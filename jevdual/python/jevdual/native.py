@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import asyncio
 import dataclasses
+import hashlib
 import json
 import logging
 import math
@@ -82,9 +83,10 @@ ROLE_MAP: dict[str, tuple[str, tuple[Operation, ...]]] = {
     "AXList": ("list", ("scroll",)),
 }
 _SECTION_ROLES = frozenset(
-    {"AXGroup", "AXToolbar", "AXTabGroup", "AXSheet", "AXDialog", "AXSplitGroup", "AXMenu", "AXMenuBarItem"}
+    {"AXGroup", "AXToolbar", "AXTabGroup", "AXSheet", "AXDialog", "AXSplitGroup", "AXMenu", "AXMenuBarItem",
+     "AXRow", "AXCell", "AXOutlineRow"}
 )
-_MENU_BAR_ROLES = frozenset({"AXMenuBar", "AXMenuBarItem", "AXMenu", "AXMenuItem"})
+_MENU_BAR_ROLES = frozenset({"AXMenuBar", "AXMenuBarItem"})
 _TEXT_ROLES = frozenset({"textbox", "searchbox", "combobox"})
 _LABEL_CAP = 80
 _VALUE_CAP = 120
@@ -207,6 +209,8 @@ class NativeMenu:
     #: Pre-pruning semantic collisions. Snapshot indices/tokens and geometry do not distinguish
     #: these backing controls across observations, even when pruning leaves just one offered row.
     ambiguous_targets: frozenset[int] = frozenset()
+    #: Full pre-pruning text roster; changes invalidate pending placeholder-qualified selections.
+    text_scope_signature: str | None = None
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -293,7 +297,7 @@ def _page_text(tree_markdown: str | None, elements: list[Any], cap: int) -> str:
     return out[:cap]
 
 
-#: candidates a native menu offers Jev at most; beyond this the tail is dropped (``omitted["cap"]``).
+#: Default candidate budget; configurable via MenuBudget.native_menu_cap.
 #: A Chrome window offered 296 and Jev refused the request as too large twice per step.
 NATIVE_MENU_CAP = 160
 #: same-key toggles kept per key: a table of unlabelled checkboxes (labelled by their raw value) must
@@ -316,6 +320,8 @@ def _prune(
     generic native actions refuse their ambiguity: peer position is not backing-object identity.
     A group larger than ``TOGGLE_REPEATS_KEPT`` or cut by the cap offers its first member only, as
     any other repeat; its pre-pruning ambiguity is retained separately. Then cap the count."""
+
+    cap = budget.native_menu_cap
 
     def key_of(c: Candidate) -> tuple[str, str, str | None, str | None]:
         return (c.role, c.label, c.value, c.section)
@@ -346,15 +352,15 @@ def _prune(
 
     whole = {k for k, n in group.items() if n <= TOGGLE_REPEATS_KEPT}
     kept = dedupe(named, whole)
-    if len(kept) > NATIVE_MENU_CAP:
+    if len(kept) > cap:
         # a repeated group the cap would cut stops being offered whole: keep its first member only
-        tail = {key_of(c) for c in kept[NATIVE_MENU_CAP:]}
+        tail = {key_of(c) for c in kept[cap:]}
         if tail & whole:
             omitted.pop("duplicate", None)
             kept = dedupe(named, whole - tail)
-    if len(kept) > NATIVE_MENU_CAP:
-        omitted["cap"] = len(kept) - NATIVE_MENU_CAP
-        kept = kept[:NATIVE_MENU_CAP]
+    if len(kept) > cap:
+        omitted["cap"] = len(kept) - cap
+        kept = kept[:cap]
     ids = {c.id for c in kept}
     return kept, {i: t for i, t in tokens.items() if i in ids}, {i: f for i, f in frames.items() if i in ids}
 
@@ -391,6 +397,8 @@ def menu_from_snapshot(
     budget: MenuBudget | None = None,
     include_menu_bar: bool = False,
     linux_text: dict[int, dict[str, Any]] | None = None,
+    mac_text: dict[int, dict[str, str]] | None = None,
+    mac_sections: dict[int, str] | None = None,
 ) -> NativeMenu:
     """Build the System 1 menu from a Driver ``get_window_state`` result (SDK object or dict)."""
     b = budget or MenuBudget()
@@ -450,7 +458,9 @@ def menu_from_snapshot(
         if _get(el, "enabled") is False:
             omitted["disabled"] = omitted.get("disabled", 0) + 1
             continue
-        raw_value = text_proof.get("value") if linux_role else _get(el, "value")
+        mac_proof = (mac_text or {}).get(int(idx), {})
+        raw_value = text_proof.get("value") if linux_role else mac_proof.get("value", _get(el, "value"))
+        placeholder = _clean(mac_proof.get("placeholder"), _LABEL_CAP) or None
         label = _clean(_get(el, "label"), _LABEL_CAP)
         if not label:
             label = _clean(_get(el, "value_description"), _LABEL_CAP)
@@ -464,6 +474,8 @@ def menu_from_snapshot(
         multiline = ax_role == "AXTextArea" or (linux_role and text_proof.get("multiline") is True)
         if role in _TEXT_ROLES and raw_value not in (None, "") and label == _clean(raw_value, _LABEL_CAP):
             label = "text area" if multiline else role  # the Driver echoed the content as the label
+        if placeholder and label in (role, "text area"):
+            label = placeholder
         value: str | None = None
         if role in _TEXT_ROLES and not sensitive and raw_value not in (None, ""):
             value = (
@@ -483,8 +495,9 @@ def menu_from_snapshot(
             has_value=(raw_value not in (None, "")) if sensitive else None,
             checked=checked,
             selected=_get(el, "selected"),
-            section=_section_of(el, by_index),
+            section=(mac_sections or {}).get(int(idx)) or _section_of(el, by_index),
             offscreen=_offscreen(frame, bounds),
+            placeholder=placeholder,
         )
         candidates.append(cand)
         tokens[cand.id] = str(token)
@@ -508,6 +521,36 @@ def menu_from_snapshot(
     ambiguous_targets = frozenset(
         c.id for c in candidates if identity_counts[c.role, c.label, c.section] > 1
     )
+    text_roster = sorted(
+        (c.role, c.label, c.section or "", c.placeholder or "")
+        for c in candidates if c.role in _TEXT_ROLES
+    )
+    text_scope_signature = hashlib.sha256(json.dumps(text_roster).encode()).hexdigest()
+    # Popup descendants are commonly emitted after hundreds of ordinary page links. A budget must
+    # not drop those choices simply because they were late in traversal. Use actual ancestry, not
+    # label guesses or invented focus flags (the pinned Driver does not expose focus/expanded).
+    popup_roles = {"AXComboBox", "AXPopUpButton", "AXMenu"}
+    selected_lists = {
+        int(_get(row, "parent_index")) for row in elements
+        if _get(row, "selected") is True and _get(row, "parent_index") is not None
+        and _get(by_index.get(int(_get(row, "parent_index"))), "role") == "AXList"
+    }
+
+    def priority(candidate: Candidate) -> tuple[int, bool]:
+        current = by_index[candidate.id]
+        seen: set[int] = set()
+        while current is not None:
+            index = int(_get(current, "element_index"))
+            if index in seen:
+                break
+            seen.add(index)
+            if _get(current, "role") in popup_roles or index in selected_lists:
+                return 0, candidate.offscreen
+            parent = _get(current, "parent_index")
+            current = by_index.get(int(parent)) if parent is not None else None
+        return (1 if candidate.role in _TEXT_ROLES else 2), candidate.offscreen
+
+    candidates.sort(key=priority)
     candidates, tokens, frames = _prune(candidates, tokens, frames, omitted, b)
     kept = {c.id for c in candidates}
     values = {i: v for i, v in values.items() if i in kept}
@@ -568,6 +611,7 @@ def menu_from_snapshot(
         web=frozenset(i for i in web if i in kept),
         scope_address_bars=scope_address_bars,
         ambiguous_targets=ambiguous_targets & kept,
+        text_scope_signature=text_scope_signature,
     )
 
 
@@ -924,6 +968,8 @@ class NativeBridge:
         require_available("desktop")
         from jevdual.effectors.cua import window_state_input
 
+        budget = budget or getattr(self, "menu_budget", None)
+
         if self.policy.locked():
             # nothing on a locked screen can be observed, so nothing can be decided or sent: stop and say why
             raise NativeBridgeError("screen_locked", "the screen is locked; unlock it to continue")
@@ -982,8 +1028,15 @@ class NativeBridge:
                     linux_text[int(index)] = await asyncio.to_thread(qualify)
                 except self.ax.AXError:
                     linux_text[int(index)] = {}
+        mac_text = None
+        mac_sections = None
+        if sys.platform == "darwin":
+            mac_text = await asyncio.to_thread(self._web_text_attributes, snap)
+            mac_sections = await asyncio.to_thread(self._web_control_sections, snap)
         observed = menu_from_snapshot(
-            snap, budget=budget, include_menu_bar=include_menu_bar, linux_text=linux_text
+            snap, budget=budget, include_menu_bar=include_menu_bar, linux_text=linux_text,
+            mac_text=mac_text,
+            mac_sections=mac_sections,
         )
         if linux_text is not None:
             # Linux window managers may report the desktop ID as the app name.
@@ -1005,8 +1058,6 @@ class NativeBridge:
             unavailable = sum("value" not in proof for proof in linux_text.values())
             if unavailable:
                 observed.menu.omitted["exact_text_unqualified"] = unavailable
-        if sys.platform == "darwin" and observed.web:
-            observed = await asyncio.to_thread(self._without_placeholders, observed)
         if self.observation_guard is not None and observed.app_name in {"Chrome", "Google Chrome"}:
             from jevdual.chrome_scope import capture
 
@@ -1023,28 +1074,73 @@ class NativeBridge:
         self.last = observed
         return self.last
 
-    def _without_placeholders(self, nm: NativeMenu) -> NativeMenu:
-        """CUA reports AXPlaceholderValue as the value of an empty text field (platform-macos
-        ax/tree.rs:500-503). For web text fields, read the field itself: when its AXValue is empty and
-        its placeholder is the reported value, the field is empty (notebook FT1). At most 8 fields."""
-        empty: list[int] = []
-        for cand in nm.menu.candidates:
-            reported = nm.values.get(cand.id)
-            frame = nm.frames.get(cand.id)
-            if cand.id not in nm.web or not reported or frame is None or len(empty) >= 8:
+    def _web_text_attributes(self, snapshot: Any) -> dict[int, dict[str, str]]:
+        """Read real AX values and placeholders before deduplication and identity classification.
+
+        The pinned CUA contract substitutes AXPlaceholderValue for an empty AXValue and omits a
+        separate placeholder field. This bounded, read-only supplement keeps them separate even
+        after typing. Secure fields are never read. Unresolved fields retain conservative projection.
+        """
+        out: dict[int, dict[str, str]] = {}
+        attempts = 0
+        for row in _get(snapshot, "elements") or []:
+            role, index, frame = _get(row, "role"), _get(row, "element_index"), _get(row, "frame")
+            if (role not in _TEXT_AX_ROLES or not _get(row, "in_web_content")
+                    or index is None or frame is None or not _get(row, "element_token")):
                 continue
+            if attempts >= 32:
+                break
+            attempts += 1
             try:
-                el = self.ax.resolve(self.pid, self.window_id, nm.ax_roles[cand.id], self.ax.Frame(*frame))
-                if self.ax.value(el) == "" and self.ax.placeholder(el) == reported:
-                    empty.append(cand.id)
-            except Exception:  # noqa: BLE001, S112 - unreadable keeps the reported value
+                coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
+                if any(value is None for value in coordinates):
+                    continue
+                element = self.ax.resolve(self.pid, self.window_id, role, self.ax.Frame(*coordinates))
+                actual = self.ax.value(element)
+                placeholder = self.ax.placeholder(element)
+                proof = {"value": actual}
+                if placeholder:
+                    proof["placeholder"] = placeholder
+                out[int(index)] = proof
+            except Exception:  # noqa: BLE001, S112 - unreadable keeps the SDK representation
                 continue
-        if not empty:
-            return nm
-        for cand in nm.menu.candidates:
-            if cand.id in empty:
-                object.__setattr__(cand, "value", None)  # this observation's own candidate objects
-        return dataclasses.replace(nm, values={**nm.values, **dict.fromkeys(empty, "")})
+        return out
+
+    def _web_control_sections(self, snapshot: Any) -> dict[int, str]:
+        """Recover explicit AX ancestor labels for repeated web controls whose groups CUA drops.
+
+        Qualification is all-or-none per duplicate group. An unreadable peer might have the same
+        section as the selected control; keeping only a successful read would hide that ambiguity.
+        """
+        groups: dict[tuple[str, str], list[Any]] = {}
+        for row in _get(snapshot, "elements") or []:
+            role = _get(row, "role")
+            label = _clean(_get(row, "label") or _get(row, "value_description") or _get(row, "value"))
+            if (role in {"AXLink", "AXButton"} and label and _get(row, "in_web_content")
+                    and _get(row, "element_token")):
+                groups.setdefault((role, label), []).append(row)
+        out: dict[int, str] = {}
+        attempts = 0
+        for (role, _), rows in groups.items():
+            if len(rows) < 2 or attempts + len(rows) > 32:
+                continue
+            qualified: dict[int, str] = {}
+            for row in rows:
+                attempts += 1
+                try:
+                    frame = _get(row, "frame")
+                    coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
+                    if any(value is None for value in coordinates):
+                        continue
+                    element = self.ax.resolve(self.pid, self.window_id, role, self.ax.Frame(*coordinates))
+                    section = _clean(self.ax.semantic_section(element), 60)
+                    if section:
+                        qualified[int(_get(row, "element_index"))] = section
+                except Exception:  # noqa: BLE001, S112 - no guessed identity on an unreadable peer
+                    continue
+            if len(qualified) == len(rows):
+                out.update(qualified)
+        return out
 
     def _target(self) -> Any:
         from jevdual.effectors.cua import window_target
@@ -1089,12 +1185,13 @@ class NativeBridge:
         cand = nm.menu.candidate(id)
         assert cand is not None
         self._require_unambiguous(nm, id)
-        key = (cand.role, cand.label, cand.section)
+        key = (cand.role, cand.label, cand.section, cand.placeholder)
         same = fresh.menu.candidate(id)
-        if same is not None and (same.role, same.label, same.section) == key:
+        if same is not None and (same.role, same.label, same.section, same.placeholder) == key:
             hit = same
         else:
-            matches = [c for c in fresh.menu.candidates if (c.role, c.label, c.section) == key]
+            matches = [c for c in fresh.menu.candidates
+                       if (c.role, c.label, c.section, c.placeholder) == key]
             if len(matches) != 1:
                 raise NativeBridgeError(
                     "target_changed",
@@ -1102,6 +1199,10 @@ class NativeBridge:
                 )
             hit = matches[0]
         self._require_unambiguous(fresh, hit.id)
+        if cand.placeholder and nm.text_scope_signature != fresh.text_scope_signature:
+            raise NativeBridgeError(
+                "target_changed", "the form's text fields changed since the decision; choose again"
+            )
         if operation in ("type", "append", "enter") and _norm_tail(nm.values.get(id, "")) != _norm_tail(
             fresh.values.get(hit.id, "")
         ):
@@ -1529,7 +1630,10 @@ class NativeBridge:
         after = await self._observe_after_input()
         self.last = None
         same = after.menu.candidate(id)
-        got = after.values.get(id, "") if same is not None and same.label == label else None
+        identity = (cand.role, cand.label, cand.section, cand.placeholder)
+        got = after.values.get(id, "") if same is not None and (
+            same.role, same.label, same.section, same.placeholder
+        ) == identity else None
         if got is not None and got.strip() == text.strip():
             return dataclasses.replace(
                 eff, effect="confirmed", evidence=(*eff.evidence, "value_readback: the field holds the text")

@@ -40,6 +40,16 @@ def _split(s: str, sep: str) -> tuple[str, ...]:
     return tuple(x.strip() for x in s.split(sep) if x.strip())
 
 
+def _native_menu_cap(value: str) -> int:
+    try:
+        count = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("native menu cap must be an integer from 1 to 1000") from None
+    if not 1 <= count <= 1000:
+        raise argparse.ArgumentTypeError("native menu cap must be an integer from 1 to 1000")
+    return count
+
+
 def _out_dir(arg: str | None) -> Path:
     return Path(arg) if arg else Path("runs") / time.strftime("%Y%m%d-%H%M%S")
 
@@ -337,6 +347,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     st.add_argument("--url")
     st.add_argument("--window")
+    st.add_argument(
+        "--native-menu-cap", type=_native_menu_cap, default=160,
+        help="native candidate budget, persisted for this session (1-1000; default: 160)",
+    )
     st.add_argument("--require", default="")
     st.add_argument("--authorize", default="")
     st.add_argument("--answer", action="store_true")

@@ -85,6 +85,44 @@ For owned headless browsing, use the explicit `footwork browser cdp` route. It k
 
 The original top-level verbs remain compatible. `footwork capability` exposes the existing scoped MCP configuration/server/report commands through the same executable. Its browser-to-TextEdit scope remains intentionally bounded; it does not grant generic input access to an MCP host.
 
+### Native form targets
+
+Native observations show an available ancestor label in brackets after a control. To distinguish
+repeated actions, qualify the label with that exact section:
+
+```sh
+footwork desktop do click 'section:example.test::link:MANAGE' --session /absolute/path/session
+```
+
+The section must come from the observation. Footwork rechecks the role, label and section before
+dispatch; a numeric ID whose meaning changed requires a fresh selection. A row without readable
+context, or multiple controls with the same qualified identity, remains ambiguous even if pruning
+shows only one representative. Native accessibility context is not a persistent DOM element ID.
+
+On macOS, a bounded accessibility read retains web-field placeholders separately from actual values
+and uses them to label otherwise unnamed fields. A verified empty field stays empty in value
+readback. A changed observed set of text fields invalidates a pending placeholder-based selection;
+reobserve after adding or removing rows. Missing attributes and replacements with identical observed
+semantics remain limits of this semantic identity model.
+
+Popup descendants take priority over ordinary page controls in the native candidate budget. To use
+a larger budget, set it when starting a fresh session:
+
+```sh
+footwork desktop start 'Inspect the form' --app 'Google Chrome' \
+  --native-menu-cap 240 --session /absolute/path/new-session
+```
+
+The default is 160 candidates; the supported range is 1–1000. The setting persists through later
+observations and action revalidation. Increasing it cannot recover elements omitted by the driver;
+`elements_incomplete` remains a separate limitation. A selector missing from a capped observation
+is reported as unobserved within that budget, rather than absent from the page.
+
+Early targeting refusals append `attempted_action` entries to `session.jsonl`, with `dispatched=false`,
+a reason code, selector and observation coverage. These records do not count as dispatched `do`
+actions or create success receipts. Typed payloads are omitted. Click receipts and field readback
+do not prove server persistence; a saved form needs a separate save-and-reload check.
+
 `--json` wraps command output and the underlying exit code for agents. JSON stdout appears once in `data`, with an empty `output`; ordinary text stays in `output` and stderr stays in `diagnostics`. Read the underlying action receipt to determine effects: an exit code or successful transport alone does not prove that an action applied or a task completed. For a long-lived capability server, retain its MCP stdio protocol rather than wrapping the stream.
 
 `doctor` reports optional Jev Rust acceleration separately from the native CUA driver. The portable wheel uses the pure Python backend; that does not prevent desktop control. Native observations require Accessibility permission for the process hosting Footwork and report a permission blocker directly. Permission status describes prerequisites; it does not qualify a live capture or action. If startup fails, the session is not initialized; correct the reported cause and complete `start` before using `look` or `do`.

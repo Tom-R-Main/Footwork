@@ -154,6 +154,28 @@ def placeholder(el: Any) -> str | None:
     return None if v is None else str(v)
 
 
+def semantic_section(el: Any) -> str | None:
+    """Read an explicit ancestor name, including groups omitted by CUA's projection.
+
+    This is semantic context, not a retained object identifier. Never infer a row name from
+    sibling text, screen position, entered field values or the page's unstructured text.
+    """
+    node = el
+    for _ in range(32):
+        node = _attr(node, "AXParent")
+        if node is None:
+            return None
+        role = _attr(node, "AXRole")
+        if role in ("AXWindow", "AXWebArea", "AXApplication"):
+            return None
+        if role in ("AXRow", "AXCell", "AXOutlineRow", "AXGroup"):
+            for attribute in ("AXTitle", "AXDescription"):
+                name = _attr(node, attribute)
+                if isinstance(name, str) and name.strip():
+                    return name.strip()
+    return None
+
+
 def value(el: Any) -> str:
     """The element's exact AXValue. An empty text view reports none at all (Notes' new note body,
     2026-09-25); it is the empty string only when the element says it holds no characters."""

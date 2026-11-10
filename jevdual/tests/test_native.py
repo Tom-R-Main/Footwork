@@ -66,6 +66,44 @@ def test_include_menu_bar_adds_menu_items(snapshot):
     assert any(c.section for c in items)  # menu items carry their menu as section
 
 
+@pytest.mark.parametrize("container", ["AXMenu", "AXList"])
+def test_visible_popup_choices_survive_cap_without_a_combobox_parent(container):
+    from jevdual.menu import MenuBudget
+
+    def element(index, role, label, parent=None, **extra):
+        return {"element_index": index, "element_token": f"s:{index}", "role": role,
+                "label": label, "parent_index": parent, "actions": ["AXPress"], **extra}
+
+    snap = {"elements": [element(i, "AXLink", f"Footer {i}") for i in range(10)] + [
+        element(20, container, "DNS options"),
+        element(21, "AXMenuItem" if container == "AXMenu" else "AXStaticText", "Basic DNS", 20, selected=True),
+        element(22, "AXMenuItem" if container == "AXMenu" else "AXStaticText", "Custom DNS", 20),
+        element(30, "AXMenuBar", "Application"),
+        element(31, "AXMenu", "File", 30),
+        element(32, "AXMenuItem", "Quit", 31),
+    ]}
+    nm = menu_from_snapshot(snap, budget=MenuBudget(native_menu_cap=4))
+    ids = {candidate.id for candidate in nm.menu.candidates}
+    assert {21, 22} <= ids
+    assert not {30, 31, 32} & ids
+    assert nm.menu.omitted["cap"] > 0
+
+
+def test_placeholder_text_roster_includes_fields_hidden_by_the_menu_budget():
+    from jevdual.menu import MenuBudget
+
+    def field(index):
+        return {"element_index": index, "element_token": f"s:{index}", "role": "AXTextField"}
+
+    proof = {i: {"value": "", "placeholder": f"Nameserver {i}"} for i in range(1, 4)}
+    before = menu_from_snapshot({"elements": [field(1), field(2)]},
+                                budget=MenuBudget(native_menu_cap=1), mac_text=proof)
+    after = menu_from_snapshot({"elements": [field(1), field(2), field(3)]},
+                               budget=MenuBudget(native_menu_cap=1), mac_text=proof)
+    assert before.menu.candidates == after.menu.candidates
+    assert before.text_scope_signature != after.text_scope_signature
+
+
 def test_incomplete_snapshot_is_reported_in_omitted(snapshot):
     nm = menu_from_snapshot(snapshot)
     assert nm.elements_complete is False

@@ -60,6 +60,8 @@ class Candidate:
     has_value: bool | None = None
     #: a toggle button's state (aria-pressed / the AX ``pressed`` property)
     pressed: ControlState = None
+    #: Independently read field hint; never entered content or proof of a nonempty value.
+    placeholder: str | None = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
@@ -69,7 +71,9 @@ class Candidate:
             "role": self.role,
             "operations": list(self.operations),
         }
-        for key in ("value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section"):
+        for key in (
+            "value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section", "placeholder"
+        ):
             val = getattr(self, key)
             if val is not None:
                 out[key] = val
@@ -109,6 +113,8 @@ class MenuBudget:
     group_size: int = 40
     #: page_text is never trimmed below this many characters by budget enforcement.
     min_page_text_chars: int = 1_500
+    #: Native operator candidate budget; separate from the model's per-choice option limit.
+    native_menu_cap: int = 160
 
 
 @dataclass(frozen=True)
