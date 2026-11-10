@@ -313,3 +313,9 @@ Refs: output/suno-20261110/candidate-b-foreground-menu.txt; output/suno-20261110
 Question: which actual peer nodes cause ambiguity for the intended hero song-menu control, and do they expose distinct backing identity or duplicate traversal of one actual element?
 Test: one read-only bound-window SDK snapshot and exact own-title menu rows; retain role, full label, parent ancestry, frames and available AXDOMIdentifier/AXIdentifier/description/title attributes. Resolve only those fresh frame/role targets; compare exact duplicate frames/element references when possible. No clicks, pointer movement, focus writes or input. Do not infer identity from position alone.
 Refs: output/suno-20261110/candidate-a-more-menu.txt; output/suno-20261110/candidate-b-play.txt; python/jevdual/native.py ambiguity qualification
+
+## SUNU30 · update · 2026-11-10 18:48
+Observed: correction to SUNU29's premature Escape-closes statement: the first Escape request was paused before dispatch because TypeSafe judgment returned400 max_tokens_exceeded. No action occurred on that request. The already-authorized harmless popup-dismissal was then issued once with exact per-action escape authorization, retaining normal foreground/identity gates; its post-observation confirms214elements removed and106remaining, closing the emoji picker. No emoji or comment was submitted. The cause of the provider error is unestablished.
+Inferred: this was judgment availability, not a safety rejection. The exact task-scoped authorization is distinct from disabling the judge or changing posture. Root must inspect dependent tool results before writing a completion observation.
+Next: the preregistered SUN25 read-only peer probe now has the UI slot; root will not drive during it.
+Refs: output/suno-20261110/close-comment-picker.txt; output/suno-20261110/close-comment-picker-authorized.txt
