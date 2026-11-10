@@ -32,3 +32,10 @@ Observed:39 helper/notebook tests pass with request-local certifi CA trust and v
 Changes: request-local verified TLS context and handshake-aware HTTPS handler, retaining no retries or redirects. Original failed parent evidence is not modified.
 Next: parent tests public provider metadata with the repaired context and then executes fresh synthetic-audio probes. OMR2 remains open until that independent live evidence exists.
 Refs: prediction48cf800; results/openrouter-media-review-20261110/pytest-tls.txt; results/openrouter-media-review-20261110/report.md
+
+## OMR3 · prediction · 2026-11-10 17:27
+Hypothesis: urllib's socket timeout bounds individual I/O waits rather than the complete exchange, so a server sending intermittent bytes can keep the helper running past its advertised timeout. A parent-enforced deadline around one isolated transport process will bound local request lifetime while preserving unknown remote completion.
+Test: public helper tests with an isolated transport boundary and mocked subprocess lifecycle; a local no-network slow-drip child exercises a real wall deadline and kill/reap cleanup. Check private-pipe payload transport, sanitized phases, no retries, successful completion, interruption and cleanup-failure reporting. Do not touch the root-owned live request or read a real key.
+Predicts: successful exchange returns once; slow drip cannot extend the total exchange deadline; timed-out child is killed and reaped with explicit cleanup evidence; key/payload never enter argv/logs, and remote completion remains unknown after timeout.
+Against: timeout leaves a hidden child request running, byte arrival refreshes the total budget, a retry is submitted, secrets enter argv/logs, or cleanup failure is reported as confirmed termination.
+Refs: scripts/openrouter_media_review.py _post; parent-reported120s live probe still running after124s on2026-11-10
