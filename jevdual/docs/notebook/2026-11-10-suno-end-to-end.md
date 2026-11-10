@@ -231,3 +231,17 @@ Refs: output/suno-20261110/hid-availability.json; output/suno-20261110/instrumen
 Question: do the two newly generated same-title song links expose distinct actual AXURL resource identities that Footwork's native menu currently omits?
 Test: one bounded read-only SDK snapshot scoped to the exact test title in bound window306787; resolve each matching AXLink by its fresh frame, independently verify title/description and read AXURL. Save resource URLs with snapshot/frame provenance. No clicks, focus writes or navigation. If absent or invalid, do not invent song IDs.
 Refs: output/suno-20261110/instrumental-open-candidate-a.txt; python/jevdual/native.py Candidate projection
+
+## SUNU24 · update · 2026-11-10 18:28
+Resolves: SUN17 = held
+Observed: exact same-title link AXURL reads identified generated songs3f208a3a-65b3-42a0-aeeb-651f671fbcce and483fa375-ef3e-4cb2-b284-4e338f1d9cbf. Their exact song pages report status complete, is_public false, make_instrumental true, empty prompt and durations214.88and204.8seconds. Both came from the single observed Create submission. Page media_urls point to progressive m4a-opus with encoding1.0.0, but the downloaded bytes have no recognized MP4/Opus/Ogg headers and FFmpeg reports moov atom not found. No audio was sent to a critic. The raw failures are retained.
+Inferred: creation is evidenced independently of a click receipt; audition remains unverified. Use the authenticated export UI rather than claim that opaque playback bytes are decoded audio. Link identity needs resource-aware qualification, delegated separately.
+Next: qualify the newly frozen selected-range route briefly on the run-owned draft, then navigate by an independently observed song URL to the actual export/editor controls.
+Refs: output/suno-20261110/generated-link-identities.json; output/suno-20261110/generated-audio; results/foreground-web-selection-20261110/report.md
+
+## SUN20 · prediction · 2026-11-10 18:28
+Hypothesis: explicit requested-range editing can insert into Suno's fresh rich editor and replace its selected text while preserving the exact unselected terminal LF, without changing whole-field replacement rules.
+Test: on frozen114a1b9 plus unchanged focus1 overlay, fresh observation then type signal with foreground web-text-range0:0. Require rendered signal and exact raw signal-plus-LF receipt/readback. If verified, use the observed Edit Select All menu, then request range0:6 to replace signal with the original short lyrics; require exact expected raw prefix/suffix plus rendering. No generation with diagnostic content.
+Predicts: independently corroborated caret/selection reaches exactly one paced type call per requested edit; the complete raw values and actual visible text match.
+Against: any range/text/focus guard refuses, only AX changes, output differs including LF, or outcome is unknown. Preserve unknown effects and reconcile before further input.
+Refs: results/foreground-web-selection-20261110/report.md; output/suno-20261110/runtime-114a1b9/identity.json; output/suno-20261110/lyrics-parameterized-observation.json
