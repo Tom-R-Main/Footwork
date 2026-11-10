@@ -164,3 +164,17 @@ Test: after the owning decoder repair is frozen and affected regression/ABI chec
 Predicts: tuple decoding validates the full selected range, exactly one foreground text call is reached, and both actual rendering and field readback show signal. Intended lyrics subsequently agree in visible and exact value evidence.
 Against: decoder refuses, another pre-text guard fails, synthesis remains unverifiable or content changes only in AX while the rendered editor stays blank.
 Refs: output/suno-20261110/foreground-lyrics-signal.txt; results/foreground-web-text-20261110/report.md
+
+## SUNU18 · update · 2026-11-10 18:08
+Resolves: SUN14 = failed
+Observed: decoder repair be8ea6b passed338 focused checks with unchanged native bytes. The new live foreground diagnostic no longer raises AttributeError; it stops with selection_unqualified because the exact field/value is not wholly selected. This check precedes text synthesis in the frozen path. The command receipt remains unverifiable because preparation/selection may have occurred. No new song generation was sent.
+Inferred: the selection guard is now functioning; the current field's AX x versus blank rendering is not a sound replacement precondition. Do not weaken the selection check or repeat the same input.
+Next: use the actual observed New draft control to reset only run-owned lyrics, then independently verify fresh empty value and rendering before testing insertion without replacement selection.
+Refs: results/selected-range-decoding-20261110/report.md; output/suno-20261110/tuple-repair-preflight.txt; output/suno-20261110/tuple-repair-lyrics-signal.txt
+
+## SUN15 · prediction · 2026-11-10 18:08
+Hypothesis: Suno's New draft control resets the inconsistent run-owned lyrics state to a fresh readable empty editor that the guarded foreground insertion route can reach.
+Test: reobserve and click New draft once; inspect exact Lyrics editor value and screenshot. Only if empty, type the short diagnostic signal through the frozen guarded foreground path and require exact readback plus visible text. If verified, replace with intended original lyrics and revalidate style/title before generation.
+Predicts: New draft yields an empty lyrics field without editing an existing song; foreground insertion then visibly renders signal and exact readback agrees.
+Against: the control opens a different flow, emptiness cannot be established, a guard refuses, or AX and rendering diverge again. Do not submit generation or force a replacement in these states.
+Refs: output/suno-20261110/ready-drafts-start.txt; output/suno-20261110/tuple-repair-lyrics-signal.txt
