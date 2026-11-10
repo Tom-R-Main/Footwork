@@ -11,3 +11,16 @@ Refs: docs/notebook/2026-11-10-suno-end-to-end.md; python/jevdual/session.py::pa
 ## EARU0 · update · 2026-11-10 17:00
 Observed: the EAR1 heading mistakenly used an estimated earlier time; its actual clock read and commit ba8ff28 are17:00. The prediction was committed before its resolving scenarios. Commit ordering remains the timing evidence.
 Next: reproduce ignored trailing native enter text through the public CLI, then repair only this argument boundary.
+
+## EARU1 · update · 2026-11-10 17:02
+Resolves: EAR1 = held
+Observed: the public CLI baseline accepted nonempty and explicit empty native enter tails; secret-looking text was resolved before binding. The first fixture also hit Calculator's existing destructive-button gate, so the scenario explicitly authorized the Return operation before reproducing the argument defect. The corrected baseline has3 failures and2 preserved-behavior passes. After repair the new scenarios pass and the affected session, CLI, discovery, authorizer and native suites pass270 tests. Ruff, notebook validation and diff checks pass.
+Changes: native cmd_do refuses any trailing enter argument before secret resolution and driver binding, with explicit type, reobserve/readback, then enter guidance. It performs no compound operation and preserves target-only Return and browser dispatch scope.
+Next: parent can use the corrected syntax for live navigation; freeze this local source repair without global activation.
+Refs: results/native-enter-arity-20261110/red.txt; results/native-enter-arity-20261110/pytest.txt; results/native-enter-arity-20261110/report.md; prediction ba8ff28
+
+## EARS1 · summary · 2026-11-10 17:02
+Established: native enter accepts only its target, rejecting even an explicit empty text argument without binding a driver, resolving secrets or claiming delivered input. Existing target-only Return retains its normal action gates and emits one Return in the simulated native scenario.
+Uncertain: no live UI or installed-wheel behavior is established by these offline scenarios. BrowserBridge itself does not implement enter; this patch leaves that existing behavior unchanged. Low-level Python NativeBridge callers are outside this CLI argument validation change.
+Decision: deliver the narrow native CLI repair with reproducible evidence; do not broaden other route argument rules or silently fill and submit.
+Refs: results/native-enter-arity-20261110/report.md

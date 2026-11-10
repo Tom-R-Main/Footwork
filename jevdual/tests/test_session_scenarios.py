@@ -1854,6 +1854,73 @@ def test_look_until_refuses_browser_before_driver_binding(world, fw, monkeypatch
     assert code == 2 and "native sessions only" in err
 
 
+def _add_native_enter_field(world):
+    world.base["elements"].append({
+        "element_index": 910, "element_token": "initial:910", "role": "AXTextField",
+        "label": "Address and search bar", "value": "chrome://newtab", "enabled": True,
+        "actions": [], "frame": {"x": 10, "y": 20, "w": 300, "h": 20},
+    })
+
+
+@pytest.mark.parametrize("tail", ["https://suno.com/create", "", "{UNRESOLVED_SECRET}"])
+def test_native_enter_rejects_any_text_before_driver_binding(world, fw, monkeypatch, tail):
+    _add_native_enter_field(world)
+    assert fw("start", "Navigate own draft", "--app", "Calculator")[0] == 0
+    previous = (fw.session / "session.jsonl").read_bytes()
+    bindings = []
+    original_create = world.create
+
+    def counted_create(**kwargs):
+        bindings.append(True)
+        return original_create(**kwargs)
+
+    monkeypatch.setattr(cd.CuaDriver, "create", counted_create)
+    code, out, err = fw(
+        "do", "enter", "Address and search bar", tail, "--no-judge",
+        "--authorize", "enter:confirm the default button",
+    )
+    assert code == 2
+    assert "native enter sends Return only and does not accept text" in err
+    assert "do type TARGET TEXT" in err and "reobserve and verify the field" in err
+    assert "do enter TARGET" in err
+    assert bindings == [] and world.tool_calls == [] and world.presses == []
+    assert "text=" not in out and "dispatched" not in out
+    assert (fw.session / "session.jsonl").read_bytes() == previous
+
+
+def test_native_enter_without_text_still_sends_one_return(world, fw):
+    _add_native_enter_field(world)
+    assert fw("start", "Navigate own draft", "--app", "Calculator")[0] == 0
+    code, out, err = fw(
+        "do", "enter", "Address and search bar", "--no-judge",
+        "--authorize", "enter:confirm the default button",
+    )
+    assert code == 0, err
+    assert "dispatched enter(Address and search bar)" in out
+    assert len(world.tool_calls) == 1
+    name, arguments = world.tool_calls[0]
+    assert name == "press_key" and arguments["key"] == "return"
+    assert "text" not in arguments
+
+
+def test_native_enter_arity_guard_does_not_change_browser_route(world, fw, monkeypatch):
+    from jevdual import session
+
+    assert fw("start", "Browser operation scope", "--app", "Calculator")[0] == 0
+    path = fw.session / "session.json"
+    raw = json.loads(path.read_text())
+    raw["mode"] = "browser"
+    path.write_text(json.dumps(raw))
+
+    async def browser_bind(state):
+        raise RuntimeError("browser route reached unchanged")
+
+    monkeypatch.setattr(session, "bind", browser_bind)
+    code, _, err = fw("do", "enter", "Field", "retained text")
+    assert code == 7 and "browser route reached unchanged" in err
+    assert "native enter sends Return only" not in err
+
+
 @pytest.mark.parametrize("command", ["start", "look"])
 @pytest.mark.parametrize("permission", ["not_granted", "unavailable"])
 def test_denied_accessibility_is_an_explicit_observation_failure(world, fw, monkeypatch, command, permission):

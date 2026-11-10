@@ -1,0 +1,90 @@
+FFF..                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_native_enter_rejects_any_text_before_driver_binding[https://suno.com/create] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x106f10e00>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1063ab830>
+tail = 'https://suno.com/create'
+
+    @pytest.mark.parametrize("tail", ["https://suno.com/create", "", "{UNRESOLVED_SECRET}"])
+    def test_native_enter_rejects_any_text_before_driver_binding(world, fw, monkeypatch, tail):
+        _add_native_enter_field(world)
+        assert fw("start", "Navigate own draft", "--app", "Calculator")[0] == 0
+        previous = (fw.session / "session.jsonl").read_bytes()
+        bindings = []
+        original_create = world.create
+    
+        def counted_create(**kwargs):
+            bindings.append(True)
+            return original_create(**kwargs)
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", counted_create)
+        code, out, err = fw(
+            "do", "enter", "Address and search bar", tail, "--no-judge",
+            "--authorize", "enter:confirm the default button",
+        )
+>       assert code == 2
+E       assert 0 == 2
+
+tests/test_session_scenarios.py:1882: AssertionError
+__________ test_native_enter_rejects_any_text_before_driver_binding[] __________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1070ab420>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1063ab800>, tail = ''
+
+    @pytest.mark.parametrize("tail", ["https://suno.com/create", "", "{UNRESOLVED_SECRET}"])
+    def test_native_enter_rejects_any_text_before_driver_binding(world, fw, monkeypatch, tail):
+        _add_native_enter_field(world)
+        assert fw("start", "Navigate own draft", "--app", "Calculator")[0] == 0
+        previous = (fw.session / "session.jsonl").read_bytes()
+        bindings = []
+        original_create = world.create
+    
+        def counted_create(**kwargs):
+            bindings.append(True)
+            return original_create(**kwargs)
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", counted_create)
+        code, out, err = fw(
+            "do", "enter", "Address and search bar", tail, "--no-judge",
+            "--authorize", "enter:confirm the default button",
+        )
+>       assert code == 2
+E       assert 0 == 2
+
+tests/test_session_scenarios.py:1882: AssertionError
+_ test_native_enter_rejects_any_text_before_driver_binding[{UNRESOLVED_SECRET}] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x106892f20>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1070b2720>
+tail = '{UNRESOLVED_SECRET}'
+
+    @pytest.mark.parametrize("tail", ["https://suno.com/create", "", "{UNRESOLVED_SECRET}"])
+    def test_native_enter_rejects_any_text_before_driver_binding(world, fw, monkeypatch, tail):
+        _add_native_enter_field(world)
+        assert fw("start", "Navigate own draft", "--app", "Calculator")[0] == 0
+        previous = (fw.session / "session.jsonl").read_bytes()
+        bindings = []
+        original_create = world.create
+    
+        def counted_create(**kwargs):
+            bindings.append(True)
+            return original_create(**kwargs)
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", counted_create)
+        code, out, err = fw(
+            "do", "enter", "Address and search bar", tail, "--no-judge",
+            "--authorize", "enter:confirm the default button",
+        )
+>       assert code == 2
+E       assert 1 == 2
+
+tests/test_session_scenarios.py:1882: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_native_enter_rejects_any_text_before_driver_binding[https://suno.com/create]
+FAILED tests/test_session_scenarios.py::test_native_enter_rejects_any_text_before_driver_binding[]
+FAILED tests/test_session_scenarios.py::test_native_enter_rejects_any_text_before_driver_binding[{UNRESOLVED_SECRET}]
+3 failed, 2 passed, 158 deselected in 0.55s

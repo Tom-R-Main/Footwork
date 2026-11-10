@@ -1847,6 +1847,13 @@ async def cmd_do(args: Any) -> int:
         print("--token requires a durable session started with --authority", file=sys.stderr)
         return 2
     op, cid, raw_text, keys, path = parse_do(args.words)
+    if state.mode == "native" and op == "enter" and len(args.words) > 2:
+        print(
+            "native enter sends Return only and does not accept text. Use do type TARGET TEXT, "
+            "then reobserve and verify the field, then do enter TARGET.",
+            file=sys.stderr,
+        )
+        return 2
     carried = None
     ref = carry.is_ref(raw_text) if op in ("type", "append") else None
     if ref is not None:
