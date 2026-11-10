@@ -1,0 +1,31 @@
+# Bounded OpenRouter media review helper
+
+Prediction: `76ea245`. This source-only helper supports the user-selected reviewer `qwen/qwen3.8-omni-flash` via the pinned OpenRouter Chat Completions endpoint.
+
+From `jevdual/`, validate without credentials or a network request:
+
+```sh
+.venv/bin/python scripts/openrouter_media_review.py --media /absolute/clip.wav --prompt /absolute/review.txt --out /absolute/path/inside/footwork/jevdual/output/review-dry
+```
+
+Make exactly one explicitly authorized request with a fresh output directory:
+
+```sh
+.venv/bin/python scripts/openrouter_media_review.py --media /absolute/clip.wav --prompt /absolute/review.txt --out /absolute/path/inside/footwork/jevdual/output/review-live --env-file /absolute/path/inside/footwork/jevdual/.env --max-tokens 500 --execute
+```
+
+WAV/MP3 use base64 `input_audio`; MP4 uses a base64 `video_url` data URL. Defaults: 16MiB media cap, 2000 output tokens, 60-second HTTP timeout. Maximum settings: 32MiB, 4000 output tokens, 120 seconds. Prompt files are bounded to32KiB and responses to2MiB. These are operational caps, not model limits. The helper does not decode media or establish its duration; the caller must probe/capture and associate actual timeline ranges separately.
+
+Output is restricted to a fresh directory inside this checkout. `request-intent.json` records pending intent before sending. `manifest.json` retains media/prompt hashes, size/type, requested and returned model/provider metadata, response identity and status; `response.json` retains text, finish reason and usage when available. Files use0600 permissions, directory0700. No request body or bearer header is retained. Credential strings and any exact echoed encoded media are redacted from retained response data. Provider/model identity is reported as returned rather than inferred.
+
+The explicit dotenv reader accepts literal `OPENROUTER_API_KEY=value` or a quoted value (optional export prefix), without shell evaluation or interpolation. Dry-run never reads the credential file. Missing/duplicate/invalid credentials refuse before sending. HTTP and library errors are reported generically with HTTP status where available, without echoed upstream bodies. Redirects and automatic retries are disabled. After a request attempt fails, provider completion is conservatively unknown; inspect evidence before manually retrying.
+
+`pytest.txt`:30 tests pass across the helper and notebook suites. Tests cover audio/video payload delivery, hashes/usage/model provenance, dry-run/no-key behavior, redaction of malicious echoes, errors/no retries, existing output preservation, bounds, invalid inputs and redirect refusal. Changed-file Ruff and `git diff --check` pass. Commands:
+
+```sh
+uv run --no-sync pytest tests/test_openrouter_media_review.py tests/test_notebook.py -q
+uv run --no-sync ruff check scripts/openrouter_media_review.py tests/test_openrouter_media_review.py
+uv run --no-sync python -m evals.notebook docs/notebook --check
+```
+
+All HTTP/model behavior here is mocked; no real credential file was read and no provider call was made by the worker. This does not qualify live audio/video delivery, correct perception, temporal localization, music taste or Suno completion. Parent performs those checks on the committed helper. New helper is invoked explicitly and is not installed into the user-local Footwork launcher.
