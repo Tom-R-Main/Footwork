@@ -209,3 +209,14 @@ Test: on an exact project-local snapshot of be8ea6b and unchanged focus1 overlay
 Predicts: intended style/title are present, lyrics remain visually empty, one submission produces identifiable new private instrumental candidates, and existing songs remain untouched.
 Against: guards refuse, content is missing/truncated or mismatched, lyrics are not empty, Create delivery is unknown without reconcilable new candidates, or account/plan prerequisite prevents generation.
 Refs: docs/experiments/suno-end-to-end-20261110.md; results/suno-20261110/reference-analysis.md
+
+## SUNU22 · update · 2026-11-10 18:18
+Observed: the instrumental style replacement on the isolated frozen runtime refused human_active before preparation or text. Five one-second passive HID idle readings were0.00to0.02seconds, so no continuous three-second idle interval was observed despite the earlier user-ready handoff. Styles remain unchanged and no generation occurred.
+Inferred: desktop availability is again a separate blocker; continuous HID events may come from human use or other automation. No source/posture change or retry has occurred.
+Next: inspect bounded passive event-type idle counters and cursor positions to identify the resetting event stream; ask for a precise external handoff only if needed.
+Refs: output/suno-20261110/instrumental-type-styles.txt; python/jevdual/posture.py MacActivity
+
+## SUN18 · exploratory · 2026-11-10 18:18
+Question: which HID event category is continuously resetting the foreground-permitted idle counter after the user's ready handoff?
+Test: read Quartz idle seconds for any input, mouse movement, keyboard down/up, button down, scroll and flags, plus cursor position, five times at one-second intervals. No event taps, key contents, clicks, pointer movement, focus writes or other input; retain only numeric counters and coordinates in private output.
+Refs: python/jevdual/posture.py MacActivity
