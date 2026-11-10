@@ -332,3 +332,17 @@ Test: fresh Create navigation and empty Lyrics editor observation on the isolate
 Predicts: one focus preparation and one text dispatch per requested edit; exact field focus, range and selected text are confirmed; renderer and raw expected values agree.
 Against: focus/readability/range gates fail, focus changes value, synthesis is unknown, raw value differs or only AX changes.
 Refs: results/range-focus-preparation-20261110/report.md; output/suno-20261110/runtime-4e3297a/identity.json; output/suno-20261110/range-edit-signal.txt
+
+## SUNU32 · update · 2026-11-10 18:56
+Resolves: SUN26 = failed
+Observed: frozen4e3297a confirms field focus and sends the diagnostic once. The renderer visibly shows signal and Suno counts6characters; complete AX value is signal. The selected-range receipt is correctly partial because its derived expected value was signal followed by LF, while the empty paragraph's former AX LF disappears after insertion. This is a known reconciled current state, not evidence of preserved unselected suffix. No generation or input retry occurred.
+Inferred: focus preparation resolves text delivery, but empty rich-editor canonicalization is outside the strict raw range-preservation contract. Do not strip values or relabel the partial receipt. Whole-field replacement from the now-real six-character value has a different fully selectable precondition.
+Next: test that normal guarded replacement with intended original lyrics, preserving the historical partial insertion evidence.
+Refs: output/suno-20261110/range-focus-signal.txt; output/suno-20261110/ready-drafts/screenshots/obs-028-1794354863.png
+
+## SUN27 · prediction · 2026-11-10 18:56
+Hypothesis: the now-nonempty real Lyrics value signal has an exact full selection and supports ordinary guarded foreground replacement with the461-character original lyrics.
+Test: on frozen4e3297a, fresh observation of the exact value, request whole-field type with the original short-lyrics file (no trailing newline), then inspect complete readback and rendering. No generation.
+Predicts: full-selection proof passes and the complete resulting lyric text including line breaks and accents agrees with the file and rendered editor.
+Against: selection/readability/focus refuses, text outcome is unknown, content is changed or truncated, newlines differ or only AX changes.
+Refs: output/suno-20261110/draft-brief/lyrics-short.txt; output/suno-20261110/range-focus-signal.txt
