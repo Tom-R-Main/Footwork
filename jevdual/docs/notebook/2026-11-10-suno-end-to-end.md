@@ -185,3 +185,14 @@ Observed: New draft changed the lyrics to Suno's empty placeholder and0of5000 ch
 Inferred: visual emptiness and the adapter's raw value/selection precondition disagree. A fresh draft alone does not resolve the mechanism. The guard remains intact; no further typing will be attempted until exact read-only SDK/direct-AX evidence identifies the disagreement.
 Next: delegate one read-only inspection of the exact field's raw value, character count, range and code points, without focus writes or input. Preregister any ensuing source repair separately.
 Refs: output/suno-20261110/new-lyrics-draft.txt; output/suno-20261110/new-draft-dismiss-onboarding.txt; output/suno-20261110/fresh-lyrics-signal.txt
+
+## SUNU20 · update · 2026-11-10 18:13
+Observed: a bounded read-only field probe found SDK value None but direct AXValue exactly one U+000A newline; AXNumberOfCharacters1 and selected range0,0. Fresh role/frame/title/description matched the intended Lyrics editor in window306787. No focus writes or input were performed. The adapter's supplemental exact value is truthy, so replacement expects a one-unit selection while Suno's empty editor remains at zero selection.
+Inferred: the disagreement is a terminal-newline representation, not arbitrary invisible text. These facts alone do not establish that the newline is structural or safely excluded from replacement selection. No whitespace stripping or guard change is authorized by this diagnosis alone.
+Next: inspect independent parameterized text/range attributes as a bounded read-only exploration before proposing any repair.
+Refs: output/suno-20261110/lyrics-range-observation.json; output/suno-20261110/fresh-lyrics-signal.txt
+
+## SUN16 · exploratory · 2026-11-10 18:13
+Question: does the actual Lyrics editor expose an independent selectable-text boundary that distinguishes a structural terminal newline from ordinary text excluded by failed Select All?
+Test: one bounded read-only probe of the same freshly resolved field: supported parameterized AX attributes, AXSelectedText, AXStringForRange for0,1 and0,0, plus AXRangeForLine0 or AXRangeForIndex0 when supported. No clicks, key events or focus writes. Retain exact strings and ranges; unsupported attributes are missing evidence, not empty values.
+Refs: output/suno-20261110/lyrics-range-observation.json; python/jevdual/ax.py
