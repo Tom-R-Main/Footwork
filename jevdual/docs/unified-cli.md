@@ -114,6 +114,15 @@ The receipt compares the complete resulting value, including preserved prefix, s
 whitespace. Unavailable or contradictory readback stays unverified. This is separate from whole-field
 replacement; it does not normalize an AX terminal newline or establish rendered/server acceptance.
 
+Native macOS links may show a complete `href` read independently from their exact bound AXLink.
+Same-title links with distinct qualified HTTP(S) resources remain offered as separate numeric IDs.
+Choose the ID from a fresh observation; the shared title still does not resolve uniquely. URL changes
+or lost qualification require another observation and choice. Every observed same-title semantic peer
+must have a readable matching AX title/description and complete URL before resource identity can
+distinguish the group. Missing peer evidence, duplicate URLs and the 64-link read limit retain
+ambiguity even when menu pruning hides peers. URLs over 2048 characters, credentials, whitespace,
+relative and unsupported URLs are not qualified. Buttons in song rows do not inherit link identity.
+
 For a read-only DOM observation, use `footwork browser lightpanda read URL --executable /absolute/lightpanda`.
 This separate profile owns one fresh external prebuilt engine and connection, withholds input/editable
 values, and supplies no input authority or geometry. Run `footwork browser lightpanda artifact` and

@@ -1940,6 +1940,122 @@ def _native_styles_field(world, monkeypatch, *, actual_after=None, initial=""):
     return row
 
 
+def _native_song_links(world, monkeypatch, urls=("https://example.test/song/a", "https://example.test/song/b")):
+    from jevdual import ax
+
+    rows, resources, clicked = [], {}, []
+    for position, url in enumerate(urls):
+        y = 20 + position * 30
+        row = {"element_index": 920 + position, "element_token": f"initial:{920 + position}",
+               "role": "AXLink", "label": "Generated song", "enabled": True,
+               "actions": ["AXPress"], "in_web_content": True,
+               "frame": {"x": 10, "y": y, "w": 300, "h": 20}}
+        rows.append(row)
+        resources[y] = url
+        world.base["elements"].append(row)
+
+    def resolve(pid, window_id, role, frame):
+        assert (pid, window_id, role) == (77, 40335, "AXLink")
+        hits = [row for row in rows if row["frame"]["y"] == frame.y]
+        assert len(hits) == 1
+        return hits[0]
+
+    monkeypatch.setattr(ax, "resolve", resolve)
+    monkeypatch.setattr(ax, "link_url", lambda element, **kwargs: resources[element["frame"]["y"]], raising=False)
+    monkeypatch.setattr(ax, "semantic_section", lambda element: None)
+    original = world.click
+
+    async def click(inp):
+        index = int(inp.position.element_token.split(":")[-1])
+        row, = [row for row in rows if row["element_index"] == index]
+        clicked.append(resources[row["frame"]["y"]])
+        return await original(inp)
+
+    monkeypatch.setattr(world, "click", click)
+    return rows, resources, clicked
+
+
+@pytest.mark.parametrize("selected", [920, 921])
+def test_native_same_title_links_use_complete_qualified_resource_identity(world, fw, monkeypatch, selected):
+    _, _, clicked = _native_song_links(world, monkeypatch)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    saved = [row for row in _state(fw)["last_candidates"] if row["label"] == "Generated song"]
+    assert [row["id"] for row in saved] == [920, 921]
+    assert all(row["href_qualified"] is True for row in saved)
+    code, out, err = fw("do", "click", str(selected), "--no-judge")
+    assert code == 0 and clicked == [f"https://example.test/song/{'a' if selected == 920 else 'b'}"], (out, err)
+
+
+@pytest.mark.parametrize("variant", ["unreadable_peer", "same_url", "hidden_unreadable_peer"])
+def test_native_link_resource_ambiguity_survives_pruning(world, fw, monkeypatch, variant):
+    urls = {"unreadable_peer": ("https://example.test/song/a", None),
+            "same_url": ("https://example.test/song/a",) * 2,
+            "hidden_unreadable_peer": ("https://example.test/song/a", "https://example.test/song/b", None)}[variant]
+    _, _, clicked = _native_song_links(world, monkeypatch, urls)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "920", "--no-judge")
+    assert code == 4 and "target_ambiguous" in out + err, (out, err)
+    assert clicked == []
+
+
+@pytest.mark.parametrize("change", ["url", "qualification_lost", "reordered_ids"])
+def test_native_link_resource_changes_since_numeric_selection_refuse(world, fw, monkeypatch, change):
+    rows, resources, clicked = _native_song_links(world, monkeypatch)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    if change == "reordered_ids":
+        rows[0]["element_index"], rows[1]["element_index"] = 921, 920
+    else:
+        resources[20] = "https://example.test/song/replaced" if change == "url" else None
+    code, out, err = fw("do", "click", "920", "--no-judge")
+    assert code == 4 and ("target_changed" in out + err or "target_ambiguous" in out + err), (out, err)
+    assert clicked == []
+
+
+@pytest.mark.parametrize("change", ["url", "unreadable_peer", "same_url", "reordered_ids"])
+def test_native_link_resource_changes_during_final_revalidation_send_nothing(world, fw, monkeypatch, change):
+    from jevdual.native import NativeBridge
+
+    rows, resources, clicked = _native_song_links(world, monkeypatch)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    observes = [0]
+    observe = NativeBridge.observe
+
+    async def change_after_preflight(bridge, **kwargs):
+        result = await observe(bridge, **kwargs)
+        observes[0] += 1
+        if observes[0] == 1:
+            if change == "reordered_ids":
+                rows[0]["element_index"], rows[1]["element_index"] = 921, 920
+            elif change == "unreadable_peer":
+                resources[50] = None
+            elif change == "same_url":
+                resources[50] = resources[20]
+            else:
+                resources[20] = "https://example.test/song/replaced"
+        return result
+
+    monkeypatch.setattr(NativeBridge, "observe", change_after_preflight)
+    code, out, err = fw("do", "click", "920", "--no-judge")
+    assert clicked == [] and any(word in out + err for word in ("refused", "target_changed", "target_ambiguous")), (code, out, err)
+
+
+def test_native_link_resource_read_budget_keeps_unread_peers_ambiguous(world, fw, monkeypatch):
+    urls = tuple(f"https://example.test/song/{index}" for index in range(65))
+    _, _, clicked = _native_song_links(world, monkeypatch, urls)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "920", "--no-judge")
+    assert code == 4 and "target_ambiguous" in out + err, (out, err)
+    assert clicked == []
+
+
+def test_native_same_title_links_still_require_unique_label_or_numeric_selection(world, fw, monkeypatch):
+    _, _, clicked = _native_song_links(world, monkeypatch)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "Generated song", "--no-judge")
+    assert code == 4 and "matches 2 elements" in out + err, (out, err)
+    assert clicked == []
+
+
 @pytest.mark.parametrize("false_equality", [False, True])
 def test_native_type_bounded_preview_is_not_full_readback(world, fw, monkeypatch, false_equality):
     intended = "a" * 479 + "…" if false_equality else "a" * 600

@@ -130,6 +130,26 @@ def test_placeholder_text_roster_includes_fields_hidden_by_the_menu_budget():
     assert before.text_scope_signature != after.text_scope_signature
 
 
+@pytest.mark.parametrize("urls,ambiguous", [
+    ({1: "https://example.test/a", 2: "https://example.test/b"}, False),
+    ({1: "https://example.test/a"}, True),
+    ({1: "https://example.test/a", 2: "https://example.test/a"}, True),
+])
+def test_native_link_identity_is_qualified_before_pruning_without_button_inheritance(urls, ambiguous):
+    from jevdual.menu import MenuBudget
+
+    snapshot = {"elements": [
+        {"element_index": index, "element_token": f"s:{index}", "role": "AXLink", "label": "Song"}
+        for index in (1, 2)
+    ] + [{"element_index": 3, "element_token": "s:3", "role": "AXButton", "label": "Edit"}]}
+    projected = menu_from_snapshot(snapshot, budget=MenuBudget(native_menu_cap=1), mac_links={**urls, 3: "https://example.test/edit"})
+    assert [candidate.id for candidate in projected.menu.candidates] == [1]
+    assert (1 in projected.ambiguous_targets) is ambiguous
+    complete = menu_from_snapshot(snapshot, mac_links={**urls, 3: "https://example.test/edit"})
+    assert complete.menu.candidate(3).href is None
+    assert complete.menu.candidate(3).href_qualified is None
+
+
 @pytest.mark.parametrize("change", ["ambiguous", "missing"])
 def test_web_write_readback_cannot_confirm_an_unqualified_field(change):
     from tests.test_posture import FakeDriver, _web_snapshot, bridge_for

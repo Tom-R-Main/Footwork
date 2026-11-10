@@ -38,7 +38,7 @@ from pathlib import Path
 from typing import Any
 
 from jevdual import carry, grants
-from jevdual.menu import Candidate, Menu, MenuBudget, peer_position
+from jevdual.menu import Candidate, Menu, MenuBudget, peer_position, qualified_link_href
 from jevdual.native import NativeBridge, NativeBridgeError, NativeMenu
 
 SETTLE_S = 1.0
@@ -59,6 +59,7 @@ _CAND_FIELDS = (
     "section",
     "placeholder",
     "value_truncated",
+    "href_qualified",
 )
 
 
@@ -914,6 +915,8 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
         extra = f" = {c.value!r}" if c.value else ""
         if c.value_truncated:
             extra += " [value preview truncated]"
+        if qualified_link_href(c) is not None:
+            extra += f" href={c.href!r}"
         for key in ("checked", "pressed", "expanded"):
             if getattr(c, key) is not None:
                 extra += f" {key}={getattr(c, key)}"
@@ -2073,6 +2076,10 @@ async def cmd_do(args: Any) -> int:
                 print(render_observation(nm, text_chars=args.text, receipt=None))
                 return targeting_refused("target_changed", "target label changed since selection")
             previous = next((c for c in chosen_cands if c["id"] == cid), None) if known is not None else None
+            if state.mode == "native" and previous is not None and qualified_link_href(previous) != qualified_link_href(target):
+                print("target_changed: the selected native link resource changed or lost qualification. "
+                      "Nothing dispatched. Choose again from a fresh observation.", file=sys.stderr)
+                return targeting_refused("target_changed", "native link resource changed since selection")
             if previous is not None and any(
                 previous.get(key) != getattr(target, key) for key in ("role", "section", "placeholder")
             ):
@@ -2264,7 +2271,8 @@ async def cmd_do(args: Any) -> int:
                 "target_id": target.id if target is not None else None,
                 "target_label": target.label if target is not None else None,
                 "target_identity": {
-                    key: getattr(target, key) for key in ("role", "label", "section", "placeholder")
+                    **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
+                    **({"href": target.href, "href_qualified": True} if qualified_link_href(target) is not None else {}),
                 } if target is not None else None,
                 "target_text_scope_signature": getattr(nm, "text_scope_signature", None),
                 "intended": None if secret_used else text,
@@ -2390,7 +2398,8 @@ async def cmd_do(args: Any) -> int:
             "target_id": target.id if target is not None else None,
             "target_label": target.label if target is not None else None,
             "target_identity": {
-                key: getattr(target, key) for key in ("role", "label", "section", "placeholder")
+                **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
+                **({"href": target.href, "href_qualified": True} if qualified_link_href(target) is not None else {}),
             } if target is not None else None,
             "target_text_scope_signature": getattr(nm, "text_scope_signature", None),
             "intended": None if secret_used else text,

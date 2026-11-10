@@ -1,0 +1,44 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+__ test_native_same_title_links_use_complete_qualified_resource_identity[920] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107d2fba0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107deb020>
+selected = 920
+
+    @pytest.mark.parametrize("selected", [920, 921])
+    def test_native_same_title_links_use_complete_qualified_resource_identity(world, fw, monkeypatch, selected):
+        _, _, clicked = _native_song_links(world, monkeypatch)
+        assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+        saved = [row for row in _state(fw)["last_candidates"] if row["label"] == "Generated song"]
+>       assert [row["id"] for row in saved] == [920, 921]
+E       assert [920] == [920, 921]
+E         
+E         Right contains one more item: 921
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:1983: AssertionError
+__ test_native_same_title_links_use_complete_qualified_resource_identity[921] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107d2f9c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107de9c10>
+selected = 921
+
+    @pytest.mark.parametrize("selected", [920, 921])
+    def test_native_same_title_links_use_complete_qualified_resource_identity(world, fw, monkeypatch, selected):
+        _, _, clicked = _native_song_links(world, monkeypatch)
+        assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+        saved = [row for row in _state(fw)["last_candidates"] if row["label"] == "Generated song"]
+>       assert [row["id"] for row in saved] == [920, 921]
+E       assert [920] == [920, 921]
+E         
+E         Right contains one more item: 921
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:1983: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_native_same_title_links_use_complete_qualified_resource_identity[920]
+FAILED tests/test_session_scenarios.py::test_native_same_title_links_use_complete_qualified_resource_identity[921]
+2 failed, 246 deselected in 0.65s

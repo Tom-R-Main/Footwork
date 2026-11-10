@@ -154,6 +154,35 @@ def placeholder(el: Any) -> str | None:
     return None if v is None else str(v)
 
 
+def link_url(el: Any, *, label: str | None = None) -> str | None:
+    """Read a complete HTTP(S) AXURL without display truncation or URL normalization."""
+    from urllib.parse import urlsplit
+
+    if label is not None and not any(
+        isinstance(name, str) and " ".join(name.split()) == " ".join(label.split())
+        for name in (_attr(el, "AXTitle"), _attr(el, "AXDescription"))
+    ):
+        return None
+    raw = _attr(el, "AXURL")
+    if isinstance(raw, str):
+        url = raw
+    else:
+        absolute = getattr(raw, "absoluteString", None)
+        url = absolute() if callable(absolute) else None
+    if (not isinstance(url, str) or not url or len(url) > 2048
+            or any(character.isspace() or ord(character) < 32 or ord(character) == 127 for character in url)):
+        return None
+    try:
+        parsed = urlsplit(url)
+        if (parsed.scheme not in ("http", "https") or not parsed.hostname or not parsed.netloc
+                or parsed.username is not None or parsed.password is not None):
+            return None
+        _ = parsed.port  # validate a malformed or out-of-range port without rewriting the resource
+    except ValueError:
+        return None
+    return url
+
+
 def semantic_section(el: Any) -> str | None:
     """Read an explicit ancestor name, including groups omitted by CUA's projection.
 

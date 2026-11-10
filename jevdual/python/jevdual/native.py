@@ -50,6 +50,7 @@ from jevdual.menu import (
     Operation,
     estimate_tokens,
     peer_position,
+    qualified_link_href,
 )
 
 log = logging.getLogger("jevdual.native")
@@ -316,7 +317,7 @@ def _prune(
     budget: MenuBudget,
 ) -> tuple[list[Candidate], dict[int, str], dict[int, tuple[float, float, float, float]]]:
     """Drop what System 1 cannot choose between: a control whose label is only its role (``button
-    'button'``) unless it is a text field, and repeats of the same (role, label, value, section) beyond
+    'button'``) unless it is a text field, and repeats of the same (role, label, value, section, qualified href) beyond
     the first (a page with 27 identical "More actions" buttons offers one). A toggle that reports its
     state is kept even when repeated, when its whole group is: two "Enabled" switches are two settings,
     and dropping the second hid its change from the effect diff. Such rows remain observable, but
@@ -326,8 +327,8 @@ def _prune(
 
     cap = budget.native_menu_cap
 
-    def key_of(c: Candidate) -> tuple[str, str, str | None, str | None]:
-        return (c.role, c.label, c.value, c.section)
+    def key_of(c: Candidate) -> tuple[str, str, str | None, str | None, str | None]:
+        return (c.role, c.label, c.value, c.section, qualified_link_href(c))
 
     named = []
     for c in candidates:
@@ -335,15 +336,15 @@ def _prune(
             omitted["unnamed"] = omitted.get("unnamed", 0) + 1
             continue
         named.append(c)
-    group: dict[tuple[str, str, str | None, str | None], int] = {}
+    group: dict[tuple[str, str, str | None, str | None, str | None], int] = {}
     for c in named:
         group[key_of(c)] = group.get(key_of(c), 0) + 1
 
     def dedupe(
-        cands: list[Candidate], whole: set[tuple[str, str, str | None, str | None]]
+        cands: list[Candidate], whole: set[tuple[str, str, str | None, str | None, str | None]]
     ) -> list[Candidate]:
         out: list[Candidate] = []
-        seen: set[tuple[str, str, str | None, str | None]] = set()
+        seen: set[tuple[str, str, str | None, str | None, str | None]] = set()
         for c in cands:
             stateful = c.checked is not None or c.pressed is not None or c.expanded is not None
             if key_of(c) in seen and not (stateful and key_of(c) in whole):
@@ -402,6 +403,7 @@ def menu_from_snapshot(
     linux_text: dict[int, dict[str, Any]] | None = None,
     mac_text: dict[int, dict[str, Any]] | None = None,
     mac_sections: dict[int, str] | None = None,
+    mac_links: dict[int, str] | None = None,
 ) -> NativeMenu:
     """Build the System 1 menu from a Driver ``get_window_state`` result (SDK object or dict)."""
     b = budget or MenuBudget()
@@ -508,6 +510,7 @@ def menu_from_snapshot(
             offscreen=_offscreen(frame, bounds),
             placeholder=placeholder,
             value_truncated=value_truncated,
+            href=(mac_links or {}).get(int(idx)) if ax_role == "AXLink" else None,
         )
         candidates.append(cand)
         tokens[cand.id] = str(token)
@@ -529,9 +532,19 @@ def menu_from_snapshot(
         if candidate.role in ("textbox", "searchbox")
         and any(hint in candidate.label.casefold() for hint in ADDRESS_BAR_HINTS)
     )
-    identity_counts = Counter((c.role, c.label, c.section) for c in candidates)
+    link_groups: dict[tuple[str, str, str | None], list[Candidate]] = {}
+    for candidate in candidates:
+        if candidate.role == "link":
+            link_groups.setdefault((candidate.role, candidate.label, candidate.section), []).append(candidate)
+    qualified_groups = {key for key, peers in link_groups.items() if all(peer.href for peer in peers)}
+    candidates = [dataclasses.replace(
+        candidate,
+        href=candidate.href if (candidate.role, candidate.label, candidate.section) in qualified_groups else None,
+        href_qualified=True if (candidate.role, candidate.label, candidate.section) in qualified_groups else None,
+    ) if candidate.role == "link" else candidate for candidate in candidates]
+    identity_counts = Counter((c.role, c.label, c.section, qualified_link_href(c)) for c in candidates)
     ambiguous_targets = frozenset(
-        c.id for c in candidates if identity_counts[c.role, c.label, c.section] > 1
+        c.id for c in candidates if identity_counts[c.role, c.label, c.section, qualified_link_href(c)] > 1
     )
     text_roster = sorted(
         (c.role, c.label, c.section or "", c.placeholder or "")
@@ -1060,13 +1073,16 @@ class NativeBridge:
                     linux_text[int(index)] = {}
         mac_text = None
         mac_sections = None
+        mac_links = None
         if sys.platform == "darwin":
             mac_text = await asyncio.to_thread(self._web_text_attributes, snap)
             mac_sections = await asyncio.to_thread(self._web_control_sections, snap)
+            mac_links = await asyncio.to_thread(self._link_resources, snap)
         observed = menu_from_snapshot(
             snap, budget=budget, include_menu_bar=include_menu_bar, linux_text=linux_text,
             mac_text=mac_text,
             mac_sections=mac_sections,
+            mac_links=mac_links,
         )
         if linux_text is not None:
             # Linux window managers may report the desktop ID as the app name.
@@ -1153,6 +1169,31 @@ class NativeBridge:
                         out[index]["placeholder_qualified"] = False
         return out
 
+    def _link_resources(self, snapshot: Any) -> dict[int, str]:
+        """Read exact bound AXLink URLs before pruning; incomplete peer groups stay ambiguous."""
+        out: dict[int, str] = {}
+        attempts = 0
+        for row in _get(snapshot, "elements") or []:
+            index, frame = _get(row, "element_index"), _get(row, "frame")
+            if (_get(row, "role") != "AXLink" or index is None or frame is None
+                    or not _get(row, "element_token") or _get(row, "enabled") is False or attempts >= 64):
+                continue
+            attempts += 1
+            try:
+                coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
+                if any(value is None for value in coordinates):
+                    continue
+                element = self.ax.resolve(self.pid, self.window_id, "AXLink", self.ax.Frame(*coordinates))
+                label = _get(row, "label") or _get(row, "value_description")
+                if not isinstance(label, str) or not label:
+                    continue
+                url = self.ax.link_url(element, label=label)
+                if isinstance(url, str) and url:
+                    out[int(index)] = url
+            except Exception:  # noqa: BLE001, S112 - unreadable peers cannot qualify one another
+                continue
+        return out
+
     def _web_control_sections(self, snapshot: Any) -> dict[int, str]:
         """Recover explicit AX ancestor labels for repeated web controls whose groups CUA drops.
 
@@ -1234,13 +1275,15 @@ class NativeBridge:
         cand = nm.menu.candidate(id)
         assert cand is not None
         self._require_unambiguous(nm, id)
-        key = (cand.role, cand.label, cand.section, cand.placeholder)
+        key = (cand.role, cand.label, cand.section, cand.placeholder, qualified_link_href(cand))
         same = fresh.menu.candidate(id)
-        if same is not None and (same.role, same.label, same.section, same.placeholder) == key:
+        if same is not None and qualified_link_href(cand) is not None and qualified_link_href(same) != qualified_link_href(cand):
+            raise NativeBridgeError("target_changed", "the selected native link resource changed or lost qualification")
+        if same is not None and (same.role, same.label, same.section, same.placeholder, qualified_link_href(same)) == key:
             hit = same
         else:
             matches = [c for c in fresh.menu.candidates
-                       if (c.role, c.label, c.section, c.placeholder) == key]
+                       if (c.role, c.label, c.section, c.placeholder, qualified_link_href(c)) == key]
             if len(matches) != 1:
                 raise NativeBridgeError(
                     "target_changed",

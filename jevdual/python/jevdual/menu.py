@@ -64,6 +64,8 @@ class Candidate:
     placeholder: str | None = None
     #: Native display projection clipped this value. None means legacy/unreported, not exact readback.
     value_truncated: bool | None = None
+    #: Complete native AXURL, qualified across its full semantic peer group before pruning.
+    href_qualified: bool | None = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
@@ -75,7 +77,7 @@ class Candidate:
         }
         for key in (
             "value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section", "placeholder",
-            "value_truncated",
+            "value_truncated", "href_qualified",
         ):
             val = getattr(self, key)
             if val is not None:
@@ -89,11 +91,21 @@ class Candidate:
         return out
 
 
+def qualified_link_href(candidate: Any) -> str | None:
+    """Only independently qualified native resources refine identity; browser hrefs do not."""
+    def get(key: str) -> Any:
+        return candidate.get(key) if isinstance(candidate, dict) else getattr(candidate, key, None)
+
+    href = get("href")
+    return href if get("role") == "link" and get("href_qualified") is True and isinstance(href, str) else None
+
+
 def peer_position(candidates: Any, id: int) -> tuple[int, int] | None:
     """``(position, count)`` of ``id`` among the candidates sharing its role, label and section, in
     observation order; None when ``id`` is absent. Accepts Candidates or their saved dicts. Two
     same-label toggles are both offered, so an id that still carries the right label may name the
-    other one after the window shifts; the position among its peers tells them apart."""
+    other one after the window shifts. A qualified complete native link resource refines the peer
+    group; ordinary browser/display hrefs do not. Position alone is not action authority."""
 
     def get(c: Any, k: str) -> Any:
         return c.get(k) if isinstance(c, dict) else getattr(c, k, None)
@@ -102,8 +114,9 @@ def peer_position(candidates: Any, id: int) -> tuple[int, int] | None:
     me = next((c for c in cands if get(c, "id") == id), None)
     if me is None:
         return None
-    key = (get(me, "role"), get(me, "label"), get(me, "section"))
-    peers = [get(c, "id") for c in cands if (get(c, "role"), get(c, "label"), get(c, "section")) == key]
+    key = (get(me, "role"), get(me, "label"), get(me, "section"), qualified_link_href(me))
+    peers = [get(c, "id") for c in cands
+             if (get(c, "role"), get(c, "label"), get(c, "section"), qualified_link_href(c)) == key]
     return peers.index(id), len(peers)
 
 

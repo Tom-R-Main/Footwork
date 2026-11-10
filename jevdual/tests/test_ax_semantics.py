@@ -3,6 +3,36 @@
 from jevdual import ax
 
 
+def test_link_url_decodes_complete_url_without_truncation_or_normalization(monkeypatch):
+    from types import SimpleNamespace
+
+    url = "https://example.test/song/" + "a" * 200 + "?v=1#part"
+    for raw in (url, SimpleNamespace(absoluteString=lambda: url)):
+        monkeypatch.setattr(ax, "_attr", lambda element, name, raw=raw:
+                            raw if name == "AXURL" else "Generated song")
+        assert ax.link_url("link", label="Generated song") == url
+        assert ax.link_url("link", label="Replaced link") is None
+
+
+def test_link_url_rejects_incomplete_unsafe_or_unsupported_values(monkeypatch):
+    for raw in (None, "", "/song/a", "javascript:void(0)", "file:///tmp/song", "https:///song",
+                "https://example.test:bad/song", "https://user:password@example.test/song",
+                "https://example.test/white space", "https://example.test/\nend",
+                "https://example.test/" + "a" * 2048, object()):
+        monkeypatch.setattr(ax, "_attr", lambda element, name, raw=raw: raw)
+        assert ax.link_url("link") is None
+
+
+def test_unqualified_browser_hrefs_do_not_refine_native_peer_identity():
+    from jevdual.menu import Candidate, peer_position
+
+    peers = [Candidate(index, "Song", "link", ("click",), href=f"https://example.test/{index}")
+             for index in (1, 2)]
+    assert peer_position(peers, 1) == (0, 2)
+    saved = [{**candidate.to_state(), "href_qualified": True} for candidate in peers]
+    assert peer_position(saved, 1) == (0, 1)
+
+
 def test_selected_text_preserves_empty_and_whitespace_values(monkeypatch):
     import pytest
 
