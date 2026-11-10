@@ -301,3 +301,15 @@ Test: on the frozen project snapshot and unchanged SDK, refresh page URL and pla
 Predicts: the menu opens for the intended loaded song, with fresh actionable controls after the foreground step.
 Against: identity or posture refuses, menu closes before observation, wrong resource/context opens or outcome is unknown. No download before choosing an approved project path through the already enabled ask-where dialog.
 Refs: results/foreground-native-click-20261110/report.md; output/suno-20261110/runtime-e802740/identity.json; output/suno-20261110/candidate-b-reload.txt
+
+## SUNU29 · update · 2026-11-10 18:46
+Resolves: SUN24 = failed
+Observed: e802740 foreground click opened the observed More actions popup, but screenshot inspection shows it is the comment emoji picker. The caller misidentified its context as the player menu. No emoji selection or comment submission occurred; Escape closes it. Source foreground delivery works on this popup, but the preregistered intended song-menu criterion fails. The actual hero song menu and main Play remain refused for duplicate native identities.
+Inferred: resource binding of the loaded player did not establish the generic popup's contextual identity. Inspect actual target bounds and ancestry before another menu action. Preserve this operator error separately from driver delivery.
+Next: bounded read-only exact song-menu peer data and ancestry/identifier inspection, without another input action.
+Refs: output/suno-20261110/candidate-b-foreground-menu.txt; output/suno-20261110/ready-drafts/screenshots/obs-025-1794354230.png; output/suno-20261110/close-comment-picker.txt
+
+## SUN25 · exploratory · 2026-11-10 18:46
+Question: which actual peer nodes cause ambiguity for the intended hero song-menu control, and do they expose distinct backing identity or duplicate traversal of one actual element?
+Test: one read-only bound-window SDK snapshot and exact own-title menu rows; retain role, full label, parent ancestry, frames and available AXDOMIdentifier/AXIdentifier/description/title attributes. Resolve only those fresh frame/role targets; compare exact duplicate frames/element references when possible. No clicks, pointer movement, focus writes or input. Do not infer identity from position alone.
+Refs: output/suno-20261110/candidate-a-more-menu.txt; output/suno-20261110/candidate-b-play.txt; python/jevdual/native.py ambiguity qualification
