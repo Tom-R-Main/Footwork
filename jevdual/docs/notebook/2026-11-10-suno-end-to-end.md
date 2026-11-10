@@ -74,3 +74,17 @@ Test: on the frozen checkout, reobserve the run-owned Lyrics editor holding x, r
 Predicts: signal reads back exactly and the long-text failure remains isolated to more complex input.
 Against: the field remains x, becomes another value, or dispatch refuses before entering text. This would rule out multiline/Unicode as a sufficient explanation.
 Refs: output/suno-20261110/drafts-type-lyrics.txt; output/suno-20261110/drafts-before-create.txt
+
+## SUNU9 · update · 2026-11-10 17:14
+Resolves: SUN9 = failed
+Observed: the short ASCII replacement signal also returned an unverifiable driver effect and suspected-no-op receipt; Lyrics editor still exposed x. The repaired source correctly marks the unrelated long Styles preview as truncated. No generation was submitted.
+Inferred: multiline/Unicode input is not a sufficient explanation. Replacement selection versus general rich-text delivery remains unresolved.
+Next: one append diagnostic to separate replacement selection from input delivery, then use source diagnosis rather than repeating the same failed replacement.
+Refs: output/suno-20261110/lyrics-ascii-diagnostic.txt
+
+## SUN10 · prediction · 2026-11-10 17:14
+Hypothesis: replacement selection fails in the rich Lyrics editor while appending can still deliver ordinary text.
+Test: from a fresh observation of the run-owned field, append the ASCII diagnostic word signal once and read back; no generation with diagnostic text.
+Predicts: xsignal (or x followed by a separator and signal) appears, distinguishing insertion from failed replacement.
+Against: x remains, a different value appears, or dispatch refuses; this leaves general rich-text delivery/focus as the stronger hypothesis.
+Refs: output/suno-20261110/lyrics-ascii-diagnostic.txt
