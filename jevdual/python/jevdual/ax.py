@@ -256,6 +256,26 @@ def selected_text(el: Any) -> str:
     return text
 
 
+def focus_text_field_ack(el: Any) -> None:
+    """One explicit AXFocused preparation write; acknowledgement alone does not prove focus."""
+    from ApplicationServices import AXUIElementSetAttributeValue
+
+    error = AXUIElementSetAttributeValue(el, "AXFocused", True)
+    if error:
+        raise AXError("focus_refused", f"AXFocused did not acknowledge the write ({error})")
+
+
+def focused_element_matches(pid: int, window_id: int, el: Any) -> bool:
+    """Independent application focused-element equality and exact key-window identity."""
+    from ApplicationServices import AXUIElementCreateApplication
+    from CoreFoundation import CFEqual
+
+    if focused_window_id(pid) != window_id:
+        return False
+    focused = _attr(AXUIElementCreateApplication(pid), "AXFocusedUIElement")
+    return focused is not None and bool(CFEqual(focused, el))
+
+
 def can_set_value(el: Any) -> bool:
     from ApplicationServices import AXUIElementIsAttributeSettable
 

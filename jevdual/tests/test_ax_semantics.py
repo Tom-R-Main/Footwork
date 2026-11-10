@@ -45,6 +45,45 @@ def test_selected_text_preserves_empty_and_whitespace_values(monkeypatch):
             ax.selected_text("field")
 
 
+def test_focus_preparation_acknowledgement_is_not_independent_focus_proof(monkeypatch):
+    import sys
+    from types import SimpleNamespace
+
+    import pytest
+
+    writes, comparisons = [], []
+    target, fresh_reference, sibling = {"resource": "field"}, {"resource": "field"}, {"resource": "other"}
+    focused = [fresh_reference]
+    error = [0]
+
+    def write(element, attribute, value):
+        writes.append((element, attribute, value))
+        return error[0]
+
+    def equal(left, right):
+        comparisons.append((left, right))
+        return left["resource"] == right["resource"]
+
+    monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+        AXUIElementSetAttributeValue=write, AXUIElementCreateApplication=lambda pid: ("app", pid),
+    ))
+    monkeypatch.setitem(sys.modules, "CoreFoundation", SimpleNamespace(CFEqual=equal))
+    monkeypatch.setattr(ax, "_attr", lambda element, name: focused[0] if name == "AXFocusedUIElement" else None)
+    monkeypatch.setattr(ax, "focused_window_id", lambda pid: 42)
+    ax.focus_text_field_ack(target)
+    assert writes == [(target, "AXFocused", True)]
+    assert ax.focused_element_matches(77, 42, target) is True
+    assert comparisons == [(fresh_reference, target)]  # CFEqual, not Python reference identity
+    assert ax.focused_element_matches(77, 43, target) is False
+    focused[0] = sibling
+    assert ax.focused_element_matches(77, 42, target) is False
+    focused[0] = None
+    assert ax.focused_element_matches(77, 42, target) is False
+    error[0] = -25205
+    with pytest.raises(ax.AXError, match="did not acknowledge"):
+        ax.focus_text_field_ack(target)
+
+
 def test_collapsed_group_name_comes_from_actual_parent_not_siblings(monkeypatch):
     monkeypatch.setattr(ax, "_attr", lambda node, key: node.get(key))
     group = {"AXRole": "AXGroup", "AXDescription": "example.test"}

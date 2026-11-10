@@ -1771,9 +1771,11 @@ class NativeBridge:
         """Explicit foreground type, never a fallback from an uncertain background operation."""
         selection_attempted = False
         text_refusal = None
+        focus_preparation = None
+        text_attempted = False
 
         async def call() -> Any:
-            nonlocal selection_attempted, text_refusal
+            nonlocal selection_attempted, text_refusal, focus_preparation, text_attempted
             await self._front_and_key()
             current, target_id = await self._live(nm, id, "type")
             target, token = self._require_fresh(current, target_id)
@@ -1803,6 +1805,25 @@ class NativeBridge:
                         raise ValueError("result exceeds bounded readback")
                 except (UnicodeError, ValueError) as exc:
                     raise NativeBridgeError("selection_unqualified", "range splits UTF-16 text or exceeds the readable value") from exc
+                focus_preparation = {"attempted": True, "acknowledged": False, "confirmed": False}
+                self.ax.focus_text_field_ack(element)
+                focus_preparation["acknowledged"] = True
+                deadline = asyncio.get_running_loop().time() + 0.2
+                while not self.ax.focused_element_matches(self.pid, self.window_id, element):
+                    if asyncio.get_running_loop().time() >= deadline:
+                        raise NativeBridgeError("focus_unconfirmed", "the exact bound field did not acquire independent focus")
+                    await asyncio.sleep(0.02)
+                current, target_id = await self._live(current, target_id, "type")
+                target, token = self._require_fresh(current, target_id)
+                role, frame = current.ax_roles.get(target_id), current.frames.get(target_id)
+                if (role is None or frame is None or target_id not in current.web
+                        or current.values.get(target_id) != before):
+                    raise NativeBridgeError("selection_unqualified", "focus preparation changed the exact field/value")
+                element = self.ax.resolve(self.pid, self.window_id, role, self.ax.Frame(*frame))
+                if (self.policy._activity().frontmost_pid() != self.pid
+                        or not self.ax.focused_element_matches(self.pid, self.window_id, element)):
+                    raise NativeBridgeError("focus_unconfirmed", "the freshly resolved bound field no longer holds focus")
+                focus_preparation["confirmed"] = True
                 from jevdual.ax import AXError
 
                 try:
@@ -1833,6 +1854,7 @@ class NativeBridge:
                     0, len(before.encode("utf-16-le")) // 2
                 ):
                     raise NativeBridgeError("selection_unqualified", "the exact field/value is not wholly selected")
+            text_attempted = True
             outcome = await self.driver.call_tool("type_text", json.dumps({
                 "pid": self.pid, "window_id": self.window_id, "element_token": token,
                 # Positive pacing disables the SDK's batched native-tail retry,
@@ -1900,6 +1922,18 @@ class NativeBridge:
             effect = dataclasses.replace(effect, native_readback={
                 "producer": "cua_driver", "kind": "foreground_web_text_delivery", "text_dispatch": text_refusal,
             }, evidence=(*effect.evidence, "SDK text-dispatch refusal: zero characters; preparation may have occurred"))
+        if focus_preparation is not None:
+            proof = effect.native_readback or {"producer": "footwork.native", "kind": "foreground_web_text_selection"}
+            proof = {**proof, "focus_preparation": focus_preparation}
+            if not text_attempted:
+                proof["text_dispatch"] = {"producer": "footwork.native", "dispatched": False, "delivered_chars": 0,
+                                          "basis": "type_text boundary not reached"}
+            effect = dataclasses.replace(effect, native_readback=proof)
+            if not effect.dispatched:
+                effect = dataclasses.replace(
+                    effect, effect="unverifiable", dispatched=True, delivery_basis="unknown", delivered_count=None,
+                    evidence=(*effect.evidence, "focus preparation was attempted; this is not proven no input"),
+                )
         return effect
 
     async def _click_foreground(self, nm: NativeMenu, id: int, cand: Candidate) -> NativeEffect:

@@ -2352,6 +2352,8 @@ def _foreground_selection_fixture(world, monkeypatch, *, initial="\n", selection
     row = _foreground_styles_fixture(world, monkeypatch, initial=initial, outcome=outcome)
     monkeypatch.setattr(ax, "selected_range", lambda element: selection)
     monkeypatch.setattr(ax, "selected_text", lambda element: selected_text, raising=False)
+    monkeypatch.setattr(ax, "focus_text_field_ack", lambda element: None, raising=False)
+    monkeypatch.setattr(ax, "focused_element_matches", lambda pid, window_id, element: True, raising=False)
     original_call = world.call_tool
 
     async def call(name, encoded):
@@ -2370,6 +2372,60 @@ def _foreground_selection_fixture(world, monkeypatch, *, initial="\n", selection
 
     monkeypatch.setattr(world, "call_tool", call)
     return row
+
+
+@pytest.mark.parametrize("failure", [None, "setter_refused", "focus_unproven", "wrong_window",
+                                     "value_changed", "identity_changed", "selection_changed", "focus_stolen"])
+def test_foreground_range_prepares_focus_and_independently_requalifies(world, fw, monkeypatch, failure):
+    from jevdual import ax
+
+    row = _foreground_selection_fixture(world, monkeypatch)
+    focused = [False]
+    writes, checks = [], []
+
+    def focus(element):
+        writes.append(element)
+        if failure == "setter_refused":
+            raise ax.AXError("focus_refused", "AXFocused setter refused")
+        focused[0] = True
+        if failure == "value_changed":
+            row["value"] += " "
+        if failure == "identity_changed":
+            row["label"] = "Different field"
+
+    def matches(pid, window_id, element):
+        checks.append((pid, window_id, element))
+        if failure in ("focus_unproven", "wrong_window"):
+            return False
+        return focused[0] and not (failure == "focus_stolen" and len(checks) > 1)
+
+    def selected_text(element):
+        if not focused[0]:
+            raise ax.AXError("selection_unreadable", "unfocused field exposes no selected text")
+        return ""
+
+    monkeypatch.setattr(ax, "focus_text_field_ack", focus, raising=False)
+    monkeypatch.setattr(ax, "focused_element_matches", matches, raising=False)
+    monkeypatch.setattr(ax, "selected_text", selected_text)
+    monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0) if focused[0] and failure == "selection_changed" else (0, 0))
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0 and writes == ["styles"], (out, err)
+    types = [args for name, args in world.tool_calls if name == "type_text"]
+    assert len(types) == (0 if failure else 1)
+    assert not [args for name, args in world.tool_calls if name == "press_key"]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    proof = receipt["action"]["native_readback"]
+    assert proof["focus_preparation"]["attempted"] is True
+    if failure:
+        assert receipt["dispatched"] is True  # preparation attempt is not proven no input
+        assert receipt["effect"] == "unverifiable"
+        assert proof["text_dispatch"]["delivered_chars"] == 0
+        assert proof["text_dispatch"]["dispatched"] is False
+    else:
+        assert row["value"] == "signal\n" and proof["focus_preparation"]["confirmed"] is True
 
 
 @pytest.mark.parametrize(("initial", "selection", "selected_text", "expected"), [
@@ -2428,7 +2484,12 @@ def test_foreground_web_range_requires_independent_exact_selection(world, fw, mo
     requested = "90:0" if failure == "outside_value" else f"{selection[0]}:{selection[1]}"
     code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
                         "--web-text-range", requested, "--authorize", "replace")
-    assert code == 0 and "refused" in out + err, (out, err)
+    prepared = failure in ("wrong_range", "wrong_text", "unreadable_text", "read_error")
+    assert code == 0 and ("unverifiable" if prepared else "refused") in out + err, (out, err)
+    if prepared:
+        records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+        receipt = next(record for record in records if record["kind"] == "receipt")
+        assert receipt["action"]["native_readback"]["text_dispatch"]["delivered_chars"] == 0
     assert not [args for name, args in world.tool_calls if name in ("press_key", "type_text")]
 
 
@@ -2450,6 +2511,10 @@ def test_foreground_web_range_never_retries_uncertain_input(world, fw, monkeypat
                         "--web-text-range", "0:0", "--authorize", "replace")
     assert code == 0 and "unverifiable" in out + err, (out, err)
     assert len([args for name, args in world.tool_calls if name == "type_text"]) == 1
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["action"]["native_readback"]["focus_preparation"]["confirmed"] is True
+    assert "text_dispatch" not in receipt["action"]["native_readback"]  # never invent zero after uncertain text
 
 
 def test_foreground_web_range_durable_provenance_and_replay(world, fw, monkeypatch, tmp_path):

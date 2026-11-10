@@ -106,13 +106,20 @@ even if web ancestry cannot be established during delivery.
 
 To edit only an existing selection, add `--web-text-range START:LENGTH`, measured in UTF-16
 code units. For example, `footwork do type "Lyrics editor" "signal" --web-text-delivery foreground
---web-text-range 0:0` inserts at an already observed caret at offset zero. The option does not move
-the caret, change the selection or send Select All. Independent fresh AX range and selected-text
+--web-text-range 0:0` inserts at an already observed caret at offset zero. The option does not set
+a caret/selection offset or send Select All. It first makes one explicit AXFocused preparation write,
+requires independent application-focused-element equality and the exact bound key window, then
+reobserves/rematches the unchanged field and proves focus again. Focus acknowledgement alone is
+insufficient. Independent fresh AX range and selected-text
 reads must exactly match the requested slice of the unchanged raw field value. Surrogate splits,
 out-of-value ranges, and values/results above 65536 UTF-16 units refuse before text synthesis.
 The receipt compares the complete resulting value, including preserved prefix, suffix and trailing
 whitespace. Unavailable or contradictory readback stays unverified. This is separate from whole-field
 replacement; it does not normalize an AX terminal newline or establish rendered/server acceptance.
+Focus preparation and text dispatch have separate evidence: if a preparation attempt precedes a
+failure, the overall input remains uncertain while a code-boundary receipt can establish that
+`type_text` was never called and zero text characters were dispatched. Focus is not retried; only
+its independent readback is polled until a 0.2-second cooperative deadline before refusing text.
 
 Native macOS links may show a complete `href` read independently from their exact bound AXLink.
 Same-title links with distinct qualified HTTP(S) resources remain offered as separate numeric IDs.
