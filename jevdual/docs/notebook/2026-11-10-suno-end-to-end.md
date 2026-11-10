@@ -29,3 +29,9 @@ Observed: the user supplied two additional research documents. Primary Suno sour
 Changes: docs/suno-workflow.md now prioritizes exported audio, lists the official service as a separate supporting route, adds Qwen adapter candidates, explicit review coverage and negative controls, and retains detector false-positive/sampling limits. Other-repository implementation claims and unverified numerical rankings in the documents were not adopted.
 Next: preserve the pending live desktop handoff; continue the requested Footwork creation/editor journey when available. Actual listening and editor completion remain unverified.
 Refs: docs/suno-workflow.md supplement; https://help.suno.com/en/articles/14551361; https://help.suno.com/en/articles/8128193; https://help.suno.com/en/articles/13670913; https://github.com/QwenLM/Qwen-MM-Plugins; https://github.com/QwenLM/Qwen-Live-Harness
+
+## SUNU4 · update · 2026-11-10 16:51
+Observed: the user selected existing Softtrigr YouTube songs as reference material and qwen/qwen3.8-omni-flash via OpenRouter as the reviewer. A fresh native look found the selected window now showing the Softtrigr channel, including18 video titles; no song audio has been reviewed. A new local jevdual/.env was created with an empty OPENROUTER_API_KEY entry, mode0600, and confirmed Git-ignored. The user was prompted to enter the value locally; no credential was received in chat or printed.
+Changes: pin the selected reviewer/provider and musical source in the workflow. Treat actual audio/video qualification as a prerequisite to sonic claims. Do not substitute another model silently.
+Next: await local key entry, qualify selected-provider media input, review representative channel songs, then create and edit run-owned tests through Footwork. The current window must be reobserved before any resumed Suno input.
+Refs: docs/suno-workflow.md; output/suno-20261110/resume-look.txt; https://openrouter.ai/qwen/qwen3.8-omni-flash/llms.txt

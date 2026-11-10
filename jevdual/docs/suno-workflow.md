@@ -2,6 +2,10 @@
 
 Engineering recommendation, researched November 10, 2026. This is a development workflow and a capability roadmap, not a claim that Footwork has completed Suno editing.
 
+User-selected reviewer: `qwen/qwen3.8-omni-flash` through OpenRouter, superseding the tentative provider shortlist below. The credential destination is the Git-ignored `jevdual/.env`, variable `OPENROUTER_API_KEY`; enter the key locally and never retain it in reports or requests logged to disk. The [canonical model guide](https://openrouter.ai/qwen/qwen3.8-omni-flash/llms.txt) documents the Chat Completions endpoint. Qualify actual audio/video input on the chosen provider before claiming musical perception: text completion alone does not establish it, and [video URL support varies by provider](https://openrouter.ai/docs/guides/overview/multimodal/videos).
+
+User-selected musical grounding: the existing songs on [Softtrigr's YouTube channel](https://www.youtube.com/@Softtrigr). Review actual media before deriving sonic characteristics; titles, channel description and lyrics are supporting context. Create new test songs iterating from those references while preserving existing material.
+
 ## The useful sequence
 
 | Milestone | Required evidence | Friction to solve before advancing |
