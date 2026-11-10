@@ -6,3 +6,18 @@ Test: compare the exact release source with the cleanup2 patch, install the matc
 Predicts: narrow ABI adaptations plus retained/new upstream safety behavior pass source and installed contracts; the real native fixture exposes and safely addresses all reported controls, refuses stale dynamic targets, records nondispatch failures and proves persistence independently of click receipts.
 Against: upstream omits a required cleanup guarantee, its ABI requires an unsafe compatibility fallback, a native fixture action lands on the wrong backing row, placeholder text becomes an entered value, an early refusal disappears from the log, or a save receipt is claimed without server/reload evidence. Simulated tests cannot substitute for the native acceptance run.
 Refs: docs/notebook/2026-11-09-native-form-targeting.md; results/native-form-targeting-20261109/report.md; vendor/cua-driver/PROVENANCE.md; https://github.com/trycua/cua/releases/tag/cua-driver-rs-v0.46.0
+
+## C46U1 · update · 2026-11-09 21:39
+Resolves: C46P1 = failed
+Observed: exact upstream0.46.0 source still spawns untracked browser and protected-grant session cleanup, and runtime shutdown does not drain those tasks. The published matched macOS SDK/native wheel imports successfully but does not preserve Footwork cleanup2. Its ActionResult constructor adds required fast_path metadata; the baseline contracts caught that and the old version pin.
+Inferred: installing the stock wheel would regress a known native lifecycle guarantee. Its import success and form tests cannot qualify that guarantee.
+Next: retain the cleanup2 patch on the0.46 source, build the matched patched SDK/native wheel, and validate its cleanup regression plus public native form behavior before adopting it.
+Refs: output/cua-046-upgrade/contract-baseline.txt; vendor/cua-driver/patches/session-cleanup-join.patch; upstream5486b624; source review runtime.rs285-302, browser/engine.rs705, tool.rs1379
+
+## C46P2 · prediction · 2026-11-09 21:39
+Revises: C46P1
+Hypothesis: the bounded cleanup2 task-ownership patch can be carried onto0.46 without changing its new input-authority semantics, while its generated Python/native ABI remains matched.
+Test: regenerate exact patched provenance, compile the release wheel with the pinned installed compiler, run cleanup task completion/cancellation/reaping regressions, install that wheel, then run complete Footwork contracts and owned live native form acceptance. Keep build/cache writes in the project and monitor free space.
+Predicts: patched shutdown waits for all registered cleanup work and preserves abnormal-task failure, the wheel imports with its exact distribution pin, Footwork tests pass and the local form satisfies all report acceptance checks.
+Against: patch conflicts require broad authority changes, compilation or lifecycle regressions fail, the installed artifact differs from the retained build, or actual native form operation remains incomplete or unsafe.
+Refs: vendor/cua-driver/PROVENANCE.md; docs/upstream/cua-driver-build.md; output/cua-046-upgrade
