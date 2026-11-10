@@ -19,3 +19,9 @@ Raw local evidence: `output/cua-046-upgrade/live-2` includes command receipts, s
 - Source review: exact upstream release, bounded four-file cleanup patch, matching generated bindings and unchanged Cargo dependencies. Prior 0.38 cleanup provenance is retained under vendor history.
 
 The live run and full Python suite used the first built 0.46 patch artifact. The final archive differs only by the SDK test-local import; installed contract and packaging checks are rerun against the final artifact. Exact final hashes and qualification are recorded below when completed.
+
+## Final installed artifact
+
+The final source archive is SHA256 `233149903c53bb1ccdcf84c3693cabc3bcbf8bba4ebc25f3b5a7c60e63540ea4`. The rebuilt wheel is SHA256 `e1e63134456aa8bc678a0b91769c0a1532aced9c9305f720de63d47b2c9aba8c`; all eight installed SDK/native files match it. All 60 installed seam/build contracts pass (`final-installed-contracts.txt`). Editable Footwork metadata was also refreshed to require the new pin.
+
+A full-profile bundle with optional simulator dependencies omitted installed into a new isolated environment using binary dependencies. The final public `installed-final/bin/footwork` then repeated all seven live checks successfully in 23 commands (`installed-acceptance.json`, `installed-persisted.json`). Raw final receipts remain in `output/cua-046-upgrade/live-final`; build/install logs and manifest are beside it. Both source execution and the delivered package therefore have independent real-Chrome acceptance evidence.

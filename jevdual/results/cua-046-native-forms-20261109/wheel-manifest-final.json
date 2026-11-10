@@ -1,0 +1,17 @@
+{
+  "wheel": "/Users/thomasmain/projects/footwork/output/cua-046-upgrade/wheelhouse-final/cua_driver-0.46.0+footwork.5486b624.cleanup2-py3-none-macosx_13_0_arm64.whl",
+  "sha256": "e1e63134456aa8bc678a0b91769c0a1532aced9c9305f720de63d47b2c9aba8c",
+  "bytes": 25041347,
+  "members": {
+    "cua_driver/__init__.py": "968e30886e29ef5fc66316d4bb5aef46a30c9b8f5422635ac48982ab15379ddd",
+    "cua_driver/__main__.py": "bcb78a6283dc6da69f3338879ae34a0f2dbeea3b444e4c3dd43f170d2922a387",
+    "cua_driver/_daemon.py": "f6ce97a08ab5c124ba0210b00e44bd652b41cca5a9ae20a511a6409093e8f01e",
+    "cua_driver/_native.py": "8bb3927dd6579d94468eb5c08b1700230359813074cd1959c2e226c318dd4828",
+    "cua_driver/_native_contract.py": "f5237aa6dac954ea15959347ddaeb38e99b6df18c6c323093fabe275f27c808f",
+    "cua_driver/wrapper.py": "cfd7abe6215aab7c1d8f66f2c15e6cd6ab7f150918de7b301b73c253e90a61d6",
+    "cua_driver/libcua_driver_sdk.dylib": "1707785440fb239cee3c16c084c122f33ce7671c3dd92623059acc560fccf319",
+    "cua_driver/bin/cua-driver": "2018160beafd23b7629834630356a0f58b494e013f967f043c37d2819fd5da37"
+  },
+  "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
+  "patched_source_sha256": "233149903c53bb1ccdcf84c3693cabc3bcbf8bba4ebc25f3b5a7c60e63540ea4"
+}

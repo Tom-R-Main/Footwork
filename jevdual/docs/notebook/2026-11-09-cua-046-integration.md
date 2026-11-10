@@ -33,3 +33,16 @@ Observed: the built custom wheel is installed in the actual project environment.
 Changes: align the fixture with the original ordinary native route on a fresh owned browser PID/profile, retaining its exact nonce title and independent localhost ledger. Do not relax production durable gates. Runner results explicitly withhold durable qualification. Three native cleanup task ownership/reaping regressions also passed on the exact patched source.
 Next: rerun the six form acceptance checks using the corrected route and fresh fixture; finish SDK lifecycle and source checks.
 Refs: output/cua-046-upgrade/live-1; output/cua-046-upgrade/cleanup-core-tests.txt; scripts/native_form_acceptance.py
+
+## C46U4 · update · 2026-11-09 21:59
+Resolves: C46P2 = held
+Observed: patched native cleanup tests pass (three core, one SDK). The SDK regression needed only a test-local AtomicBool import removed by upstream; the rebuilt final archive and wheel retain identical production logic. The actual installed environment passes all60 seam/build contracts and the full Python suite passed2935 tests with51 skips and66 deselections. Real Chrome acceptance passed seven checks in23 commands twice: editable source and the final freshly installed binary-dependency bundle. Independent server state confirms four backing fields persisted after reload with beta unchanged. Ruff and tool-resource synchronization pass.
+Inferred: the retained cleanup patch preserves its tested ownership guarantees on0.46, and the reported form-targeting defects satisfy the original ordinary-native acceptance criteria on an owned local Chrome fixture.
+Next: finish hosted CI, publish consolidated main and retire branch refs only after verifying their archive tags. Retain local evidence and unresolved durable journal.
+Refs: results/cua-046-native-forms-20261109/report.md; output/cua-046-upgrade/live-final; output/cua-046-upgrade/wheel-manifest-final.json; docs/branch-archive-20261109.md
+
+## C46S1 · summary · 2026-11-09 21:59
+Established: CUA0.46 custom cleanup build, matched native/Python artifacts, source contracts, lifecycle regressions and real installed native form acceptance pass. Stock0.46 was rejected because its cleanup guarantee is insufficient. The bug fix required Footwork projection, identity and audit changes in addition to the dependency upgrade.
+Uncertain: actual Namecheap provider page was unavailable and has not been requalified; no DNS edits occurred. Durable native delivery is not qualified by the ordinary-native fixture. Hosted CI is pending at this boundary. Generated external build caches lack a supported cleanup-adapter qualification and remain retained.
+Decision: adopt the exact patched dependency and form fixes subject to hosted CI. Preserve seven historical tips as verified remote archive tags before retiring branches; keep the sealed and rejected experiments separate from adopted runtime code.
+Refs: results/cua-046-native-forms-20261109; docs/branch-archive-20261109.md; output/cua-046-upgrade/cleanup-plan-pre-release.md
