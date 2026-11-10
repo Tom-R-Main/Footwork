@@ -7,3 +7,7 @@ Test: public CLI simulated-Mac scenarios for a nonempty tail, explicit empty arg
 Predicts: native enter with any trailing argument returns2 before binding, resolving secrets or dispatching; its error explicitly instructs type, observe/readback, then enter. Existing target-only enter still sends one Return; other routes and browser behavior remain unchanged.
 Against: rejected text reaches a driver or history as delivered input, an empty tail is accepted, a secret-looking rejected argument is resolved, target-only enter no longer works, or the fix performs an implicit fill-and-submit.
 Refs: docs/notebook/2026-11-10-suno-end-to-end.md; python/jevdual/session.py::parse_do; python/jevdual/native.py::NativeBridge.act
+
+## EARU0 · update · 2026-11-10 17:00
+Observed: the EAR1 heading mistakenly used an estimated earlier time; its actual clock read and commit ba8ff28 are17:00. The prediction was committed before its resolving scenarios. Commit ordering remains the timing evidence.
+Next: reproduce ignored trailing native enter text through the public CLI, then repair only this argument boundary.
