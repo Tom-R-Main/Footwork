@@ -76,6 +76,15 @@ These profiles do not establish a RAM or startup improvement; small-host measure
 
 The legacy `footwork browser start/look/do` verbs and `footwork desktop` route to the existing session commands. `start`, `look`, `do`, `read`, `done`, and `status` retain the existing admission checks, fresh target identities, receipts and completion verification. Browser start uses Footwork's dedicated Chrome; desktop start selects a running native app. Use separate explicit `--session` directories for independent tasks. Initial same-Space Chrome attachment may require bringing that owned Chrome window to the foreground.
 
+For delayed native controls after navigation, use `footwork look --until "Song description" --timeout 10 --session /absolute/session`.
+This repeats fresh read-only observations until an exact offered candidate label appears, with a
+0.1–60 second deadline (default 10). It sends no input and prints the final available observation.
+Timeout exits 6; partial coverage does not establish absence. A matching title, address value or page
+text does not satisfy the check. Duplicate labels can satisfy appearance but retain all existing action
+ambiguity checks. Appearance proves neither task completion nor that an action is authorized.
+The deadline bounds cooperative observation and polling; driver shutdown still runs to completion.
+This option currently supports native sessions only; ordinary `look` is unchanged.
+
 For a read-only DOM observation, use `footwork browser lightpanda read URL --executable /absolute/lightpanda`.
 This separate profile owns one fresh external prebuilt engine and connection, withholds input/editable
 values, and supplies no input authority or geometry. Run `footwork browser lightpanda artifact` and

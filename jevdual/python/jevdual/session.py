@@ -27,6 +27,7 @@ import copy
 import dataclasses
 import html
 import json
+import math
 import os
 import re
 import sys
@@ -956,7 +957,7 @@ def _native_bridge(
 
 
 async def observe(
-    state: SessionState, bridge: NativeBridge, *, secret_value: str | None = None
+    state: SessionState, bridge: NativeBridge, *, secret_value: str | None = None, unique_capture: bool = False
 ) -> tuple[NativeMenu, dict[str, Any] | None]:
     shot: str | None = None
     if state.secret_names or secret_value:
@@ -967,7 +968,8 @@ async def observe(
     else:
         shots = state.path / "screenshots"
         shots.mkdir(exist_ok=True)
-        shot = str(shots / f"obs-{state.step:03d}-{int(time.time())}.png")
+        stamp = time.time_ns() if unique_capture else int(time.time())
+        shot = str(shots / f"obs-{state.step:03d}-{stamp}.png")
     started_at = time.time()
     nm = await bridge.observe(screenshot_path=shot)
     return finish_observation(
@@ -1446,12 +1448,53 @@ async def _start_browser(args: Any, d: Path) -> int:
 
 
 async def cmd_look(args: Any) -> int:
+    until = getattr(args, "until", None)
+    timeout = getattr(args, "timeout", None)
+    if until is None and timeout is not None:
+        print("look: --timeout requires --until", file=sys.stderr)
+        return 2
+    if until is not None:
+        if (
+            not until or until.strip() != until or len(until) > 80
+            or any(ord(c) < 32 or ord(c) == 127 for c in until)
+        ):
+            print(
+                "look: --until needs an exact nonempty label of at most 80 characters without control characters",
+                file=sys.stderr,
+            )
+            return 2
+        timeout = 10.0 if timeout is None else timeout
+        if not math.isfinite(timeout) or not 0.1 <= timeout <= 60:
+            print("look: --timeout must be finite and between 0.1 and 60 seconds", file=sys.stderr)
+            return 2
     state = SessionState.load(session_dir(args.session))
+    if until is not None and state.mode != "native":
+        print("look: --until currently supports native sessions only", file=sys.stderr)
+        return 2
     driver, bridge = await bind(state)
+    nm, receipt, matches = None, None, []
+    timed_out = False
     try:
-        nm, receipt = await observe(state, bridge)
+        if until is None:
+            nm, receipt = await observe(state, bridge)
+        else:
+            deadline = asyncio.timeout(timeout)
+            try:
+                async with deadline:
+                    while True:
+                        nm, fresh_receipt = await observe(state, bridge, unique_capture=True)
+                        if fresh_receipt is not None:
+                            receipt = fresh_receipt
+                        matches = [candidate for candidate in nm.menu.candidates if candidate.label == until]
+                        if matches:
+                            break
+                        await asyncio.sleep(0.25)
+            except TimeoutError:
+                if not deadline.expired():
+                    raise
+                timed_out = True
         menus = None
-        if getattr(args, "menu_bar", False) and state.mode == "native":
+        if not timed_out and getattr(args, "menu_bar", False) and state.mode == "native":
             # Q19 R4: the app's menu items, so a menu path is chosen from what exists (D09 guessed one); read
             # through AX, since the observation's element cap drops them
             from jevdual import ax
@@ -1459,7 +1502,22 @@ async def cmd_look(args: Any) -> int:
             menus = ax.menu_paths(state.pid)
     finally:
         await driver.shutdown()
-    print(render_observation(nm, text_chars=args.text, receipt=receipt))
+    if nm is not None:
+        print(render_observation(nm, text_chars=args.text, receipt=receipt))
+    if until is not None:
+        if timed_out:
+            print(
+                f"look: timed out after {timeout:g}s; exact candidate label {until!r} not observed; "
+                "absence is not established", file=sys.stderr,
+            )
+            if nm is None:
+                print("look: no observation completed before the deadline", file=sys.stderr)
+            return 6
+        count = len(matches)
+        print(
+            f"observed exact candidate label {until!r} ({count} {'match' if count == 1 else 'matches'}); "
+            "appearance only, not action authorization or task completion"
+        )
     if menus is not None:
         print(f"menu bar ({len(menus)} items):")
         for path in menus:

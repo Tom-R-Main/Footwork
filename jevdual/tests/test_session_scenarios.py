@@ -1724,6 +1724,136 @@ def test_native_start_and_look_use_a_cua_capture_session(world, fw, monkeypatch)
     assert world.presses == ["7"]
 
 
+def test_look_until_observes_delayed_exact_control_without_input(world, fw, monkeypatch):
+    assert fw("start", "Observe delayed form", "--app", "Calculator")[0] == 0
+    original = world.get_window_state
+    calls = []
+    captures = []
+
+    async def delayed(inp):
+        snap = await original(inp)
+        calls.append(snap["snapshot_id"])
+        captures.append(inp.screenshot_out_file)
+        if len(calls) >= 2:
+            snap["elements"] = [
+                {**row, "label": "Song description"} if row.get("label") == "7" else row
+                for row in snap["elements"]
+            ]
+        return snap
+
+    monkeypatch.setattr(world, "get_window_state", delayed)
+    code, out, err = fw("look", "--until", "Song description", "--timeout", "1")
+    assert code == 0, err
+    assert len(calls) == 2 and len(set(calls)) == 2
+    assert len(set(captures)) == 2
+    assert "observed exact candidate label 'Song description' (1 match)" in out
+    assert "not action authorization or task completion" in out
+    assert world.presses == [] and world.tool_calls == []
+
+
+def test_look_until_timeout_preserves_partial_menu_and_ignores_title_text(world, fw, monkeypatch):
+    world.toggles = {910: ["Song description helper", "0"]}
+    assert fw("start", "Observe delayed form", "--app", "Calculator")[0] == 0
+    original = world.get_window_state
+
+    async def only_text(inp):
+        snap = await original(inp)
+        snap["window_title"] = "Song description"
+        snap["tree_markdown"] += '\nAXStaticText = "Song description"'
+        snap["elements_complete"] = False
+        return snap
+
+    monkeypatch.setattr(world, "get_window_state", only_text)
+    code, out, err = fw("look", "--until", "Song description", "--timeout", "0.1")
+    assert code == 6
+    assert "exact candidate label 'Song description' not observed" in err
+    assert "elements:" in out and "this observation is incomplete" in out
+    assert world.presses == [] and world.tool_calls == []
+
+
+def test_look_until_duplicate_appearance_does_not_authorize_click(world, fw):
+    world.toggles = {910: ["Ready", "0"], 911: ["Ready", "0"]}
+    assert fw("start", "Observe duplicate controls", "--app", "Calculator")[0] == 0
+    code, out, err = fw("look", "--until", "Ready", "--timeout", "1")
+    assert code == 0, err
+    assert "(2 matches)" in out
+    code, out, err = fw("do", "click", "Ready", "--no-judge")
+    assert code == 4 and "matches 2 elements" in out + err
+    assert world.presses == []
+
+
+@pytest.mark.parametrize(
+    "options",
+    [
+        ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+        ["--until", "Ready\n"], ["--timeout", "1"],
+        *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+    ],
+)
+def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+    def forbidden(**kwargs):
+        pytest.fail("invalid wait options must not create a driver")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    code, _, err = fw("look", *options)
+    assert code == 2 and "look:" in err
+    assert world.n == 0
+
+
+def test_look_until_deadline_cancels_slow_observation_and_shuts_down(world, fw, monkeypatch):
+    import asyncio
+    import time
+
+    assert fw("start", "Observe delayed form", "--app", "Calculator")[0] == 0
+    events = []
+
+    async def slow(inp):
+        try:
+            await asyncio.sleep(2)
+        finally:
+            events.append("observation cancelled")
+
+    async def shutdown():
+        events.append("shutdown")
+
+    monkeypatch.setattr(world, "get_window_state", slow)
+    monkeypatch.setattr(world, "shutdown", shutdown)
+    started = time.monotonic()
+    code, out, err = fw("look", "--until", "Ready", "--timeout", "0.1")
+    assert code == 6 and time.monotonic() - started < 1
+    assert "no observation completed before the deadline" in err
+    assert "elements:" not in out
+    assert events == ["observation cancelled", "shutdown"]
+    assert world.presses == [] and world.tool_calls == []
+
+
+def test_look_until_driver_timeout_keeps_its_actual_failure(world, fw, monkeypatch):
+    assert fw("start", "Observe delayed form", "--app", "Calculator")[0] == 0
+
+    async def broken(inp):
+        raise TimeoutError("driver AX RPC expired")
+
+    monkeypatch.setattr(world, "get_window_state", broken)
+    code, _, err = fw("look", "--until", "Ready", "--timeout", "1")
+    assert code == 7 and "driver AX RPC expired" in err
+    assert "not observed" not in err
+
+
+def test_look_until_refuses_browser_before_driver_binding(world, fw, monkeypatch):
+    assert fw("start", "Observe form", "--app", "Calculator")[0] == 0
+    path = fw.session / "session.json"
+    raw = json.loads(path.read_text())
+    raw["mode"] = "browser"
+    path.write_text(json.dumps(raw))
+
+    def forbidden(**kwargs):
+        pytest.fail("unsupported browser wait must not create a driver")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    code, _, err = fw("look", "--until", "Ready")
+    assert code == 2 and "native sessions only" in err
+
+
 @pytest.mark.parametrize("command", ["start", "look"])
 @pytest.mark.parametrize("permission", ["not_granted", "unavailable"])
 def test_denied_accessibility_is_an_explicit_observation_failure(world, fw, monkeypatch, command, permission):

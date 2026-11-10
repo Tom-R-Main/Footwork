@@ -402,6 +402,8 @@ def build_parser() -> argparse.ArgumentParser:
     ko.set_defaults(fn=S.cmd_keep_out)
     lk = sub.add_parser("look", help="observe; prints the receipt for the last action")
     lk.add_argument("--menu-bar", action="store_true", help="native: also list the app's menu items")
+    lk.add_argument("--until", help="native: observe until this exact candidate label appears; sends no input")
+    lk.add_argument("--timeout", type=float, help="with --until: observation deadline in seconds (0.1-60; default 10)")
     common(lk)
     lk.set_defaults(fn=S.cmd_look)
     inspect = sub.add_parser(
