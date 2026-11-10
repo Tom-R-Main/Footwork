@@ -102,3 +102,10 @@ Test: after the source route is committed and offline regressions pass, reobserv
 Predicts: the visible editor and bound text value both contain the requested diagnostic; subsequent intended lyrics agree in readback and rendering.
 Against: only AX value changes while rendered editor stays blank, wrong window/field receives input, guards refuse, or content remains x. A refusal is not evidence that the permitted route works.
 Refs: output/suno-20261110/lyrics-ascii-diagnostic.txt; output/suno-20261110/lyrics-append-diagnostic.txt
+
+## SUN12 · prediction · 2026-11-10 17:23
+Hypothesis: the selected Qwen OpenRouter route can reason over actual MP4 visual and audio content at a coarse temporal level, while brief-defect detection remains limited.
+Test: supply the amended ten-second controlled video with a neutral prompt. Compare reported macro color change, direction of square movement and tone pattern against the generated source; separately record whether the known freeze and single-frame flash are noticed.
+Predicts: blue then green background, white-square rightward movement and isolated tones are identified; missing the single-frame flash would limit fine temporal/jank claims rather than prove no video was perceived.
+Against: missing or reversed macro sequence, generic unrelated video description, invented speech or silent-only interpretation. Provider errors are unverified capability, not a content judgment.
+Refs: docs/experiments/openrouter-media-live-20261110.md amendment
