@@ -39,3 +39,10 @@ Test: public helper tests with an isolated transport boundary and mocked subproc
 Predicts: successful exchange returns once; slow drip cannot extend the total exchange deadline; timed-out child is killed and reaped with explicit cleanup evidence; key/payload never enter argv/logs, and remote completion remains unknown after timeout.
 Against: timeout leaves a hidden child request running, byte arrival refreshes the total budget, a retry is submitted, secrets enter argv/logs, or cleanup failure is reported as confirmed termination.
 Refs: scripts/openrouter_media_review.py _post; parent-reported120s live probe still running after124s on2026-11-10
+
+## OMRU3 · update · 2026-11-10 17:30
+Resolves: OMR3 = held
+Observed: baselinee3eaecb with a synthetic active stream exceeded its0.05s timeout, independently reproducing the parent's observed contract defect without network. The repaired helper passed45 helper/notebook tests. A real local slow-drip process was killed and reaped at the parent deadline; private-pipe, cleanup-failure and interruption cases retained appropriate evidence without retry. No real key/provider call or root-owned live process was accessed.
+Changes: isolate each transport in one child, enforce a parent exchange deadline, bound normal cleanup to2 additional seconds, record child PID before private payload transfer, and preserve unknown remote completion on timeout. Abrupt parent death/SIGKILL and the launch-to-journal gap remain explicit limits.
+Next: parent may use the frozen helper on a separately authorized future request. Review provider reasoning-budget behavior separately; do not retry the completed original MP4 probe.
+Refs: predictiona5f1495; results/openrouter-media-review-20261110/red-deadline.txt; results/openrouter-media-review-20261110/pytest-deadline.txt; results/openrouter-media-review-20261110/report.md

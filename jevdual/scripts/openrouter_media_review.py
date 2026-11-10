@@ -13,8 +13,11 @@ import http.client
 import json
 import math
 import os
+import signal
 import ssl
+import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from datetime import UTC, datetime
@@ -26,11 +29,18 @@ ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 MAX_MEDIA_BYTES = 32 * 1024 * 1024
 MAX_RESPONSE_BYTES = 2 * 1024 * 1024
+CLEANUP_GRACE_SECONDS = 2
 FORMATS = {".wav": "audio/wav", ".mp3": "audio/mpeg", ".mp4": "video/mp4"}
 
 
 class ReviewError(Exception):
     """Safe, preselected diagnostic text only."""
+
+
+class _TransportFailure(ReviewError):
+    def __init__(self, error: dict[str, Any]):
+        super().__init__(error["summary"])
+        self.error = error
 
 
 def _bounded_read(path: Path, cap: int, label: str) -> bytes:
@@ -150,6 +160,100 @@ def _post(request: urllib.request.Request, timeout: float) -> bytes:
     return data
 
 
+def _cleanup_child(child: subprocess.Popen) -> bool:
+    """Kill and reap this run's sole transport process; do not claim success on failure."""
+    try:
+        if child.poll() is None:
+            child.kill()
+        child.communicate(timeout=CLEANUP_GRACE_SECONDS)
+        return child.poll() is not None
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+
+
+def _request_with_deadline(request: urllib.request.Request, timeout: float, journal: Path | None = None) -> bytes:
+    started = time.monotonic()
+    # The helper supplies authentication/media only over stdin, never argv or a new environment entry.
+    envelope = json.dumps({"body": request.data.decode("utf-8"),
+                           "authorization": request.get_header("Authorization"), "timeout": timeout}).encode()
+    child = subprocess.Popen(
+        [sys.executable, "-I", str(Path(__file__).resolve()), "--transport-child"],
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, start_new_session=True,
+    )
+    previous_handler = None
+    handler_installed = False
+
+    def interrupted(_signum, _frame):
+        raise KeyboardInterrupt
+
+    try:
+        if journal is not None:
+            _write(journal / "transport-child.json", {"pid": child.pid,
+                   "started_at": datetime.now(UTC).isoformat(), "scope": "single transport child",
+                   "deadline_seconds": timeout, "cleanup_grace_seconds": CLEANUP_GRACE_SECONDS}, "")
+        previous_handler = signal.signal(signal.SIGTERM, interrupted)
+        handler_installed = True
+        remaining = max(0, timeout - (time.monotonic() - started))
+        result, _ = child.communicate(input=envelope, timeout=remaining)
+    except subprocess.TimeoutExpired:
+        reaped = _cleanup_child(child)
+        error = {"kind": "total_request_deadline", "phase": "transport_exchange",
+                 "application_request_sent": "unknown", "child_reaped": reaped,
+                 "summary": "total request deadline reached; remote completion unknown; no retry"}
+        if not reaped:
+            error["cleanup_pending_pid"] = child.pid
+        raise _TransportFailure(error) from None
+    except BaseException:
+        reaped = _cleanup_child(child)
+        if not reaped:
+            raise _TransportFailure({"kind": "transport_cleanup_failed", "phase": "transport_cleanup",
+                                     "application_request_sent": "unknown", "child_reaped": False,
+                                     "cleanup_pending_pid": child.pid,
+                                     "summary": "transport interruption cleanup unconfirmed; no retry"}) from None
+        raise
+    finally:
+        if handler_installed:
+            signal.signal(signal.SIGTERM, previous_handler)
+    if child.returncode != 0:
+        raise ReviewError("isolated transport exited without a result; remote completion unknown; no retry")
+    try:
+        data = json.loads(result)
+        if data.get("ok") is not True:
+            raise _TransportFailure(data["error"])
+        return base64.b64decode(data["response"], validate=True)
+    except _TransportFailure:
+        raise
+    except (ValueError, TypeError, KeyError, AttributeError):
+        raise ReviewError("isolated transport returned invalid data; no retry") from None
+
+
+def _transport_child() -> int:
+    """Private subprocess protocol; only the parent consumes stdout, and stderr is discarded."""
+    try:
+        raw = sys.stdin.buffer.read(MAX_MEDIA_BYTES * 2 + 128 * 1024 + 1)
+        if len(raw) > MAX_MEDIA_BYTES * 2 + 128 * 1024:
+            raise ReviewError("transport input exceeded byte limit")
+        data = json.loads(raw)
+        request = urllib.request.Request(
+            ENDPOINT, data=data["body"].encode("utf-8"),
+            headers={"Authorization": data["authorization"], "Content-Type": "application/json"}, method="POST",
+        )
+        response = _post(request, data["timeout"])
+        result = {"ok": True, "response": base64.b64encode(response).decode("ascii")}
+    except urllib.error.HTTPError as exc:
+        result = {"ok": False, "error": {"kind": "http_error", "http_status": exc.code,
+                  "phase": "http_response", "summary": "provider HTTP request failed; no retry"}}
+    except (OSError, urllib.error.URLError, TimeoutError) as exc:
+        error = _transport_error(exc)
+        error["phase"] = "tls_handshake" if error.get("application_request_sent") is False else "socket_io"
+        result = {"ok": False, "error": error}
+    except Exception:  # noqa: BLE001 -- subprocess must not print payload-bearing exceptions
+        result = {"ok": False, "error": {"kind": "transport_child_error", "phase": "transport_exchange",
+                  "summary": "isolated transport failed; no retry"}}
+    sys.stdout.write(json.dumps(result))
+    return 0
+
+
 def _payload(media: bytes, suffix: str, prompt: str, max_tokens: int) -> dict[str, Any]:
     encoded = base64.b64encode(media).decode("ascii")
     part = (
@@ -174,7 +278,7 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--env-file", type=Path, help="explicit local dotenv file; never evaluated as shell")
     p.add_argument("--max-media-bytes", type=int, default=16 * 1024 * 1024)
     p.add_argument("--max-tokens", type=int, default=2000)
-    p.add_argument("--timeout", type=float, default=60)
+    p.add_argument("--timeout", type=float, default=60, help="total transport deadline; cleanup may add up to 2 seconds")
     p.add_argument("--execute", action="store_true", help="send exactly one paid request; default is dry-run")
     return p
 
@@ -220,6 +324,8 @@ def main(argv: list[str] | None = None) -> int:
             "endpoint": ENDPOINT,
             "max_tokens": args.max_tokens,
             "timeout_seconds": args.timeout,
+            "timeout_kind": "total_transport_exchange",
+            "cleanup_grace_seconds": CLEANUP_GRACE_SECONDS,
             "automatic_retries": 0,
             "perception_verified": False,
         }
@@ -235,7 +341,7 @@ def main(argv: list[str] | None = None) -> int:
         _write(out / "request-intent.json", manifest, key)
         request_attempted = True
         try:
-            response = json.loads(_post(request, args.timeout))
+            response = json.loads(_request_with_deadline(request, args.timeout, out))
         except (json.JSONDecodeError, UnicodeError):
             raise ReviewError("provider returned invalid JSON") from None
         if not isinstance(response, dict) or "error" in response:
@@ -257,6 +363,11 @@ def main(argv: list[str] | None = None) -> int:
         _write(out / "manifest.json", manifest, key)
         print("One provider response saved; media perception remains unverified.")
         return 0
+    except _TransportFailure as exc:
+        error = exc.error
+    except KeyboardInterrupt:
+        error = {"kind": "interrupted", "phase": "transport_exchange",
+                 "summary": "media review interrupted; remote completion unknown; no retry"}
     except urllib.error.HTTPError as exc:
         error = {"kind": "http_error", "http_status": exc.code, "summary": "provider HTTP request failed; no retry"}
     except ReviewError as exc:
@@ -281,4 +392,4 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(_transport_child() if sys.argv[1:] == ["--transport-child"] else main())

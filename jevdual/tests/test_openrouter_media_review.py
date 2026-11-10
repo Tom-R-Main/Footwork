@@ -4,11 +4,15 @@ from __future__ import annotations
 
 import base64
 import importlib.util
+import io
 import json
 import ssl
+import subprocess
 import sys
+import time
 import urllib.error
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -40,7 +44,7 @@ def response(content="Two sounds."):
 
 def test_dry_run_sends_nothing_and_does_not_read_key(setup, monkeypatch, capsys):
     media, _prompt, _env, out, argv = setup
-    monkeypatch.setattr(review, "_post", lambda *a: pytest.fail("dry run sent a request"))
+    monkeypatch.setattr(review, "_request_with_deadline", lambda *a: pytest.fail("dry run sent a request"))
     monkeypatch.setattr(review, "_key", lambda *a: pytest.fail("dry run read a key"))
     assert review.main(argv) == 0
     manifest = json.loads((out / "manifest.json").read_text())
@@ -59,7 +63,7 @@ def test_execute_delivers_media_once_and_preserves_provenance(setup, monkeypatch
     argv[1] = str(target)
     calls = []
 
-    def post(request, timeout):
+    def post(request, timeout, journal=None):
         calls.append(request)
         assert request.full_url == review.ENDPOINT and request.method == "POST"
         assert request.get_header("Authorization") == "Bearer fixture-credential-do-not-print"
@@ -77,7 +81,7 @@ def test_execute_delivers_media_once_and_preserves_provenance(setup, monkeypatch
         assert base64.b64decode(encoded) == target.read_bytes()
         return response("Two sounds. fixture-credential-do-not-print " + encoded)
 
-    monkeypatch.setattr(review, "_post", post)
+    monkeypatch.setattr(review, "_request_with_deadline", post)
     assert review.main([*argv, "--execute", "--env-file", str(env)]) == 0
     assert len(calls) == 1
     manifest = json.loads((out / "manifest.json").read_text())
@@ -97,7 +101,7 @@ def test_failed_request_has_no_retry_or_upstream_leak(setup, monkeypatch, capsys
     _media, _prompt, env, out, argv = setup
     calls = []
 
-    def fail(request, timeout):
+    def fail(request, timeout, journal=None):
         calls.append(request)
         if failure == "http":
             raise urllib.error.HTTPError(review.ENDPOINT, 401, "fixture-credential-do-not-print", {}, None)
@@ -111,7 +115,7 @@ def test_failed_request_has_no_retry_or_upstream_leak(setup, monkeypatch, capsys
             raise ValueError("fixture-credential-do-not-print")
         return b'{"choices":[{"message":{"content":""}}]}'
 
-    monkeypatch.setattr(review, "_post", fail)
+    monkeypatch.setattr(review, "_request_with_deadline", fail)
     assert review.main([*argv, "--execute", "--env-file", str(env)]) == 1
     assert len(calls) == 1 and not (out / "response.json").exists()
     manifest = json.loads((out / "manifest.json").read_text())
@@ -128,7 +132,7 @@ def test_failed_request_has_no_retry_or_upstream_leak(setup, monkeypatch, capsys
 ])
 def test_invalid_bounds_never_request_or_create_output(setup, monkeypatch, options):
     _media, _prompt, env, out, argv = setup
-    monkeypatch.setattr(review, "_post", lambda *a: pytest.fail("invalid input sent a request"))
+    monkeypatch.setattr(review, "_request_with_deadline", lambda *a: pytest.fail("invalid input sent a request"))
     assert review.main([*argv, *options, "--execute", "--env-file", str(env)]) == 1
     assert not out.exists()
 
@@ -210,13 +214,13 @@ def test_tls_certificate_failure_is_safe_and_not_sent(setup, monkeypatch, capsys
     calls = []
     certificate_error = review._TLSHandshakeVerificationError(20)
 
-    def fail(request, timeout):
+    def fail(request, timeout, journal=None):
         calls.append(request)
         if wrapped:
             raise urllib.error.URLError(certificate_error)
         raise certificate_error
 
-    monkeypatch.setattr(review, "_post", fail)
+    monkeypatch.setattr(review, "_request_with_deadline", fail)
     assert review.main([*argv, "--execute", "--env-file", str(env)]) == 1
     manifest = json.loads((out / "manifest.json").read_text())
     assert manifest["request_attempted"] is True and manifest["provider_completion"] == "not_sent_tls_handshake"
@@ -267,11 +271,152 @@ def test_verified_handler_uses_handshake_aware_connection(monkeypatch):
     assert calls == [(review._VerifiedHTTPSConnection, request, {"context": context})]
 
 
+def test_total_deadline_kills_and_reaps_real_slow_drip_child(monkeypatch):
+    actual_popen = subprocess.Popen
+    children = []
+
+    def start(_argv, **kwargs):
+        # A real local process consumes private stdin, then keeps emitting bytes. No network.
+        child = actual_popen([sys.executable, "-c", (
+            "import sys,time;sys.stdin.buffer.read();"
+            "[(sys.stdout.write(' '),sys.stdout.flush(),time.sleep(.05)) for _ in range(100)]")], **kwargs)
+        children.append(child)
+        return child
+
+    monkeypatch.setattr(review.subprocess, "Popen", start)
+    request = review.urllib.request.Request(review.ENDPOINT, data=b"{}", headers={"Authorization": "Bearer fixture"})
+    started = time.monotonic()
+    with pytest.raises(review._TransportFailure) as error:
+        review._request_with_deadline(request, .15)
+    assert time.monotonic() - started < 2
+    assert error.value.error["kind"] == "total_request_deadline"
+    assert error.value.error["application_request_sent"] == "unknown"
+    assert error.value.error["child_reaped"] is True
+    assert len(children) == 1 and children[0].poll() is not None
+
+
+def test_isolated_exchange_uses_private_stdin_not_arguments(monkeypatch, tmp_path):
+    secret = "fixture-credential-do-not-print"
+    request = review.urllib.request.Request(review.ENDPOINT, data=b'{"payload":"fixture-media"}',
+                                          headers={"Authorization": f"Bearer {secret}"})
+    calls = []
+
+    class Child:
+        returncode = 0
+        pid = 45678
+
+        def communicate(self, input=None, timeout=None):
+            data = json.loads(input)
+            assert data["authorization"] == f"Bearer {secret}" and data["body"] == request.data.decode()
+            assert 0 < timeout <= 1
+            calls.append("communicate")
+            return json.dumps({"ok": True, "response": base64.b64encode(b"{}").decode()}).encode(), None
+
+    def start(argv, **kwargs):
+        assert secret not in str(argv) and "fixture-media" not in str(argv)
+        assert argv[-1] == "--transport-child" and "-I" in argv
+        assert kwargs["stdin"] == subprocess.PIPE and kwargs["stderr"] == subprocess.DEVNULL
+        assert "env" not in kwargs
+        calls.append("start")
+        return Child()
+
+    monkeypatch.setattr(review.subprocess, "Popen", start)
+    assert review._request_with_deadline(request, 1, tmp_path) == b"{}"
+    assert calls == ["start", "communicate"]
+    assert json.loads((tmp_path / "transport-child.json").read_text())["pid"] == 45678
+
+
+def test_child_keeps_diagnostics_safe_and_handshake_scope(monkeypatch):
+    data = {"body": "{}", "authorization": "Bearer fixture-secret", "timeout": 1}
+    monkeypatch.setattr(review.sys, "stdin", SimpleNamespace(buffer=io.BytesIO(json.dumps(data).encode())))
+    stdout = io.StringIO()
+    monkeypatch.setattr(review.sys, "stdout", stdout)
+
+    def fail(request, timeout, journal=None):
+        raise urllib.error.URLError(review._TLSHandshakeVerificationError(20))
+
+    monkeypatch.setattr(review, "_post", fail)
+    assert review._transport_child() == 0
+    result = json.loads(stdout.getvalue())
+    assert result["ok"] is False and result["error"]["phase"] == "tls_handshake"
+    assert result["error"]["application_request_sent"] is False
+    assert "fixture-secret" not in stdout.getvalue()
+
+
+def test_total_deadline_public_result_preserves_unknown_completion(setup, monkeypatch):
+    _media, _prompt, env, out, argv = setup
+    calls = []
+
+    def deadline(*args):
+        calls.append(args)
+        raise review._TransportFailure({"kind": "total_request_deadline", "phase": "transport_exchange",
+                                       "child_reaped": True, "application_request_sent": "unknown",
+                                       "summary": "total request deadline reached; no retry"})
+
+    monkeypatch.setattr(review, "_request_with_deadline", deadline)
+    assert review.main([*argv, "--execute", "--env-file", str(env)]) == 1
+    result = json.loads((out / "manifest.json").read_text())
+    assert result["provider_completion"] == "unknown" and result["error"]["child_reaped"] is True
+    assert result["timeout_kind"] == "total_transport_exchange" and len(calls) == 1
+
+
+def test_cleanup_failure_is_explicit_and_not_confirmed(monkeypatch):
+    calls = []
+
+    class Child:
+        pid = 45678
+
+        def communicate(self, input=None, timeout=None):
+            calls.append("communicate")
+            raise subprocess.TimeoutExpired("fixture-child", timeout)
+
+        def poll(self):
+            return None
+
+        def kill(self):
+            calls.append("kill")
+
+    monkeypatch.setattr(review.subprocess, "Popen", lambda *args, **kwargs: Child())
+    request = review.urllib.request.Request(review.ENDPOINT, data=b"{}")
+    with pytest.raises(review._TransportFailure) as error:
+        review._request_with_deadline(request, 1)
+    assert error.value.error["child_reaped"] is False
+    assert error.value.error["cleanup_pending_pid"] == 45678
+    assert calls == ["communicate", "kill", "communicate"]
+
+
+def test_interruption_kills_and_reaps_child_before_propagating(monkeypatch):
+    calls = []
+
+    class Child:
+        returncode = None
+
+        def communicate(self, input=None, timeout=None):
+            calls.append("communicate")
+            if len(calls) == 1:
+                raise KeyboardInterrupt
+            return b"", None
+
+        def poll(self):
+            return self.returncode
+
+        def kill(self):
+            calls.append("kill")
+            self.returncode = -9
+
+    child = Child()
+    monkeypatch.setattr(review.subprocess, "Popen", lambda *args, **kwargs: child)
+    request = review.urllib.request.Request(review.ENDPOINT, data=b"{}")
+    with pytest.raises(KeyboardInterrupt):
+        review._request_with_deadline(request, 1)
+    assert calls == ["communicate", "kill", "communicate"] and child.returncode == -9
+
+
 def test_existing_output_is_preserved(setup, monkeypatch):
     _media, _prompt, env, out, argv = setup
     out.mkdir()
     (out / "manifest.json").write_text("original")
-    monkeypatch.setattr(review, "_post", lambda *a: pytest.fail("existing output sent request"))
+    monkeypatch.setattr(review, "_request_with_deadline", lambda *a: pytest.fail("existing output sent request"))
     assert review.main([*argv, "--execute", "--env-file", str(env)]) == 1
     assert (out / "manifest.json").read_text() == "original"
 
@@ -291,6 +436,6 @@ def test_invalid_inputs_never_request(setup, monkeypatch, kind, tmp_path):
         env.write_text("OPENROUTER_API_KEY=a\nOPENROUTER_API_KEY=b\n")
     else:
         prompt.write_text(" \n")
-    monkeypatch.setattr(review, "_post", lambda *a: pytest.fail("invalid input sent request"))
+    monkeypatch.setattr(review, "_request_with_deadline", lambda *a: pytest.fail("invalid input sent request"))
     assert review.main([*argv, "--execute", "--env-file", str(env)]) == 1
     assert not out.exists()
