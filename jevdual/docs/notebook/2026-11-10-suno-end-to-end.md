@@ -319,3 +319,16 @@ Observed: correction to SUNU29's premature Escape-closes statement: the first Es
 Inferred: this was judgment availability, not a safety rejection. The exact task-scoped authorization is distinct from disabling the judge or changing posture. Root must inspect dependent tool results before writing a completion observation.
 Next: the preregistered SUN25 read-only peer probe now has the UI slot; root will not drive during it.
 Refs: output/suno-20261110/close-comment-picker.txt; output/suno-20261110/close-comment-picker-authorized.txt
+
+## SUNU31 · update · 2026-11-10 18:53
+Observed: SUN25 found two distinct own-song menu AXPopUpButtons with identical labels and different complete AXDOMIdentifier values: one hero control and one player control. They are different AX objects, not duplicate traversal. Main Play peers have no DOM identifiers. A separately preregistered bounded parent probe then reached actual AXWebArea ancestors at depths9and5 and read the same exact second-song AXURL for both. No input occurred.
+Inferred: native DOM identifier plus actual document URL can supply backed identity for these two controls without choosing by position alone. Controls lacking that evidence remain refused. The source-only implementation is delegated separately.
+Next: use frozen4e3297a to qualify the repaired focus/range path on the run-owned creation draft while control-ID work proceeds independently.
+Refs: output/suno-20261110/SUN25-hero-peer-probe.json; output/suno-20261110/control-document-scope.json; results/range-focus-preparation-20261110/report.md
+
+## SUN26 · prediction · 2026-11-10 18:53
+Hypothesis: independently verified AX field-focus preparation in4e3297a makes Suno's exact selected text readable, enabling the explicit LF-preserving range edit.
+Test: fresh Create navigation and empty Lyrics editor observation on the isolated frozen snapshot; type signal at requested range0:0 with explicit foreground delivery. Require complete exact raw readback and visible text. If verified, invoke the actually observed Edit Select All menu and request range0:6 to replace signal with the original short lyrics; verify complete raw value including preserved LF and actual rendering. No generation with diagnostic content.
+Predicts: one focus preparation and one text dispatch per requested edit; exact field focus, range and selected text are confirmed; renderer and raw expected values agree.
+Against: focus/readability/range gates fail, focus changes value, synthesis is unknown, raw value differs or only AX changes.
+Refs: results/range-focus-preparation-20261110/report.md; output/suno-20261110/runtime-4e3297a/identity.json; output/suno-20261110/range-edit-signal.txt
