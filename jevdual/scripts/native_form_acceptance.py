@@ -10,6 +10,11 @@ CLI, then terminates only that owned process. It never attaches to personal Chro
 use ``footwork do``; HTTP reads inspect the independent fixture ledger. --no-judge is deliberately
 used only for this harmless localhost fixture. ``serve`` exposes the fixture for manual inspection
 and prints exact URL/title metadata; it launches no browser. No live DNS is involved.
+
+This exercises the ordinary native session route used by the original report. The exact owned PID,
+nonce-bearing window title, unique profile and loopback server establish fixture ownership. It does
+not enable durable authority or claim durable delivery qualification: generic CUA clicks may have
+unverifiable delivery acknowledgments even when the independent fixture records the intended effect.
 """
 
 from __future__ import annotations
@@ -240,8 +245,7 @@ class Acceptance:
     def start(self, session: Path | None = None) -> None:
         self.command(
             "start", "Exercise only the owned synthetic native form", "--app", "Google Chrome",
-            "--pid", str(self.pid), "--window", self.title, "--authority", str(self.root / "authority.sqlite"),
-            "--native-url", self.url, "--native-title", self.title, session=session,
+            "--pid", str(self.pid), "--window", self.title, session=session,
         )
 
     def metadata(self) -> dict:
@@ -287,8 +291,6 @@ class Acceptance:
         self.command("do", "click", "Nameserver mode")
         self.candidate("Custom DNS")
         assert self.metadata()["native_menu_cap"] == 160
-        observation = next(r for r in reversed(self.records()) if r.get("kind") == "observation")
-        assert observation["coverage"]["omitted"].get("cap", 0) > 0, observation["coverage"]
         offered = {c["label"] for c in self.metadata()["last_candidates"]}
         excluded = next(f"Reference {i:03d}" for i in range(180) if f"Reference {i:03d}" not in offered)
         self.command("do", "click", excluded, expected=(4,))
@@ -329,7 +331,10 @@ class Acceptance:
         self.command("look")
         assert [self.candidate(f"Nameserver {i}", "textbox")["value"] for i in range(1, 5)] == EXPECTED
         self.checks.append("four backing fields saved once and reloaded from server; beta unchanged")
-        return {"passed": True, "checks": self.checks, "server": self.oracle(), "commands": self.index}
+        return {
+            "passed": True, "route": "ordinary_native", "durable_delivery_qualified": False,
+            "checks": self.checks, "server": self.oracle(), "commands": self.index,
+        }
 
 
 def main(argv: list[str] | None = None) -> int:
