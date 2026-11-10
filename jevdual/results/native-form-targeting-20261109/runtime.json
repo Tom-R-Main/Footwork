@@ -1,0 +1,11 @@
+{
+  "source_commit": "1763f0926d3466d1cc2298c2b728dd5bf4316b56",
+  "python": "3.12.6",
+  "platform": "Darwin",
+  "machine": "arm64",
+  "footwork_source": "/Users/thomasmain/projects/footwork/jevdual/python/jevdual/__init__.py",
+  "installed_cua_driver": "0.38.0+footwork.d5373879",
+  "required_cua_driver": "0.38.0+footwork.d5373879.cleanup2",
+  "live_browser_exercised": false,
+  "dependencies_changed": false
+}
