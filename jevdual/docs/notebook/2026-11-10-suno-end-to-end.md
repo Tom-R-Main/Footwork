@@ -138,3 +138,15 @@ Observed: the driver source patch now verifies addressed-field focus inside the 
 Inferred: fixture and source-contract evidence supports the new refusal boundary, not live Suno input readiness. The explicit option is type-only; append remains unsupported rather than reconstructing a value from a preview.
 Next: verify overlay import/ABI and frozen source, run full default offline checks, then SUN11 short diagnostic plus actual rendered/readback evidence. Do not invoke the new option on the older installed runtime.
 Refs: output/foreground-web-text/rust-red.txt; output/foreground-web-text/rust-green-final.txt; output/foreground-web-text/python-affected.txt; python/jevdual/native.py FOREGROUND_WEB_TEXT_CUA_VERSION
+
+## SUNU15 · update · 2026-11-10 17:52
+Observed: source a516212 and the project-local focus1 wheel are frozen. Independent review's two blockers were reproduced and fixed: unreadable field values now refuse before text selection, and strict foreground typing uses positive pacing to disable the SDK batched-tail resend. The narrow independent re-review reports both resolved;84 overlay contracts and33 Rust focus checks pass. Root full default offline suite is running. A read-only live refresh found the bound window on YouTube, with the existing Create Suno tab still visible beside it. One observed Select Previous Tab menu request refused as human_active before input; no new foreground text or generation was sent.
+Inferred: source and contract readiness is distinct from desktop availability and live rich-text success. SUN11 remains open because its typing test has not run.
+Next: finish the broad regression check and wait for the requested idle-desktop handoff, then refresh Suno and perform SUN11 without bypassing the guard.
+Refs: results/foreground-web-text-20261110/report.md; output/suno-20261110/full-offline-pytest.txt; output/suno-20261110/foreground-repair-preflight.txt; output/suno-20261110/foreground-repair-select-suno.txt
+
+## SUNU16 · update · 2026-11-10 17:54
+Observed: the full default offline suite on a516212 with the qualified focus1 overlay exited0:3098 passed,62 skipped in261.07s. No browser/live opt-in flags were enabled. The independent re-review found both original source blockers resolved. No further source edits or native rebuilds followed this check. The idle-desktop handoff is still pending; SUN11 typing has not run.
+Inferred: broad offline regression readiness holds for this frozen runtime, while live rich-text delivery remains unverified.
+Next: on the requested ready handoff, refresh the existing Suno tab and run the preregistered diagnostic followed by intended content only if verified.
+Refs: results/suno-20261110/offline-suite.json; output/suno-20261110/full-offline-pytest.txt; results/foreground-web-text-20261110/runtime.json
