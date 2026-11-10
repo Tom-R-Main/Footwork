@@ -1,0 +1,216 @@
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/engine.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/engine.rs
+@@ -693,7 +693,8 @@
+                             }
+                             if let Ok(runtime) = tokio::runtime::Handle::try_current() {
+                                 let engine = engine.clone();
+-                                runtime.spawn(async move {
++                                let cleanup = engine.approval_broker.clone();
++                                cleanup.spawn_cleanup(&runtime, async move {
+                                     // A normal session end parks the already-consented
+                                     // socket for the next approved session, unless the
+                                     // driver is turning remote debugging back off.
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/consent.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/consent.rs
+@@ -102,11 +102,30 @@
+     BoundedResource(String),
+ }
+ 
++type CleanupTask = Arc<tokio::sync::Mutex<Option<tokio::task::JoinHandle<()>>>>;
++
++struct CleanupCompletion {
++    failed: Arc<std::sync::atomic::AtomicBool>,
++    succeeded: bool,
++}
++
++impl Drop for CleanupCompletion {
++    fn drop(&mut self) {
++        if !self.succeeded {
++            self.failed.store(true, Ordering::Release);
++        }
++    }
++}
++
++
+ #[derive(Clone)]
+ pub struct ApprovalBroker {
+     daemon_instance: Arc<str>,
+     next_generation: Arc<AtomicU64>,
+     provider: Option<Arc<dyn ProtectedConsentProvider>>,
++    cleanup_tasks: Arc<Mutex<Vec<CleanupTask>>>,
++    cleanup_drain: Arc<tokio::sync::Mutex<()>>,
++    cleanup_failed: Arc<std::sync::atomic::AtomicBool>,
+ }
+ 
+ impl ApprovalBroker {
+@@ -119,7 +138,61 @@
+             daemon_instance: Arc::from(Uuid::new_v4().to_string()),
+             next_generation: Arc::new(AtomicU64::new(1)),
+             provider,
+-        }
++            cleanup_tasks: Default::default(),
++            cleanup_drain: Default::default(),
++            cleanup_failed: Default::default(),
++        }
++    }
++
++    /// Own session-end work until it has finished dropping its captures.
++    /// These captures may include callbacks into a foreign interpreter.
++    pub fn spawn_cleanup(
++        &self,
++        runtime: &tokio::runtime::Handle,
++        work: impl std::future::Future<Output = ()> + Send + 'static,
++    ) {
++        // The guard is captured before the first poll, so even an unpolled
++        // cancellation records failure before a completed handle is pruned.
++        let completion = CleanupCompletion { failed: self.cleanup_failed.clone(), succeeded: false };
++        let handle = runtime.spawn(async move {
++            let mut completion = completion;
++            work.await;
++            completion.succeeded = true;
++        });
++        let task = Arc::new(tokio::sync::Mutex::new(Some(handle)));
++        let mut tasks = self.cleanup_tasks.lock().unwrap();
++        tasks.retain(|task| task.try_lock().map_or(true, |slot| {
++            slot.as_ref().is_some_and(|handle| !handle.is_finished())
++        }));
++        tasks.push(task);
++    }
++
++    /// Admission must be closed and synchronous end hooks finished first.
++    /// Keep handles in the queue while awaiting: cancelling a drain must not
++    /// detach unfinished work. A later drain can join it.
++    pub async fn drain_cleanup(&self) -> Result<(), &'static str> {
++        let _drain = self.cleanup_drain.lock().await;
++        loop {
++            let tasks = self.cleanup_tasks.lock().unwrap().clone();
++            if tasks.is_empty() { break; }
++            for task in &tasks {
++                let mut slot = task.lock().await;
++                if let Some(handle) = slot.as_mut() {
++                    if handle.await.is_err() {
++                        self.cleanup_failed.store(true, Ordering::Release);
++                    }
++                    slot.take();
++                }
++            }
++            // Linear pass over empty joined slots; new and pending tasks
++            // remain owned, including when a drain is cancelled mid-await.
++            self.cleanup_tasks.lock().unwrap().retain(|task| {
++                task.try_lock().map_or(true, |slot| slot.is_some())
++            });
++        }
++        if self.cleanup_failed.load(Ordering::Acquire) {
++            Err("native session cleanup task failed")
++        } else { Ok(()) }
+     }
+ 
+     pub fn provider_id(&self) -> Option<&'static str> {
+@@ -888,3 +961,58 @@
+         );
+     }
+ }
++
++#[cfg(test)]
++mod cleanup_lifecycle_tests {
++    use super::*;
++    use std::sync::atomic::{AtomicBool, Ordering};
++    #[tokio::test]
++    async fn drain_joins_captures_and_isolated_runtime_owners() {
++        let a = ApprovalBroker::unavailable(); let b = ApprovalBroker::unavailable();
++        let entered = Arc::new(tokio::sync::Notify::new());
++        let release = Arc::new(tokio::sync::Notify::new());
++        let dropped = Arc::new(AtomicBool::new(false));
++        struct Guard(Arc<AtomicBool>);
++        impl Drop for Guard { fn drop(&mut self) { self.0.store(true, Ordering::Release); } }
++        let guard = Guard(dropped.clone()); let (e, r) = (entered.clone(), release.clone());
++        a.spawn_cleanup(&tokio::runtime::Handle::current(), async move {
++            let _guard = guard; e.notify_one(); r.notified().await;
++        });
++        entered.notified().await; b.drain_cleanup().await.unwrap();
++        assert!(!dropped.load(Ordering::Acquire));
++        assert!(tokio::time::timeout(std::time::Duration::from_millis(20), a.drain_cleanup()).await.is_err());
++        assert!(!dropped.load(Ordering::Acquire));
++        release.notify_one(); a.drain_cleanup().await.unwrap();
++        assert!(dropped.load(Ordering::Acquire)); a.drain_cleanup().await.unwrap();
++    }
++    #[tokio::test]
++    async fn drain_reports_task_panic_instead_of_completed_shutdown() {
++        let broker = ApprovalBroker::unavailable();
++        broker.spawn_cleanup(&tokio::runtime::Handle::current(), async { panic!("fixture cleanup failure") });
++        assert!(broker.drain_cleanup().await.is_err()); assert!(broker.drain_cleanup().await.is_err());
++    }
++    #[tokio::test]
++    async fn completed_history_is_reaped_without_hiding_failed_tasks() {
++        let broker = ApprovalBroker::unavailable();
++        for _ in 0..1000 {
++            broker.spawn_cleanup(&tokio::runtime::Handle::current(), async {});
++            assert!(broker.cleanup_tasks.lock().unwrap().len() <= 1,
++                    "completed cleanup history grew with ended sessions");
++            loop {
++                let task = broker.cleanup_tasks.lock().unwrap().last().unwrap().clone();
++                if task.lock().await.as_ref().unwrap().is_finished() { break; }
++                tokio::task::yield_now().await;
++            }
++        }
++        broker.spawn_cleanup(&tokio::runtime::Handle::current(), async { panic!("fixture cleanup failure") });
++        loop {
++            let task = broker.cleanup_tasks.lock().unwrap().last().unwrap().clone();
++            if task.lock().await.as_ref().unwrap().is_finished() { break; }
++            tokio::task::yield_now().await;
++        }
++        broker.spawn_cleanup(&tokio::runtime::Handle::current(), async {});
++        assert!(broker.cleanup_tasks.lock().unwrap().len() <= 1);
++        assert!(broker.drain_cleanup().await.is_err(), "ordinary pruning hid task failure");
++    }
++
++}
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
+@@ -1184,7 +1184,8 @@
+                     return;
+                 }
+                 if let Ok(runtime) = tokio::runtime::Handle::try_current() {
+-                    runtime.spawn(async move {
++                    let cleanup = grants.broker().clone();
++                    cleanup.spawn_cleanup(&runtime, async move {
+                         for grant in revoked {
+                             grants.broker().revoke(&grant).await;
+                         }
+--- a/libs/cua-driver/rust/crates/cua-driver-sdk/src/runtime.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-sdk/src/runtime.rs
+@@ -235,6 +235,8 @@
+             self.compatibility_context.runtime_scope_key()
+         );
+         cua_driver_core::session::revoke_sessions_with_prefix(&runtime_prefix);
++        self.registry.approval_broker().drain_cleanup().await
++            .expect("native session cleanup must finish before SDK shutdown returns");
+         cua_driver_core::session::forget_ended_sessions_with_prefix(&runtime_prefix);
+         cua_driver_core::session::forget_suspended_runtime_scope(
+             &self.compatibility_context.runtime_scope_key(),
+@@ -1008,4 +1010,24 @@
+             "lifecycle maintenance is still running after shutdown"
+         );
+     }
+-}
++    #[tokio::test]
++    async fn shutdown_waits_for_owned_session_cleanup_after_cancelled_drain() {
++        let _runtime_test = TEST_RUNTIME_LOCK.lock().await;
++        let runtime = DriverRuntime::create(standard_options()).unwrap();
++        let entered = Arc::new(tokio::sync::Notify::new());
++        let release = Arc::new(tokio::sync::Notify::new());
++        let finished = Arc::new(AtomicBool::new(false));
++        let (e, r, f) = (entered.clone(), release.clone(), finished.clone());
++        runtime.registry.approval_broker().spawn_cleanup(&tokio::runtime::Handle::current(), async move {
++            e.notify_one(); r.notified().await; f.store(true, Ordering::Release);
++        });
++        entered.notified().await;
++        assert!(tokio::time::timeout(Duration::from_millis(20), runtime.shutdown()).await.is_err(),
++                "shutdown returned before the owned cleanup task completed");
++        assert!(!finished.load(Ordering::Acquire));
++        release.notify_one();
++        runtime.shutdown().await;
++        assert!(finished.load(Ordering::Acquire));
++    }
++
++}

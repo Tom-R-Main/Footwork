@@ -173,6 +173,7 @@ class World:
         else:
             self.calc.press(label)
         return cd.ActionResult(
+            fast_path=None,
             effect=cd.ActionEffect.CONFIRMED,
             route=cd.ActionRoute.ACCESSIBILITY,
             delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.BACKGROUND, delivered_count=1),

@@ -1,4 +1,4 @@
-"""Contract tests pinning the cua-driver 0.38.0 seams jevdual depends on.
+"""Contract tests pinning the cua-driver 0.46.0 seams jevdual depends on.
 
 The native arm, the receipts and the coexistence posture all read the Driver's own types: its five
 effect words, its routes and delivery modes, the snapshot fields that make ids stale by construction.
@@ -17,7 +17,7 @@ import pytest
 
 cd = pytest.importorskip("cua_driver")
 
-PINNED_VERSION = "0.38.0+footwork.d5373879.cleanup2"
+PINNED_VERSION = "0.46.0+footwork.5486b624.cleanup2"
 
 
 def _params(cls) -> set[str]:
@@ -148,6 +148,7 @@ def test_mapping_reads_a_real_action_result():
         error=None,
         hint=None,
         next_call=None,
+        fast_path=None,
     )
     eff = effect_from_action_result("click", 3, "OK", res)
     assert eff.effect == "suspected_noop"

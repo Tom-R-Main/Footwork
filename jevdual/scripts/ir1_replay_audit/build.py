@@ -51,13 +51,13 @@ def main():
     command=[str(rustc),'--edition=2021','--crate-name','platform_linux','--crate-type','rlib',str(workspace/'crates/platform-linux/src/lib.rs'),'--cfg','ir1_audit','--cfg','feature="default"','-C','debuginfo=0','-o',str(out/'libplatform_linux.rlib'),*libs,*extern]
     manifest={'archive_sha256':PIN,'production_native_sha256':hashlib.sha256(original).hexdigest(),'test_augmented_native_sha256':hashlib.sha256(native.read_bytes()).hexdigest(),'production_prefix_byte_identical':native.read_bytes()[:len(original)]==original,'cargo_lock_sha256':hashlib.sha256((workspace/'Cargo.lock').read_bytes()).hexdigest(),'original_feature_fingerprint':fp,'dependency_artifacts':deps,'commands':[command]}
     (task/'build.json').write_text(json.dumps(manifest,indent=2)+'\n')
-    p=subprocess.run(command,cwd=workspace,env=env,stdout=(task/'compile.stdout.txt').open('w'),stderr=(task/'compile.stderr.txt').open('w'));manifest['compile_exit']=p.returncode
+    p=subprocess.run(command,cwd=workspace,env=env,check=False,stdout=(task/'compile.stdout.txt').open('w'),stderr=(task/'compile.stderr.txt').open('w'));manifest['compile_exit']=p.returncode
     (task/'build.json').write_text(json.dumps(manifest,indent=2)+'\n')
     if p.returncode:raise SystemExit(p.returncode)
     entry=task/'main.rs';entry.write_text('fn main(){platform_linux::atspi::native::ir1_audit::run();}\n')
     command=[str(rustc),'--edition=2021',str(entry),'--extern',f'platform_linux={out/"libplatform_linux.rlib"}',*libs,'-C','debuginfo=0','-o',str(out/'ir1-probe')]
     manifest['commands'].append(command)
-    p=subprocess.run(command,cwd=workspace,env=env,stdout=(task/'link.stdout.txt').open('w'),stderr=(task/'link.stderr.txt').open('w'));manifest['link_exit']=p.returncode
+    p=subprocess.run(command,cwd=workspace,env=env,check=False,stdout=(task/'link.stdout.txt').open('w'),stderr=(task/'link.stderr.txt').open('w'));manifest['link_exit']=p.returncode
     if p.returncode==0:manifest['probe_sha256']=hashlib.sha256((out/'ir1-probe').read_bytes()).hexdigest()
     (task/'build.json').write_text(json.dumps(manifest,indent=2)+'\n');raise SystemExit(p.returncode)
 

@@ -31,7 +31,7 @@ CI defines Linux/Python 3.12 and macOS arm64/Python 3.12 and 3.14 profiles. The 
 
 ## Install into a fresh environment
 
-CUA `0.38.0+footwork.d5373879.cleanup2` builds its Python bindings and native engine from the pinned reference source because published packages lag that commit. First build the dependency wheel for the destination platform; see [CUA wheel provenance and builds](upstream/cua-driver-build.md). From `jevdual/`, with an existing Python and uv:
+CUA `0.46.0+footwork.5486b624.cleanup2` builds matched Python bindings and native code from the pinned release with Footwork's shutdown-cleanup patch. The published upstream wheel does not contain that correction. First build the dependency wheel for the destination platform; see [CUA wheel provenance and builds](upstream/cua-driver-build.md). From `jevdual/`, with an existing Python and uv:
 
 ~~~sh
 rustup toolchain install 1.97.1 --profile minimal

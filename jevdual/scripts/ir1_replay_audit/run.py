@@ -3,11 +3,11 @@ import argparse
 import hashlib
 import json
 import os
-from pathlib import Path
 import select
 import subprocess
 import sys
 import time
+from pathlib import Path
 
 
 def save(path, data):
@@ -64,7 +64,7 @@ def target_case(package, task, output, arm, mode, timeout, label):
         record['control_passed']=None if expected is None else len(effects)==expected and (record['result'] is not None)
         record['safety_one_effect']=len(effects)<=1
         save(out/'receipt.json',record)
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001 - retain infrastructure failures in the run receipt
         record={'label':label,'boundary':arm,'fixture_mode':mode,'infrastructure_error':f'{type(error).__name__}: {error}'}
         save(out/'receipt.json',record)
     finally:

@@ -3,11 +3,11 @@ import ctypes
 import hashlib
 import json
 import os
-from pathlib import Path
 import signal
 import subprocess
 import sys
 import time
+from pathlib import Path
 
 import psutil
 
@@ -47,7 +47,8 @@ def main():
         while child.poll() is None and time.monotonic()<deadline:
             try:
                 for row in descendants():history[(row['pid'],row['start'])]=row
-            except Exception as error:errors.append(type(error).__name__+': '+str(error))
+            except Exception as error:  # noqa: BLE001 - retain failures of the diagnostic process probe
+                errors.append(type(error).__name__+': '+str(error))
             time.sleep(.05)
         timeout=child.poll() is None
         if timeout:

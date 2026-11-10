@@ -4,6 +4,16 @@ Survey date 2026-09-24. Checkout: `external/cua` (git-ignored; MIT except where 
 Surveyed: `libs/cua-driver`, `libs/cua-s1`, `libs/cua-bench-s1`, `libs/cua-bench`,
 `libs/python/*`, `rfcs/3931`, `rfcs/2512`, `rfcs/2549`, `rfcs/3007`, `skills/jev-use`.
 
+## November 9, 2026 refresh
+
+The current dependency is `cua-driver==0.46.0+footwork.5486b624.cleanup2`, built from the
+0.46.0 release's matched Python bindings and native source. The published release still lacks
+Footwork's cleanup-task ownership and shutdown-drain correction, so the four-file cleanup2 patch
+is retained. See [source provenance](../vendor/cua-driver/PROVENANCE.md) and
+[build instructions](upstream/cua-driver-build.md). The October notes below describe the earlier
+adoption, not the current installed version. New optional snapshot metadata and ActionResult's
+required `fast_path` field do not grant additional target or input authority.
+
 ## October 27, 2026 refresh
 
 Reference: `/Volumes/External SSD/referencerepos/cua` at
@@ -51,7 +61,7 @@ desktop backend, and theirs is good.
 
 ## What we consume
 
-**Cua Driver** as a source-pinned dependency: `cua-driver==0.38.0+footwork.d5373879` package (Python 3.10+, no
+**Cua Driver** as a source-pinned dependency: `cua-driver==0.46.0+footwork.5486b624.cleanup2` package (Python 3.10+, no
 dependencies, bundles the Rust runtime and the `cua-driver` binary). `CuaDriver.create(embedded=True)` runs
 in-process with the host process's Accessibility grant; no daemon, no CuaDriver.app needed for
 development. Telemetry disabled with `cua-driver telemetry disable`.

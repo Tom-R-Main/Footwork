@@ -6,8 +6,8 @@ import contextlib
 import hashlib
 import json
 import os
-from pathlib import Path
 import time
+from pathlib import Path
 
 from jevdual import linux_ax as ax
 
@@ -29,7 +29,7 @@ start = time.monotonic()
 try:
     ax.set_value_ack(Element(), 'TOKEN')
     outcome = {'ok':True}
-except Exception as error:
+except Exception as error:  # noqa: BLE001 - record unexpected driver failures as audit evidence
     outcome = {'ok':False, 'type':type(error).__name__, 'error':str(error), 'code':getattr(error,'code',None)}
 print(json.dumps({'boundary':'linux_ax.set_value_ack; binding and writability stubbed; actual private-bus call',
                   'source_sha256':hashlib.sha256(Path(ax.__file__).read_bytes()).hexdigest(),
