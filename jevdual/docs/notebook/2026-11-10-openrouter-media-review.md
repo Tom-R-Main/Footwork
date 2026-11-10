@@ -19,3 +19,10 @@ Established: the explicit local-media helper has bounded one-request behavior an
 Uncertain: live route acceptance, provider media perception, temporal localization and musical judgment remain unverified; caller must probe duration and supply timeline context.
 Decision: commit helper for the parent live qualification; no install, key read or model call in this work package.
 Refs: results/openrouter-media-review-20261110/report.md
+
+## OMR2 · prediction · 2026-11-10 16:59
+Hypothesis: the live helper's immediate TLS failure is caused by the checkout interpreter lacking a usable default CA bundle; explicitly selecting installed certifi's CA bundle will retain certificate/hostname verification and enable the parent to reach the public provider metadata endpoint.
+Test: mocked helper HTTPS opener verifies a CERT_REQUIRED/check_hostname context using certifi's CA path; mock certificate-verification failures versus generic URL transport failures to verify safe distinct diagnostics and application-request non-delivery only for the TLS certificate case. Parent independently checks public HTTPS metadata and then fresh live probes after this repair is committed.
+Predicts: HTTPS uses the existing CA bundle without disabling verification, certificate errors retain a safe numeric verification code with no request/credential strings and classify application request as not sent, while other transport failures retain unknown delivery and no retry.
+Against: the context disables verification, arbitrary URLError text becomes proof of nondelivery, request headers leak, or public metadata still fails under the repaired context. Fixture results cannot establish the live diagnosis alone.
+Refs: scripts/openrouter_media_review.py; tests/test_openrouter_media_review.py; parent-reported SSLCertVerificationError verify_code20 on2026-11-10
