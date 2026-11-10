@@ -104,6 +104,23 @@ def test_placeholder_text_roster_includes_fields_hidden_by_the_menu_budget():
     assert before.text_scope_signature != after.text_scope_signature
 
 
+@pytest.mark.parametrize("change", ["ambiguous", "missing"])
+def test_web_write_readback_cannot_confirm_an_unqualified_field(change):
+    from tests.test_posture import FakeDriver, _web_snapshot, bridge_for
+
+    after = _web_snapshot("Ada", snap="s00000002")
+    if change == "ambiguous":
+        after["elements"].append({**after["elements"][-1], "element_index": 8, "element_token": "s00000002:8"})
+    else:
+        after["elements"] = [row for row in after["elements"] if row["element_index"] != 7]
+    bridge = bridge_for(FakeDriver(_web_snapshot(""), after))
+    observation = asyncio.run(bridge.observe())
+    effect = asyncio.run(bridge.act(observation, "type", 7, "Ada"))
+    assert effect.dispatched and effect.effect == "unverifiable"
+    assert any("identity" in evidence for evidence in effect.evidence)
+    assert not any("holds 0 characters" in evidence for evidence in effect.evidence)
+
+
 def test_incomplete_snapshot_is_reported_in_omitted(snapshot):
     nm = menu_from_snapshot(snapshot)
     assert nm.elements_complete is False

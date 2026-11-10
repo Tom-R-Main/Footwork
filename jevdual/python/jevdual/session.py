@@ -772,6 +772,17 @@ def _field_receipt(
         return dataclasses.replace(
             r, effect="unverifiable", evidence=f"{label!r} is not on the fresh observation as one field"
         )
+    if field.id in getattr(nm, "ambiguous_targets", ()):
+        return dataclasses.replace(
+            r, effect="unverifiable", evidence=f"{label!r} has ambiguous identity, including hidden peers"
+        )
+    if pending.get("mode", "native") == "native" and field.placeholder and (
+        not pending.get("target_text_scope_signature")
+        or pending["target_text_scope_signature"] != getattr(nm, "text_scope_signature", None)
+    ):
+        return dataclasses.replace(
+            r, effect="unverifiable", evidence="the placeholder field group changed or its prior identity is unavailable"
+        )
     secret = bool(pending.get("secret"))
     if field.input_type == "password":
         # a password field exposes whether it holds something, never what: that is not a confirmation
@@ -2113,6 +2124,7 @@ async def cmd_do(args: Any) -> int:
                 "target_identity": {
                     key: getattr(target, key) for key in ("role", "label", "section", "placeholder")
                 } if target is not None else None,
+                "target_text_scope_signature": getattr(nm, "text_scope_signature", None),
                 "intended": None if secret_used else text,
                 "secret": secret_used,
                 "mode": state.mode,
@@ -2235,6 +2247,7 @@ async def cmd_do(args: Any) -> int:
             "target_identity": {
                 key: getattr(target, key) for key in ("role", "label", "section", "placeholder")
             } if target is not None else None,
+            "target_text_scope_signature": getattr(nm, "text_scope_signature", None),
             "intended": None if secret_used else text,
             "secret": secret_used,
             "mode": state.mode,
@@ -2869,6 +2882,7 @@ def _element_ref(nm: Any, target: Any) -> str:
         return json.dumps({
             "kind": "qualified_target",
             **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
+            **({"text_scope_signature": getattr(nm, "text_scope_signature", None)} if target.placeholder else {}),
         }, sort_keys=True)
     same = [c.id for c in nm.menu.candidates if c.role == target.role and c.label == target.label]
     return f"{same.index(target.id) + 1} of {len(same)}" if len(same) > 1 else ""

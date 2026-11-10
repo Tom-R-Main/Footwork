@@ -2241,3 +2241,71 @@ def test_native_form_placeholder_change_during_final_live_check_refuses(world, f
     code, out, err = fw("do", "type", "301", "ns2.example.test", "--no-judge")
     assert "target_changed" in out + err, (code, out, err)
     assert not any(actual.values())
+
+
+def test_native_form_select_all_rechecks_the_field_before_inserting(world, fw, monkeypatch):
+    from tests.test_posture import _ok
+
+    fields, actual, placeholders = _install_nameserver_fields(world, monkeypatch)
+    actual[301] = fields[1]["value"] = "old.example.test"
+    call_tool = world.call_tool
+
+    async def replace_after_selection(name, args_json):
+        if name == "press_key":
+            placeholders[301] = "Replacement field"
+            await call_tool(name, args_json)
+            return _ok()
+        return await call_tool(name, args_json)
+
+    monkeypatch.setattr(world, "call_tool", replace_after_selection)
+    assert fw("start", "Replace second nameserver", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "type", "301", "ns2.example.test", "--no-judge")
+    assert [name for name, _ in world.tool_calls] == ["press_key"], (code, out, err, world.tool_calls)
+    assert actual[301] == "old.example.test"
+
+
+def test_native_form_partial_placeholder_reads_do_not_prove_unique_identity(world, fw, monkeypatch):
+    from jevdual import native
+
+    fields, actual, placeholders = _install_nameserver_fields(world, monkeypatch)
+    placeholders[300] = placeholders[301] = "Nameserver 1"
+    fields[0]["value"] = fields[1]["value"] = "Nameserver 1"
+    ax = native.NativeBridge.ax.fget(None)
+    value = ax.value
+
+    def unreadable_peer(element):
+        if element == 301:
+            raise RuntimeError("unreadable field")
+        return value(element)
+
+    ax.value = unreadable_peer
+    assert fw("start", "Set first nameserver", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "type", "300", "ns1.example.test", "--no-judge")
+    assert not any(actual.values()), (code, out, err, actual)
+    assert "target_ambiguous" in out + err
+
+
+def test_native_form_truncated_duplicate_labels_require_context_for_every_peer(world, fw, monkeypatch):
+    from jevdual import native
+
+    rows, writes, _ = _install_domain_rows(world, monkeypatch)
+    world.base["elements"] = [row for row in world.base["elements"] if row not in (rows[0], rows[2])]
+    for row in (rows[1], rows[3]):
+        row.update(parent_index=0, in_web_content=True, label="M" * 85 + "-same")
+    world.base["elements"].append(
+        _native_form_element(305, "AXLink", "M" * 85 + "-other", in_web_content=True)
+    )
+
+    def section(element):
+        if element == 305:
+            raise RuntimeError("unreadable AX parent")
+        return {301: "example.test", 303: "other.test"}[element]
+
+    ax = SimpleNamespace(
+        Frame=lambda x, y, w, h: (x, y, w, h),
+        resolve=lambda pid, wid, role, frame: int(frame[0]), semantic_section=section,
+    )
+    monkeypatch.setattr(native.NativeBridge, "ax", property(lambda _: ax))
+    assert fw("start", "Manage example.test", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "301", "--no-judge")
+    assert code == 4 and "target_ambiguous" in err and writes == [], (out, err)

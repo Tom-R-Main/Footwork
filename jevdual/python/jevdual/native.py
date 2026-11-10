@@ -397,7 +397,7 @@ def menu_from_snapshot(
     budget: MenuBudget | None = None,
     include_menu_bar: bool = False,
     linux_text: dict[int, dict[str, Any]] | None = None,
-    mac_text: dict[int, dict[str, str]] | None = None,
+    mac_text: dict[int, dict[str, Any]] | None = None,
     mac_sections: dict[int, str] | None = None,
 ) -> NativeMenu:
     """Build the System 1 menu from a Driver ``get_window_state`` result (SDK object or dict)."""
@@ -472,9 +472,12 @@ def menu_from_snapshot(
             label = role
         sensitive = ax_role == "AXSecureTextField" or (linux_role and ax_role.casefold() == "password text")
         multiline = ax_role == "AXTextArea" or (linux_role and text_proof.get("multiline") is True)
-        if role in _TEXT_ROLES and raw_value not in (None, "") and label == _clean(raw_value, _LABEL_CAP):
+        if role in _TEXT_ROLES and any(
+            value not in (None, "") and label == _clean(value, _LABEL_CAP)
+            for value in (raw_value, _get(el, "value"))
+        ):
             label = "text area" if multiline else role  # the Driver echoed the content as the label
-        if placeholder and label in (role, "text area"):
+        if placeholder and mac_proof.get("placeholder_qualified", True) and label in (role, "text area"):
             label = placeholder
         value: str | None = None
         if role in _TEXT_ROLES and not sensitive and raw_value not in (None, ""):
@@ -1074,22 +1077,32 @@ class NativeBridge:
         self.last = observed
         return self.last
 
-    def _web_text_attributes(self, snapshot: Any) -> dict[int, dict[str, str]]:
+    def _web_text_attributes(self, snapshot: Any) -> dict[int, dict[str, Any]]:
         """Read real AX values and placeholders before deduplication and identity classification.
 
         The pinned CUA contract substitutes AXPlaceholderValue for an empty AXValue and omits a
         separate placeholder field. This bounded, read-only supplement keeps them separate even
         after typing. Secure fields are never read. Unresolved fields retain conservative projection.
         """
-        out: dict[int, dict[str, str]] = {}
+        out: dict[int, dict[str, Any]] = {}
         attempts = 0
-        for row in _get(snapshot, "elements") or []:
+        rows = list(_get(snapshot, "elements") or [])
+        by_index = {int(_get(row, "element_index")): row for row in rows
+                    if _get(row, "element_index") is not None}
+        peers: dict[tuple[str, str, str | None], list[int]] = {}
+        for row in rows:
             role, index, frame = _get(row, "role"), _get(row, "element_index"), _get(row, "frame")
             if (role not in _TEXT_AX_ROLES or not _get(row, "in_web_content")
-                    or index is None or frame is None or not _get(row, "element_token")):
+                    or index is None or not _get(row, "element_token")):
                 continue
-            if attempts >= 32:
-                break
+            projected_role = ROLE_MAP[role][0]
+            label = (_clean(_get(row, "label"), _LABEL_CAP)
+                     or _clean(_get(row, "value_description"), _LABEL_CAP) or projected_role)
+            if _get(row, "value") not in (None, "") and label == _clean(_get(row, "value"), _LABEL_CAP):
+                label = "text area" if role == "AXTextArea" else projected_role
+            peers.setdefault((projected_role, label, _section_of(row, by_index)), []).append(int(index))
+            if frame is None or attempts >= 32:
+                continue
             attempts += 1
             try:
                 coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
@@ -1104,6 +1117,13 @@ class NativeBridge:
                 out[int(index)] = proof
             except Exception:  # noqa: BLE001, S112 - unreadable keeps the SDK representation
                 continue
+        for indices in peers.values():
+            if any(index not in out for index in indices):
+                # An unreadable generic peer may carry the same placeholder. Retain the hint as
+                # descriptive evidence but do not let a successful partial read prove uniqueness.
+                for index in indices:
+                    if index in out:
+                        out[index]["placeholder_qualified"] = False
         return out
 
     def _web_control_sections(self, snapshot: Any) -> dict[int, str]:
@@ -1115,7 +1135,9 @@ class NativeBridge:
         groups: dict[tuple[str, str], list[Any]] = {}
         for row in _get(snapshot, "elements") or []:
             role = _get(row, "role")
-            label = _clean(_get(row, "label") or _get(row, "value_description") or _get(row, "value"))
+            label = (_clean(_get(row, "label"), _LABEL_CAP)
+                     or _clean(_get(row, "value_description"), _LABEL_CAP)
+                     or _clean(_get(row, "value"), _LABEL_CAP))
             if (role in {"AXLink", "AXButton"} and label and _get(row, "in_web_content")
                     and _get(row, "element_token")):
                 groups.setdefault((role, label), []).append(row)
@@ -1599,7 +1621,14 @@ class NativeBridge:
                 return dataclasses.replace(sel, summary=f"select-all before typing: {sel.summary}"[:200])
             selected = True
             fresh = await self._observe_after_input()
-            token = fresh.token(id) or token
+            try:
+                id = self._rematch(nm, fresh, id, "type")
+                cand, token = self._require_fresh(fresh, id)
+                nm = fresh
+            except NativeBridgeError as exc:
+                # Selection was delivered; it cannot be reported as a proven no-send even though
+                # the changed form prevents the subsequent insertion. Never reuse the old token.
+                raise NativeBridgeError(exc.reason, str(exc), dispatched=True) from exc
         args: dict[str, Any] = {
             "pid": self.pid,
             "window_id": self.window_id,
@@ -1631,12 +1660,20 @@ class NativeBridge:
         self.last = None
         same = after.menu.candidate(id)
         identity = (cand.role, cand.label, cand.section, cand.placeholder)
-        got = after.values.get(id, "") if same is not None and (
+        qualified = (id not in after.ambiguous_targets and (
+            not cand.placeholder or nm.text_scope_signature == after.text_scope_signature
+        ))
+        got = after.values.get(id, "") if qualified and same is not None and (
             same.role, same.label, same.section, same.placeholder
         ) == identity else None
         if got is not None and got.strip() == text.strip():
             return dataclasses.replace(
                 eff, effect="confirmed", evidence=(*eff.evidence, "value_readback: the field holds the text")
+            )
+        if got is None:
+            return dataclasses.replace(
+                eff, effect="unverifiable",
+                evidence=(*eff.evidence, "value_readback unavailable: field identity is no longer qualified"),
             )
         return dataclasses.replace(
             eff,

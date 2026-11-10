@@ -193,3 +193,56 @@ def test_drag_cannot_reuse_previously_ambiguous_destination(world, fw):
     attempt = next(r for r in _records(fw) if r["kind"] == "attempted_action")
     assert attempt["code"] == "target_ambiguous" and attempt["requested_destination"] == "201"
     assert not [r for r in _records(fw) if r["kind"] == "do"]
+
+
+@pytest.mark.parametrize("change", ["hidden_duplicate", "renumber_after_delete"])
+def test_field_receipt_does_not_confirm_changed_identity_after_dispatch(world, fw, monkeypatch, change):
+    fields, actual, placeholders = scenarios._install_nameserver_fields(world, monkeypatch)
+    call_tool = world.call_tool
+
+    async def change_after_write(name, args_json):
+        result = await call_tool(name, args_json)
+        if name == "type_text":
+            if change == "hidden_duplicate":
+                peer = scenarios._native_form_element(
+                    304, "AXTextField", value="ns2.example.test", in_web_content=True,
+                )
+                world.base["elements"].append(peer)
+                fields.append(peer)
+                actual[304] = "ns2.example.test"
+                placeholders[304] = "Nameserver 2"
+            else:
+                world.base["elements"].remove(fields[-1])
+                # Another backing field now has the selected placeholder and the same value.
+                placeholders[301], placeholders[302] = "Nameserver 3", "Nameserver 2"
+                actual[302] = "ns2.example.test"
+                fields[2]["value"] = "ns2.example.test"
+        return result
+
+    monkeypatch.setattr(world, "call_tool", change_after_write)
+    assert fw("start", "Set second nameserver", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "type", "301", "ns2.example.test", "--no-judge")
+    assert code == 0, (out, err)
+    receipt = next(r for r in _records(fw) if r["kind"] == "receipt")
+    assert receipt["effect"] == "unverifiable", receipt
+    if change == "hidden_duplicate":
+        state = _state(fw)
+        assert 301 in state["last_native_ambiguous"]
+        assert 304 not in {c["id"] for c in state["last_candidates"]}
+
+
+def test_placeholder_exact_grant_expires_when_form_roster_changes(world, fw, monkeypatch):
+    fields, actual, placeholders = scenarios._install_nameserver_fields(world, monkeypatch)
+    # A destructive accessible label requires an exact grant even for a short text field.
+    fields[1]["label"] = "Delete"
+    assert fw("start", "Replace second nameserver", "--app", "Calculator")[0] == 0
+    assert fw("grant", "type", "textbox:Delete", "ns2.example.test")[0] == 0
+    peer = scenarios._native_form_element(304, "AXTextField", value="Nameserver 5", in_web_content=True)
+    fields.append(peer)
+    world.base["elements"].append(peer)
+    actual[304], placeholders[304] = "", "Nameserver 5"
+    code, out, err = fw("do", "type", "textbox:Delete", "ns2.example.test", "--no-judge")
+    assert code == 3 and actual[301] == "", (out, err)
+    assert fw("grant", "type", "textbox:Delete", "ns2.example.test")[0] == 0
+    code, out, err = fw("do", "type", "textbox:Delete", "ns2.example.test", "--no-judge")
+    assert code == 0 and actual[301] == "ns2.example.test", (out, err)
