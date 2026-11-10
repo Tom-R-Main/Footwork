@@ -3,9 +3,9 @@
   "release": "cua-driver-rs-v0.46.0",
   "upstream_release_archive_sha256": "032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112",
   "upstream_archive_sha256": "257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1",
-  "patched_archive_sha256": "8f517900274522a8447e44ca7e063f5c2d49bf8de2e2c812dcc8d9c9dad8a304",
+  "patched_archive_sha256": "233149903c53bb1ccdcf84c3693cabc3bcbf8bba4ebc25f3b5a7c60e63540ea4",
   "previous_candidate_archive_sha256": "5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401",
-  "patch_sha256": "1c5e5bd6013d21a11448da423189915db184bdf2cab93c885ab360d8fa58773d",
+  "patch_sha256": "a50fd8e1d2000a5865078c2d378fe900de888661697adaf0c7c4a1f4102a1e46",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-core/src/browser/engine.rs": {
       "before": "3a1b8e9cfcbcfbaa226cd12581c9b8e4a7e602b9e38ff14fa44aab05dcac1bff",
@@ -21,7 +21,7 @@
     },
     "libs/cua-driver/rust/crates/cua-driver-sdk/src/runtime.rs": {
       "before": "4980b4b15dccc030bfde0579432a49c67c0f1711237e38d06c03b2e5bd6776cf",
-      "after": "7090e28605b6398f6e5d0bc7bcfcc07727abf2bd436e3a2a552c3551393f85e2"
+      "after": "670db9bdcd7c66024ec519ab2cf6aec115c3d2f115ccb36e19fd711616775564"
     }
   }
 }

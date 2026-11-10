@@ -20,7 +20,7 @@ The six Python files are copied byte-for-byte from the exact release source. The
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `8f517900274522a8447e44ca7e063f5c2d49bf8de2e2c812dcc8d9c9dad8a304` (6,403,447 bytes).
+`native-source.tar.gz` SHA256: `233149903c53bb1ccdcf84c3693cabc3bcbf8bba4ebc25f3b5a7c60e63540ea4` (6,403,457 bytes).
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -28,7 +28,7 @@ Selection includes `libs/cua-driver/rust`, `libs/cua-driver/wayland-helper`, `li
 
 ## Required local cleanup patch
 
-The exact release still spawns untracked browser/grant session-end work and returns from SDK shutdown without awaiting it. The four-file patch retains the previously reviewed cleanup2 implementation: runtime-owned task handles, cancellation-safe joining, completed-handle reaping, sticky abnormal-completion failure, and shutdown drain after session revocation. It does not change authorization predicates, Cargo dependencies or generated bindings.
+The exact release still spawns untracked browser/grant session-end work and returns from SDK shutdown without awaiting it. The four-file patch retains the previously reviewed cleanup2 implementation: runtime-owned task handles, cancellation-safe joining, completed-handle reaping, sticky abnormal-completion failure, and shutdown drain after session revocation. It does not change authorization predicates, Cargo dependencies or generated bindings. The SDK regression test adds a local AtomicBool import because the newer upstream test module no longer imports it.
 
 `patches/session-cleanup-join.patch` is the inspectable diff against this release. `patches/session-cleanup-join.json` binds the original and patched file hashes and archive hashes. The previous 0.38 cleanup2 provenance, diff and manifest are retained under `history/`; its native archive remains in Git history. Prior qualification does not automatically qualify this newer build.
 

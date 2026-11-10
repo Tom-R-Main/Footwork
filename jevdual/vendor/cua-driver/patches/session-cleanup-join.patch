@@ -188,13 +188,14 @@
          cua_driver_core::session::forget_ended_sessions_with_prefix(&runtime_prefix);
          cua_driver_core::session::forget_suspended_runtime_scope(
              &self.compatibility_context.runtime_scope_key(),
-@@ -1040,4 +1042,24 @@
+@@ -1040,4 +1042,25 @@
              "lifecycle maintenance is still running after shutdown"
          );
      }
 -}
 +    #[tokio::test]
 +    async fn shutdown_waits_for_owned_session_cleanup_after_cancelled_drain() {
++        use std::sync::atomic::AtomicBool;
 +        let _runtime_test = TEST_RUNTIME_LOCK.lock().await;
 +        let runtime = DriverRuntime::create(standard_options()).unwrap();
 +        let entered = Arc::new(tokio::sync::Notify::new());

@@ -1,0 +1,197 @@
+{
+  "passed": true,
+  "route": "ordinary_native",
+  "durable_delivery_qualified": false,
+  "checks": [
+    "unqualified MANAGE refused and audited without any domain event",
+    "repeated MANAGE selected independent alpha backing domain",
+    "reordered rows rebound alpha or refused without beta dispatch",
+    "real reference link excluded by160budget refused as not observed and audited",
+    "late popup option exposed at default budget and empty placeholders retained separately",
+    "removed and renumbered fields refused stale pending input",
+    "four backing fields saved once and reloaded from server; beta unchanged"
+  ],
+  "server": {
+    "version": 1,
+    "selected": "alpha.example.test",
+    "domains": {
+      "alpha.example.test": {
+        "mode": "Custom DNS",
+        "fields": [
+          {
+            "id": "alpha.example.test:2",
+            "value": "ns1.example.test"
+          },
+          {
+            "id": "alpha.example.test:3",
+            "value": "ns2.example.test"
+          },
+          {
+            "id": "alpha.example.test:4",
+            "value": "ns3.example.test"
+          },
+          {
+            "id": "alpha.example.test:5",
+            "value": "ns4.example.test"
+          }
+        ]
+      },
+      "beta.example.test": {
+        "mode": "Basic DNS",
+        "fields": [
+          {
+            "id": "beta.example.test:1",
+            "value": ""
+          },
+          {
+            "id": "beta.example.test:2",
+            "value": ""
+          }
+        ]
+      }
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "time": 1794279050.22205,
+        "kind": "page_load",
+        "version": 0,
+        "selected": null
+      },
+      {
+        "sequence": 2,
+        "time": 1794279053.92316,
+        "kind": "manage",
+        "domain": "alpha.example.test",
+        "backing_domain": "alpha.example.test"
+      },
+      {
+        "sequence": 3,
+        "time": 1794279056.5027,
+        "kind": "reorder",
+        "domain": "alpha.example.test",
+        "order": [
+          "beta.example.test",
+          "alpha.example.test"
+        ]
+      },
+      {
+        "sequence": 4,
+        "time": 1794279058.988805,
+        "kind": "manage",
+        "domain": "alpha.example.test",
+        "backing_domain": "alpha.example.test"
+      },
+      {
+        "sequence": 5,
+        "time": 1794279063.1194701,
+        "kind": "mode",
+        "domain": "alpha.example.test",
+        "mode": "Custom DNS"
+      },
+      {
+        "sequence": 6,
+        "time": 1794279064.9946501,
+        "kind": "add",
+        "domain": "alpha.example.test",
+        "field_id": "alpha.example.test:3"
+      },
+      {
+        "sequence": 7,
+        "time": 1794279066.998629,
+        "kind": "add",
+        "domain": "alpha.example.test",
+        "field_id": "alpha.example.test:4"
+      },
+      {
+        "sequence": 8,
+        "time": 1794279069.017339,
+        "kind": "remove",
+        "domain": "alpha.example.test",
+        "field_id": "alpha.example.test:1"
+      },
+      {
+        "sequence": 9,
+        "time": 1794279072.380877,
+        "kind": "add",
+        "domain": "alpha.example.test",
+        "field_id": "alpha.example.test:5"
+      },
+      {
+        "sequence": 10,
+        "time": 1794279074.489835,
+        "kind": "input",
+        "domain": "alpha.example.test",
+        "field_id": "alpha.example.test:2",
+        "placeholder": "Nameserver 1",
+        "value": "ns1.example.test"
+      },
+      {
+        "sequence": 11,
+        "time": 1794279076.867166,
+        "kind": "input",
+        "domain": "alpha.example.test",
+        "field_id": "alpha.example.test:3",
+        "placeholder": "Nameserver 2",
+        "value": "ns2.example.test"
+      },
+      {
+        "sequence": 12,
+        "time": 1794279079.258414,
+        "kind": "input",
+        "domain": "alpha.example.test",
+        "field_id": "alpha.example.test:4",
+        "placeholder": "Nameserver 3",
+        "value": "ns3.example.test"
+      },
+      {
+        "sequence": 13,
+        "time": 1794279081.70065,
+        "kind": "input",
+        "domain": "alpha.example.test",
+        "field_id": "alpha.example.test:5",
+        "placeholder": "Nameserver 4",
+        "value": "ns4.example.test"
+      },
+      {
+        "sequence": 14,
+        "time": 1794279084.0569751,
+        "kind": "save",
+        "version": 1,
+        "domain": "alpha.example.test",
+        "fields": [
+          {
+            "id": "alpha.example.test:2",
+            "value": "ns1.example.test"
+          },
+          {
+            "id": "alpha.example.test:3",
+            "value": "ns2.example.test"
+          },
+          {
+            "id": "alpha.example.test:4",
+            "value": "ns3.example.test"
+          },
+          {
+            "id": "alpha.example.test:5",
+            "value": "ns4.example.test"
+          }
+        ]
+      },
+      {
+        "sequence": 15,
+        "time": 1794279086.1260889,
+        "kind": "reload",
+        "domain": "alpha.example.test"
+      },
+      {
+        "sequence": 16,
+        "time": 1794279086.135078,
+        "kind": "page_load",
+        "version": 1,
+        "selected": "alpha.example.test"
+      }
+    ]
+  },
+  "commands": 23
+}

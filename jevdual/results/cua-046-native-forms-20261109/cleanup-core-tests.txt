@@ -1,0 +1,46 @@
+   Compiling libc v0.2.186
+   Compiling getrandom v0.3.4
+   Compiling cc v1.2.62
+   Compiling errno v0.3.14
+   Compiling rustix v1.1.4
+   Compiling tempfile v3.27.0
+   Compiling uniffi_pipeline v0.31.0
+   Compiling rquickjs-sys v0.14.0
+   Compiling uniffi_meta v0.31.0
+   Compiling ahash v0.8.12
+   Compiling half v2.7.1
+   Compiling uniffi_core v0.31.0
+   Compiling ciborium-ll v0.2.2
+   Compiling referencing v0.46.10
+   Compiling uniffi_macros v0.31.0
+   Compiling futures-core v0.3.32
+   Compiling log v0.4.29
+   Compiling jsonschema v0.46.10
+   Compiling rquickjs-core v0.14.0
+   Compiling tungstenite v0.24.0
+   Compiling futures-util v0.3.32
+   Compiling tokio v1.52.1
+   Compiling postcard v1.1.3
+   Compiling uniffi v0.31.0
+   Compiling ciborium v0.2.2
+   Compiling tracing-core v0.1.36
+   Compiling bytemuck v1.25.0
+   Compiling ipnet v2.12.0
+   Compiling image v0.25.10
+   Compiling regorus v0.10.1
+   Compiling tracing v0.1.44
+   Compiling coset v0.4.2
+   Compiling cua-driver-contract v0.46.0 (/Users/thomasmain/projects/footwork/output/cua-046-upgrade/source-8f5179002745/libs/cua-driver/rust/crates/cua-driver-contract)
+   Compiling tokio-tungstenite v0.24.0
+   Compiling rquickjs v0.14.0
+   Compiling cua-driver-core v0.46.0 (/Users/thomasmain/projects/footwork/output/cua-046-upgrade/source-8f5179002745/libs/cua-driver/rust/crates/cua-driver-core)
+    Finished `release` profile [optimized] target(s) in 1m 49s
+     Running unittests src/lib.rs (/Users/thomasmain/projects/footwork/output/cua-046-upgrade/target/release/deps/cua_driver_core-00c8989ff30ca4ee)
+
+running 3 tests
+test consent::cleanup_lifecycle_tests::drain_reports_task_panic_instead_of_completed_shutdown ... ok
+test consent::cleanup_lifecycle_tests::completed_history_is_reaped_without_hiding_failed_tasks ... ok
+test consent::cleanup_lifecycle_tests::drain_joins_captures_and_isolated_runtime_owners ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1231 filtered out; finished in 0.02s
+
