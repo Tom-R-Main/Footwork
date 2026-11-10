@@ -196,3 +196,16 @@ Refs: output/suno-20261110/lyrics-range-observation.json; output/suno-20261110/f
 Question: does the actual Lyrics editor expose an independent selectable-text boundary that distinguishes a structural terminal newline from ordinary text excluded by failed Select All?
 Test: one bounded read-only probe of the same freshly resolved field: supported parameterized AX attributes, AXSelectedText, AXStringForRange for0,1 and0,0, plus AXRangeForLine0 or AXRangeForIndex0 when supported. No clicks, key events or focus writes. Retain exact strings and ranges; unsupported attributes are missing evidence, not empty values.
 Refs: output/suno-20261110/lyrics-range-observation.json; python/jevdual/ax.py
+
+## SUNU21 · update · 2026-11-10 18:16
+Observed: the second bounded read-only probe confirms AXStringForRange0,1 returns LF, AXRangeForLine0 includes it, AXRangeForIndex0 is0,0, visible range0,1 and selected text empty. No input occurred. These APIs do not independently prove that excluding a terminal LF is valid whole-field replacement.
+Inferred: a whitespace exception would assume more than the evidence. Explicit selected-range editing can instead preserve the exact unselected prefix/suffix and verify the requested edit without changing full-field replacement semantics. This capability is delegated as a separate preregistered source package.
+Next: move the core creation/editor journey forward with an instrumental, using the observed empty-lyrics convention and ordinary Styles/title fields on frozen be8ea6b, isolated from concurrent source edits. The user's task does not require lyrics for the first song; original vocal draft remains available for the later range-edit test.
+Refs: output/suno-20261110/lyrics-parameterized-observation.json; output/suno-20261110/new-draft-dismiss-onboarding.txt
+
+## SUN17 · prediction · 2026-11-10 18:16
+Hypothesis: ordinary Styles and title controls accept guarded full-field foreground replacement, allowing creation of a private reference-grounded instrumental while rich-text range editing is repaired separately.
+Test: on an exact project-local snapshot of be8ea6b and unchanged focus1 overlay, collapse the observed Lyrics panel, enter a short instrumental style and unique title, verify actual field values and rendering plus Suno's zero-lyrics counter, then submit Create song once. Reconcile generated identities and ready state without uncertain submission retries.
+Predicts: intended style/title are present, lyrics remain visually empty, one submission produces identifiable new private instrumental candidates, and existing songs remain untouched.
+Against: guards refuse, content is missing/truncated or mismatched, lyrics are not empty, Create delivery is unknown without reconcilable new candidates, or account/plan prerequisite prevents generation.
+Refs: docs/experiments/suno-end-to-end-20261110.md; results/suno-20261110/reference-analysis.md
