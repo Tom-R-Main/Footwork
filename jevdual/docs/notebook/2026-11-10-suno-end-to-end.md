@@ -287,3 +287,17 @@ Test: frozen e6785a7 snapshot with unchanged SDK, return through the observed Cr
 Predicts: two complete distinct qualified hrefs are exposed, the selected second resource survives fresh rematching and opens its own exact song page.
 Against: ambiguity remains, href is missing/wrong, changes between observations, click refuses or the first/wrong resource opens.
 Refs: results/native-link-resources-20261110/report.md; output/suno-20261110/generated-link-identities.json
+
+## SUNU28 · update · 2026-11-10 18:43
+Resolves: SUN23 = held
+Observed: frozen e6785a7 exposes distinct qualified actual hrefs for both same-title generated links. Selecting the second by its fresh ID opened its exact observed song URL. The player href still pointed to the first song; main Play was refused ambiguous before input. A single observed Reload on the second song page loaded the second song into the player, confirmed by the player's distinct href. A passive availability check reports370seconds idle.
+Inferred: native link identity repair works on this actual duplicate pair. Page navigation and loaded-player resource are separate states and must both be bound before export. Main Play ambiguity is not resolved by link-only qualification.
+Next: test the independently frozen explicit foreground click on the unique player More actions for the actually loaded second resource.
+Refs: output/suno-20261110/href-return-create.txt; output/suno-20261110/href-open-candidate-b.txt; output/suno-20261110/candidate-b-play.txt; output/suno-20261110/candidate-b-reload.txt; results/native-link-resources-20261110/report.md
+
+## SUN24 · prediction · 2026-11-10 18:43
+Hypothesis: explicit guarded foreground click in e802740 opens the current song's unique player dropdown where the default background route refused before its input boundary.
+Test: on the frozen project snapshot and unchanged SDK, refresh page URL and player href for the second actual resource, then click More actions with click-delivery foreground once. Inspect the actual popup's export/editor controls. No automatic fallback or repeat; preserve the historical background receipt.
+Predicts: the menu opens for the intended loaded song, with fresh actionable controls after the foreground step.
+Against: identity or posture refuses, menu closes before observation, wrong resource/context opens or outcome is unknown. No download before choosing an approved project path through the already enabled ask-where dialog.
+Refs: results/foreground-native-click-20261110/report.md; output/suno-20261110/runtime-e802740/identity.json; output/suno-20261110/candidate-b-reload.txt
