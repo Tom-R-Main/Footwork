@@ -210,9 +210,13 @@ def selected_range(el: Any) -> tuple[int, int]:
     if raw is None:
         raise AXError("selection_unreadable", "the field's selected range is unavailable")
     ok, value = AXValueGetValue(raw, kAXValueCFRangeType, None)
-    if not ok or value.location < 0 or value.length < 0:
+    if isinstance(value, tuple) and len(value) == 2:
+        location, length = value
+    else:
+        location, length = getattr(value, "location", None), getattr(value, "length", None)
+    if not ok or type(location) is not int or type(length) is not int or location < 0 or length < 0:
         raise AXError("selection_unreadable", "the field's selected range cannot be qualified")
-    return int(value.location), int(value.length)
+    return location, length
 
 
 def can_set_value(el: Any) -> bool:

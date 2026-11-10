@@ -2188,6 +2188,52 @@ def test_explicit_foreground_web_type_partial_reply_uses_no_batched_tail_retry(w
     assert len(types) == 1 and types[0].get("delay_ms", 0) > 0
 
 
+@pytest.mark.parametrize("representation", ["tuple", "cfrange"])
+def test_foreground_web_replacement_decodes_real_range_representations(world, fw, monkeypatch, representation):
+    import sys
+
+    from jevdual import ax
+
+    decode = ax.selected_range
+    prior = "prior text"
+    _foreground_styles_fixture(world, monkeypatch, initial=prior)
+    monkeypatch.setattr(ax, "selected_range", decode)
+    value = (0, len(prior)) if representation == "tuple" else SimpleNamespace(location=0, length=len(prior))
+    monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+    monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+        AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+    ))
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0 and "confirmed" in _state(fw)["memory"][-1], (out, err)
+    assert len([value for name, value in world.tool_calls if name == "press_key"]) == 1
+    assert len([value for name, value in world.tool_calls if name == "type_text"]) == 1
+
+
+@pytest.mark.parametrize("value", [
+    (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+    SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+])
+def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+    import sys
+
+    from jevdual import ax
+
+    decode = ax.selected_range
+    _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+    monkeypatch.setattr(ax, "selected_range", decode)
+    monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+    monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+        AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+    ))
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0 and "selection_unreadable" in out + err
+    assert len([value for name, value in world.tool_calls if name == "press_key"]) == 1
+    assert not [value for name, value in world.tool_calls if name == "type_text"]
+    assert "unverifiable" in out + err  # selection was attempted; no retroactive no-input claim
+
+
 @pytest.mark.parametrize("command", ["start", "look"])
 @pytest.mark.parametrize("permission", ["not_granted", "unavailable"])
 def test_denied_accessibility_is_an_explicit_observation_failure(world, fw, monkeypatch, command, permission):
