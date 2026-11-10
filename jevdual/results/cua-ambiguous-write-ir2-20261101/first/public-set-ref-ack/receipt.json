@@ -1,0 +1,54 @@
+{
+  "argv": [
+    "/work/build-v2/bin/ir1-probe",
+    "public_set_ref"
+  ],
+  "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+  "returncode": 0,
+  "signal": null,
+  "watchdog_expired": false,
+  "elapsed_seconds": 0.017445625000050313,
+  "result": {
+    "backstop_extra_ms": 500,
+    "boundary": "public_set_ref",
+    "elapsed_ms": 3,
+    "error": null,
+    "ok": true,
+    "operation_budget_ms": 3000
+  },
+  "label": "public-set-ref-ack",
+  "boundary": "public_set_ref",
+  "fixture_mode": "ack",
+  "client_timeout_ms": null,
+  "attempts": 1,
+  "effects": 1,
+  "methods": [
+    "SetTextContents"
+  ],
+  "transitions": [
+    {
+      "before": "",
+      "after": "TOKEN"
+    }
+  ],
+  "final_value": "TOKEN",
+  "target_argv": [
+    "/workspace/footwork/bin/python",
+    "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+    "--address",
+    "unix:path=/tmp/dbus-AwQD39NTIc,guid=caafcebdd78f145ede9a283f6ae795a8",
+    "--journal",
+    "/results/first/public-set-ref-ack/target.jsonl",
+    "--ready",
+    "/results/first/public-set-ref-ack/ready.json",
+    "--mode",
+    "ack",
+    "--primary",
+    "SetTextContents",
+    "--invocation",
+    "public-set-ref-ack"
+  ],
+  "expected_control_effects": 1,
+  "control_passed": true,
+  "safety_one_effect": true
+}

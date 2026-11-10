@@ -1,0 +1,1 @@
+{"backstop_extra_ms":500,"boundary":"public_set_ref","elapsed_ms":4,"error":"text_write_uncertain: EditableText.SetTextContents acknowledgement unavailable; delivery unknown: org.freedesktop.DBus.Error.Failed: IR1 effect already applied","ok":false,"operation_budget_ms":3000}

@@ -1,0 +1,23 @@
+{
+  "status": "PREPARED_NOT_BUILT_OR_TESTED",
+  "archive_sha256": "5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401",
+  "files": [
+    {
+      "path": "libs/cua-driver/rust/crates/platform-linux/src/atspi/native.rs",
+      "before_sha256": "e15a9da1a1b7b696a79ded21f9df7c61545b531a481bf87e24eefc43ad007eea",
+      "candidate_sha256": "230c49e03bb2ad507c45a5d9ce15489cd8f70cb857a3691be253b099e47ae037"
+    },
+    {
+      "path": "libs/cua-driver/rust/crates/platform-linux/src/atspi/mod.rs",
+      "before_sha256": "b401adfe675e4ee2c040c462a5d11e0601642c8cbff820d59904966e98851cdc",
+      "candidate_sha256": "eb2dec1f9161d880878b26a6a1b577957bc9ea626effda884c57a1715fddd45b"
+    },
+    {
+      "path": "libs/cua-driver/rust/crates/platform-linux/src/tools/impl_.rs",
+      "before_sha256": "71cd888b0edccc52b7f4a92fa268e3b6f4776bc66c49cdf5060afdc13a824bf8",
+      "candidate_sha256": "ab8f59bbd4c8269895848fb5bd14109fe342192180dad015e5e81b1ab15d9a82"
+    }
+  ],
+  "patch_sha256": "c1367501dc3f3eeca7f2f4d8d0afd3dda6c3c64af9542e4690ee3fb6d1f2d6a3",
+  "cargo_lock_and_manifests_unchanged": true
+}

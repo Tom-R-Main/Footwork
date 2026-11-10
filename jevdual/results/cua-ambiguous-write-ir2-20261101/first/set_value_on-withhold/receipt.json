@@ -1,0 +1,55 @@
+{
+  "argv": [
+    "/work/build-v2/bin/ir1-probe",
+    "set_value_on"
+  ],
+  "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+  "returncode": 0,
+  "signal": null,
+  "watchdog_expired": false,
+  "elapsed_seconds": 0.12405999999998585,
+  "result": {
+    "boundary": "set_value_on",
+    "client_timeout_ms": 100,
+    "elapsed_ms": 103,
+    "error": "text_write_uncertain: EditableText.SetTextContents acknowledgement unavailable; delivery unknown: I/O error: timed out: timed out",
+    "ok": false,
+    "ordinary_zbus_timeout_ms": 25000,
+    "result": null
+  },
+  "label": "set_value_on-withhold",
+  "boundary": "set_value_on",
+  "fixture_mode": "withhold",
+  "client_timeout_ms": 100,
+  "attempts": 1,
+  "effects": 1,
+  "methods": [
+    "SetTextContents"
+  ],
+  "transitions": [
+    {
+      "before": "",
+      "after": "TOKEN"
+    }
+  ],
+  "final_value": "TOKEN",
+  "target_argv": [
+    "/workspace/footwork/bin/python",
+    "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+    "--address",
+    "unix:path=/tmp/dbus-x5cw8qzZyo,guid=aa2a22547de2a596629c0dbb6ae795a7",
+    "--journal",
+    "/results/first/set_value_on-withhold/target.jsonl",
+    "--ready",
+    "/results/first/set_value_on-withhold/ready.json",
+    "--mode",
+    "withhold",
+    "--primary",
+    "SetTextContents",
+    "--invocation",
+    "set_value_on-withhold"
+  ],
+  "expected_control_effects": null,
+  "control_passed": null,
+  "safety_one_effect": true
+}

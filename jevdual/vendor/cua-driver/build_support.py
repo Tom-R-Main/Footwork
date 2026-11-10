@@ -10,9 +10,9 @@ import subprocess
 import tarfile
 from pathlib import Path, PurePosixPath
 
-VERSION = "0.38.0+footwork.d5373879.cleanup2"
-SOURCE_COMMIT = "d5373879e9e0baf5a63999ac4d26902340c0ce20"
-SOURCE_SHA256 = "5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401"
+VERSION = "0.46.0+footwork.5486b624.cleanup2"
+SOURCE_COMMIT = "5486b6246e4c807c0d793216e52df283671d9362"
+SOURCE_SHA256 = "233149903c53bb1ccdcf84c3693cabc3bcbf8bba4ebc25f3b5a7c60e63540ea4"
 TOOLCHAIN = "1.97.1"
 
 
@@ -117,12 +117,12 @@ def build_native(root: Path) -> tuple[str, dict[str, str]]:
         )
     archive = root / "native-source.tar.gz"
     verify(archive, SOURCE_SHA256)
-    cache = root / ".native-cache"
+    cache = Path(os.environ.get("FOOTWORK_CUA_BUILD_CACHE", root / ".native-cache"))
     if cache.is_symlink():
         raise RuntimeError("Native build cache must not be a symlink")
     source = cache / f"source-{SOURCE_SHA256[:12]}"
     extract_source(archive, source)
-    target = cache / "target"
+    target = Path(os.environ.get("CARGO_TARGET_DIR", cache / "target")).resolve()
     env = os.environ.copy()
     env["CUA_DRIVER_GIT_SHA"] = SOURCE_COMMIT
     env["CARGO_TARGET_DIR"] = str(target.resolve())

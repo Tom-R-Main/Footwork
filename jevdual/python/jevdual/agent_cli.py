@@ -49,6 +49,7 @@ class RoutingError(ValueError):
 
 def catalog() -> dict:
     from .browser_cli import discovery
+    from .install_profile import installation
     from .lightpanda_cli import discovery as lightpanda_discovery
     from .tool_catalog import catalog as auxiliary
 
@@ -63,6 +64,7 @@ def catalog() -> dict:
     return {
         "schema_version": "1",
         "entrypoint": "footwork",
+        "installation": installation(),
         "global_options": {
             "--json": "Prefix before the command; preserves exit status and does not certify effects"
         },

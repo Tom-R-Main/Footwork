@@ -1,0 +1,4 @@
+{"invocation": "public-set-ref-withhold", "monotonic_ns": 620702701490, "kind": "target_ready", "pid": 65, "unique_name": ":1.0"}
+{"invocation": "public-set-ref-withhold", "monotonic_ns": 620725827865, "kind": "method_received", "method": "SetTextContents", "arguments": ["TOKEN"], "serial": 12}
+{"invocation": "public-set-ref-withhold", "monotonic_ns": 620726014324, "kind": "effect_applied", "method": "SetTextContents", "before": "", "after": "TOKEN"}
+{"invocation": "public-set-ref-withhold", "monotonic_ns": 620726103240, "kind": "reply_behavior", "method": "SetTextContents", "behavior": "withhold", "value": "TOKEN"}

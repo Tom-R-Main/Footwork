@@ -1,4 +1,4 @@
-"""Build one portable installer bundle for this host's Footwork and CUA wheels."""
+"""Build a light or host-specific full Footwork installer bundle."""
 from __future__ import annotations
 
 import argparse
@@ -78,6 +78,7 @@ def main():
     parser.add_argument("--venv", type=Path, required=True)
     parser.add_argument("--python", default=sys.executable, help="existing interpreter path, name, or version")
     parser.add_argument("--offline", action="store_true")
+    parser.add_argument("--profile", choices=("light", "full"), help="must match the bundle's declared profile")
     parser.add_argument("--core-only", action="store_true", help="omit optional simulator dependencies")
     args = parser.parse_args()
     root = Path(__file__).resolve().parent
@@ -88,7 +89,12 @@ def main():
         path = root / name
         if path.is_symlink() or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
             parser.error("bundle checksum mismatch: " + name)
-    for role in ("product", "cua"):
+    profile = manifest.get("profile", "full")  # schema-1 bundles were full installations
+    if profile not in ("light", "full") or (args.profile and args.profile != profile):
+        parser.error("requested profile does not match this bundle; obtain the matching light or full bundle")
+    if profile == "light" and "cua" in manifest:
+        parser.error("light bundle cannot carry a CUA role")
+    for role in (("product", "cua") if profile == "full" else ("product",)):
         name = manifest.get(role)
         if not isinstance(name, str) or Path(name).name != name or name not in manifest["files"]:
             parser.error("invalid bundle wheel role: " + role)
@@ -98,7 +104,7 @@ def main():
     if venv.exists() or venv.is_symlink():
         parser.error("choose a new environment; existing environments are never overwritten")
     selected_python, host = interpreter(args.python, parser)
-    if not target_matches(manifest["cua"], host):
+    if profile == "full" and not target_matches(manifest["cua"], host):
         parser.error("CUA wheel is incompatible with this Python host; obtain a bundle built for its OS and architecture")
     uv = shutil.which("uv")
     bundled_pip = False
@@ -120,8 +126,11 @@ def main():
         subprocess.run([uv, "venv", "--no-python-downloads", "--python", selected_python, str(venv)], check=True)
     python = venv / ("Scripts/python.exe" if __import__("os").name == "nt" else "bin/python")
     product = str(root / manifest["product"])
-    if not args.core_only:
-        product += "[tools]"
+    extras = ["desktop", "agent"] if profile == "full" else []
+    if profile == "full" and not args.core_only:
+        extras.append("tools")
+    if extras:
+        product += "[" + ",".join(extras) + "]"
     if uv:
         command = [uv, "pip", "install", "--python", str(python)]
     elif bundled_pip:
@@ -129,13 +138,19 @@ def main():
     else:
         command = [selected_python, "-I", "-m", "pip", "--isolated", "--python", str(python),
                    "install", "--disable-pip-version-check"]
-    command += ["--only-binary", ":all:", "--find-links", str(root), product, str(root / manifest["cua"])]
+    command += ["--only-binary", ":all:", "--find-links", str(root), product]
+    if profile == "full":
+        command.append(str(root / manifest["cua"]))
     if args.offline:
         command.append("--offline" if uv else "--no-index")
-    subprocess.run(command, check=True)
+    try:
+        subprocess.run(command, check=True)
+    except subprocess.CalledProcessError:
+        parser.exit(1, "Binary dependency installation failed for profile " + profile
+                    + "; provide its compatible wheels (or choose light to omit native/agent dependencies). No compilation or fallback attempted.\\n")
     executable = venv / ("Scripts/footwork.exe" if __import__("os").name == "nt" else "bin/footwork")
     subprocess.run([str(executable), "tools"], check=True)
-    print(json.dumps({"installed": True, "executable": str(executable), "environment": str(venv)}))
+    print(json.dumps({"installed": True, "profile": profile, "executable": str(executable), "environment": str(venv)}))
 
 
 if __name__ == "__main__":
@@ -143,38 +158,46 @@ if __name__ == "__main__":
 '''
 
 
-def build_bundle(output: Path, cua_wheel: Path | None = None) -> dict:
+def build_bundle(output: Path, cua_wheel: Path | None = None, *, profile: str = "full") -> dict:
     root = Path(__file__).resolve().parents[1]
+    if profile not in ("light", "full"):
+        raise ValueError("profile must be light or full")
+    if profile == "light" and cua_wheel is not None:
+        raise ValueError("light profile does not accept a CUA wheel")
     output.mkdir(parents=True, exist_ok=False)
-    if cua_wheel is None:
+    if profile == "full" and cua_wheel is None:
         subprocess.run(["uv", "build", str(root / "vendor/cua-driver"), "--wheel", "--out-dir", str(output)],
                        check=True)
         candidates = list(output.glob("cua_driver-*.whl"))
         if len(candidates) != 1:
             raise ValueError("exactly one built CUA wheel required")
         cua_wheel = candidates[0]
-    else:
+    elif cua_wheel is not None:
         if cua_wheel.is_symlink() or not cua_wheel.is_file():
             raise ValueError("CUA wheel must be a regular file")
         cua_wheel = cua_wheel.resolve()
         copied = output / cua_wheel.name
         shutil.copyfile(cua_wheel, copied)
         cua_wheel = copied
-    with zipfile.ZipFile(cua_wheel) as archive:
-        metadata = [n for n in archive.namelist() if n.endswith('.dist-info/METADATA')]
-        if len(metadata) != 1:
-            raise ValueError("invalid CUA wheel metadata")
-        parsed = BytesParser().parsebytes(archive.read(metadata[0]))
-    import tomllib
-    config = tomllib.loads((root / 'pyproject.toml').read_text())
-    pin = next(d.split('==', 1)[1] for d in config['project']['dependencies'] if d.startswith('cua-driver=='))
-    if parsed['Name'] != 'cua-driver' or parsed['Version'] != pin:
-        raise ValueError("CUA wheel does not match the exact source pin")
+    if cua_wheel is not None:
+        with zipfile.ZipFile(cua_wheel) as archive:
+            metadata = [n for n in archive.namelist() if n.endswith('.dist-info/METADATA')]
+            if len(metadata) != 1:
+                raise ValueError("invalid CUA wheel metadata")
+            parsed = BytesParser().parsebytes(archive.read(metadata[0]))
+        import tomllib
+        config = tomllib.loads((root / 'pyproject.toml').read_text())
+        desktop = config['project']['optional-dependencies']['desktop']
+        pin = next(d.split('==', 1)[1] for d in desktop if d.startswith('cua-driver=='))
+        if parsed['Name'] != 'cua-driver' or parsed['Version'] != pin:
+            raise ValueError("CUA wheel does not match the exact source pin")
     product = build(root, output)
     (output / 'install.py').write_text(INSTALLER)
     files = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
              for p in sorted(output.iterdir()) if p.is_file()}
-    manifest = {'schema_version': 1, 'product': product.name, 'cua': cua_wheel.name, 'files': files}
+    manifest = {'schema_version': 2, 'profile': profile, 'product': product.name, 'files': files}
+    if cua_wheel is not None:
+        manifest['cua'] = cua_wheel.name
     (output / 'MANIFEST.json').write_text(json.dumps(manifest, indent=2, sort_keys=True) + '\n')
     return manifest
 
@@ -183,8 +206,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--cua-wheel', type=Path)
+    parser.add_argument('--profile', choices=('light', 'full'), default='full')
     args = parser.parse_args()
-    result = build_bundle(args.output.resolve(), args.cua_wheel)
+    result = build_bundle(args.output.resolve(), args.cua_wheel, profile=args.profile)
     print(json.dumps({'bundle': str(args.output.resolve()), **result}))
 
 

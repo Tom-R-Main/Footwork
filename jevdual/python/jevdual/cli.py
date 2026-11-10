@@ -40,6 +40,16 @@ def _split(s: str, sep: str) -> tuple[str, ...]:
     return tuple(x.strip() for x in s.split(sep) if x.strip())
 
 
+def _native_menu_cap(value: str) -> int:
+    try:
+        count = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("native menu cap must be an integer from 1 to 1000") from None
+    if not 1 <= count <= 1000:
+        raise argparse.ArgumentTypeError("native menu cap must be an integer from 1 to 1000")
+    return count
+
+
 def _out_dir(arg: str | None) -> Path:
     return Path(arg) if arg else Path("runs") / time.strftime("%Y%m%d-%H%M%S")
 
@@ -337,6 +347,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     st.add_argument("--url")
     st.add_argument("--window")
+    st.add_argument(
+        "--native-menu-cap", type=_native_menu_cap, default=160,
+        help="native candidate budget, persisted for this session (1-1000; default: 160)",
+    )
     st.add_argument("--require", default="")
     st.add_argument("--authorize", default="")
     st.add_argument("--answer", action="store_true")
@@ -361,8 +375,31 @@ def build_parser() -> argparse.ArgumentParser:
         help="execution posture: background_only never takes the foreground (default); foreground_permitted "
         "takes it only after 3 s without your input; exclusive_desktop assumes nobody is using this desktop",
     )
+    st.add_argument(
+        "--pointer-motion",
+        choices=("off", "filmed"),
+        default="off",
+        help="filmed (exclusive_desktop, native): the real pointer travels to each target like a person's",
+    )
+    st.add_argument("--keep-out", help="filmed: X,Y,W,H in viewport CSS px that no pointer path may enter")
+    st.add_argument("--rest", help="filmed: X,Y in viewport CSS px where footwork park rests the pointer")
+    st.add_argument("--type-delay-ms", type=int, default=65, help="filmed: milliseconds between typed characters")
     common(st)
     st.set_defaults(fn=S.cmd_start)
+    pk = sub.add_parser("park", help="filmed take: move the pointer to the rest position, or to X Y (viewport CSS px)")
+    pk.add_argument("x", type=float, nargs="?")
+    pk.add_argument("y", type=float, nargs="?")
+    pk.add_argument("--place", action="store_true", help="setup only, off camera: one move, no path admission")
+    common(pk)
+    pk.set_defaults(fn=S.cmd_park)
+    pt = sub.add_parser("point", help="filmed take: move the pointer over the one element named LABEL, delivering nothing")
+    pt.add_argument("label", help="the accessible name, or its unique start (Scene 1:)")
+    common(pt)
+    pt.set_defaults(fn=S.cmd_point)
+    ko = sub.add_parser("keep-out", help="filmed take: set the keep-out (X,Y,W,H viewport CSS px) or turn it off")
+    ko.add_argument("rect", help="X,Y,W,H in viewport CSS px, or off")
+    common(ko)
+    ko.set_defaults(fn=S.cmd_keep_out)
     lk = sub.add_parser("look", help="observe; prints the receipt for the last action")
     lk.add_argument("--menu-bar", action="store_true", help="native: also list the app's menu items")
     common(lk)

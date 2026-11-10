@@ -1,0 +1,35 @@
+# Supported lightweight installation
+
+## LWI1 · prediction · 2026-11-01 01:27
+Question: does the supported wheel install avoid native and agent dependencies when the light runtime is selected?
+Hypothesis: optional runtime imports already support CUA-free CDP and Lightpanda, but package metadata and builder/consumer scripts still force the full dependency closure. Explicit desktop/agent extras and light/full artifact profiles can make the existing boundary installable without changing delivery authority.
+Test: inspect and test the built wheel Requires-Dist and profile manifests; resolve/install its light profile offline into a fresh project-owned environment, invoke installed catalog/schema/doctor and a local read-only fixture where the pinned engine is available, and require absent native requests to refuse before host effects. Preserve full-profile metadata/artifact and existing package checks as positive controls; test unsupported/missing wheel failures without compilation or fallback.
+Predicts: the unchanged wheel or installer selects CUA/browser-use for a light install; the corrected profile installs neither and the installed public light CLI works with explicit unavailable-effector refusals. The full profile still names and carries its required dependencies.
+Against: baseline already provides a supported light dependency closure; the new wheel omits a real light runtime dependency, discovery imports an excluded package, a consumer compiles/falls back silently, full installs lose required artifacts, or the available offline artifacts cannot establish a clean resolver-based installation.
+Refs: docs/plans/light-profile-20261030.md L2; docs/notebook/2026-10-31-lightpanda-readonly.md; scripts/build_capability_wheel.py; scripts/build_agent_bundle.py; scripts/capability_clean_install.py; source baseline7852bb7
+
+## LWIU1 · update · 2026-11-01 01:37
+Observed: new wheel/profile tests fail four baseline assertions before implementation: base metadata selects CUA/browser-use and bundle APIs lack profile selection. After the metadata and installer split, the packaging/onboarding/release/optional-effector group passes170 with6 skips, owned runtime/scripts lint passes, and uv lock --check --offline --no-build with a project-owned cache accepts all300 unchanged resolved package versions. The first unchanged-package-resolution candidate9d13de45 also passed the parent's actual fresh-cache binary-only light install:35 packages, no CUA/browser-use/native-platform packages, installed discovery/doctor and typed native absence.
+Inferred: the runtime optionality gap was package metadata and consumer selection, not a missing lightweight effector. OS markers must be combined with extra markers, and full research commands must explicitly retain their extras.
+Changes: base light dependencies; desktop/agent extras; same portable wheel with valid markers; schema2 light/full bundles; binary-only profile-aware fresh installer and installed-profile diagnostics; full/source CI recipes retained and light macOS/Linux artifact jobs added. No action authority, provider gate, engine pin or mutation contract changed.
+Next: parent freezes combined source, independently builds and installs its final wheel, exercises the pinned engine on a loopback fixture, and records the final artifact identity. Full installed native runtime, hosted jobs and2CPU/8GB performance remain separate evidence.
+Refs: output/light-install-20261101/red.txt; output/light-install-20261101/packaging-final.txt; output/light-install-20261101/ruff.txt; root output/light-install-20261101/parent-light-clean/receipt.json; prediction7b326f2/ecb01de before tests
+
+## LWIS1 · summary · 2026-11-01 01:37
+Established: profile metadata, wheel marker semantics, light-without-CUA bundle production, full profile dependency selection, existing no-compiler consumer paths, optional-runtime refusals and frozen packet behavior pass the selected offline checks. Parent observed a real clean resolver install of the first candidate; human-writing hygiene changed no bytes across9 maintained prose files.
+Uncertain: the exact final combined artifact is not yet qualified in this worker handoff; hosted macOS/Linux jobs are configured but unexecuted here. Current source .venv has the older native CUA build, so its unit checks do not establish the exact cleanup2 installed native runtime. No small-host resource savings are claimed.
+Decision: hand the bounded install-profile change to parent for final combined-artifact qualification and normal review; keep LWI1 open until that evidence is retained. No commits, push, PR or merge performed by this worker.
+Refs: results/light-install-20261101/report.md; results/light-install-20261101/verification.json
+
+## LWIU2 · update · 2026-11-01 01:46
+Resolves: LWI1 = held
+Observed: committed source81d6985 produced the final wheel0c777e645947f308e93b01e939eaf964dae5a6e77c81c7d4ef269e7f51d41a4a; the source inventory/RECORD verifier passes217 entries. A genuinely fresh-cache binary resolver install passed consistency/origin/doctor gates with35 packages and no CUA, browser-use or native platform distributions. Installed tools/schema/doctor report light, native apps requests refuse effector_unavailable, and all212 product files equal the wheel. The installed CLI read the local fixture through the pinned Lightpanda executable, withheld private fields, sent no input/POST, retained unasserted completion and reported bounded cleanup independently.
+Observed: generated light installer passed offline using the previously resolved project cache; mismatched profile refused before environment creation. Both profile manifests validate and share the same product-wheel bytes. Full missing-binary negative control stopped resolution without compilation/fallback; a full fresh dependency installation was not performed.
+Next: preserve the installed evidence with the final integration report; follow provider checks only when PR/publication is separately requested.
+Refs: results/light-install-20261101/final-artifact-verification.json; results/light-install-20261101/final-clean-receipt.json; results/light-install-20261101/final-installed-public.json
+
+## LWIS2 · summary · 2026-11-01 01:46
+Established: supported base light metadata, explicit desktop/agent extras, profile-aware binary-only bundles, actual clean resolver installation and installed public CLI/read-only engine behavior on macOS arm64 Python3.12.6. All300 resolved lock versions/artifact hashes remain unchanged.
+Uncertain: hosted/new Linux profile checks, full fresh native installation and native delivery, small-host resource use and performance gains remain unverified; no broader Lightpanda or Chromium action/completion contract is added.
+Decision: deliver the locally committed and checked implementation with reproducible artifact/evidence; retain the full-profile and platform limits explicitly.
+Refs: results/duplicate-controls-light-install-20261101/report.md; source81d6985791298d151c9610bc10b1b00816137b07; wheel0c777e645947f308e93b01e939eaf964dae5a6e77c81c7d4ef269e7f51d41a4a

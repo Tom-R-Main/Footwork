@@ -1,0 +1,21 @@
+{
+  "source_commit": "81d6985791298d151c9610bc10b1b00816137b07",
+  "wheel_sha256": "0c777e645947f308e93b01e939eaf964dae5a6e77c81c7d4ef269e7f51d41a4a",
+  "evidence_files": {
+    "final-artifact-identity.json": "1ce18b6c9f8275747df78a643248587fbd263c357cfec164aa51a431f64dbcc4",
+    "final-clean-receipt.json": "b7ba5fc307c088a98fd9351a00e76bdf277c33c455c4c3488fe5bb3e908db312",
+    "final-installed-public.json": "dfc8c1268b09adbe17661b27fc6a1b35a0a1898d0ac464cac844d1aa26a5aa63",
+    "final-installed-closure.json": "c6ebf556204a7ed7a4c22e6cc0771bde6b5af958040d3574da095bf10d6061c9",
+    "final-bundle-light-install.json": "a4b47a0f4cedcf7028adfb2d1cc0a0080126ee89dc32d3c78ba7a2d185ec3b55",
+    "final-bundle-mismatch.json": "85d9278be9fe9ed201d4d26d67e9fbdd5ec347d6bebfbedbee8996ca144c23ac",
+    "final-bundle-full-missing.json": "37e2df47169461cdc1fa096693daaa07dbf8b8da4e0caeb19b6d441a15dcdc1f",
+    "verify_installed_light.py": "3e15e932ecdc7899b1f9c2908ee004d948e7f5ad3774d6fcbd996b410e6d0e52"
+  },
+  "runtime_surface": "macOS arm64 Python3.12.6 installed CLI; loopback pinned Lightpanda read",
+  "limits": [
+    "Hosted CI/Linux new metadata profile not executed in this chat",
+    "Full clean dependency install not run; full bundle roles/pin and expected missing-binary refusal tested",
+    "No live desktop, provider, heldout or small-host benchmark",
+    "Bounded owned cleanup result is not global process-tree absence"
+  ]
+}

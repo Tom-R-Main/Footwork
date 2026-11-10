@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3.12",
+    "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-bundle/install.py",
+    "--profile",
+    "light",
+    "--offline",
+    "--venv",
+    "/Users/thomasmain/projects/footwork/output/light-install-20261101/bundle-light-installed",
+    "--python",
+    "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3.12"
+  ],
+  "exit": 0,
+  "offline": true,
+  "cache": "previously resolved project-owned cache; not a fresh-cache qualification",
+  "result": {
+    "installed": true,
+    "profile": "light",
+    "executable": "/Users/thomasmain/projects/footwork/output/light-install-20261101/bundle-light-installed/bin/footwork",
+    "environment": "/Users/thomasmain/projects/footwork/output/light-install-20261101/bundle-light-installed"
+  }
+}

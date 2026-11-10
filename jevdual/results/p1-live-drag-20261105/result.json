@@ -1,0 +1,161 @@
+{
+  "ready": {
+    "square_centre_root": [
+      270.0,
+      338.0
+    ],
+    "slider_0_root": [
+      376,
+      537
+    ],
+    "slider_75_root": [
+      652,
+      537
+    ],
+    "window_root": [
+      200,
+      188,
+      720,
+      420
+    ]
+  },
+  "runs": [
+    {
+      "name": "square",
+      "plan": {
+        "start": [
+          270.0,
+          338.0
+        ],
+        "end": [
+          670.0,
+          398.0
+        ],
+        "samples": 87,
+        "duration_s": 0.7138698089211634,
+        "max_step_pt": 7.542149202075314
+      },
+      "result": {
+        "outcome": "dropped",
+        "posted_drags": 86,
+        "released_at": [
+          670.0,
+          398.0
+        ],
+        "escape_sent": false,
+        "causes": [],
+        "max_gap_s": 0.008312208927236497,
+        "lateness_s": null,
+        "lateness_p95_ms": 0.003893510438501835
+      },
+      "pointer_after": [
+        670.0,
+        398.0
+      ],
+      "button_down_after": false,
+      "app": {
+        "kinds": [
+          "press",
+          "release"
+        ],
+        "motion_events": 80,
+        "max_motion_gap_ms": 22.26549992337823,
+        "max_off_path_pt": 1.324655811337547,
+        "first": {
+          "kind": "press",
+          "widget": "canvas",
+          "x_root": 270,
+          "y_root": 338,
+          "tk_ms": 1793915517338,
+          "mono": 896070.669781541,
+          "slider": 0
+        },
+        "last": {
+          "kind": "release",
+          "widget": "canvas",
+          "x_root": 670,
+          "y_root": 398,
+          "tk_ms": 1793915518323,
+          "mono": 896071.653811958,
+          "slider": 0
+        },
+        "square_centre_after": [
+          670.0,
+          398.0
+        ],
+        "slider_after": 0
+      },
+      "idle_s": 3.059863291
+    },
+    {
+      "name": "slider",
+      "plan": {
+        "start": [
+          376,
+          537
+        ],
+        "end": [
+          652,
+          537
+        ],
+        "samples": 79,
+        "duration_s": 0.6459890170502637,
+        "max_step_pt": 5.674159627072203
+      },
+      "result": {
+        "outcome": "dropped",
+        "posted_drags": 78,
+        "released_at": [
+          652,
+          537
+        ],
+        "escape_sent": false,
+        "causes": [],
+        "max_gap_s": 0.008286625030450523,
+        "lateness_s": null,
+        "lateness_p95_ms": 0.004587695002555847
+      },
+      "pointer_after": [
+        652.0,
+        537.0
+      ],
+      "button_down_after": false,
+      "app": {
+        "kinds": [
+          "press",
+          "release",
+          "press",
+          "release"
+        ],
+        "motion_events": 152,
+        "max_motion_gap_ms": 3785.016917041503,
+        "max_off_path_pt": 226.35370551417972,
+        "first": {
+          "kind": "press",
+          "widget": "canvas",
+          "x_root": 270,
+          "y_root": 338,
+          "tk_ms": 1793915517338,
+          "mono": 896070.669781541,
+          "slider": 0
+        },
+        "last": {
+          "kind": "release",
+          "widget": "slider",
+          "x_root": 652,
+          "y_root": 537,
+          "tk_ms": 1793915522711,
+          "mono": 896076.0415775,
+          "slider": 75
+        },
+        "square_centre_after": [
+          670.0,
+          398.0
+        ],
+        "slider_after": 75
+      },
+      "idle_s": 3.061755666
+    }
+  ],
+  "t": "2026-11-05T16:52:03"
+}

@@ -1,0 +1,546 @@
+{
+ "dir": "/Users/thomasmain/projects/footwork/jevdual/results/demogeek-take-20261105-8/session",
+ "app": "Google Chrome",
+ "pid": 70447,
+ "window_id": 39614,
+ "task": "Make a Relay demo in DemoGeek",
+ "requirements": [],
+ "authorized": [
+  "Send"
+ ],
+ "answer_expected": false,
+ "step": 8,
+ "status": "open",
+ "memory": [
+  "step 1: type(Message) text='Show how a failed webhook gets replayed in relay.dev' -> confirmed",
+  "step 2: key(Return) -> confirmed",
+  "step 3: click(45 sec) -> confirmed",
+  "step 4: click(Record it) -> confirmed",
+  "step 5: type(Message) text='Hold the replay scene a bit longer' -> confirmed",
+  "step 6: key(Return) -> confirmed",
+  "step 7: click(Replay it, 12 seconds. Click to jump.) -> suspected_noop",
+  "step 8: click(See proof) -> confirmed"
+ ],
+ "last_url": "app://Google Chrome",
+ "last_title": "DemoGeek",
+ "last_page_text": "Relay webhook replay\nShow how a failed webhook gets replayed in relay.dev\nRelay's Deliveries page has what we need: a failed event, its payload, and a replay button.\nHow long should it be?\n45 sec\nHere's the plan: four scenes, about 44 seconds. Each scene's narration is under its picture.\nThe replay scene clicks \u201cReplay event\u201d once in your Relay sandbox. On a real run that sends one webhook to your test endpoint, and I won't repeat it without asking. Here, everything is simulated.\nRecorded four scenes\nYour cut is ready: 0:44.\nThe replay worked. Relay showed 200 OK for it.\nAction\nClicked \u201cReplay event\u201d once on\nevt_8f2a\n, in the Relay sandbox\nResult\nAttempt 2 returned 200 OK in 142 ms\nFootage\nA real run records the screen and adds cursor, zoom and captions afterwards.\nThis prototype simulates the recording. Pause anywhere and tell me what to change, like \u201cmake this longer\u201d. I'll apply it to the moment you're on.\nat 0:00 \u00b7 A delivery fails\nHold the replay scene a bit longer\nDone. \u201cReplay it\u201d is now 12s instead of 9s. The cut is 0:47.\nOnly the timing changed, so nothing was re-recorded.\nAbout\n0:34 \u00b7 Delivered\nBrief\nRecord\nThis time the receiver returned 200, and the event is delivered.\n0:34 / 0:47\nWhat should change?",
+ "last_candidates": [
+  {
+   "id": 10,
+   "label": "Details",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 13,
+   "label": "Hide proof",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 15,
+   "label": "Action",
+   "role": "list",
+   "operations": [
+    "scroll"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 29,
+   "label": "Undo",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 32,
+   "label": "Attach files",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 33,
+   "label": "Message",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": "textarea",
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 35,
+   "label": "Storyboard",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 37,
+   "label": "Cut",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 38,
+   "label": "Export",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 40,
+   "label": "Play",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 42,
+   "label": "A delivery fails, 9 seconds. Click to jump.",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 43,
+   "label": "Inspect the payload, 12 seconds. Click to jump.",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 44,
+   "label": "Replay it, 12 seconds. Click to jump.",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 45,
+   "label": "Delivered, 14 seconds. Click to jump.",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  }
+ ],
+ "last_native_ambiguous": [],
+ "last_snapshot": "s00000003",
+ "pending": null,
+ "mode": "native",
+ "posture": "exclusive_desktop",
+ "browser_tab": "",
+ "secret_names": [],
+ "visual_generation": "893181b354004abaaf6c533662e63816",
+ "last_visual_check": null,
+ "authority": "",
+ "session_id": "",
+ "native_binding": {},
+ "native_scope": {},
+ "finder_scope": {},
+ "ticket_scope": {},
+ "filmed": {
+  "window": [
+   36.0,
+   40.0,
+   1440.0,
+   932.0
+  ],
+  "content": [
+   36.0,
+   72.0,
+   1440.0,
+   900.0
+  ],
+  "keep_out": [
+   456.0,
+   217.0,
+   980.0,
+   558.0
+  ],
+  "rest": [
+   396.0,
+   532.0
+  ],
+  "margin_pt": 4.0,
+  "arcs": [
+   0.18,
+   0.1,
+   0.05,
+   0.0
+  ],
+  "timing": "DELIBERATE",
+  "dwell_s": 0.18,
+  "type_delay_ms": 65,
+  "continuity_pt": 2.0,
+  "take_ended": null,
+  "last_pointer": [
+   396.0,
+   532.0
+  ],
+  "gestures": [
+   {
+    "kind": "place",
+    "label": "setup",
+    "from": [
+     910.2265625,
+     441.07421875
+    ],
+    "to": [
+     396.0,
+     532.0
+    ],
+    "samples": 1,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Message",
+    "from": [
+     396.0,
+     532.0
+    ],
+    "to": [
+     756.0,
+     542.0
+    ],
+    "samples": 85,
+    "duration_s": 0.8800625935811617,
+    "posted": 84,
+    "max_gap_ms": 11.9,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "45 sec",
+    "from": [
+     756.0,
+     542.0
+    ],
+    "to": [
+     166.0,
+     322.5
+    ],
+    "samples": 97,
+    "duration_s": 0.9720518151704803,
+    "posted": 96,
+    "max_gap_ms": 11.4,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Scene 1: A delivery fails, 9 seconds",
+    "from": [
+     166.0,
+     322.5
+    ],
+    "to": [
+     720.0,
+     372.5
+    ],
+    "samples": 94,
+    "duration_s": 0.9514687164089811,
+    "posted": 93,
+    "max_gap_ms": 13.7,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Scene 2: Inspect the payload, 12 seconds",
+    "from": [
+     720.0,
+     372.5
+    ],
+    "to": [
+     1172.0,
+     372.5
+    ],
+    "samples": 90,
+    "duration_s": 0.9171826315104145,
+    "posted": 89,
+    "max_gap_ms": 11.7,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Scene 3: Replay it, 9 seconds",
+    "from": [
+     1172.0,
+     372.5
+    ],
+    "to": [
+     720.0,
+     699.5
+    ],
+    "samples": 94,
+    "duration_s": 0.951954616627093,
+    "posted": 93,
+    "max_gap_ms": 11.6,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Scene 4: Delivered, 14 seconds",
+    "from": [
+     720.0,
+     699.5
+    ],
+    "to": [
+     1172.0,
+     699.5
+    ],
+    "samples": 90,
+    "duration_s": 0.9171826315104145,
+    "posted": 89,
+    "max_gap_ms": 11.6,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Record it",
+    "from": [
+     1172.0,
+     699.5
+    ],
+    "to": [
+     101.0,
+     536.5
+    ],
+    "samples": 109,
+    "duration_s": 1.0633492826066626,
+    "posted": 108,
+    "max_gap_ms": 11.1,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "park",
+    "label": "rest",
+    "from": [
+     101.0,
+     536.5
+    ],
+    "to": [
+     396.0,
+     532.0
+    ],
+    "samples": 80,
+    "duration_s": 0.847912638274201,
+    "posted": 79,
+    "max_gap_ms": 12.2,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Message",
+    "from": [
+     396.0,
+     532.0
+    ],
+    "to": [
+     225.5,
+     932.0
+    ],
+    "samples": 89,
+    "duration_s": 0.9108194249006509,
+    "posted": 88,
+    "max_gap_ms": 11.7,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Replay it, 12 seconds. Click to jump.",
+    "from": [
+     225.5,
+     932.0
+    ],
+    "to": [
+     1024.5,
+     842.5
+    ],
+    "samples": 102,
+    "duration_s": 1.0130223171745583,
+    "posted": 101,
+    "max_gap_ms": 11.3,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "park",
+    "label": "waypoint",
+    "from": [
+     1024.5,
+     842.5
+    ],
+    "to": [
+     436.0,
+     837.0
+    ],
+    "samples": 95,
+    "duration_s": 0.960839688050141,
+    "posted": 94,
+    "max_gap_ms": 11.6,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "See proof",
+    "from": [
+     436.0,
+     837.0
+    ],
+    "to": [
+     223.0,
+     512.5
+    ],
+    "samples": 86,
+    "duration_s": 0.8922523584214975,
+    "posted": 85,
+    "max_gap_ms": 12.7,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "park",
+    "label": "rest",
+    "from": [
+     223.0,
+     512.5
+    ],
+    "to": [
+     396.0,
+     532.0
+    ],
+    "samples": 70,
+    "duration_s": 0.7654107929001599,
+    "posted": 69,
+    "max_gap_ms": 12.7,
+    "outcome": "arrived"
+   }
+  ]
+ }
+}

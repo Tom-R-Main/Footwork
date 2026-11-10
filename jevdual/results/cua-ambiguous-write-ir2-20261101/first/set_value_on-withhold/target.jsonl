@@ -1,0 +1,4 @@
+{"invocation": "set_value_on-withhold", "monotonic_ns": 619955640615, "kind": "target_ready", "pid": 25, "unique_name": ":1.0"}
+{"invocation": "set_value_on-withhold", "monotonic_ns": 619972822865, "kind": "method_received", "method": "SetTextContents", "arguments": ["TOKEN"], "serial": 3}
+{"invocation": "set_value_on-withhold", "monotonic_ns": 619973016198, "kind": "effect_applied", "method": "SetTextContents", "before": "", "after": "TOKEN"}
+{"invocation": "set_value_on-withhold", "monotonic_ns": 619973136740, "kind": "reply_behavior", "method": "SetTextContents", "behavior": "withhold", "value": "TOKEN"}

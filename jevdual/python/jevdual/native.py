@@ -27,18 +27,21 @@ from __future__ import annotations
 
 import asyncio
 import dataclasses
+import hashlib
 import json
 import logging
 import math
 import re
 import sys
 import uuid
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from jevdual import pointer
 from jevdual.menu import (
     Candidate,
     ControlState,
@@ -80,9 +83,10 @@ ROLE_MAP: dict[str, tuple[str, tuple[Operation, ...]]] = {
     "AXList": ("list", ("scroll",)),
 }
 _SECTION_ROLES = frozenset(
-    {"AXGroup", "AXToolbar", "AXTabGroup", "AXSheet", "AXDialog", "AXSplitGroup", "AXMenu", "AXMenuBarItem"}
+    {"AXGroup", "AXToolbar", "AXTabGroup", "AXSheet", "AXDialog", "AXSplitGroup", "AXMenu", "AXMenuBarItem",
+     "AXRow", "AXCell", "AXOutlineRow"}
 )
-_MENU_BAR_ROLES = frozenset({"AXMenuBar", "AXMenuBarItem", "AXMenu", "AXMenuItem"})
+_MENU_BAR_ROLES = frozenset({"AXMenuBar", "AXMenuBarItem"})
 _TEXT_ROLES = frozenset({"textbox", "searchbox", "combobox"})
 _LABEL_CAP = 80
 _VALUE_CAP = 120
@@ -202,6 +206,11 @@ class NativeMenu:
     #: Pre-pruning address bars for scope checks; deduplication cannot prove uniqueness.
     scope_address_bars: tuple[tuple[int, str | None], ...] | None = None
     chrome_scope: Any = None
+    #: Pre-pruning semantic collisions. Snapshot indices/tokens and geometry do not distinguish
+    #: these backing controls across observations, even when pruning leaves just one offered row.
+    ambiguous_targets: frozenset[int] = frozenset()
+    #: Full pre-pruning text roster; changes invalidate pending placeholder-qualified selections.
+    text_scope_signature: str | None = None
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -288,7 +297,7 @@ def _page_text(tree_markdown: str | None, elements: list[Any], cap: int) -> str:
     return out[:cap]
 
 
-#: candidates a native menu offers Jev at most; beyond this the tail is dropped (``omitted["cap"]``).
+#: Default candidate budget; configurable via MenuBudget.native_menu_cap.
 #: A Chrome window offered 296 and Jev refused the request as too large twice per step.
 NATIVE_MENU_CAP = 160
 #: same-key toggles kept per key: a table of unlabelled checkboxes (labelled by their raw value) must
@@ -307,10 +316,12 @@ def _prune(
     'button'``) unless it is a text field, and repeats of the same (role, label, value, section) beyond
     the first (a page with 27 identical "More actions" buttons offers one). A toggle that reports its
     state is kept even when repeated, when its whole group is: two "Enabled" switches are two settings,
-    and dropping the second hid its change from the effect diff. The ``do`` and ``_live`` identity
-    checks tell repeats apart by their position among the offered peers, which only holds when every
-    peer is offered, so a group larger than ``TOGGLE_REPEATS_KEPT`` or cut by the cap offers its first
-    member only, as any other repeat. Then cap the count."""
+    and dropping the second hid its change from the effect diff. Such rows remain observable, but
+    generic native actions refuse their ambiguity: peer position is not backing-object identity.
+    A group larger than ``TOGGLE_REPEATS_KEPT`` or cut by the cap offers its first member only, as
+    any other repeat; its pre-pruning ambiguity is retained separately. Then cap the count."""
+
+    cap = budget.native_menu_cap
 
     def key_of(c: Candidate) -> tuple[str, str, str | None, str | None]:
         return (c.role, c.label, c.value, c.section)
@@ -341,15 +352,15 @@ def _prune(
 
     whole = {k for k, n in group.items() if n <= TOGGLE_REPEATS_KEPT}
     kept = dedupe(named, whole)
-    if len(kept) > NATIVE_MENU_CAP:
+    if len(kept) > cap:
         # a repeated group the cap would cut stops being offered whole: keep its first member only
-        tail = {key_of(c) for c in kept[NATIVE_MENU_CAP:]}
+        tail = {key_of(c) for c in kept[cap:]}
         if tail & whole:
             omitted.pop("duplicate", None)
             kept = dedupe(named, whole - tail)
-    if len(kept) > NATIVE_MENU_CAP:
-        omitted["cap"] = len(kept) - NATIVE_MENU_CAP
-        kept = kept[:NATIVE_MENU_CAP]
+    if len(kept) > cap:
+        omitted["cap"] = len(kept) - cap
+        kept = kept[:cap]
     ids = {c.id for c in kept}
     return kept, {i: t for i, t in tokens.items() if i in ids}, {i: f for i, f in frames.items() if i in ids}
 
@@ -386,6 +397,8 @@ def menu_from_snapshot(
     budget: MenuBudget | None = None,
     include_menu_bar: bool = False,
     linux_text: dict[int, dict[str, Any]] | None = None,
+    mac_text: dict[int, dict[str, Any]] | None = None,
+    mac_sections: dict[int, str] | None = None,
 ) -> NativeMenu:
     """Build the System 1 menu from a Driver ``get_window_state`` result (SDK object or dict)."""
     b = budget or MenuBudget()
@@ -445,7 +458,9 @@ def menu_from_snapshot(
         if _get(el, "enabled") is False:
             omitted["disabled"] = omitted.get("disabled", 0) + 1
             continue
-        raw_value = text_proof.get("value") if linux_role else _get(el, "value")
+        mac_proof = (mac_text or {}).get(int(idx), {})
+        raw_value = text_proof.get("value") if linux_role else mac_proof.get("value", _get(el, "value"))
+        placeholder = _clean(mac_proof.get("placeholder"), _LABEL_CAP) or None
         label = _clean(_get(el, "label"), _LABEL_CAP)
         if not label:
             label = _clean(_get(el, "value_description"), _LABEL_CAP)
@@ -457,8 +472,13 @@ def menu_from_snapshot(
             label = role
         sensitive = ax_role == "AXSecureTextField" or (linux_role and ax_role.casefold() == "password text")
         multiline = ax_role == "AXTextArea" or (linux_role and text_proof.get("multiline") is True)
-        if role in _TEXT_ROLES and raw_value not in (None, "") and label == _clean(raw_value, _LABEL_CAP):
+        if role in _TEXT_ROLES and any(
+            value not in (None, "") and label == _clean(value, _LABEL_CAP)
+            for value in (raw_value, _get(el, "value"))
+        ):
             label = "text area" if multiline else role  # the Driver echoed the content as the label
+        if placeholder and mac_proof.get("placeholder_qualified", True) and label in (role, "text area"):
+            label = placeholder
         value: str | None = None
         if role in _TEXT_ROLES and not sensitive and raw_value not in (None, ""):
             value = (
@@ -478,8 +498,9 @@ def menu_from_snapshot(
             has_value=(raw_value not in (None, "")) if sensitive else None,
             checked=checked,
             selected=_get(el, "selected"),
-            section=_section_of(el, by_index),
+            section=(mac_sections or {}).get(int(idx)) or _section_of(el, by_index),
             offscreen=_offscreen(frame, bounds),
+            placeholder=placeholder,
         )
         candidates.append(cand)
         tokens[cand.id] = str(token)
@@ -499,6 +520,40 @@ def menu_from_snapshot(
         if candidate.role in ("textbox", "searchbox")
         and any(hint in candidate.label.casefold() for hint in ADDRESS_BAR_HINTS)
     )
+    identity_counts = Counter((c.role, c.label, c.section) for c in candidates)
+    ambiguous_targets = frozenset(
+        c.id for c in candidates if identity_counts[c.role, c.label, c.section] > 1
+    )
+    text_roster = sorted(
+        (c.role, c.label, c.section or "", c.placeholder or "")
+        for c in candidates if c.role in _TEXT_ROLES
+    )
+    text_scope_signature = hashlib.sha256(json.dumps(text_roster).encode()).hexdigest()
+    # Popup descendants are commonly emitted after hundreds of ordinary page links. A budget must
+    # not drop those choices simply because they were late in traversal. Use actual ancestry, not
+    # label guesses or invented focus flags (the pinned Driver does not expose focus/expanded).
+    popup_roles = {"AXComboBox", "AXPopUpButton", "AXMenu"}
+    selected_lists = {
+        int(_get(row, "parent_index")) for row in elements
+        if _get(row, "selected") is True and _get(row, "parent_index") is not None
+        and _get(by_index.get(int(_get(row, "parent_index"))), "role") == "AXList"
+    }
+
+    def priority(candidate: Candidate) -> tuple[int, bool]:
+        current = by_index[candidate.id]
+        seen: set[int] = set()
+        while current is not None:
+            index = int(_get(current, "element_index"))
+            if index in seen:
+                break
+            seen.add(index)
+            if _get(current, "role") in popup_roles or index in selected_lists:
+                return 0, candidate.offscreen
+            parent = _get(current, "parent_index")
+            current = by_index.get(int(parent)) if parent is not None else None
+        return (1 if candidate.role in _TEXT_ROLES else 2), candidate.offscreen
+
+    candidates.sort(key=priority)
     candidates, tokens, frames = _prune(candidates, tokens, frames, omitted, b)
     kept = {c.id for c in candidates}
     values = {i: v for i, v in values.items() if i in kept}
@@ -558,6 +613,8 @@ def menu_from_snapshot(
         ax_roles=ax_roles,
         web=frozenset(i for i in web if i in kept),
         scope_address_bars=scope_address_bars,
+        ambiguous_targets=ambiguous_targets & kept,
+        text_scope_signature=text_scope_signature,
     )
 
 
@@ -881,6 +938,8 @@ class NativeBridge:
         self.policy = policy if policy is not None else ExecutionPolicy("background_only")
         self.live_check = live_check
         self.observation_guard = observation_guard
+        #: filmed pointer mode (``jevdual.filmed``): the pointer travels to each target before an action
+        self.filmed: Any = None
         self.finder_scope = finder_scope
         self._foreground_inputs = 0
         self._ax = ax
@@ -911,6 +970,8 @@ class NativeBridge:
 
         require_available("desktop")
         from jevdual.effectors.cua import window_state_input
+
+        budget = budget or getattr(self, "menu_budget", None)
 
         if self.policy.locked():
             # nothing on a locked screen can be observed, so nothing can be decided or sent: stop and say why
@@ -970,8 +1031,15 @@ class NativeBridge:
                     linux_text[int(index)] = await asyncio.to_thread(qualify)
                 except self.ax.AXError:
                     linux_text[int(index)] = {}
+        mac_text = None
+        mac_sections = None
+        if sys.platform == "darwin":
+            mac_text = await asyncio.to_thread(self._web_text_attributes, snap)
+            mac_sections = await asyncio.to_thread(self._web_control_sections, snap)
         observed = menu_from_snapshot(
-            snap, budget=budget, include_menu_bar=include_menu_bar, linux_text=linux_text
+            snap, budget=budget, include_menu_bar=include_menu_bar, linux_text=linux_text,
+            mac_text=mac_text,
+            mac_sections=mac_sections,
         )
         if linux_text is not None:
             # Linux window managers may report the desktop ID as the app name.
@@ -1009,6 +1077,93 @@ class NativeBridge:
         self.last = observed
         return self.last
 
+    def _web_text_attributes(self, snapshot: Any) -> dict[int, dict[str, Any]]:
+        """Read real AX values and placeholders before deduplication and identity classification.
+
+        The pinned CUA contract substitutes AXPlaceholderValue for an empty AXValue and omits a
+        separate placeholder field. This bounded, read-only supplement keeps them separate even
+        after typing. Secure fields are never read. Unresolved fields retain conservative projection.
+        """
+        out: dict[int, dict[str, Any]] = {}
+        attempts = 0
+        rows = list(_get(snapshot, "elements") or [])
+        by_index = {int(_get(row, "element_index")): row for row in rows
+                    if _get(row, "element_index") is not None}
+        peers: dict[tuple[str, str, str | None], list[int]] = {}
+        for row in rows:
+            role, index, frame = _get(row, "role"), _get(row, "element_index"), _get(row, "frame")
+            if (role not in _TEXT_AX_ROLES or not _get(row, "in_web_content")
+                    or index is None or not _get(row, "element_token")):
+                continue
+            projected_role = ROLE_MAP[role][0]
+            label = (_clean(_get(row, "label"), _LABEL_CAP)
+                     or _clean(_get(row, "value_description"), _LABEL_CAP) or projected_role)
+            if _get(row, "value") not in (None, "") and label == _clean(_get(row, "value"), _LABEL_CAP):
+                label = "text area" if role == "AXTextArea" else projected_role
+            peers.setdefault((projected_role, label, _section_of(row, by_index)), []).append(int(index))
+            if frame is None or attempts >= 32:
+                continue
+            attempts += 1
+            try:
+                coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
+                if any(value is None for value in coordinates):
+                    continue
+                element = self.ax.resolve(self.pid, self.window_id, role, self.ax.Frame(*coordinates))
+                actual = self.ax.value(element)
+                placeholder = self.ax.placeholder(element)
+                proof = {"value": actual}
+                if placeholder:
+                    proof["placeholder"] = placeholder
+                out[int(index)] = proof
+            except Exception:  # noqa: BLE001, S112 - unreadable keeps the SDK representation
+                continue
+        for indices in peers.values():
+            if any(index not in out for index in indices):
+                # An unreadable generic peer may carry the same placeholder. Retain the hint as
+                # descriptive evidence but do not let a successful partial read prove uniqueness.
+                for index in indices:
+                    if index in out:
+                        out[index]["placeholder_qualified"] = False
+        return out
+
+    def _web_control_sections(self, snapshot: Any) -> dict[int, str]:
+        """Recover explicit AX ancestor labels for repeated web controls whose groups CUA drops.
+
+        Qualification is all-or-none per duplicate group. An unreadable peer might have the same
+        section as the selected control; keeping only a successful read would hide that ambiguity.
+        """
+        groups: dict[tuple[str, str], list[Any]] = {}
+        for row in _get(snapshot, "elements") or []:
+            role = _get(row, "role")
+            label = (_clean(_get(row, "label"), _LABEL_CAP)
+                     or _clean(_get(row, "value_description"), _LABEL_CAP)
+                     or _clean(_get(row, "value"), _LABEL_CAP))
+            if (role in {"AXLink", "AXButton"} and label and _get(row, "in_web_content")
+                    and _get(row, "element_token")):
+                groups.setdefault((role, label), []).append(row)
+        out: dict[int, str] = {}
+        attempts = 0
+        for (role, _), rows in groups.items():
+            if len(rows) < 2 or attempts + len(rows) > 32:
+                continue
+            qualified: dict[int, str] = {}
+            for row in rows:
+                attempts += 1
+                try:
+                    frame = _get(row, "frame")
+                    coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
+                    if any(value is None for value in coordinates):
+                        continue
+                    element = self.ax.resolve(self.pid, self.window_id, role, self.ax.Frame(*coordinates))
+                    section = _clean(self.ax.semantic_section(element), 60)
+                    if section:
+                        qualified[int(_get(row, "element_index"))] = section
+                except Exception:  # noqa: BLE001, S112 - no guessed identity on an unreadable peer
+                    continue
+            if len(qualified) == len(rows):
+                out.update(qualified)
+        return out
+
     def _target(self) -> Any:
         from jevdual.effectors.cua import window_target
 
@@ -1027,38 +1182,49 @@ class NativeBridge:
             raise NativeBridgeError("target_missing", f"id {id} is not on the menu from {nm.snapshot_id}")
         return cand, token
 
+    def _require_unambiguous(self, nm: NativeMenu, id: int) -> None:
+        peers = peer_position(nm.menu.candidates, id)
+        if id in nm.ambiguous_targets or (peers is not None and peers[1] > 1):
+            cand = nm.menu.candidate(id)
+            raise NativeBridgeError(
+                "target_ambiguous",
+                f"[{id}] {cand.label if cand else ''!r} has alike native controls without qualified "
+                "backing identity; position, state and a fresh token cannot distinguish them. "
+                "Nothing dispatched. Use a distinctly labelled or scoped control.",
+            )
+
     async def _live(self, nm: NativeMenu, id: int, operation: str) -> tuple[NativeMenu, int]:
-        """Reobserve and find the decided element again: the same (role, label, section), its id kept
-        when it still names it, else the unique element that does. A text field whose value changed, a
-        checkbox whose state changed, or an element that is gone or no longer unique refuses the step:
-        the person or another agent changed the window since the decision."""
+        """Reobserve and find the decided unique element again: the same (role, label, section), its
+        id kept when it still names it, else the unique element that does. Ambiguous controls refuse
+        because their identity is unavailable. A changed text value or checkbox state, or a missing
+        control, also refuses the step."""
+        self._require_unambiguous(nm, id)
+        fresh = await self.observe()
+        return fresh, self._rematch(nm, fresh, id, operation)
+
+    def _rematch(self, nm: NativeMenu, fresh: NativeMenu, id: int, operation: str) -> int:
+        """The id in ``fresh`` of the decided element ``id`` of ``nm``, under ``_live``'s rules."""
         cand = nm.menu.candidate(id)
         assert cand is not None
-        fresh = await self.observe()
-        key = (cand.role, cand.label, cand.section)
+        self._require_unambiguous(nm, id)
+        key = (cand.role, cand.label, cand.section, cand.placeholder)
         same = fresh.menu.candidate(id)
-        decided = peer_position(nm.menu.candidates, id)
-        if decided is not None and decided[1] > 1:
-            # one of several same-label controls (repeated toggles are kept): the id alone may now name
-            # a sibling, so the decided one is the same position among the same number of peers
-            peers = [c for c in fresh.menu.candidates if (c.role, c.label, c.section) == key]
-            if len(peers) != decided[1]:
-                raise NativeBridgeError(
-                    "target_changed",
-                    f"[{id}] {cand.label!r} was {decided[0] + 1} of {decided[1]} alike; the window now has "
-                    f"{len(peers)}",
-                )
-            hit = peers[decided[0]]
-        elif same is not None and (same.role, same.label, same.section) == key:
+        if same is not None and (same.role, same.label, same.section, same.placeholder) == key:
             hit = same
         else:
-            matches = [c for c in fresh.menu.candidates if (c.role, c.label, c.section) == key]
+            matches = [c for c in fresh.menu.candidates
+                       if (c.role, c.label, c.section, c.placeholder) == key]
             if len(matches) != 1:
                 raise NativeBridgeError(
                     "target_changed",
                     f"[{id}] {cand.label!r} is {'gone' if not matches else 'no longer unique'} in the window now",
                 )
             hit = matches[0]
+        self._require_unambiguous(fresh, hit.id)
+        if cand.placeholder and nm.text_scope_signature != fresh.text_scope_signature:
+            raise NativeBridgeError(
+                "target_changed", "the form's text fields changed since the decision; choose again"
+            )
         if operation in ("type", "append", "enter") and _norm_tail(nm.values.get(id, "")) != _norm_tail(
             fresh.values.get(hit.id, "")
         ):
@@ -1071,7 +1237,7 @@ class NativeBridge:
             raise NativeBridgeError(
                 "precondition_changed", f"[{id}] {cand.label!r} changed state since the decision"
             )
-        return fresh, hit.id
+        return hit.id
 
     def _not_sent(
         self, operation: str, target: int, label: str, code: str, reason: str, delivery: str
@@ -1455,7 +1621,14 @@ class NativeBridge:
                 return dataclasses.replace(sel, summary=f"select-all before typing: {sel.summary}"[:200])
             selected = True
             fresh = await self._observe_after_input()
-            token = fresh.token(id) or token
+            try:
+                id = self._rematch(nm, fresh, id, "type")
+                cand, token = self._require_fresh(fresh, id)
+                nm = fresh
+            except NativeBridgeError as exc:
+                # Selection was delivered; it cannot be reported as a proven no-send even though
+                # the changed form prevents the subsequent insertion. Never reuse the old token.
+                raise NativeBridgeError(exc.reason, str(exc), dispatched=True) from exc
         args: dict[str, Any] = {
             "pid": self.pid,
             "window_id": self.window_id,
@@ -1463,6 +1636,8 @@ class NativeBridge:
             "text": text,
             "delivery_mode": "background",
         }
+        if self.filmed is not None:
+            args["delay_ms"] = self.filmed.type_delay_ms
         if self.session:
             args["session"] = self.session
         try:
@@ -1484,10 +1659,21 @@ class NativeBridge:
         after = await self._observe_after_input()
         self.last = None
         same = after.menu.candidate(id)
-        got = after.values.get(id, "") if same is not None and same.label == label else None
+        identity = (cand.role, cand.label, cand.section, cand.placeholder)
+        qualified = (id not in after.ambiguous_targets and (
+            not cand.placeholder or nm.text_scope_signature == after.text_scope_signature
+        ))
+        got = after.values.get(id, "") if qualified and same is not None and (
+            same.role, same.label, same.section, same.placeholder
+        ) == identity else None
         if got is not None and got.strip() == text.strip():
             return dataclasses.replace(
                 eff, effect="confirmed", evidence=(*eff.evidence, "value_readback: the field holds the text")
+            )
+        if got is None:
+            return dataclasses.replace(
+                eff, effect="unverifiable",
+                evidence=(*eff.evidence, "value_readback unavailable: field identity is no longer qualified"),
             )
         return dataclasses.replace(
             eff,
@@ -1533,6 +1719,8 @@ class NativeBridge:
         self, nm: NativeMenu, operation: str, selector: str, text: str | None = None
     ) -> NativeEffect:
         """Rename or move the exact owned file through Finder's front/key UI."""
+        if self.filmed is not None:
+            raise NativeBridgeError("cross_window", "file operations are refused in a filmed take")
         target, id = self.resolve_file(nm, selector)
         self._require_fresh(nm, id)
         if operation == "move":
@@ -2073,6 +2261,100 @@ class NativeBridge:
                 native_readback=proof,
             )
 
+    async def _filmed_gate(
+        self, operation: str, id: int, label: str, frame: Any, *, approach: bool = False
+    ) -> NativeEffect | None:
+        """In a filmed take: refuse once the take ended, else travel to the target first when asked."""
+        if self.filmed is None:
+            return None
+        from jevdual.filmed import FilmedRefusal
+
+        try:
+            if approach:
+                if frame is None or frame[2] <= 0 or frame[3] <= 0:
+                    raise FilmedRefusal("frame_unavailable", f"{label!r} has no frame to travel to")
+                await self.filmed.approach(tuple(frame), label)
+            else:
+                self.filmed.check()
+        except FilmedRefusal as refusal:
+            return self._not_sent(operation, id, label, refusal.code, refusal.reason, "desktop")
+        return None
+
+    async def drag(self, nm: NativeMenu, source: int, destination: int) -> NativeEffect:
+        """Drag the real pointer from ``source``'s centre to ``destination``'s centre (``jevdual.drag``).
+
+        Desktop-scoped: it moves the person's pointer and holds its button, so it runs only in
+        exclusive_desktop. Both targets are re-found after one live re-observation. The approach to the
+        source is a planned pointer move; once the button is down every exit releases it."""
+        from jevdual import drag as d
+
+        src, _ = self._require_fresh(nm, source)
+        dst, _ = self._require_fresh(nm, destination)
+        label = f"{src.label} -> {dst.label}"
+        if source == destination:
+            raise NativeBridgeError("drag_same_target", f"[{source}] {src.label!r} is both ends of the drag")
+        self._require_unambiguous(nm, source)
+        self._require_unambiguous(nm, destination)
+        refusal = self.policy.permits("desktop", why=f"drag {label!r} (it moves the real pointer and holds its button)")
+        if refusal is not None:
+            return self._not_sent("drag", source, label, refusal.code, refusal.reason, "desktop")
+        if self.live_check or self.observation_guard is not None:
+            fresh = await self.observe()
+            source, destination = (
+                self._rematch(nm, fresh, source, "drag"),
+                self._rematch(nm, fresh, destination, "drag"),
+            )
+            nm = fresh
+        self.last = None
+        self.dispatches += 1
+        frames = [nm.frames.get(i) for i in (source, destination)]
+        if any(f is None or f[2] <= 0 or f[3] <= 0 for f in frames):
+            return self._not_sent("drag", source, label, "frame_unavailable", "a drag needs both targets' frames", "desktop")
+        (sx, sy, sw, sh), (tx, ty, tw, th) = frames  # type: ignore[misc]
+        start, end = (sx + sw / 2, sy + sh / 2), (tx + tw / 2, ty + th / 2)
+        settings = d.DragSettings()
+        seed = f"{self.session}|{nm.snapshot_id}|{source}|{destination}"
+        try:
+            plan = d.plan_drag(start, end, settings, seed=seed)
+        except d.DragRefused as exc:
+            return self._not_sent("drag", source, label, exc.code, str(exc), "desktop")
+        poster, clock = d.QuartzPoster(), d.MonotonicClock()
+        here = poster.location()
+        approach = None
+        if self.filmed is not None:
+            refused = await self._filmed_gate("drag", source, label, frames[0], approach=True)
+            if refused is not None:
+                return refused
+            here = start
+        if math.dist(here, start) >= 1.0:
+            approach = await asyncio.to_thread(
+                d.play_move, d.plan_path(here, start, settings, seed=seed + "|approach"), poster, clock, settings
+            )
+            if approach.outcome != "arrived":
+                return NativeEffect(
+                    "drag", source, label, "unverifiable", "desktop_pointer",
+                    (f"approach {approach.outcome} after {approach.posted_drags} moves; button never pressed",),
+                    f"drag approach {approach.outcome}", f"drag_{approach.outcome}",
+                    delivery="desktop", dispatched=True,
+                )
+        result = await asyncio.to_thread(d.play_drag, plan, poster, clock, settings)
+        if self.filmed is not None:
+            self.filmed.last_pointer = result.released_at
+            if result.outcome != "dropped":
+                self.filmed.end_take(result.outcome.removeprefix("aborted:"))
+        evidence = (
+            f"approach {approach.posted_drags if approach else 0} moves",
+            f"pressed at {start[0]:.1f},{start[1]:.1f}",
+            f"{result.posted_drags} drags, largest gap {result.max_gap_s * 1000:.1f} ms",
+            f"released at {result.released_at[0]:.1f},{result.released_at[1]:.1f}" if result.released_at else "not released",
+            *(["escape sent before release"] if result.escape_sent else []),
+        )
+        return NativeEffect(
+            "drag", source, label, "unverifiable", "desktop_pointer", evidence,
+            f"drag {result.outcome}", None if result.outcome == "dropped" else f"drag_{result.outcome}",
+            delivery="desktop", dispatched=True,
+        )
+
     async def act(
         self,
         nm: NativeMenu,
@@ -2095,6 +2377,7 @@ class NativeBridge:
             )
         if operation in ("type", "append") and text is None:
             raise NativeBridgeError("text_required", f"{operation} on [{id}] needs a value")
+        self._require_unambiguous(nm, id)
         decision_snapshot, decision_target = nm.snapshot_id, id
         if self.live_check or self.observation_guard is not None:
             decided_values = nm.values
@@ -2106,6 +2389,9 @@ class NativeBridge:
         self.last = None
         self.dispatches += 1
         label = cand.label
+        refused = await self._filmed_gate(operation, id, label, nm.frames.get(id), approach=operation != "enter")
+        if refused is not None:
+            return refused
         if operation == "append":
             assert text is not None
             result = await self._append(nm, id, cand, text, append_precondition)
@@ -2126,12 +2412,28 @@ class NativeBridge:
             if refusal is not None:
                 return self._not_sent("hover", id, label, refusal.code, refusal.reason, "desktop")
             fx, fy, fw, fh = nm.frames.get(id, (0.0, 0.0, 0.0, 0.0))
+            # CUA's desktop scope takes screenshot pixels and divides by the main display's backing
+            # scale; read that same scale rather than assume one (notebook PM1).
+            try:
+                scale = pointer.main_display_scale(
+                    await self.driver.call_tool("get_screen_size", json.dumps({"session": self.session}))
+                )
+            except Exception:  # noqa: BLE001
+                scale = None
+            if scale is None:
+                return self._not_sent(
+                    "hover",
+                    id,
+                    label,
+                    "scale_unknown",
+                    "the main display's backing scale could not be read; the pointer was not moved",
+                    "desktop",
+                )
+            at = pointer.desktop_pixels(fx + fw / 2, fy + fh / 2, scale)
             try:
                 outcome = await self.driver.call_tool(
                     "move_cursor",
-                    json.dumps(
-                        {"x": fx + fw / 2, "y": fy + fh / 2, "scope": "desktop", "session": self.session}
-                    ),
+                    json.dumps({"x": at.x, "y": at.y, "scope": "desktop", "session": self.session}),
                 )
             except Exception as exc:  # noqa: BLE001
                 outcome = exc
@@ -2180,6 +2482,8 @@ class NativeBridge:
         mods = [{"command": "cmd", "option": "alt", "control": "ctrl"}.get(m, m) for m in (modifiers or [])]
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "key press decided on a stale snapshot; reobserve")
+        if (refused := await self._filmed_gate("key", -1, "+".join([*mods, key]), None)) is not None:
+            return refused
         if self.observation_guard is not None:
             await self.observe()
         self.last = None
@@ -2292,6 +2596,8 @@ class NativeBridge:
         background chord. Asked of the posture first; ``key`` is the background route for a chord."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "hotkey decided on a stale snapshot; reobserve")
+        if (refused := await self._filmed_gate("hotkey", -1, "+".join(keys), None)) is not None:
+            return refused
         if self.observation_guard is not None:
             await self.observe()
         self.last = None
@@ -2345,6 +2651,8 @@ class NativeBridge:
         invoke_menu remains the route only in exclusive_desktop, for a path AX cannot resolve."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "menu decided on a stale snapshot; reobserve")
+        if (refused := await self._filmed_gate("menu", -1, " > ".join(path), None)) is not None:
+            return refused
         if self.observation_guard is not None:
             await self.observe()
         self.last = None

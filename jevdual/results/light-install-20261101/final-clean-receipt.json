@@ -1,0 +1,634 @@
+{
+  "source_commit": "81d6985791298d151c9610bc10b1b00816137b07",
+  "host": {
+    "platform": "Darwin",
+    "machine": "arm64"
+  },
+  "interpreter_requested": "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3.12",
+  "wheel": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-bundle/jevdual-0.0.1-py3-none-any.whl",
+  "wheel_sha256": "0c777e645947f308e93b01e939eaf964dae5a6e77c81c7d4ef269e7f51d41a4a",
+  "cache_initially_empty": true,
+  "system_site_packages": false,
+  "borrowed_dependencies": false,
+  "registry": "https://pypi.org/simple",
+  "binary_only": true,
+  "profile": "light",
+  "offline": false,
+  "local_dependency_wheels": {},
+  "commands": [
+    {
+      "stage": "venv",
+      "argv": [
+        "/Users/thomasmain/.local/bin/uv",
+        "--no-config",
+        "--no-progress",
+        "--cache-dir",
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/empty-cache",
+        "--no-python-downloads",
+        "venv",
+        "--python",
+        "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3.12",
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv"
+      ],
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "stage": "install",
+      "argv": [
+        "/Users/thomasmain/.local/bin/uv",
+        "--no-config",
+        "--no-progress",
+        "--cache-dir",
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/empty-cache",
+        "--no-python-downloads",
+        "pip",
+        "install",
+        "--python",
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/bin/python",
+        "--only-binary",
+        ":all:",
+        "--default-index",
+        "https://pypi.org/simple",
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-bundle/jevdual-0.0.1-py3-none-any.whl"
+      ],
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "stage": "consistency",
+      "argv": [
+        "/Users/thomasmain/.local/bin/uv",
+        "--no-config",
+        "--no-progress",
+        "--cache-dir",
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/empty-cache",
+        "--no-python-downloads",
+        "pip",
+        "check",
+        "--python",
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/bin/python"
+      ],
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "stage": "inventory",
+      "argv": [
+        "/Users/thomasmain/.local/bin/uv",
+        "--no-config",
+        "--no-progress",
+        "--cache-dir",
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/empty-cache",
+        "--no-python-downloads",
+        "pip",
+        "list",
+        "--python",
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/bin/python",
+        "--format",
+        "json"
+      ],
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "stage": "origins",
+      "argv": [
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/bin/python",
+        "-I",
+        "-c",
+        "FOOTWORK_INSTALL_PROFILE = \"light\"\n\nimport sys,json,importlib.metadata,importlib\nfrom pathlib import Path\nimport jevdual,jevdual.capability.execution_worker as worker\nfrom jevdual._native import BACKEND\nprofile=globals().get(\"FOOTWORK_INSTALL_PROFILE\", \"full\")\nnames=(\"psutil\",\"mcp\",\"packaging\")\nif profile == \"full\":\n    names += (\"cua_driver\",)\nif profile == \"full\" and sys.platform == \"darwin\":\n    names += (\"ApplicationServices\",\"Quartz\",\"Foundation\")\nelif profile == \"full\" and sys.platform == \"linux\":\n    names += (\"jeepney\",)\nmodules={n:str(importlib.import_module(n).__file__) for n in names}\nprint(json.dumps({\"version\":sys.version,\"prefix\":sys.prefix,\"base_prefix\":sys.base_prefix,\"python\":sys.executable,\"package\":jevdual.__file__,\"worker\":worker.__file__,\"backend\":BACKEND,\"module_origins\":modules,\"sys_path\":sys.path}))\n"
+      ],
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "stage": "doctor",
+      "argv": [
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/bin/footwork-capability",
+        "doctor"
+      ],
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "stage": "wheel-tags",
+      "argv": [
+        "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/bin/python",
+        "-I",
+        "-c",
+        "import json,importlib.metadata;print(json.dumps([{\"name\":d.metadata[\"Name\"],\"version\":d.version,\"tags\":[l[5:] for l in (d.read_text(\"WHEEL\") or \"\").splitlines() if l.startswith(\"Tag: \")]} for d in importlib.metadata.distributions()]))"
+      ],
+      "returncode": 0,
+      "timed_out": false
+    }
+  ],
+  "passed": true,
+  "limits": "Fresh dependencies on existing host OS/interpreter, not a fresh machine or qualified desktop session/permission state.",
+  "origins": {
+    "version": "3.12.6 (v3.12.6:a4a2d2b0d85, Sep  6 2024, 16:08:03) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "prefix": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv",
+    "base_prefix": "/Library/Frameworks/Python.framework/Versions/3.12",
+    "python": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/bin/python",
+    "package": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages/jevdual/__init__.py",
+    "worker": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages/jevdual/capability/execution_worker.py",
+    "backend": "pure-python",
+    "module_origins": {
+      "psutil": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages/psutil/__init__.py",
+      "mcp": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages/mcp/__init__.py",
+      "packaging": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages/packaging/__init__.py"
+    },
+    "sys_path": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python312.zip",
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12",
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/lib-dynload",
+      "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages"
+    ]
+  },
+  "doctor": {
+    "platform": "darwin",
+    "supported": true,
+    "runtime": {
+      "python_version": "3.12.6",
+      "python_requirement": ">=3.11,<4.0",
+      "python_compatible": true,
+      "interpreter": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/bin/python",
+      "architecture": "arm64",
+      "distribution": {
+        "version": "0.0.1",
+        "location": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages"
+      },
+      "loaded_modules": {
+        "jevdual": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages/jevdual/__init__.py",
+        "jevdual.capability.setup": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages/jevdual/capability/setup.py"
+      }
+    },
+    "dependencies": {
+      "typesafe-sdk": {
+        "version": "0.7.5",
+        "requirement": "<1,>=0.7",
+        "compatible": true,
+        "location": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages"
+      },
+      "orjson": {
+        "version": "3.13.0",
+        "requirement": ">=3.10",
+        "compatible": true,
+        "location": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages"
+      },
+      "psutil": {
+        "version": "7.2.2",
+        "requirement": "==7.2.2",
+        "compatible": true,
+        "location": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages"
+      },
+      "websockets": {
+        "version": "15.0.1",
+        "requirement": "==15.0.1",
+        "compatible": true,
+        "location": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages"
+      },
+      "mcp": {
+        "version": "2.1.1",
+        "requirement": "==2.1.1",
+        "compatible": true,
+        "location": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages"
+      },
+      "packaging": {
+        "version": "26.3",
+        "requirement": "<27,>=25",
+        "compatible": true,
+        "location": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/venv/lib/python3.12/site-packages"
+      }
+    },
+    "installation": {
+      "profile": "light",
+      "observed_extras": [],
+      "optional_versions": {
+        "desktop": null,
+        "agent": null,
+        "tools": null
+      },
+      "basis": "installed distributions; requested extras are not retained by Python",
+      "light_install": "Install the light bundle, or the Footwork wheel without extras using --only-binary :all:.",
+      "full_install": "Install the matching full Footwork bundle with its pinned cua-driver wheel.",
+      "runtime_qualification": "not_checked"
+    },
+    "dependency_status": "met",
+    "permissions": {
+      "accessibility": "unavailable",
+      "screen_recording": "unavailable"
+    },
+    "scope": "not_checked",
+    "journal": "not_checked",
+    "warnings": [
+      "Screen Recording is not qualified. Routes that capture pixels may require it."
+    ],
+    "dependency_metadata": "installed distribution",
+    "limitation": "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding.",
+    "runtime_qualification": "not_checked",
+    "provider_account_required": false,
+    "rust_toolchain_required": false,
+    "blockers": [
+      "accessibility_unavailable"
+    ],
+    "prerequisite_status": "blocked",
+    "qualification": "Prerequisites only. Window identity, current state, effects and job completion require separate checks."
+  },
+  "inventory": [
+    {
+      "name": "annotated-types",
+      "version": "0.8.0"
+    },
+    {
+      "name": "anyio",
+      "version": "4.15.1"
+    },
+    {
+      "name": "attrs",
+      "version": "26.1.0"
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1"
+    },
+    {
+      "name": "click",
+      "version": "8.5.0"
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.2"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0"
+    },
+    {
+      "name": "httpcore2",
+      "version": "2.16.0"
+    },
+    {
+      "name": "httpx2",
+      "version": "2.16.0"
+    },
+    {
+      "name": "idna",
+      "version": "3.20"
+    },
+    {
+      "name": "jevdual",
+      "version": "0.0.1"
+    },
+    {
+      "name": "jsonschema",
+      "version": "4.26.0"
+    },
+    {
+      "name": "jsonschema-specifications",
+      "version": "2025.9.1"
+    },
+    {
+      "name": "mcp",
+      "version": "2.1.1"
+    },
+    {
+      "name": "mcp-types",
+      "version": "2.1.1"
+    },
+    {
+      "name": "opentelemetry-api",
+      "version": "1.45.2"
+    },
+    {
+      "name": "orjson",
+      "version": "3.13.0"
+    },
+    {
+      "name": "packaging",
+      "version": "26.3"
+    },
+    {
+      "name": "psutil",
+      "version": "7.2.2"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.12"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.14.2"
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.50.2"
+    },
+    {
+      "name": "pyjwt",
+      "version": "2.15.1"
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.33"
+    },
+    {
+      "name": "referencing",
+      "version": "0.37.0"
+    },
+    {
+      "name": "rpds-py",
+      "version": "2026.9.1"
+    },
+    {
+      "name": "sse-starlette",
+      "version": "3.6.0"
+    },
+    {
+      "name": "starlette",
+      "version": "1.10.0"
+    },
+    {
+      "name": "tenacity",
+      "version": "9.2.1"
+    },
+    {
+      "name": "truststore",
+      "version": "0.10.5"
+    },
+    {
+      "name": "typesafe-sdk",
+      "version": "0.7.5"
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4"
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.54.0"
+    },
+    {
+      "name": "websockets",
+      "version": "15.0.1"
+    }
+  ],
+  "wheel_tags": [
+    {
+      "name": "uvicorn",
+      "version": "0.54.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pydantic",
+      "version": "2.14.2",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "starlette",
+      "version": "1.10.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "click",
+      "version": "8.5.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "packaging",
+      "version": "26.3",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "jsonschema-specifications",
+      "version": "2025.9.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "jevdual",
+      "version": "0.0.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "jsonschema",
+      "version": "4.26.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "orjson",
+      "version": "3.13.0",
+      "tags": [
+        "cp312-cp312-macosx_15_0_arm64"
+      ]
+    },
+    {
+      "name": "PyJWT",
+      "version": "2.15.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pydantic_core",
+      "version": "2.50.2",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "mcp",
+      "version": "2.1.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.2",
+      "tags": [
+        "cp311-abi3-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "pycparser",
+      "version": "3.12",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "typesafe-sdk",
+      "version": "0.7.5",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "opentelemetry-api",
+      "version": "1.45.2",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "httpcore2",
+      "version": "2.16.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "truststore",
+      "version": "0.10.5",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "sse-starlette",
+      "version": "3.6.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "httpx2",
+      "version": "2.16.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.8.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "referencing",
+      "version": "0.37.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "rpds-py",
+      "version": "2026.9.1",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "attrs",
+      "version": "26.1.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "websockets",
+      "version": "15.0.1",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.33",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "psutil",
+      "version": "7.2.2",
+      "tags": [
+        "cp36-abi3-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "anyio",
+      "version": "4.15.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "tenacity",
+      "version": "9.2.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "mcp-types",
+      "version": "2.1.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "idna",
+      "version": "3.20",
+      "tags": [
+        "py3-none-any"
+      ]
+    }
+  ],
+  "cache_bytes_after_install": 54375547,
+  "private_state": {
+    "private-home": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/private-home",
+    "private-config": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/private-config",
+    "private-cache": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/private-cache",
+    "private-temp": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-clean/private-temp"
+  }
+}

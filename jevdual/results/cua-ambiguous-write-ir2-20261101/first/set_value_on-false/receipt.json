@@ -1,0 +1,56 @@
+{
+  "argv": [
+    "/work/build-v2/bin/ir1-probe",
+    "set_value_on"
+  ],
+  "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+  "returncode": 0,
+  "signal": null,
+  "watchdog_expired": false,
+  "elapsed_seconds": 0.008963208000068335,
+  "result": {
+    "boundary": "set_value_on",
+    "client_timeout_ms": null,
+    "elapsed_ms": 3,
+    "error": null,
+    "ok": true,
+    "ordinary_zbus_timeout_ms": 25000,
+    "result": true
+  },
+  "label": "set_value_on-false",
+  "boundary": "set_value_on",
+  "fixture_mode": "false",
+  "client_timeout_ms": null,
+  "attempts": 2,
+  "effects": 1,
+  "methods": [
+    "SetTextContents",
+    "InsertText"
+  ],
+  "transitions": [
+    {
+      "before": "",
+      "after": "TOKEN"
+    }
+  ],
+  "final_value": "TOKEN",
+  "target_argv": [
+    "/workspace/footwork/bin/python",
+    "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+    "--address",
+    "unix:path=/tmp/dbus-a5FCYefisk,guid=7769088161be27c06c2c67206ae795a7",
+    "--journal",
+    "/results/first/set_value_on-false/target.jsonl",
+    "--ready",
+    "/results/first/set_value_on-false/ready.json",
+    "--mode",
+    "false",
+    "--primary",
+    "SetTextContents",
+    "--invocation",
+    "set_value_on-false"
+  ],
+  "expected_control_effects": 1,
+  "control_passed": true,
+  "safety_one_effect": true
+}

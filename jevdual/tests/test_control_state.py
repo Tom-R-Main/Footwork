@@ -290,7 +290,7 @@ def _bridge_observing(fresh_cands):
     return b, _a, NativeMenu
 
 
-def test_live_resolution_keeps_the_position_among_same_label_toggles():
+def test_live_resolution_refuses_ordinal_identity_among_same_label_toggles():
     import pytest
     from jevdual.native import NativeBridgeError
 
@@ -302,12 +302,13 @@ def test_live_resolution_keeps_the_position_among_same_label_toggles():
     )
     b, aio, NativeMenu = _bridge_observing(shifted)
     nm = NativeMenu(**_NM, menu=menu(*decided), snapshot_id="s1", tokens={200: "a", 201: "b"})
-    _, hit = aio.run(b._live(nm, 201, "click"))
-    assert hit == 202  # the second "Enabled", not id 201 which is now the first
+    with pytest.raises(NativeBridgeError) as exc:
+        aio.run(b._live(nm, 201, "click"))
+    assert exc.value.reason == "target_ambiguous" and exc.value.dispatched is False
     b, aio, _ = _bridge_observing((cand(201, "Enabled", checked=False),))
     with pytest.raises(NativeBridgeError) as exc:
         aio.run(b._live(nm, 201, "click"))
-    assert exc.value.reason == "target_changed"
+    assert exc.value.reason == "target_ambiguous" and exc.value.dispatched is False
 
 
 def test_repeated_toggles_are_offered_only_as_whole_groups():

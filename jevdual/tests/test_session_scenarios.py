@@ -1851,7 +1851,10 @@ async def test_capability_resource_replacement_during_live_observation_sends_not
     assert world.writes == [] and world.content == "Invoice report"
 
 
-def test_the_second_of_two_same_label_switches_is_offered_and_its_toggle_is_named(world, fw):
+def test_the_second_of_two_same_label_switches_is_observed_and_its_change_is_named(world, fw):
+    from jevdual.effects import diff
+    from jevdual.session import SessionState
+
     # 2026-10-28 (notebook CTL3): native pruning kept only the first of two "Enabled" switches, so
     # the second could not be chosen and a change to it was invisible to the effect diff
     world.toggles = {200: ["Enabled", "1"], 201: ["Enabled", "0"]}
@@ -1859,11 +1862,16 @@ def test_the_second_of_two_same_label_switches_is_offered_and_its_toggle_is_name
     rows = [ln.strip() for ln in out.splitlines() if ln.strip().startswith("[") and "'Enabled'" in ln]
     assert [int(r[1 : r.index("]")]) for r in rows] == [200, 201]
     assert "checked=True" in rows[0] and "checked=False" in rows[1]
-    code, out, err = fw("do", "click", "201", "--no-judge")
+    before = SessionState.load(fw.session).last_menu()
+    # Both remain evidence, but native actions now refuse their unresolved backing identity.
+    # An external change must still be visible to the observation diff.
+    world.toggles[201][1] = "1"
+    code, out, err = fw("look")
     assert code == 0, err
     assert world.toggles[201][1] == "1" and world.toggles[200][1] == "1"
-    assert "'Enabled' checked False -> True" in out
-    assert _state(fw)["memory"][-1].endswith("-> confirmed")
+    after = SessionState.load(fw.session).last_menu()
+    assert "'Enabled' checked False -> True" in diff(before, after).summary
+    assert world.presses == []
 
 
 def test_a_reload_with_unchanged_switches_is_not_progress(world, fw):
@@ -1887,3 +1895,417 @@ def test_a_shifted_window_refuses_the_wrong_one_of_two_same_label_switches(world
     code, _, err = fw("do", "click", "201", "--no-judge")
     assert code == 4 and "1 of 2 now; it was 2 of 2" in err and "Nothing dispatched" in err
     assert world.presses == [] and [v for _, v in world.toggles.values()] == ["1", "0", "0"]
+
+
+@pytest.mark.parametrize("change", ["reorder", "replace", "unchanged"])
+def test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position(world, fw, change):
+    from tests.fixtures.native_world import ToggleControl
+
+    first, selected = ToggleControl("setting-A"), ToggleControl("setting-B")
+    world.backed_toggles = {200: first, 201: selected}
+    code, out, err = fw("start", "Enable setting B", "--app", "Calculator")
+    assert code == 0, err
+    assert {200, 201} <= {row["id"] for row in _state(fw)["last_candidates"]}
+    if change == "reorder":
+        world.backed_toggles = {200: selected, 201: first}
+    elif change == "replace":
+        world.backed_toggles[201] = ToggleControl("replacement-C")
+
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    # The effect oracle names the backing setting, independent of its label, index and token.
+    # No field in the public snapshot distinguishes these controls, even without a reorder.
+    assert world.toggle_writes == [], (change, code, out, err, world.toggle_writes)
+    assert first.value == selected.value == "0"
+    assert code == 4 and "target_ambiguous" in err, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    assert not [record for record in records if record["kind"] == "do"]
+
+
+def test_a_distinct_native_switch_still_changes_the_selected_backing_setting(world, fw):
+    from tests.fixtures.native_world import ToggleControl
+
+    first = ToggleControl("setting-A", label="Enable A")
+    selected = ToggleControl("setting-B", label="Enable B")
+    world.backed_toggles = {200: first, 201: selected}
+    fw("start", "Enable B", "--app", "Calculator")
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert code == 0, (out, err)
+    assert world.toggle_writes == ["setting-B"]
+    assert first.value == "0" and selected.value == "1"
+
+
+def test_pruning_duplicate_native_switches_does_not_make_the_retained_one_unique(world, fw):
+    from tests.fixtures.native_world import ToggleControl
+
+    world.backed_toggles = {200 + i: ToggleControl(f"setting-{i}") for i in range(5)}
+    fw("start", "Enable the first setting", "--app", "Calculator")
+    offered = {row["id"] for row in _state(fw)["last_candidates"]}
+    assert 200 in offered and not offered.intersection({201, 202, 203, 204})
+    code, out, err = fw("do", "click", "200", "--no-judge")
+    assert world.toggle_writes == [], (code, out, err, world.toggle_writes)
+    assert code == 4 and "target_ambiguous" in err, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    assert not [record for record in records if record["kind"] == "do"]
+
+
+def test_a_native_switch_becoming_ambiguous_during_revalidation_sends_nothing(world, fw, monkeypatch):
+    from tests.fixtures.native_world import ToggleControl
+
+    selected = ToggleControl("setting-B")
+    world.backed_toggles = {201: selected}
+    fw("start", "Enable setting B", "--app", "Calculator")
+    next_observation = world.n + 1
+    observe = world.get_window_state
+
+    async def add_sibling_after_the_command_observes(inp):
+        snapshot = await observe(inp)
+        if world.n == next_observation:
+            world.backed_toggles[200] = ToggleControl("new-setting-A")
+        return snapshot
+
+    monkeypatch.setattr(world, "get_window_state", add_sibling_after_the_command_observes)
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert world.toggle_writes == [] and selected.value == "0", (code, out, err)
+    assert "target_ambiguous" in out + err
+
+
+def test_a_native_switch_peer_disappearing_does_not_rebind_the_selected_setting(world, fw):
+    from tests.fixtures.native_world import ToggleControl
+
+    first, selected = ToggleControl("setting-A"), ToggleControl("setting-B")
+    world.backed_toggles = {200: first, 201: selected}
+    fw("start", "Enable setting B", "--app", "Calculator")
+    world.backed_toggles = {201: first}
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert code == 4 and "Nothing dispatched" in err, (out, err)
+    assert world.toggle_writes == [] and first.value == selected.value == "0"
+
+
+def test_a_previously_pruned_native_lookalike_cannot_replace_the_selected_backing_button(world, fw):
+    from tests.fixtures.native_world import ToggleControl
+
+    selected = ToggleControl("setting-A", label="Enable", role="AXButton")
+    lookalike = ToggleControl("setting-B", label="Enable", role="AXButton")
+    world.backed_toggles = {200: selected, 201: lookalike}
+    fw("start", "Enable setting A", "--app", "Calculator")
+    offered = {row["id"] for row in _state(fw)["last_candidates"]}
+    assert 200 in offered and 201 not in offered
+    # The next command sees a singleton with the same public fields and index. Only the previous
+    # observation knew that a pruned lookalike existed, so that uncertainty must survive save/load.
+    world.backed_toggles = {200: lookalike}
+    code, out, err = fw("do", "click", "200", "--no-judge")
+    assert world.toggle_writes == [], (code, out, err, world.toggle_writes)
+    assert selected.value == lookalike.value == "0"
+    assert "target_ambiguous" in out + err
+
+
+def test_a_legacy_native_baseline_requires_fresh_selection_before_numeric_input(world, fw):
+    from tests.fixtures.native_world import ToggleControl
+
+    selected = ToggleControl("setting-B", label="Enable B")
+    world.backed_toggles = {201: selected}
+    fw("start", "Enable B", "--app", "Calculator")
+    old_state = _state(fw)
+    old_state.pop("last_native_ambiguous", None)
+    (fw.session / "session.json").write_text(json.dumps(old_state))
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert code == 4 and "target_ambiguous" in err, (out, err)
+    assert world.toggle_writes == [] and selected.value == "0"
+    assert fw("look")[0] == 0
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert code == 0 and world.toggle_writes == ["setting-B"], (out, err)
+
+
+def _native_form_element(index, role, label=None, parent=0, **kwargs):
+    return {
+        "element_index": index, "role": role, "label": label,
+        "parent_index": parent, "enabled": True, "actions": ["AXPress"],
+        "frame": {"x": float(index), "y": 400.0, "w": 100.0, "h": 20.0},
+        **kwargs,
+    }
+
+
+def _install_domain_rows(world, monkeypatch):
+    rows = [
+        _native_form_element(300, "AXRow", "example.test"),
+        _native_form_element(301, "AXLink", "MANAGE", parent=300),
+        _native_form_element(302, "AXRow", "other.test"),
+        _native_form_element(303, "AXLink", "MANAGE", parent=302),
+    ]
+    world.base["elements"] += rows
+    backing = {301: "domain-A", 303: "domain-B"}
+    writes = []
+    click = world.click
+
+    async def click_domain(inp):
+        index = int(inp.position.element_token.split(":")[1])
+        writes.append(backing[index])
+        return await click(inp)
+
+    monkeypatch.setattr(world, "click", click_domain)
+
+    def reorder():
+        rows[0]["label"], rows[2]["label"] = rows[2]["label"], rows[0]["label"]
+        backing[301], backing[303] = backing[303], backing[301]
+
+    return rows, writes, reorder
+
+
+def test_native_form_repeated_row_links_keep_distinct_domain_sections(world, fw, monkeypatch):
+    _, writes, _ = _install_domain_rows(world, monkeypatch)
+    code, out, err = fw("start", "Manage example.test", "--app", "Calculator")
+    assert code == 0, (out, err)
+    rows = {c["id"]: c for c in _state(fw)["last_candidates"]}
+    assert rows[301]["section"] == "example.test"
+    assert rows[303]["section"] == "other.test"
+    code, out, err = fw("do", "click", "301", "--no-judge")
+    assert code == 0 and writes == ["domain-A"], (out, err)
+
+
+@pytest.mark.parametrize("when", ["before_command", "final_live"])
+def test_native_form_reordered_rows_never_dispatch_to_another_domain(world, fw, monkeypatch, when):
+    _, writes, reorder = _install_domain_rows(world, monkeypatch)
+    assert fw("start", "Manage example.test", "--app", "Calculator")[0] == 0
+    if when == "before_command":
+        reorder()
+    else:
+        first = world.n + 1
+        observe = world.get_window_state
+
+        async def reorder_after_command_snapshot(inp):
+            snapshot = await observe(inp)
+            if world.n == first:
+                reorder()
+            return snapshot
+
+        monkeypatch.setattr(world, "get_window_state", reorder_after_command_snapshot)
+    code, out, err = fw("do", "click", "301", "--no-judge")
+    if when == "before_command":
+        assert code == 4 and writes == [], (out, err, writes)
+    else:
+        assert code == 0 and writes == ["domain-A"], (out, err, writes)
+
+
+@pytest.mark.parametrize("unreadable_peer", [False, True])
+def test_native_form_collapsed_groups_require_context_for_every_peer(world, fw, monkeypatch, unreadable_peer):
+    from jevdual import native
+
+    rows, writes, _ = _install_domain_rows(world, monkeypatch)
+    # The pinned Driver drops AXGroup containers. Only the actual AX parent chain can supply
+    # these explicitly named group scopes; no domain identity is invented from adjacent text.
+    world.base["elements"] = [row for row in world.base["elements"] if row not in (rows[0], rows[2])]
+    for row in (rows[1], rows[3]):
+        row.update(parent_index=0, in_web_content=True)
+
+    def section(element):
+        if element == 303 and unreadable_peer:
+            raise RuntimeError("unreadable AX parent")
+        return {301: "example.test", 303: "other.test"}[element]
+
+    ax = SimpleNamespace(
+        Frame=lambda x, y, w, h: (x, y, w, h),
+        resolve=lambda pid, wid, role, frame: int(frame[0]), semantic_section=section,
+    )
+    monkeypatch.setattr(native.NativeBridge, "ax", property(lambda _: ax))
+    assert fw("start", "Manage example.test", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "301", "--no-judge")
+    if unreadable_peer:
+        assert code == 4 and "target_ambiguous" in err and writes == [], (out, err)
+    else:
+        assert code == 0 and writes == ["domain-A"], (out, err)
+
+
+def test_native_form_active_popup_survives_surrounding_link_budget(world, fw):
+    world.base["elements"] += [
+        _native_form_element(300 + i, "AXLink", f"Footer {i}") for i in range(180)
+    ] + [
+        _native_form_element(600, "AXComboBox", "Nameservers"),
+        _native_form_element(601, "AXList", "DNS options", parent=600),
+        _native_form_element(602, "AXStaticText", "Basic DNS", parent=601, selected=True),
+        _native_form_element(603, "AXStaticText", "Custom DNS", parent=601),
+    ]
+    code, out, err = fw("start", "Select Custom DNS", "--app", "Calculator")
+    assert code == 0, (out, err)
+    assert 603 in {c["id"] for c in _state(fw)["last_candidates"]}
+    code, out, err = fw("do", "click", "Custom DNS", "--no-judge")
+    assert code == 0 and world.presses == ["Custom DNS"], (out, err)
+
+
+def _install_nameserver_fields(world, monkeypatch):
+    from jevdual import native
+
+    fields = [
+        _native_form_element(300 + i, "AXTextField", value=f"Nameserver {i + 1}", in_web_content=True)
+        for i in range(4)
+    ]
+    # This independent AX view distinguishes placeholders from actual entered text. The SDK rows
+    # deliberately retain its real fallback behavior: an empty field's value is its placeholder.
+    actual = {row["element_index"]: "" for row in fields}
+    placeholders = {row["element_index"]: row["value"] for row in fields}
+    ax = SimpleNamespace(
+        Frame=lambda x, y, w, h: (x, y, w, h),
+        resolve=lambda pid, wid, role, frame: int(frame[0]),
+        value=lambda element: actual[element],
+        placeholder=lambda element: placeholders[element],
+    )
+    monkeypatch.setattr(native.NativeBridge, "ax", property(lambda _: ax))
+    call_tool = world.call_tool
+
+    async def write_field(name, args_json):
+        args = json.loads(args_json)
+        if name == "type_text":
+            idx = int(args["element_token"].split(":")[1])
+            actual[idx] = args["text"]
+            next(row for row in fields if row["element_index"] == idx)["value"] = args["text"]
+        return await call_tool(name, args_json)
+
+    monkeypatch.setattr(world, "call_tool", write_field)
+    world.base["elements"] += fields
+    return fields, actual, placeholders
+
+
+def test_native_form_empty_placeholders_qualify_fields_before_pruning(world, fw, monkeypatch):
+    _, actual, _ = _install_nameserver_fields(world, monkeypatch)
+    code, out, err = fw("start", "Set the second nameserver", "--app", "Calculator")
+    assert code == 0, (out, err)
+    rows = {c["id"]: c for c in _state(fw)["last_candidates"]}
+    for i in range(4):
+        row = rows[300 + i]
+        assert row["label"] == row["placeholder"] == f"Nameserver {i + 1}"
+        assert row.get("value") is None
+    assert not set(range(300, 304)) & set(_state(fw)["last_native_ambiguous"])
+    code, out, err = fw("do", "type", "301", "ns2.example.test", "--no-judge")
+    assert code == 0, (out, err)
+    assert actual == {300: "", 301: "ns2.example.test", 302: "", 303: ""}
+    row = next(c for c in _state(fw)["last_candidates"] if c["id"] == 301)
+    assert row["label"] == row["placeholder"] == "Nameserver 2"
+    assert row["value"] == "ns2.example.test"
+
+
+@pytest.mark.parametrize("when", ["before_command", "final_live"])
+@pytest.mark.parametrize("change", ["delete_and_renumber", "add"])
+def test_native_form_changed_field_roster_cannot_retarget_a_pending_input(world, fw, monkeypatch, when, change):
+    fields, actual, placeholders = _install_nameserver_fields(world, monkeypatch)
+    assert fw("start", "Set the second nameserver", "--app", "Calculator")[0] == 0
+
+    def mutate():
+        if change == "add":
+            field = _native_form_element(304, "AXTextField", value="Nameserver 5", in_web_content=True)
+            fields.append(field)
+            world.base["elements"].append(field)
+            actual[304], placeholders[304] = "", "Nameserver 5"
+        else:
+            # Delete the selected backing field. Its old index and placeholder now name the old
+            # third field; checking only the selected label/role/section would wrongly dispatch.
+            world.base["elements"].remove(fields[1])
+            for i in (2, 3):
+                fields[i]["element_index"] -= 1
+                fields[i]["value"] = placeholders[300 + i] = f"Nameserver {i}"
+
+    if when == "before_command":
+        mutate()
+    else:
+        from jevdual import native
+
+        first = world.n + 1
+        observe = native.NativeBridge.observe
+
+        async def mutate_after_command_snapshot(bridge, **kwargs):
+            snapshot = await observe(bridge, **kwargs)
+            if world.n == first:
+                mutate()
+            return snapshot
+
+        monkeypatch.setattr(native.NativeBridge, "observe", mutate_after_command_snapshot)
+    code, out, err = fw("do", "type", "301", "ns2.example.test", "--no-judge")
+    assert "target_changed" in out + err, (code, out, err)
+    assert not any(actual.values())
+
+
+def test_native_form_placeholder_change_during_final_live_check_refuses(world, fw, monkeypatch):
+    from jevdual import native
+
+    fields, actual, placeholders = _install_nameserver_fields(world, monkeypatch)
+    fields[1]["label"] = "Destination"
+    assert fw("start", "Set the destination", "--app", "Calculator")[0] == 0
+    first = world.n + 1
+    observe = native.NativeBridge.observe
+
+    async def mutate_after_command_snapshot(bridge, **kwargs):
+        snapshot = await observe(bridge, **kwargs)
+        if world.n == first:
+            placeholders[301] = "Replacement destination"
+        return snapshot
+
+    monkeypatch.setattr(native.NativeBridge, "observe", mutate_after_command_snapshot)
+    code, out, err = fw("do", "type", "301", "ns2.example.test", "--no-judge")
+    assert "target_changed" in out + err, (code, out, err)
+    assert not any(actual.values())
+
+
+def test_native_form_select_all_rechecks_the_field_before_inserting(world, fw, monkeypatch):
+    from tests.test_posture import _ok
+
+    fields, actual, placeholders = _install_nameserver_fields(world, monkeypatch)
+    actual[301] = fields[1]["value"] = "old.example.test"
+    call_tool = world.call_tool
+
+    async def replace_after_selection(name, args_json):
+        if name == "press_key":
+            placeholders[301] = "Replacement field"
+            await call_tool(name, args_json)
+            return _ok()
+        return await call_tool(name, args_json)
+
+    monkeypatch.setattr(world, "call_tool", replace_after_selection)
+    assert fw("start", "Replace second nameserver", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "type", "301", "ns2.example.test", "--no-judge")
+    assert [name for name, _ in world.tool_calls] == ["press_key"], (code, out, err, world.tool_calls)
+    assert actual[301] == "old.example.test"
+
+
+def test_native_form_partial_placeholder_reads_do_not_prove_unique_identity(world, fw, monkeypatch):
+    from jevdual import native
+
+    fields, actual, placeholders = _install_nameserver_fields(world, monkeypatch)
+    placeholders[300] = placeholders[301] = "Nameserver 1"
+    fields[0]["value"] = fields[1]["value"] = "Nameserver 1"
+    ax = native.NativeBridge.ax.fget(None)
+    value = ax.value
+
+    def unreadable_peer(element):
+        if element == 301:
+            raise RuntimeError("unreadable field")
+        return value(element)
+
+    ax.value = unreadable_peer
+    assert fw("start", "Set first nameserver", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "type", "300", "ns1.example.test", "--no-judge")
+    assert not any(actual.values()), (code, out, err, actual)
+    assert "target_ambiguous" in out + err
+
+
+def test_native_form_truncated_duplicate_labels_require_context_for_every_peer(world, fw, monkeypatch):
+    from jevdual import native
+
+    rows, writes, _ = _install_domain_rows(world, monkeypatch)
+    world.base["elements"] = [row for row in world.base["elements"] if row not in (rows[0], rows[2])]
+    for row in (rows[1], rows[3]):
+        row.update(parent_index=0, in_web_content=True, label="M" * 85 + "-same")
+    world.base["elements"].append(
+        _native_form_element(305, "AXLink", "M" * 85 + "-other", in_web_content=True)
+    )
+
+    def section(element):
+        if element == 305:
+            raise RuntimeError("unreadable AX parent")
+        return {301: "example.test", 303: "other.test"}[element]
+
+    ax = SimpleNamespace(
+        Frame=lambda x, y, w, h: (x, y, w, h),
+        resolve=lambda pid, wid, role, frame: int(frame[0]), semantic_section=section,
+    )
+    monkeypatch.setattr(native.NativeBridge, "ax", property(lambda _: ax))
+    assert fw("start", "Manage example.test", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "301", "--no-judge")
+    assert code == 4 and "target_ambiguous" in err and writes == [], (out, err)

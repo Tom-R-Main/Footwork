@@ -22,6 +22,6 @@ MODULES=(
 export PYTHONPATH="$(cd ../browser-use && pwd)${PYTHONPATH:+:$PYTHONPATH}"
 # Match upstream's loop ownership: its browser fixtures and event buses span tests.
 # -c /dev/null intentionally skips upstream project setup, so keep these explicit.
-exec uv run pytest -p jevdual.upstream_pytest -c /dev/null --rootdir=../browser-use --confcutdir="$UP" \
+exec uv run --no-sync pytest -p jevdual.upstream_pytest -c /dev/null --rootdir=../browser-use --confcutdir="$UP" \
   -o asyncio_mode=auto -o asyncio_default_fixture_loop_scope=session \
   -o asyncio_default_test_loop_scope=session -p no:cacheprovider -q --timeout=240 "${MODULES[@]}" "$@"

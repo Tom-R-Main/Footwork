@@ -1,0 +1,143 @@
+FFF.F                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position[reorder] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107e97420>, change = 'reorder'
+
+    @pytest.mark.parametrize("change", ["reorder", "replace", "unchanged"])
+    def test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position(world, fw, change):
+        from tests.fixtures.native_world import ToggleControl
+    
+        first, selected = ToggleControl("setting-A"), ToggleControl("setting-B")
+        world.backed_toggles = {200: first, 201: selected}
+        code, out, err = fw("start", "Enable setting B", "--app", "Calculator")
+        assert code == 0, err
+        assert {200, 201} <= {row["id"] for row in _state(fw)["last_candidates"]}
+        if change == "reorder":
+            world.backed_toggles = {200: selected, 201: first}
+        elif change == "replace":
+            world.backed_toggles[201] = ToggleControl("replacement-C")
+    
+        code, out, err = fw("do", "click", "201", "--no-judge")
+        # The effect oracle names the backing setting, independent of its label, index and token.
+        # No field in the public snapshot distinguishes these controls, even without a reorder.
+>       assert world.toggle_writes == [], (change, code, out, err, world.toggle_writes)
+E       AssertionError: ('reorder', 0, "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+E         dispatched click... 'Enabled' checked=False
+E           [ 201] checkbox   'Enabled' checked=True
+E         page text (3 chars):
+E         0
+E         0
+E         ", '', ['setting-A'])
+E       assert ['setting-A'] == []
+E         
+E         Left contains one more item: 'setting-A'
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:1909: AssertionError
+_ test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position[replace] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1077fb880>, change = 'replace'
+
+    @pytest.mark.parametrize("change", ["reorder", "replace", "unchanged"])
+    def test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position(world, fw, change):
+        from tests.fixtures.native_world import ToggleControl
+    
+        first, selected = ToggleControl("setting-A"), ToggleControl("setting-B")
+        world.backed_toggles = {200: first, 201: selected}
+        code, out, err = fw("start", "Enable setting B", "--app", "Calculator")
+        assert code == 0, err
+        assert {200, 201} <= {row["id"] for row in _state(fw)["last_candidates"]}
+        if change == "reorder":
+            world.backed_toggles = {200: selected, 201: first}
+        elif change == "replace":
+            world.backed_toggles[201] = ToggleControl("replacement-C")
+    
+        code, out, err = fw("do", "click", "201", "--no-judge")
+        # The effect oracle names the backing setting, independent of its label, index and token.
+        # No field in the public snapshot distinguishes these controls, even without a reorder.
+>       assert world.toggle_writes == [], (change, code, out, err, world.toggle_writes)
+E       AssertionError: ('replace', 0, "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+E         dispatched click...abled' checked=False
+E           [ 201] checkbox   'Enabled' checked=True
+E         page text (3 chars):
+E         0
+E         0
+E         ", '', ['replacement-C'])
+E       assert ['replacement-C'] == []
+E         
+E         Left contains one more item: 'replacement-C'
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:1909: AssertionError
+_ test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position[unchanged] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1077fc180>, change = 'unchanged'
+
+    @pytest.mark.parametrize("change", ["reorder", "replace", "unchanged"])
+    def test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position(world, fw, change):
+        from tests.fixtures.native_world import ToggleControl
+    
+        first, selected = ToggleControl("setting-A"), ToggleControl("setting-B")
+        world.backed_toggles = {200: first, 201: selected}
+        code, out, err = fw("start", "Enable setting B", "--app", "Calculator")
+        assert code == 0, err
+        assert {200, 201} <= {row["id"] for row in _state(fw)["last_candidates"]}
+        if change == "reorder":
+            world.backed_toggles = {200: selected, 201: first}
+        elif change == "replace":
+            world.backed_toggles[201] = ToggleControl("replacement-C")
+    
+        code, out, err = fw("do", "click", "201", "--no-judge")
+        # The effect oracle names the backing setting, independent of its label, index and token.
+        # No field in the public snapshot distinguishes these controls, even without a reorder.
+>       assert world.toggle_writes == [], (change, code, out, err, world.toggle_writes)
+E       AssertionError: ('unchanged', 0, "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+E         dispatched cli... 'Enabled' checked=False
+E           [ 201] checkbox   'Enabled' checked=True
+E         page text (3 chars):
+E         0
+E         0
+E         ", '', ['setting-B'])
+E       assert ['setting-B'] == []
+E         
+E         Left contains one more item: 'setting-B'
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:1909: AssertionError
+_ test_pruning_duplicate_native_switches_does_not_make_the_retained_one_unique _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107c91a80>
+
+    def test_pruning_duplicate_native_switches_does_not_make_the_retained_one_unique(world, fw):
+        from tests.fixtures.native_world import ToggleControl
+    
+        world.backed_toggles = {200 + i: ToggleControl(f"setting-{i}") for i in range(5)}
+        fw("start", "Enable the first setting", "--app", "Calculator")
+        offered = {row["id"] for row in _state(fw)["last_candidates"]}
+        assert 200 in offered and not offered.intersection({201, 202, 203, 204})
+        code, out, err = fw("do", "click", "200", "--no-judge")
+>       assert world.toggle_writes == [], (code, out, err, world.toggle_writes)
+E       AssertionError: (0, "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+E         dispatched click(Enabled): ...[  23] button     'Mode'
+E           [ 200] checkbox   'Enabled' checked=True
+E         page text (3 chars):
+E         0
+E         0
+E         ", '', ['setting-0'])
+E       assert ['setting-0'] == []
+E         
+E         Left contains one more item: 'setting-0'
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:1935: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position[reorder]
+FAILED tests/test_session_scenarios.py::test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position[replace]
+FAILED tests/test_session_scenarios.py::test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position[unchanged]
+FAILED tests/test_session_scenarios.py::test_pruning_duplicate_native_switches_does_not_make_the_retained_one_unique
+4 failed, 1 passed, 118 deselected in 0.63s

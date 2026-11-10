@@ -1,0 +1,19 @@
+{
+  "capsule_gzip_sha256": "3705108d0ee6ac5a44b63434b182e1f3aad013d7bd4ac1b7bbc2c2b71cb060e8",
+  "case_count": 26,
+  "normal_return_cases": 24,
+  "watchdog_unavailable_cases": 2,
+  "journal_counts_and_monotonic_order": "all26 agree with summaries",
+  "verified_script_hashes": {
+    "jevdual/scripts/ir1_replay_audit/run.py": "52c6d563305c74598731e9f437338dd09095b090d49971ffe7f6d8b6e5a05911",
+    "jevdual/scripts/ir1_replay_audit/target.py": "b6390639ecce8d69e5acdad5979c05e05e1b0972ce9be09bbba0cb1c95ae8fe8",
+    "jevdual/scripts/ir1_replay_audit/ax_control.py": "06a86c5f58fb9998616735103e7526418315121c5e8a8703e3bc284348b52f32",
+    "jevdual/scripts/ir1_replay_audit/supervise.py": "1a6c2140b1129038ca9a3581d8c67c8759a4b37733d08f49eca9a271af72eefe",
+    "jevdual/scripts/ir1_replay_audit/native_probe.rs": "117e661c12e7cd4b6afc60392a38a5489f4d00e025050df6afa664d5208247d9",
+    "jevdual/scripts/ir1_replay_audit/build.py": "88c59cfa97ecc28f4aaf5e40999f267bbc5d892d97b573b271ad9e248bac92dc"
+  },
+  "owned_fixture_waits": 36,
+  "remaining_owned_descendants": [],
+  "source_provenance": "complete pinned native function prefix hash matches owning archive; cached core has separate provenance limitation",
+  "executed_new_probe": false
+}

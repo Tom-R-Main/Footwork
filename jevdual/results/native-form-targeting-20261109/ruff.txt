@@ -1,0 +1,147 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> scripts/ir1_replay_audit/ax_control.py:5:1
+   |
+ 3 |   This is NOT X11 binding or current product runtime qualification.
+ 4 |   """
+ 5 | / import contextlib
+ 6 | | import hashlib
+ 7 | | import json
+ 8 | | import os
+ 9 | | from pathlib import Path
+10 | | import time
+11 | |
+12 | | from jevdual import linux_ax as ax
+   | |__________________________________^
+help: Organize imports
+   |
+8  | import os
+9  + import time
+10 | from pathlib import Path
+   - import time
+11 |
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+  --> scripts/ir1_replay_audit/ax_control.py:32:8
+   |
+30 |     ax.set_value_ack(Element(), 'TOKEN')
+31 |     outcome = {'ok':True}
+32 | except Exception as error:
+   |        ^^^^^^^^^
+33 |     outcome = {'ok':False, 'type':type(error).__name__, 'error':str(error), 'code':getattr(error,'code',None)}
+34 | print(json.dumps({'boundary':'linux_ax.set_value_ack; binding and writability stubbed; actual private-bus call',
+   |
+
+PLW1510 `subprocess.run` without explicit `check` argument
+  --> scripts/ir1_replay_audit/build.py:54:7
+   |
+52 |     manifest={'archive_sha256':PIN,'production_native_sha256':hashlib.sha256(original).hexdigest(),'test_augmented_native_sha256':hash…
+53 |     (task/'build.json').write_text(json.dumps(manifest,indent=2)+'\n')
+54 |     p=subprocess.run(command,cwd=workspace,env=env,stdout=(task/'compile.stdout.txt').open('w'),stderr=(task/'compile.stderr.txt').ope…
+   |       ^^^^^^^^^^^^^^
+55 |     (task/'build.json').write_text(json.dumps(manifest,indent=2)+'\n')
+56 |     if p.returncode:raise SystemExit(p.returncode)
+   |
+help: Add explicit `check=False`
+
+PLW1510 `subprocess.run` without explicit `check` argument
+  --> scripts/ir1_replay_audit/build.py:60:7
+   |
+58 |     command=[str(rustc),'--edition=2021',str(entry),'--extern',f'platform_linux={out/"libplatform_linux.rlib"}',*libs,'-C','debuginfo=…
+59 |     manifest['commands'].append(command)
+60 |     p=subprocess.run(command,cwd=workspace,env=env,stdout=(task/'link.stdout.txt').open('w'),stderr=(task/'link.stderr.txt').open('w')…
+   |       ^^^^^^^^^^^^^^
+61 |     if p.returncode==0:manifest['probe_sha256']=hashlib.sha256((out/'ir1-probe').read_bytes()).hexdigest()
+62 |     (task/'build.json').write_text(json.dumps(manifest,indent=2)+'\n');raise SystemExit(p.returncode)
+   |
+help: Add explicit `check=False`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> scripts/ir1_replay_audit/run.py:2:1
+   |
+ 1 |   """Finite IR1 first run; independent fixture journal precedes client grading."""
+ 2 | / import argparse
+ 3 | | import hashlib
+ 4 | | import json
+ 5 | | import os
+ 6 | | from pathlib import Path
+ 7 | | import select
+ 8 | | import subprocess
+ 9 | | import sys
+10 | | import time
+   | |___________^
+help: Organize imports
+   |
+5  | import os
+   - from pathlib import Path
+6  | import select
+7  | import subprocess
+8  | import sys
+9  | import time
+10 + from pathlib import Path
+11 |
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+  --> scripts/ir1_replay_audit/run.py:67:12
+   |
+65 |         record['safety_one_effect']=len(effects)<=1
+66 |         save(out/'receipt.json',record)
+67 |     except Exception as error:
+   |            ^^^^^^^^^
+68 |         record={'label':label,'boundary':arm,'fixture_mode':mode,'infrastructure_error':f'{type(error).__name__}: {error}'}
+69 |         save(out/'receipt.json',record)
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> scripts/ir1_replay_audit/supervise.py:2:1
+   |
+ 1 |   """Owned subprocess lifetime and finite whole-run bound; no global reaper."""
+ 2 | / import ctypes
+ 3 | | import hashlib
+ 4 | | import json
+ 5 | | import os
+ 6 | | from pathlib import Path
+ 7 | | import signal
+ 8 | | import subprocess
+ 9 | | import sys
+10 | | import time
+11 | |
+12 | | import psutil
+   | |_____________^
+help: Organize imports
+   |
+5  | import os
+   - from pathlib import Path
+6  | import signal
+7  | import subprocess
+8  | import sys
+9  | import time
+10 + from pathlib import Path
+11 |
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+  --> scripts/ir1_replay_audit/supervise.py:50:20
+   |
+48 |             try:
+49 |                 for row in descendants():history[(row['pid'],row['start'])]=row
+50 |             except Exception as error:errors.append(type(error).__name__+': '+str(error))
+   |                    ^^^^^^^^^
+51 |             time.sleep(.05)
+52 |         timeout=child.poll() is None
+   |
+
+SIM115 Use a context manager for opening files
+  --> scripts/ir1_replay_audit/target.py:22:15
+   |
+20 |     for name in ['org.footwork.IR1Target', 'org.a11y.Bus', 'org.a11y.atspi.Registry']:
+21 |         conn.send_and_get_reply(new_method_call(daemon, 'RequestName', 'su', (name, 0)), timeout=2)
+22 |     journal = Path(a.journal).open('a', buffering=1)
+   |               ^^^^^^^^^^^^^^^^^^^^
+23 |     value = ''
+24 |     first = True
+   |
+
+Found 9 errors.
+[*] 3 fixable with the `--fix` option.

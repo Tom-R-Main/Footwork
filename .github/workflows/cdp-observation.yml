@@ -22,17 +22,18 @@ jobs:
       - name: Install only the browser qualification dependencies
         run: |
           uv venv --python 3.12 "$RUNNER_TEMP/cdp-env"
-          uv pip install --python "$RUNNER_TEMP/cdp-env/bin/python" --only-binary=:all: pytest==8.4.2 psutil==7.2.2 websockets==15.0.1 'packaging>=25,<27'
-          uv pip install --python "$RUNNER_TEMP/cdp-env/bin/python" --no-deps "$RUNNER_TEMP"/cdp-wheel/*.whl
+          uv pip install --python "$RUNNER_TEMP/cdp-env/bin/python" --only-binary=:all: pytest==8.4.2 "$RUNNER_TEMP"/cdp-wheel/*.whl
+          uv pip check --python "$RUNNER_TEMP/cdp-env/bin/python"
       - name: Provision the pinned external Lightpanda binary
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api repos/lightpanda-io/browser/releases/assets/694146173 -H 'Accept: application/octet-stream' > "$RUNNER_TEMP/lightpanda"
+          # Stable 1.0.3; keep this byte pin aligned with lightpanda/artifacts.py.
+          gh api repos/lightpanda-io/browser/releases/assets/712768846 -H 'Accept: application/octet-stream' > "$RUNNER_TEMP/lightpanda"
           python - "$RUNNER_TEMP/lightpanda" <<'PYCODE'
           import hashlib, pathlib, sys
           path = pathlib.Path(sys.argv[1])
-          assert hashlib.sha256(path.read_bytes()).hexdigest() == "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3"
+          assert hashlib.sha256(path.read_bytes()).hexdigest() == "53eb34da09159dcf8f04865dbfe3e63e9a652062684495aa7ced5ddd7c82e8b0"
           path.chmod(0o700)
           PYCODE
           LIGHTPANDA_DISABLE_TELEMETRY=true LIGHTPANDA_DISABLE_CORE_DUMP=1 "$RUNNER_TEMP/lightpanda" version

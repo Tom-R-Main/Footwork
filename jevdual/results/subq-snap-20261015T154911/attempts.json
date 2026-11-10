@@ -1,0 +1,698 @@
+[
+  {
+    "id": "act-0",
+    "expected_route": "act",
+    "distractor_characters": 0,
+    "status": "completed",
+    "request_bytes": 1413,
+    "request_sha256": "43b6368b43a9086203ecbb9b4f7c63b469b4d8b96de5a9c12dbb3b41b1158df2",
+    "reserved_input_tokens": 4239,
+    "accounted_tokens": 370,
+    "latency_seconds": 0.38841620786115527,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "act",
+          "probabilities": {
+            "act": 0.9789029359817505,
+            "wait": 0.007859871722757816,
+            "done": 0.005491393618285656,
+            "escalate": 0.0077458638697862625
+          },
+          "confidence": 0.9718705813090006
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.011670316569507122
+        },
+        "progress": {
+          "type": "score",
+          "score": 0.0351721690967679,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.9711920022964478,
+            "1": 0.022443698719143867,
+            "2": 0.0063642351888120174
+          },
+          "confidence": 0.9472417463548481
+        }
+      },
+      "usage": {
+        "input_tokens": 370,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "act",
+    "completion": 0.011670316569507122,
+    "score": 0.0351721690967679,
+    "input_tokens": 370,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "wait-0",
+    "expected_route": "wait",
+    "distractor_characters": 0,
+    "status": "completed",
+    "request_bytes": 1414,
+    "request_sha256": "8a3b99bde0e8851334c2cb703676ff5c1f530c9072153edbf94c729ca6c39434",
+    "reserved_input_tokens": 4242,
+    "accounted_tokens": 370,
+    "latency_seconds": 0.3070776250679046,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "wait",
+          "probabilities": {
+            "act": 0.015472745522856712,
+            "wait": 0.9738931059837341,
+            "done": 0.005139554385095835,
+            "escalate": 0.005494598299264908
+          },
+          "confidence": 0.9651908079783121
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.0128847761079669
+        },
+        "progress": {
+          "type": "score",
+          "score": 0.9895415641367435,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.018781570717692375,
+            "1": 0.972895085811615,
+            "2": 0.008323239162564278
+          },
+          "confidence": 0.959342785179615
+        }
+      },
+      "usage": {
+        "input_tokens": 370,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "wait",
+    "completion": 0.0128847761079669,
+    "score": 0.9895415641367435,
+    "input_tokens": 370,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "done-0",
+    "expected_route": "done",
+    "distractor_characters": 0,
+    "status": "completed",
+    "request_bytes": 1419,
+    "request_sha256": "a0dfcdf50b3bdc325ea46db4cee3a46c24b7caafdd69273f865370f942e01488",
+    "reserved_input_tokens": 4257,
+    "accounted_tokens": 369,
+    "latency_seconds": 0.3669562910217792,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "done",
+          "probabilities": {
+            "act": 0.020650753751397133,
+            "wait": 0.008254501037299633,
+            "done": 0.965167760848999,
+            "escalate": 0.005926948040723801
+          },
+          "confidence": 0.953557014465332
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.976942777633667
+        },
+        "progress": {
+          "type": "score",
+          "score": 1.9666042234748602,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.009702893905341625,
+            "1": 0.013990035280585289,
+            "2": 0.9763070940971375
+          },
+          "confidence": 0.9499062653630972
+        }
+      },
+      "usage": {
+        "input_tokens": 369,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "done",
+    "completion": 0.976942777633667,
+    "score": 1.9666042234748602,
+    "input_tokens": 369,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "escalate-0",
+    "expected_route": "escalate",
+    "distractor_characters": 0,
+    "status": "completed",
+    "request_bytes": 1412,
+    "request_sha256": "995c4f253a40e22091942ce742a21c032ddcc0a59f4b97295d8e49ffd6d907ee",
+    "reserved_input_tokens": 4236,
+    "accounted_tokens": 370,
+    "latency_seconds": 0.3852320001460612,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "escalate",
+          "probabilities": {
+            "act": 0.01574551686644554,
+            "wait": 0.00645979680120945,
+            "done": 0.004677197430282831,
+            "escalate": 0.9731174111366272
+          },
+          "confidence": 0.9641565481821696
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.013507219031453133
+        },
+        "progress": {
+          "type": "score",
+          "score": 0.035397062078118324,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.9708917737007141,
+            "1": 0.022819427773356438,
+            "2": 0.006288817152380943
+          },
+          "confidence": 0.9469044068828225
+        }
+      },
+      "usage": {
+        "input_tokens": 370,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "escalate",
+    "completion": 0.013507219031453133,
+    "score": 0.035397062078118324,
+    "input_tokens": 370,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "act-8000",
+    "expected_route": "act",
+    "distractor_characters": 8000,
+    "status": "completed",
+    "request_bytes": 9416,
+    "request_sha256": "6629bce1c721e07d56d1bcc4c73c63373785897fc2087cad86c9117ab96fbf6c",
+    "reserved_input_tokens": 28248,
+    "accounted_tokens": 1518,
+    "latency_seconds": 0.3228475828655064,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "act",
+          "probabilities": {
+            "act": 0.9767702221870422,
+            "wait": 0.007643359247595072,
+            "done": 0.005679628811776638,
+            "escalate": 0.009906856343150139
+          },
+          "confidence": 0.9690269629160563
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.00996109563857317
+        },
+        "progress": {
+          "type": "score",
+          "score": 0.03733067773282528,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.9698753356933594,
+            "1": 0.02291847951710224,
+            "2": 0.007206099107861519
+          },
+          "confidence": 0.9440039834007621
+        }
+      },
+      "usage": {
+        "input_tokens": 1518,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "act",
+    "completion": 0.00996109563857317,
+    "score": 0.03733067773282528,
+    "input_tokens": 1518,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "wait-8000",
+    "expected_route": "wait",
+    "distractor_characters": 8000,
+    "status": "completed",
+    "request_bytes": 9417,
+    "request_sha256": "fc9348eb64432f5b0288ee6278e54e59023b629c14e99754d0b2214aa3576f5d",
+    "reserved_input_tokens": 28251,
+    "accounted_tokens": 1518,
+    "latency_seconds": 0.35962599981576204,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "wait",
+          "probabilities": {
+            "act": 0.014666818082332611,
+            "wait": 0.9753468632698059,
+            "done": 0.004730022978037596,
+            "escalate": 0.005256309639662504
+          },
+          "confidence": 0.9671291510264078
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.01287140417844057
+        },
+        "progress": {
+          "type": "score",
+          "score": 0.9906583977863193,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.015810411423444748,
+            "1": 0.9777209162712097,
+            "2": 0.0064687407575547695
+          },
+          "confidence": 0.9665812717285007
+        }
+      },
+      "usage": {
+        "input_tokens": 1518,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "wait",
+    "completion": 0.01287140417844057,
+    "score": 0.9906583977863193,
+    "input_tokens": 1518,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "done-8000",
+    "expected_route": "done",
+    "distractor_characters": 8000,
+    "status": "completed",
+    "request_bytes": 9422,
+    "request_sha256": "dd78660fe090bac7d221994d45b36f62f70c3fea4cff11ac5a70cf302815f721",
+    "reserved_input_tokens": 28266,
+    "accounted_tokens": 1517,
+    "latency_seconds": 0.32323170779272914,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "done",
+          "probabilities": {
+            "act": 0.017512278631329536,
+            "wait": 0.007115280255675316,
+            "done": 0.9699565172195435,
+            "escalate": 0.005415843799710274
+          },
+          "confidence": 0.9599420229593912
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.9797508120536804
+        },
+        "progress": {
+          "type": "score",
+          "score": 1.9618917740881443,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.01112354826182127,
+            "1": 0.015861157327890396,
+            "2": 0.973015308380127
+          },
+          "confidence": 0.9428376192227006
+        }
+      },
+      "usage": {
+        "input_tokens": 1517,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "done",
+    "completion": 0.9797508120536804,
+    "score": 1.9618917740881443,
+    "input_tokens": 1517,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "escalate-8000",
+    "expected_route": "escalate",
+    "distractor_characters": 8000,
+    "status": "completed",
+    "request_bytes": 9415,
+    "request_sha256": "fcbb41400475d6d59db8d4a054e359198b3197c30e3bed8af31e41cabcdb0f5b",
+    "reserved_input_tokens": 28245,
+    "accounted_tokens": 1518,
+    "latency_seconds": 0.3088545829523355,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "escalate",
+          "probabilities": {
+            "act": 0.018178556114435196,
+            "wait": 0.007778405677527189,
+            "done": 0.005180878099054098,
+            "escalate": 0.9688621163368225
+          },
+          "confidence": 0.95848282178243
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.012677471153438091
+        },
+        "progress": {
+          "type": "score",
+          "score": 0.03328399080783129,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.9723353981971741,
+            "1": 0.022045349702239037,
+            "2": 0.005619320552796125
+          },
+          "confidence": 0.9500740137882531
+        }
+      },
+      "usage": {
+        "input_tokens": 1518,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "escalate",
+    "completion": 0.012677471153438091,
+    "score": 0.03328399080783129,
+    "input_tokens": 1518,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "act-80000",
+    "expected_route": "act",
+    "distractor_characters": 80000,
+    "status": "completed",
+    "request_bytes": 81417,
+    "request_sha256": "832e02aa0a5686d5723ea84e30be00b22b543ad946bfd64606f92fb190ee6a5e",
+    "reserved_input_tokens": 244251,
+    "accounted_tokens": 11805,
+    "latency_seconds": 0.779385874979198,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "act",
+          "probabilities": {
+            "act": 0.9803119897842407,
+            "wait": 0.007326089311391115,
+            "done": 0.00539956521242857,
+            "escalate": 0.006962273269891739
+          },
+          "confidence": 0.9737493197123209
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.010830079205334187
+        },
+        "progress": {
+          "type": "score",
+          "score": 0.038376519456505775,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.9686642289161682,
+            "1": 0.02429482527077198,
+            "2": 0.007040847092866898
+          },
+          "confidence": 0.9424352208152413
+        }
+      },
+      "usage": {
+        "input_tokens": 11805,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "act",
+    "completion": 0.010830079205334187,
+    "score": 0.038376519456505775,
+    "input_tokens": 11805,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "wait-80000",
+    "expected_route": "wait",
+    "distractor_characters": 80000,
+    "status": "completed",
+    "request_bytes": 81418,
+    "request_sha256": "231b1623bdcf8cbe256208f3f4158866936098534332a1d633ea3f5e9fc765b7",
+    "reserved_input_tokens": 244254,
+    "accounted_tokens": 11805,
+    "latency_seconds": 0.4834505000617355,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "wait",
+          "probabilities": {
+            "act": 0.014254841022193432,
+            "wait": 0.975595235824585,
+            "done": 0.004471475724130869,
+            "escalate": 0.00567838829010725
+          },
+          "confidence": 0.9674603144327799
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.01156145054847002
+        },
+        "progress": {
+          "type": "score",
+          "score": 0.9945897283032537,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.012980131432414055,
+            "1": 0.9794498682022095,
+            "2": 0.007569930050522089
+          },
+          "confidence": 0.9691749077755958
+        }
+      },
+      "usage": {
+        "input_tokens": 11805,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "wait",
+    "completion": 0.01156145054847002,
+    "score": 0.9945897283032537,
+    "input_tokens": 11805,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "done-80000",
+    "expected_route": "done",
+    "distractor_characters": 80000,
+    "status": "completed",
+    "request_bytes": 81423,
+    "request_sha256": "add6c535b36bd23bc1cb915249552ce96447bab6e71900e96d6ff57ccf3189c7",
+    "reserved_input_tokens": 244269,
+    "accounted_tokens": 11804,
+    "latency_seconds": 0.5425702498760074,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "done",
+          "probabilities": {
+            "act": 0.019962172955274582,
+            "wait": 0.007646479178220034,
+            "done": 0.9673249125480652,
+            "escalate": 0.005066431127488613
+          },
+          "confidence": 0.9564332167307535
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.9814825654029846
+        },
+        "progress": {
+          "type": "score",
+          "score": 1.9667034046724439,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.010327346622943878,
+            "1": 0.01264189649373293,
+            "2": 0.9770307540893555
+          },
+          "confidence": 0.950055115390569
+        }
+      },
+      "usage": {
+        "input_tokens": 11804,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "done",
+    "completion": 0.9814825654029846,
+    "score": 1.9667034046724439,
+    "input_tokens": 11804,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  },
+  {
+    "id": "escalate-80000",
+    "expected_route": "escalate",
+    "distractor_characters": 80000,
+    "status": "completed",
+    "request_bytes": 81416,
+    "request_sha256": "08395c992fa7ef5c0d57e8341bfdd1442490e2147d79f5278a87696b49372dae",
+    "reserved_input_tokens": 244248,
+    "accounted_tokens": 11805,
+    "latency_seconds": 0.45016329106874764,
+    "response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "escalate",
+          "probabilities": {
+            "act": 0.02099669724702835,
+            "wait": 0.0067915236577391624,
+            "done": 0.005190092604607344,
+            "escalate": 0.9670217633247375
+          },
+          "confidence": 0.9560290177663168
+        },
+        "completion": {
+          "type": "noul",
+          "noul": 0.012569576501846313
+        },
+        "progress": {
+          "type": "score",
+          "score": 0.033064402639865875,
+          "legend": {
+            "0": "Not started: no draft exists, or a required value needs user clarification.",
+            "1": "Partial: the draft is being saved, with no successful durable save receipt.",
+            "2": "Complete: exact requested content and a successful durable save receipt exist."
+          },
+          "probabilities": {
+            "0": 0.9733639359474182,
+            "1": 0.02020776830613613,
+            "2": 0.006428317166864872
+          },
+          "confidence": 0.9504033960402012
+        }
+      },
+      "usage": {
+        "input_tokens": 11805,
+        "output_tokens": 0
+      }
+    },
+    "contract_valid": true,
+    "route": "escalate",
+    "completion": 0.012569576501846313,
+    "score": 0.033064402639865875,
+    "input_tokens": 11805,
+    "route_correct": true,
+    "completion_correct": true,
+    "score_correct": true
+  }
+]

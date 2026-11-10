@@ -108,10 +108,11 @@ def test_bind_allows_restored_durable_secret_and_preserves_legacy_mode(
         monkeypatch.delenv("FOOTWORK_SECRET_FIXTURE", raising=False)
     else:
         monkeypatch.setenv("FOOTWORK_SECRET_FIXTURE", value)
-    driver, bridge = object(), object()
+    driver, bridge = object(), SimpleNamespace()
     monkeypatch.setattr(cua_driver.CuaDriver, "create", staticmethod(lambda **kwargs: driver))
     monkeypatch.setattr(session, "_native_bridge", lambda *args: bridge)
     assert asyncio.run(session.bind(state)) == (driver, bridge)
+    assert bridge.menu_budget.native_menu_cap == state.native_menu_cap
 
 
 def _nm(cands, title="page", page_text=""):

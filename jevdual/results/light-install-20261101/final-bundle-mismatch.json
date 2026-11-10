@@ -1,0 +1,5 @@
+{
+  "exit": 2,
+  "environment_created": false,
+  "diagnostic": "usage: install.py [-h] --venv VENV [--python PYTHON] [--offline]\n                  [--profile {light,full}] [--core-only]\ninstall.py: error: requested profile does not match this bundle; obtain the matching light or full bundle\n"
+}

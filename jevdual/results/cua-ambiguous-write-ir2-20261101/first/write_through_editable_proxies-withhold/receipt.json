@@ -1,0 +1,55 @@
+{
+  "argv": [
+    "/work/build-v2/bin/ir1-probe",
+    "write_through_editable_proxies"
+  ],
+  "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+  "returncode": 0,
+  "signal": null,
+  "watchdog_expired": false,
+  "elapsed_seconds": 0.12020641599997361,
+  "result": {
+    "boundary": "write_through_editable_proxies",
+    "client_timeout_ms": 100,
+    "elapsed_ms": 106,
+    "error": "text_write_uncertain: EditableText.InsertText acknowledgement unavailable; delivery unknown: I/O error: timed out: timed out",
+    "ok": false,
+    "ordinary_zbus_timeout_ms": 25000,
+    "result": null
+  },
+  "label": "write_through_editable_proxies-withhold",
+  "boundary": "write_through_editable_proxies",
+  "fixture_mode": "withhold",
+  "client_timeout_ms": 100,
+  "attempts": 1,
+  "effects": 1,
+  "methods": [
+    "InsertText"
+  ],
+  "transitions": [
+    {
+      "before": "",
+      "after": "TOKEN"
+    }
+  ],
+  "final_value": "TOKEN",
+  "target_argv": [
+    "/workspace/footwork/bin/python",
+    "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+    "--address",
+    "unix:path=/tmp/dbus-ltviKeIz8k,guid=6b0cf9caa1de304c3b9349ce6ae795a8",
+    "--journal",
+    "/results/first/write_through_editable_proxies-withhold/target.jsonl",
+    "--ready",
+    "/results/first/write_through_editable_proxies-withhold/ready.json",
+    "--mode",
+    "withhold",
+    "--primary",
+    "InsertText",
+    "--invocation",
+    "write_through_editable_proxies-withhold"
+  ],
+  "expected_control_effects": null,
+  "control_passed": null,
+  "safety_one_effect": true
+}

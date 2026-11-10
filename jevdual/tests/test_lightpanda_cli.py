@@ -43,7 +43,7 @@ def test_installed_lightpanda_discovery_is_an_explicit_readonly_profile():
     assert {a["name"] for a in schema["arguments"]} >= {"url", "executable", "work_dir", "timeout"}
     guide = cli("browser", "lightpanda", "guide")
     assert guide["completion"] == "not_asserted; observation is not task completion"
-    assert "pending" in guide["install"]
+    assert "base light package metadata" in guide["install"]
     doctor = cli("doctor")["browser_profiles"]["lightpanda"]
     assert doctor["runtime_qualification"] == "not_checked"
     assert doctor["typing"] == "disabled"
@@ -51,8 +51,10 @@ def test_installed_lightpanda_discovery_is_an_explicit_readonly_profile():
 
 def test_artifact_lookup_never_downloads_or_builds():
     pin = cli("browser", "lightpanda", "artifact", "--platform", "linux-x86_64")
-    assert pin["asset_id"] == 694146173
-    assert pin["sha256"] == "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3"
+    assert pin["asset_id"] == 712768846
+    assert pin["sha256"] == "53eb34da09159dcf8f04865dbfe3e63e9a652062684495aa7ced5ddd7c82e8b0"
+    assert pin["release"] == "1.0.3"
+    assert pin["bytes"] == 77403464
     assert pin["available"] is True
 
 

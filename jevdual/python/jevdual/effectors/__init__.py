@@ -1,7 +1,8 @@
 """Select an effector without importing its optional implementation at startup.
 
-Only CUA is selected today. The base install and runtime selection do not change
-until an independent browser effector and its evidence contract are qualified.
+The compatibility desktop/browser factories below use the optional CUA extra.
+The owned CDP and read-only Lightpanda commands select their own implementations
+explicitly; installing fewer dependencies never switches a live session's route.
 """
 
 from __future__ import annotations

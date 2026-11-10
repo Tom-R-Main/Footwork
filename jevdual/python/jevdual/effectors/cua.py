@@ -34,6 +34,11 @@ def _sdk(kind: str = "desktop") -> Any:
     return cua_driver
 
 
+def cursor_planner() -> Any:
+    """CUA's pure motion planner (``plan_cursor_move`` and its request types); no driver, no input."""
+    return _sdk("desktop")
+
+
 def require_available(kind: str) -> None:
     """Import-check the implementation without constructing a driver."""
     _sdk(kind)

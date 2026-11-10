@@ -1,0 +1,60 @@
+{
+  "argv": [
+    "/work/build-v2/bin/ir1-probe",
+    "double_set_control"
+  ],
+  "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+  "returncode": 0,
+  "signal": null,
+  "watchdog_expired": false,
+  "elapsed_seconds": 0.00946275000001151,
+  "result": {
+    "boundary": "double_set_control",
+    "client_timeout_ms": null,
+    "elapsed_ms": 3,
+    "error": null,
+    "ok": true,
+    "ordinary_zbus_timeout_ms": 25000,
+    "result": true
+  },
+  "label": "equal-final-value-double-effect-control",
+  "boundary": "double_set_control",
+  "fixture_mode": "ack",
+  "client_timeout_ms": null,
+  "attempts": 2,
+  "effects": 2,
+  "methods": [
+    "SetTextContents",
+    "SetTextContents"
+  ],
+  "transitions": [
+    {
+      "before": "",
+      "after": "TOKEN"
+    },
+    {
+      "before": "TOKEN",
+      "after": "TOKEN"
+    }
+  ],
+  "final_value": "TOKEN",
+  "target_argv": [
+    "/workspace/footwork/bin/python",
+    "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+    "--address",
+    "unix:path=/tmp/dbus-qj8Tiw5JWk,guid=0da035f73eed83f29a1eb3bf6ae795ac",
+    "--journal",
+    "/results/first/equal-final-value-double-effect-control/target.jsonl",
+    "--ready",
+    "/results/first/equal-final-value-double-effect-control/ready.json",
+    "--mode",
+    "ack",
+    "--primary",
+    "SetTextContents",
+    "--invocation",
+    "equal-final-value-double-effect-control"
+  ],
+  "expected_control_effects": 2,
+  "control_passed": true,
+  "safety_one_effect": false
+}

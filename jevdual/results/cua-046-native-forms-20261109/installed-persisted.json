@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "domains": {
+    "alpha.example.test": {
+      "mode": "Custom DNS",
+      "fields": [
+        {
+          "id": "alpha.example.test:2",
+          "value": "ns1.example.test"
+        },
+        {
+          "id": "alpha.example.test:3",
+          "value": "ns2.example.test"
+        },
+        {
+          "id": "alpha.example.test:4",
+          "value": "ns3.example.test"
+        },
+        {
+          "id": "alpha.example.test:5",
+          "value": "ns4.example.test"
+        }
+      ]
+    },
+    "beta.example.test": {
+      "mode": "Basic DNS",
+      "fields": [
+        {
+          "id": "beta.example.test:1",
+          "value": ""
+        },
+        {
+          "id": "beta.example.test:2",
+          "value": ""
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "baseline": "7852bb7bb1106a7b00a1c15395bf19d99606a97a",
+  "prediction_commits": [
+    "7b326f2",
+    "ecb01de"
+  ],
+  "criteria": [
+    {
+      "id": "duplicate_reproduction",
+      "kind": "historical",
+      "boundary": "public CLI simulated Mac",
+      "required": "same-count reorder/replacement test fails for independent wrong backing effect before fix",
+      "state": "checked"
+    },
+    {
+      "id": "duplicate_refusal",
+      "kind": "historical",
+      "boundary": "public CLI simulated Mac",
+      "required": "ambiguous controls dispatch zero input after repair; unique positive control still reaches expected backing object",
+      "state": "checked"
+    },
+    {
+      "id": "light_metadata",
+      "kind": "artifact",
+      "boundary": "built wheel METADATA",
+      "required": "base closure excludes CUA/browser-use/platform native packages; explicit extras retain exact versions/markers",
+      "state": "checked"
+    },
+    {
+      "id": "light_install",
+      "kind": "current_state",
+      "boundary": "clean binary-only resolver install",
+      "required": "installed light profile contains no desktop/agent distributions and passes dependency consistency",
+      "state": "checked"
+    },
+    {
+      "id": "installed_cli",
+      "kind": "historical",
+      "boundary": "installed public CLI outside source",
+      "required": "catalog/schema/doctor work and absent native effector refuses before host side effects",
+      "state": "checked"
+    },
+    {
+      "id": "installed_read",
+      "kind": "historical",
+      "boundary": "installed CLI with local pinned Lightpanda",
+      "required": "loopback semantic read preserves private-field withholding, no input authority, independent cleanup result",
+      "state": "checked"
+    },
+    {
+      "id": "full_profile",
+      "kind": "artifact_and_regression",
+      "boundary": "full extras, bundle roles and existing tests",
+      "required": "full package retains required dependencies, host checks, binary-only consumer and no silent fallback",
+      "state": "artifact_and_regressions_checked; full_fresh_install_unverified"
+    },
+    {
+      "id": "resource_claim",
+      "kind": "limit",
+      "boundary": "no small-host benchmark",
+      "required": "do not claim 2CPU/8GB qualification or performance gain",
+      "state": "explicitly_unmeasured"
+    }
+  ],
+  "checked_source": "81d6985791298d151c9610bc10b1b00816137b07",
+  "checks": {
+    "source_suite": {
+      "result": "2848 passed,51 skipped,66 deselected",
+      "exit": 0,
+      "artifact": "integrated-pinned-pytest.txt"
+    },
+    "initial_source_suite": {
+      "result": "2847 passed,51 skipped,66 deselected; one native-pin mismatch in old shared venv",
+      "exit": 1,
+      "artifact": "integrated-pytest.txt"
+    },
+    "lint": {
+      "command": ".venv/bin/ruff check python evals tests scripts",
+      "exit": 0
+    },
+    "notebook": {
+      "command": "python -m evals.notebook docs/notebook --check",
+      "exit": 0
+    },
+    "resource_snapshot": {
+      "command": "python scripts/sync_tool_resources.py --check",
+      "files": 103,
+      "exit": 0
+    },
+    "lock": {
+      "command": "uv --no-config --cache-dir output/light-install-20261101/parent-lock-cache lock --check --offline --no-build",
+      "packages": 300,
+      "exit": 0,
+      "resolved_versions_and_artifacts_unchanged": true
+    }
+  },
+  "test_environment": {
+    "python": "3.12.6",
+    "platform": "macOS arm64",
+    "shared_virtualenv": "Existing project virtualenv retained unchanged; its CUA version was old.",
+    "pinned_native_overlay": "/Users/thomasmain/projects/footwork/output/duplicate-controls-light-install-20261101/pinned-cua",
+    "cua_version": "0.38.0+footwork.d5373879.cleanup2",
+    "local_cua_wheel_sha256": "23815cfcd8e248c831ff42b9bb74c220a52ecbd0a586f48d5eaf872d4f6f6c74",
+    "qualification": "Source tests use explicit source path and local native overlay, not a clean full-profile dependency installation."
+  },
+  "wheel_sha256": "0c777e645947f308e93b01e939eaf964dae5a6e77c81c7d4ef269e7f51d41a4a"
+}

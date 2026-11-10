@@ -18,7 +18,7 @@ OUT="results/g-pilot-$STAMP-$VARIANT"; B="$OUT/browser"; T="$OUT/textedit"
 DIR="$HOME/footwork-pilot"; NAME="transfer-$STAMP.txt"; FILE="$DIR/$NAME"
 mkdir -p "$OUT" "$DIR"; printf 'Price carried from the browser:\n' > "$FILE"
 LOG="$OUT/pilot.log"
-fw() { echo "\$ footwork $*" >> "$LOG"; uv run footwork "$@" 2>&1 | tee -a "$LOG"; }
+fw() { echo "\$ footwork $*" >> "$LOG"; uv run --no-sync footwork "$@" 2>&1 | tee -a "$LOG"; }
 # a step that fails ends the pilot there, named, with its exit code (G7's first run went on after a
 # failed start and reported the oracle's failure with tee's exit code)
 must() { "$@"; local c=$?; if [ $c -ne 0 ]; then echo "pilot stopped: '$*' exited $c" | tee -a "$LOG"; echo "stopped" > "$OUT/outcome.txt"; exit $c; fi; }

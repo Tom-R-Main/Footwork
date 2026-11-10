@@ -15,7 +15,9 @@ python scripts/build_capability_wheel.py --verify /absolute/owned/artifacts/jevd
 
 The builder uses the standard library and downloads nothing. It refuses to replace an existing wheel. The verifier compares the ZIP inventory and bytes with the permitted source inventory, checks required runtime resources, verifies every RECORD hash and size, and checks the declared license path. Fixed ZIP timestamps and ordering make builds from unchanged source repeatable in the same Python environment.
 
-Only `.py` runtime files, the policy file and generated distribution metadata ship. Research runs, tests, caches and compiled extensions are excluded; source symlinks are rejected. Dependencies are declared rather than bundled. The wheel retains the full current dependency list, including exact MCP, browser-use, cua-driver and psutil pins. It is not a reduced-dependency distribution.
+Only `.py` runtime files, the policy file and generated distribution metadata ship. Research runs, tests, caches and compiled extensions are excluded; source symlinks are rejected. Dependencies are declared rather than bundled. The base dependency set is light. Native support is declared in `[desktop]` and browser-use in `[agent]`;
+full capability installs request both explicitly. The portable wheel carries all runtime modules,
+with optional implementations imported only when selected. See [installation profiles](unified-cli.md#choose-an-installation-profile).
 
 ### Consumer artifact checks
 
@@ -29,7 +31,7 @@ CI defines Linux/Python 3.12 and macOS arm64/Python 3.12 and 3.14 profiles. The 
 
 ## Install into a fresh environment
 
-CUA `0.38.0+footwork.d5373879` builds its Python bindings and native engine from the pinned reference source because published packages lag that commit. First build the dependency wheel for the destination platform; see [CUA wheel provenance and builds](upstream/cua-driver-build.md). From `jevdual/`, with an existing Python and uv:
+CUA `0.46.0+footwork.5486b624.cleanup2` builds matched Python bindings and native code from the pinned release with Footwork's shutdown-cleanup patch. The published upstream wheel does not contain that correction. First build the dependency wheel for the destination platform; see [CUA wheel provenance and builds](upstream/cua-driver-build.md). From `jevdual/`, with an existing Python and uv:
 
 ~~~sh
 rustup toolchain install 1.97.1 --profile minimal
@@ -38,7 +40,7 @@ uv --no-config venv --python /absolute/python3 /absolute/owned/venv
 uv --no-config pip install --python /absolute/owned/venv/bin/python \
   --default-index https://pypi.org/simple --only-binary :all: \
   --find-links /absolute/owned/cua-wheels \
-  /absolute/owned/artifacts/jevdual-0.0.1-py3-none-any.whl
+  "/absolute/owned/artifacts/jevdual-0.0.1-py3-none-any.whl[desktop,agent]"
 /absolute/owned/venv/bin/python -I -m jevdual.capability.cli doctor --strict
 ~~~
 

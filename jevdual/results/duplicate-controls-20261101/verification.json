@@ -1,0 +1,76 @@
+{
+  "package": "duplicate native-control identity",
+  "prediction_commit": "7b326f2",
+  "implementation_base": "7852bb7bb1106a7b00a1c15395bf19d99606a97a",
+  "checked_head": "ecb01de7122d6b04314a742691852e9042778771",
+  "delivery_state": "built and checked locally; parent integration pending",
+  "source_files": {
+    "jevdual/python/jevdual/native.py": "70dc7c0d37f266deba54c739f858a980870e47323be998c2bec1ada7c36d2cf9",
+    "jevdual/python/jevdual/session.py": "8cf80bf4669007d413cc71df0bc87655b24eb641ac35b9865c7843bb1054eecb",
+    "jevdual/tests/fixtures/native_world.py": "8fa4b40c80d541a0847187f3e87be41e0d5852634c9548c965b0919f5b6006e4",
+    "jevdual/tests/test_session_scenarios.py": "3cd614ccbf2fe2f2fa2c53b749c3446b930406c8e75ac9ee242655271cc2d8a7",
+    "jevdual/tests/test_control_state.py": "415baacdcb8038852a1ccbaaa0abae41cb748b13d6b803b6111f017ba9218505",
+    "jevdual/docs/notebook/2026-11-01-duplicate-control-identity.md": "1a08b117b1645fad2e767d2a29bdb97fa5c2cde52491cfa1a60d2deb5503b6b7"
+  },
+  "baseline_native_files": {
+    "jevdual/python/jevdual/native.py": "f6c17d90dfcf64f212cdd2e091c8c1fc811623ff404396c9f8aa8c3ca311f700",
+    "jevdual/python/jevdual/session.py": "f14ae04582d819a354b4f014f3986ff958320ef63211fe8149e97ffe53ea8238"
+  },
+  "checks": [
+    {
+      "kind": "behavioral negative control",
+      "command": "PYTHONPATH=/Users/thomasmain/projects/footwork/jevdual/python .venv/bin/python -m pytest tests/test_session_scenarios.py -k 'indistinguishable_native_switches or distinct_native_switch' -q",
+      "result": "3 failed,1 passed; baseline delivered to wrong backing identity after reorder and replacement",
+      "exit": 1,
+      "artifact": "red-behavior.txt",
+      "source_state": "baseline native.py/session.py with new scenario/fixture only; packaging work concurrent, unrelated to the native binding path"
+    },
+    {
+      "kind": "pruned collision negative control",
+      "result": "4 failed,1 passed; five known same-label peers were pruned to one and baseline dispatched to it",
+      "exit": 1,
+      "artifact": "red-pruned.txt"
+    },
+    {
+      "kind": "historical collision negative control",
+      "result": "1 failed; transient-only repair still delivered to lookalike after source collision evidence was lost across command save/load",
+      "exit": 1,
+      "artifact": "red-historical-pruning.txt",
+      "source_state": "first native ambiguity refusal, before persisted session ambiguity guard"
+    },
+    {
+      "kind": "final affected regression suite",
+      "command": "PYTHONPATH=/Users/thomasmain/projects/footwork/jevdual/python .venv/bin/python -m pytest tests/test_session_scenarios.py tests/test_control_state.py tests/test_native.py tests/test_session.py -q",
+      "result": "203 passed in 11.12s",
+      "exit": 0,
+      "artifact": "affected-final.txt"
+    },
+    {
+      "kind": "lint",
+      "command": ".venv/bin/ruff check python/jevdual/native.py python/jevdual/session.py tests/test_session_scenarios.py tests/fixtures/native_world.py tests/test_control_state.py",
+      "result": "All checks passed",
+      "exit": 0,
+      "artifact": "ruff.txt"
+    }
+  ],
+  "evidence_files": {
+    "red-behavior.txt": "7c9a2e06e1d298a6e330dba250c31f41fcbf8ca1a118bf54be414a8836f0c99e",
+    "red-pruned.txt": "bd6ecc043df299d7d16d81170f0146474fc247edf093f17e611954bf57a3c4e6",
+    "red-historical-pruning.txt": "9f64e64ff9ac9b2d2efadcdb6bbd98b57f50b8c477b686cafa0df8c2448c8022",
+    "affected-final.txt": "a3a85dfa6e71c31a7f27529f57c7261b785e6653bb94354de060b61a0cda3b1f",
+    "ruff.txt": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "limits": [
+    "Simulated public CLI and source tests; no live desktop qualified.",
+    "Known duplicate collisions refuse even when mutable states differ; no retained AX/native identity protocol introduced.",
+    "Known source collisions survive menu pruning and session persistence; incomplete backend trees can still hide unknown peers.",
+    "Label selection explicitly queries the current observation; generic numeric selection from legacy baselines requires fresh selection.",
+    "Current-only ambiguity inside act preserves existing exit0 plus typed not-dispatched receipt contract; inspect dispatched status, not process exit alone.",
+    "Parent will retain final broad checks and artifact identity separately; no PR, merge or deployment performed."
+  ],
+  "parent_followup": {
+    "checked_implementation_commit": "81d6985791298d151c9610bc10b1b00816137b07",
+    "integration_report": "../duplicate-controls-light-install-20261101/report.md",
+    "note": "Original source_files identify the worker handoff snapshot; parent appended notebook/result evidence after that snapshot. Product/source implementation files remain unchanged."
+  }
+}

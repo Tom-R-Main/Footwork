@@ -1,0 +1,85 @@
+{
+  "checks": {
+    "capture_completed": true,
+    "semantic_heading": true,
+    "script_content": true,
+    "private_fields_withheld": true,
+    "no_actions": true,
+    "no_input": true,
+    "no_business_completion": true,
+    "no_post_effects": true,
+    "bounded_cleanup": true
+  },
+  "commands": [
+    {
+      "command": [
+        "tools"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "schema",
+        "browser",
+        "lightpanda",
+        "read"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "doctor"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "apps"
+      ],
+      "exit": 7
+    },
+    {
+      "command": [
+        "browser",
+        "lightpanda",
+        "read",
+        "http://127.0.0.1:62318/",
+        "--executable",
+        "/Users/thomasmain/projects/footwork/.worktrees/lightpanda-readonly/output/lightpanda-binaries/lightpanda-aarch64-macos",
+        "--work-dir",
+        "/Users/thomasmain/projects/footwork/output/lwi-lp-final",
+        "--timeout",
+        "15"
+      ],
+      "exit": 0
+    }
+  ],
+  "installation": {
+    "profile": "light",
+    "observed_extras": [],
+    "optional_versions": {
+      "desktop": null,
+      "agent": null,
+      "tools": null
+    },
+    "basis": "installed distributions; requested extras are not retained by Python",
+    "light_install": "Install the light bundle, or the Footwork wheel without extras using --only-binary :all:.",
+    "full_install": "Install the matching full Footwork bundle with its pinned cua-driver wheel.",
+    "runtime_qualification": "not_checked"
+  },
+  "missing_optional_modules": {
+    "cua_driver": true,
+    "browser_use": true,
+    "Quartz": true,
+    "ApplicationServices": true,
+    "jeepney": true
+  },
+  "packages": 35,
+  "installed_product_files_match_wheel": 212,
+  "cleanup": {
+    "status": "bounded_owned_processes_stopped",
+    "complete_tree_inventory": false
+  },
+  "wheel": "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-light-bundle/jevdual-0.0.1-py3-none-any.whl",
+  "wheel_sha256": "0c777e645947f308e93b01e939eaf964dae5a6e77c81c7d4ef269e7f51d41a4a"
+}

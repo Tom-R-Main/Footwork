@@ -116,6 +116,66 @@ def resolve(pid: int, window_id: int, role: str, frame: Frame | None) -> Any:
     return hits[0]
 
 
+def web_area_frame(win: Any, *, depth: int = 12) -> Frame | None:
+    """The frame of the first AXWebArea under ``win`` (a browser's content area), or None."""
+    stack = [(win, 0)]
+    while stack:
+        el, d = stack.pop()
+        if _attr(el, "AXRole") == "AXWebArea":
+            return frame_of(el)
+        if d < depth:
+            stack.extend((c, d + 1) for c in reversed(_attr(el, "AXChildren") or []))
+    return None
+
+
+def labelled(win: Any, label: str, *, limit: int = 6000) -> list[tuple[str, str, Frame]]:
+    """Elements under ``win`` whose AXDescription or AXTitle is ``label`` or starts with it, as
+    ``(role, name, frame)``. Reaches containers the Driver collapses (CUA drops every AXGroup)."""
+    want = label.casefold()
+    hits: list[tuple[str, str, Frame]] = []
+    queue, seen = [win], 0
+    while queue and seen < limit:
+        el = queue.pop(0)
+        seen += 1
+        for attr in ("AXDescription", "AXTitle"):
+            name = _attr(el, attr)
+            if isinstance(name, str) and name.strip() and name.casefold().startswith(want):
+                frame = frame_of(el)
+                if frame is not None and frame.w > 0 and frame.h > 0:
+                    hits.append((str(_attr(el, "AXRole") or ""), name, frame))
+                break
+        queue.extend(_attr(el, "AXChildren") or [])
+    return hits
+
+
+def placeholder(el: Any) -> str | None:
+    """The element's AXPlaceholderValue, or None."""
+    v = _attr(el, "AXPlaceholderValue")
+    return None if v is None else str(v)
+
+
+def semantic_section(el: Any) -> str | None:
+    """Read an explicit ancestor name, including groups omitted by CUA's projection.
+
+    This is semantic context, not a retained object identifier. Never infer a row name from
+    sibling text, screen position, entered field values or the page's unstructured text.
+    """
+    node = el
+    for _ in range(32):
+        node = _attr(node, "AXParent")
+        if node is None:
+            return None
+        role = _attr(node, "AXRole")
+        if role in ("AXWindow", "AXWebArea", "AXApplication"):
+            return None
+        if role in ("AXRow", "AXCell", "AXOutlineRow", "AXGroup"):
+            for attribute in ("AXTitle", "AXDescription"):
+                name = _attr(node, attribute)
+                if isinstance(name, str) and name.strip():
+                    return name.strip()
+    return None
+
+
 def value(el: Any) -> str:
     """The element's exact AXValue. An empty text view reports none at all (Notes' new note body,
     2026-09-25); it is the empty string only when the element says it holds no characters."""

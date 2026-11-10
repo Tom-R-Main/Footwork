@@ -37,7 +37,7 @@ from pathlib import Path
 from typing import Any
 
 from jevdual import carry, grants
-from jevdual.menu import Candidate, Menu, peer_position
+from jevdual.menu import Candidate, Menu, MenuBudget, peer_position
 from jevdual.native import NativeBridge, NativeBridgeError, NativeMenu
 
 SETTLE_S = 1.0
@@ -56,6 +56,7 @@ _CAND_FIELDS = (
     "expanded",
     "pressed",
     "section",
+    "placeholder",
 )
 
 
@@ -77,10 +78,14 @@ class SessionState:
     last_title: str = ""
     last_page_text: str = ""
     last_candidates: list[dict[str, Any]] = field(default_factory=list)
+    #: None identifies a legacy baseline without pre-pruning native collision evidence.
+    last_native_ambiguous: list[int] | None = None
+    last_native_text_scope_signature: str = ""
     last_snapshot: str = ""
     pending: dict[str, Any] | None = None  # the action dispatched by the last `do`, awaiting its receipt
     #: "native" (accessibility route) or "browser" (the Driver's DevTools route on footwork's Chrome)
     mode: str = "native"
+    native_menu_cap: int = 160
     #: the execution posture (jevdual.posture): background_only unless the operator granted more at start
     posture: str = "background_only"
     #: browser mode: the tab this session bound at start; later commands refuse rather than follow the
@@ -99,6 +104,8 @@ class SessionState:
     native_scope: dict[str, str] = field(default_factory=dict)
     finder_scope: dict[str, Any] = field(default_factory=dict)
     ticket_scope: dict[str, Any] = field(default_factory=dict)
+    #: filmed pointer mode (``jevdual.filmed.Filmed.to_record``); empty when off
+    filmed: dict[str, Any] = field(default_factory=dict)
 
     @property
     def path(self) -> Path:
@@ -153,6 +160,8 @@ class SessionState:
         self.last_title = nm.menu.title
         self.last_page_text = nm.menu.page_text
         self.last_candidates = [{k: getattr(c, k) for k in _CAND_FIELDS} for c in nm.menu.candidates]
+        self.last_native_ambiguous = sorted(getattr(nm, "ambiguous_targets", ()))
+        self.last_native_text_scope_signature = getattr(nm, "text_scope_signature", "")
         self.last_snapshot = nm.snapshot_id
 
 
@@ -677,12 +686,21 @@ def scrub(state: SessionState, nm: Any, extra: str | None = None) -> Any:
         return x
 
     m = nm.menu
+    candidates = tuple(
+        dataclasses.replace(
+            c, label=s(c.label), value=s(c.value), section=s(c.section),
+            placeholder=s(c.placeholder), href=s(c.href),
+        )
+        for c in m.candidates
+    )
+    by_id = {c.id: c for c in candidates}
     menu = dataclasses.replace(
         m,
         url=s(m.url),
         title=s(m.title),
         page_text=s(m.page_text),
-        candidates=tuple(dataclasses.replace(c, label=s(c.label), value=s(c.value)) for c in m.candidates),
+        candidates=candidates,
+        by_operation={op: tuple(by_id[c.id] for c in rows) for op, rows in m.by_operation.items()},
     )
     if dataclasses.is_dataclass(nm):
         changes: dict[str, Any] = {"menu": menu}
@@ -704,6 +722,13 @@ def _bound_field(menu: Menu | None, pending: dict[str, Any]) -> Candidate | None
     the label, the one with the chosen id. Never the first of several."""
     if menu is None:
         return None
+    identity = pending.get("target_identity")
+    if isinstance(identity, dict):
+        same = [
+            c for c in menu.candidates if "type" in c.operations
+            and all(identity.get(key) == getattr(c, key) for key in ("role", "label", "section", "placeholder"))
+        ]
+        return same[0] if len(same) == 1 else None
     low = pending["target_label"].casefold()
     same = [c for c in menu.candidates if c.label.casefold() == low and "type" in c.operations]
     if len(same) == 1:
@@ -746,6 +771,17 @@ def _field_receipt(
     if field is None:
         return dataclasses.replace(
             r, effect="unverifiable", evidence=f"{label!r} is not on the fresh observation as one field"
+        )
+    if field.id in getattr(nm, "ambiguous_targets", ()):
+        return dataclasses.replace(
+            r, effect="unverifiable", evidence=f"{label!r} has ambiguous identity, including hidden peers"
+        )
+    if pending.get("mode", "native") == "native" and field.placeholder and (
+        not pending.get("target_text_scope_signature")
+        or pending["target_text_scope_signature"] != getattr(nm, "text_scope_signature", None)
+    ):
+        return dataclasses.replace(
+            r, effect="unverifiable", evidence="the placeholder field group changed or its prior identity is unavailable"
         )
     secret = bool(pending.get("secret"))
     if field.input_type == "password":
@@ -872,15 +908,27 @@ async def bind(state: SessionState):
 
     driver = desktop_effector()
     if state.native_scope or state.finder_scope:
-        return driver, _native_bridge(
-            driver,
-            state.pid,
-            state.window_id,
-            state.posture,
-            native_scope=state.native_scope,
-            finder_scope=state.finder_scope,
+        return driver, _filmed(
+            state,
+            _native_bridge(
+                driver,
+                state.pid,
+                state.window_id,
+                state.posture,
+                native_scope=state.native_scope,
+                finder_scope=state.finder_scope,
+            ),
         )
-    return driver, _native_bridge(driver, state.pid, state.window_id, state.posture)
+    return driver, _filmed(state, _native_bridge(driver, state.pid, state.window_id, state.posture))
+
+
+def _filmed(state: SessionState, bridge: Any) -> Any:
+    bridge.menu_budget = MenuBudget(native_menu_cap=state.native_menu_cap)
+    if state.filmed:
+        from jevdual.filmed import Filmed
+
+        bridge.filmed = Filmed.from_record(state.filmed)
+    return bridge
 
 
 def _native_bridge(
@@ -983,6 +1031,152 @@ def finish_observation(
 # ---- commands --------------------------------------------------------------------------------
 
 
+def _filmed_setup(state: SessionState, args: Any) -> str | None:
+    """Record a filmed take's geometry at start: the scene window, its web content origin, and the keep-out
+    and rest position converted from viewport CSS px to screen points."""
+    from jevdual import ax
+    from jevdual.filmed import Filmed
+
+    if state.posture != "exclusive_desktop":
+        return "--pointer-motion filmed moves the real pointer; it needs --mode exclusive_desktop"
+
+    def pair(raw: str | None, n: int, name: str) -> tuple[float, ...] | None:
+        if raw is None:
+            return None
+        parts = [float(v) for v in raw.replace(" ", "").split(",")]
+        if len(parts) != n:
+            raise ValueError(f"{name} needs {n} numbers, got {raw!r}")
+        return tuple(parts)
+
+    try:
+        win = ax.window_element(state.pid, state.window_id)
+        window = ax.frame_of(win)
+        web = ax.web_area_frame(win)
+        keep = pair(getattr(args, "keep_out", None), 4, "--keep-out")
+        rest = pair(getattr(args, "rest", None), 2, "--rest")
+    except (ax.AXError, ValueError) as exc:
+        return str(exc)
+    if window is None:
+        return "the scene window has no frame"
+    content = web or window
+    origin = (content.x, content.y)
+    filmed = Filmed(
+        window=(window.x, window.y, window.w, window.h),
+        content=(content.x, content.y, content.w, content.h),
+        keep_out=(origin[0] + keep[0], origin[1] + keep[1], keep[2], keep[3]) if keep else None,
+        rest=(origin[0] + rest[0], origin[1] + rest[1]) if rest else None,
+        type_delay_ms=getattr(args, "type_delay_ms", 65),
+    )
+    if filmed.rest is not None and filmed.keep_out is not None:
+        from jevdual.filmed import _inside
+
+        if _inside(filmed.rest, filmed.keep_out):
+            return "the rest position is inside the keep-out"
+    state.filmed = filmed.to_record()
+    print(
+        f"filmed take: content {content.w:.0f}x{content.h:.0f} at {content.x:.0f},{content.y:.0f}; "
+        f"keep-out {filmed.keep_out}; rest {filmed.rest}"
+    )
+    return None
+
+
+async def cmd_point(args: Any) -> int:
+    """Filmed take: rest the pointer over the one element named LABEL. Nothing is delivered; the page's
+    own hover state shows because the real pointer is there. Finds containers the Driver collapses."""
+    from jevdual import ax
+    from jevdual.filmed import Filmed, FilmedRefusal
+
+    state = SessionState.load(session_dir(args.session))
+    if not state.filmed:
+        print("point needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
+        return 2
+    filmed = Filmed.from_record(state.filmed)
+    try:
+        hits = await asyncio.to_thread(ax.labelled, ax.window_element(state.pid, state.window_id), args.label)
+    except ax.AXError as exc:
+        print(f"point refused: {exc}", file=sys.stderr)
+        return 4
+    exact = [h for h in hits if h[1].casefold() == args.label.casefold()]
+    hits = exact or hits
+    names = sorted({h[1] for h in hits})
+    if len(names) != 1:
+        why = "no element" if not names else f"{len(names)} elements ({', '.join(repr(n[:40]) for n in names[:4])})"
+        print(f"point refused: {why} named {args.label!r}", file=sys.stderr)
+        return 4
+    role, name, frame = hits[0]
+    try:
+        record = await filmed.approach((frame.x, frame.y, frame.w, frame.h), name)
+    except FilmedRefusal as refusal:
+        state.filmed = filmed.to_record()
+        state.log({"kind": "point", "label": name, "refused": refusal.code, "reason": refusal.reason})
+        state.save()
+        print(f"point refused: {refusal.code}: {refusal.reason}", file=sys.stderr)
+        return 4
+    state.filmed = filmed.to_record()
+    state.log({"kind": "point", "role": role, **record})
+    state.save()
+    print(f"pointing at {role} {name[:60]!r} ({record.get('samples', 0)} samples)")
+    return 0
+
+
+async def cmd_keep_out(args: Any) -> int:
+    """Filmed take: arm the keep-out when the frame it protects appears, or turn it off."""
+    from jevdual.filmed import Filmed, _inside
+
+    state = SessionState.load(session_dir(args.session))
+    if not state.filmed:
+        print("keep-out needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
+        return 2
+    filmed = Filmed.from_record(state.filmed)
+    if args.rect.strip().lower() == "off":
+        filmed.keep_out = None
+    else:
+        try:
+            x, y, w, h = (float(v) for v in args.rect.replace(" ", "").split(","))
+        except ValueError:
+            print(f"keep-out takes X,Y,W,H or off, got {args.rect!r}", file=sys.stderr)
+            return 2
+        filmed.keep_out = (filmed.content[0] + x, filmed.content[1] + y, w, h)
+        for name, point in (("rest position", filmed.rest), ("pointer", filmed.last_pointer)):
+            if point is not None and _inside(tuple(point), filmed.keep_out):
+                print(f"keep-out refused: the {name} {point} is inside it", file=sys.stderr)
+                return 4
+    state.filmed = filmed.to_record()
+    state.log({"kind": "keep_out", "rect": filmed.keep_out})
+    state.save()
+    print(f"keep-out {filmed.keep_out}")
+    return 0
+
+
+async def cmd_park(args: Any) -> int:
+    """Filmed take: move the pointer to the rest position, or to X Y in viewport CSS px."""
+    from jevdual.filmed import Filmed, FilmedRefusal
+
+    state = SessionState.load(session_dir(args.session))
+    if not state.filmed:
+        print("park needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
+        return 2
+    if (args.x is None) != (args.y is None):
+        print("park takes both X and Y, or neither (the rest position)", file=sys.stderr)
+        return 2
+    filmed = Filmed.from_record(state.filmed)
+    point = filmed.viewport(args.x, args.y) if args.x is not None else None
+    try:
+        record = filmed.place(point) if getattr(args, "place", False) else await filmed.park(point)
+    except FilmedRefusal as refusal:
+        state.filmed = filmed.to_record()
+        state.log({"kind": "park", "refused": refusal.code, "reason": refusal.reason})
+        state.save()
+        print(f"park refused: {refusal.code}: {refusal.reason}", file=sys.stderr)
+        return 4
+    state.filmed = filmed.to_record()
+    state.log({"kind": "park", **record})
+    state.save()
+    to = record["to"]
+    print(f"parked at {to[0]:.1f},{to[1]:.1f} ({record.get('samples', 0)} samples)")
+    return 0
+
+
 async def cmd_start(args: Any) -> int:
     from jevdual.effectors import desktop_effector, require_available
     from jevdual.native import (
@@ -1001,6 +1195,9 @@ async def cmd_start(args: Any) -> int:
     operations = getattr(args, "_operations", None)
     durable = bool(getattr(args, "authority", None))
     explicit_pid = getattr(args, "pid", None)
+    if getattr(args, "browser", False) and getattr(args, "native_menu_cap", 160) != 160:
+        print("not starting: --native-menu-cap requires a native session", file=sys.stderr)
+        return 2
     if explicit_pid is not None and (explicit_pid <= 0 or getattr(args, "browser", False)):
         print("not starting: --pid requires a positive native process ID", file=sys.stderr)
         return 2
@@ -1146,7 +1343,13 @@ async def cmd_start(args: Any) -> int:
             authorized=_split(args.authorize, ","),
             answer_expected=args.answer,
             posture=getattr(args, "mode", None) or "background_only",
+            native_menu_cap=getattr(args, "native_menu_cap", 160),
         )
+        if getattr(args, "pointer_motion", "off") == "filmed":
+            refusal = _filmed_setup(state, args)
+            if refusal:
+                print(f"not starting: {refusal}", file=sys.stderr)
+                return 2
         if durable:
             from jevdual.session_operations import native_identity
 
@@ -1156,8 +1359,11 @@ async def cmd_start(args: Any) -> int:
             state.native_scope = native_scope
             state.finder_scope = finder_scope
             state.ticket_scope = ticket_scope
-        bridge = _native_bridge(
-            driver, pid, wid, state.posture, native_scope=state.native_scope, finder_scope=state.finder_scope
+        bridge = _filmed(
+            state,
+            _native_bridge(
+                driver, pid, wid, state.posture, native_scope=state.native_scope, finder_scope=state.finder_scope
+            ),
         )
         if explicit_pid is not None:
             initial = await bridge.observe()
@@ -1185,7 +1391,7 @@ async def cmd_start(args: Any) -> int:
                     return 2
                 raise
             state.window_id = wid
-            bridge = _native_bridge(driver, pid, wid, state.posture)
+            bridge = _filmed(state, _native_bridge(driver, pid, wid, state.posture))
             print(f"opened a new window {wid} for the session")
             nm = await navigate_in_window(bridge, args.url)
             bar = address_bar(nm)
@@ -1424,7 +1630,7 @@ def _inspection_preview(record: dict[str, Any], manifest_name: str) -> str:
 </body></html>'''
 
 
-_ROUTES = ("click", "type", "append", "move", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")
+_ROUTES = ("click", "type", "append", "move", "enter", "scroll", "hover", "drag", "key", "hotkey", "menu", "navigate")
 
 
 def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, ...], tuple[str, ...]]:
@@ -1451,6 +1657,11 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
         if not path:
             raise SystemExit('menu needs a path, e.g. menu "File > Save"')
         return op, None, None, (), path
+    if op == "drag":
+        if len(words) != 3:
+            raise SystemExit('drag needs a source and a destination, e.g. drag 12 30 or drag "Card A" "Done"')
+        source = int(words[1]) if words[1].lstrip("-").isdigit() else words[1]
+        return op, source, words[2], (), ()  # type: ignore[return-value]
     if len(words) < 2:
         raise SystemExit(f'{op} needs an element id or a label, e.g. {op} 65 or {op} "Telephone"')
     text = " ".join(words[2:]) if len(words) > 2 else None
@@ -1462,15 +1673,37 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
     return op, words[1], text, (), ()  # type: ignore[return-value]
 
 
+def resolve_destination(nm: Any, selector: str) -> tuple[Any, str]:
+    """A drag's destination on the fresh observation: an element id, or a label as ``resolve_label``."""
+    if selector.lstrip("-").isdigit():
+        cand = nm.menu.candidate(int(selector))
+        return cand, "" if cand is not None else f"destination id {selector} is not on the current observation"
+    rid, why = resolve_label(nm, selector)
+    return (nm.menu.candidate(rid), "") if rid is not None else (None, f"destination: {why}")
+
+
 def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
-    """The one candidate whose label contains ``label`` (case-insensitive); an exact match wins."""
+    """Resolve a label, optionally ``section:<exact ancestor>::<role:label>``.
+
+    Section matching is exact (case-insensitive); label matching retains its exact-before-substring
+    rule. A literal label starting with ``section:`` remains addressable with ``label:``.
+    """
     role = None
+    section = None
+    if label.startswith("section:"):
+        section, separator, label = label[len("section:"):].partition("::")
+        if not separator or not section or not label:
+            return None, "invalid section selector; use section:<exact ancestor>::<label>"
     if label.startswith("label:"):
         label = label[len("label:") :]  # label:2 addresses a label that is a number (Q19 R4)
     elif ":" in label and label.split(":", 1)[0].isalpha():
         role, label = label.split(":", 1)  # button:Search narrows by role
     low = label.casefold()
-    pool = [c for c in nm.menu.candidates if role is None or c.role == role.casefold()]
+    pool = [
+        c for c in nm.menu.candidates
+        if (role is None or c.role == role.casefold())
+        and (section is None or (c.section or "").casefold() == section.casefold())
+    ]
     exact = [c for c in pool if c.label.casefold() == low]
     if len(exact) == 1:
         return exact[0].id, ""
@@ -1478,10 +1711,27 @@ def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
     if len(hits) == 1:
         return hits[0].id, ""
     if not hits:
-        return None, f"no element labelled {label!r} on the current observation"
+        why = f"no element labelled {label!r} on the current observation"
+        if nm.menu.omitted.get("cap"):
+            why += "; the current candidate budget excluded controls, so absence is not established"
+        elif any(nm.menu.omitted.get(k) for k in ("elements_incomplete", "truncated")):
+            why += "; this observation is incomplete, so absence is not established"
+        return None, why
     return None, f"{label!r} matches {len(hits)} elements: " + ", ".join(
         f"[{c.id}] {c.label!r}" for c in hits[:6]
     )
+
+
+def _selector_failure_code(nm: NativeMenu, why: str) -> str:
+    if why.startswith("invalid section selector"):
+        return "selector_invalid"
+    if why.startswith(("no element", "destination id")):
+        return (
+            "selector_not_observed"
+            if any(nm.menu.omitted.get(k) for k in ("cap", "elements_incomplete", "truncated"))
+            else "selector_not_found"
+        )
+    return "target_ambiguous"
 
 
 def _file_target(state: SessionState, nm: NativeMenu, selector: str) -> Any:
@@ -1578,7 +1828,41 @@ async def cmd_do(args: Any) -> int:
         # the ids the operator chose from: the observation before this command, not the fresh one
         chosen_from = {c["id"]: c["label"] for c in state.last_candidates}
         chosen_cands = list(state.last_candidates)
+        chosen_ambiguity = state.last_native_ambiguous
+        chosen_text_scope = state.last_native_text_scope_signature
+        chosen_snapshot = state.last_snapshot
+        requested_selector = str(cid) if cid is not None else None
         nm, receipt = await observe(state, bridge)
+
+        def targeting_refused(code: str, reason: str, *, destination: str | None = None) -> int:
+            # These are attempted commands, not admitted/dispatched operations or receipts. Keep
+            # the evidence narrowly scoped: no typed payload, full candidate list or page text.
+            record = {
+                "kind": "attempted_action",
+                "schema_version": "1",
+                "op": op,
+                "dispatched": False,
+                "code": code,
+                "reason": reason,
+                "requested_selector": requested_selector,
+                "previous_observation": chosen_snapshot,
+                "observation": nm.snapshot_id,
+                "coverage": {
+                    "omitted": dict(nm.menu.omitted),
+                    "elements_complete": bool(getattr(nm, "elements_complete", False)),
+                    "truncated": bool(getattr(nm, "truncated", False)),
+                },
+                "ambiguity": {
+                    "previous_known": chosen_ambiguity is not None,
+                    "previous_selected": isinstance(cid, int) and cid in (chosen_ambiguity or ()),
+                    "current_selected": isinstance(cid, int) and cid in getattr(nm, "ambiguous_targets", ()),
+                },
+            }
+            if destination is not None:
+                record["requested_destination"] = destination
+            state.log(_safe_operation_value(state, record, text if secret_used else None))
+            return 4
+
         if receipt:
             print(f"receipt (previous action): {receipt['text']}")
         elif before is not None:
@@ -1600,7 +1884,7 @@ async def cmd_do(args: Any) -> int:
                 rid, why = resolve_label(nm, cid)
             if rid is None:
                 print(why, file=sys.stderr)
-                return 4
+                return targeting_refused(_selector_failure_code(nm, why), "selector did not resolve uniquely")
             cid = rid
             chosen_from = {}  # a label is resolved on the fresh observation; nothing to compare
         if cid is not None:
@@ -1612,7 +1896,9 @@ async def cmd_do(args: Any) -> int:
                 print(
                     f"id {cid} is not on the current observation{hint}; run `footwork look`", file=sys.stderr
                 )
-                return 4
+                return targeting_refused(
+                    _selector_failure_code(nm, "no element"), "numeric target is not in the current observation"
+                )
             was = peer_position(chosen_cands, cid) if known is not None else None
             now = peer_position(nm.menu.candidates, cid)
             if known is not None and known == target.label and was is not None and was[1] > 1 and was != now:
@@ -1624,7 +1910,18 @@ async def cmd_do(args: Any) -> int:
                     file=sys.stderr,
                 )
                 print(render_observation(nm, text_chars=args.text, receipt=None))
-                return 4
+                return targeting_refused("target_changed", "same-label peer position changed since selection")
+            if state.mode == "native" and known is not None and (
+                chosen_ambiguity is None or cid in chosen_ambiguity
+            ):
+                print(
+                    f"target_ambiguous: id {cid} has no qualified backing identity in the previous "
+                    "native observation (including peers hidden by pruning). Nothing dispatched. "
+                    "Choose a distinctly labelled or scoped control from a fresh observation.",
+                    file=sys.stderr,
+                )
+                print(render_observation(nm, text_chars=args.text, receipt=None))
+                return targeting_refused("target_ambiguous", "previous native identity is ambiguous or unknown")
             if known is not None and known != target.label:
                 print(
                     f"id {cid} is now {target.label!r}, it was {known!r} when you looked; the page changed. "
@@ -1632,9 +1929,66 @@ async def cmd_do(args: Any) -> int:
                     file=sys.stderr,
                 )
                 print(render_observation(nm, text_chars=args.text, receipt=None))
-                return 4
+                return targeting_refused("target_changed", "target label changed since selection")
+            previous = next((c for c in chosen_cands if c["id"] == cid), None) if known is not None else None
+            if previous is not None and any(
+                previous.get(key) != getattr(target, key) for key in ("role", "section", "placeholder")
+            ):
+                print(
+                    f"id {cid} changed role, section or placeholder since you looked. Nothing dispatched. "
+                    "Choose again from a fresh observation.",
+                    file=sys.stderr,
+                )
+                return targeting_refused("target_changed", "target qualification changed since selection")
+            if (
+                state.mode == "native" and previous is not None and target.placeholder
+                and target.role in ("textbox", "searchbox")
+                and (not chosen_text_scope or chosen_text_scope != getattr(nm, "text_scope_signature", ""))
+            ):
+                print(
+                    "target_changed: the placeholder field group changed since you looked. "
+                    "Nothing dispatched. Choose again from a fresh observation.", file=sys.stderr,
+                )
+                return targeting_refused("target_changed", "placeholder field group changed since selection")
         if op == "move" and file_target is None:
             raise NativeBridgeError("file_scope_missing", "move requires a manifest-owned file:/ selector")
+        destination = None
+        if op == "drag":
+            if state.mode != "native" or not callable(getattr(bridge, "drag", None)):
+                print("not admitted: drag is a native route (footwork start --app ...)", file=sys.stderr)
+                return 2
+            destination, why = resolve_destination(nm, text or "")
+            if destination is None:
+                print(why, file=sys.stderr)
+                return targeting_refused(
+                    _selector_failure_code(nm, why.removeprefix("destination: ")),
+                    "drag destination did not resolve uniquely", destination=text or "",
+                )
+            known = chosen_from.get(destination.id)
+            if state.mode == "native" and (text or "").lstrip("-").isdigit() and known is not None and (
+                chosen_ambiguity is None or destination.id in chosen_ambiguity
+            ):
+                print(
+                    "target_ambiguous: drag destination had no qualified identity in the previous observation. "
+                    "Nothing dispatched. Choose again from a fresh observation.", file=sys.stderr,
+                )
+                return targeting_refused(
+                    "target_ambiguous", "previous drag destination identity is ambiguous or unknown",
+                    destination=text or "",
+                )
+            previous = next((c for c in chosen_cands if c["id"] == destination.id), None)
+            if known is not None and previous is not None and any(
+                previous.get(key) != getattr(destination, key) for key in ("role", "label", "section", "placeholder")
+            ):
+                print(
+                    f"destination id {destination.id} is now {destination.label!r}, it was {known!r} when you "
+                    "looked; the page changed. Nothing dispatched.",
+                    file=sys.stderr,
+                )
+                return targeting_refused(
+                    "target_changed", "drag destination qualification changed since selection", destination=text or ""
+                )
+            text = shown_text = destination.label
         judge = None
         client = None
         # every route the authorizer judges (authorize.JUDGED_ROUTES), plus navigation: a key or Return
@@ -1677,9 +2031,11 @@ async def cmd_do(args: Any) -> int:
         if op == "navigate":
             action = dataclasses.replace(action, label=f"navigate to {shown_text}", route="click")
         line = f"{op}({target.label if target else (shown_text if op == 'navigate' else ('+'.join(keys) if keys else ' > '.join(path)))})"
+        if destination is not None and target is not None:
+            line = f"drag({target.label} -> {destination.label})"
         if carried is not None:
             line += f" text=@{carried.name} (from {carried.surface} {carried.location or carried.title})"
-        elif shown_text:
+        elif shown_text and op != "drag":
             line += f" text={shown_text[:60]!r}"
         if operations is not None:
             line = _safe_operation_value(state, line, text if secret_used else None)
@@ -1765,6 +2121,10 @@ async def cmd_do(args: Any) -> int:
                 "op": op,
                 "target_id": target.id if target is not None else None,
                 "target_label": target.label if target is not None else None,
+                "target_identity": {
+                    key: getattr(target, key) for key in ("role", "label", "section", "placeholder")
+                } if target is not None else None,
+                "target_text_scope_signature": getattr(nm, "text_scope_signature", None),
                 "intended": None if secret_used else text,
                 "secret": secret_used,
                 "mode": state.mode,
@@ -1833,6 +2193,9 @@ async def cmd_do(args: Any) -> int:
                 eff = await bridge.key(nm, keys[-1], list(keys[:-1]))
             elif op == "menu":
                 eff = await bridge.menu(nm, list(path))
+            elif op == "drag":
+                assert target is not None and destination is not None
+                eff = await bridge.drag(nm, target.id, destination.id)
             else:
                 assert target is not None
                 route_arg = getattr(args, "route", None)
@@ -1870,6 +2233,8 @@ async def cmd_do(args: Any) -> int:
                 )
             raise
         exec_ms = (time.perf_counter() - t0) * 1000
+        if getattr(bridge, "filmed", None) is not None:
+            state.filmed = bridge.filmed.to_record()
         state.pending = {
             "line": line,
             "driver_effect": driver_effect,
@@ -1879,6 +2244,10 @@ async def cmd_do(args: Any) -> int:
             "op": op,
             "target_id": target.id if target is not None else None,
             "target_label": target.label if target is not None else None,
+            "target_identity": {
+                key: getattr(target, key) for key in ("role", "label", "section", "placeholder")
+            } if target is not None else None,
+            "target_text_scope_signature": getattr(nm, "text_scope_signature", None),
             "intended": None if secret_used else text,
             "secret": secret_used,
             "mode": state.mode,
@@ -2484,7 +2853,7 @@ def _proposal(
 ) -> grants.Proposal:
     arguments = (
         text
-        if op in ("type", "append", "move", "navigate")
+        if op in ("type", "append", "move", "navigate", "drag")
         else ("+".join(keys) if keys else " > ".join(path) or None)
     )
     return grants.Proposal(
@@ -2506,6 +2875,15 @@ def _element_ref(nm: Any, target: Any) -> str:
     so a grant for one row does not clear another; empty when the element is unique."""
     if target is None:
         return ""
+    if target.section or target.placeholder:
+        # Newly qualified controls bind grants to their semantic context, never their ordinal.
+        # Legacy context-free refs remain compatible; an old ordinal grant cannot authorize a
+        # newly qualified row merely because that row moved into the same position.
+        return json.dumps({
+            "kind": "qualified_target",
+            **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
+            **({"text_scope_signature": getattr(nm, "text_scope_signature", None)} if target.placeholder else {}),
+        }, sort_keys=True)
     same = [c.id for c in nm.menu.candidates if c.role == target.role and c.label == target.label]
     return f"{same.index(target.id) + 1} of {len(same)}" if len(same) > 1 else ""
 
@@ -2547,6 +2925,12 @@ async def cmd_grant(args: Any) -> int:
             if target is None:
                 print(f"id {cid} is not on the current observation", file=sys.stderr)
                 return 4
+        if op == "drag":
+            destination, why = resolve_destination(nm, raw_text or "")
+            if destination is None:
+                print(why, file=sys.stderr)
+                return 4
+            raw_text = destination.label
         g = grants.issue(
             _proposal(
                 state,

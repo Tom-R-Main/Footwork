@@ -1,0 +1,33 @@
+# Pointer motion P0: desktop hover units
+
+## PM1 · prediction · 2026-11-05 16:33
+Question: does a desktop-scoped hover land at the element's centre on a Retina display?
+Hypothesis: CUA's desktop `move_cursor` takes native `get_desktop_state` screenshot pixels and divides by the main display's backing scale, but the hover route passes the AX frame centre in points, so on a scale-2 display the real pointer lands at half the intended coordinates.
+Alternatives: CUA treats desktop coordinates as points on this pinned build, or Footwork already converts before the call.
+Test: give the simulated Mac in `tests/fixtures/native_world.py` a backing-scale model that answers `get_screen_size` and lands a desktop `move_cursor` at x/scale, y/scale, as the pinned source does; hover an element with a known frame through NativeBridge in exclusive_desktop on scale 2 and on scale 1.
+Predicts: today the scale-2 hover lands at half the element centre and the scale-1 hover at the centre; after a single typed points-to-desktop-pixels conversion, fed by the same `get_screen_size` scale CUA divides by, both land at the centre in points and the call records the scale it used.
+Against: the scale-2 hover already lands at the centre before the change, or the fix moves the scale-1 landing point.
+Refs: design/pointer-motion/PLAN.md v12 §2, §3.2, §4 test 1 (demogeek); vendor cua-driver platform-macos tools/mod.rs desktop_screenshot_point and tools/move_cursor.rs; native.py hover route
+
+## PMU1 · update · 2026-11-05 16:39
+Resolves: PM1 = held
+Observed: tests/test_pointer_scale.py on dba1d55 (scale model, no fix): scale 1 landed at (463, 569), scale 2 at (231.5, 284.5), exactly half. On bd4f64d both land at (463, 569); test_hover_is_desktop_scoped now sees (20, 20) desktop pixels for a (10, 10) point centre at scale 2, and test_hover_without_a_readable_scale_moves_nothing refuses with scale_unknown and no move_cursor. Full suite: 2905 passed, 62 skipped, 1 failed (test_cua_driver_version_is_pinned, which fails identically with these changes stashed: the installed wheel reports 0.38.0+footwork.d5373879, the test expects the .cleanup2 label).
+Inferred: the offline half of P0 holds; the fake now models the same divide CUA performs, so it cannot tell whether the real scale read matches the display under the pointer on a multi-display setup (main display only, as CUA does).
+Next: P0's live acceptance, one hover with the idle guard landing within 1 pt of an element centre on this Retina display, waits for the owner's direct authorization of desktop takeover.
+
+## PM2 · prediction · 2026-11-05 16:44
+Hypothesis: with bd4f64d, a real desktop hover on this Retina display (main display scale 2) lands on the element's centre in points.
+Test: scripts/p0_live_hover.py on bd4f64d: Calculator in front, idle guard (HID idle at least 3 s), one hover on "7" through NativeBridge in exclusive_desktop, then read the pointer with CGEventGetLocation.
+Predicts: the hover dispatches and the pointer is within 1 pt of the frame centre on both axes.
+Against: the pointer lands near half the centre (the fix did not take effect live), or more than 1 pt off by any other amount, or CUA's endpoint guard refuses a point over the frontmost Calculator.
+Refs: PMU1; results/p0-live-hover-20261105/result.json (to be written)
+
+## PMU2 · update · 2026-11-05 16:45
+Observed: scripts/p0_live_hover.py on ded1270 stopped at NativeBridge.observe with the Accessibility error before any input; the pointer was not moved and no result file was written. The process tree is zsh under claude under T3 Code (Nightly).app, which has no Accessibility grant.
+Next: PM2 stays open. Rerun after the owner grants Accessibility to the launching host, or from a host that already has it; never reset or edit TCC from here.
+
+## PMU3 · update · 2026-11-05 16:46
+Resolves: PM2 = held
+Observed: after the owner granted Accessibility and Input Monitoring to T3 Code (both preflight true), scripts/p0_live_hover.py on 4bd9abe (bd4f64d's fix; the script now waits up to 15 s for the idle guard after the first try on ded1270 refused at 2.1 s idle, nothing moved) hovered Calculator's "7" (frame 439,545 48x48) with 11.6 s idle: pointer moved from (927.1, 433.1) to (463.0, 569.0), the frame centre, error 0.0 pt; effect dispatched, unverifiable, no error. results/p0-live-hover-20261105/result.json.
+Inferred: P0's acceptance holds on this Retina display; the fake's divide-by-scale model matches the real driver here.
+Next: P0 closes. P1a: write the pre-registered experiment file in docs/experiments/ and commit it before the poster probe.

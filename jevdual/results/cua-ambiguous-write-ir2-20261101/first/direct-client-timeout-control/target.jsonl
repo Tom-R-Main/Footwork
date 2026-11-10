@@ -1,0 +1,4 @@
+{"invocation": "direct-client-timeout-control", "monotonic_ns": 624297690034, "kind": "target_ready", "pid": 70, "unique_name": ":1.0"}
+{"invocation": "direct-client-timeout-control", "monotonic_ns": 624317638076, "kind": "method_received", "method": "SetTextContents", "arguments": ["TOKEN"], "serial": 3}
+{"invocation": "direct-client-timeout-control", "monotonic_ns": 624317828201, "kind": "effect_applied", "method": "SetTextContents", "before": "", "after": "TOKEN"}
+{"invocation": "direct-client-timeout-control", "monotonic_ns": 624317911451, "kind": "reply_behavior", "method": "SetTextContents", "behavior": "withhold", "value": "TOKEN"}

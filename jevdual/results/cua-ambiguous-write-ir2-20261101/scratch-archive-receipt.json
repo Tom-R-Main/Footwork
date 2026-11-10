@@ -1,0 +1,17 @@
+{
+  "source": "/Users/thomasmain/projects/footwork/output/cua-ir2-mac-linux-20261101",
+  "archive": "/Volumes/External SSD/Footwork Archives/2026-11-01/cua-ir2-mac-linux/cua-ir2-mac-linux.tar.zst",
+  "archive_sha256": "630b7d760ddee592e8577fe8ca56f249af96fa669ffd3ef38120d3fd54e0575f",
+  "files": 1608,
+  "verified_entries": 1608,
+  "logical_bytes": 254617366,
+  "compressed_bytes": 40872238,
+  "source_stable": true,
+  "sources_removed": true,
+  "manifest_sha256": "a41af35d185fc09800c6930f7d7118662e647a153833da4ad64be5ac81a558e3",
+  "scope": "task-owned IR2 scratch; exact regular-file content and metadata before/after verified; no symlinks or special files",
+  "free_before_bytes": 11845292032,
+  "free_after_bytes": 12105240576,
+  "observed_free_delta_bytes": 259948544,
+  "final_liveness_pids": []
+}

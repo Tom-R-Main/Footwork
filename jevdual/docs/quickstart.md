@@ -8,9 +8,10 @@ call a model provider.
 ## Install a bundle
 
 You need an existing Python 3.11 or newer, below Python 4. A bundle contains the Footwork wheel,
-the pinned native CUA wheel for one host platform, an installer and a SHA256 manifest. Choose a
-bundle built for your OS and architecture, with compatible system libraries. Linux wheels have local
-platform tags and make no manylinux compatibility promise.
+an installer and a SHA256 manifest. A light bundle omits CUA and browser-use and supports the
+owned headless browser routes. A full bundle adds the pinned native CUA wheel for one host platform
+and the agent dependencies. Choose a full bundle built for your OS and architecture, with compatible
+system libraries. Linux CUA wheels have local platform tags and make no manylinux compatibility promise.
 
 If you already have a compatible bundle, install into a **new** environment:
 
@@ -26,18 +27,21 @@ environment. It uses installed Python and uv, pip or bundled ensurepip; binary d
 downloaded. The consumer needs no Rust compiler. Doctor reports prerequisites; a successful live
 observation establishes access to the selected app.
 
-To build a bundle from this repository, first install uv and the
-[CUA native build prerequisites](upstream/cua-driver-build.md) for your platform. From the repository
+To build a bundle from this repository, choose the profile explicitly. A light bundle needs only existing Python; a full build also needs
+uv and the [CUA native build prerequisites](upstream/cua-driver-build.md). From the repository
 root, with a new output directory:
 
 ```sh
-rustup toolchain install 1.97.1 --profile minimal
 cd jevdual
-python3 scripts/build_agent_bundle.py --output ../output/footwork-bundle
+python3 scripts/build_agent_bundle.py --profile light --output ../output/footwork-light-bundle
+# For native and legacy browser routes, with full build prerequisites:
+rustup toolchain install 1.97.1 --profile minimal
+python3 scripts/build_agent_bundle.py --profile full --output ../output/footwork-bundle
 ```
 
-Then use `output/footwork-bundle/install.py` from the repository root in the installation command
-above. This builder compiles the pinned CUA native dependency and can download build dependencies.
+Then use the selected `output/footwork-light-bundle/install.py` or
+`output/footwork-bundle/install.py` from the repository root in the installation command above. The full builder compiles the pinned CUA native dependency and can download build dependencies;
+the light builder does neither.
 If you already built the exact compatible CUA wheel, supply it with `--cua-wheel /path/to/cua_driver.whl`
 to reuse that build. See [bundle details](unified-cli.md#build-one-bundle) for the artifact contract.
 Footwork's pinned CUA dependency must be supplied by this build or a matching wheelhouse; a bare
@@ -99,7 +103,7 @@ alone is not proof that the wider task is complete.
 
 ## Choose your next route
 
-- **Owned headless browser:** the [CDP preview](owned-cdp.md) adds guarded button activation and durable restart retention without a desktop at runtime. Typing and general browser completion remain unavailable; the light dependency-metadata split is still pending.
+- **Owned headless browser:** the [CDP preview](owned-cdp.md) adds guarded button activation and durable restart retention without a desktop at runtime. Typing and general browser completion remain unavailable; the light profile omits native and agent dependencies.
 - **Native apps:** try the [macOS operator example](../../README.md#drive-it), or the
   [Linux Mousepad path](linux-support.md#exact-text-and-document-scope). Linux repeated desktop
   sessions have known native teardown aborts and target-readiness timeouts; current qualification

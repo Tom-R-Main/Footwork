@@ -72,7 +72,7 @@ def main(argv: list[str]) -> int:
         ]
         t0 = time.perf_counter()
         p = subprocess.run(
-            ["uv", "run", "footwork", *args, "--session", str(tdir / surface)],
+            ["uv", "run", "--no-sync", "footwork", *args, "--session", str(tdir / surface)],
             capture_output=True,
             text=True,
             check=False,
