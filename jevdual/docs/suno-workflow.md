@@ -18,7 +18,7 @@ User-selected musical grounding: the existing songs on [Softtrigr's YouTube chan
 | 6. Check the joins | Before/after audio spanning each boundary, plus a whole-song context pass | Clicks, silence, abrupt timbre/loudness/tempo changes, unintended lyric or musical changes |
 | 7. Save and reopen | New song identity, saved derivative, reopened editor state and playable output | Delivery of Save is distinct from persistence; title changes alone prove little |
 
-Start with an instrumental and a fade so lyrics, alignment and stochastic regeneration do not obscure control failures. Then test a lyric/section replacement. Finally test Studio/stems separately: a successful Song Editor journey does not qualify a different editor.
+For a fresh generic qualification, an instrumental and a fade isolate control failures from lyric alignment and stochastic regeneration. This user's run instead uses original French-English lyrics grounded in their selected references. Then test a lyric/section replacement. Test Studio/stems separately: a successful Song Editor journey does not qualify a different editor.
 
 Suno documents section replacement, alternative previews, draggable transition boundaries, fades and section rearrangement in its [Song Editor guide](https://help.suno.com/en/articles/6141505). Discover the current UI each time; do not assume that the historical guide describes every current account or plan.
 
@@ -59,7 +59,7 @@ Ask a critic for timestamped observations, severity, confidence, evidence and on
 | Browser performance | [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) | Diagnose browser behavior and performance | Requires an actual permitted connection; distinct from an audio critic |
 | Capture | OBS + [obs-websocket](https://github.com/obsproject/obs-websocket) | Programmatic recording control | Screen and intended system/app audio must both be configured and checked; available MCP tools do not prove OBS is running or connected |
 | Media mechanics | [FFmpeg](https://github.com/FFmpeg/FFmpeg), [librosa](https://github.com/librosa/librosa) | Clip/decode/probe media; derive audio and music features | Features support diagnosis, not taste; FFmpeg is installed locally, no new packages installed in this run |
-| Hosted multimodal perception | [Gemini video](https://ai.google.dev/gemini-api/docs/video-understanding) and [audio](https://ai.google.dev/gemini-api/docs/audio) APIs | Direct audio/video input and timestamped questions | Provider documentation notes fixed-rate video sampling can miss rapid events; validate critical excerpts at suitable resolution. No provider was activated for media judgment here |
+| Hosted multimodal perception | [Gemini video](https://ai.google.dev/gemini-api/docs/video-understanding) and [audio](https://ai.google.dev/gemini-api/docs/audio) APIs | Direct audio/video input and timestamped questions | Provider documentation notes fixed-rate video sampling can miss rapid events; validate critical excerpts at suitable resolution. Gemini was not activated in this run |
 | Open-weight multimodal perception | [Qwen3-Omni](https://github.com/QwenLM/Qwen3-Omni) | Text, images, audio and video in one model family | Benchmark against real Suno edits; assess model license and serving requirements before adoption |
 | Open music specialist | [Music Flamingo / Audio Flamingo](https://github.com/nvidia/audio-flamingo) | Music/audio understanding and question answering | Candidate critic, not proof of expert taste or browser control; not installed or benchmarked here |
 | Tool orchestration reference | [Microsoft MusicAgent](https://github.com/microsoft/muzic/tree/main/musicagent) | Existing pattern for routing music tasks to specialist tools | Historical research architecture; not a turnkey Suno driver |
@@ -78,6 +78,14 @@ MCP is a transport for tools. It supplies neither perception nor musical taste b
 5. Add an A/B review loop and saved-state readback, then exercise interrupt/restart and ordinary variants.
 
 The first target is a narrow end-to-end journey with inspectable failures. General autonomous creative judgment is a later, separately evaluated capability.
+
+## Live qualification of the selected reviewer
+
+The project-local `scripts/openrouter_media_review.py` now supplies actual local audio/video to the user's selected Qwen route. It retains media hashes, provider/model response, usage and uncertainty without saving credentials or media payloads in logs. It has explicit reasoning control, a total exchange deadline and no automatic retry. A deadline cannot prove that a remote generation stopped or was unbilled. Requested output tokens are not a hard total-token or spend limit.
+
+In this development run, the route correctly distinguished a known tone pattern from silence and produced audio-grounded accounts of three Softtrigr reference songs. The video route identified a blue-to-green scene and rightward motion, but missed a known freeze and one-frame flash, invented some spatial detail and gave inaccurate times. Adding the same audio explicitly as a sidecar produced an audible-events account where embedded audio alone had been inconclusive. These are small mechanism checks, not accuracy-rate or taste validation. See `results/suno-20261110/reference-analysis.md`, `video-calibration.md` beside it and `results/openrouter-media-review-20261110/report.md`.
+
+Use the model for coarse observations and proposed edits with stated uncertainty. Use actual editor state, exported audio, independent duration/silence/frame checks and reopened saved state to verify the intended change. A model saying “smooth” does not clear a known defect. Human preference acceptance remains separate.
 
 ## Research to use as design tests
 

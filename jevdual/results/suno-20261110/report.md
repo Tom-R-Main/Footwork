@@ -31,14 +31,17 @@ The preregistered five-milestone metric has zero completed milestones. Navigatio
 | F1 | Title/address changed to Create while repeated native AX menus still exposed profile controls; screenshot showed the creation form | Require a specific control and cross-check rendered evidence. Driver source documents possible Chromium AX delay; cause is not proven here. A source change adds bounded control-appearance waiting, separately tested below |
 | F2 | App-name-only start selected a different concurrently running Chrome process and could not find the Suno window | Resolved for this run with explicit `--pid 24992` and selected window title |
 | F3 | `elements_incomplete` appeared even when target inspection succeeded | Source inspection distinguishes conservative Chromium coverage from actual truncation; numeric target inspection can still be qualified. Do not treat the flag as an empty page or full-page evidence |
-| F4 | Two Window menu attempts returned `human_active` before input delivery | Pending user desktop availability. Foreground-permitted policy requires idle input; no override or alternate-driver bypass was used |
-| F5 | No live audio/video judgment path established | Engineering roadmap in `docs/suno-workflow.md`; available capture tools and candidate models are research inputs, not tested integrations |
+| F4 | Two Window menu attempts returned `human_active` before input delivery | User agreed to pause input; subsequent guarded Window menu actions succeeded. The idle gate remains active; availability must be rechecked for each action |
+| F5 | Initially no live audio/video judgment path | Project-local OpenRouter helper now supplied actual audio to the selected Qwen route, distinguished tones from silence and reviewed three reference songs. Video macro perception held, but fine defects and precise timing failed qualification; see the separate reports |
+| F6 | `do enter FIELD TEXT` pressed Return without typing the trailing text | Source now rejects trailing enter text before dispatch; use type for text and enter for Return. No navigation was inferred from the failed sequence |
+| F7 | A clipped480-character field preview caused false mismatch/equality reasoning | Candidate truncation provenance now makes incomplete content comparisons explicitly unverifiable; no full-value assertion from a preview |
+| F8 | Suno's visible rich Lyrics field stayed blank while AX exposed x after background replacement/append attempts | Default native web typing hard-coded background delivery. An explicit foreground type route and addressed-field focus guard are under offline qualification; live success remains unverified |
 
 ## Resume
 
-Keep the signed-in Suno window visible and allow the foreground-permitted idle condition to clear. Reobserve the exact process/window, confirm creation-specific fields against the screenshot, then enter a new run-owned instrumental brief, submit once and reconcile generation state. Continue through audition, a deterministic fade/crop, section replacement, transition playback and saved-state readback. Preserve originals.
+Reobserve the bound signed-in Suno creation window with the qualified project-local runtime. First verify a short diagnostic in the actual rendered Lyrics editor and exact field readback; replace it with the original run-owned lyrics before any generation. Verify style and title, submit once and reconcile generation state. Continue through actual-audio audition, a bounded editor change, transition playback and saved-state readback. Preserve originals. No generation with diagnostic text.
 
-No local source patch has been installed into the user-local release. Use the checkout explicitly when verifying the new observation option. No global installation, remote model activation for media judgment, merge or deployment occurred.
+No local source patch has been installed into the user-local release. Use the checkout explicitly when verifying new behavior. The user subsequently authorized project-only yt-dlp installation and selected Qwen through OpenRouter with a local key. Audio probes and reference reviews have now run; see `reference-analysis.md`. No global installation, merge or deployment occurred.
 
 ## Source repair and verification
 
