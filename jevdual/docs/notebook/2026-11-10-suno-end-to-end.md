@@ -259,3 +259,17 @@ Test: click the actual unique field once on frozen114a1b9, observe, then request
 Predicts: field focus preparation lets existing selection/value/text checks pass and the rendered editor plus raw receipt agree on signal followed by its preserved LF.
 Against: click refuses, exact selection remains unreadable/mismatched, focus shifts elsewhere, text outcome is unknown, or only AX changes.
 Refs: output/suno-20261110/range-edit-signal.txt
+
+## SUNU26 · update · 2026-11-10 18:31
+Resolves: SUN21 = failed
+Observed: ordinary click on the unique Lyrics editor was refused unknown_operation before dispatch because the native textbox projection does not offer click. No text was sent and the fresh editor remains empty. A source inquiry is checking a proper focus-only primitive; no noop keystroke or relaxed selected-text evidence is being used.
+Inferred: explicit selection editing exposes a missing field-focus preparation capability. It is separate from the working ordinary Styles/title route and the already-created saved songs.
+Next: keep the repair package scoped, and qualify public URL navigation to the observed first saved song for export/editor progress.
+Refs: output/suno-20261110/range-edit-focus-field.txt; output/suno-20261110/generated-link-identities.json
+
+## SUN22 · prediction · 2026-11-10 18:31
+Hypothesis: the ordinary native Chrome address-bar type and target-bound Return route can navigate to an independently observed exact song URL without an ambiguous row click.
+Test: fresh bound-window observation on frozen114a1b9, type the first actual AXURL into the unique Address and search bar, inspect exact field readback, then send target-bound Enter only if the intended URL is present. Reobserve URL and song-specific controls/title; stop on refusal or unknown effect without repeat.
+Predicts: the address holds the actual observed first song URL, one Return navigates to that song, and its own editor/export controls are observed.
+Against: typing is refused/mismatched, Enter outcome is unknown without reconcilable destination, URL differs or only title changes without song-specific evidence.
+Refs: output/suno-20261110/generated-link-identities.json; docs/experiments/suno-end-to-end-20261110.md
