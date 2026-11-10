@@ -1997,6 +1997,197 @@ def test_native_append_receipt_does_not_compare_a_truncated_persisted_baseline(
     assert world.tool_calls == []
 
 
+def _foreground_styles_fixture(
+    world, monkeypatch, *, idle=60, initial="", selection_change=False, focus_change=False, outcome=None
+):
+    from jevdual import ax, native, posture
+
+    from tests.test_posture import Activity
+
+    row = _native_styles_field(world, monkeypatch, initial=initial)
+    row["in_web_content"] = True
+    selection = [(0, 0)]
+    monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2.focus1",
+                        raising=False)
+    monkeypatch.setattr(posture, "MacActivity", lambda: Activity(idle=idle, fronts=(77,)))
+    monkeypatch.setattr(ax, "raise_window", lambda *a: None)
+    monkeypatch.setattr(ax, "focused_window_id", lambda pid: 40335)
+    monkeypatch.setattr(ax, "resolve", lambda *a: "styles")
+    monkeypatch.setattr(ax, "value", lambda el: row["value"])
+    monkeypatch.setattr(ax, "selected_range", lambda el: selection[0], raising=False)
+
+    async def call(name, encoded):
+        args = json.loads(encoded)
+        world.tool_calls.append((name, args))
+        if name == "bring_to_front" and focus_change:
+            row["label"] = "Replaced field"
+        if name == "press_key":
+            assert args["delivery_mode"] == "foreground" and args["modifiers"] == ["cmd"]
+            selection[0] = (0, len(row["value"].encode("utf-16-le")) // 2)
+            if selection_change:
+                row["label"] = "Replaced field"
+        if name == "type_text":
+            assert args["delivery_mode"] == "foreground"
+            assert args["window_id"] == 40335 and args["element_token"].endswith(":910")
+            if isinstance(outcome, Exception):
+                raise outcome
+            if outcome is not None:
+                return outcome
+            row["value"] = args["text"]
+        return SimpleNamespace(
+            action=cd.ActionResult(
+                effect=cd.ActionEffect.UNVERIFIABLE, route=cd.ActionRoute.SYNTHETIC_EVENTS,
+                delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.FOREGROUND, delivered_count=None),
+                evidence=[], escalation=None, summary="foreground event post attempted", error=None,
+                hint=None, next_call=None, fast_path=None,
+            ), text="", is_error=False, error_code=None,
+            structured_json=json.dumps({"path": "key_events_fg", "effect": "unverifiable"}),
+        )
+
+    monkeypatch.setattr(world, "call_tool", call)
+    return row
+
+
+@pytest.mark.parametrize("initial", ["", "prior text"])
+def test_explicit_foreground_web_type_preserves_target_and_readback(world, fw, monkeypatch, initial):
+    row = _foreground_styles_fixture(world, monkeypatch, initial=initial)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0 and row["value"] == "signal", (out, err)
+    assert len([v for k, v in world.tool_calls if k == "type_text"]) == 1
+    assert "confirmed" in _state(fw)["memory"][-1]
+    assert all(v.get("delivery_mode") == "foreground" for k, v in world.tool_calls if k in ("type_text", "press_key"))
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["action"]["web_text_delivery"] == "foreground"
+    assert receipt["action"]["native_delivery"]["driver_delivery"] == "foreground"
+
+
+@pytest.mark.parametrize("idle", [0, 2.9])
+def test_explicit_foreground_web_type_yields_to_human_input(world, fw, monkeypatch, idle):
+    _foreground_styles_fixture(world, monkeypatch, idle=idle)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    _, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground")
+    assert "human_active" in out + err
+    assert world.tool_calls == []
+
+
+@pytest.mark.parametrize("failure", ["focus_changed", "selection_changed", "uncertain"])
+def test_explicit_foreground_web_type_never_retries_after_selection_or_delivery(
+    world, fw, monkeypatch, failure
+):
+    _foreground_styles_fixture(world, monkeypatch, initial="prior text",
+                               selection_change=failure == "selection_changed",
+                               focus_change=failure == "focus_changed",
+                               outcome=RuntimeError("post reply lost") if failure == "uncertain" else None)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    types = [v for k, v in world.tool_calls if k == "type_text"]
+    assert len(types) == (1 if failure == "uncertain" else 0), (code, out, err)
+    assert ("refused" if failure == "focus_changed" else "unverifiable") in out + err
+
+
+def test_explicit_foreground_web_type_requires_independent_complete_selection(world, fw, monkeypatch):
+    from jevdual import ax
+
+    _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+    monkeypatch.setattr(ax, "selected_range", lambda el: (1, 1))
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0 and "selection_unqualified" in out + err
+    assert not [value for name, value in world.tool_calls if name == "type_text"]
+
+
+@pytest.mark.parametrize("variant", [
+    "background_only", "append", "click", "browser", "old_runtime", "no_judge", "file_selector", "browser_route",
+])
+def test_explicit_foreground_web_type_rejects_unsupported_before_binding(world, fw, monkeypatch, variant):
+    from jevdual import native
+
+    _foreground_styles_fixture(world, monkeypatch)
+    posture = "background_only" if variant == "background_only" else "foreground_permitted"
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", posture)[0] == 0
+    if variant == "browser":
+        path = fw.session / "session.json"
+        raw = json.loads(path.read_text()); raw["mode"] = "browser"; path.write_text(json.dumps(raw))
+    if variant == "old_runtime":
+        monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2")
+
+    def forbidden(**kwargs):
+        pytest.fail("unsupported foreground option must refuse before driver binding")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    operation = variant if variant in ("append", "click") else "type"
+    target = "file:/owned/name.txt" if variant == "file_selector" else "Styles"
+    args = ["do", operation, target, "signal", "--web-text-delivery", "foreground"]
+    if variant == "no_judge":
+        args.append("--no-judge")
+    if variant == "browser_route":
+        args.extend(["--route", "dom"])
+    code, _, err = fw(*args)
+    assert code == 2 and "foreground web text" in err
+
+
+@pytest.mark.parametrize("initial", ["", "prior text"])
+def test_explicit_foreground_focus_refusal_retains_no_text_evidence(world, fw, monkeypatch, initial):
+    refused = SimpleNamespace(
+        action=cd.ActionResult(
+            effect=cd.ActionEffect.REFUSED, route=cd.ActionRoute.SYNTHETIC_EVENTS, delivery=None,
+            evidence=[], escalation=None, summary="no text dispatched", error=None,
+            hint=None, next_call=None, fast_path=None,
+        ), text="no text dispatched", is_error=True, error_code="target_focus_unconfirmed",
+        structured_json=json.dumps({
+            "code": "target_focus_unconfirmed", "effect": "refused", "dispatched": False, "delivered_chars": 0,
+        }),
+    )
+    _foreground_styles_fixture(world, monkeypatch, initial=initial, outcome=refused)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0, (out, err)
+    assert len([v for k, v in world.tool_calls if k == "type_text"]) == 1
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    proof = receipt["action"]["native_readback"]["text_dispatch"]
+    assert proof["dispatched"] is False and proof["delivered_chars"] == 0
+    assert receipt["dispatched"] is bool(initial)  # replacement selection is earlier input
+
+
+def test_explicit_foreground_web_type_refuses_unreadable_nonempty_field(world, fw, monkeypatch):
+    from jevdual import ax
+
+    row = _foreground_styles_fixture(world, monkeypatch, initial="unreadable existing text")
+    row["value"] = None
+
+    def unreadable(element):
+        raise ax.AXError("no_value", "the nonempty field does not expose its value")
+
+    monkeypatch.setattr(ax, "value", unreadable)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground")
+    assert code == 0 and "field_value_unreadable" in out + err
+    assert not [value for name, value in world.tool_calls if name in ("type_text", "press_key")]
+
+
+def test_explicit_foreground_web_type_partial_reply_uses_no_batched_tail_retry(world, fw, monkeypatch):
+    # The pinned SDK's incomplete-ancestry case can enter its native-tail branch
+    # only when delay_ms==0; explicit positive pacing must disable that branch.
+    partial = SimpleNamespace(
+        action=cd.ActionResult(
+            effect=cd.ActionEffect.PARTIAL, route=cd.ActionRoute.SYNTHETIC_EVENTS,
+            delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.FOREGROUND, delivered_count=1),
+            evidence=[], escalation=None, summary="one character observed, ancestry incomplete", error=None,
+            hint=None, next_call=None, fast_path=None,
+        ), text="type_text incomplete", is_error=True, error_code="type_text_incomplete",
+        structured_json=json.dumps({"code": "type_text_incomplete", "effect": "partial", "delivered_chars": 1}),
+    )
+    _foreground_styles_fixture(world, monkeypatch, outcome=partial)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground")
+    types = [value for name, value in world.tool_calls if name == "type_text"]
+    assert code == 0 and "unverifiable" in out + err
+    assert len(types) == 1 and types[0].get("delay_ms", 0) > 0
+
+
 @pytest.mark.parametrize("command", ["start", "look"])
 @pytest.mark.parametrize("permission", ["not_granted", "unavailable"])
 def test_denied_accessibility_is_an_explicit_observation_failure(world, fw, monkeypatch, command, permission):

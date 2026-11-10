@@ -1,0 +1,41 @@
+   Compiling platform-macos v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source/libs/cua-driver/rust/crates/platform-macos)
+    Finished `release` profile [optimized] target(s) in 1m 07s
+     Running unittests src/lib.rs (output/cua-046-upgrade/target/release/deps/platform_macos-8f1d1af4e6a6e40d)
+
+running 33 tests
+test tools::type_text::tests::ax_backed_web_readbacks_are_downgraded ... ok
+test tools::type_text::tests::background_text_focus_remains_best_effort ... ok
+test tools::type_text::tests::delivery_unreadable_does_not_probe_ancestry ... ok
+test tools::type_text::tests::default_delay_selects_batched_typing ... ok
+test tools::type_text::tests::browser_identities_take_the_activating_rung ... ok
+test tools::type_text::tests::delivery_unchanged_web_is_unverifiable ... ok
+test tools::type_text::tests::chromium_native_field_refuses_only_background_submits ... ok
+test tools::type_text::tests::editor_surfaces_take_keys_but_item_browsers_do_not ... ok
+test tools::type_text::tests::drained_prefix_reports_the_delivered_character_count ... ok
+test tools::type_text::tests::electron_web_ax_background_refuses_before_synthesis ... ok
+test tools::type_text::tests::foreground_text_focus_error_emits_no_text ... ok
+test tools::type_text::tests::foreground_typing_skips_long_rearm_when_target_is_already_frontmost ... ok
+test tools::type_text::tests::incomplete_web_ancestry_only_fails_closed_for_electron_background_ax ... ok
+test tools::type_text::tests::large_atomic_ax_payloads_are_not_subject_to_the_synthesis_budget ... ok
+test tools::type_text::tests::oversized_synthesis_is_refused_before_the_terminal_event_path ... ok
+test tools::type_text::tests::path_constants_are_stable_tokens ... ok
+test tools::type_text::tests::semantic_only_policy_refuses_terminal_cgevent_rung ... ok
+test tools::type_text::tests::foreground_text_verified_focus_dispatches_once_and_refusal_is_structured ... ok
+test tools::type_text::tests::screen_sharing_text_fails_closed_without_foreground_window ... ok
+test tools::type_text::tests::refusal_diagnostics_distinguish_safe_chunking_from_indeterminate_ax ... ok
+test tools::type_text::tests::synthesis_preflight_accepts_the_exact_transport_safe_boundary ... ok
+test tools::type_text::tests::text_roles_take_typed_text ... ok
+test tools::type_text::tests::typed_progress_classifies_readback ... ok
+test tools::type_text::tests::unfocused_window_needs_a_confirmed_key_window ... ok
+test tools::type_text::tests::web_readback_distrust_preserves_native_and_unverified_outcomes ... ok
+test tools::type_text::tests::web_readback_escalation_never_recommends_the_completed_pixel_rung ... ok
+test tools::type_text::tests::untargeted_text_without_a_focused_text_input_is_refused ... ok
+test tools::type_text::tests::delivery_waits_through_a_partial_readback_until_complete ... ok
+test tools::type_text::tests::delivery_web_keeps_polling_and_preserves_positive_progress ... ok
+test tools::type_text::tests::foreground_text_focus_failure_emits_no_text ... ok
+test tools::type_text::tests::foreground_text_focus_lost_during_settle_emits_no_text ... ok
+test tools::type_text::tests::foreground_text_zero_settle_cannot_bypass_focus_gate ... ok
+test tools::type_text::tests::zero_progress_stops_polling_after_the_give_up_window ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 707 filtered out; finished in 0.51s
+

@@ -1,0 +1,58 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_____ test_explicit_foreground_web_type_refuses_unreadable_nonempty_field ______
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107a244a0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107a70740>
+
+    def test_explicit_foreground_web_type_refuses_unreadable_nonempty_field(world, fw, monkeypatch):
+        from jevdual import ax
+    
+        row = _foreground_styles_fixture(world, monkeypatch, initial="unreadable existing text")
+        row["value"] = None
+    
+        def unreadable(element):
+            raise ax.AXError("no_value", "the nonempty field does not expose its value")
+    
+        monkeypatch.setattr(ax, "value", unreadable)
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground")
+>       assert code == 0 and "field_value_unreadable" in out + err
+E       assert (0 == 0 and 'field_value_unreadable' in ("dispatched type(Styles) text='signal': driver says unverifiable in 0.0s\nreceipt: Receipt for type(Styles) text='sign...on     'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (10 chars):\n0\n0\nsignal\n" + ''))
+
+tests/test_session_scenarios.py:2167: AssertionError
+__ test_explicit_foreground_web_type_partial_reply_uses_no_batched_tail_retry __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107ab13a0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107a73ef0>
+
+    def test_explicit_foreground_web_type_partial_reply_uses_no_batched_tail_retry(world, fw, monkeypatch):
+        # The pinned SDK's incomplete-ancestry case can enter its native-tail branch
+        # only when delay_ms==0; explicit positive pacing must disable that branch.
+        partial = SimpleNamespace(
+            action=cd.ActionResult(
+                effect=cd.ActionEffect.PARTIAL, route=cd.ActionRoute.SYNTHETIC_EVENTS,
+                delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.FOREGROUND, delivered_count=1),
+                evidence=[], escalation=None, summary="one character observed, ancestry incomplete", error=None,
+                hint=None, next_call=None, fast_path=None,
+            ), text="type_text incomplete", is_error=True, error_code="type_text_incomplete",
+            structured_json=json.dumps({"code": "type_text_incomplete", "effect": "partial", "delivered_chars": 1}),
+        )
+        _foreground_styles_fixture(world, monkeypatch, outcome=partial)
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground")
+        types = [value for name, value in world.tool_calls if name == "type_text"]
+        assert code == 0 and "unverifiable" in out + err
+>       assert len(types) == 1 and types[0].get("delay_ms", 0) > 0
+E       AssertionError: assert (1 == 1 and 0 > 0)
+E        +  where 1 = len([{'pid': 77, 'window_id': 40335, 'element_token': 's00000003:910', 'text': 'signal', ...}])
+E        +  and   0 = <built-in method get of dict object at 0x106401c40>('delay_ms', 0)
+E        +    where <built-in method get of dict object at 0x106401c40> = {'pid': 77, 'window_id': 40335, 'element_token': 's00000003:910', 'text': 'signal', ...}.get
+
+tests/test_session_scenarios.py:2188: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_refuses_unreadable_nonempty_field
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_partial_reply_uses_no_batched_tail_retry
+2 failed, 186 deselected in 1.31s

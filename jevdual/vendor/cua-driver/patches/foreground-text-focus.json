@@ -1,0 +1,18 @@
+{
+  "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1",
+  "base_archive_sha256": "233149903c53bb1ccdcf84c3693cabc3bcbf8bba4ebc25f3b5a7c60e63540ea4",
+  "patched_archive_sha256": "804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2",
+  "patch_sha256": "abc312aa842a58cfde036ed42f69134781eec0328f20b42c3bf26bfb0b7f978f",
+  "files": {
+    "libs/cua-driver/rust/crates/platform-macos/src/tools/press_key.rs": {
+      "before": "a6308fb4b0d112c9049b936e153708eea20628064df37dca0d180d49ef43f225",
+      "after": "7026fbc135f62df527e041a0bb4d66158c6f74830b71dc5703513803842f0519"
+    },
+    "libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs": {
+      "before": "5483b7949dc8364e88c5bfa0cd89eb8304f72f803789e595f4e5bdc6fc75eaed",
+      "after": "fa86a334d72b715abb62ba49b72e3577d789ea8d76fb0a15c37b2d16eaeeae89"
+    }
+  },
+  "abi": "unchanged six upstream Python binding files; private Rust guard only"
+}

@@ -85,6 +85,25 @@ ambiguity checks. Appearance proves neither task completion nor that an action i
 The deadline bounds cooperative observation and polling; driver shutdown still runs to completion.
 This option currently supports native sessions only; ordinary `look` is unchanged.
 
+On macOS, `footwork do type "Observed web field" "Text" --web-text-delivery foreground`
+explicitly uses the focus-guarded native web text route. It requires the exact
+`cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1` runtime and a session started with
+`--mode foreground_permitted` or `exclusive_desktop`. Shared foreground mode still requires three
+seconds without human input. Existing action and replacement authorization gates apply;
+`--no-judge`, browser mode, append and other operations refuse this option. A non-web target also
+refuses before field mutation.
+
+This is an explicit operation, never a fallback after uncertain background input. For a replacement,
+the route activates the exact window, reobserves the field, sends a token-bound foreground Select All,
+then revalidates identity/value and independently reads the complete selection before typing.
+The driver proves addressed field focus inside its foreground activation guard before text synthesis.
+If selection or delivery becomes uncertain, the command stops without retrying. A retained SDK
+zero-text refusal stays separate from earlier preparation input. Read the receipt and inspect the
+rendered field: AX value agreement does not establish that the renderer or server accepted the edit.
+The exact target must have a readable current value; missing readback is never assumed empty.
+The strict route requests positive character pacing, disabling the SDK's batched partial-tail retry
+even if web ancestry cannot be established during delivery.
+
 For a read-only DOM observation, use `footwork browser lightpanda read URL --executable /absolute/lightpanda`.
 This separate profile owns one fresh external prebuilt engine and connection, withholds input/editable
 values, and supplies no input authority or geometry. Run `footwork browser lightpanda artifact` and

@@ -254,6 +254,7 @@ def _operation_request(args: Any) -> dict[str, Any]:
         if getattr(args, "from_session", None)
         else None,
         "route": getattr(args, "route", None),
+        **({"web_text_delivery": args.web_text_delivery} if getattr(args, "web_text_delivery", None) else {}),
     }
     if getattr(args, "_native_scope", None):
         request["native_scope"] = dict(args._native_scope)
@@ -1870,6 +1871,21 @@ async def cmd_do(args: Any) -> int:
         print("--token requires a durable session started with --authority", file=sys.stderr)
         return 2
     op, cid, raw_text, keys, path = parse_do(args.words)
+    web_text_delivery = getattr(args, "web_text_delivery", None)
+    if web_text_delivery:
+        from jevdual.native import require_foreground_web_text_runtime
+
+        if (state.mode != "native" or op != "type" or state.posture == "background_only"
+                or getattr(args, "no_judge", False) or str(cid).startswith("file:")
+                or getattr(args, "route", None)):
+            print("foreground web text requires native type, foreground posture and normal action gates; "
+                  "append and browser/ordinary operations are unsupported", file=sys.stderr)
+            return 2
+        try:
+            require_foreground_web_text_runtime()
+        except NativeBridgeError as exc:
+            print(f"foreground web text unavailable: {exc}", file=sys.stderr)
+            return 2
     if state.mode == "native" and op == "enter" and len(args.words) > 2:
         print(
             "native enter sends Return only and does not accept text. Use do type TARGET TEXT, "
@@ -2291,6 +2307,8 @@ async def cmd_do(args: Any) -> int:
                     eff = await bridge.act(
                         nm, op, target.id, text, route="dom_event" if route_arg == "dom" else "trusted"
                     )
+                elif web_text_delivery:
+                    eff = await bridge.act(nm, op, target.id, text, web_text_delivery=web_text_delivery)
                 else:
                     eff = await bridge.act(nm, op, target.id, text)
             ended_at = time.time()
@@ -2341,6 +2359,14 @@ async def cmd_do(args: Any) -> int:
             "mode": state.mode,
             "app": state.app,
             **({"carry": dataclasses.asdict(carried)} if carried is not None else {}),
+            **({
+                "web_text_delivery": web_text_delivery,
+                "native_delivery": {
+                    key: getattr(eff, key, None) for key in (
+                        "delivery", "driver_delivery", "dispatched", "delivered_count", "delivery_basis", "route"
+                    )
+                },
+            } if web_text_delivery else {}),
         }
         if getattr(eff, "readback", None) is not None:
             state.pending["save_readback"] = eff.readback

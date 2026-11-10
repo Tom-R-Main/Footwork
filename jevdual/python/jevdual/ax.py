@@ -202,6 +202,19 @@ def can_insert(el: Any) -> bool:
     return True
 
 
+def selected_range(el: Any) -> tuple[int, int]:
+    """Read the field's current UTF-16 selection; no selection is inferred from a key receipt."""
+    from ApplicationServices import AXValueGetValue, kAXValueCFRangeType
+
+    raw = _attr(el, "AXSelectedTextRange")
+    if raw is None:
+        raise AXError("selection_unreadable", "the field's selected range is unavailable")
+    ok, value = AXValueGetValue(raw, kAXValueCFRangeType, None)
+    if not ok or value.location < 0 or value.length < 0:
+        raise AXError("selection_unreadable", "the field's selected range cannot be qualified")
+    return int(value.location), int(value.length)
+
+
 def can_set_value(el: Any) -> bool:
     from ApplicationServices import AXUIElementIsAttributeSettable
 

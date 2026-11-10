@@ -90,6 +90,7 @@ _MENU_BAR_ROLES = frozenset({"AXMenuBar", "AXMenuBarItem"})
 _TEXT_ROLES = frozenset({"textbox", "searchbox", "combobox"})
 _LABEL_CAP = 80
 _VALUE_CAP = 120
+FOREGROUND_WEB_TEXT_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1"
 _INVISIBLE = re.compile("[" + "\u200e\u200f\u202a-\u202e\u2066-\u2069" + "]")
 _WS = re.compile(r"\s+")
 #: ``AXStaticText = "..."`` optionally followed by ``[actions=[...]]`` or other bracketed attributes
@@ -652,6 +653,23 @@ def require_accessibility() -> None:
             "Native observation requires Accessibility permission for the process hosting Footwork. "
             "Check System Settings > Privacy & Security > Accessibility, then run footwork doctor "
             "from the same host before retrying.",
+        )
+
+
+def _foreground_web_text_version() -> str:
+    from importlib.metadata import PackageNotFoundError, version
+
+    try:
+        return version("cua-driver")
+    except PackageNotFoundError:
+        return ""
+
+
+def require_foreground_web_text_runtime() -> None:
+    if sys.platform != "darwin" or _foreground_web_text_version() != FOREGROUND_WEB_TEXT_CUA_VERSION:
+        raise NativeBridgeError(
+            "foreground_web_text_runtime_unqualified",
+            f"requires macOS and cua-driver=={FOREGROUND_WEB_TEXT_CUA_VERSION}; no input sent",
         )
 
 
@@ -1693,6 +1711,78 @@ class NativeBridge:
         except NativeBridgeError as exc:
             raise NativeBridgeError(exc.reason, str(exc), dispatched=True) from exc
 
+    async def _type_web_foreground(self, nm: NativeMenu, id: int, cand: Candidate, text: str) -> NativeEffect:
+        """Explicit foreground type, never a fallback from an uncertain background operation."""
+        selection_attempted = False
+        text_refusal = None
+
+        async def call() -> Any:
+            nonlocal selection_attempted, text_refusal
+            await self._front_and_key()
+            current, target_id = await self._live(nm, id, "type")
+            target, token = self._require_fresh(current, target_id)
+            if target_id not in current.web:
+                raise NativeBridgeError("web_field_changed", "the target is no longer a qualified web text field")
+            if target_id not in current.values:
+                raise NativeBridgeError(
+                    "field_value_unreadable", "the target's current value is unreadable; selection and typing withheld"
+                )
+            before = current.values[target_id]
+            if before:
+                selection_attempted = True
+                outcome = await self.driver.call_tool("press_key", json.dumps({
+                    "pid": self.pid, "window_id": self.window_id, "element_token": token,
+                    "key": "a", "modifiers": ["cmd"], "delivery_mode": "foreground", "session": self.session,
+                }))
+                selected = self._effect("type", target_id, target.label, outcome, "foreground")
+                if not selected.dispatched or selected.error_code or getattr(outcome, "is_error", False):
+                    selection_attempted = selected.dispatched
+                    return selected
+                current, target_id = await self._live(current, target_id, "type")
+                target, token = self._require_fresh(current, target_id)
+                role, frame = current.ax_roles.get(target_id), current.frames.get(target_id)
+                if role is None or frame is None:
+                    raise NativeBridgeError("selection_unqualified", "the selected field has no qualified role/frame")
+                element = self.ax.resolve(self.pid, self.window_id, role, self.ax.Frame(*frame))
+                if self.ax.value(element) != before or self.ax.selected_range(element) != (
+                    0, len(before.encode("utf-16-le")) // 2
+                ):
+                    raise NativeBridgeError("selection_unqualified", "the exact field/value is not wholly selected")
+            outcome = await self.driver.call_tool("type_text", json.dumps({
+                "pid": self.pid, "window_id": self.window_id, "element_token": token,
+                # Positive pacing disables the SDK's batched native-tail retry,
+                # including when web ancestry becomes unreadable during delivery.
+                "text": text, "delay_ms": 1, "delivery_mode": "foreground", "session": self.session,
+            }))
+            try:
+                proof = json.loads(getattr(outcome, "structured_json", None) or "{}")
+            except (TypeError, ValueError):
+                proof = {}
+            action = getattr(outcome, "action", None)
+            action_effect = _enum_name(getattr(action, "effect", None))
+            delivered = getattr(getattr(action, "delivery", None), "delivered_count", None)
+            if (isinstance(proof, dict) and proof.get("code") == "target_focus_unconfirmed"
+                    and proof.get("effect") == "refused" and proof.get("dispatched") is False
+                    and type(proof.get("delivered_chars")) is int and proof["delivered_chars"] == 0
+                    and action_effect in (None, "refused") and delivered in (None, 0)
+                    and getattr(outcome, "is_error", False) is True):
+                text_refusal = {key: proof[key] for key in ("code", "effect", "dispatched", "delivered_chars")}
+                return self._not_sent("type", target_id, target.label, "target_focus_unconfirmed",
+                                      "the SDK refused text before synthesis; zero text characters dispatched", "foreground")
+            return outcome
+
+        effect = await self._foreground("type", id, cand.label, call, why=f"explicit foreground web text {cand.label!r}")
+        if selection_attempted and not effect.dispatched:
+            effect = dataclasses.replace(
+                effect, effect="unverifiable", dispatched=True, delivery_basis="unknown", delivered_count=None,
+                evidence=(*effect.evidence, "selection was attempted; subsequent typing was withheld"),
+            )
+        if text_refusal is not None:
+            effect = dataclasses.replace(effect, native_readback={
+                "producer": "cua_driver", "kind": "foreground_web_text_delivery", "text_dispatch": text_refusal,
+            }, evidence=(*effect.evidence, "SDK text-dispatch refusal: zero characters; preparation may have occurred"))
+        return effect
+
     async def _click_token(self, token: str) -> Any:
         from jevdual.effectors.cua import background_delivery, click_input, element_position
 
@@ -2366,6 +2456,7 @@ class NativeBridge:
         text: str | None = None,
         *,
         append_precondition: AppendPrecondition | None = None,
+        web_text_delivery: str | None = None,
     ) -> NativeEffect:
         """Dispatch exactly one operation. The caller must reobserve afterwards; ``self.last`` is
         cleared so a second act on the same snapshot is refused as stale."""
@@ -2374,6 +2465,16 @@ class NativeBridge:
                 "unknown_operation", "An exact append precondition only applies to append"
             )
         cand, token = self._require_fresh(nm, id)
+        if web_text_delivery is not None:
+            require_foreground_web_text_runtime()
+            if (web_text_delivery != "foreground" or operation != "type" or id not in nm.web
+                    or "type" not in cand.operations):
+                return self._not_sent(operation, id, cand.label, "web_text_route_unsupported",
+                                      "foreground web text supports only a qualified native web type target", "foreground")
+            self._require_unambiguous(nm, id)
+            if text is None:
+                raise NativeBridgeError("text_required", "foreground web type needs text")
+            return await self._type_web_foreground(nm, id, cand, text)
         if operation not in cand.operations:
             raise NativeBridgeError(
                 "unknown_operation", f"{operation!r} is not offered on [{id}] {cand.label!r} ({cand.role})"

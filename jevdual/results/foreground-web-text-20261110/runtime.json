@@ -1,0 +1,21 @@
+{
+  "distribution_version": "0.46.0+footwork.5486b624.cleanup2.focus1",
+  "upstream_python_version": "0.46.0",
+  "module": "/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/overlay/cua_driver/__init__.py",
+  "loaded_native_library": "/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/overlay/cua_driver/libcua_driver_sdk.dylib",
+  "cli_version": "cua-driver 0.46.0",
+  "wheel": "/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/wheelhouse/cua_driver-0.46.0+footwork.5486b624.cleanup2.focus1-py3-none-macosx_13_0_arm64.whl",
+  "wheel_sha256": "22083ce34aa45a2404bda2b27ad120156c7380da8a659879e00df139a69393ec",
+  "source_archive_sha256": "804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2",
+  "file_hashes": {
+    "cua_driver/__init__.py": "968e30886e29ef5fc66316d4bb5aef46a30c9b8f5422635ac48982ab15379ddd",
+    "cua_driver/__main__.py": "bcb78a6283dc6da69f3338879ae34a0f2dbeea3b444e4c3dd43f170d2922a387",
+    "cua_driver/_daemon.py": "f6ce97a08ab5c124ba0210b00e44bd652b41cca5a9ae20a511a6409093e8f01e",
+    "cua_driver/_native.py": "8bb3927dd6579d94468eb5c08b1700230359813074cd1959c2e226c318dd4828",
+    "cua_driver/_native_contract.py": "f5237aa6dac954ea15959347ddaeb38e99b6df18c6c323093fabe275f27c808f",
+    "cua_driver/wrapper.py": "cfd7abe6215aab7c1d8f66f2c15e6cd6ab7f150918de7b301b73c253e90a61d6",
+    "cua_driver/libcua_driver_sdk.dylib": "543d7c228b66c6b1e5bab04d8c821629457f481404dfcfd2931aae6fc96c90a6",
+    "cua_driver/bin/cua-driver": "c4209e906fa2962732d2491b60348795277105cbc83b7e04b057aa229d4b65f4"
+  },
+  "qualification": "ABI import/checksums, exact package bytes and version gate; no live UI"
+}

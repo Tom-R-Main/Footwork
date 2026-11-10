@@ -455,6 +455,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     do.add_argument("--from", dest="from_session", help="the session an @NAME value was read in")
     do.add_argument(
+        "--web-text-delivery", choices=("foreground",),
+        help="explicit native macOS web type delivery; needs the focus-guarded CUA pin and foreground posture",
+    )
+    do.add_argument(
         "--route",
         choices=("trusted", "dom"),
         help="browser mode: the click route (default trusted; dom for radio, checkbox, switch)",

@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2`. The published 0.46.0 wheel does not contain the required shutdown cleanup patch and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1`. The published 0.46.0 wheel does not contain the required shutdown cleanup and foreground text focus patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 The six Python files are copied byte-for-byte from the exact release source. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -20,7 +20,7 @@ The six Python files are copied byte-for-byte from the exact release source. The
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `233149903c53bb1ccdcf84c3693cabc3bcbf8bba4ebc25f3b5a7c60e63540ea4` (6,403,457 bytes).
+`native-source.tar.gz` SHA256: `804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2` (6,403,795 bytes).
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -31,6 +31,22 @@ Selection includes `libs/cua-driver/rust`, `libs/cua-driver/wayland-helper`, `li
 The exact release still spawns untracked browser/grant session-end work and returns from SDK shutdown without awaiting it. The four-file patch retains the previously reviewed cleanup2 implementation: runtime-owned task handles, cancellation-safe joining, completed-handle reaping, sticky abnormal-completion failure, and shutdown drain after session revocation. It does not change authorization predicates, Cargo dependencies or generated bindings. The SDK regression test adds a local AtomicBool import because the newer upstream test module no longer imports it.
 
 `patches/session-cleanup-join.patch` is the inspectable diff against this release. `patches/session-cleanup-join.json` binds the original and patched file hashes and archive hashes. The previous 0.38 cleanup2 provenance, diff and manifest are retained under `history/`; its native archive remains in Git history. Prior qualification does not automatically qualify this newer build.
+
+## Foreground text focus patch
+
+The cleanup-only archive SHA256 is `233149903c53bb1ccdcf84c3693cabc3bcbf8bba4ebc25f3b5a7c60e63540ea4`.
+`patches/foreground-text-focus.patch` applies on top of it. Its JSON manifest binds both archive
+hashes, the patch hash and the before/after hashes of two private macOS Rust files. The six upstream
+Python binding files and Rust dependencies remain unchanged; the four cleanup file hashes still
+match the final archive.
+
+The foreground text synthesizer previously ignored failed or lost field focus. The patch waits
+for activation settling, then uses the existing bounded confirmed-key-focus helper with the
+application's focused element identity immediately before synthesis. Failure returns
+`target_focus_unconfirmed`, `effect:refused`, `dispatched:false` and `delivered_chars:0`.
+An explicit foreground boolean controls the gate, including zero settling time. Existing
+background focus behavior is retained. The guard proves OS field focus, not DOM acceptance or
+server persistence. The SDK retains its existing no-retry behavior for uncertain web text.
 
 ## Build and qualification
 
