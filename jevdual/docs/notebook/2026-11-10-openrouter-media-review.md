@@ -46,3 +46,10 @@ Observed: baselinee3eaecb with a synthetic active stream exceeded its0.05s timeo
 Changes: isolate each transport in one child, enforce a parent exchange deadline, bound normal cleanup to2 additional seconds, record child PID before private payload transfer, and preserve unknown remote completion on timeout. Abrupt parent death/SIGKILL and the launch-to-journal gap remain explicit limits.
 Next: parent may use the frozen helper on a separately authorized future request. Review provider reasoning-budget behavior separately; do not retry the completed original MP4 probe.
 Refs: predictiona5f1495; results/openrouter-media-review-20261110/red-deadline.txt; results/openrouter-media-review-20261110/pytest-deadline.txt; results/openrouter-media-review-20261110/report.md
+
+## OMR4 · prediction · 2026-11-10 17:32
+Hypothesis: explicit reasoning-disable requests plus reported-usage checks expose provider budget mismatches, and a separately hashed audio input part beside MP4 can make the intended sound available without assuming embedded-video audio support.
+Test: mocked public helper requests verify off/provider-default reasoning payloads and reported token/cost statuses; MP4 plus WAV/MP3 sidecar construction and aggregate byte validation; hostile sidecar echoes are redacted. No real credential, model or UI access. Parent later runs a separately authorized known audiovisual fixture.
+Predicts: defaultoff sends enabledfalse and records uncertainty or non-honor from reported reasoning tokens; reported completion overruns are visible without retry. Valid sidecars reach the same single request as distinct input_audio parts; invalid pairings/aggregate limits send nothing and exact encoded echoes are removed.
+Against: max_tokens is represented as a hard spend cap, missing usage falsely proves disablement, malformed pairings dispatch, sidecar media leaks to logs/files, or supplying a sidecar silently establishes synchronization/perception.
+Refs: scripts/openrouter_media_review.py; tests/test_openrouter_media_review.py; https://openrouter.ai/docs/guides/best-practices/reasoning-tokens
