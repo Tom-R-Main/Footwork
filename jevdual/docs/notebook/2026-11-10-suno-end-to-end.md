@@ -35,3 +35,10 @@ Observed: the user selected existing Softtrigr YouTube songs as reference materi
 Changes: pin the selected reviewer/provider and musical source in the workflow. Treat actual audio/video qualification as a prerequisite to sonic claims. Do not substitute another model silently.
 Next: await local key entry, qualify selected-provider media input, review representative channel songs, then create and edit run-owned tests through Footwork. The current window must be reobserved before any resumed Suno input.
 Refs: docs/suno-workflow.md; output/suno-20261110/resume-look.txt; https://openrouter.ai/qwen/qwen3.8-omni-flash/llms.txt
+
+## SUN5 · prediction · 2026-11-10 16:55
+Hypothesis: the selected OpenRouter Qwen route consumes actual WAV bytes and distinguishes a known tone sequence from a silent negative control using an identical neutral prompt.
+Test: on the committed media adapter, submit the two preregistered ten-second fixtures, then inspect semantic content and coarse timing against their known construction. Use at most500 output tokens per probe and no retry/fallback.
+Predicts: two equal low tones then one longer high tone for the signal fixture, and silence for the negative control, without invented speech or music.
+Against: unsupported input, empty or generic identical output, invented content for silence, or failure to identify relative pitch/order. Success does not establish musical taste or all video input.
+Refs: docs/experiments/openrouter-media-live-20261110.md
