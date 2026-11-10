@@ -273,3 +273,17 @@ Test: fresh bound-window observation on frozen114a1b9, type the first actual AXU
 Predicts: the address holds the actual observed first song URL, one Return navigates to that song, and its own editor/export controls are observed.
 Against: typing is refused/mismatched, Enter outcome is unknown without reconcilable destination, URL differs or only title changes without song-specific evidence.
 Refs: output/suno-20261110/generated-link-identities.json; docs/experiments/suno-end-to-end-20261110.md
+
+## SUNU27 · update · 2026-11-10 18:38
+Resolves: SUN22 = held
+Observed: native address-bar type confirmed the exact observed first song URL; a single target-bound Enter reached that same song ID and its actual Play/song-detail controls. The own-song hero menu refused ambiguous identity; the separately observed player More actions then returned a background web-dropdown Not opened error. No export occurred. Read-only Chrome Downloads settings show Ask where to save each file enabled; no setting was changed, and Back returns to the song.
+Inferred: observed-URL navigation is established, while background dropdown delivery is a separate blocker requiring an explicit foreground route, not an automatic retry. An actual save dialog can select the approved project directory.
+Next: validate the frozen native href identity repair while foreground click is implemented separately.
+Refs: output/suno-20261110/song-url-address-type.txt; output/suno-20261110/song-url-enter-once.txt; output/suno-20261110/candidate-a-more-menu.txt; output/suno-20261110/candidate-a-player-menu.txt; output/suno-20261110/download-settings-look.txt
+
+## SUN23 · prediction · 2026-11-10 18:38
+Hypothesis: native link-resource qualification in e6785a7 distinguishes the two actual same-title generated links without using row position as identity.
+Test: frozen e6785a7 snapshot with unchanged SDK, return through the observed Create sidebar link, refresh all link metadata, choose the second owned resource by its actually exposed distinct href and fresh ID, then verify navigation's actual song ID. No click if either semantic peer is unreadable/unqualified.
+Predicts: two complete distinct qualified hrefs are exposed, the selected second resource survives fresh rematching and opens its own exact song page.
+Against: ambiguity remains, href is missing/wrong, changes between observations, click refuses or the first/wrong resource opens.
+Refs: results/native-link-resources-20261110/report.md; output/suno-20261110/generated-link-identities.json
