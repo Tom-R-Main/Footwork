@@ -88,3 +88,17 @@ Test: from a fresh observation of the run-owned field, append the ASCII diagnost
 Predicts: xsignal (or x followed by a separator and signal) appears, distinguishing insertion from failed replacement.
 Against: x remains, a different value appears, or dispatch refuses; this leaves general rich-text delivery/focus as the stronger hypothesis.
 Refs: output/suno-20261110/lyrics-ascii-diagnostic.txt
+
+## SUNU10 · update · 2026-11-10 17:17
+Resolves: SUN10 = failed
+Observed: append signal returned partial/content_mismatch and an unverifiable receipt. Its post-observation and a subsequent read-only observation still showed x in Lyrics editor; no generation occurred. Native preview repair51955f0 passed328 affected and296 adjacent tests and now reports bounded evidence honestly. Source diagnosis found _type_web hard-codes background delivery even when foreground is permitted; no origin for literal x was established.
+Inferred: replacement selection alone does not explain the rich-text failure. The attempted append's historical delivery remains uncertain; do not repeat it to obtain a cleaner receipt. A different explicit guarded foreground route is the next testable mechanism, not an automatic retry/fallback.
+Next: implement and freeze the opt-in foreground web-text route, then test a short run-owned diagnostic with actual rendered and exact readback evidence before intended lyrics.
+Refs: output/suno-20261110/lyrics-append-diagnostic.txt; output/suno-20261110/lyrics-append-readback.txt; results/bounded-field-receipts-20261110/report.md; python/jevdual/native.py _type_web
+
+## SUN11 · prediction · 2026-11-10 17:17
+Hypothesis: explicit foreground web-text delivery, using Footwork's existing idle/window/identity gates, reaches the visible Suno rich-text editor where the background route failed.
+Test: after the source route is committed and offline regressions pass, reobserve the run-owned Lyrics editor, enter one short ASCII diagnostic through the explicit foreground route, and inspect exact field readback plus the rendered editor. If held, replace with the intended short original lyrics and verify before generation. No fallback after uncertain input.
+Predicts: the visible editor and bound text value both contain the requested diagnostic; subsequent intended lyrics agree in readback and rendering.
+Against: only AX value changes while rendered editor stays blank, wrong window/field receives input, guards refuse, or content remains x. A refusal is not evidence that the permitted route works.
+Refs: output/suno-20261110/lyrics-ascii-diagnostic.txt; output/suno-20261110/lyrics-append-diagnostic.txt
