@@ -3,6 +3,18 @@
 from jevdual import ax
 
 
+def test_selected_text_preserves_empty_and_whitespace_values(monkeypatch):
+    import pytest
+
+    for value in ("", "\n", " 😀 \t"):
+        monkeypatch.setattr(ax, "_attr", lambda element, name, value=value: value if name == "AXSelectedText" else None)
+        assert ax.selected_text("field") == value
+    for value in (None, 0, False):
+        monkeypatch.setattr(ax, "_attr", lambda element, name, value=value: value)
+        with pytest.raises(ax.AXError, match="selected text is unavailable"):
+            ax.selected_text("field")
+
+
 def test_collapsed_group_name_comes_from_actual_parent_not_siblings(monkeypatch):
     monkeypatch.setattr(ax, "_attr", lambda node, key: node.get(key))
     group = {"AXRole": "AXGroup", "AXDescription": "example.test"}

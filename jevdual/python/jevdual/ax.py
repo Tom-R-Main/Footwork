@@ -219,6 +219,14 @@ def selected_range(el: Any) -> tuple[int, int]:
     return location, length
 
 
+def selected_text(el: Any) -> str:
+    """The independent exact AXSelectedText, including an explicitly empty selection."""
+    text = _attr(el, "AXSelectedText")
+    if not isinstance(text, str):
+        raise AXError("selection_unreadable", "the field's selected text is unavailable")
+    return text
+
+
 def can_set_value(el: Any) -> bool:
     from ApplicationServices import AXUIElementIsAttributeSettable
 

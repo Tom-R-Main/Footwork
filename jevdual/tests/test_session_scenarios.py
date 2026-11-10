@@ -2098,6 +2098,245 @@ def test_explicit_foreground_web_type_requires_independent_complete_selection(wo
     assert not [value for name, value in world.tool_calls if name == "type_text"]
 
 
+def _foreground_selection_fixture(world, monkeypatch, *, initial="\n", selection=(0, 0),
+                                  selected_text="", actual_after=None, outcome=None):
+    from jevdual import ax
+
+    row = _foreground_styles_fixture(world, monkeypatch, initial=initial, outcome=outcome)
+    monkeypatch.setattr(ax, "selected_range", lambda element: selection)
+    monkeypatch.setattr(ax, "selected_text", lambda element: selected_text, raising=False)
+    original_call = world.call_tool
+
+    async def call(name, encoded):
+        if name == "press_key":
+            pytest.fail("explicit range edits must not change the selection")
+        before = row["value"]
+        result = await original_call(name, encoded)
+        if name == "type_text" and outcome is None:
+            args = json.loads(encoded)
+            raw = before.encode("utf-16-le")
+            start, length = selection
+            expected = (raw[:start * 2].decode("utf-16-le") + args["text"]
+                        + raw[(start + length) * 2:].decode("utf-16-le"))
+            row["value"] = expected if actual_after is None else actual_after
+        return result
+
+    monkeypatch.setattr(world, "call_tool", call)
+    return row
+
+
+@pytest.mark.parametrize(("initial", "selection", "selected_text", "expected"), [
+    ("\n", (0, 0), "", "signal\n"),
+    ("ab😀cd\n", (2, 2), "😀", "absignalcd\n"),
+    ("a" * 600 + "\n", (600, 0), "", "a" * 600 + "signal\n"),
+])
+def test_foreground_web_range_preserves_exact_prefix_suffix(
+    world, fw, monkeypatch, initial, selection, selected_text, expected
+):
+    row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection,
+                                        selected_text=selected_text)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", f"{selection[0]}:{selection[1]}", "--authorize", "replace")
+    assert code == 0 and row["value"] == expected, (out, err)
+    types = [args for name, args in world.tool_calls if name == "type_text"]
+    assert len(types) == 1 and types[0]["delay_ms"] > 0
+    assert "confirmed" in _state(fw)["memory"][-1]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["action"]["web_text_range"] == list(selection)
+    assert receipt["action"]["field_readback"]["expected_value"] == expected
+
+
+@pytest.mark.parametrize("failure", ["wrong_range", "wrong_text", "unreadable_text", "read_error", "split_surrogate",
+                                     "outside_value", "changed_value", "changed_identity"])
+def test_foreground_web_range_requires_independent_exact_selection(world, fw, monkeypatch, failure):
+    from jevdual import ax
+
+    initial = "ab😀cd\n" if failure == "split_surrogate" else "prior\n"
+    selection = (3, 0) if failure == "split_surrogate" else (0, 0)
+    row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection)
+    if failure == "wrong_range":
+        monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0))
+    if failure in ("wrong_text", "unreadable_text"):
+        monkeypatch.setattr(ax, "selected_text", lambda element: "unselected" if failure == "wrong_text" else None)
+    if failure == "read_error":
+        def unreadable(element):
+            raise ax.AXError("selection_unreadable", "selection unavailable")
+        monkeypatch.setattr(ax, "selected_text", unreadable)
+    if failure in ("changed_identity", "changed_value"):
+        original = world.call_tool
+
+        async def change(name, encoded):
+            result = await original(name, encoded)
+            if name == "bring_to_front":
+                if failure == "changed_identity":
+                    row["label"] = "Different field"
+                else:
+                    monkeypatch.setattr(ax, "value", lambda element: "different exact value")
+            return result
+
+        monkeypatch.setattr(world, "call_tool", change)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    requested = "90:0" if failure == "outside_value" else f"{selection[0]}:{selection[1]}"
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", requested, "--authorize", "replace")
+    assert code == 0 and "refused" in out + err, (out, err)
+    assert not [args for name, args in world.tool_calls if name in ("press_key", "type_text")]
+
+
+@pytest.mark.parametrize("actual", ["signal", "signal\n\n", "other\n"])
+def test_foreground_web_range_receipt_compares_exact_full_value(world, fw, monkeypatch, actual):
+    _foreground_selection_fixture(world, monkeypatch, actual_after=actual)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0, (out, err)
+    assert "confirmed" not in _state(fw)["memory"][-1]
+    assert len([args for name, args in world.tool_calls if name == "type_text"]) == 1
+
+
+def test_foreground_web_range_never_retries_uncertain_input(world, fw, monkeypatch):
+    _foreground_selection_fixture(world, monkeypatch, outcome=RuntimeError("reply lost"))
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0 and "unverifiable" in out + err, (out, err)
+    assert len([args for name, args in world.tool_calls if name == "type_text"]) == 1
+
+
+def test_foreground_web_range_durable_provenance_and_replay(world, fw, monkeypatch, tmp_path):
+    from jevdual.session import SessionState
+
+    _foreground_selection_fixture(world, monkeypatch)
+    _durable_start(fw, monkeypatch, tmp_path)
+    state = SessionState.load(fw.session)
+    state.posture = "foreground_permitted"
+    state.save()
+    words = ["do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+             "--web-text-range", "0:0", "--authorize", "replace", "--token", "selection-once"]
+    code, out, err = fw(*words)
+    assert code == 0, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    fact, = receipt["structured_evidence"]["facts"]
+    assert fact["parameters"]["source"] == "native.foreground_web_selection_readback"
+    assert fact["values"] == ["signal\n"] and fact["limits"] == []
+    assert fw(*words)[0] == 0
+    different = words.copy()
+    different[different.index("0:0")] = "1:0"
+    code, out, err = fw(*different)
+    assert code != 0 and "conflict" in out + err, (out, err)
+    assert len([args for name, args in world.tool_calls if name == "type_text"]) == 1
+
+
+def test_foreground_web_range_secret_readback_is_redacted(world, fw, monkeypatch):
+    _foreground_selection_fixture(world, monkeypatch)
+    secret = "synthetic-private-selection-value"
+    monkeypatch.setenv("FOOTWORK_SECRET_SELECTION", secret)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "{SELECTION}", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0 and secret not in out + err, (out, err)
+    for name in ("session.json", "session.jsonl"):
+        assert secret not in (fw.session / name).read_text()
+    assert "confirmed" not in _state(fw)["memory"][-1]
+
+
+@pytest.mark.parametrize("failure", ["unreadable", "changed_identity", "stale_confirmation", "sdk_fallback"])
+def test_foreground_web_range_requires_post_input_and_receipt_time_readback(world, fw, monkeypatch, failure):
+    from jevdual import ax
+
+    row = _foreground_selection_fixture(world, monkeypatch)
+    original_call = world.call_tool
+
+    async def call(name, encoded):
+        result = await original_call(name, encoded)
+        if name == "type_text":
+            if failure == "unreadable":
+                def unavailable(element):
+                    raise ax.AXError("no_value", "field readback unavailable")
+                monkeypatch.setattr(ax, "value", unavailable)
+            elif failure == "changed_identity":
+                row["label"] = "Different field"
+            else:
+                reads = [0]
+
+                def delayed_change(element):
+                    reads[0] += 1
+                    # Immediate postcondition: supplement + independent direct read.
+                    # Receipt-time observation then sees an external later edit.
+                    if reads[0] <= 2:
+                        return row["value"]
+                    if failure == "sdk_fallback":
+                        raise ax.AXError("no_value", "only SDK projection remains readable")
+                    return "later edit\n"
+
+                monkeypatch.setattr(ax, "value", delayed_change)
+        return result
+
+    monkeypatch.setattr(world, "call_tool", call)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0 and "unverifiable" in _state(fw)["memory"][-1], (out, err)
+    assert len([args for name, args in world.tool_calls if name == "type_text"]) == 1
+
+
+def test_foreground_web_range_does_not_relax_whole_field_lf_guard(world, fw, monkeypatch):
+    _foreground_selection_fixture(world, monkeypatch)
+    # The whole-field path still tries Select All, then rejects the LF not being selected.
+    original = world.call_tool
+
+    async def call(name, encoded):
+        if name == "press_key":
+            world.tool_calls.append((name, json.loads(encoded)))
+            return SimpleNamespace(text="selection attempted", is_error=False, error_code=None,
+                                   action=None, structured_json=None)
+        return await original(name, encoded)
+
+    monkeypatch.setattr(world, "call_tool", call)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0 and "selection_unqualified" in out + err, (out, err)
+    assert not [args for name, args in world.tool_calls if name == "type_text"]
+
+
+@pytest.mark.parametrize("range_text", ["-1:0", "0:-1", "0", "0:1:2", "65537:0", "65536:1", "a:0", ""])
+def test_foreground_web_range_invalid_bounds_refuse_before_binding(world, fw, monkeypatch, range_text):
+    _foreground_selection_fixture(world, monkeypatch)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+
+    def forbidden(**kwargs):
+        pytest.fail("invalid selected range must refuse before binding")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    code, _, _ = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                    "--web-text-range", range_text)
+    assert code == 2
+
+
+@pytest.mark.parametrize("variant", ["missing_foreground", "background_only", "append", "browser", "no_judge"])
+def test_foreground_web_range_unsupported_refuses_before_binding(world, fw, monkeypatch, variant):
+    _foreground_selection_fixture(world, monkeypatch)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode",
+              "background_only" if variant == "background_only" else "foreground_permitted")[0] == 0
+    if variant == "browser":
+        path = fw.session / "session.json"
+        state = json.loads(path.read_text()); state["mode"] = "browser"; path.write_text(json.dumps(state))
+
+    def forbidden(**kwargs):
+        pytest.fail("unsupported selected range must refuse before binding")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    args = ["do", "append" if variant == "append" else "type", "Styles", "signal", "--web-text-range", "0:0"]
+    if variant != "missing_foreground":
+        args.extend(["--web-text-delivery", "foreground"])
+    if variant == "no_judge":
+        args.append("--no-judge")
+    assert fw(*args)[0] == 2
+
+
 @pytest.mark.parametrize("variant", [
     "background_only", "append", "click", "browser", "old_runtime", "no_judge", "file_selector", "browser_route",
 ])

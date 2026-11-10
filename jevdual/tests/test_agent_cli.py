@@ -135,6 +135,10 @@ def test_schema_reports_actual_required_arguments(capsys):
     assert any(
         r["name"] == "task" and r["required"] for r in json.loads(capsys.readouterr().out)["arguments"]
     )
+    assert route(["schema", "desktop", "do"], lambda args: 99) == 0
+    fields = {r["name"]: r for r in json.loads(capsys.readouterr().out)["arguments"]}
+    assert fields["web_text_range"]["required"] is False
+    assert "UTF-16" in fields["web_text_range"]["help"]
 
 
 def test_doctor_includes_optional_families_and_preserves_strict_code(monkeypatch, capsys):

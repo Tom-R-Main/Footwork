@@ -104,6 +104,16 @@ The exact target must have a readable current value; missing readback is never a
 The strict route requests positive character pacing, disabling the SDK's batched partial-tail retry
 even if web ancestry cannot be established during delivery.
 
+To edit only an existing selection, add `--web-text-range START:LENGTH`, measured in UTF-16
+code units. For example, `footwork do type "Lyrics editor" "signal" --web-text-delivery foreground
+--web-text-range 0:0` inserts at an already observed caret at offset zero. The option does not move
+the caret, change the selection or send Select All. Independent fresh AX range and selected-text
+reads must exactly match the requested slice of the unchanged raw field value. Surrogate splits,
+out-of-value ranges, and values/results above 65536 UTF-16 units refuse before text synthesis.
+The receipt compares the complete resulting value, including preserved prefix, suffix and trailing
+whitespace. Unavailable or contradictory readback stays unverified. This is separate from whole-field
+replacement; it does not normalize an AX terminal newline or establish rendered/server acceptance.
+
 For a read-only DOM observation, use `footwork browser lightpanda read URL --executable /absolute/lightpanda`.
 This separate profile owns one fresh external prebuilt engine and connection, withholds input/editable
 values, and supplies no input authority or geometry. Run `footwork browser lightpanda artifact` and

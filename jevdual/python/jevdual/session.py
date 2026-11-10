@@ -255,6 +255,7 @@ def _operation_request(args: Any) -> dict[str, Any]:
         else None,
         "route": getattr(args, "route", None),
         **({"web_text_delivery": args.web_text_delivery} if getattr(args, "web_text_delivery", None) else {}),
+        **({"web_text_range": args.web_text_range} if getattr(args, "web_text_range", None) is not None else {}),
     }
     if getattr(args, "_native_scope", None):
         request["native_scope"] = dict(args._native_scope)
@@ -429,7 +430,8 @@ def _structured_receipt(state: SessionState, pending: dict[str, Any], nm: Any) -
                 predicate="field_equals",
                 values=[rb["observed_value"]],
                 parameters={
-                    "source": "native.ax_insert_ack",
+                    "source": ("native.foreground_web_selection_readback"
+                               if rb.get("edit_kind") == "selected_range" else "native.ax_insert_ack"),
                     "label": rb.get("label"),
                     "target_id": rb["decision_target_id"],
                     "source_target_id": rb["target_id"],
@@ -826,6 +828,31 @@ def _field_receipt(
             evidence=f"{label!r} {'changed' if changed else 'did not change'}; a secret is compared only during the command that typed it",
         )
     intended = (secret_value if secret else pending.get("intended")) or ""
+    if pending.get("web_text_range") is not None:
+        # This operation preserves the raw prefix/suffix, including terminal whitespace.
+        # Never feed it through the ordinary preview/rstrip-based replacement receipt.
+        rb = pending.get("field_readback")
+        if (not isinstance(rb, dict) or rb.get("complete") is not True
+                or rb.get("producer") != {"name": "footwork.native", "version": 1}
+                or rb.get("predicate") != "field_equals" or rb.get("edit_kind") != "selected_range"
+                or rb.get("selected_range") != pending["web_text_range"]
+                or rb.get("decision_target_id") != pending.get("target_id")
+                or not isinstance(rb.get("expected_value"), str)
+                or not isinstance(rb.get("observed_value"), str)
+                or field.id not in getattr(nm, "exact_ax_values", ())
+                or rb.get("role") != getattr(nm, "ax_roles", {}).get(field.id)
+                or rb.get("frame") != list(getattr(nm, "frames", {}).get(field.id) or ())):
+            return dataclasses.replace(r, effect="unverifiable", evidence="exact selected-range full-value readback is unavailable")
+        exact = getattr(nm, "values", {}).get(field.id)
+        if not isinstance(exact, str) or exact != rb["observed_value"]:
+            return dataclasses.replace(r, effect="unverifiable", evidence="the fresh field differs from its exact selected-range readback")
+        if exact == rb["expected_value"]:
+            return dataclasses.replace(r, effect="confirmed",
+                                       evidence="the exact full field matches the selected-range edit, preserving prefix and suffix")
+        return dataclasses.replace(
+            r, effect="suspected_noop" if exact == rb.get("before_value") else "partial",
+            evidence="the exact full field does not match the selected-range edit's preserved prefix and suffix",
+        )
     if pending.get("mode", "native") == "native":
         if _bounded_native_value(field):
             return dataclasses.replace(
@@ -1872,6 +1899,17 @@ async def cmd_do(args: Any) -> int:
         return 2
     op, cid, raw_text, keys, path = parse_do(args.words)
     web_text_delivery = getattr(args, "web_text_delivery", None)
+    web_text_range = None
+    range_text = getattr(args, "web_text_range", None)
+    if range_text is not None:
+        if (web_text_delivery != "foreground" or not re.fullmatch(r"[0-9]{1,5}:[0-9]{1,5}", range_text)):
+            print("--web-text-range requires --web-text-delivery foreground and START:LENGTH in UTF-16 units",
+                  file=sys.stderr)
+            return 2
+        web_text_range = tuple(int(part) for part in range_text.split(":"))
+        if sum(web_text_range) > 65_536:
+            print("--web-text-range START + LENGTH must be at most 65536 UTF-16 units", file=sys.stderr)
+            return 2
     if web_text_delivery:
         from jevdual.native import require_foreground_web_text_runtime
 
@@ -2308,7 +2346,8 @@ async def cmd_do(args: Any) -> int:
                         nm, op, target.id, text, route="dom_event" if route_arg == "dom" else "trusted"
                     )
                 elif web_text_delivery:
-                    eff = await bridge.act(nm, op, target.id, text, web_text_delivery=web_text_delivery)
+                    eff = await bridge.act(nm, op, target.id, text, web_text_delivery=web_text_delivery,
+                                           **({"web_text_range": web_text_range} if web_text_range is not None else {}))
                 else:
                     eff = await bridge.act(nm, op, target.id, text)
             ended_at = time.time()
@@ -2361,6 +2400,7 @@ async def cmd_do(args: Any) -> int:
             **({"carry": dataclasses.asdict(carried)} if carried is not None else {}),
             **({
                 "web_text_delivery": web_text_delivery,
+                **({"web_text_range": list(web_text_range)} if web_text_range is not None else {}),
                 "native_delivery": {
                     key: getattr(eff, key, None) for key in (
                         "delivery", "driver_delivery", "dispatched", "delivered_count", "delivery_basis", "route"
@@ -2372,7 +2412,7 @@ async def cmd_do(args: Any) -> int:
             state.pending["save_readback"] = eff.readback
         if getattr(eff, "native_readback", None) is not None:
             state.pending["native_readback"] = _safe_operation_value(state, eff.native_readback)
-        if operations is not None and getattr(eff, "field_readback", None) is not None:
+        if (operations is not None or web_text_range is not None) and getattr(eff, "field_readback", None) is not None:
             state.pending["field_readback"] = _safe_field_readback(
                 state, eff.field_readback, text if secret_used else None
             )

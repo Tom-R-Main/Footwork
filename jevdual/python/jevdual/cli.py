@@ -459,6 +459,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="explicit native macOS web type delivery; needs the focus-guarded CUA pin and foreground posture",
     )
     do.add_argument(
+        "--web-text-range", metavar="START:LENGTH",
+        help="with foreground web type: replace only this already selected UTF-16 range; does not set selection",
+    )
+    do.add_argument(
         "--route",
         choices=("trusted", "dom"),
         help="browser mode: the click route (default trusted; dom for radio, checkbox, switch)",

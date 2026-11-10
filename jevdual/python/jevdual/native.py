@@ -212,6 +212,8 @@ class NativeMenu:
     ambiguous_targets: frozenset[int] = frozenset()
     #: Full pre-pruning text roster; changes invalidate pending placeholder-qualified selections.
     text_scope_signature: str | None = None
+    #: Values independently supplemented by direct macOS AX reads, not the SDK's trimmed fallback.
+    exact_ax_values: frozenset[int] = frozenset()
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -415,6 +417,7 @@ def menu_from_snapshot(
     tokens: dict[int, str] = {}
     frames: dict[int, tuple[float, float, float, float]] = {}
     values: dict[int, str] = {}
+    exact_ax_values: set[int] = set()
     ax_roles: dict[int, str] = {}
     web: set[int] = set()
     omitted: dict[str, int] = {}
@@ -513,6 +516,8 @@ def menu_from_snapshot(
             web.add(cand.id)
         if role in _TEXT_ROLES and not sensitive and raw_value is not None:
             values[cand.id] = str(raw_value)
+            if isinstance(mac_proof.get("value"), str):
+                exact_ax_values.add(cand.id)
         if frame is not None:
             fx, fy, fw, fh = (_get(frame, k) for k in ("x", "y", "w", "h"))
             if None not in (fx, fy, fw, fh):
@@ -614,6 +619,7 @@ def menu_from_snapshot(
         degraded=bool(_get(snapshot, "degraded") or False),
         frames=frames,
         values=values,
+        exact_ax_values=frozenset(exact_ax_values & kept),
         ax_roles=ax_roles,
         web=frozenset(i for i in web if i in kept),
         scope_address_bars=scope_address_bars,
@@ -1711,7 +1717,9 @@ class NativeBridge:
         except NativeBridgeError as exc:
             raise NativeBridgeError(exc.reason, str(exc), dispatched=True) from exc
 
-    async def _type_web_foreground(self, nm: NativeMenu, id: int, cand: Candidate, text: str) -> NativeEffect:
+    async def _type_web_foreground(
+        self, nm: NativeMenu, id: int, cand: Candidate, text: str, *, text_range: tuple[int, int] | None = None
+    ) -> NativeEffect:
         """Explicit foreground type, never a fallback from an uncertain background operation."""
         selection_attempted = False
         text_refusal = None
@@ -1728,7 +1736,36 @@ class NativeBridge:
                     "field_value_unreadable", "the target's current value is unreadable; selection and typing withheld"
                 )
             before = current.values[target_id]
-            if before:
+            expected = None
+            if text_range is not None:
+                role, frame = current.ax_roles.get(target_id), current.frames.get(target_id)
+                if role is None or frame is None or nm.values.get(id) != before:
+                    raise NativeBridgeError("selection_unqualified", "the exact field/value changed or is unavailable")
+                element = self.ax.resolve(self.pid, self.window_id, role, self.ax.Frame(*frame))
+                start, length = text_range
+                try:
+                    raw = before.encode("utf-16-le")
+                    if len(raw) // 2 > 65_536 or start + length > len(raw) // 2:
+                        raise ValueError("range outside bounded value")
+                    prefix = raw[:start * 2].decode("utf-16-le")
+                    selected_text = raw[start * 2:(start + length) * 2].decode("utf-16-le")
+                    suffix = raw[(start + length) * 2:].decode("utf-16-le")
+                    expected = prefix + text + suffix
+                    if len(expected.encode("utf-16-le")) // 2 > 65_536:
+                        raise ValueError("result exceeds bounded readback")
+                except (UnicodeError, ValueError) as exc:
+                    raise NativeBridgeError("selection_unqualified", "range splits UTF-16 text or exceeds the readable value") from exc
+                from jevdual.ax import AXError
+
+                try:
+                    selection_matches = (self.ax.value(element) == before
+                                         and self.ax.selected_range(element) == text_range
+                                         and self.ax.selected_text(element) == selected_text)
+                except AXError as exc:
+                    raise NativeBridgeError("selection_unqualified", "the exact selected range/text is unreadable") from exc
+                if not selection_matches:
+                    raise NativeBridgeError("selection_unqualified", "the exact selected range/text does not match the request")
+            elif before:
                 selection_attempted = True
                 outcome = await self.driver.call_tool("press_key", json.dumps({
                     "pid": self.pid, "window_id": self.window_id, "element_token": token,
@@ -1769,7 +1806,41 @@ class NativeBridge:
                 text_refusal = {key: proof[key] for key in ("code", "effect", "dispatched", "delivered_chars")}
                 return self._not_sent("type", target_id, target.label, "target_focus_unconfirmed",
                                       "the SDK refused text before synthesis; zero text characters dispatched", "foreground")
-            return outcome
+            if text_range is None:
+                return outcome
+            sent = self._effect("type", target_id, target.label, outcome, "foreground")
+            if not sent.dispatched or sent.error_code or getattr(outcome, "is_error", False):
+                return sent
+            # Read a fresh, independently resolved field after the single text call. A new
+            # value is the postcondition, so rematch identity/roster without a pre-value gate.
+            try:
+                after = await self.observe()
+                after_id = self._rematch(current, after, target_id, "readback")
+                after_role, after_frame = after.ax_roles.get(after_id), after.frames.get(after_id)
+                if after_role != role or after_frame is None or after_id not in after.values:
+                    raise NativeBridgeError("readback_unqualified", "the edited field's exact value is unavailable")
+                after_element = self.ax.resolve(self.pid, self.window_id, after_role, self.ax.Frame(*after_frame))
+                actual = self.ax.value(after_element)
+                if actual != after.values[after_id] or len(actual.encode("utf-16-le")) // 2 > 65_536:
+                    raise NativeBridgeError("readback_unqualified", "the fresh exact field reads disagree or exceed bounds")
+            except Exception:  # noqa: BLE001 - input happened; never retry an unavailable readback
+                return dataclasses.replace(sent, effect="unverifiable",
+                                           evidence=(*sent.evidence, "exact selected-range postcondition is unavailable"))
+            finally:
+                self.last = None
+            readback = {
+                "schema_version": 1, "producer": {"name": "footwork.native", "version": 1},
+                "predicate": "field_equals", "edit_kind": "selected_range", "selected_range": list(text_range),
+                "before_value": before, "observed_value": actual, "expected_value": expected,
+                "matches": actual == expected, "complete": True, "target_id": after_id,
+                "label": target.label, "role": after_role, "frame": list(after_frame),
+                "snapshot_id": after.snapshot_id, "decision_snapshot_id": nm.snapshot_id, "decision_target_id": id,
+            }
+            return dataclasses.replace(
+                sent, effect="confirmed" if actual == expected else "partial", field_readback=readback,
+                evidence=(*sent.evidence, "exact selected-range full-value readback "
+                          + ("matches" if actual == expected else "differs")),
+            )
 
         effect = await self._foreground("type", id, cand.label, call, why=f"explicit foreground web text {cand.label!r}")
         if selection_attempted and not effect.dispatched:
@@ -2457,6 +2528,7 @@ class NativeBridge:
         *,
         append_precondition: AppendPrecondition | None = None,
         web_text_delivery: str | None = None,
+        web_text_range: tuple[int, int] | None = None,
     ) -> NativeEffect:
         """Dispatch exactly one operation. The caller must reobserve afterwards; ``self.last`` is
         cleared so a second act on the same snapshot is refused as stale."""
@@ -2465,6 +2537,11 @@ class NativeBridge:
                 "unknown_operation", "An exact append precondition only applies to append"
             )
         cand, token = self._require_fresh(nm, id)
+        if web_text_range is not None and (
+            web_text_delivery != "foreground" or not isinstance(web_text_range, tuple) or len(web_text_range) != 2
+            or any(type(value) is not int or value < 0 for value in web_text_range) or sum(web_text_range) > 65_536
+        ):
+            raise NativeBridgeError("web_text_range_invalid", "a bounded UTF-16 range requires foreground web type")
         if web_text_delivery is not None:
             require_foreground_web_text_runtime()
             if (web_text_delivery != "foreground" or operation != "type" or id not in nm.web
@@ -2474,7 +2551,7 @@ class NativeBridge:
             self._require_unambiguous(nm, id)
             if text is None:
                 raise NativeBridgeError("text_required", "foreground web type needs text")
-            return await self._type_web_foreground(nm, id, cand, text)
+            return await self._type_web_foreground(nm, id, cand, text, text_range=web_text_range)
         if operation not in cand.operations:
             raise NativeBridgeError(
                 "unknown_operation", f"{operation!r} is not offered on [{id}] {cand.label!r} ({cand.role})"
