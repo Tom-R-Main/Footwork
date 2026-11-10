@@ -24,6 +24,11 @@ workflow. The command never downloads, installs or builds an engine. A different
 unsupported platform refuses; there is no source-build fallback.
 
 This tranche pins Linux x86-64 and macOS arm64 artifacts. Linux needs a compatible glibc-based host.
+The Linux pin is [Lightpanda 1.0.3](https://github.com/lightpanda-io/browser/releases/tag/1.0.3),
+asset `712768846` (77,403,464 bytes), SHA256
+`53eb34da09159dcf8f04865dbfe3e63e9a652062684495aa7ced5ddd7c82e8b0`.
+It replaces the removed nightly asset `694146173`; release tags alone do not establish byte identity.
+The macOS pin remains the previously qualified nightly artifact.
 The external engine is separate from the Footwork wheel. Install Footwork's base wheel without extras or choose a `--profile light` bundle.
 The light dependency set omits CUA and browser-use; see [installation profiles](unified-cli.md#choose-an-installation-profile).
 

@@ -11,11 +11,13 @@ from pathlib import Path
 ARTIFACTS = {
     "darwin-arm64": {
         "name": "lightpanda-aarch64-macos", "asset_id": 694148451, "bytes": 93911048,
+        "release": "nightly",
         "sha256": "273a4659510f8c48e6c5f26a2eee6aa20051632210cbf0f59975ac705056c44f",
     },
     "linux-x86_64": {
-        "name": "lightpanda-x86_64-linux", "asset_id": 694146173, "bytes": 77129032,
-        "sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+        "name": "lightpanda-x86_64-linux", "asset_id": 712768846, "bytes": 77403464,
+        "release": "1.0.3",
+        "sha256": "53eb34da09159dcf8f04865dbfe3e63e9a652062684495aa7ced5ddd7c82e8b0",
     },
 }
 
@@ -33,7 +35,7 @@ def artifact(key: str | None = None) -> dict:
         return {"platform": selected, "available": False,
                 "reason": "no qualified engine artifact for this platform; no source-build fallback"}
     return {"platform": selected, "available": True, **value,
-            "repository": "lightpanda-io/browser", "release": "nightly",
+            "repository": "lightpanda-io/browser",
             "asset_api_url": f"https://api.github.com/repos/lightpanda-io/browser/releases/assets/{value['asset_id']}",
             "download_accept": "application/octet-stream",
             "pin_semantics": "asset bytes and SHA256; the rolling release tag is not source identity"}
