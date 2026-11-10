@@ -109,3 +109,18 @@ Test: supply the amended ten-second controlled video with a neutral prompt. Comp
 Predicts: blue then green background, white-square rightward movement and isolated tones are identified; missing the single-frame flash would limit fine temporal/jank claims rather than prove no video was perceived.
 Against: missing or reversed macro sequence, generic unrelated video description, invented speech or silent-only interpretation. Provider errors are unverified capability, not a content judgment.
 Refs: docs/experiments/openrouter-media-live-20261110.md amendment
+
+## SUNU12 · update · 2026-11-10 17:30
+Resolves: SUN12 = failed
+Observed: the MP4 probe returned the pinned Qwen/Alibaba response with correct blue-to-green macro order and rightward white-square motion. It missed the known single-frame black flash and one-second freeze, described continuous smooth motion, could not confirm the embedded tones, and estimated coordinates outside the320px frame. FFmpeg independently detected black4.400–4.433333s, freeze5.966667–7.000s, and non-silent audio near2–3,4–5,6–8s in the same encoded file. The response arrived after several minutes despite a120s configured socket timeout, before parent termination; no process was killed or call repeated. Usage reports32300 completion tokens with31982 reasoning despite max_tokens1500, cost0.01531165 dollars.
+Inferred: coarse visual perception holds but the preregistered combined audio/video criterion fails; fine-defect and exact-spatial judgments are not qualified. The response does not identify whether embedded audio was dropped or simply unattended. Source transport deadlines and reasoning controls need explicit qualification.
+Changes: six successful paid calls now total0.01983876 dollars by provider accounting. A total-deadline repair is in progress independently of the native driver rebuild; no automatic retry. The source native field-focus fix reproduced three failing Rust cases before repair and is being tested offline.
+Next: bound future requests and test separate audio alongside video only as a new protocol probe if needed; prioritize the Suno foreground typing recovery after the native contract is frozen.
+Refs: results/suno-20261110/video-calibration.md; output/suno-20261110/video-probe-review/response.json; output/suno-20261110/audio-probes/video-defect-detection.txt; output/suno-20261110/audio-probes/video-audio-detection.txt
+
+## SUN13 · prediction · 2026-11-10 17:35
+Hypothesis: supplying the known audio as a separate input_audio part alongside MP4 resolves this route's unconfirmed embedded-audio result, and explicit reasoning.enabled=false prevents reported reasoning expansion.
+Test: on frozen helper72bd20b, submit the same controlled MP4 plus its original time-aligned probe-A WAV as a sidecar, with a neutral joint-review prompt, requested500 completion tokens and60s total exchange deadline. This is a new multimodal payload, not a retry of the prior video request.
+Predicts: the response identifies the blue-to-green square scene and the three-tone two-low/one-high pattern; reported reasoning_tokens is zero and the call returns within its total deadline. Missing flash/freeze still limits jank claims.
+Against: audio remains unconfirmed, the macro scene or tone sequence is wrong, reasoning disable is not honored/unknown, or the transport deadline expires. No automatic retry or model fallback.
+Refs: docs/experiments/openrouter-media-live-20261110.md amendment; output/suno-20261110/video-probe-review/response.json; results/openrouter-media-review-20261110/report.md
