@@ -9,9 +9,11 @@ from __future__ import annotations
 import argparse
 import base64
 import hashlib
+import http.client
 import json
 import math
 import os
+import ssl
 import sys
 import urllib.error
 import urllib.request
@@ -95,8 +97,52 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
         raise urllib.error.HTTPError(req.full_url, code, "redirect refused", headers, fp)
 
 
+def _tls_context() -> ssl.SSLContext:
+    """Keep verification enabled with an installed CA bundle; never alter global trust."""
+    try:
+        import certifi
+    except ImportError:
+        return ssl.create_default_context()
+    return ssl.create_default_context(cafile=certifi.where())
+
+
+class _TLSHandshakeVerificationError(OSError):
+    def __init__(self, verify_code: int | None):
+        super().__init__("TLS handshake certificate verification failed")
+        self.verify_code = verify_code
+
+
+class _VerifiedHTTPSConnection(http.client.HTTPSConnection):
+    def connect(self):
+        try:
+            super().connect()
+        except ssl.SSLCertVerificationError as exc:
+            code = getattr(exc, "verify_code", None)
+            raise _TLSHandshakeVerificationError(code if isinstance(code, int) else None) from None
+
+
+class _VerifiedHTTPSHandler(urllib.request.HTTPSHandler):
+    def https_open(self, request):
+        return self.do_open(_VerifiedHTTPSConnection, request, context=self._context)
+
+
+def _transport_error(exc: BaseException) -> dict[str, Any]:
+    reason = exc.reason if isinstance(exc, urllib.error.URLError) else exc
+    if isinstance(reason, (_TLSHandshakeVerificationError, ssl.SSLCertVerificationError)):
+        handshake = isinstance(reason, _TLSHandshakeVerificationError)
+        error = {"kind": "tls_certificate_verification_error", "exception_type": "SSLCertVerificationError",
+                 "application_request_sent": False if handshake else "unknown",
+                 "summary": "TLS certificate verification failed; no retry"}
+        code = getattr(reason, "verify_code", None)
+        if isinstance(code, int):
+            error["ssl_verify_code"] = code
+        return error
+    return {"kind": "transport_or_filesystem_error", "application_request_sent": "unknown",
+            "summary": "request or local I/O failed; no retry"}
+
+
 def _post(request: urllib.request.Request, timeout: float) -> bytes:
-    opener = urllib.request.build_opener(_NoRedirect())
+    opener = urllib.request.build_opener(_NoRedirect(), _VerifiedHTTPSHandler(context=_tls_context()))
     with opener.open(request, timeout=timeout) as response:
         data = response.read(MAX_RESPONSE_BYTES + 1)
     if len(data) > MAX_RESPONSE_BYTES:
@@ -215,14 +261,17 @@ def main(argv: list[str] | None = None) -> int:
         error = {"kind": "http_error", "http_status": exc.code, "summary": "provider HTTP request failed; no retry"}
     except ReviewError as exc:
         error = {"kind": "validation_or_response_error", "summary": str(exc)}
-    except (OSError, urllib.error.URLError, TimeoutError):
-        error = {"kind": "transport_or_filesystem_error", "summary": "request or local I/O failed; no retry"}
+    except (OSError, urllib.error.URLError, TimeoutError) as exc:
+        error = _transport_error(exc)
     except Exception:  # noqa: BLE001 -- final CLI boundary must not expose headers in library exceptions
         # Never expose a library exception that could contain request headers or response bytes.
         error = {"kind": "unexpected_error", "summary": "media review failed; no retry"}
     if manifest is not None and out is not None and out.is_dir():
+        completion = "unknown" if request_attempted else "not_attempted"
+        if error.get("application_request_sent") is False:
+            completion = "not_sent_tls_handshake"
         manifest.update(status="failed", request_attempted=request_attempted,
-                        provider_completion="unknown" if request_attempted else "not_attempted", error=error)
+                        provider_completion=completion, error=error)
         try:
             _write(out / "manifest.json", manifest, key)
         except OSError:

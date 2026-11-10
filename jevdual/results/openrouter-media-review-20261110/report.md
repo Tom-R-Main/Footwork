@@ -29,3 +29,11 @@ uv run --no-sync python -m evals.notebook docs/notebook --check
 ```
 
 All HTTP/model behavior here is mocked; no real credential file was read and no provider call was made by the worker. This does not qualify live audio/video delivery, correct perception, temporal localization, music taste or Suno completion. Parent performs those checks on the committed helper. New helper is invoked explicitly and is not installed into the user-local Footwork launcher.
+
+## TLS follow-up
+
+After the parent reported immediate certificate failures under the checkout interpreter, prediction `48cf800` preceded a verified-trust repair. The helper now builds a request-local SSL context from the already installed certifi CA bundle, falling back to platform defaults only if certifi is unavailable. Certificate verification and hostname checks remain enabled; no global trust or dependency installation is changed.
+
+An HTTPS connection wrapper marks certificate-verification failure specifically during connection establishment. Only that typed handshake failure records `application_request_sent=false` and `provider_completion=not_sent_tls_handshake`. A certificate error of unqualified origin, generic URL error or timeout retains unknown delivery. Diagnostics retain only safe classification and numeric SSL verification code; arbitrary exception text is excluded. No redirects or automatic retries were added. A proxy CONNECT handshake, where applicable, is distinct from the target application's request.
+
+`pytest-tls.txt`:39 helper/notebook tests pass, including explicit CA/verification settings, platform fallback, HTTPS opener/connection binding, safe handshake-code retention and unknown-delivery counterexamples. Ruff and diff checks pass. Worker did not read a real key or issue HTTPS/model requests; parent must independently verify public metadata with `_tls_context()` and re-drive fresh live probes. Original failed-run evidence is retained by the parent.

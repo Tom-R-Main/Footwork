@@ -5,6 +5,8 @@ from __future__ import annotations
 import base64
 import importlib.util
 import json
+import ssl
+import sys
 import urllib.error
 from pathlib import Path
 
@@ -136,6 +138,133 @@ def test_redirect_is_refused_without_following():
     with pytest.raises(urllib.error.HTTPError) as error:
         review._NoRedirect().redirect_request(request, None, 302, "Found", {}, "https://other.example/")
     assert error.value.code == 302
+
+
+def test_tls_context_loads_installed_ca_with_verification(monkeypatch):
+    import certifi
+
+    seen = []
+    create = ssl.create_default_context
+
+    def record(**kwargs):
+        seen.append(kwargs)
+        return create(**kwargs)
+
+    monkeypatch.setattr(review.ssl, "create_default_context", record)
+    context = review._tls_context()
+    assert seen == [{"cafile": certifi.where()}]
+    assert context.verify_mode == ssl.CERT_REQUIRED and context.check_hostname is True
+
+
+def test_tls_context_falls_back_without_disabling_verification(monkeypatch):
+    seen = []
+    create = ssl.create_default_context
+
+    def record(**kwargs):
+        seen.append(kwargs)
+        return create(**kwargs)
+
+    monkeypatch.setitem(sys.modules, "certifi", None)
+    monkeypatch.setattr(review.ssl, "create_default_context", record)
+    context = review._tls_context()
+    assert seen == [{}]
+    assert context.verify_mode == ssl.CERT_REQUIRED and context.check_hostname is True
+
+
+def test_post_uses_verified_https_handler_and_no_redirect(monkeypatch):
+    context = review._tls_context()
+    monkeypatch.setattr(review, "_tls_context", lambda: context)
+    calls = []
+    request = review.urllib.request.Request(review.ENDPOINT)
+
+    class Reply:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return None
+
+        def read(self, limit):
+            assert limit == review.MAX_RESPONSE_BYTES + 1
+            return b"{}"
+
+    class Opener:
+        def open(self, req, timeout):
+            assert req is request and timeout == 9
+            calls.append("open")
+            return Reply()
+
+    def build(*handlers):
+        assert any(isinstance(h, review._NoRedirect) for h in handlers)
+        https = [h for h in handlers if isinstance(h, review.urllib.request.HTTPSHandler)]
+        assert len(https) == 1 and https[0]._context is context
+        return Opener()
+
+    monkeypatch.setattr(review.urllib.request, "build_opener", build)
+    assert review._post(request, 9) == b"{}" and calls == ["open"]
+
+
+@pytest.mark.parametrize("wrapped", [False, True])
+def test_tls_certificate_failure_is_safe_and_not_sent(setup, monkeypatch, capsys, wrapped):
+    _media, _prompt, env, out, argv = setup
+    calls = []
+    certificate_error = review._TLSHandshakeVerificationError(20)
+
+    def fail(request, timeout):
+        calls.append(request)
+        if wrapped:
+            raise urllib.error.URLError(certificate_error)
+        raise certificate_error
+
+    monkeypatch.setattr(review, "_post", fail)
+    assert review.main([*argv, "--execute", "--env-file", str(env)]) == 1
+    manifest = json.loads((out / "manifest.json").read_text())
+    assert manifest["request_attempted"] is True and manifest["provider_completion"] == "not_sent_tls_handshake"
+    assert manifest["error"]["ssl_verify_code"] == 20
+    assert manifest["error"]["application_request_sent"] is False
+    assert len(calls) == 1
+    assert "fixture-credential-do-not-print" not in (out / "manifest.json").read_text() + str(capsys.readouterr())
+
+
+def test_url_error_text_does_not_establish_tls_non_delivery():
+    error = review._transport_error(urllib.error.URLError("CERTIFICATE_VERIFY_FAILED fixture-secret"))
+    assert error["application_request_sent"] == "unknown"
+    assert error["kind"] == "transport_or_filesystem_error" and "fixture-secret" not in str(error)
+
+
+def test_connection_labels_only_certificate_failure_at_connect(monkeypatch):
+    certificate_error = ssl.SSLCertVerificationError(1, "fixture-secret")
+    certificate_error.verify_code = 20
+
+    def fail(self):
+        raise certificate_error
+
+    monkeypatch.setattr(review.http.client.HTTPSConnection, "connect", fail)
+    connection = review._VerifiedHTTPSConnection("example.invalid", context=review._tls_context())
+    with pytest.raises(review._TLSHandshakeVerificationError) as error:
+        connection.connect()
+    assert error.value.verify_code == 20 and "fixture-secret" not in str(error.value)
+
+
+def test_unqualified_certificate_error_retains_delivery_uncertainty():
+    error = review._transport_error(ssl.SSLCertVerificationError(1, "fixture-secret"))
+    assert error["application_request_sent"] == "unknown"
+    assert "fixture-secret" not in str(error)
+
+
+def test_verified_handler_uses_handshake_aware_connection(monkeypatch):
+    context = review._tls_context()
+    handler = review._VerifiedHTTPSHandler(context=context)
+    request = review.urllib.request.Request(review.ENDPOINT)
+    calls = []
+
+    def open_connection(connection, req, **kwargs):
+        calls.append((connection, req, kwargs))
+        return "fixture response"
+
+    monkeypatch.setattr(handler, "do_open", open_connection)
+    assert handler.https_open(request) == "fixture response"
+    assert calls == [(review._VerifiedHTTPSConnection, request, {"context": context})]
 
 
 def test_existing_output_is_preserved(setup, monkeypatch):

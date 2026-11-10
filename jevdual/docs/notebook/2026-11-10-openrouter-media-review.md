@@ -26,3 +26,9 @@ Test: mocked helper HTTPS opener verifies a CERT_REQUIRED/check_hostname context
 Predicts: HTTPS uses the existing CA bundle without disabling verification, certificate errors retain a safe numeric verification code with no request/credential strings and classify application request as not sent, while other transport failures retain unknown delivery and no retry.
 Against: the context disables verification, arbitrary URLError text becomes proof of nondelivery, request headers leak, or public metadata still fails under the repaired context. Fixture results cannot establish the live diagnosis alone.
 Refs: scripts/openrouter_media_review.py; tests/test_openrouter_media_review.py; parent-reported SSLCertVerificationError verify_code20 on2026-11-10
+
+## OMRU2 · update · 2026-11-10 17:01
+Observed:39 helper/notebook tests pass with request-local certifi CA trust and verified hostname/certificate settings. Mocked connection establishment wraps only its certificate verification failure as definite target-application non-delivery; a raw/unqualified certificate exception and arbitrary URL text preserve unknown delivery. Numeric verification codes survive without exception messages or credentials. Ruff and diff checks pass. No live HTTPS or real key access was performed by the worker.
+Changes: request-local verified TLS context and handshake-aware HTTPS handler, retaining no retries or redirects. Original failed parent evidence is not modified.
+Next: parent tests public provider metadata with the repaired context and then executes fresh synthetic-audio probes. OMR2 remains open until that independent live evidence exists.
+Refs: prediction48cf800; results/openrouter-media-review-20261110/pytest-tls.txt; results/openrouter-media-review-20261110/report.md
