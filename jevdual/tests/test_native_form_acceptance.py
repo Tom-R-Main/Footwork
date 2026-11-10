@@ -108,9 +108,8 @@ def test_cli_commands_use_owned_pid_scope_and_native_public_interface(module, tm
     runner = module.Acceptance(tmp_path, "/owned/footwork", "http://127.0.0.1:1234/", "fixture nonce", 4242)
     runner.start()
     assert commands[0][commands[0].index("--pid") + 1] == "4242"
-    assert commands[0][commands[0].index("--native-url") + 1] == "http://127.0.0.1:1234/"
-    assert commands[0][commands[0].index("--native-title") + 1] == "fixture nonce"
-    assert "--browser" not in commands[0]
+    assert commands[0][commands[0].index("--window") + 1] == "fixture nonce"
+    assert not {"--browser", "--authority", "--native-url", "--native-title"}.intersection(commands[0])
     runner.command("do", "type", "Nameserver 1", "ns1.example.test")
     assert commands[1][0:5] == ["/owned/footwork", "do", "type", "Nameserver 1", "ns1.example.test"]
     assert "--no-judge" in commands[1]
