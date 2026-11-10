@@ -70,6 +70,7 @@ def test_execute_delivers_media_once_and_preserves_provenance(setup, monkeypatch
         data = json.loads(request.data)
         assert data["model"] == review.MODEL and data["provider"] == {"allow_fallbacks": False}
         assert data["max_tokens"] == 2000 and data["stream"] is False
+        assert data["reasoning"] == {"enabled": False}
         part, text = data["messages"][0]["content"]
         assert text == {"type": "text", "text": prompt.read_text()}
         if suffix == ".mp4":
@@ -96,7 +97,7 @@ def test_execute_delivers_media_once_and_preserves_provenance(setup, monkeypatch
     assert (out / "response.json").stat().st_mode & 0o777 == 0o600
 
 
-@pytest.mark.parametrize("failure", ["http", "transport", "json", "provider_error", "empty", "unexpected"])
+@pytest.mark.parametrize("failure", ["http", "transport", "json", "provider_error", "unexpected"])
 def test_failed_request_has_no_retry_or_upstream_leak(setup, monkeypatch, capsys, failure):
     _media, _prompt, env, out, argv = setup
     calls = []
@@ -113,7 +114,7 @@ def test_failed_request_has_no_retry_or_upstream_leak(setup, monkeypatch, capsys
             return b'{"error":{"message":"fixture-credential-do-not-print"}}'
         if failure == "unexpected":
             raise ValueError("fixture-credential-do-not-print")
-        return b'{"choices":[{"message":{"content":""}}]}'
+        pytest.fail("unhandled fixture failure type")
 
     monkeypatch.setattr(review, "_request_with_deadline", fail)
     assert review.main([*argv, "--execute", "--env-file", str(env)]) == 1
@@ -410,6 +411,141 @@ def test_interruption_kills_and_reaps_child_before_propagating(monkeypatch):
     with pytest.raises(KeyboardInterrupt):
         review._request_with_deadline(request, 1)
     assert calls == ["communicate", "kill", "communicate"] and child.returncode == -9
+
+
+@pytest.mark.parametrize("mode", ["off", "provider-default"])
+def test_explicit_reasoning_mode_payload_and_manifest(setup, monkeypatch, mode):
+    _media, _prompt, env, out, argv = setup
+    calls = []
+
+    def post(request, timeout, journal=None):
+        payload = json.loads(request.data)
+        if mode == "off":
+            assert payload["reasoning"] == {"enabled": False}
+        else:
+            assert "reasoning" not in payload
+        calls.append(request)
+        return response()
+
+    monkeypatch.setattr(review, "_request_with_deadline", post)
+    assert review.main([*argv, "--execute", "--env-file", str(env), "--reasoning", mode]) == 0
+    manifest = json.loads((out / "manifest.json").read_text())
+    assert manifest["reasoning_mode"] == mode
+    assert manifest["reasoning_request"] == ({"enabled": False} if mode == "off" else None)
+    assert manifest["budget_report"]["reasoning_disable_status"] == ("unknown" if mode == "off" else "not_requested")
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize("tokens,status,overrun", [(0, "reported_zero", False), (20, "not_honored", True)])
+def test_provider_reasoning_and_completion_overrun_visible_without_retry(setup, monkeypatch, capsys,
+                                                                       tokens, status, overrun):
+    _media, _prompt, env, out, argv = setup
+    calls = []
+
+    def post(*args):
+        calls.append(args)
+        result = json.loads(response())
+        result["usage"] = {"completion_tokens": 30 if overrun else 5,
+                           "completion_tokens_details": {"reasoning_tokens": tokens}, "cost": .003}
+        return json.dumps(result).encode()
+
+    monkeypatch.setattr(review, "_request_with_deadline", post)
+    assert review.main([*argv, "--execute", "--env-file", str(env), "--max-tokens", "10"]) == 0
+    budget = json.loads((out / "manifest.json").read_text())["budget_report"]
+    assert budget["reported_reasoning_tokens"] == tokens and budget["reasoning_disable_status"] == status
+    assert budget["completion_tokens_exceed_requested_max"] is overrun
+    assert budget["hard_spend_cap_enforced"] is False and budget["reported_cost"] == .003
+    assert len(calls) == 1
+    if overrun:
+        assert "Warning:" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("usage", [None, {}, {"completion_tokens": True},
+                                  {"completion_tokens_details": {"reasoning_tokens": -1}},
+                                  {"completion_tokens_details": "invalid"}])
+def test_missing_or_malformed_usage_does_not_prove_disable_or_budget(usage):
+    budget = review._budget_report(usage, 500, "off")
+    assert budget["reasoning_disable_status"] == "unknown"
+    assert budget["completion_tokens_exceed_requested_max"] == "unknown"
+    assert budget["hard_spend_cap_enforced"] is False
+
+
+@pytest.mark.parametrize("content", [None, ""])
+def test_no_final_text_preserves_length_usage_and_does_not_retry(setup, monkeypatch, content):
+    _media, _prompt, env, out, argv = setup
+    calls = []
+
+    def post(*args):
+        calls.append(args)
+        data = json.loads(response())
+        data["choices"][0] = {"message": {"content": content}, "finish_reason": "length"}
+        data["usage"] = {"completion_tokens": 30, "completion_tokens_details": {"reasoning_tokens": 30}, "cost": .003}
+        return json.dumps(data).encode()
+
+    monkeypatch.setattr(review, "_request_with_deadline", post)
+    assert review.main([*argv, "--execute", "--env-file", str(env), "--max-tokens", "10"]) == 1
+    manifest = json.loads((out / "manifest.json").read_text())
+    result = json.loads((out / "response.json").read_text())
+    assert manifest["status"] == "response_no_text" and manifest["provider_completion"] == "response_received"
+    assert result["finish_reason"] == "length" and result["usage"]["cost"] == .003
+    assert result["budget_report"]["reasoning_disable_status"] == "not_honored" and len(calls) == 1
+
+
+@pytest.mark.parametrize("suffix", [".wav", ".mp3"])
+def test_mp4_audio_sidecar_delivered_and_hashed_without_sync_claim(setup, monkeypatch, suffix, capsys):
+    media, prompt, env, out, argv = setup
+    video = media.with_suffix(".mp4")
+    media.rename(video)
+    argv[1] = str(video)
+    sidecar = video.parent / ("sound" + suffix)
+    sidecar.write_bytes(b"different-sidecar-audio-bytes")
+    encoded = base64.b64encode(sidecar.read_bytes()).decode()
+    calls = []
+
+    def post(request, timeout, journal=None):
+        calls.append(request)
+        parts = json.loads(request.data)["messages"][0]["content"]
+        assert len(parts) == 3 and parts[0]["type"] == "video_url"
+        assert parts[1] == {"type": "input_audio", "input_audio": {"data": encoded, "format": suffix[1:]}}
+        assert parts[2] == {"type": "text", "text": prompt.read_text()}
+        return response("Audio review " + encoded + " fixture-credential-do-not-print")
+
+    monkeypatch.setattr(review, "_request_with_deadline", post)
+    limit = len(video.read_bytes()) + len(sidecar.read_bytes())
+    assert review.main([*argv, "--execute", "--env-file", str(env), "--audio-sidecar", str(sidecar),
+                        "--max-media-bytes", str(limit)]) == 0
+    manifest = json.loads((out / "manifest.json").read_text())
+    assert manifest["aggregate_media_bytes"] == limit
+    assert manifest["audio_sidecar"]["bytes"] == len(sidecar.read_bytes())
+    assert manifest["audio_sidecar"]["sha256"] == review.hashlib.sha256(sidecar.read_bytes()).hexdigest()
+    assert manifest["audio_sidecar"]["mime_type"] == review.FORMATS[suffix]
+    assert manifest["audio_sidecar"]["synchronization_verified"] is False and len(calls) == 1
+    retained = "".join(p.read_text() for p in out.iterdir()) + str(capsys.readouterr())
+    assert encoded not in retained and "fixture-credential-do-not-print" not in retained
+
+
+@pytest.mark.parametrize("kind", ["primary_audio", "wrong_format", "missing", "aggregate_limit"])
+def test_invalid_sidecar_refuses_before_key_or_request(setup, monkeypatch, kind):
+    media, _prompt, env, out, argv = setup
+    sidecar = media.parent / "sound.wav"
+    sidecar.write_bytes(b"sidecar-fixture")
+    options = ["--audio-sidecar", str(sidecar)]
+    if kind != "primary_audio":
+        video = media.with_suffix(".mp4")
+        media.rename(video)
+        argv[1] = str(video)
+    if kind == "wrong_format":
+        target = sidecar.with_suffix(".mp4")
+        sidecar.rename(target)
+        options[1] = str(target)
+    elif kind == "missing":
+        sidecar.unlink()
+    elif kind == "aggregate_limit":
+        options += ["--max-media-bytes", str(len(video.read_bytes()) + len(sidecar.read_bytes()) - 1)]
+    monkeypatch.setattr(review, "_key", lambda *a: pytest.fail("invalid media read a key"))
+    monkeypatch.setattr(review, "_request_with_deadline", lambda *a: pytest.fail("invalid media sent request"))
+    assert review.main([*argv, "--execute", "--env-file", str(env), *options]) == 1
+    assert not out.exists()
 
 
 def test_existing_output_is_preserved(setup, monkeypatch):

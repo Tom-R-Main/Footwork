@@ -53,3 +53,10 @@ Test: mocked public helper requests verify off/provider-default reasoning payloa
 Predicts: defaultoff sends enabledfalse and records uncertainty or non-honor from reported reasoning tokens; reported completion overruns are visible without retry. Valid sidecars reach the same single request as distinct input_audio parts; invalid pairings/aggregate limits send nothing and exact encoded echoes are removed.
 Against: max_tokens is represented as a hard spend cap, missing usage falsely proves disablement, malformed pairings dispatch, sidecar media leaks to logs/files, or supplying a sidecar silently establishes synchronization/perception.
 Refs: scripts/openrouter_media_review.py; tests/test_openrouter_media_review.py; https://openrouter.ai/docs/guides/best-practices/reasoning-tokens
+
+## OMRU4 · update · 2026-11-10 17:35
+Resolves: OMR4 = held
+Observed:61 helper/notebook tests pass. Mocked requests show default reasoning.enabled=false or deliberate omission for provider-default; accounting checks expose missing usage, non-honor and completion overrun without claiming a spend cap. Valid no-text responses preserve usage/finish reason and return failure without retry. MP4 plus WAV/MP3 sidecars reach one request in video/audio/text order; invalid pairings/aggregate limits refuse before key loading and exact echoed encodings are redacted.
+Changes: explicit reasoning mode, budget report and optional independently hashed audio sidecar; caller-owned synchronization remains unverified. Existing pinned model, private subprocess transport, total deadline and no-retry behavior remain.
+Next: parent qualifies joint audiovisual input on the known fixture as a distinct authorized protocol test. No real key/provider/UI access or install occurred in this worker follow-up.
+Refs: predictionc483bd9; results/openrouter-media-review-20261110/pytest-sidecar.txt; results/openrouter-media-review-20261110/report.md

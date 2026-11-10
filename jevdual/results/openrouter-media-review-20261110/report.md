@@ -47,3 +47,26 @@ The parent's MP4 request demonstrated that the old socket timeout did not bound 
 `transport-child.json` journals the child PID and start timestamp before the parent transfers the request. This is diagnostic evidence, not crash-proof custody: abrupt parent death/SIGKILL can defeat cleanup, and the small launch-to-journal gap remains. Reconcile retained intent/process evidence before any further submission. The deadline does not bound unrelated local media validation or filesystem writes.
 
 `pytest-deadline.txt`:45 helper/notebook tests pass. A real local, no-network slow-drip child is killed and reaped by a0.15s deadline despite ongoing bytes; mocked cases verify private-pipe payloads, one attempt, cleanup-failure evidence, interruption cleanup and safe child diagnostics. Ruff/notebook/diff checks pass. No real key or provider call was accessed by this worker; original root-owned live processes and evidence were untouched.
+
+## Explicit reasoning and optional audio sidecar
+
+Following prediction `c483bd9`, the experimental critic defaults to `--reasoning off`, sending `reasoning: {"enabled": false}`. `--reasoning provider-default` deliberately omits the field. OpenRouter's [reasoning guide](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens) documents the unified control; acceptance of a request does not establish provider compliance. `reasoning.exclude` is not used as a budget control. The requested mode/config is retained in the manifest.
+
+The response and manifest contain `budget_report` with:
+
+- `reported_reasoning_tokens`, `reported_completion_tokens`, and `reported_cost`, where supplied with usable numeric types.
+- `reasoning_disable_status`: `reported_zero`, `not_honored`, `unknown`, or `not_requested`. Reported zero is provider accounting evidence, not independent knowledge of internal computation.
+- `completion_tokens_exceed_requested_max`: boolean when a usable count exists, otherwise `unknown`.
+- `hard_spend_cap_enforced: false`. `max_tokens` is a request setting; this helper cannot guarantee provider spend, especially after a local timeout. Unexpected provider reasoning/overruns warn without resubmission.
+
+Valid responses lacking final text now preserve response identity, `finish_reason`, usage and budget findings, record `response_no_text`, and exit1 without retry. They are not perception successes.
+
+`--audio-sidecar /absolute/audio.wav` or MP3 is accepted only with an MP4 primary. It adds a distinct `input_audio` part between the video part and prompt in the same single request. The byte cap applies to the aggregate primary+sidecar media; invalid pairing, format, missing input or excessive aggregate bytes refuse before key loading or request. Both media inputs retain separate hashes, sizes, MIME types and filenames; exact echoed sidecar base64 is also redacted. `audio_sidecar.synchronization_verified` remains false. The caller owns duration, source association, synchronization and interpretation; no extraction/transcode is performed here.
+
+Example for a separately authorized joint-protocol probe:
+
+```sh
+.venv/bin/python scripts/openrouter_media_review.py --media /absolute/probe.mp4 --audio-sidecar /absolute/probe.wav --prompt /absolute/joint-review.txt --out /absolute/path/inside/footwork/jevdual/output/NEW-joint-probe --env-file /absolute/path/inside/footwork/jevdual/.env --reasoning off --max-tokens 500 --timeout 60 --execute
+```
+
+`pytest-sidecar.txt`:61 helper/notebook tests pass. New coverage verifies reasoning payloads/defaults, missing/malformed usage uncertainty, reported overruns/non-honor, no-text usage retention, sidecar payload/order/hashes/redaction, exact aggregate allowance and invalid pairings/aggregate rejection. Ruff/notebook/diff checks pass. No credential/provider/UI access or installs were performed by this worker. Live selected-provider compliance and joint-audio perception remain for parent qualification on a new, distinct request.
