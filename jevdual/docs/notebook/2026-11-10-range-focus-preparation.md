@@ -20,3 +20,9 @@ Established: explicit foreground range edits perform one focus setter, independe
 Uncertain: no worker live UI qualification occurred. Sequential AX/focus/selection checks do not create an atomic renderer transaction or establish DOM/server acceptance. Existing whole-field selection semantics and historical unknown receipts remain unchanged.
 Decision: hand off frozen source with no SDK rebuild/global installation; parent must inspect actual rendered results before claiming successful song editing.
 Refs: results/range-focus-preparation-20261110/report.md
+
+
+## RFP4 · update · 2026-11-10 18:48
+Observed: RFP2 and RFP3 headings were also entered one minute ahead of the actual 18:47 command clock; source and evidence remain frozen in 4e3297a. This entry timestamp is generated directly from the machine clock.
+Next: parent-owned live qualification; no further source change.
+Refs: results/range-focus-preparation-20261110/report.md
