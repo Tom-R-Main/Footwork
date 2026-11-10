@@ -150,3 +150,17 @@ Observed: the full default offline suite on a516212 with the qualified focus1 ov
 Inferred: broad offline regression readiness holds for this frozen runtime, while live rich-text delivery remains unverified.
 Next: on the requested ready handoff, refresh the existing Suno tab and run the preregistered diagnostic followed by intended content only if verified.
 Refs: results/suno-20261110/offline-suite.json; output/suno-20261110/full-offline-pytest.txt; results/foreground-web-text-20261110/runtime.json
+
+## SUNU17 · update · 2026-11-10 18:05
+Resolves: SUN11 = failed
+Observed: the user supplied the ready handoff. The former bound window no longer contained Suno; a fresh session bound the observed Create Suno window306787 in the same Chrome process24992. On frozen a516212/focus1, foreground Lyrics editor replacement signal ended unverifiable with AttributeError: tuple has no attribute location. Its post-observation and independent read both retain x; the rendered editor still appears blank. No generation was submitted. Source diagnosis places the error in AX selected-range decoding after possible Select All and before type_text; the historical command receipt remains unknown rather than rewritten.
+Inferred: the mock/contract suites missed a real PyObjC representation variant. The addressed-field selection decoder must accept the actual validated tuple form in addition to CFRange objects before this route can qualify. No new SDK build is required.
+Next: repair the owning decoder with red-before-green public CLI coverage, freeze the source and run affected checks. Reobserve and run a new-version diagnostic only after the text boundary is known not to have been reached.
+Refs: output/suno-20261110/ready-drafts-start.txt; output/suno-20261110/foreground-lyrics-signal.txt; output/suno-20261110/foreground-lyrics-signal-readback.txt; python/jevdual/ax.py selected_range
+
+## SUN14 · prediction · 2026-11-10 18:05
+Hypothesis: the actual native selected-range tuple is the remaining pre-text failure on this guarded foreground path.
+Test: after the owning decoder repair is frozen and affected regression/ABI checks pass, obtain a fresh Suno observation and replace the run-owned Lyrics field with the short diagnostic signal; inspect the rendered field and exact readback. If verified, replace it with intended original lyrics and verify before any generation. Keep the prior unknown selection receipt intact.
+Predicts: tuple decoding validates the full selected range, exactly one foreground text call is reached, and both actual rendering and field readback show signal. Intended lyrics subsequently agree in visible and exact value evidence.
+Against: decoder refuses, another pre-text guard fails, synthesis remains unverifiable or content changes only in AX while the rendered editor stays blank.
+Refs: output/suno-20261110/foreground-lyrics-signal.txt; results/foreground-web-text-20261110/report.md
