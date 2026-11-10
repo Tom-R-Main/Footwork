@@ -169,6 +169,8 @@ def test_filmed_needs_the_exclusive_desktop(world, fw, filmed):
     assert code == 2 and "exclusive_desktop" in err
 
 
+# Unlike the CLI scenarios, this standalone Mac double does not request ``world``.
+@pytest.mark.usefixtures("mac_native_contract")
 def test_filmed_typing_paces_the_characters(monkeypatch):
     import asyncio
     import json
