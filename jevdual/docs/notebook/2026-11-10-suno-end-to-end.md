@@ -220,3 +220,14 @@ Refs: output/suno-20261110/instrumental-type-styles.txt; python/jevdual/posture.
 Question: which HID event category is continuously resetting the foreground-permitted idle counter after the user's ready handoff?
 Test: read Quartz idle seconds for any input, mouse movement, keyboard down/up, button down, scroll and flags, plus cursor position, five times at one-second intervals. No event taps, key contents, clicks, pointer movement, focus writes or other input; retain only numeric counters and coordinates in private output.
 Refs: python/jevdual/posture.py MacActivity
+
+## SUNU23 · update · 2026-11-10 18:23
+Observed: the bounded passive HID probe subsequently showed36to40seconds idle with stable cursor; the activity had cleared without a policy change. A fresh observation preceded the previously refused style request; foreground typing then confirmed the396-character instrumental style and unique title. After verified zero lyric characters, one Create song click produced two new candidates, visible durations3:35and3:25 and a Publish clip control for the first. Control-specific waiting observed a Play button. Opening first title by ID157 was then refused target_ambiguous before dispatch because both generated rows share a title/section, including a peer omitted from the compact menu.
+Inferred: generation submission and new candidates are established; complete audio and exact resource identities remain to be retrieved. Duration missed the90to120second brief. Duplicate labels are a separate native resource-identity gap, not grounds to force the click.
+Next: inspect exact AXURL attributes of only the two owned generated links; qualify unique resource navigation from observed URLs and repair native link identity separately.
+Refs: output/suno-20261110/hid-availability.json; output/suno-20261110/instrumental-type-styles-idle.txt; output/suno-20261110/instrumental-type-title.txt; output/suno-20261110/instrumental-create-once.txt; output/suno-20261110/instrumental-candidates-ready.txt; output/suno-20261110/instrumental-open-candidate-a.txt
+
+## SUN19 · exploratory · 2026-11-10 18:23
+Question: do the two newly generated same-title song links expose distinct actual AXURL resource identities that Footwork's native menu currently omits?
+Test: one bounded read-only SDK snapshot scoped to the exact test title in bound window306787; resolve each matching AXLink by its fresh frame, independently verify title/description and read AXURL. Save resource URLs with snapshot/frame provenance. No clicks, focus writes or navigation. If absent or invalid, do not invent song IDs.
+Refs: output/suno-20261110/instrumental-open-candidate-a.txt; python/jevdual/native.py Candidate projection
