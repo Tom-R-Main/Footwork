@@ -178,3 +178,10 @@ Test: reobserve and click New draft once; inspect exact Lyrics editor value and 
 Predicts: New draft yields an empty lyrics field without editing an existing song; foreground insertion then visibly renders signal and exact readback agrees.
 Against: the control opens a different flow, emptiness cannot be established, a guard refuses, or AX and rendering diverge again. Do not submit generation or force a replacement in these states.
 Refs: output/suno-20261110/ready-drafts-start.txt; output/suno-20261110/tuple-repair-lyrics-signal.txt
+
+## SUNU19 · update · 2026-11-10 18:11
+Resolves: SUN15 = failed
+Observed: New draft changed the lyrics to Suno's empty placeholder and0of5000 character counter, cleared the test title and preserved the style. The observed Auto-save onboarding was dismissed with Got it. The subsequent foreground diagnostic still stops at selection_unqualified before text synthesis; post-observation still shows the empty placeholder and0counter. No generation occurred.
+Inferred: visual emptiness and the adapter's raw value/selection precondition disagree. A fresh draft alone does not resolve the mechanism. The guard remains intact; no further typing will be attempted until exact read-only SDK/direct-AX evidence identifies the disagreement.
+Next: delegate one read-only inspection of the exact field's raw value, character count, range and code points, without focus writes or input. Preregister any ensuing source repair separately.
+Refs: output/suno-20261110/new-lyrics-draft.txt; output/suno-20261110/new-draft-dismiss-onboarding.txt; output/suno-20261110/fresh-lyrics-signal.txt
