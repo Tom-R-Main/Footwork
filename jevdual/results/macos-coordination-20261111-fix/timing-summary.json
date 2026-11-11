@@ -1,0 +1,41 @@
+{
+  "source": "cd630bb",
+  "kind": "timing-only wrappers around original public CLI/input methods",
+  "stages": {
+    "QuartzPoster.location": {
+      "count": 87,
+      "first_ms": 1.2362501583993435,
+      "max_ms": 1.2362501583993435
+    },
+    "MonotonicClock.now": {
+      "count": 88,
+      "first_ms": 0.0027909409254789352,
+      "max_ms": 0.03054109402000904
+    },
+    "Claim.check": {
+      "count": 172,
+      "first_ms": 0.806041993200779,
+      "max_ms": 1.8722920212894678
+    },
+    "QuartzPoster.foreign_input": {
+      "count": 86,
+      "first_ms": 0.008709030225872993,
+      "max_ms": 0.019832979887723923
+    },
+    "MonotonicClock.sleep_until": {
+      "count": 87,
+      "first_ms": 9.5572080463171,
+      "max_ms": 182.90795804932714
+    },
+    "QuartzPoster._mouse": {
+      "count": 86,
+      "first_ms": 20.68208297714591,
+      "max_ms": 20.68208297714591
+    }
+  },
+  "outcome": "arrived",
+  "successful_posts": 86,
+  "max_successful_gap_ms": 22.04491593874991,
+  "original_failure_cause": "unresolved; this attempt did not reproduce the stall",
+  "raw_trace": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-diagnosis/05-filmed-point.timing.json"
+}
