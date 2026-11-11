@@ -1,5 +1,7 @@
 # Suno creation, editing and media judgment
 
+Continuation direction, November 11: actual Suno Studio is included in the user's end-to-end goal. Generic evidence/session fixes take priority; Suno-specific learning belongs in an [app extender or recipe](app-extenders.md), with reusable audio/video tools kept separate. Current Studio milestones and remaining prerequisites are tracked in the [continuation ledger](../results/suno-studio-20261111/report.md). The completed legacy result below does not qualify Studio editing.
+
 Engineering findings and recommendations, November 10, 2026. A bounded creation-to-legacy-fade-to-Library-reopen journey and one further public-command fade/export/reopen pass are verified. A newer Song Editor clip menu also opened through an inspected opaque control. Canvas mutation, broad musical judgment and an ease/reliability rate remain separate qualifications.
 
 User-selected reviewer: `qwen/qwen3.8-omni-flash` through OpenRouter, superseding the tentative provider shortlist below. The credential destination is the Git-ignored `jevdual/.env`, variable `OPENROUTER_API_KEY`; enter the key locally and never retain it in reports or requests logged to disk. The [canonical model guide](https://openrouter.ai/qwen/qwen3.8-omni-flash/llms.txt) documents the Chat Completions endpoint. Qualify actual audio/video input on the chosen provider before claiming musical perception: text completion alone does not establish it, and [video URL support varies by provider](https://openrouter.ai/docs/guides/overview/multimodal/videos).
