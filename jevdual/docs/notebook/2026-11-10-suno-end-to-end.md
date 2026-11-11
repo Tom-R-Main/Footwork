@@ -572,3 +572,10 @@ Test: use immutableca4e7dc and unchangedfocus1overlay on the saved4second deriva
 Predicts: the full read-only peer census qualifies the intended visible target, which opens the actual clip menu; the frameless peer supplies only collision evidence and cannot be acted on.
 Against: identity remains unqualified, unsafe peer is offered for action, any name/ID/document/frame guard fails, the capture is another context or the resulting popup is not clip operations. No unknown-outcome retry or guard bypass.
 Refs: output/suno-20261110/runtime-ca4e7dc/identity.json; results/opaque-named-peer-census-20261110/report.md; output/suno-20261110/opaque-live-diagnosis.json
+
+## SUNU55 · update · 2026-11-10 21:16
+Resolves: SUN39 = held
+Observed: frozen ca4e7dc reopens the saved4second derivative in the new editor and projects literal native-ID controls. Frameless Hide Tips is absent as an action candidate. Numeric inspection86 records opaque=true, qualified=true, exact derivative document, actual native ID and frame; its captured bounds visibly cover the clip ellipsis. One normal guarded foreground click opens named Split and Create Section controls. Escape removes both without timeline edits or a new song save. The earlier failed1cc result remains retained.
+Inferred: the census-only named-peer repair resolves the live opaque-menu blocker without making the frameless peer actionable. This qualifies that inspected menu path, not direct visual FADE selection or general waveform dragging. The completed audio edits still use the separately verified exact-time legacy route.
+Next: close reports and this work package; no more UI edits, unlocks or model calls are needed.
+Refs: output/suno-20261110/runtime-ca4e7dc/identity.json; output/suno-20261110/opaque-final-editor-open.txt; output/suno-20261110/opaque-final/inspection/9e94cd86697f4d078bd4c368925b0669.json; output/suno-20261110/opaque-final-clip-click.txt; output/suno-20261110/opaque-final-dismiss.txt; results/opaque-named-peer-census-20261110/report.md
