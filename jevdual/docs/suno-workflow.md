@@ -132,6 +132,15 @@ A menu action with no visible change is also unverifiable because clipboard, dis
 
 Source: [receipt ambiguities](../results/native-receipt-ambiguities-20261110/report.md). The broader [run report](../results/suno-20261110/report.md) retains the failed hypotheses and live limits.
 
+### Qualify one bounded editor change
+
+Suno's [dedicated Crop Song guide](https://help.suno.com/en/articles/3166529) describes opening a song's triple-dot menu, choosing Remix/Edit then Crop Song, adjusting a waveform selection and applying Crop Song to create a new song in Library/Workspace. Its [Song Editor guide](https://help.suno.com/en/articles/6141505) separately describes inline section removal and fades at clip corners. Discover which interface is open and whether its selection means a retained range or a removed interval; do not transfer semantics between those controls. These are documented routes, not completed steps in this live run.
+
+1. Bind a run-owned source and preserve its identity, baseline duration and decodable audio. State one intended change and its interval before touching the waveform. Inspect current controls, selection times and preview; when positions are only approximate, do not claim an exact time range from pixels alone.
+2. Make one crop or fade and audition the affected boundary with surrounding context. A visible waveform change establishes draft editor state. Apply the observed commit/save action once and reconcile it; for dedicated Crop Song, require a distinct new Library/Workspace resource and verify the original remains available.
+3. Export that derivative to a fresh project path. Verify identity, file hash, complete decode and duration against the selected interval, allowing only separately explained encoding effects. A fade should preserve duration; check the audible ending and level envelope instead. Neither a download receipt nor a model's description establishes the intended audio change.
+4. Reopen the saved derivative through Library and inspect its current editor/playback state. Compare its actual audio with the baseline around the edit, then in whole-song context. Record draft-state, saved-resource, exported-artifact and reopened-state evidence separately. Qualify lyric regeneration only as a later test with its own preservation and transition checks.
+
 ## Live qualification of the selected reviewer
 
 The project-local `scripts/openrouter_media_review.py` now supplies actual local audio/video to the user's selected Qwen route. It retains media hashes, provider/model response, usage and uncertainty without saving credentials or media payloads in logs. It has explicit reasoning control, a total exchange deadline and no automatic retry. A deadline cannot prove that a remote generation stopped or was unbilled. Requested output tokens are not a hard total-token or spend limit.
