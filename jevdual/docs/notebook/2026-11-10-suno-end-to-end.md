@@ -517,3 +517,15 @@ Test: same neutral prompt, final24seconds from each real export with2second sepa
 Predicts: any asserted preference or distinction refers consistently to the same underlying ending across both orders, with plausible audible evidence.
 Against: preference follows first/second position rather than version, accounts contradict, differences are invented, transport is unsupported or the model cannot distinguish. A stable preference is not proof of human taste agreement.
 Refs: docs/experiments/openrouter-media-live-20261110.md; output/suno-20261110/exports/fade-comparison.json
+
+## SUNU49 · update · 2026-11-10 20:42
+Resolves: SUN37 = failed
+Observed: both blind presentation orders receive no-preference/indistinguishable answers, with strong unsupported assertions of identical dynamics and no level differences. The independently measured endings have a progressive fade and roughly10.9dB RMS difference in their final2seconds. Qwen therefore did not qualify this edit distinction in either order. Its separate neutral whole-derivative review describes an instrumental with a complete ending and suggests tightening a repeated second-half passage; that is coarse model judgment, not preference acceptance.
+Inferred: the model is useful for broad musical descriptions but this route cannot verify the subtle ending change. No cause is established; input segmentation, model processing and actual perceptual limits remain alternatives. Do not tune the expected truth into the prompt or call the blind test a success because both answers agree.
+Next: use decoded signal evidence as the edit verification, preserve the blind failure, and complete actual Library/editor reopen. No more model requests in this bounded package.
+Refs: output/suno-20261110/review-boundary-fade-first/response.json; output/suno-20261110/review-boundary-original-first/response.json; output/suno-20261110/review-final-fade/response.json; output/suno-20261110/exports/fade-comparison.json
+
+## SUNU50 · update · 2026-11-10 20:42
+Observed: all eleven successful requests in the amended media package now report0.02146825dollars total. The last three use the exact selected model, report zero reasoning tokens and cost0.00023202,0.00019818and0.00047252dollars. Each was one independent request with no retry or provider fallback. Actual source order/interval manifests and media hashes are retained privately.
+Next: close the media package at this cap after its reports are updated; further perception experiments require a new preregistered question, not an unrecorded retry.
+Refs: docs/experiments/openrouter-media-live-20261110.md; output/suno-20261110/exports/boundary-fade-first.manifest.json; output/suno-20261110/exports/boundary-original-first.manifest.json; output/suno-20261110/review-final-fade/manifest.json
