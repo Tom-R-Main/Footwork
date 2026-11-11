@@ -1,6 +1,6 @@
 # Suno creation, editing and media judgment
 
-Engineering findings and recommendations, November 10, 2026. One bounded creation-to-legacy-fade-to-Library-reopen journey is verified. The newer Song Editor canvas, broad musical judgment and repeated-run ease remain separate qualifications.
+Engineering findings and recommendations, November 10, 2026. A bounded creation-to-legacy-fade-to-Library-reopen journey and one further public-command fade/export/reopen pass are verified. A newer Song Editor clip menu also opened through an inspected opaque control. Canvas mutation, broad musical judgment and an ease/reliability rate remain separate qualifications.
 
 User-selected reviewer: `qwen/qwen3.8-omni-flash` through OpenRouter, superseding the tentative provider shortlist below. The credential destination is the Git-ignored `jevdual/.env`, variable `OPENROUTER_API_KEY`; enter the key locally and never retain it in reports or requests logged to disk. The [canonical model guide](https://openrouter.ai/qwen/qwen3.8-omni-flash/llms.txt) documents the Chat Completions endpoint. Qualify actual audio/video input on the chosen provider before claiming musical perception: text completion alone does not establish it, and [video URL support varies by provider](https://openrouter.ai/docs/guides/overview/multimodal/videos).
 
@@ -14,9 +14,11 @@ The first generated playback downloads were opaque `m4a-opus`/encoding 1.0.0 byt
 
 One legacy Fade out application from `03:16.80` to the 204.8-second end created a distinct derivative. Its authenticated MP3 export fully decodes, and Library lists it separately from both original candidates. Reopening its actual Library link and then Reload preserved its page/player resource and `3:24` display. The last two seconds are approximately 10.90dB lower in the diagnostic comparison. Earlier audio remains highly correlated but differs in decoded hashes and is approximately 0.30dB lower, so this is not bit-exact preservation or proof of aesthetic improvement.
 
+A second pass used frozen `1cccdcb` and public Footwork commands throughout, with no implementation change, private SDK helper or user handoff. Starting again from original candidate B, one four-second fade from `03:20.80` produced a separate 204.8-second MP3. Its full decode passed; the last two seconds were approximately 5.27dB lower than the source. Library showed both originals and both derivatives, and the new derivative survived reopen and Reload. This additional successful pass is not a measured reliability rate.
+
 The selected Qwen route reviewed references, original candidate B, the two ending presentation orders and the full derivative. Both blinded ending orders produced unsupported assertions of identical dynamics despite the measured difference; SUN37 failed this critic qualification. The neutral full-derivative review described a complete natural ending and suggested reducing second-half repetition. Those are coarse judgments, not human preference or precise edit instructions. Eleven successful requests report $0.02146825 in OpenRouter charges, excluding Suno/TypeSafe spending. Video checks also missed known short defects; actual exposure and fine discrimination cannot be assumed.
 
-The bounded legacy journey is verified; new-editor canvas mutation, generative section replacement, human taste acceptance and a reliability/ease rate are not. Run evidence: [main report](../results/suno-20261110/report.md), [edited-song comparison](../results/suno-20261110/edited-song-analysis.md), [reference analysis](../results/suno-20261110/reference-analysis.md) and [video calibration](../results/suno-20261110/video-calibration.md).
+The bounded legacy journey and additional fade/export/reopen pass are verified. In the newer editor, one freshly inspected, backed clip-ellipsis control opened Split/Create Section and Escape dismissed it without an edit or save. New-editor canvas mutation, generative section replacement, human taste acceptance and a reliability/ease rate remain unverified. Run evidence: [main report](../results/suno-20261110/report.md), [edited-song comparison](../results/suno-20261110/edited-song-analysis.md), [reference analysis](../results/suno-20261110/reference-analysis.md) and [video calibration](../results/suno-20261110/video-calibration.md).
 
 ## The useful sequence
 
@@ -66,7 +68,7 @@ Ask a critic for timestamped observations, severity, confidence, evidence and on
 
 | Layer | Candidate | Why it fits | Current boundary |
 | --- | --- | --- | --- |
-| Guarded UI actions | Footwork native CLI | Existing signed-in Chrome, fresh targets, posture and receipts | Bounded creation/export/legacy fade/derivative/Library-reopen verified; new-canvas edits, generative replacement and repeated-run reliability remain unverified |
+| Guarded UI actions | Footwork native CLI | Existing signed-in Chrome, fresh targets, posture and receipts | Bounded creation/export/legacy fade/Library-reopen plus one public-command repeat and a new-editor clip menu verified; canvas edits, generative replacement and reliability rate remain unverified |
 | In-app semantic editing | [Suno Studio Chat](https://suno.com/blog/studio-chat-assistant) | Documented track naming, multi-fader changes, effects/parameter setup and feedback | Closed hosted assistant; no Studio Chat UI operation tested here, and documented examples do not qualify crop/fade control |
 | Browser state and controls | [Playwright MCP/CLI](https://github.com/microsoft/playwright-mcp) | Structured snapshots and browser automation | Default owned profile does not inherit this user's login; the documented [extension route](https://github.com/microsoft/playwright/blob/main/packages/extension/README.md) supports existing tabs but requires setup and connection approval |
 | Browser performance | [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) | Diagnose browser behavior and performance | Requires an actual permitted connection; distinct from an audio critic |
@@ -94,14 +96,14 @@ The first target is a narrow end-to-end journey with inspectable failures. Gener
 
 ## Recipes from the native Suno run
 
-Core legacy edit/export/reopen actions used frozen `a64b6f2` with the exact focus-guarded CUA `0.46.0+footwork.5486b624.cleanup2.focus1` project overlay. That source passed 3256 offline tests with 62 skips; see its [suite result](../results/exact-window-start-20261110/full-default.json). The later `1cccdcb` archive includes opaque-control source `1bdcd0b` ([3301 passes/62 skips](../results/opaque-native-controls-20261110/full-default.json)) and the separately checked read-only window inventory ([407 affected checks](../results/native-window-inventory-20261110/report.md), with no full-suite repeat). Those later capabilities are separate from the verified core edit. The user-local installed release is unchanged. Establish the exact archived source/runtime before using the repaired commands; source tests alone do not qualify live editor behavior.
+Core legacy edit/export/reopen actions used frozen `a64b6f2` with the exact focus-guarded CUA `0.46.0+footwork.5486b624.cleanup2.focus1` project overlay. That source passed 3256 offline tests with 62 skips; see its [suite result](../results/exact-window-start-20261110/full-default.json). The additional four-second legacy pass used frozen `1cccdcb`, including the public read-only window inventory ([407 affected checks](../results/native-window-inventory-20261110/report.md)). The final project launcher archives `ca4e7dc` with the same focus1 overlay: [3339 offline passes/62 skips](../results/opaque-named-peer-census-20261110/full-default.json), plus [594 focused checks including 19 new cases](../results/opaque-named-peer-census-20261110/report.md). Its newer-editor clip menu was separately qualified live; that success does not establish canvas mutation. The user-local installed release is unchanged. Establish the exact archived source/runtime before using the repaired commands; source tests alone do not qualify live editor behavior.
 
 ### Bind, wait and inspect
 
 Use the observed PID and window rather than an app name alone when multiple Chrome processes exist. Keep one owner of the shared window and the foreground idle guard. Session start must use a new directory because it resets session files.
 
 ```sh
-suno_fw=/absolute/footwork/jevdual/output/suno-20261110/runtime-1cccdcb/footwork
+suno_fw=/absolute/footwork/jevdual/output/suno-20261110/runtime-ca4e7dc/footwork
 suno_session=/absolute/footwork/jevdual/output/NEW-suno-session
 "$suno_fw" windows --pid OBSERVED_PID
 "$suno_fw" start "Create and edit only run-owned Suno drafts" --app "Google Chrome" --pid OBSERVED_PID --window "OBSERVED_WINDOW_TITLE" --mode foreground_permitted --session "$suno_session"
@@ -112,7 +114,9 @@ suno_session=/absolute/footwork/jevdual/output/NEW-suno-session
 
 Placeholders are selected from fresh observations; do not reuse the IDs in old receipts. The wait proves an offered label appeared, not complete page readiness. Before the click, match the inspected bounds, document and control identity to the intended UI context. One generic More actions control in this run opened a comment emoji picker; it was dismissed without submitting a comment. A popup alone does not establish that the song menu opened.
 
-The public PID-scoped inventory includes genuine untitled window IDs without input or activation, and reports `read_only: true`, `association_verified: false`. Its live readback was checked against the known current main window; it does not prove modal ownership, key status or complete future routing. Obtain a fresh list, independently qualify any modal association and bind the exact current ID. The opaque-control projection similarly retains a backed literal identifier, not an invented action name; new-editor popup qualification remains separate.
+The public PID-scoped inventory includes genuine untitled window IDs without input or activation, and reports `read_only: true`, `association_verified: false`. During the additional export pass, public inventory found both the Save sheet and the new untitled Go to Folder panel; each was then independently qualified and explicitly bound. Inventory alone does not prove modal ownership, key status or complete future routing. Obtain a fresh list, qualify the association and bind the exact current ID.
+
+The final opaque-control projection retains a backed literal identifier. In the newer editor, inspection confirmed the exact document, qualified native identity and visible frame of the intended clip ellipsis; one foreground click opened Split/Create Section, then Escape dismissed it. A frameless Hide Tips peer remained census evidence only, never an action candidate. This qualifies that popup, not direct visual FADE control, waveform dragging or a saved canvas edit. Sources: [opaque peer census](../results/opaque-named-peer-census-20261110/report.md) and SUN39 in the run notebook.
 
 Same-title native links now retain independently qualified complete hrefs; distinct buttons/popups can retain a complete DOM identifier scoped to their actual closest WebArea document. These qualify only the observed peer group and must survive fresh rematching. Choose a fresh numeric candidate when the label remains shared. Links do not lend identity to neighboring buttons, and unqualified duplicate Play controls still refuse. After internal song navigation, verify the player resource separately: the run observed a player retaining the previous song until Reload. Reload is appropriate only after checking that it will not discard unsaved work.
 
@@ -140,9 +144,9 @@ Source: [receipt ambiguities](../results/native-receipt-ambiguities-20261110/rep
 
 ### Save an authenticated export through native panels
 
-This run qualified the following sequence for one complete MP3 export. Discover each actual PID/window ID and prove its same-process modal association; the numeric IDs in historical evidence are not reusable targets. A parent-bound session never implicitly redirects input to a child panel.
+This run qualified the following sequence for the source and derivative MP3 exports. The additional four-second pass used public Footwork commands for window discovery and binding throughout. Discover each actual PID/window ID and prove its same-process modal association; the numeric IDs in historical evidence are not reusable targets. A parent-bound session never implicitly redirects input to a child panel.
 
-1. In the actual own-song Download dialog, inspect format state. Its options are multiselect: selecting MP3 did not clear the default M4A. Require MP3-only selection, then unlock once under the existing included allowance. Wait and reconcile the prepared export rather than invoking Unlock again.
+1. In the actual own-song Download dialog, inspect format state. Its options are multiselect: selecting MP3 did not clear the default M4A. Require MP3-only selection, then unlock once under the existing included allowance. Wait and reconcile the prepared export rather than invoking Unlock again. On the additional pass, a 15-second label wait expired before public window inventory found the Save sheet; the expired wait did not justify another Unlock.
 2. Bind the observed Save sheet explicitly. From that session invoke the guarded foreground `cmd+shift+g` hotkey. If Go to Folder opens an untitled nested panel, observe and bind its exact ID in a new session:
 
    ```sh
@@ -165,15 +169,15 @@ Suno's [dedicated Crop Song guide](https://help.suno.com/en/articles/3166529) de
 
 ### Verified legacy ending-fade recipe
 
-This is the completed bounded route, using observed named/time controls rather than the newer editor's visual-only fade handle:
+This is the verified bounded route, completed with an eight-second fade and then a separate four-second pass from the same original. It uses observed named/time controls:
 
-1. From the own-song menu, focus Edit and use the observed foreground Right-key route if clicking does not expose its submenu. Open the actual Song Editor, then its observed Legacy Editor link for the same source. Recheck song/page/player identity.
-2. Choose named FADE OUT mode. For the independently decoded 204.8-second source, replace From with `03:16.80`, blur and verify the complete value and selected ending. This specifies an eight-second ending fade; it is not Qwen's proposed middle-section cut.
+1. From the own-song menu, focus Edit and use the observed foreground Right-key route if clicking does not expose its submenu. Open the actual Song Editor, then its observed Legacy Editor link for the same source. Recheck song/page/player identity. On the additional pass, the song menu’s Fade out opened a conditioned Create form instead. No generation was submitted: only the run-owned unsubmitted condition was cleared, then the previously observed Legacy Editor URL was reopened through public address-bar commands. Do not guess a legacy URL or treat every Fade out label as editor navigation.
+2. Choose named FADE OUT mode. For the independently decoded 204.8-second source, replace From with `03:16.80`, blur and verify the complete value and selected ending. This specifies an eight-second ending fade. The separate four-second pass independently reloaded original B and verified `03:20.80` after blur before applying once. Neither operation implements Qwen’s proposed middle-section cut.
 3. Apply Fade out once, reconcile the new resource and retain the original. Export that distinct derivative through the project-safe native Save recipe. The completed `candidate-b-fade-8s.mp3` is 4,693,331 bytes and 204.8 seconds, SHA256 `9a02e024eb44a7b2caa8864a545b1db27a804b4539b6e06b71cb10bf1c5ae924`; complete decode passed.
 4. Compare actual aligned audio. At 8kHz mono, successive two-second fade windows were approximately 0.45, 1.93, 5.57 and 10.90dB lower than the source. The pre-fade `[1,196)`-second prefix correlation was 0.9984246 with a 0.30353dB level shift and differing decoded hashes. Require these limited claims rather than assuming every non-target sample is unchanged.
 5. Reopen the derivative through its actual Library link, confirm both originals remain separate, and Reload to recheck current resource/player identity and duration. Preserve the failed blind critic result rather than treating model agreement as edit verification.
 
-The [edited-song analysis](../results/suno-20261110/edited-song-analysis.md) records the file pair, method, signal results, model costs and limits. This completes one bounded development journey; it does not establish aesthetic improvement, human acceptance, all modern canvas controls or an ease/reliability rate.
+The additional `candidate-b-fade-4s-repeat.mp3` is 4,703,603 bytes and 204.8 seconds, with complete decode and Library/reload identity checks. Its final two two-second windows are approximately 1.19 and 5.27dB lower than the source; its pre-fade prefix is highly correlated but approximately 0.28dB lower. The [edited-song analysis](../results/suno-20261110/edited-song-analysis.md) records all three files, hashes, methods, signal results, model costs and limits. The two bounded passes do not establish aesthetic improvement, human acceptance, all modern canvas controls or an ease/reliability rate.
 
 ## Live qualification of the selected reviewer
 
@@ -236,4 +240,4 @@ Use blinded A/B comparisons in both presentation orders. Include muted/swapped a
 - Keep editor responsiveness, recording defects and exported-output defects separate. A slow preview or poor recording does not prove the final media is damaged.
 - Treat fixed FPS settings, token counts, model rankings, commercial API access, benchmark scores and installation commands in the supplied notes as leads until checked for the selected version and task. No headline benchmark numbers were adopted as Footwork acceptance thresholds.
 
-The bounded legacy edit/export/Library-reopen milestone is complete. The separate next qualification is the newer editor's actual opaque clip controls, followed by any newly scoped canvas or generative edit tests. Do not repeat the completed fade or regenerate the batch for cleaner receipts. Broader NLE integration, repeated-run ease and musical preference remain separate work packages.
+The bounded legacy edit/export/Library-reopen milestone is complete. The newer editor’s inspected opaque clip menu is also qualified; actual canvas mutation, direct visual FADE control, waveform dragging and generative edits remain separate qualifications. No further UI or provider call is needed to close this bounded package. Do not repeat a completed fade or regenerate the batch for cleaner receipts. Broader NLE integration, repeated-run ease and musical preference remain separate work packages.

@@ -1,8 +1,8 @@
 # Actual ending-fade verification
 
-The bounded legacy-editor creation/export/fade/save/Library-reopen journey is verified. The exported ending shows progressive attenuation over the requested final eight seconds. This does not establish bit-exact preservation, aesthetic improvement or human preference. The selected Qwen route failed the blinded ending-discrimination check.
+The bounded legacy-editor creation/export/fade/save/Library-reopen journey is verified. The first exported ending shows progressive attenuation over the requested final eight seconds. A further public-command pass created, exported and reopened a separate four-second fade from the same original. This does not establish bit-exact preservation, aesthetic improvement or human preference. The selected Qwen route failed the blinded ending-discrimination check.
 
-Core UI work used frozen source `a64b6f2` with the existing project-local focus1 CUA overlay. Outcome commit `260a3ff` records SUN36 held; notebook updates SUNU47–51 retain the export, comparison, failed critic and Library/reload evidence. Later opaque-control/window-inventory changes were separate qualification work, not the source used for the fade.
+Core UI work used frozen source `a64b6f2` with the existing project-local focus1 CUA overlay. Outcome commit `260a3ff` records SUN36 held; notebook updates SUNU47–51 retain the export, comparison, failed critic and Library/reload evidence. The additional pass used frozen `1cccdcb` and public commands throughout, without an implementation change, private SDK helper or user handoff; outcome `47054d4` records SUN38 held. Newer-editor popup qualification used `ca4e7dc`, with SUN39 held in `0d6c6d9`; it did not mutate or save the timeline. These sources are distinct from the first fade’s source.
 
 ## Files and intended edit
 
@@ -12,8 +12,9 @@ The source was the second run-owned instrumental from one Create submission. Thr
 | --- | ---: | ---: | --- |
 | `candidate-b.mp3` | 204.8 s | 4,639,077 | `138821e47c9a2e68c267942e308f3b055aa932cde5a031d0aae2df4d6d63d349` |
 | `candidate-b-fade-8s.mp3` | 204.8 s | 4,693,331 | `9a02e024eb44a7b2caa8864a545b1db27a804b4539b6e06b71cb10bf1c5ae924` |
+| `candidate-b-fade-4s-repeat.mp3` | 204.8 s | 4,703,603 | `070c687276937b71d67cbabe1840b4c4cf2666b5ee3e1719438f4cb0b749dc64` |
 
-Both files are stereo 48kHz MP3, and both complete FFmpeg decode checks passed. Private validation manifests retain exact UI/file source identity; this report omits private song IDs. Library subsequently showed the derivative and both source candidates separately. Reopening the derivative through its actual Library link and then Reload retained the intended page/player identity and `3:24` display, consistent with the independently decoded 204.8-second file. Optional direct HTTP metadata reads returned 403 and stopped; they were not bypassed or used as success evidence.
+All three files are stereo 48kHz MP3, and all complete FFmpeg decode checks passed. Private validation manifests retain exact UI/file source identity; this report omits private song IDs. Library subsequently showed the derivative and both source candidates separately. Reopening the derivative through its actual Library link and then Reload retained the intended page/player identity and `3:24` display, consistent with the independently decoded 204.8-second file. Optional direct HTTP metadata reads returned 403 and stopped; they were not bypassed or used as success evidence.
 
 ## Signal comparison and limits
 
@@ -27,6 +28,24 @@ Diagnostic analysis downmixed/resampled the decoded files to 8kHz mono. Each had
 | 202.8–204.8 s | −10.90 dB |
 
 This progressive attenuation supports the requested ending fade. The analysis does not identify the cause of the broader small level change, prove full-band/stereo preservation, calibrate audible-difference thresholds, or decide whether the fade improves the music. The signal check and the saved-resource/reopen checks answer different requirements.
+
+## Additional four-second pass
+
+The original candidate B was selected through Library and reloaded to reconcile page/player identity. The menu’s Fade out opened a conditioned Create form, so the run-owned unsubmitted condition was cleared without generation. Public address-bar commands reopened the previously observed Legacy Editor URL. The From field retained `03:20.80` after blur and visual readback; one apply created a new derivative for `[200.8,204.8)` seconds.
+
+The export used public PID-scoped window inventory to discover the Save sheet and, after Go to Folder, its untitled nested panel. Fresh exact bindings, destination/filename readback and one foreground Save preceded the independent file checks. A 15-second Save-label wait had expired; later inventory found the sheet, and Unlock was not repeated. All four resources, both originals and both derivatives, appeared separately in Library. Reopening the four-second derivative and Reload retained matching page/player identity, ID3 source binding and `3:24` duration.
+
+The same 8kHz mono diagnostic produced 1,638,400 samples per file. Alignment again found zero lag, with correlation 0.9982002. Over the pre-fade `[1,200)`-second prefix, correlation was 0.9984056 and RMS was 0.27525dB lower. The three ending windows were:
+
+| Interval | Four-second derivative RMS change relative to source |
+| --- | ---: |
+| 198.8–200.8 s, before fade | −0.24 dB |
+| 200.8–202.8 s | −1.19 dB |
+| 202.8–204.8 s | −5.27 dB |
+
+These measurements support a distinct shorter fade, with the same full-band/stereo and preservation limits as the first comparison. No Qwen review or human preference decision was made for this derivative. One additional successful development pass does not estimate reliability or ease across ordinary variants.
+
+The final `ca4e7dc` launcher also qualified one newer-editor clip-menu action: inspect the backed opaque target’s exact document, identity and visible frame, foreground-click once, observe Split/Create Section, then Escape. A frameless Hide Tips peer was not an action candidate. No newer-editor edit/save, direct visual FADE action or waveform drag was qualified. Its [offline suite](../opaque-named-peer-census-20261110/full-default.json) recorded 3339 passes and 62 skips; the [focused report](../opaque-named-peer-census-20261110/report.md) records 594 checks including 19 new cases. The user-local installed release remains unchanged.
 
 ## Blinded Qwen comparison
 
@@ -48,12 +67,14 @@ All eleven successful requests in the amended media package report $0.02146825 c
 
 Paths below are relative to `jevdual/`; private media and raw model outputs remain in ignored output:
 
-- `output/suno-20261110/exports/{candidate-b.mp3,candidate-b-fade-8s.mp3}.validation.json`
+- `output/suno-20261110/exports/{candidate-b.mp3,candidate-b-fade-8s.mp3,candidate-b-fade-4s-repeat.mp3}.validation.json`
 - `output/suno-20261110/exports/fade-comparison.json` and `{original,fade}-prefix-196s.hash`
 - `output/suno-20261110/exports/boundary-{fade,original}-first.manifest.json`
 - `output/suno-20261110/review-boundary-{fade,original}-first/{manifest,response}.json`
 - `output/suno-20261110/review-final-fade/{manifest,response}.json`
 - `output/suno-20261110/{derivative-reopened-from-library,derivative-reopen-reload,derivative-reloaded-ready}.txt`
-- `docs/notebook/2026-11-10-suno-end-to-end.md`, SUN36/SUN37 and SUNU47–51
+- `output/suno-20261110/exports/repeat-four-comparison.json`
+- `output/suno-20261110/repeat-{four-second-apply-once,before-folder-inventory,folder-inventory,save-destination-confirmed,library-reopen,reopened-reload}.*`
+- `docs/notebook/2026-11-10-suno-end-to-end.md`, SUN36–39 and SUNU47–55
 
-The tested recipe and its separate new-editor limits are in [the workflow guide](../../docs/suno-workflow.md). This is one development journey, not a measured reliability rate or acceptance of all current Song Editor canvas interactions.
+The tested recipe and its separate new-editor limits are in [the workflow guide](../../docs/suno-workflow.md). The initial journey and additional public-command pass are verified, alongside the separate newer-editor popup. They do not establish a reliability rate, human musical preference or general Song Editor canvas editing.
