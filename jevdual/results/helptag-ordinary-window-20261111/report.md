@@ -52,3 +52,15 @@ manifest-qualified frozen-source wrapper supplied with this candidate.
 The parent owns the single final full Python regression and actual public GUI
 qualification. The worker did not start a native driver, invoke activation, move
 the pointer, type/click, change posture or call private activation probes.
+
+Frozen source: `8e977ba`. New explicit runtime:
+`/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/footwork`.
+`frozen-runtime.json` verifies archived CLI/native Python import paths and native
+library SHA256 `e30d43b9014f544f746a21ca9d08aa8bb236a076c9b350f89c103ed0439ddef6`.
+The wrapper uses only the new overlay and archived source; historical freeze
+wrappers are unchanged. `wrapper-help.txt` is metadata-only, without a driver.
+
+The single final full command for the parent, from `jevdual/`, is
+`PYTHONPATH=output/foreground-helptag/overlay:python .venv/bin/python -m pytest -q`
+with live/browser opt-ins unset and source/tests held during measurement. Actual
+GUI qualification and this full-suite result remain separately recorded by root.

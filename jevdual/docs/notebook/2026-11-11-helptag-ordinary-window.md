@@ -31,3 +31,8 @@ Established: generic positive AXHelpTag classification fixes the owning ranking 
 Uncertain: no worker UI/activation calls were made. Actual scheduled-run recovery remains parent-owned, and the new SDK is not the default/global installation. Rust activation tests were explicitly skipped; pure tests and ABI imports do not prove live application delivery.
 Decision: hand off the frozen candidate and artifact; preserve historical overlays and use only the new manifest-qualified wrapper for the next live check. One full Python regression remains for the parent after this freeze, without a redundant mid-build run.
 Refs: results/helptag-ordinary-window-20261111/report.md
+
+## HTW6 · update · 2026-11-11 03:47
+Observed: source is frozen at 8e977ba. The new output/foreground-helptag/footwork wrapper imports only its own helptag1 overlay and archived 8e977ba Python. Frozen-runtime qualification verifies CLI/native module paths, native.py hash, native library hash e30d43b9014f544f746a21ca9d08aa8bb236a076c9b350f89c103ed0439ddef6 and exact wheel/source hashes. --help runs without a driver. Historical wrappers and focus1 overlay are unchanged.
+Next: parent runs the single full default Python suite and actual public qualification; source/tests held, evidence-only work complete.
+Refs: results/helptag-ordinary-window-20261111/frozen-runtime.json; results/helptag-ordinary-window-20261111/wrapper-help.txt
