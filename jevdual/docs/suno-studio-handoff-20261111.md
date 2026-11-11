@@ -14,6 +14,8 @@ Artifact and frozen-source identities are in results/helptag-ordinary-window-202
 
 The latest failed new-wrapper start directory is output/suno-studio-20261111/helptag-live/. It is not a qualified binding. The previous completed diagnostic session is foreground-diagnostic-0300, using the older SDK; preserve its evidence and start a **new** session after actual unlock, fresh PID/window inventory and resource checks. ST12 records the new SDK menu qualification as inconclusive, while ST5 remains pending. A private local analyzer is available at output/suno-studio-20261111/analyze-eq.py; its synthetic checks qualify mechanics only, and actual UI cutoff/exports must precede its real comparison.
 
+The one-time03:00automation has now been deleted after execution; there is no unrequested recurring retry. Resume when the user supplies the unlock handoff. The latest03:58native check still reports locked. All root/worker CLI, build, test and synthetic-analysis processes have returned; no helper needs polling. Unrelated untracked notes remain untouched.
+
 ## Original 03:00 handoff and workflow
 
 The user requested a one-time continuation at **03:00 on November 11, 2026, America/Detroit**, expecting the computer may be free. That expectation does not waive Footwork's normal idle, focus, ownership or action guards. Pause on actual human activity rather than taking the desktop. Resume this existing task and preserve its current work.
