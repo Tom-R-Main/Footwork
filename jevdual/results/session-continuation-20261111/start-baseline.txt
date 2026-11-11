@@ -1,0 +1,148 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_failed_replacement_start_preserves_all_existing_session_files[stale_id] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104fb8ea0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104ecbad0>
+failure = 'stale_id'
+
+    @pytest.mark.parametrize('failure', ['stale_id', 'binding_mismatch', 'observation', 'shutdown'])
+    def test_failed_replacement_start_preserves_all_existing_session_files(world, fw, monkeypatch, failure):
+        assert fw('start', 'Retain previous task', '--app', 'Calculator')[0] == 0
+        names = ('session.json', 'session.jsonl', 'carries.json', 'snapshots.json', 'grants.json')
+        for name in names[2:]: (fw.session / name).write_text('{"previous":true}')
+        before = {name: (fw.session / name).read_bytes() for name in names}
+        original = world.get_window_state
+    
+        async def observe(inp):
+            assert all((fw.session / name).read_bytes() == value for name, value in before.items())
+            if failure == 'observation': raise RuntimeError('new observation unavailable')
+            result = await original(inp)
+            if failure == 'binding_mismatch': result['pid'] = 88
+            return result
+    
+        async def shutdown():
+            if failure == 'shutdown': raise RuntimeError('new driver cleanup failed')
+    
+        monkeypatch.setattr(world, 'get_window_state', observe)
+        monkeypatch.setattr(world, 'shutdown', shutdown)
+        code, out, err = fw('start', 'Replacement task', '--app', 'Calculator', '--pid', '77',
+                            '--window-id', '99999' if failure == 'stale_id' else '40335')
+        assert code != 0, (out, err)
+>       assert all((fw.session / name).exists() and (fw.session / name).read_bytes() == value for name, value in before.items())
+E       assert False
+E        +  where False = all(<generator object test_failed_replacement_start_preserves_all_existing_session_files.<locals>.<genexpr> at 0x104fc3680>)
+
+tests/test_session_scenarios.py:3928: AssertionError
+_ test_failed_replacement_start_preserves_all_existing_session_files[binding_mismatch] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1049ca2a0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104c11490>
+failure = 'binding_mismatch'
+
+    @pytest.mark.parametrize('failure', ['stale_id', 'binding_mismatch', 'observation', 'shutdown'])
+    def test_failed_replacement_start_preserves_all_existing_session_files(world, fw, monkeypatch, failure):
+        assert fw('start', 'Retain previous task', '--app', 'Calculator')[0] == 0
+        names = ('session.json', 'session.jsonl', 'carries.json', 'snapshots.json', 'grants.json')
+        for name in names[2:]: (fw.session / name).write_text('{"previous":true}')
+        before = {name: (fw.session / name).read_bytes() for name in names}
+        original = world.get_window_state
+    
+        async def observe(inp):
+            assert all((fw.session / name).read_bytes() == value for name, value in before.items())
+            if failure == 'observation': raise RuntimeError('new observation unavailable')
+            result = await original(inp)
+            if failure == 'binding_mismatch': result['pid'] = 88
+            return result
+    
+        async def shutdown():
+            if failure == 'shutdown': raise RuntimeError('new driver cleanup failed')
+    
+        monkeypatch.setattr(world, 'get_window_state', observe)
+        monkeypatch.setattr(world, 'shutdown', shutdown)
+        code, out, err = fw('start', 'Replacement task', '--app', 'Calculator', '--pid', '77',
+                            '--window-id', '99999' if failure == 'stale_id' else '40335')
+        assert code != 0, (out, err)
+>       assert all((fw.session / name).exists() and (fw.session / name).read_bytes() == value for name, value in before.items())
+E       assert False
+E        +  where False = all(<generator object test_failed_replacement_start_preserves_all_existing_session_files.<locals>.<genexpr> at 0x104972b20>)
+
+tests/test_session_scenarios.py:3928: AssertionError
+_ test_failed_replacement_start_preserves_all_existing_session_files[observation] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10499dc60>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104924290>
+failure = 'observation'
+
+    @pytest.mark.parametrize('failure', ['stale_id', 'binding_mismatch', 'observation', 'shutdown'])
+    def test_failed_replacement_start_preserves_all_existing_session_files(world, fw, monkeypatch, failure):
+        assert fw('start', 'Retain previous task', '--app', 'Calculator')[0] == 0
+        names = ('session.json', 'session.jsonl', 'carries.json', 'snapshots.json', 'grants.json')
+        for name in names[2:]: (fw.session / name).write_text('{"previous":true}')
+        before = {name: (fw.session / name).read_bytes() for name in names}
+        original = world.get_window_state
+    
+        async def observe(inp):
+            assert all((fw.session / name).read_bytes() == value for name, value in before.items())
+            if failure == 'observation': raise RuntimeError('new observation unavailable')
+            result = await original(inp)
+            if failure == 'binding_mismatch': result['pid'] = 88
+            return result
+    
+        async def shutdown():
+            if failure == 'shutdown': raise RuntimeError('new driver cleanup failed')
+    
+        monkeypatch.setattr(world, 'get_window_state', observe)
+        monkeypatch.setattr(world, 'shutdown', shutdown)
+        code, out, err = fw('start', 'Replacement task', '--app', 'Calculator', '--pid', '77',
+                            '--window-id', '99999' if failure == 'stale_id' else '40335')
+        assert code != 0, (out, err)
+>       assert all((fw.session / name).exists() and (fw.session / name).read_bytes() == value for name, value in before.items())
+E       assert False
+E        +  where False = all(<generator object test_failed_replacement_start_preserves_all_existing_session_files.<locals>.<genexpr> at 0x1041ae7a0>)
+
+tests/test_session_scenarios.py:3928: AssertionError
+_ test_failed_replacement_start_preserves_all_existing_session_files[shutdown] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104189760>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10497b8c0>
+failure = 'shutdown'
+
+    @pytest.mark.parametrize('failure', ['stale_id', 'binding_mismatch', 'observation', 'shutdown'])
+    def test_failed_replacement_start_preserves_all_existing_session_files(world, fw, monkeypatch, failure):
+        assert fw('start', 'Retain previous task', '--app', 'Calculator')[0] == 0
+        names = ('session.json', 'session.jsonl', 'carries.json', 'snapshots.json', 'grants.json')
+        for name in names[2:]: (fw.session / name).write_text('{"previous":true}')
+        before = {name: (fw.session / name).read_bytes() for name in names}
+        original = world.get_window_state
+    
+        async def observe(inp):
+            assert all((fw.session / name).read_bytes() == value for name, value in before.items())
+            if failure == 'observation': raise RuntimeError('new observation unavailable')
+            result = await original(inp)
+            if failure == 'binding_mismatch': result['pid'] = 88
+            return result
+    
+        async def shutdown():
+            if failure == 'shutdown': raise RuntimeError('new driver cleanup failed')
+    
+        monkeypatch.setattr(world, 'get_window_state', observe)
+        monkeypatch.setattr(world, 'shutdown', shutdown)
+        code, out, err = fw('start', 'Replacement task', '--app', 'Calculator', '--pid', '77',
+                            '--window-id', '99999' if failure == 'stale_id' else '40335')
+        assert code != 0, (out, err)
+>       assert all((fw.session / name).exists() and (fw.session / name).read_bytes() == value for name, value in before.items())
+E       assert False
+E        +  where False = all(<generator object test_failed_replacement_start_preserves_all_existing_session_files.<locals>.<genexpr> at 0x104971ee0>)
+
+tests/test_session_scenarios.py:3928: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_failed_replacement_start_preserves_all_existing_session_files[stale_id]
+FAILED tests/test_session_scenarios.py::test_failed_replacement_start_preserves_all_existing_session_files[binding_mismatch]
+FAILED tests/test_session_scenarios.py::test_failed_replacement_start_preserves_all_existing_session_files[observation]
+FAILED tests/test_session_scenarios.py::test_failed_replacement_start_preserves_all_existing_session_files[shutdown]
+4 failed, 363 deselected in 0.80s

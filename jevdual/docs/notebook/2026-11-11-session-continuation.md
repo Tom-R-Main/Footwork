@@ -13,3 +13,9 @@ Test: public CLI simulated-Mac click or Return delivers once, then exact-window 
 Predicts: current public route ends in generic stopped; repair reports unavailable post-action observation, retains reconciliation evidence and dispatches no retry or implicit parent/new-window action.
 Against: closure confirms Save, pending evidence is cleared/rewritten, old observations become fresh, commands silently retarget, or an uncertain input retries.
 Refs: results/session-continuation-20261111/
+
+## SCN3 · update · 2026-11-11 00:14
+Resolves: SCN1 = held
+Observed: all four public failed-replacement scenarios failed before the fix. Replacement initialization now runs in an owned temporary session, preserving existing JSON/log/carry/destination/grant bytes during binding, observation and driver cleanup. Six focused replacement cases cover failures, successful publication without old authority, and publication rollback. All 49 affected start/schema checks and Ruff pass.
+Next: freeze the failed-start preservation change separately, then resolve SCN2. Root will run integrated regression after concurrent packages are stable.
+Refs: results/session-continuation-20261111/start-baseline.txt; results/session-continuation-20261111/start-focused.txt
