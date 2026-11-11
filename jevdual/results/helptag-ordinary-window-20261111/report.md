@@ -64,3 +64,9 @@ The single final full command for the parent, from `jevdual/`, is
 `PYTHONPATH=output/foreground-helptag/overlay:python .venv/bin/python -m pytest -q`
 with live/browser opt-ins unset and source/tests held during measurement. Actual
 GUI qualification and this full-suite result remain separately recorded by root.
+
+## Parent integration and live boundary
+
+The root-owned new-overlay default suite passes **3418tests,62skipped** in207.53seconds (208.98seconds wall), with tracked Python source/test/script hashes unchanged and live/browser opt-ins absent. `full-default.json` retains source identity8e977ba, the documentation-head identity and before/after hashes; `full-default.txt` retains pytest output. No duplicate broad run is needed without new source or failures.
+
+Actual corrected-SDK GUI qualification is **inconclusive**: before the first new-wrapper observation/application action, Footwork refused screen_locked. An independent native session lock flag confirmed the lock. The preceding actual CLI failures and read-only native classification established the old SDK defect; unit/ABI/integration results establish the candidate's tested mechanism. They do not establish that the corrected build has opened the actual Suno menu. Resume that normal public qualification after actual unlock; do not bypass the screen or activation guards.
