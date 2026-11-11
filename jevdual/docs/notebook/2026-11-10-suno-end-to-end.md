@@ -374,3 +374,18 @@ Test: observe actual Edit Select All and Copy paths, select the focused run-owne
 Predicts: newly copied plaintext exactly matches the intended file, independently qualifying lyrics content despite the AX mismatch.
 Against: full selection cannot be established, Copy is refused/unknown without changed counter, new clipboard does not match or no plaintext is available. Do not retry or print unrelated clipboard contents.
 Refs: output/suno-20261110/lyrics-full-value-comparison.json; output/suno-20261110/draft-brief/lyrics-short.txt
+
+## SUNU35 · update · 2026-11-10 19:10
+Resolves: SUN29 = failed
+Observed: first Select All refused human_active before input; a later passive idle interval allowed one new Select All. The focused AX element is the owned Lyrics field and its full AX value hash matches the prior known lyrics, but selected range0,442 and selected text442characters/5LF differ from AXValue456characters/19LF and intended461characters/24LF. The declared whole-AX-range precondition failed, so no Copy or clipboard content read occurred.
+Inferred: selected-range indices and AXValue serialization are not interchangeable here. A verification-only copy may instead bind source ownership through exact non-LF content, focus and the observed Select All action, while leaving the final equality criterion unchanged. This is not permission to normalize an edit or confirm line breaks by inference.
+Next: revise the copy experiment before any Copy, keeping its postcondition exact and guarding clipboard provenance/change count.
+Refs: output/suno-20261110/lyrics-copy-select-all.txt; output/suno-20261110/lyrics-copy-select-all-idle.txt; output/suno-20261110/lyrics-copy-precondition.json; output/suno-20261110/lyrics-selected-text-comparison.json
+
+## SUN30 · prediction · 2026-11-10 19:10
+Revises: SUN29
+Hypothesis: controlled plaintext copy exposes the complete frontend lyrics although native AX getters serialize its line breaks differently.
+Test: before Copy, require exact intended non-LF characters in both whole AXValue and selected text, selected range starting0, the known owned-field hash, same actual focused element and prior observed Select All. These source-ownership checks permit only a copy, not a text edit. Record the pasteboard counter without reading contents; invoke observed Edit Copy once, then compare new plaintext in memory only if the counter advances. Persist exact equality and counter provenance; never unmatched clipboard text/hash.
+Predicts: the new copied plaintext equals the original461-character file exactly, including every LF and accent.
+Against: source ownership/focus fails, clipboard does not advance, Copy refuses, plaintext is unavailable or differs. No retry and no normalization of the expected text.
+Refs: output/suno-20261110/lyrics-copy-precondition.json; output/suno-20261110/lyrics-selected-text-comparison.json
