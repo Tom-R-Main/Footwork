@@ -423,3 +423,10 @@ Observed: the authenticated owner export accepted MP3 after the visually checked
 Inferred: included export is progressing, but SUN32 remains open until a project-only save and complete decode. The modal binding defect has a separately preregistered source repair; implicit parent routing is not used.
 Next: freeze the qualified modal resolver and test project-folder navigation on the explicit Save session. Preserve the prepared export; do not unlock or submit it again.
 Refs: output/suno-20261110/song-b-export-save-wait.txt; output/suno-20261110/song-b-save-go-folder.txt; output/suno-20261110/modal-bindability.json; output/suno-20261110/save-b-set-filename.txt; docs/notebook/2026-11-10-save-modal-binding.md
+
+## SUN33 · prediction · 2026-11-10 19:42
+Hypothesis: explicitly binding the already-key Save sheet and including its proven exact AXSheet in direct window resolution permits normal guarded Go to Folder navigation and a project-only MP3 save.
+Test: after source repair is committed and archived, record its immutable identity and observe save-b's actual PID/window, destination and filename. Request the normal foreground cmd shift g hotkey on that exact modal session once. Observe the resulting folder control before typing the actual project exports directory, confirm destination/filename, then save once only there. If nested modal has another actual window identity, require explicit proven rebinding. Independently inspect actual output and full decode under SUN32. No parent-key exception, outside-project save, second unlock or uncertain-outcome retry.
+Predicts: original sheet remains exact key, Go to Folder appears through one guarded dispatch and the project path can be selected before Save; final file exists only at the requested path.
+Against: any ownership/key/resolver guard refuses, input is unknown, another window receives input, project location cannot be proven, no file arrives or the export is not the intended complete MP3.
+Refs: docs/notebook/2026-11-10-save-modal-binding.md; output/suno-20261110/save-b-before-resolver-look.txt; output/suno-20261110/save-b-set-filename.txt
