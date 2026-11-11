@@ -346,7 +346,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--browser", action="store_true", help="footwork's own Chrome through the Driver's DevTools route"
     )
     st.add_argument("--url")
-    st.add_argument("--window")
+    window_selector = st.add_mutually_exclusive_group()
+    window_selector.add_argument("--window", help="native window title substring")
+    window_selector.add_argument("--window-id", type=int, help="native exact positive CGWindowID; requires --pid and includes untitled windows")
     st.add_argument(
         "--native-menu-cap", type=_native_menu_cap, default=160,
         help="native candidate budget, persisted for this session (1-1000; default: 160)",

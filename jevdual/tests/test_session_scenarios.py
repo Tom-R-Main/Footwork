@@ -2317,6 +2317,55 @@ def test_public_save_modal_session_keeps_exact_window_hotkey_binding(world, fw, 
     assert mutations == []  # the SDK already proved the requested modal key; no AXMain/AXRaise needed
 
 
+@pytest.mark.parametrize("variant", ["untitled", "stale", "wrong_pid", "duplicate", "observation_drift"])
+def test_start_exact_window_id_binds_only_observed_owned_window(world, fw, monkeypatch, variant):
+    calls = []
+    world.base.update(pid=88 if variant == "observation_drift" else 77, window_id=60066,
+                      window_title=None, app_name="Calculator")
+    world.base["elements"] = [{"element_index": 0, "role": "AXSheet", "label": "GoToWindow"}]
+
+    async def windows(inp):
+        calls.append(inp.pid)
+        if inp.pid != 77:
+            return SimpleNamespace(windows=[])
+        rows = [SimpleNamespace(window_id=40335, title="Main document", bounds=SimpleNamespace(width=1200, height=900)),
+                SimpleNamespace(window_id=60066, title=None, bounds=SimpleNamespace(width=460, height=343))]
+        if variant == "duplicate": rows.append(rows[1])
+        return SimpleNamespace(windows=rows)
+
+    monkeypatch.setattr(world, "list_windows", windows)
+    code, out, err = fw("start", "Navigate own untitled folder panel", "--app", "Calculator",
+                        "--pid", "88" if variant == "wrong_pid" else "77", "--window-id",
+                        "60067" if variant == "stale" else "60066")
+    assert calls == [88 if variant == "wrong_pid" else 77]
+    if variant == "untitled":
+        assert code == 0 and _state(fw)["window_id"] == 60066, (out, err)
+        assert _state(fw)["pid"] == 77
+    else:
+        assert code == 2 and "not starting" in err, (out, err)
+        assert not (fw.session / "session.json").exists()
+    assert world.tool_calls == [] and world.presses == []
+
+
+@pytest.mark.parametrize("variant", ["missing_pid", "zero", "negative", "too_large", "noninteger", "title", "empty_title", "browser", "url"])
+def test_start_invalid_exact_window_selector_refuses_before_binding_and_reset(world, fw, monkeypatch, variant):
+    assert fw("start", "Keep existing observed session", "--app", "Calculator")[0] == 0
+    before = {name: (fw.session / name).read_bytes() for name in ("session.json", "session.jsonl")}
+
+    def forbidden(**kwargs):
+        pytest.fail("invalid exact window selector must refuse before binding")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    value = {"zero": "0", "negative": "-1", "too_large": "4294967296", "noninteger": "not-an-id"}.get(variant, "60066")
+    args = ["start", "Replace session only after valid exact binding", "--app", "Calculator", "--window-id", value]
+    if variant != "missing_pid": args.extend(["--pid", "77"])
+    if variant in ("title", "empty_title"): args.extend(["--window", "" if variant == "empty_title" else "Save"])
+    if variant == "browser": args.append("--browser")
+    if variant == "url": args.extend(["--url", "https://example.test/"])
+    assert fw(*args)[0] == 2
+    assert all((fw.session / name).read_bytes() == old for name, old in before.items())
+
+
 def test_lf_representation_receipt_keeps_selected_range_full_value_strict(world, fw, monkeypatch):
     _foreground_selection_fixture(world, monkeypatch, actual_after="A\nB\n")
     assert fw("start", "Edit own selected lyrics", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0

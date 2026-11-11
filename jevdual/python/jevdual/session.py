@@ -1283,6 +1283,14 @@ async def cmd_start(args: Any) -> int:
     operations = getattr(args, "_operations", None)
     durable = bool(getattr(args, "authority", None))
     explicit_pid = getattr(args, "pid", None)
+    explicit_window_id = getattr(args, "window_id", None)
+    if explicit_window_id is not None and (
+        explicit_pid is None or type(explicit_window_id) is not int or not 0 < explicit_window_id <= 0xFFFFFFFF
+        or getattr(args, "window", None) is not None or getattr(args, "browser", False) or getattr(args, "url", None)
+    ):
+        print("not starting: --window-id requires a positive native CGWindowID and --pid; "
+              "--window, --browser and --url are incompatible", file=sys.stderr)
+        return 2
     if getattr(args, "browser", False) and getattr(args, "native_menu_cap", 160) != 160:
         print("not starting: --native-menu-cap requires a native session", file=sys.stderr)
         return 2
@@ -1370,7 +1378,10 @@ async def cmd_start(args: Any) -> int:
         try:
             if explicit_pid is not None:
                 pid = explicit_pid
-                wid, title = await find_window_for_pid(driver, pid, title_contains=args.window or "")
+                wid, title = await find_window_for_pid(
+                    driver, pid, title_contains=args.window or "",
+                    **({"window_id": explicit_window_id} if explicit_window_id is not None else {}),
+                )
             else:
                 pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
             if finder_scope:
@@ -1380,6 +1391,8 @@ async def cmd_start(args: Any) -> int:
                 windows = await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))
                 matches = []
                 for window in windows.windows:
+                    if explicit_window_id is not None and window.window_id != explicit_window_id:
+                        continue
                     if args.window and args.window.casefold() not in window.title.casefold():
                         continue
                     try:

@@ -141,6 +141,10 @@ def test_schema_reports_actual_required_arguments(capsys):
     assert "UTF-16" in fields["web_text_range"]["help"]
     assert fields["click_delivery"]["required"] is False
     assert fields["click_delivery"]["choices"] == ["foreground"]
+    assert route(["schema", "desktop", "start"], lambda args: 99) == 0
+    fields = {r["name"]: r for r in json.loads(capsys.readouterr().out)["arguments"]}
+    assert fields["window_id"]["required"] is False
+    assert "untitled" in fields["window_id"]["help"]
 
 
 def test_doctor_includes_optional_families_and_preserves_strict_code(monkeypatch, capsys):

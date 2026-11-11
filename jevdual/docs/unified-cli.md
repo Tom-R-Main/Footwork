@@ -158,6 +158,15 @@ then sends one SDK foreground click addressed by its fresh element token. Errors
 without retry or automatic fallback. The default remains background delivery. A click acknowledgement
 does not establish that the menu opened; reobserve its actual controls before continuing.
 
+To bind an observed untitled native panel, use `footwork start "Panel task" --app "Google Chrome"
+--pid PID --window-id CGWINDOWID`. Both IDs must be positive; the window ID must fit unsigned32 bits.
+The exact ID must appear once in that process's on-screen SDK window list, including untitled entries.
+An absent or duplicate ID refuses without falling back to a titled or larger window. `--window-id`
+requires `--pid` and cannot be combined with `--window`, `--browser` or `--url`. Invalid combinations
+refuse before driver creation or session reset. Later observed PID/window checks, posture and target
+guards remain in force. A panel opening a nested modal requires a new explicit observed binding;
+the caller's parent window never implicitly routes input to its child.
+
 For a read-only DOM observation, use `footwork browser lightpanda read URL --executable /absolute/lightpanda`.
 This separate profile owns one fresh external prebuilt engine and connection, withholds input/editable
 values, and supplies no input authority or geometry. Run `footwork browser lightpanda artifact` and

@@ -3223,13 +3223,22 @@ async def find_window(driver: Any, app_name: str, *, title_contains: str = "") -
     return pid, w.window_id, w.title
 
 
-async def find_window_for_pid(driver: Any, pid: int, *, title_contains: str = "") -> tuple[int, str]:
+async def find_window_for_pid(
+    driver: Any, pid: int, *, title_contains: str = "", window_id: int | None = None
+) -> tuple[int, str]:
     """``(window_id, title)`` of the largest on-screen titled window of one process (whose title contains
     ``title_contains`` when given), or raise ``LookupError``. Used after ``launch_app`` returned the pid of a
     fresh instance: ``list_apps`` reports one pid per bundle, so a second instance is invisible to it."""
     from jevdual.effectors.cua import list_windows_input
 
+    if window_id is not None and (type(window_id) is not int or not 0 < window_id <= 0xFFFFFFFF or title_contains):
+        raise LookupError("exact native window selection needs a positive CGWindowID without a title filter")
     wins = await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))
+    if window_id is not None:
+        matches = [window for window in wins.windows if window.window_id == window_id]
+        if len(matches) != 1:
+            raise LookupError(f"pid {pid} has {len(matches)} on-screen windows matching exact CGWindowID {window_id}; no fallback")
+        return matches[0].window_id, matches[0].title or ""
     titled = [w for w in wins.windows if w.title]
     if title_contains:
         titled = [w for w in titled if title_contains.casefold() in w.title.casefold()]

@@ -1,0 +1,179 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+____ test_start_exact_window_id_binds_only_observed_owned_window[untitled] _____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...k]]\n', 'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 60066, 'window_title': None})
+fw = <function fw.<locals>.run at 0x1048e5120>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104aa0e90>
+variant = 'untitled'
+
+    @pytest.mark.parametrize("variant", ["untitled", "stale", "wrong_pid", "duplicate", "observation_drift"])
+    def test_start_exact_window_id_binds_only_observed_owned_window(world, fw, monkeypatch, variant):
+        calls = []
+        world.base.update(pid=88 if variant == "observation_drift" else 77, window_id=60066,
+                          window_title=None, app_name="Calculator")
+        world.base["elements"] = [{"element_index": 0, "role": "AXSheet", "label": "GoToWindow"}]
+    
+        async def windows(inp):
+            calls.append(inp.pid)
+            if inp.pid != 77:
+                return SimpleNamespace(windows=[])
+            rows = [SimpleNamespace(window_id=40335, title="Main document", bounds=SimpleNamespace(width=1200, height=900)),
+                    SimpleNamespace(window_id=60066, title=None, bounds=SimpleNamespace(width=460, height=343))]
+            if variant == "duplicate": rows.append(rows[1])
+            return SimpleNamespace(windows=rows)
+    
+        monkeypatch.setattr(world, "list_windows", windows)
+        code, out, err = fw("start", "Navigate own untitled folder panel", "--app", "Calculator",
+                            "--pid", "88" if variant == "wrong_pid" else "77", "--window-id",
+                            "60067" if variant == "stale" else "60066")
+>       assert calls == [88 if variant == "wrong_pid" else 77]
+E       assert [] == [77]
+E         
+E         Right contains one more item: 77
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:2340: AssertionError
+______ test_start_exact_window_id_binds_only_observed_owned_window[stale] ______
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...k]]\n', 'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 60066, 'window_title': None})
+fw = <function fw.<locals>.run at 0x10470fba0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104aa0650>
+variant = 'stale'
+
+    @pytest.mark.parametrize("variant", ["untitled", "stale", "wrong_pid", "duplicate", "observation_drift"])
+    def test_start_exact_window_id_binds_only_observed_owned_window(world, fw, monkeypatch, variant):
+        calls = []
+        world.base.update(pid=88 if variant == "observation_drift" else 77, window_id=60066,
+                          window_title=None, app_name="Calculator")
+        world.base["elements"] = [{"element_index": 0, "role": "AXSheet", "label": "GoToWindow"}]
+    
+        async def windows(inp):
+            calls.append(inp.pid)
+            if inp.pid != 77:
+                return SimpleNamespace(windows=[])
+            rows = [SimpleNamespace(window_id=40335, title="Main document", bounds=SimpleNamespace(width=1200, height=900)),
+                    SimpleNamespace(window_id=60066, title=None, bounds=SimpleNamespace(width=460, height=343))]
+            if variant == "duplicate": rows.append(rows[1])
+            return SimpleNamespace(windows=rows)
+    
+        monkeypatch.setattr(world, "list_windows", windows)
+        code, out, err = fw("start", "Navigate own untitled folder panel", "--app", "Calculator",
+                            "--pid", "88" if variant == "wrong_pid" else "77", "--window-id",
+                            "60067" if variant == "stale" else "60066")
+>       assert calls == [88 if variant == "wrong_pid" else 77]
+E       assert [] == [77]
+E         
+E         Right contains one more item: 77
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:2340: AssertionError
+____ test_start_exact_window_id_binds_only_observed_owned_window[wrong_pid] ____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...k]]\n', 'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 60066, 'window_title': None})
+fw = <function fw.<locals>.run at 0x10470fc40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10471fe90>
+variant = 'wrong_pid'
+
+    @pytest.mark.parametrize("variant", ["untitled", "stale", "wrong_pid", "duplicate", "observation_drift"])
+    def test_start_exact_window_id_binds_only_observed_owned_window(world, fw, monkeypatch, variant):
+        calls = []
+        world.base.update(pid=88 if variant == "observation_drift" else 77, window_id=60066,
+                          window_title=None, app_name="Calculator")
+        world.base["elements"] = [{"element_index": 0, "role": "AXSheet", "label": "GoToWindow"}]
+    
+        async def windows(inp):
+            calls.append(inp.pid)
+            if inp.pid != 77:
+                return SimpleNamespace(windows=[])
+            rows = [SimpleNamespace(window_id=40335, title="Main document", bounds=SimpleNamespace(width=1200, height=900)),
+                    SimpleNamespace(window_id=60066, title=None, bounds=SimpleNamespace(width=460, height=343))]
+            if variant == "duplicate": rows.append(rows[1])
+            return SimpleNamespace(windows=rows)
+    
+        monkeypatch.setattr(world, "list_windows", windows)
+        code, out, err = fw("start", "Navigate own untitled folder panel", "--app", "Calculator",
+                            "--pid", "88" if variant == "wrong_pid" else "77", "--window-id",
+                            "60067" if variant == "stale" else "60066")
+>       assert calls == [88 if variant == "wrong_pid" else 77]
+E       assert [] == [88]
+E         
+E         Right contains one more item: 88
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:2340: AssertionError
+____ test_start_exact_window_id_binds_only_observed_owned_window[duplicate] ____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...k]]\n', 'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 60066, 'window_title': None})
+fw = <function fw.<locals>.run at 0x10487b240>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104628560>
+variant = 'duplicate'
+
+    @pytest.mark.parametrize("variant", ["untitled", "stale", "wrong_pid", "duplicate", "observation_drift"])
+    def test_start_exact_window_id_binds_only_observed_owned_window(world, fw, monkeypatch, variant):
+        calls = []
+        world.base.update(pid=88 if variant == "observation_drift" else 77, window_id=60066,
+                          window_title=None, app_name="Calculator")
+        world.base["elements"] = [{"element_index": 0, "role": "AXSheet", "label": "GoToWindow"}]
+    
+        async def windows(inp):
+            calls.append(inp.pid)
+            if inp.pid != 77:
+                return SimpleNamespace(windows=[])
+            rows = [SimpleNamespace(window_id=40335, title="Main document", bounds=SimpleNamespace(width=1200, height=900)),
+                    SimpleNamespace(window_id=60066, title=None, bounds=SimpleNamespace(width=460, height=343))]
+            if variant == "duplicate": rows.append(rows[1])
+            return SimpleNamespace(windows=rows)
+    
+        monkeypatch.setattr(world, "list_windows", windows)
+        code, out, err = fw("start", "Navigate own untitled folder panel", "--app", "Calculator",
+                            "--pid", "88" if variant == "wrong_pid" else "77", "--window-id",
+                            "60067" if variant == "stale" else "60066")
+>       assert calls == [88 if variant == "wrong_pid" else 77]
+E       assert [] == [77]
+E         
+E         Right contains one more item: 77
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:2340: AssertionError
+_ test_start_exact_window_id_binds_only_observed_owned_window[observation_drift] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...k]]\n', 'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 60066, 'window_title': None})
+fw = <function fw.<locals>.run at 0x104639800>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104853890>
+variant = 'observation_drift'
+
+    @pytest.mark.parametrize("variant", ["untitled", "stale", "wrong_pid", "duplicate", "observation_drift"])
+    def test_start_exact_window_id_binds_only_observed_owned_window(world, fw, monkeypatch, variant):
+        calls = []
+        world.base.update(pid=88 if variant == "observation_drift" else 77, window_id=60066,
+                          window_title=None, app_name="Calculator")
+        world.base["elements"] = [{"element_index": 0, "role": "AXSheet", "label": "GoToWindow"}]
+    
+        async def windows(inp):
+            calls.append(inp.pid)
+            if inp.pid != 77:
+                return SimpleNamespace(windows=[])
+            rows = [SimpleNamespace(window_id=40335, title="Main document", bounds=SimpleNamespace(width=1200, height=900)),
+                    SimpleNamespace(window_id=60066, title=None, bounds=SimpleNamespace(width=460, height=343))]
+            if variant == "duplicate": rows.append(rows[1])
+            return SimpleNamespace(windows=rows)
+    
+        monkeypatch.setattr(world, "list_windows", windows)
+        code, out, err = fw("start", "Navigate own untitled folder panel", "--app", "Calculator",
+                            "--pid", "88" if variant == "wrong_pid" else "77", "--window-id",
+                            "60067" if variant == "stale" else "60066")
+>       assert calls == [88 if variant == "wrong_pid" else 77]
+E       assert [] == [77]
+E         
+E         Right contains one more item: 77
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:2340: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_start_exact_window_id_binds_only_observed_owned_window[untitled]
+FAILED tests/test_session_scenarios.py::test_start_exact_window_id_binds_only_observed_owned_window[stale]
+FAILED tests/test_session_scenarios.py::test_start_exact_window_id_binds_only_observed_owned_window[wrong_pid]
+FAILED tests/test_session_scenarios.py::test_start_exact_window_id_binds_only_observed_owned_window[duplicate]
+FAILED tests/test_session_scenarios.py::test_start_exact_window_id_binds_only_observed_owned_window[observation_drift]
+5 failed, 311 deselected in 0.64s
