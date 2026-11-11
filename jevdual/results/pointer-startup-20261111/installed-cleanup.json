@@ -1,0 +1,85 @@
+{
+  "source": "/Users/thomasmain/.local/share/footwork/releases/2930faf4bfa5818fb33bd3369e92f843810ded13/lib/python3.12/site-packages/jevdual/__init__.py",
+  "target": "2930faf4bfa5818fb33bd3369e92f843810ded13",
+  "criteria_passed": 15,
+  "criteria_total": 15,
+  "gestures": [
+    {
+      "kind": "place",
+      "label": "setup",
+      "from": [
+        714.96875,
+        595.5625
+      ],
+      "to": [
+        200.0,
+        287.0
+      ],
+      "samples": 1,
+      "outcome": "arrived"
+    },
+    {
+      "kind": "approach",
+      "label": "Coordination target",
+      "from": [
+        200.0,
+        287.0
+      ],
+      "to": [
+        550.0,
+        477.0
+      ],
+      "samples": 87,
+      "duration_s": 0.896437356998477,
+      "posted": 86,
+      "max_gap_ms": 21.6,
+      "stall_gap_ms": null,
+      "max_post_ms": 11.7,
+      "max_ack_ms": 9.8,
+      "outcome": "arrived"
+    }
+  ],
+  "expected": [
+    550.0,
+    477.0
+  ],
+  "observed": [
+    550.0,
+    477.0
+  ],
+  "owned_pids_present": [],
+  "requests": [],
+  "owned_reservations": [
+    {
+      "token": "55fa888d56f946f380874675f28143da",
+      "state": "revoked"
+    },
+    {
+      "token": "ee3de9f95f3a46989a7eb9032d23bc4f",
+      "state": "revoked"
+    },
+    {
+      "token": "750d6c808d164208ad5ef00451201770",
+      "state": "revoked"
+    },
+    {
+      "token": "e6652e08473d4b10ab733023b14d88de",
+      "state": "revoked"
+    }
+  ],
+  "video": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 2024,
+        "height": 1524
+      }
+    ],
+    "format": {
+      "duration": "6.086667",
+      "size": "282243"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "source_commit": "2930faf4bfa5818fb33bd3369e92f843810ded13",
+  "source_tree": "11666cce7a1009be6959176117bd81b6cd5791ad",
+  "source_merged": false,
+  "active_release": "/Users/thomasmain/.local/share/footwork/releases/2930faf4bfa5818fb33bd3369e92f843810ded13",
+  "previous_release": "/Users/thomasmain/.local/share/footwork/releases/f821f032a81ba567a4c20298789fae55f79edc78",
+  "launcher_unchanged": true,
+  "offline_install": true,
+  "qualification": {
+    "installed_bytes": "passed",
+    "installed_discovery": "passed",
+    "native_immediate_start": "pending"
+  }
+}

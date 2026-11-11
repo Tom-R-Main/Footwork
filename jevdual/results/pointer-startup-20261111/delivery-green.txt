@@ -1,0 +1,36 @@
+..FF............                                                         [100%]
+=================================== FAILURES ===================================
+______ test_missing_delivery_stalls_without_queuing_more_input[play_move] ______
+
+player = <function play_move at 0x106279620>
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    def test_missing_delivery_stalls_without_queuing_more_input(player):
+        clock = Clock()
+        poster = DelayedPoster(clock, delay=float('inf'))
+        result = player(plan(), poster, clock)
+        assert result.outcome == 'aborted:playback_stall'
+>       assert result.stall_gap_s >= .05
+E       AssertionError: assert 0.04999999999999716 >= 0.05
+E        +  where 0.04999999999999716 = DragResult(outcome='aborted:playback_stall', posted_drags=1, released_at=None, escape_sent=False, causes=['playback_st...0.010000000000005116, lateness_s=[0.0], stall_gap_s=0.04999999999999716, max_post_s=0.0, max_ack_s=0.04999999999999716).stall_gap_s
+
+tests/test_pointer_delivery.py:96: AssertionError
+______ test_missing_delivery_stalls_without_queuing_more_input[play_drag] ______
+
+player = <function play_drag at 0x106279760>
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    def test_missing_delivery_stalls_without_queuing_more_input(player):
+        clock = Clock()
+        poster = DelayedPoster(clock, delay=float('inf'))
+        result = player(plan(), poster, clock)
+        assert result.outcome == 'aborted:playback_stall'
+>       assert result.stall_gap_s >= .05
+E       AssertionError: assert 0.04999999999999716 >= 0.05
+E        +  where 0.04999999999999716 = DragResult(outcome='aborted:playback_stall', posted_drags=1, released_at=(5.0, 0.0), escape_sent=True, causes=['playba...0.010000000000005116, lateness_s=[0.0], stall_gap_s=0.04999999999999716, max_post_s=0.0, max_ack_s=0.04999999999999716).stall_gap_s
+
+tests/test_pointer_delivery.py:96: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_pointer_delivery.py::test_missing_delivery_stalls_without_queuing_more_input[play_move]
+FAILED tests/test_pointer_delivery.py::test_missing_delivery_stalls_without_queuing_more_input[play_drag]
+2 failed, 14 passed, 144 deselected in 0.55s

@@ -1,0 +1,302 @@
+FFFFFF..FFFFFF                                                           [100%]
+=================================== FAILURES ===================================
+_ test_delayed_own_delivery_is_acknowledged_before_next_post_and_success[play_move-arrived] _
+
+player = <function play_move at 0x107df1b20>, success = 'arrived'
+
+    @pytest.mark.parametrize('player,success', [(play_move, 'arrived'), (play_drag, 'dropped')])
+    def test_delayed_own_delivery_is_acknowledged_before_next_post_and_success(player, success):
+        clock = Clock()
+        poster = DelayedPoster(clock)
+        result = player(plan(), poster, clock)
+>       assert result.outcome == success
+E       AssertionError: assert 'aborted:poin...moved 0.0,0.0' == 'arrived'
+E
+E         - arrived
+E         + aborted:pointer_contended:pointer_moved 0.0,0.0
+
+tests/test_pointer_delivery.py:83: AssertionError
+_ test_delayed_own_delivery_is_acknowledged_before_next_post_and_success[play_drag-dropped] _
+
+player = <function play_drag at 0x107df1c60>, success = 'dropped'
+
+    @pytest.mark.parametrize('player,success', [(play_move, 'arrived'), (play_drag, 'dropped')])
+    def test_delayed_own_delivery_is_acknowledged_before_next_post_and_success(player, success):
+        clock = Clock()
+        poster = DelayedPoster(clock)
+        result = player(plan(), poster, clock)
+>       assert result.outcome == success
+E       AssertionError: assert 'aborted:poin...moved 0.0,0.0' == 'dropped'
+E
+E         - dropped
+E         + aborted:pointer_contended:pointer_moved 0.0,0.0
+
+tests/test_pointer_delivery.py:83: AssertionError
+______ test_missing_delivery_stalls_without_queuing_more_input[play_move] ______
+
+player = <function play_move at 0x107df1b20>
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    def test_missing_delivery_stalls_without_queuing_more_input(player):
+        clock = Clock()
+        poster = DelayedPoster(clock, delay=float('inf'))
+        result = player(plan(), poster, clock)
+>       assert result.outcome == 'aborted:playback_stall'
+E       AssertionError: assert 'aborted:poin...moved 0.0,0.0' == 'aborted:playback_stall'
+E
+E         - aborted:playback_stall
+E         + aborted:pointer_contended:pointer_moved 0.0,0.0
+
+tests/test_pointer_delivery.py:96: AssertionError
+______ test_missing_delivery_stalls_without_queuing_more_input[play_drag] ______
+
+player = <function play_drag at 0x107df1c60>
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    def test_missing_delivery_stalls_without_queuing_more_input(player):
+        clock = Clock()
+        poster = DelayedPoster(clock, delay=float('inf'))
+        result = player(plan(), poster, clock)
+>       assert result.outcome == 'aborted:playback_stall'
+E       AssertionError: assert 'aborted:poin...moved 0.0,0.0' == 'aborted:playback_stall'
+E
+E         - aborted:playback_stall
+E         + aborted:pointer_contended:pointer_moved 0.0,0.0
+
+tests/test_pointer_delivery.py:96: AssertionError
+____________ test_slow_final_post_cannot_return_success[play_move] _____________
+
+player = <function play_move at 0x107df1b20>
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    def test_slow_final_post_cannot_return_success(player):
+        clock = Clock()
+        poster = DelayedPoster(clock, delay=0.)
+        poster.final_post_cost = .2
+        result = player(plan(5), poster, clock)
+>       assert result.outcome == 'aborted:playback_stall'
+E       AssertionError: assert 'arrived' == 'aborted:playback_stall'
+E
+E         - aborted:playback_stall
+E         + arrived
+
+tests/test_pointer_delivery.py:109: AssertionError
+____________ test_slow_final_post_cannot_return_success[play_drag] _____________
+
+player = <function play_drag at 0x107df1c60>
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    def test_slow_final_post_cannot_return_success(player):
+        clock = Clock()
+        poster = DelayedPoster(clock, delay=0.)
+        poster.final_post_cost = .2
+        result = player(plan(5), poster, clock)
+>       assert result.outcome == 'aborted:playback_stall'
+E       AssertionError: assert 'dropped' == 'aborted:playback_stall'
+E
+E         - aborted:playback_stall
+E         + dropped
+
+tests/test_pointer_delivery.py:109: AssertionError
+_ test_delivery_wait_retains_cancellation_and_foreign_key_fences[cancel-play_move] _
+
+player = <function play_move at 0x107df1b20>, interruption = 'cancel'
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    @pytest.mark.parametrize('interruption', ['cancel', 'foreign_key'])
+    def test_delivery_wait_retains_cancellation_and_foreign_key_fences(player, interruption):
+        clock = Clock()
+        poster = DelayedPoster(clock)
+        moving_start = 100.12 if player is play_drag else 100.
+        interrupted = lambda: clock.now() >= moving_start + .025
+        if interruption == 'foreign_key':
+            poster.foreign = lambda: 'key_down' if interrupted() else None
+        result = player(plan(), poster, clock,
+                        cancelled=interrupted if interruption == 'cancel' else lambda: False)
+        expected = 'cancelled' if interruption == 'cancel' else 'pointer_contended:key_down'
+>       assert result.outcome == 'aborted:' + expected
+E       AssertionError: assert 'aborted:poin...moved 0.0,0.0' == 'aborted:cancelled'
+E
+E         - aborted:cancelled
+E         + aborted:pointer_contended:pointer_moved 0.0,0.0
+
+tests/test_pointer_delivery.py:143: AssertionError
+_ test_delivery_wait_retains_cancellation_and_foreign_key_fences[cancel-play_drag] _
+
+player = <function play_drag at 0x107df1c60>, interruption = 'cancel'
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    @pytest.mark.parametrize('interruption', ['cancel', 'foreign_key'])
+    def test_delivery_wait_retains_cancellation_and_foreign_key_fences(player, interruption):
+        clock = Clock()
+        poster = DelayedPoster(clock)
+        moving_start = 100.12 if player is play_drag else 100.
+        interrupted = lambda: clock.now() >= moving_start + .025
+        if interruption == 'foreign_key':
+            poster.foreign = lambda: 'key_down' if interrupted() else None
+        result = player(plan(), poster, clock,
+                        cancelled=interrupted if interruption == 'cancel' else lambda: False)
+        expected = 'cancelled' if interruption == 'cancel' else 'pointer_contended:key_down'
+>       assert result.outcome == 'aborted:' + expected
+E       AssertionError: assert 'aborted:poin...moved 0.0,0.0' == 'aborted:cancelled'
+E
+E         - aborted:cancelled
+E         + aborted:pointer_contended:pointer_moved 0.0,0.0
+
+tests/test_pointer_delivery.py:143: AssertionError
+_ test_delivery_wait_retains_cancellation_and_foreign_key_fences[foreign_key-play_move] _
+
+player = <function play_move at 0x107df1b20>, interruption = 'foreign_key'
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    @pytest.mark.parametrize('interruption', ['cancel', 'foreign_key'])
+    def test_delivery_wait_retains_cancellation_and_foreign_key_fences(player, interruption):
+        clock = Clock()
+        poster = DelayedPoster(clock)
+        moving_start = 100.12 if player is play_drag else 100.
+        interrupted = lambda: clock.now() >= moving_start + .025
+        if interruption == 'foreign_key':
+            poster.foreign = lambda: 'key_down' if interrupted() else None
+        result = player(plan(), poster, clock,
+                        cancelled=interrupted if interruption == 'cancel' else lambda: False)
+        expected = 'cancelled' if interruption == 'cancel' else 'pointer_contended:key_down'
+>       assert result.outcome == 'aborted:' + expected
+E       AssertionError: assert 'aborted:poin...moved 0.0,0.0' == 'aborted:poin...nded:key_down'
+E
+E         - aborted:pointer_contended:key_down
+E         + aborted:pointer_contended:pointer_moved 0.0,0.0
+
+tests/test_pointer_delivery.py:143: AssertionError
+_ test_delivery_wait_retains_cancellation_and_foreign_key_fences[foreign_key-play_drag] _
+
+player = <function play_drag at 0x107df1c60>, interruption = 'foreign_key'
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    @pytest.mark.parametrize('interruption', ['cancel', 'foreign_key'])
+    def test_delivery_wait_retains_cancellation_and_foreign_key_fences(player, interruption):
+        clock = Clock()
+        poster = DelayedPoster(clock)
+        moving_start = 100.12 if player is play_drag else 100.
+        interrupted = lambda: clock.now() >= moving_start + .025
+        if interruption == 'foreign_key':
+            poster.foreign = lambda: 'key_down' if interrupted() else None
+        result = player(plan(), poster, clock,
+                        cancelled=interrupted if interruption == 'cancel' else lambda: False)
+        expected = 'cancelled' if interruption == 'cancel' else 'pointer_contended:key_down'
+>       assert result.outcome == 'aborted:' + expected
+E       AssertionError: assert 'aborted:poin...moved 0.0,0.0' == 'aborted:poin...nded:key_down'
+E
+E         - aborted:pointer_contended:key_down
+E         + aborted:pointer_contended:pointer_moved 0.0,0.0
+
+tests/test_pointer_delivery.py:143: AssertionError
+_ test_real_poster_prepares_cold_mouse_bridge_without_input_before_timed_playback _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107e437d0>
+
+    def test_real_poster_prepares_cold_mouse_bridge_without_input_before_timed_playback(monkeypatch):
+        clock = Clock()
+
+        class Quartz:
+            kCGEventSourceStateHIDSystemState = 1
+            kCGEventSourceStateCombinedSessionState = 2
+            kCGEventKeyDown = 10
+            kCGEventLeftMouseDown = 1
+            kCGEventRightMouseDown = 3
+            kCGEventOtherMouseDown = 25
+            kCGEventMouseMoved = 5
+            kCGMouseButtonLeft = 0
+            kCGEventSourceUserData = 42
+            kCGHIDEventTap = 0
+
+            def __init__(self):
+                self.created = 0
+                self.posts = []
+                self.pointer = SimpleNamespace(x=0., y=0.)
+
+            def CGEventSourceCreate(self, state):
+                return object()
+
+            def CGEventSourceCounterForEventType(self, state, kind):
+                return 0
+
+            def CGPointMake(self, x, y):
+                return SimpleNamespace(x=x, y=y)
+
+            def CGEventCreateMouseEvent(self, source, kind, point, button):
+                if not self.created:
+                    clock.t += .2
+                self.created += 1
+                return {'point': point}
+
+            def CGEventSetIntegerValueField(self, event, field, value):
+                event[field] = value
+
+            def CGEventPost(self, tap, event):
+                self.posts.append(event)
+                self.pointer = event['point']
+
+            def CGEventCreate(self, source):
+                return {'point': self.pointer}
+
+            def CGEventGetLocation(self, event):
+                return event['point']
+
+        quartz = Quartz()
+        monkeypatch.setitem(sys.modules, 'Quartz', quartz)
+        poster = QuartzPoster()
+        assert quartz.posts == [], 'bridge preparation must not move the real pointer'
+        result = play_move(plan(), poster, clock)
+>       assert result.outcome == 'arrived'
+E       AssertionError: assert 'aborted:playback_stall' == 'arrived'
+E
+E         - arrived
+E         + aborted:playback_stall
+
+tests/test_pointer_delivery.py:202: AssertionError
+_ test_filmed_point_waits_for_delayed_native_delivery_before_claiming_arrival __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x12348c680>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107e43200>
+
+    def test_filmed_point_waits_for_delayed_native_delivery_before_claiming_arrival(world, fw, monkeypatch):
+        """Public point must not classify our queued move as foreign or save an undelivered endpoint."""
+        from jevdual import ax, drag
+
+        from tests.test_filmed_session import CONTENT, WINDOW
+        from tests.test_pointer_delivery import Clock, DelayedPoster
+
+        clock = Clock()
+        poster = DelayedPoster(clock)
+        poster.pointer = (600., 400.)
+        monkeypatch.setattr(drag, 'QuartzPoster', lambda: poster)
+        monkeypatch.setattr(drag, 'MonotonicClock', lambda: clock)
+        monkeypatch.setattr(ax, 'window_element', lambda pid, wid: object())
+        monkeypatch.setattr(ax, 'frame_of', lambda element: ax.Frame(*WINDOW))
+        monkeypatch.setattr(ax, 'web_area_frame', lambda element: ax.Frame(*CONTENT))
+        monkeypatch.setattr(ax, 'labelled', lambda element, label:
+                            [('AXButton', 'Owned target', ax.Frame(440, 400, 30, 30))])
+        assert fw('start', 'Film only owned target', '--app', 'Calculator', '--mode', 'exclusive_desktop',
+                  '--pointer-motion', 'filmed')[0] == 0
+        code, _, error = fw('point', 'Owned target')
+>       assert code == 0, error
+E       AssertionError: point refused: pointer_contended: the approach aborted:pointer_contended:pointer_moved 580.4,397.6; the take ended
+E
+E       assert 4 == 0
+
+tests/test_session_scenarios.py:2447: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_pointer_delivery.py::test_delayed_own_delivery_is_acknowledged_before_next_post_and_success[play_move-arrived]
+FAILED tests/test_pointer_delivery.py::test_delayed_own_delivery_is_acknowledged_before_next_post_and_success[play_drag-dropped]
+FAILED tests/test_pointer_delivery.py::test_missing_delivery_stalls_without_queuing_more_input[play_move]
+FAILED tests/test_pointer_delivery.py::test_missing_delivery_stalls_without_queuing_more_input[play_drag]
+FAILED tests/test_pointer_delivery.py::test_slow_final_post_cannot_return_success[play_move]
+FAILED tests/test_pointer_delivery.py::test_slow_final_post_cannot_return_success[play_drag]
+FAILED tests/test_pointer_delivery.py::test_delivery_wait_retains_cancellation_and_foreign_key_fences[cancel-play_move]
+FAILED tests/test_pointer_delivery.py::test_delivery_wait_retains_cancellation_and_foreign_key_fences[cancel-play_drag]
+FAILED tests/test_pointer_delivery.py::test_delivery_wait_retains_cancellation_and_foreign_key_fences[foreign_key-play_move]
+FAILED tests/test_pointer_delivery.py::test_delivery_wait_retains_cancellation_and_foreign_key_fences[foreign_key-play_drag]
+FAILED tests/test_pointer_delivery.py::test_real_poster_prepares_cold_mouse_bridge_without_input_before_timed_playback
+FAILED tests/test_session_scenarios.py::test_filmed_point_waits_for_delayed_native_delivery_before_claiming_arrival
+12 failed, 2 passed in 0.58s

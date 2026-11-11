@@ -1,0 +1,19 @@
+{
+  "scope": ["python/jevdual/drag.py", "python/jevdual/filmed.py", "tests/test_pointer_delivery.py", "tests/test_session_scenarios.py"],
+  "reviewer": "independent fresh-context repository explorer",
+  "mode": "read-only static review; no tests or native UI performed by reviewer",
+  "findings": [],
+  "observations": [
+    "Original pre-post 50ms budget includes posting and acknowledgement; it is not reset.",
+    "A final slow post or missing delivery cannot report success.",
+    "One pending post is held until float32-equivalent location readback.",
+    "Original outside-tolerance, foreign-counter, cancellation and ownership fences remain active.",
+    "Fresh fence checks occur after scheduled sleep.",
+    "Drag abort/exception still attempts exactly one release."
+  ],
+  "limits": [
+    "Float32 readback equivalence is supported by retained observed Mac coordinates, not a universal Quartz guarantee.",
+    "Location acknowledgement establishes global pointer position, not event identity or application handling.",
+    "Immediate-start native qualification and historical stall attribution require separate runtime evidence."
+  ]
+}
