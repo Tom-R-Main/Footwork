@@ -403,3 +403,17 @@ Test: on the isolated source snapshot and unchanged SDK, navigate to the second 
 Predicts: distinct complete identifiers plus the exact document scope qualify the selected hero or player menu, inspection places it on the intended song action button, and its song menu appears.
 Against: any peer/scope/inspection guard refuses, identity changes, resource differs, the target is another UI context or popup does not expose song operations. No download confirmation before the project path is selected.
 Refs: results/native-control-identity-20261110/report.md; output/suno-20261110/runtime-a6defe1/identity.json; output/suno-20261110/control-document-scope.json
+
+## SUNU37 · update · 2026-11-10 19:20
+Resolves: SUN31 = held
+Observed: frozen a6defe1 offers both real menu controls with distinct scoped DOM IDs. Inspect-target67 binds the actual hero ellipsis (image bounds913,273to965,326), exact second-song document and qualified DOM identifier. One explicit foreground click opens the actual song menu with Edit/Download/Remix and other song operations. Download opens its format dialog. It shows existing Premier plan and67available downloads; M4A is currently selected, with MP3/WAV options and Unlock Download. No purchase, download unlock or file save has occurred yet.
+Inferred: scoped native control identity plus visual inspection resolves the actual menu blocker. The authenticated export uses the existing plan's download allowance, distinct from the opaque playback route. Chrome already asks for a save location.
+Next: choose MP3, unlock the single owned second-song export once, and save only into the task project directory.
+Refs: output/suno-20261110/inspect-song-b-menu.txt; output/suno-20261110/ready-drafts/inspection/694bc4d21a3c46df86c6209f2575a0c8.json; output/suno-20261110/song-b-actual-actions-menu.txt; output/suno-20261110/song-b-download-submenu.txt
+
+## SUN32 · prediction · 2026-11-10 19:20
+Hypothesis: Suno's authenticated owner MP3 export yields a decodable complete audio file where its progressive playback bytes did not.
+Test: frozen a6defe1 UI, actual second-song resource and existing Premier allowance67. Select MP3, inspect its selected state, click Unlock Download once, reconcile pending/completed state without retry, and choose only output/suno-20261110/exports/candidate-b.mp3 in the ask-where save dialog. Verify actual file signature, decode, duration near204.8seconds and hash. Stop at any purchase/account-change prerequisite.
+Predicts: one included export reaches a project-scoped save, decodes as MP3 and matches the intended song's expected duration.
+Against: format/identity differs, unlock outcome is unknown, location cannot be controlled, a new purchase is required, save is missing or media is undecodable/wrong duration. No opaque bytes to critic.
+Refs: output/suno-20261110/download-settings-look.txt; output/suno-20261110/generated-audio/483fa375-ef3e-4cb2-b284-4e338f1d9cbf-metadata.json; output/suno-20261110/song-b-download-submenu.txt
