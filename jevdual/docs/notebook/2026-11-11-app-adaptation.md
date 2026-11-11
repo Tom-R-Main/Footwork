@@ -97,3 +97,9 @@ Test: as AAD2, except for the profile. The owner decided the test must not share
 Predicts: both sign-ins complete without an error page, and the signed-in state is observed after the relaunch and after the wait.
 Against: either provider refuses the sign-in in this browser, or the signed-in state is gone after the relaunch or the wait. A pass says sign-in works in a Footwork-launched profile; it does not test the default profile itself.
 Refs: python/jevdual/browser_driver.py; docs/repo-learning/app-adaptation/REPORT.md
+
+## AADU5 · update · 2026-11-11 23:58
+Observed: in the fresh profile launched with Footwork's arguments and a debugging port on 9555, the owner signed in to Suno and to Notion with no error reported. A copy of the profile's cookie store, read by name only, held Google account session cookies (SID, __Secure-1PSID, __Secure-3PSID, SAPISID, LSID), Suno's Clerk session cookies and Notion's token_v2, all persistent. The browser was then quit with SIGTERM and relaunched on the same profile with the same arguments. After the relaunch: Suno's readable Clerk cookie __client_uat was nonzero; app.notion.com opened the workspace page directly and a same-origin getSpaces call returned 200; the Google session cookies were still present (results/signin-20261111/after-relaunch.json). The owner noted the Notion account used here is not the one used in daily work.
+Inferred: the first two parts of AAD7 hold: sign-in completes in a browser started with a debugging port, and it survives a restart. That Notion was reached through Google sign-in is consistent with the Google cookies but was not observed directly. Token renewal is not yet tested.
+Next: leave the browser open with the Suno and Notion tabs and repeat the check after at least one hour, then resolve AAD7.
+Refs: results/signin-20261111/after-relaunch.json; scripts/probe_signin_state.py
