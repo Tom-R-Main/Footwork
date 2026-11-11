@@ -324,6 +324,8 @@ def main(argv: list[str] | None = None) -> int:
     out = None
     manifest = None
     key = ""
+    encoded_media = ""
+    encoded_sidecar = ""
     request_attempted = False
     try:
         if not 1 <= args.max_media_bytes <= MAX_MEDIA_BYTES:
@@ -344,6 +346,8 @@ def main(argv: list[str] | None = None) -> int:
         media = _bounded_read(args.media, args.max_media_bytes, "media")
         audio = (_bounded_read(args.audio_sidecar, args.max_media_bytes - len(media), "audio sidecar")
                  if args.audio_sidecar is not None else None)
+        encoded_media = base64.b64encode(media).decode("ascii")
+        encoded_sidecar = base64.b64encode(audio).decode("ascii") if audio is not None else ""
         prompt_bytes = _bounded_read(args.prompt, 32 * 1024, "prompt")
         try:
             prompt = prompt_bytes.decode("utf-8")
@@ -379,7 +383,7 @@ def main(argv: list[str] | None = None) -> int:
         }
         out.mkdir(mode=0o700, parents=True, exist_ok=False)
         if not args.execute:
-            _write(out / "manifest.json", manifest, key)
+            _write(out / "manifest.json", manifest, key, encoded_media, encoded_sidecar)
             print("Dry-run: media validated; no credential read or provider request sent.")
             return 0
         request = urllib.request.Request(
@@ -387,7 +391,7 @@ def main(argv: list[str] | None = None) -> int:
                 sidecar=(audio, audio_suffix) if audio is not None else None, reasoning=args.reasoning)).encode(),
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, method="POST",
         )
-        _write(out / "request-intent.json", manifest, key)
+        _write(out / "request-intent.json", manifest, key, encoded_media, encoded_sidecar)
         request_attempted = True
         try:
             response = json.loads(_request_with_deadline(request, args.timeout, out))
@@ -413,9 +417,8 @@ def main(argv: list[str] | None = None) -> int:
         manifest.update(status="response_received" if has_text else "response_no_text",
                         provider_completion="response_received", request_attempted=True, returned_model=response.get("model"),
                         returned_provider=response.get("provider"), response_id=response.get("id"), budget_report=budget)
-        _write(out / "response.json", result, key, base64.b64encode(media).decode("ascii"),
-               base64.b64encode(audio).decode("ascii") if audio is not None else "")
-        _write(out / "manifest.json", manifest, key)
+        _write(out / "response.json", result, key, encoded_media, encoded_sidecar)
+        _write(out / "manifest.json", manifest, key, encoded_media, encoded_sidecar)
         if budget["reasoning_disable_status"] == "not_honored":
             print("Warning: provider reported reasoning tokens despite disable request; no retry.", file=sys.stderr)
         if budget["completion_tokens_exceed_requested_max"] is True:
@@ -444,7 +447,7 @@ def main(argv: list[str] | None = None) -> int:
         manifest.update(status="failed", request_attempted=request_attempted,
                         provider_completion=completion, error=error)
         try:
-            _write(out / "manifest.json", manifest, key)
+            _write(out / "manifest.json", manifest, key, encoded_media, encoded_sidecar)
         except OSError:
             pass
     print(json.dumps(error), file=sys.stderr)

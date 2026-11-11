@@ -13,3 +13,10 @@ Test: public helper with a deterministic mkdir boundary that creates a competing
 Predicts: baseline writes a failed manifest into the competing directory; recording ownership only after successful mkdir prevents every loser write and keeps owned failure evidence.
 Against: baseline already preserves the competing directory exactly, losing creation dispatches a request, or the repair suppresses owned failure evidence or modifies existing files.
 Refs: scripts/openrouter_media_review.py; tests/test_openrouter_media_review.py
+
+## MEIU1 · update · 2026-11-11 00:11
+Resolves: MEI1 = held
+Observed: both new metadata-echo cases failed on the baseline, including the response-persistence failure path. After passing primary and sidecar encodings to every main artifact writer, all63 helper/notebook checks pass; hashes, reported cost and one-request behavior remain covered. Changed-file Ruff and notebook validation pass.
+Changes: known sensitive encodings are computed after bounded media reads and applied consistently to dry-run, intent, response, success-manifest and failure-manifest writes.
+Next: reproduce and repair output-directory ownership under MEI2. No live credentials, provider requests or UI were used.
+Refs: results/media-evidence-integrity-20261111/red-redaction.txt; results/media-evidence-integrity-20261111/green-redaction.txt; prediction581abf0

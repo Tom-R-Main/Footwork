@@ -575,3 +575,48 @@ def test_invalid_inputs_never_request(setup, monkeypatch, kind, tmp_path):
     monkeypatch.setattr(review, "_request_with_deadline", lambda *a: pytest.fail("invalid input sent request"))
     assert review.main([*argv, "--execute", "--env-file", str(env)]) == 1
     assert not out.exists()
+
+
+@pytest.mark.parametrize("persistence_failure", [False, True])
+def test_metadata_media_echoes_redacted_from_every_artifact(setup, monkeypatch, capsys, persistence_failure):
+    media, _prompt, env, out, argv = setup
+    video = media.with_suffix(".mp4")
+    media.rename(video)
+    argv[1] = str(video)
+    sidecar = video.parent / "sidecar.wav"
+    sidecar.write_bytes(b"distinct-fixture-sidecar-audio")
+    primary_encoded = base64.b64encode(video.read_bytes()).decode()
+    sidecar_encoded = base64.b64encode(sidecar.read_bytes()).decode()
+    credential = "fixture-credential-do-not-print"
+    calls = []
+
+    def post(*args):
+        calls.append(args)
+        data = json.loads(response())
+        data.update(model=f"model {primary_encoded}", provider=f"provider {sidecar_encoded}",
+                    id=f"id {primary_encoded} {sidecar_encoded} {credential}")
+        data["choices"][0]["message"]["content"] = f"Review {primary_encoded} {sidecar_encoded} {credential}"
+        return json.dumps(data).encode()
+
+    original_write = review._write
+
+    def write(path, *args, **kwargs):
+        if persistence_failure and path.name == "response.json":
+            raise OSError("fixture local persistence failure")
+        return original_write(path, *args, **kwargs)
+
+    monkeypatch.setattr(review, "_request_with_deadline", post)
+    monkeypatch.setattr(review, "_write", write)
+    assert review.main([*argv, "--audio-sidecar", str(sidecar), "--execute", "--env-file", str(env)]) == (
+        1 if persistence_failure else 0)
+    assert len(calls) == 1
+    manifest = json.loads((out / "manifest.json").read_text())
+    assert manifest["status"] == ("failed" if persistence_failure else "response_received")
+    assert manifest["media"]["sha256"] == review.hashlib.sha256(video.read_bytes()).hexdigest()
+    assert manifest["audio_sidecar"]["sha256"] == review.hashlib.sha256(sidecar.read_bytes()).hexdigest()
+    assert manifest["budget_report"]["reported_cost"] == .0001
+    retained = "".join(p.read_text() for p in out.iterdir()) + str(capsys.readouterr())
+    for sensitive in (credential, primary_encoded, sidecar_encoded):
+        assert sensitive not in retained
+    assert manifest["returned_model"] == "model [REDACTED]"
+    assert manifest["returned_provider"] == "provider [REDACTED]"
