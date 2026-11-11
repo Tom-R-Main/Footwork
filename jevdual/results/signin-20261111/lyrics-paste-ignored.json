@@ -1,0 +1,66 @@
+{
+ "advanced": "clicked",
+ "editor_before": {
+  "tag": "DIV",
+  "ph": "",
+  "innerText": {
+   "len": 1,
+   "lf": 1,
+   "cr": 0,
+   "sha": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+   "nonlf_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "value": null,
+  "counters": [
+   "0 of 5000 characters used.",
+   "0/5000",
+   "0/1000",
+   "0/500"
+  ]
+ },
+ "entry": "synthetic paste event, text/plain",
+ "paste": {
+  "default_prevented": true
+ },
+ "editor_after": {
+  "tag": "DIV",
+  "innerText": {
+   "len": 1,
+   "lf": 1,
+   "cr": 0,
+   "sha": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+   "nonlf_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "textContent": {
+   "len": 0,
+   "lf": 0,
+   "cr": 0,
+   "sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "nonlf_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "value": null,
+  "paragraphs": 1,
+  "empty_paragraphs": 1,
+  "counters": [
+   "0 of 5000 characters used.",
+   "0/5000",
+   "0/1000",
+   "0/500"
+  ]
+ },
+ "cleared": {
+  "innerText": {
+   "len": 1,
+   "lf": 1,
+   "cr": 0,
+   "sha": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+   "nonlf_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "counters": [
+   "0 of 5000 characters used.",
+   "0/5000",
+   "0/1000",
+   "0/500"
+  ]
+ }
+}

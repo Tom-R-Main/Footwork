@@ -142,3 +142,19 @@ Test: the owner allowed entering the verified lyrics into a Suno draft in the te
 Predicts: Suno's counter reads 461, and innerText equals the file after at most one declared normalisation (line-ending form, or one trailing line feed), keeping all 24 line feeds.
 Against: the counter reads 461 but innerText differs from the file by a rule other than one fixed normalisation. If the counter does not read 461, the paste itself changed the text and the test is inconclusive. If the editor is a plain textarea, its value equals the file trivially and the result says nothing about rich editors; record that.
 Refs: output/suno-20261110/draft-brief/lyrics-short.txt; docs/notebook/2026-11-10-suno-end-to-end.md
+
+## AADU8 · update · 2026-11-11 17:44
+Resolves: AAD10 = inconclusive
+Observed: Advanced mode showed a contenteditable lyrics editor holding one empty paragraph, and Suno's counter read "0 of 5000 characters used". A synthetic plain-text paste event on the focused editor was default-prevented by the page but inserted nothing: the counter stayed at 0 and the editor at one empty paragraph (results/signin-20261111/lyrics-paste-ignored.json). The first attempt had failed earlier in the script, before any input, on a redeclared helper name.
+Inferred: the editor handles paste itself and ignores an untrusted clipboard event, so this route cannot enter the text. Nothing about node-text fidelity is learned.
+Next: AAD11, entering the text through DevTools input instead.
+Refs: results/signin-20261111/lyrics-paste-ignored.json; scripts/probe_lyrics_paste.py
+
+## AAD11 · prediction · 2026-11-11 17:44
+Revises: AAD10
+Question: does page-level node text keep the characters the accessibility value dropped?
+Hypothesis: unchanged from AAD3.
+Test: as AAD10, but enter the text as DevTools input on the focused editor: Input.insertText for each line, and one Enter key press (keyDown and keyUp) for each line feed, so a blank line is two presses. Then confirm Suno's counter, read the editor as length, line feeds and SHA-256, and clear it. Nothing is created.
+Predicts: the counter reads 461, and innerText equals the file after at most one declared normalisation, keeping all 24 line feeds.
+Against: the counter reads 461 but innerText differs by a rule other than one fixed normalisation. If the counter does not read 461, entry changed the text (for example the editor collapsed repeated Enter presses) and the result is inconclusive for node text, though it is itself a finding about entry.
+Refs: output/suno-20261110/draft-brief/lyrics-short.txt
