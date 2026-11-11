@@ -1,0 +1,43 @@
+{
+  "target": "ac892a75211900ca6e252a46bca4f0da2362af6b",
+  "checkout_head": "74f44e85cb88025c9c63bfe80cae3f3ac3726966",
+  "module": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/python/jevdual/__init__.py",
+  "backend": "pure-python",
+  "os": "26.5.1",
+  "machine": "arm64",
+  "runtime": {
+    "jevdual/python/jevdual/agent_cli.py": "0a5a39435920a8f8d790c5a00a797f1017710bfa0de952cfe46dffce1c191e8d",
+    "jevdual/python/jevdual/ax.py": "2d3ab85ec86cb7cc80e49508b88ef80f5ab615898ddeb125d3a619882a296c79",
+    "jevdual/python/jevdual/browser_driver.py": "e0396d81bd303abe57663f5d66f896dfc17c6970f15db90b9ac28197cd035299",
+    "jevdual/python/jevdual/browser_target.py": "dac5827449b01201b0555fd6ebd66f3f124b02d89f372902f6a1de5ce70bb7ad",
+    "jevdual/python/jevdual/capability/backend.py": "a3b0db229bd5cdacf1c6bfefae7052142139911a04f19a38c44b75f18a089f03",
+    "jevdual/python/jevdual/capability/execution_worker.py": "287b1e325b0ba5f8acee1e00fb7c7dff62825032196346e162cad8ee9cdbd209",
+    "jevdual/python/jevdual/capability/service.py": "b70210acb289ab7432c74f9f12eda57139ba5d78cd758ec9c05d2ca02099243b",
+    "jevdual/python/jevdual/cli.py": "992f60a440ba9374e22cfd796d4da103006660a18fe548d629056f4b9022eb27",
+    "jevdual/python/jevdual/coordination.py": "04d33ebadf3a773257ea00c312b4f283c9000e76f50fc377bdba82d54be798b4",
+    "jevdual/python/jevdual/coordination_cli.py": "7f0c0bf3b21893b92f8a4292d1fd101ddcad365d2d65d732d6149a3862855856",
+    "jevdual/python/jevdual/drag.py": "61673201cbb6e5f4449f69c9cc35cf5a80b5e27b94e3fc4a0d2b3604c85510fd",
+    "jevdual/python/jevdual/effectors/cua.py": "d895920022417bb8ff76094ea99eba4db410e1e62b999450dac63945911cba3e",
+    "jevdual/python/jevdual/filmed.py": "cbdfab6d205338b065444aefd55b6c98340239dcdb48fac26cc1ece63460f879",
+    "jevdual/python/jevdual/linux_ax.py": "e4a186101d11759c984d774dbf57751532fa4e7de7379c89fe1e30333e9e5dcd",
+    "jevdual/python/jevdual/native.py": "30d9d599cc8bbe74b66abaf80083d4e9d79ee384e79b80f83ede59bd6b42e068",
+    "jevdual/python/jevdual/posture.py": "70f2c3ba5f3922e01959434eb8a496bf5061c3488400dfad71208b76436adf7e",
+    "jevdual/python/jevdual/session.py": "d22b74fe76c65f044c5e9654f0a2656fb2799927a29d2e066c261e10d2e87771"
+  },
+  "sdk": {
+    "version": "0.46.0+footwork.5486b624.cleanup2",
+    "files": {
+      "cua_driver/__init__.py": "968e30886e29ef5fc66316d4bb5aef46a30c9b8f5422635ac48982ab15379ddd",
+      "cua_driver/__main__.py": "bcb78a6283dc6da69f3338879ae34a0f2dbeea3b444e4c3dd43f170d2922a387",
+      "cua_driver/_daemon.py": "f6ce97a08ab5c124ba0210b00e44bd652b41cca5a9ae20a511a6409093e8f01e",
+      "cua_driver/_native.py": "8bb3927dd6579d94468eb5c08b1700230359813074cd1959c2e226c318dd4828",
+      "cua_driver/_native_contract.py": "f5237aa6dac954ea15959347ddaeb38e99b6df18c6c323093fabe275f27c808f",
+      "cua_driver/libcua_driver_sdk.dylib": "1707785440fb239cee3c16c084c122f33ce7671c3dd92623059acc560fccf319",
+      "cua_driver/wrapper.py": "cfd7abe6215aab7c1d8f66f2c15e6cd6ab7f150918de7b301b73c253e90a61d6"
+    }
+  },
+  "probe_hashes": {
+    "live_probe.py": "1cef87dcb23494bf6e45eb764ed10d7f14c090c9cbf22758c70a477b6dafa425",
+    "reservation_probe.py": "5e5c9b366262da53bc57f44d25240a5539f3b335082c8f99efeece61cd948433"
+  }
+}
