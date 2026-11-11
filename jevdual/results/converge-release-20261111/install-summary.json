@@ -1,0 +1,27 @@
+{
+  "source_commit": "6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "prefix": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "bundle": "/Users/thomasmain/.local/share/footwork/bundles/6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "current_unchanged": "/Users/thomasmain/.local/share/footwork/releases/eded45c48d550b6867e1ce1314de64c41cbcfae8",
+  "launcher_sha256": "8b786ec4bebfd7b8fe62e478f6e017ed2048fe31489395fc180b15978f49e793",
+  "verification": {
+    "passed": true,
+    "wheel_checks": {
+      "jevdual": {
+        "version": "0.0.1",
+        "checked_files": 219,
+        "location": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/lib/python3.12/site-packages"
+      },
+      "cua-driver": {
+        "version": "0.46.0+footwork.5486b624.cleanup2.focus1",
+        "checked_files": 8,
+        "location": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/lib/python3.12/site-packages"
+      }
+    },
+    "failures": [],
+    "imports": {
+      "jevdual": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/lib/python3.12/site-packages/jevdual/__init__.py",
+      "cua_driver": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/lib/python3.12/site-packages/cua_driver/__init__.py"
+    }
+  }
+}
