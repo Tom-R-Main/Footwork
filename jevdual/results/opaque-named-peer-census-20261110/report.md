@@ -25,3 +25,21 @@ Full default offline result on frozen `ca4e7dc`: **3339 passed, 62 skipped** in
 222.32 seconds, exit 0. Before/after production hashes match and live/browser
 opt-ins were removed. `full-default.json` records command, runtime and hashes;
 `full-default.txt` records pytest output. Source/test hold is released.
+
+Parent-operated live qualification held on frozen `ca4e7dc` (SUN39, record
+`0d6c6d9`). A fresh owned derivative editor exposed literal-ID buttons, while the
+frameless Hide Tips peer remained absent from action candidates. Numeric target86
+inspection recorded `native_control_opaque: true`, qualified identity, the exact
+current document scope and DOM ID `base-ui-_r_p_`, with native frame761,576,36,36;
+the fresh screenshot showed the clip ellipsis. One explicit foreground click opened
+named Split (Cmd E) and Create Section menu items; Escape dismissed the menu.
+Evidence: `output/suno-20261110/opaque-final-editor-open.txt`,
+`output/suno-20261110/opaque-final/inspection/9e94cd86697f4d078bd4c368925b0669.json`,
+`output/suno-20261110/opaque-final-clip-click.txt` and
+`output/suno-20261110/opaque-final-dismiss.txt`.
+
+This qualifies one fresh inspected control/menu interaction. It does not establish
+timeline editing, save behavior, other unnamed controls or complete editor coverage.
+No timeline edit, save, coordinate action or posture change occurred in this check.
+The earlier `1cccdcb` live census refusal remains recorded; this later success does
+not revise that historical result. The worker made no UI or provider calls.
