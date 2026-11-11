@@ -1,0 +1,95 @@
+{
+  "synthetic_only": true,
+  "checks": {
+    "selective_low_12db": {
+      "normalized_low_change_db": -11.999999999959263,
+      "expected": -12
+    },
+    "uniform_gain_6db": {
+      "raw_low_change_db": -6.0,
+      "normalized_low_change_db": -2.6645352591003757e-15
+    },
+    "opposite_phase_stereo": {
+      "baseline_low_power": 0.019987896264025615,
+      "normalized_low_change_db": 1.7763568394002505e-15
+    },
+    "known_padding": {
+      "expected_lag_samples": 733,
+      "alignment": {
+        "qualified": true,
+        "anchors": [
+          {
+            "source_start_seconds": 0.6666666666666666,
+            "duration_seconds": 4,
+            "lag_samples": 733,
+            "lag_seconds": 0.015270833333333334,
+            "reference_band_correlation": 0.9935783589353705,
+            "search_boundary": false
+          },
+          {
+            "source_start_seconds": 6.0,
+            "duration_seconds": 4,
+            "lag_samples": 733,
+            "lag_seconds": 0.015270833333333334,
+            "reference_band_correlation": 0.9933244890363975,
+            "search_boundary": false
+          },
+          {
+            "source_start_seconds": 11.333333333333334,
+            "duration_seconds": 4,
+            "lag_samples": 733,
+            "lag_seconds": 0.015270833333333334,
+            "reference_band_correlation": 0.9938437201607803,
+            "search_boundary": false
+          }
+        ],
+        "lag_spread_samples": 0,
+        "selected_lag_samples": 733,
+        "lag_convention": "positive means edited signal is delayed; compare baseline[i] with edited[i+lag]"
+      }
+    },
+    "inconsistent_padding": {
+      "qualified": false,
+      "anchors": [
+        {
+          "source_start_seconds": 0.6666666666666666,
+          "duration_seconds": 4,
+          "lag_samples": 733,
+          "lag_seconds": 0.015270833333333334,
+          "reference_band_correlation": 0.9935783589353705,
+          "search_boundary": false
+        },
+        {
+          "source_start_seconds": 6.0,
+          "duration_seconds": 4,
+          "lag_samples": 733,
+          "lag_seconds": 0.015270833333333334,
+          "reference_band_correlation": 0.5035163878418388,
+          "search_boundary": false
+        },
+        {
+          "source_start_seconds": 11.333333333333334,
+          "duration_seconds": 4,
+          "lag_samples": 2000,
+          "lag_seconds": 0.041666666666666664,
+          "reference_band_correlation": 0.9879545302279626,
+          "search_boundary": false
+        }
+      ],
+      "lag_spread_samples": 1267,
+      "selected_lag_samples": null,
+      "lag_convention": "positive means edited signal is delayed; compare baseline[i] with edited[i+lag]"
+    },
+    "invalid_bands": "rejected zero, nonfinite and above-Nyquist reference bands",
+    "local_wav_cli": {
+      "first_exit": 0,
+      "overwrite_exit": 1,
+      "sample_counts": [
+        768000,
+        768000
+      ],
+      "hashes_present": true
+    },
+    "duration_bounds": "601-second metadata and over-bound decoded WAV rejected"
+  }
+}
