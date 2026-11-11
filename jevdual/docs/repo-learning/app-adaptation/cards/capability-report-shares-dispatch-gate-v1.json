@@ -1,0 +1,36 @@
+{
+  "id": "capability-report-shares-dispatch-gate-v1",
+  "title": "Compute the capability report with the same function that gates dispatch, keyed by toolkit not application",
+  "problem": "A caller meeting an unfamiliar window cannot know which routes will work, and a separate capability table drifts from the code that actually refuses.",
+  "mechanism": "The observation of a window includes, per input route, available or refused with a reason, produced by calling the very decision function the action path calls. The report is advisory and every action rechecks. Route decisions key on runtime toolkit fingerprints (framework bundles, loaded images, web view detection), never on application names.",
+  "when_to_use": "Session start on an unknown application; deciding between background, page-level and foreground delivery.",
+  "when_not_to_use": "As permission to act. Not for application-model quirks such as an editor whose accessibility value differs from its content; toolkit level does not see those.",
+  "tradeoffs": "Keeps core free of application names, but toolkit detection is incomplete (frameworks in the shared cache are invisible) and core still grows one branch per toolkit.",
+  "counterexample": "In the reference, toolkit detection runs only on the pixel route, so a Tk window reports pointer delivery available and then refuses the click. The report states frame freshness as unknown.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "Have look report per-route availability from posture and native dispatch gates. Classify the application-named branches in native.py: toolkit-level ones stay in core behind fingerprints, application-model ones (Finder rename and move, Preview save readback) move to recipes. Not implemented.",
+    "compatibility_checks": "By inspection of the listed branches, about half are application-model and would not be removed by toolkit fingerprints; this card does not replace a recipe layer.",
+    "next_test": "Compare the reported availability with the result of one background click on a Tk window and on an Electron app."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised."
+  },
+  "evidence_ids": [
+    "ev-841c4626f807bb4263436018",
+    "ev-c4b552986d9b50a27698526d",
+    "ev-7f14b1cc69869ea66e57e860",
+    "ev-dbd81d990083cc8af9ec5e82",
+    "ev-9091b7ad19b7d57589de076e",
+    "ev-d7b9ae4c7a7ef13ee7cd4ba7"
+  ],
+  "tags": [
+    "capability probe",
+    "toolkit",
+    "electron",
+    "route availability",
+    "unknown application",
+    "preflight"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "network-write-classified-as-outcome-evidence-v1",
+  "title": "Classify the network write as evidence of an outcome the page cannot show",
+  "problem": "Edits on canvas or audio surfaces leave nothing in the element tree to read back.",
+  "mechanism": "Observe the write the action causes and classify its answer: a server error, timeout, challenge page or non-JSON success is outcome-unknown; a ledger keyed by the admitted operation prevents sending the same write twice.",
+  "when_to_use": "Effects that persist through a first-party request and are invisible in the page.",
+  "when_not_to_use": "As proof the effect was applied: a success status means accepted. It needs a later read of the resource. Not available on a browser reached only through accessibility.",
+  "tradeoffs": "Adds an evidence channel independent of rendering; requires page-level access and care with private request data.",
+  "counterexample": "The reference uses this to replay recorded flows; using it to confirm a live click is an inference from that design.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "Record requests around one admitted page action in the owned browser and bind the record to the operation token, as a completion reader for surfaces such as an audio editor. Not implemented.",
+    "compatibility_checks": "Request bodies can hold private content; apply the existing redaction and withhold rules.",
+    "next_test": "One fixture POST from an owned-browser click: the record binds to the operation token and a 5xx is reported as outcome unknown."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised."
+  },
+  "evidence_ids": [
+    "ev-0f0d860693ea2bf9bb60f525",
+    "ev-3c10f7b04604e919b891a9d9",
+    "ev-1407f66de4600ca350950ebb"
+  ],
+  "tags": [
+    "network",
+    "completion reader",
+    "canvas",
+    "audio",
+    "outcome unknown",
+    "idempotency"
+  ]
+}

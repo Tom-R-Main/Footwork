@@ -1,0 +1,38 @@
+{
+  "id": "pixel-action-bound-to-single-use-capture-v1",
+  "title": "Bind a coordinate action to one capture and consume the capture on use",
+  "problem": "Canvas, WebGL and custom-drawn surfaces have no element tree, so the only address is a point; a bare coordinate can be replayed against a different screen.",
+  "mechanism": "A coordinate action must name the capture it was chosen from. The driver checks the capture against target, session, expiry and native frame size, maps the point, acts, and deletes the capture. Optionally two crops taken shortly before dispatch are compared with the crop at read time and a difference refuses.",
+  "when_to_use": "Only where no accessibility or page reference exists for the target.",
+  "when_not_to_use": "When a tree reference exists. Never treat a relocated template match as permission to act at the new point, and never treat identical pixels as identical state.",
+  "tradeoffs": "Gives every surface an address at the cost of weaker identity; the effect still needs evidence from another channel (file, network, page state) or must be labelled model-observed.",
+  "counterexample": "Admission compares identity and dimensions, not pixels: a surface that scrolls itself at the same size within the time limit is still admitted. A uniform grid shifted by one cell yields an identical crop and passes the pixel guard on the wrong item.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "Add a coordinate rung to the ladder for tree-less surfaces such as the Suno Studio waveform and fade control, admitted only with a capture identity and an independent effect check. Not implemented; Footwork callers cannot click at coordinates today.",
+    "compatibility_checks": "The reference perception detector is AGPL and must not be vendored; the capture-binding contract is MIT. Screenshots are withheld under scope guards and after secrets, which removes this rung in those sessions.",
+    "next_test": "Fixture page that scrolls on a timer without resizing: capture, wait, act with the capture identity; admission is the predicted weakness. Grid fixture shifted one row: the guard is predicted to pass wrongly."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised."
+  },
+  "evidence_ids": [
+    "ev-02424167da74b931c503a160",
+    "ev-8ae1afc05e2f9656eed6888c",
+    "ev-c7f8b491e3cd8670c816ac29",
+    "ev-3c7f274482946faf3bad279f",
+    "ev-47d5b765a8fb298775f9d7c6",
+    "ev-5164f72bf49f1121f3b02766"
+  ],
+  "tags": [
+    "canvas",
+    "coordinates",
+    "pixel",
+    "vision",
+    "screenshot",
+    "studio",
+    "webgl",
+    "tree-less surface"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "id": "page-typing-reads-back-target-node-v3",
+  "title": "Enter text at page level and read the value back from the target node",
+  "problem": "Driving a rich web editor through the desktop accessibility tree loses text, selection and blank lines, and typing through keys needs window focus the person is using.",
+  "mechanism": "After entering text at page level, read inner text (content-editable) or value (inputs) from the same node and compare with what was sent under a declared equivalence. The reference reads back and only reports a mismatch; it checks focus from an isolated world only for secret entry. Combining an isolated-world focus check with a readback that refuses on mismatch is a synthesis, not something a reference implements.",
+  "when_to_use": "Text entry into inputs and content-editable editors in a browser the tool can reach at page level.",
+  "when_not_to_use": "When the editor's internal model can diverge from the page, the node text is evidence of rendering only. Not a route to focus independence: Footwork's own probe found the driver's typing selects the bound tab for about 100 ms unless inserting into an empty field.",
+  "tradeoffs": "Reads the text the page actually holds, with line structure, where the accessibility value can be lossy. It does not remove the need for focus: replacing held text is a foreground step on the current lane until a probe shows otherwise. The reference only reports a mismatch; a verifying tool must refuse on it.",
+  "counterexample": "A neighbouring tool clears a field by assigning an empty value, which does not clear a content-editable node, and never reads back.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "On the chosen browser lane, keep raw multiline values for verification instead of the clipped and whitespace-collapsed values used today, and name the equivalence on the receipt. Gated on the sign-in, node-text and tab-selection checks. Not implemented.",
+    "compatibility_checks": "start --browser clips values to 200 characters and asks for foreground to replace held text; browser cdp disables typing for the focus race and collapses whitespace in snapshots. Paragraph blocks may double line feeds in inner text.",
+    "next_test": "In a Footwork-launched signed-in profile, compare node inner text, the application's copy and the accessibility value against the verified 461-character, 24-line-feed lyrics; repeat the page-visibility probe for replacement on the pinned driver."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised. Revised after council rounds 1 and 2."
+  },
+  "evidence_ids": [
+    "ev-e77fea9a4bd8919233daf679",
+    "ev-91e7f6c7d9626b98d2086eb6",
+    "ev-40755ae03e014e2ce185eb62",
+    "ev-5f90cdfa630a54f70ed7148e",
+    "ev-13224c8135b7b9f3ff62f4cd"
+  ],
+  "tags": [
+    "contenteditable",
+    "rich text",
+    "lyrics",
+    "suno",
+    "cdp",
+    "insert text",
+    "web editor",
+    "browser"
+  ],
+  "supersedes": "page-typing-reads-back-target-node-v2"
+}

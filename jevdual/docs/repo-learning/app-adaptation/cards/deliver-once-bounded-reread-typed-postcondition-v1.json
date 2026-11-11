@@ -1,0 +1,37 @@
+{
+  "id": "deliver-once-bounded-reread-typed-postcondition-v1",
+  "title": "Deliver once, then re-read the same element against a typed postcondition inside the caller's deadline",
+  "problem": "A receipt that only says the screen changed cannot tell the requested effect from an unrelated change, and a fixed sleep either wastes time or reads too early.",
+  "mechanism": "The action carries a predicate over the target element that returns true, false or unknown. After one delivery the tool re-reads on a short interval under a hard cap, extending only while typed text is still changing. Unknown returns delivered-unverified with the reason and the post-state; false returns an error with the post-state. Numeric tolerance applies only to continuous-control roles; integers and text compare exactly. Steppers advance one step at a time with a readback after each.",
+  "when_to_use": "Value writes, selection, toggles, numeric controls, text entry.",
+  "when_not_to_use": "Effects with no element-level readback (canvas, audio); commits debounced past the cap come back unverified and need a different evidence channel.",
+  "tradeoffs": "Needs a predicate per action kind rather than per application. A short cap misses slow commits; a long one slows every action.",
+  "counterexample": "In the reference, click is excluded from state readback, so clicks carry no change summary. An editor whose accessibility value differs from its content can only ever return a mismatch.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "Extend the numeric observation in native.py from metadata into an action-bound predicate, and replace 'some change was seen' receipts with predicate outcomes. Not implemented.",
+    "compatibility_checks": "Footwork receipts currently diff before and after observations; 'confirmed' means a change, not the requested effect. Check interaction with look --until.",
+    "next_test": "A setter that reads back 50.0000004 verifies on a slider and is refused on a text field; reads of old, partial, new verify with one dispatch."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised."
+  },
+  "evidence_ids": [
+    "ev-45c8cf9def44189514f7e3ea",
+    "ev-6c938da2c240e759616d6f1b",
+    "ev-3dae4611def8153058739fcb",
+    "ev-d4898f70dd1d5edb4a6b998f",
+    "ev-6bc608373374e28d8a304ce9",
+    "ev-453b85272421c73bf71270e8"
+  ],
+  "tags": [
+    "readback",
+    "postcondition",
+    "settle",
+    "receipt",
+    "numeric",
+    "slider",
+    "wait"
+  ]
+}

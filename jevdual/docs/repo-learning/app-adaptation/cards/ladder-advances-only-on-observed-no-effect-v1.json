@@ -1,0 +1,44 @@
+{
+  "id": "ladder-advances-only-on-observed-no-effect-v1",
+  "title": "Advance a fallback ladder only on not-delivered or a positively observed no-effect",
+  "problem": "A tool that falls back from a semantic action to a synthetic click whenever the first rung looks unsuccessful can act twice, and a tool with one fixed route per operation needs new code for every surface where that route fails.",
+  "mechanism": "Each rung returns one typed outcome: not delivered, satisfied without delivery, delivered unverified, delivered without effect, delivered verified. Only not-delivered and delivered-without-effect continue to the next rung; delivered-unverified stops the chain so nothing is dispatched twice. Delivered-without-effect requires a positive readback (for example the selected attribute still false), never an unreadable one. Physical rungs run only under a caller policy that allows them. Every step records its mechanism so the caller sees which rung acted.",
+  "when_to_use": "Any action whose first channel can fail silently on some surfaces: accessibility press on web content, value writes that echo without applying.",
+  "when_not_to_use": "When no channel can read the postcondition: the ladder then stops honestly at unverified and makes no progress, so a different readback channel is needed, not more rungs.",
+  "tradeoffs": "Stops more often than optimistic fallback; needs a per-action postcondition predicate. Removes the need for per-operation route branches.",
+  "counterexample": "An accessibility press on a Chromium group returns success and changes nothing; with the attribute unreadable the chain stops at delivered-unverified. One reference tool reports 'pressed via accessibility' with no readback at all.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "Replace the fixed route per operation in native.act with a declared ladder whose rungs return these outcomes; keep posture as the gate on physical rungs; put the acting rung on the receipt. Not implemented.",
+    "compatibility_checks": "Footwork today has two automatic fallbacks (same-pid keyboard ambiguity to foreground; refused scroll to Page Down). Check that existing 'unverifiable' receipts map to delivered-unverified and that durable unknown-effect barriers still block a second dispatch.",
+    "next_test": "Fake element whose press succeeds and whose selected state reads false: next rung recorded. Same element with the state unreadable: stop, exactly one dispatch."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised."
+  },
+  "evidence_ids": [
+    "ev-3d88ae816364a8a76d300fcb",
+    "ev-6af3ead68870e6c536d1cf72",
+    "ev-e223523288383250d3076ef3",
+    "ev-35ee441f125db3ebc8e80dd7",
+    "ev-9a65bbcb54dccfd51d407583",
+    "ev-8fe424e2f958236f2de4ce69"
+  ],
+  "tags": [
+    "fallback",
+    "escalation",
+    "action route",
+    "unverifiable",
+    "suno",
+    "app adaptation",
+    "channel ladder"
+  ],
+  "novelty": {
+    "nearest": [
+      "strict-target-loss-refuses-instead-of-retargeting-v1"
+    ],
+    "difference": "That card concerns keeping a bound target; this one concerns choosing the next action channel without a second dispatch.",
+    "decision": "new card"
+  }
+}

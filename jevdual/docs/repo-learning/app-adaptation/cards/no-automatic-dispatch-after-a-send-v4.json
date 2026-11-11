@@ -1,0 +1,45 @@
+{
+  "id": "no-automatic-dispatch-after-a-send-v4",
+  "title": "Try another rung only when nothing was sent; after a send, keep the custody the session already has",
+  "problem": "A fallback that fires when the first route shows no effect cannot tell a silent no-op from an effect that lands late, so it can act twice.",
+  "mechanism": "Each action returns a delivery outcome (not sent, sent, unknown) and an effect outcome (confirmed, absent at a declared bound, unreadable). Another rung may be tried automatically only when nothing was sent. After a send, an effect absent at the bound is an unknown outcome and no second dispatch follows. What an unknown outcome then does is set by the session's existing custody level, not by this rule: an ordinary session reports it and the caller decides; a durable session blocks all mutation in its authority domain, across a crash, until a qualified reconciliation producer clears it. A fresh observation does not clear it. The effector's escalation advice is carried for diagnosis only, never offered as a next step.",
+  "when_to_use": "Any surface where a route can report success without acting or can act late.",
+  "when_not_to_use": "As a way to make progress unattended on surfaces whose first route often no-ops: this rule hands those cases to the caller. A later extension for absolute setters, whose mechanism yields the same state whether or not an earlier application lands, needs its own test.",
+  "tradeoffs": "Stops more often than any reference chain. On a durable session with no general reconciliation producer, the session halts at the first unconfirmed effect, so durable multi-step work reaches only as far as effect readers confirm. Wording a goal as a target state does not make its mechanism repeat-safe: a second click on a toggle flips it.",
+  "counterexample": "The reference's right-click chain continues after unverified delivery, safe only because each step re-checks for an open menu. Its no-effect reading for selection sits inside a short settle window.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "State the browser lane's outcomes in the two existing custody levels before widening it, and carry the pinned driver's Confirmed and Unverifiable effect through browser_driver._effect. Decide whether a driver Confirmed, which reads the target's state, may settle a durable operation; it never settles a business effect. Not implemented.",
+    "compatibility_checks": "Footwork's durable rule (session_operations.py:338-349) makes every dispatched outcome other than sent-with-confirmed-or-partial-effect unknown, blocks the domain, and refuses manual resolution; owned-cdp.md says a new observation cannot clear an uncertain operation; durable-native-operator.md:63 says no general app-effect reconciliation producer exists. start --browser runs outside the durable authority and records delivery as unknown for every driver reply. The pinned driver advises retry_with_page_action for a page click whose target did not change.",
+    "next_test": "A click-toggle whose effect lands after the bound, a lost acknowledgement, an acknowledged action with unreadable effect, and a restart mid-action: exactly one dispatch in each; on a durable session the next mutation is refused in all four and observation does not clear the block."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised. Revised after council rounds 1 and 2 and the one completed review of round 3."
+  },
+  "evidence_ids": [
+    "ev-3d88ae816364a8a76d300fcb",
+    "ev-6af3ead68870e6c536d1cf72",
+    "ev-e223523288383250d3076ef3",
+    "ev-35ee441f125db3ebc8e80dd7",
+    "ev-9a65bbcb54dccfd51d407583",
+    "ev-8fe424e2f958236f2de4ce69"
+  ],
+  "tags": [
+    "fallback",
+    "escalation",
+    "action route",
+    "unverifiable",
+    "suno",
+    "app adaptation",
+    "channel ladder"
+  ],
+  "novelty": {
+    "nearest": [
+      "strict-target-loss-refuses-instead-of-retargeting-v1"
+    ],
+    "difference": "That card concerns keeping a bound target; this one concerns choosing the next action channel without a second dispatch.",
+    "decision": "new version; v3 described a target-scoped barrier cleared by re-observation and no barrier after sent-with-absent-effect, both weaker than Footwork's existing durable rule"
+  },
+  "supersedes": "no-automatic-dispatch-after-a-send-v3"
+}
