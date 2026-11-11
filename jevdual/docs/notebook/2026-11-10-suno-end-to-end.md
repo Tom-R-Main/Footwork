@@ -441,3 +441,22 @@ Refs: output/suno-20261110/runtime-16a67f4/identity.json; output/suno-20261110/s
 Question: after decoding and reviewing the selected owned instrumental, which current Suno Song Editor controls expose a bounded ending edit and a separately saved derivative through Footwork?
 Test: retain original song identity and exported audio; use the actually observed song menu and Edit submenu to open the actual editor, recording current URL and controls/captures on a frozen runtime. Inspect selection/keep/remove/fade semantics before any edit. Prefer an explicit ending-fade control or readable time fields; do not infer exact time from approximate pixels, use unsupported drag or remove ambiguous regions. After a bounded run-owned edit, observe draft state, save as a new song once, verify new identity/original retention, retrieve actual project-scoped audio, independently check the changed boundary, and reopen the derivative from Library. Add a new preregistered source repair if a missing capability blocks the actual observed control. No original overwrite, publication or purchase.
 Refs: docs/suno-workflow.md; https://help.suno.com/en/articles/6141505; https://help.suno.com/en/articles/3166529; output/suno-20261110/generated-link-identities.json
+
+## SUNU40 · update · 2026-11-10 19:56
+Resolves: SUN32 = held
+Observed: exactly one prepared owner MP3 export was saved through the explicitly bound native Save sheet into the typed project exports directory. The sheet closed; the requested file exists at output/suno-20261110/exports/candidate-b.mp3,4639077bytes, SHA256138821e47c9a2e68c267942e308f3b055aa932cde5a031d0aae2df4d6d63d349. ffprobe reports204.8seconds and complete FFmpeg decode reports no errors. No overwrite, purchase or publication occurred.
+Inferred: authenticated owner MP3 export resolves the opaque playback-byte blocker. Closed-window observation failure after Save does not erase the historical dispatch or independent filesystem/decode proof.
+Next: continue actual Song Editor exploration on the same private candidate.
+Refs: output/suno-20261110/save-b-project-destination.txt; output/suno-20261110/save-b-confirm-once.txt; output/suno-20261110/exports/candidate-b.mp3.validation.json
+
+## SUNU41 · update · 2026-11-10 19:56
+Resolves: SUN33 = held
+Observed: frozen a64b6f2 exact PID/window-ID start binds the proven untitled nested folder panel326559. Addressed replacement verifies the complete project directory. Background enter leaves the panel unchanged; source documents native menu equivalents need the existing foreground hotkey route. One foreground Return closes only that panel; reobserved Save325928 shows exports and candidate-b.mp3 before one Save. The resulting project file independently verifies the destination.
+Inferred: explicit exact modal binding plus the existing foreground key route completes project-only native save navigation. No window guard was widened and no session JSON was retargeted manually.
+Next: retain this recipe in the workflow guide; ordinary enter and foreground hotkey remain distinct routes.
+Refs: output/suno-20261110/runtime-a64b6f2/identity.json; output/suno-20261110/go-to-b-start.txt; output/suno-20261110/go-to-b-type-project.txt; output/suno-20261110/go-to-b-enter-project.txt; output/suno-20261110/go-to-b-foreground-return.txt; output/suno-20261110/save-b-project-destination.txt
+
+## SUNU42 · update · 2026-11-10 19:56
+Observed: the actual decoded full candidate B MP3 was sent once to the selected Qwen model with reasoning off. It describes restrained piano/bass/percussion, a complete natural ending and an overlong middle; its proposed bounded change is to reduce middle repetition. This is model judgment against a disclosed target, not human taste acceptance or calibrated temporal localization. Provider reports zero reasoning tokens and0.00052498dollars; eight successful package calls now total0.02056553dollars. A local timeout180validation error occurred before request/output-directory creation; the single actual request used the helper's permitted120second limit.
+Next: choose a bounded edit from actual observed editor affordances, preserving the original audio and resource. Do not invent a precise middle-cut timestamp from the critique.
+Refs: output/suno-20261110/review-candidate-b/response.json; output/suno-20261110/review-candidate-b/manifest.json; output/suno-20261110/draft-brief/instrumental-review-prompt.txt
