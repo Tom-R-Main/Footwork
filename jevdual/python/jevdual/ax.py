@@ -19,6 +19,8 @@ import ctypes
 from dataclasses import dataclass
 from typing import Any
 
+from jevdual.coordination import checkpoint
+
 _FRAME_TOL = 3.0
 
 
@@ -213,6 +215,7 @@ def set_value_ack(el: Any, text: str) -> None:
     """One AXValue setter. A returned acknowledgement counts one accepted AX input."""
     from ApplicationServices import AXUIElementSetAttributeValue
 
+    checkpoint()
     err = AXUIElementSetAttributeValue(el, "AXValue", text)
     if err:
         raise AXError("value_write_uncertain", f"AXValue did not acknowledge the write ({err})")
@@ -237,6 +240,7 @@ def select_finder_row_ack(el: Any) -> None:
     err, writable = AXUIElementIsAttributeSettable(row, "AXSelected", None)
     if err or not writable:
         raise AXError("file_row_not_selectable", "Finder row selection is unavailable")
+    checkpoint()
     err = AXUIElementSetAttributeValue(row, "AXSelected", True)
     if err:
         raise AXError("file_selection_uncertain", f"Finder row selection was not acknowledged ({err})")
@@ -440,9 +444,11 @@ def insert_at_end(el: Any, text: str, *, expect: str | None = None) -> tuple[str
     if expect is not None and before != expect:
         raise AXError("precondition_changed", "the field changed between the read and the insertion")
     rng = AXValueCreate(kAXValueCFRangeType, NSMakeRange(utf16_len(before), 0))
+    checkpoint()
     err = AXUIElementSetAttributeValue(el, "AXSelectedTextRange", rng)
     if err != 0:
         raise AXError("selection_refused", f"AXSelectedTextRange write refused ({err})")
+    checkpoint()
     err = AXUIElementSetAttributeValue(el, "AXSelectedText", text)
     if err != 0:
         raise AXError("insert_refused", f"AXSelectedText write refused ({err})")
@@ -500,6 +506,7 @@ def click_at(x: float, y: float) -> None:
         kCGMouseButtonLeft,
     )
 
+    checkpoint()
     back = CGEventGetLocation(CGEventCreate(None))
     for kind in (kCGEventLeftMouseDown, kCGEventLeftMouseUp):
         CGEventPost(kCGHIDEventTap, CGEventCreateMouseEvent(None, kind, (x, y), kCGMouseButtonLeft))
@@ -563,6 +570,7 @@ def press_menu(pid: int, path: list[str]) -> None:
         node = hits[0]
     # AXEnabled is not checked first: a menu item's enabled state is validated when its menu opens, so it
     # can read False for an item that works (Q15 smoke 6: Edit > Select All); the press reports a refusal
+    checkpoint()
     err = AXUIElementPerformAction(node, "AXPress")
     if err != 0:
         raise AXError("press_refused", f"AXPress on {' > '.join(path)} refused ({err})")
@@ -594,7 +602,9 @@ def raise_window(pid: int, window_id: int) -> None:
     from ApplicationServices import AXUIElementPerformAction, AXUIElementSetAttributeValue
 
     w = window_element(pid, window_id)
+    checkpoint()
     AXUIElementSetAttributeValue(w, "AXMain", True)
+    checkpoint()
     err = AXUIElementPerformAction(w, "AXRaise")
     if err != 0:
         raise AXError("raise_refused", f"AXRaise on window {window_id} refused ({err})")

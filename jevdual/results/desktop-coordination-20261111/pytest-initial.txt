@@ -1,0 +1,154 @@
+ssssF................................................................... [  2%]
+........................................................................ [  4%]
+.ssssssssssssss......................................................... [  7%]
+........................................................................ [  9%]
+...........................................................F............ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 19%]
+....................s................................................... [ 21%]
+..........F............................................................. [ 24%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 36%]
+........................................................................ [ 38%]
+........................................................................ [ 40%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+..................s..................................................... [ 48%]
+........................................................................ [ 50%]
+........................................................................ [ 52%]
+........................................................................ [ 55%]
+........................................................................ [ 57%]
+........................................................................ [ 60%]
+.............................F.......................................... [ 62%]
+........................................................................ [ 64%]
+........................................................................ [ 67%]
+........................................................................ [ 69%]
+.............................................s.......................... [ 72%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 79%]
+........................................................................ [ 81%]
+........................................................................ [ 84%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+.......ss............................................................... [ 91%]
+........................................................................ [ 93%]
+.....................................................................F.. [ 96%]
+........................................................................ [ 98%]
+............................................                             [100%]
+=================================== FAILURES ===================================
+______________________ test_cua_driver_version_is_pinned _______________________
+
+    def test_cua_driver_version_is_pinned():
+        # every native module: the effect vocabulary and refusal codes below are this version's
+>       assert importlib.metadata.version("cua-driver") == PINNED_VERSION
+E       AssertionError: assert '0.46.0' == '0.46.0+footw...b624.cleanup2'
+E         
+E         - 0.46.0+footwork.5486b624.cleanup2
+E         + 0.46.0
+
+tests/contract/test_cua_driver_seams.py:36: AssertionError
+___ test_existing_browser_metadata_cannot_enroll_by_adding_an_authority_path ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-2/test_existing_browser_metadata0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f863c8a7470>
+capsys = <_pytest.capture.CaptureFixture object at 0x7f863c8a64e0>
+
+    def test_existing_browser_metadata_cannot_enroll_by_adding_an_authority_path(tmp_path, monkeypatch, capsys):
+        calls = _no_browser(monkeypatch)
+        directory = tmp_path / "session"
+        directory.mkdir()
+        original = json.dumps({"mode": "browser", "authority": str(tmp_path / "authority.db")})
+        metadata = directory / "session.json"
+        metadata.write_text(original)
+        result = cli.main(["look", "--session", str(directory)])
+>       assert result == 2
+E       assert 7 == 2
+
+tests/test_browser_authority.py:65: AssertionError
+----------------------------- Captured stderr call -----------------------------
+stopped: KeyError: 'pid'
+___________ test_runtime_audit_is_private_optional_and_not_a_receipt ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-2/test_runtime_audit_is_private_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f863c1bb500>
+
+    def test_runtime_audit_is_private_optional_and_not_a_receipt(tmp_path, monkeypatch):
+        from jevdual.capability.runtime import emit_runtime_audit
+    
+        monkeypatch.delenv("FOOTWORK_RUNTIME_AUDIT_DIR", raising=False)
+        emit_runtime_audit("worker", "fixture")
+        assert list(tmp_path.iterdir()) == []
+        directory = tmp_path / "audit"
+        directory.mkdir(mode=0o700)
+        monkeypatch.setenv("FOOTWORK_RUNTIME_AUDIT_DIR", str(directory))
+        emit_runtime_audit("server")
+        files = list(directory.iterdir())
+        assert len(files) == 1
+        assert files[0].stat().st_mode & 0o777 == 0o600
+        context = json.loads(files[0].read_text())
+        assert context["pid"] == os.getpid() and context["role"] == "server"
+        assert "disposition" not in context and "text" not in context
+        public = tmp_path / "public"
+        public.mkdir(mode=0o755)
+        monkeypatch.setenv("FOOTWORK_RUNTIME_AUDIT_DIR", str(public))
+        emit_runtime_audit("worker", "fixture")
+>       assert list(public.iterdir()) == []
+E       AssertionError: assert [PosixPath('/...693931.json')] == []
+E         
+E         Left contains one more item: PosixPath('/tmp/pytest-of-agent/pytest-2/test_runtime_audit_is_private_0/public/worker-1453-1794377327371693931.json')
+E         Use -v to get more diff
+
+tests/test_capability_install_isolation.py:155: AssertionError
+______ test_actual_xlib_handshake_on_a_stalled_socket_is_killably_bounded ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-2/test_actual_xlib_handshake_on_0')
+
+    def test_actual_xlib_handshake_on_a_stalled_socket_is_killably_bounded(tmp_path):
+        class StalledX(FixtureSession):
+            def probe_command(self, stage):
+                if stage == 'x11':
+                    return [sys.executable, '-I', '-m', 'jevdual.linux_session', '--probe', 'x11']
+                return super().probe_command(stage)
+    
+        target = StalledX(tmp_path / 'stalled-x')
+        target.commands['xvfb'] = [sys.executable, '-c',
+            ('import socket,os,time; s=socket.socket(socket.AF_UNIX); '
+             's.bind("/tmp/.X11-unix/X"+os.environ["DISPLAY"][1:]); '
+             's.listen(10); c=s.accept()[0]; time.sleep(60)')]
+        before = time.monotonic()
+        try:
+            assert target.run() == 1
+            assert time.monotonic() - before < 4
+>           assert target.report['reason'] == 'x11:probe_timeout'
+E           AssertionError: assert 'component_exited:xvfb' == 'x11:probe_timeout'
+E             
+E             - x11:probe_timeout
+E             + component_exited:xvfb
+
+tests/test_linux_session.py:233: AssertionError
+__________ test_preexisting_broad_readable_capture_directory_refuses ___________
+
+operator = (CaptureWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id...pytest-of-agent/pytest-2/test_preexisting_broad_readabl0/session'), <function operator.<locals>.run at 0x7f863675b1a0>)
+
+    def test_preexisting_broad_readable_capture_directory_refuses(operator):
+        world, path, run = operator
+        manifest, _ = spec(path)
+        (path / "visual").mkdir(mode=0o755)
+        before = world.capture_calls
+        code, _, error = run("visual-check", "--request", str(manifest))
+>       assert code == 4 and "visual_path_unsafe" in error and before == world.capture_calls
+E       AssertionError: assert (4 == 4 and 'visual_path_unsafe' in '')
+
+tests/test_visual_native.py:251: AssertionError
+=========================== short test summary info ============================
+FAILED tests/contract/test_cua_driver_seams.py::test_cua_driver_version_is_pinned
+FAILED tests/test_browser_authority.py::test_existing_browser_metadata_cannot_enroll_by_adding_an_authority_path
+FAILED tests/test_capability_install_isolation.py::test_runtime_audit_is_private_optional_and_not_a_receipt
+FAILED tests/test_linux_session.py::test_actual_xlib_handshake_on_a_stalled_socket_is_killably_bounded
+FAILED tests/test_visual_native.py::test_preexisting_broad_readable_capture_directory_refuses
+5 failed, 2968 passed, 23 skipped, 66 deselected in 202.36s (0:03:22)

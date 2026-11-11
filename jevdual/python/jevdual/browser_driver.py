@@ -167,6 +167,9 @@ def _begin_chrome(url: str | None) -> tuple[int, subprocess.Popen | None]:
     pid = chrome_pid()
     if pid is not None:
         return pid, None
+    from jevdual.coordination import checkpoint
+
+    checkpoint()
     PROFILE_DIR.mkdir(parents=True, exist_ok=True)
     process = subprocess.Popen(_chrome_args(url), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                                start_new_session=True)
@@ -406,6 +409,7 @@ class BrowserBridge:
         self.target_id: str | None = None
         self.tab_id: str | None = None
         self.binding: BrowserBinding | None = None
+        self.target_pin: dict[str, Any] = {}
         self.last: WebMenu | None = None
 
     async def attach(self, *, tab_id: str | None = None, expect_url: str | None = None) -> dict[str, Any]:
@@ -424,6 +428,14 @@ class BrowserBridge:
         self.target_id = bound["target_id"]
         tabs = bound.get("tabs") or []
         self.binding = BrowserBinding(target_id=self.target_id, tabs=tuple(tabs))
+        if tab_id is not None:
+            if not any(t.get("tab_id") == tab_id for t in tabs):
+                raise RuntimeError(
+                    f"the session's tab {tab_id} is no longer in this window; nothing dispatched. "
+                    "Start a new session on the tab you want."
+                )
+            self.tab_id = tab_id
+            return bound
         if expect_url:
             want = _page_key(expect_url)
             same = [t for t in tabs if _page_key(str(t.get("url") or "")) == want]
@@ -439,27 +451,27 @@ class BrowserBridge:
                 )
             self.tab_id = same[0]["tab_id"]
             return bound
-        if tab_id is not None:
-            if not any(t.get("tab_id") == tab_id for t in tabs):
-                raise RuntimeError(
-                    f"the session's tab {tab_id} is no longer in this window; nothing dispatched. "
-                    "Start a new session on the tab you want."
-                )
-            self.tab_id = tab_id
-            return bound
         active = next((t for t in tabs if t.get("active")), tabs[0] if tabs else None)
         if active is None:
             raise RuntimeError("bound target has no tab")
         self.tab_id = active["tab_id"]
         return bound
 
+    async def _validate_pin(self, url: str | None = None) -> None:
+        if self.target_pin:
+            from jevdual.browser_target import resolve
+
+            await resolve(self.pid, url=url, expected=self.target_pin)
+
     async def observe(self, *, screenshot_path: str | None = None, **_: Any) -> WebMenu:
         if self.target_id is None:
             await self.attach()
+        await self._validate_pin()
         reply = await self.operations.snapshot(target_id=self.target_id, tab_id=self.tab_id)
         if reply.status == "refused":
             raise RuntimeError(f"snapshot refused: {_refusal_message(reply)[:200]}")
         self.last = menu_from_semantic(dict(reply.payload))
+        await self._validate_pin(self.last.menu.url)
         return self.last
 
     def _fresh(self, nm: WebMenu, id: int) -> tuple[Candidate, str]:
@@ -499,6 +511,7 @@ class BrowserBridge:
         self, nm: WebMenu, operation: str, id: int, text: str | None = None, *, route: str | None = None
     ) -> BrowserEffect:
         c, ref = self._fresh(nm, id)
+        await self._validate_pin(nm.menu.url)
         base = {"target_id": self.target_id, "tab_id": self.tab_id, "ref": ref}
         if operation == "click":
             # 2026-09-25: in this background posture the trusted route toggled no radio or checkbox,
@@ -552,6 +565,7 @@ class BrowserBridge:
     async def navigate(self, url: str) -> BrowserEffect:
         if self.target_id is None:
             await self.attach()
+        await self._validate_pin(self.last.menu.url if self.last else None)
         out = await self.operations.navigate(target_id=self.target_id, tab_id=self.tab_id, url=url)
         self.last = None
         return self._effect(out, "navigate", -1, url)

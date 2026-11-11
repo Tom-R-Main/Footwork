@@ -239,7 +239,10 @@ def test_an_unparseable_reply_reads_as_an_unverifiable_effect():
 def test_the_session_reports_an_unknown_delivery_refusal_as_unverifiable(tmp_path, capsys, monkeypatch):
     """The command layer, not the bridge, decides what a dispatched refusal means for the person."""
     import jevdual.keys
+    from jevdual import browser_target
 
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
     wire = Wire({"browser_click": UNKNOWN_DELIVERY})
     monkeypatch.setattr(browser_driver, "_begin_chrome", lambda *_: (42, None))
     monkeypatch.setattr(browser_driver, "chrome_pid", lambda: 42)
@@ -403,3 +406,22 @@ def test_attach_by_page_binds_only_the_one_tab_showing_it(pages):
         with pytest.raises(RuntimeError, match="nothing dispatched"):
             asyncio.run(b.attach(expect_url=URL))
     assert [n for n, _ in wire.calls] == ["browser_prepare", "get_browser_state"]
+
+
+def test_explicit_missing_tab_is_not_rebound_to_the_same_url():
+    wire = Wire({"get_browser_state": {**BOUND, "tabs": [
+        {"tab_id": "replacement", "active": True, "url": URL}
+    ]}})
+    with pytest.raises(RuntimeError, match="no longer in this window"):
+        asyncio.run(_bridge(wire).attach(tab_id="original", expect_url=URL))
+    assert [name for name, _ in wire.calls] == ["browser_prepare", "get_browser_state"]
+
+
+def test_explicit_tab_survives_its_own_navigation_without_selecting_url_peer():
+    wire = Wire({"get_browser_state": {**BOUND, "tabs": [
+        {"tab_id": "original", "active": False, "url": URL + "/next"},
+        {"tab_id": "peer", "active": True, "url": URL},
+    ]}})
+    bridge = _bridge(wire)
+    asyncio.run(bridge.attach(tab_id="original", expect_url=URL))
+    assert bridge.tab_id == "original"

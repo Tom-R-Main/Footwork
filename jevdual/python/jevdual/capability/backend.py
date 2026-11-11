@@ -19,6 +19,11 @@ from .contracts import CapabilityError, DispatchOutcome, Validated
 from .observations import Observations
 
 
+def destination_app() -> str:
+    """Use the same platform contract for identity checks and shared app ownership."""
+    return "Mousepad" if sys.platform == "linux" else "TextEdit"
+
+
 @dataclass
 class BoundResource:
     name: str

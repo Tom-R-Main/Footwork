@@ -14,7 +14,7 @@ import threading
 import time
 from pathlib import Path
 
-from .backend import ScopedBackend
+from .backend import ScopedBackend, destination_app
 from .contracts import CapabilityError
 from .recovery import (
     WORKER_DEADLINE_S,
@@ -34,6 +34,17 @@ from .runtime import emit_runtime_audit
 
 
 async def run(packet_path: Path) -> int:
+    from jevdual.coordination import Coordinator, activated, app_resource
+
+    # This fixed capability can append only to TextEdit/Mousepad. Its separate
+    # execution process participates in the same app reservation as legacy CLI.
+    app = destination_app()
+    async with Coordinator().claim(str(packet_path), [app_resource(app)]) as claim:
+        with activated(claim):
+            return await _run_owned(packet_path)
+
+
+async def _run_owned(packet_path: Path) -> int:
     if packet_path.name != "packet.json" or packet_path.parent.parent.suffix != ".executions":
         raise RecoveryError("unsupported packet path")
     store = ExecutionStore(Path(str(packet_path.parent.parent)[: -len(".executions")]))

@@ -50,6 +50,23 @@ class CapabilityService:
         args: dict[str, Any],
         client_token: str | None = None,
     ) -> dict[str, Any]:
+        from jevdual.capability.backend import ScopedBackend, destination_app
+        from jevdual.coordination import Coordinator, activated, app_resource
+
+        arguments = {"task": task, "resource": resource, "observation": observation,
+                     "target": target, "move": move, "args": args, "client_token": client_token}
+        if isinstance(self.backend, ScopedBackend) and not self.backend.durable:
+            app = destination_app()
+            async with Coordinator().claim(self.backend.session, [app_resource(app)]) as claim:
+                with activated(claim):
+                    return await self._act_owned(**arguments)
+        # Durable input is owned in its independent execution worker, not here.
+        return await self._act_owned(**arguments)
+
+    async def _act_owned(
+        self, *, task: str, resource: str, observation: str, target: str | None,
+        move: str, args: dict[str, Any], client_token: str | None = None,
+    ) -> dict[str, Any]:
         if client_token is not None:
             prior = self.journal.by_token(task, client_token)
             if prior is not None:

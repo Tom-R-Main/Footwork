@@ -40,3 +40,18 @@ def _native_accessibility_granted(monkeypatch):
     from jevdual import native
 
     monkeypatch.setattr(native, "accessibility_status", lambda: "granted")
+
+
+@pytest.fixture(autouse=True)
+def _isolated_coordination_registry(monkeypatch, tmp_path):
+    """Offline ownership tests never reserve the user's real desktop registry."""
+    if os.environ.get("FOOTWORK_LIVE") == "1":
+        return
+    from jevdual.coordination import Coordinator
+
+    original = Coordinator.__init__
+
+    def initialize(self, path=None):
+        original(self, path if path is not None else tmp_path / "coordination.sqlite")
+
+    monkeypatch.setattr(Coordinator, "__init__", initialize)

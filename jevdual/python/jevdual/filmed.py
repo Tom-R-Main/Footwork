@@ -16,10 +16,11 @@ and pointer location); the tagged event tap of the pointer-motion plan replaces 
 
 from __future__ import annotations
 
-import asyncio
 import math
 from dataclasses import asdict, dataclass, field
 from typing import Any
+
+from jevdual.coordination import owned_thread
 
 Point = tuple[float, float]
 Rect = tuple[float, float, float, float]
@@ -155,7 +156,7 @@ class Filmed:
     async def approach(self, frame: Rect, label: str) -> dict[str, Any]:
         """Travel to the centre of ``frame`` (screen points) before an action on it."""
         x, y, w, h = frame
-        return await asyncio.to_thread(self._move, (x + w / 2, y + h / 2), "approach", label)
+        return await owned_thread(self._move, (x + w / 2, y + h / 2), "approach", label)
 
     def place(self, point: Point | None = None) -> dict[str, Any]:
         """Setup only, off camera: put the pointer at ``point`` (or the rest position) in one move,
@@ -186,4 +187,4 @@ class Filmed:
         target = point if point is not None else self.rest
         if target is None:
             raise FilmedRefusal("rest_unset", "no rest position; start the take with --rest X,Y")
-        return await asyncio.to_thread(self._move, target, "park", "rest" if point is None else "waypoint")
+        return await owned_thread(self._move, target, "park", "rest" if point is None else "waypoint")

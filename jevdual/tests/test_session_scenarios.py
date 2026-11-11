@@ -585,6 +585,10 @@ def fw(tmp_path, capsys):
 
 def test_linux_browser_start_recovers_window_in_exact_owned_profile(world, fw, monkeypatch):
     from jevdual import browser_driver as browser
+    from jevdual import browser_target
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": ""}]))
 
     opened, running = [], [False]
     monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
@@ -2309,3 +2313,33 @@ def test_native_form_truncated_duplicate_labels_require_context_for_every_peer(w
     assert fw("start", "Manage example.test", "--app", "Calculator")[0] == 0
     code, out, err = fw("do", "click", "301", "--no-judge")
     assert code == 4 and "target_ambiguous" in err and writes == [], (out, err)
+
+
+def test_changed_bound_window_is_unavailable_before_any_input(world, fw):
+    code, out, error = fw("start", "Keep the original window", "--app", "Calculator")
+    assert code == 0, error
+    target = _id(out, "7")
+    world.window_id += 1
+    code, _, error = fw("do", "click", str(target), "--no-judge")
+    assert code == 7 and "target_changed" in error
+    assert world.presses == []
+
+
+async def test_capability_respects_another_operator_app_reservation(text_capability, monkeypatch):
+    from jevdual.coordination import CoordinationError, Coordinator, app_resource
+
+    world, tools = text_capability
+    observation = await tools.call("bind", {"name": "destination"})
+    target = _append_target(observation)["target"]
+    original = Coordinator.claim
+    monkeypatch.setattr(Coordinator, "claim", lambda self, *args, **kwargs:
+                        original(self, *args, **{**kwargs, "timeout": 0}))
+    store = Coordinator()
+    async with store.claim("film", [app_resource("TextEdit")]) as claim:
+        reservation = store.reserve(claim, claim.resources)
+    try:
+        with pytest.raises(CoordinationError, match="busy"):
+            await tools.call("act", {"target": target, "text": "must wait"})
+        assert world.writes == []
+    finally:
+        store.revoke(reservation)

@@ -91,6 +91,7 @@ class SessionState:
     #: browser mode: the tab this session bound at start; later commands refuse rather than follow the
     #: active tab (status audit 2026-09-26, probe browser_session_rebind_after_active_tab_switch)
     browser_tab: str = ""
+    browser_target: dict[str, Any] = field(default_factory=dict)
     #: names of the secrets typed in this session (``{NAME}``); their values are scrubbed from every
     #: observation before it is rendered, persisted or shown to a model. Names only, never values.
     secret_names: list[str] = field(default_factory=list)
@@ -106,6 +107,7 @@ class SessionState:
     ticket_scope: dict[str, Any] = field(default_factory=dict)
     #: filmed pointer mode (``jevdual.filmed.Filmed.to_record``); empty when off
     filmed: dict[str, Any] = field(default_factory=dict)
+    coordination_token: str = ""
 
     @property
     def path(self) -> Path:
@@ -170,6 +172,77 @@ def session_dir(arg: str | None) -> Path:
 
 
 async def run_command(args: Any) -> int:
+    """Serialize state updates and own shared resources through readback and cleanup."""
+    from jevdual.coordination import CoordinationError, Coordinator, activated, app_resource
+
+    registry = Coordinator()
+    if not getattr(args, "_session_command", False):
+        if args.cmd not in {"run", "menu"}:
+            return await args.fn(args)
+        resources = [app_resource(args.app)]
+        if args.cmd == "run" and getattr(args, "mode", "background_only") != "background_only":
+            resources.append("desktop")
+        async with registry.claim(f"legacy:{os.getpid()}", resources) as claim:
+            with activated(claim):
+                return await args.fn(args)
+    directory = session_dir(args.session).resolve()
+    args.session = str(directory)
+    owner = str(directory)
+    from urllib.parse import quote
+
+    async with registry.claim(owner, ["session/" + quote(owner, safe="")]):
+        args._session_owned = True
+        try:
+            metadata = directory / "session.json"
+            raw = json.loads(metadata.read_text()) if metadata.exists() else {}
+            if args.cmd != "start" and raw.get("dir") and Path(raw["dir"]).resolve() != directory:
+                if args.cmd in {"inspect-target", "visual-check"}:
+                    print("not inspected: session_path_mismatch: session directory binding changed", file=sys.stderr)
+                    return 4
+                raise CoordinationError("session directory binding changed; refusing writes outside the owned session")
+            app = ("Google Chrome" if getattr(args, "browser", False) else
+                   getattr(args, "app", "") if args.cmd == "start" else raw.get("app", ""))
+            window = ""
+            if raw.get("mode") == "browser" and args.cmd != "start" and raw.get("pid") and raw.get("window_id"):
+                window = f"{raw['pid']}/{raw['window_id']}"
+            resources = [app_resource(app, window=window)]
+            posture = getattr(args, "mode", None) or raw.get("posture", "background_only")
+            mutating = args.cmd in {"start", "do", "park", "point"} or (args.cmd == "s1" and args.act)
+            if mutating and args.cmd != "start" and raw.get("mode") == "browser" and not raw.get("browser_target"):
+                raise CoordinationError("legacy browser session lacks a persistent page identity; start a fresh session")
+            browser_start = args.cmd == "start" and getattr(args, "browser", False)
+            if (mutating and posture != "background_only") or browser_start:
+                # Headed Chrome launch/recovery can activate a native window even
+                # when later page operations qualify for background delivery.
+                resources.append("desktop")
+            reservation = raw.get("coordination_token", "")
+            if args.cmd == "start" and reservation:
+                raise CoordinationError("reserved session cannot be restarted; yield and use a fresh directory")
+            # Status is disk/journal inspection and remains available after revocation.
+            if args.cmd == "status" and not getattr(args, "reconcile", False):
+                return await _run_authority_command(args)
+            async with registry.claim(owner, resources, reservation=reservation) as claim:
+                args._coordination_claim = claim
+                with activated(claim):
+                    result = await _run_authority_command(args)
+                if result and getattr(args, "_created_reservation", ""):
+                    registry.revoke(args._created_reservation)
+                return result
+        except (KeyboardInterrupt, SystemExit):
+            if getattr(args, "_created_reservation", ""):
+                registry.revoke(args._created_reservation)
+            raise
+        except Exception as exc:  # noqa: BLE001 - record failures while still owning session state
+            if getattr(args, "_created_reservation", ""):
+                registry.revoke(args._created_reservation)
+            from jevdual.cli import _stopped
+
+            return _stopped(args, exc)
+        finally:
+            args._session_owned = False
+
+
+async def _run_authority_command(args: Any) -> int:
     """Own a durable domain before loading or writing any participating session state."""
     from jevdual.capability.journal import JournalError
     from jevdual.session_operations import SessionOperations
@@ -895,18 +968,37 @@ async def bind(state: SessionState):
     if state.mode == "browser":
         from jevdual.browser_driver import BrowserBridge, configured_driver
 
+        current_url = state.last_url or None
+        if state.browser_target:
+            from jevdual.browser_target import resolve
+
+            _, current_url = await resolve(state.pid, expected=state.browser_target)
         driver = configured_driver(state.pid)
         from jevdual.posture import ExecutionPolicy
 
         bridge = BrowserBridge(driver, state.pid, state.window_id, policy=ExecutionPolicy(state.posture))  # type: ignore[arg-type]
-        # the tab is the one showing the page this session last observed: the Driver's tab ids are new on
-        # every connection, so the page is the identity that survives between commands
-        await bridge.attach(expect_url=state.last_url or None)
+        bridge.target_pin = state.browser_target
+        try:
+            await bridge.attach(expect_url=current_url)
+        except BaseException:
+            with contextlib.suppress(Exception):
+                await driver.shutdown()
+            raise
         state.browser_tab = bridge.tab_id or ""
         return driver, bridge
     from jevdual.effectors import desktop_effector
 
     driver = desktop_effector()
+    from jevdual.effectors.cua import list_windows_input
+
+    try:
+        windows = await driver.list_windows(list_windows_input(pid=state.pid, on_screen_only=True))
+        if not any(window.window_id == state.window_id for window in windows.windows):
+            raise NativeBridgeError("target_changed", "the original native window is unavailable; nothing dispatched")
+    except BaseException:
+        with contextlib.suppress(Exception):
+            await driver.shutdown()
+        raise
     if state.native_scope or state.finder_scope:
         return driver, _filmed(
             state,
@@ -1350,6 +1442,14 @@ async def cmd_start(args: Any) -> int:
             if refusal:
                 print(f"not starting: {refusal}", file=sys.stderr)
                 return 2
+        if state.filmed:
+            from jevdual.coordination import CoordinationError
+
+            claim = getattr(args, "_coordination_claim", None)
+            if claim is None:
+                raise CoordinationError("filming requires the coordinated command entrypoint")
+            state.coordination_token = claim.registry.reserve(claim, claim.resources)
+            args._created_reservation = state.coordination_token
         if durable:
             from jevdual.session_operations import native_identity
 
@@ -1437,6 +1537,11 @@ async def _start_browser(args: Any, d: Path) -> int:
             print(f"navigate {args.url}: {eff.effect} {eff.summary[:80]}")
             await asyncio.sleep(2.0)
         state.log({"kind": "start", "task": args.task, "requirements": state.requirements, "mode": "browser"})
+        initial = await bridge.observe()
+        from jevdual.browser_target import resolve
+
+        state.browser_target, _ = await resolve(state.pid, url=initial.menu.url)
+        bridge.target_pin = state.browser_target
         nm, _ = await observe(state, bridge)
         print(render_observation(nm, text_chars=args.text, receipt=None))
         print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
