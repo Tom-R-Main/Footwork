@@ -191,6 +191,8 @@ def test_window_element_fields():
         "label",
         "value",
         "value_description",
+        "min",
+        "max",
         "enabled",
         "selected",
         "in_web_content",

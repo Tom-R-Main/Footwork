@@ -161,6 +161,26 @@ def test_preview_outlines_exact_pixel_binding_and_preserves_original_png(operato
     assert world.presses == []
 
 
+def test_inspection_keeps_numeric_snapshot_evidence_without_granting_an_edit(operator):
+    world, path, run = operator
+    world.base["elements"].append({
+        "element_index": 801, "role": "AXSlider", "label": "Track volume", "value": "0.75",
+        "min": 0, "max": 1, "value_description": "-2.5 dB", "enabled": True,
+        "actions": ["AXIncrement", "AXDecrement"],
+        "frame": {"x": 440., "y": 380., "w": 100., "h": 18.},
+    })
+    assert run("look")[0] == 0
+    code, out, err = inspect(run, "801")
+    assert code == 0, (out, err)
+    evidence = manifest(path)["inspection"]
+    assert evidence["target_numeric"] == {
+        "source": "cua.window_state", "value": .75, "min": 0., "max": 1., "range_valid": True,
+        "value_description": "-2.5 dB", "value_description_truncated": False,
+    }
+    assert "read-only" in evidence["authority"]
+    assert world.presses == [] and world.tool_calls == []
+
+
 def test_preview_escapes_native_labels_and_postconditions(operator):
     world, path, run = operator
     label = '<img src=x onerror="window.evil()"> & Clear'

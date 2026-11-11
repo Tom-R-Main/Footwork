@@ -132,6 +132,39 @@ def _get(obj: Any, key: str, default: Any = None) -> Any:
     return getattr(obj, key, default)
 
 
+def _finite_numeric(value: Any) -> float | None:
+    """Snapshot numbers only: no units, locale guesses, booleans or nonfinite JSON values."""
+    if type(value) not in (int, float, str):
+        return None
+    if isinstance(value, str) and (
+        len(value) > _VALUE_CAP
+        or re.fullmatch(r"[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?", value.strip()) is None
+    ):
+        return None
+    try:
+        number = float(value)
+    except (ValueError, OverflowError):
+        return None
+    return number if math.isfinite(number) and len(str(value)) <= _VALUE_CAP else None
+
+
+def _numeric_observation(element: Any) -> dict[str, Any] | None:
+    """Read-only SDK metadata; matching AX state is not renderer or persistence proof."""
+    out: dict[str, Any] = {}
+    for name in ("value", "min", "max"):
+        number = _finite_numeric(_get(element, name))
+        if number is not None:
+            out[name] = number
+    description = _get(element, "value_description")
+    if isinstance(description, str) and description:
+        # Bound the source before normalization; never hide clipping in a units description.
+        out["value_description"] = _clean(description[:_VALUE_CAP], _VALUE_CAP)
+        out["value_description_truncated"] = len(description) > _VALUE_CAP
+    if "min" in out and "max" in out:
+        out["range_valid"] = out["min"] <= out["max"]
+    return {"source": "cua.window_state", **out} if out else None
+
+
 @dataclass(frozen=True)
 class NativeVisualCapture:
     """Geometry supplied with the same explicit bound-window capture, not action authority."""
@@ -493,12 +526,17 @@ def menu_from_snapshot(
         if placeholder and mac_proof.get("placeholder_qualified", True) and label in (role, "text area"):
             label = placeholder
         value: str | None = None
+        numeric = _numeric_observation(el) if role in ("slider", "spinbutton") else None
         value_truncated = False if role in _TEXT_ROLES and not sensitive else None
         if role in _TEXT_ROLES and not sensitive and raw_value not in (None, ""):
             preview = _clean_multiline(raw_value) if multiline else _clean(raw_value)
             cap = _VALUE_CAP * 4 if multiline else _VALUE_CAP
             value_truncated = len(preview) > cap
             value = preview[:cap - 1] + "…" if value_truncated else preview
+        elif numeric is not None and "value" in numeric:
+            # Keep the supplied spelling for display; numeric is an approximate float projection.
+            # Do not populate NativeMenu.values/exact_ax_values, which authorize editable text.
+            value = str(_get(el, "value")).strip()
         checked = _checked(raw_value) if role in ("checkbox", "radio", "switch") else None
         if linux_role and role in ("checkbox", "radio"):
             checked = _get(el, "selected")
@@ -517,6 +555,7 @@ def menu_from_snapshot(
             offscreen=_offscreen(frame, bounds),
             placeholder=placeholder,
             value_truncated=value_truncated,
+            numeric=numeric,
             href=(mac_links or {}).get(int(idx)) if ax_role == "AXLink" else None,
             native_dom_id=(mac_controls or {}).get(int(idx), (None, None))[0]
             if ax_role in ("AXButton", "AXPopUpButton") else None,

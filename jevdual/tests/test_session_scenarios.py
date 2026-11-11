@@ -583,6 +583,32 @@ def fw(tmp_path, capsys):
     return run
 
 
+def test_numeric_controls_keep_read_only_snapshot_values(world, fw):
+    world.base["elements"].extend([
+        {"element_index": 801, "role": "AXSlider", "label": "Track volume",
+         "value": "0.75", "value_description": "-2.5 dB", "min": 0.0, "max": 1.0,
+         "actions": ["AXIncrement", "AXDecrement"], "enabled": True},
+        {"element_index": 802, "role": "AXIncrementor", "label": "Tempo", "value": "105",
+         "value_description": "105 BPM", "actions": ["AXIncrement", "AXDecrement"], "enabled": True},
+    ])
+    code, out, err = fw("start", "Read faders without changing them", "--app", "Calculator")
+    assert code == 0, (out, err)
+    assert "'Track volume' = '0.75'" in out
+    assert "'Tempo' = '105'" in out
+    code, out, err = fw("look")
+    assert code == 0 and "'Track volume' = '0.75'" in out, (out, err)
+    saved = json.loads((fw.session / "session.json").read_text())
+    controls = {c["label"]: c for c in saved["last_candidates"]}
+    assert controls["Track volume"]["numeric"] == {
+        "source": "cua.window_state", "value": 0.75, "min": 0.0, "max": 1.0,
+        "value_description": "-2.5 dB", "value_description_truncated": False, "range_valid": True,
+    }
+    assert controls["Tempo"]["numeric"]["value"] == 105
+    assert "min" not in controls["Tempo"]["numeric"]
+    assert all(controls[name]["operations"] == ["click"] for name in ("Track volume", "Tempo"))
+    assert world.presses == [] and world.tool_calls == []
+
+
 def test_linux_browser_start_recovers_window_in_exact_owned_profile(world, fw, monkeypatch):
     from jevdual import browser_driver as browser
 

@@ -71,6 +71,7 @@ _CAND_FIELDS = (
     "native_document_url",
     "native_control_qualified",
     "native_control_opaque",
+    "numeric",
 )
 
 
@@ -946,6 +947,8 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
         extra = f" = {c.value!r}" if c.value else ""
         if c.value_truncated:
             extra += " [value preview truncated]"
+        if c.numeric is not None:
+            extra += " numeric=" + json.dumps(c.numeric, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
         if qualified_link_href(c) is not None:
             extra += f" href={c.href!r}"
         if qualified_control_identity(c) is not None:
@@ -1807,6 +1810,7 @@ async def cmd_inspect_target(args: Any) -> int:
         "driver_reported_scale": capture.reported_scale,
         "target_label": candidate.label,
         "target_identity": _target_identity(candidate),
+        **({"target_numeric": dict(candidate.numeric)} if candidate.numeric is not None else {}),
         "authority": "read-only evidence; no model judgment, dispatch, consent or verified postcondition",
         "coverage_warning": None
         if nm.elements_complete

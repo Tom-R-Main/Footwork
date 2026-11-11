@@ -71,6 +71,8 @@ class Candidate:
     native_control_qualified: bool | None = None
     #: Literal DOM identifier used because the independently read accessible name is empty.
     native_control_opaque: bool | None = None
+    #: Read-only numeric metadata from the native snapshot, never exact text/edit authority.
+    numeric: dict[str, Any] | None = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
@@ -93,6 +95,8 @@ class Candidate:
             out["offscreen"] = True
         if self.has_value is not None and self.value is None:
             out["has_value"] = self.has_value
+        if self.numeric is not None:
+            out["numeric"] = dict(self.numeric)
         return out
 
 
