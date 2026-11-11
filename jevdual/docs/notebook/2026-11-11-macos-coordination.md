@@ -27,3 +27,17 @@ Established: merged PR21 is partially qualified on macOS 26.5.1 arm64 with exact
 Uncertain: no successful complete filmed approach under capture/background concurrency, actual button-held cancellation or hard-kill cleanup, other apps, cross-user/session desktops, native window-birth identity or installed-release adoption is established. Source tests model native UI and cannot replace the explicit live trajectory.
 Decision: close this verification package with a failed broad verdict, precise passing subset, reproducible counterexample, private task-window recording and immutable runtime hashes. Retain the isolated evidence branch; do not merge changes into the active Suno checkout or modify the user-local release.
 Refs: docs/experiments/macos-desktop-coordination-20261111.md; results/macos-coordination-20261111/REPORT.md
+
+## MACF1 · prediction · 2026-11-11 10:41
+Hypothesis: allowing a valid reservation owner past earlier waiting requests that its own reservation blocks removes circular waiting without bypassing any active/revoked/orphaned conflicting owner or changing ordinary FIFO fairness.
+Test: first add a failing public-CLI simulated-Mac command-gap scenario and coordinator cases for desktop/app hierarchy, active and revoked owners, stale tokens, and unrelated earlier waiters. Then repair only the arbitration condition and rerun the real-kernel counterexample plus the focused suite.
+Predicts: the recorded old source fails the valid-owner continuation scenario; repaired source admits the owner while the competitor remains waiting, retains exclusion during cleanup and preserves normal fairness where no owned reservation blocks the earlier waiter.
+Against: an active owner is bypassed, revoked/stale authority gains admission, ordinary earlier waiters starve, or the original owner still stalls.
+Refs: results/macos-coordination-20261111/reservation-probe.json; python/jevdual/coordination.py; tests/test_session_scenarios.py
+
+## MACP1 · prediction · 2026-11-11 10:41
+Hypothesis: the live playback stall is caused by a cold native event-posting stage or per-sample ownership work exceeding the existing50ms gap, rather than the planner's admitted schedule. Measuring ownership, Quartz posting, contention reads and actual failed gap separately will distinguish these causes without moving the pointer during initial diagnostics.
+Test: benchmark real Coordinator checks against a task-private registry without input, inspect the exact real plan, add deterministic public simulated-Mac slow-check/slow-post scenarios and stage instrumentation. For the later explicitly handed-over live rehearsal, record per-stage timings and the failed interval; do not relax DragSettings. If actual event-post time is dominant, compare cold versus prepared event construction/posting only on the owned fixture under a desktop claim.
+Predicts: the schedule stays below50ms; at least one actual runtime stage crosses the bound or stalls ownership. The symptom remains a safe refusal with no late follow-up post. A slow-check negative control must still abort even if event posting is repaired.
+Against: the schedule itself violates admission, no observed stage explains the failed gap, or a proposed repair hides real delays/foreign input/cancellation instead of preventing the avoidable work.
+Refs: results/macos-coordination-20261111/live.json; python/jevdual/drag.py; python/jevdual/filmed.py; results/macos-coordination-20261111-fix/
