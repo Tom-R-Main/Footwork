@@ -389,3 +389,10 @@ Test: before Copy, require exact intended non-LF characters in both whole AXValu
 Predicts: the new copied plaintext equals the original461-character file exactly, including every LF and accent.
 Against: source ownership/focus fails, clipboard does not advance, Copy refuses, plaintext is unavailable or differs. No retry and no normalization of the expected text.
 Refs: output/suno-20261110/lyrics-copy-precondition.json; output/suno-20261110/lyrics-selected-text-comparison.json
+
+## SUNU36 · update · 2026-11-10 19:11
+Resolves: SUN30 = held
+Observed: owned-field hash/non-LF content and focused-element checks passed; one Edit Copy advanced pasteboard changeCount3537to3538. Only then the new plaintext was read and compared in memory: exactly461characters,24LF and SHA25674338bc435e4ec1c2079ae7cc48f2d7e3cd708bcf09f2ee55fdab832375663ff, identical to the intended original file. No prior clipboard contents were read or unmatched clipboard content stored. The generic menu receipt had suspected no-op because the visible page did not change, illustrating its limited scope.
+Inferred: the full original lyrics were delivered correctly. AXValue and AXSelectedText serialize their line breaks differently; their earlier partial receipt is not proof of lost lyrics and remains historically unchanged. Controlled new-copy equality independently verifies the requested content. No retyping is needed.
+Next: resume actual song-menu/export/editor journey on frozen a6defe1, using inspected scoped DOM identity. No generation from the still-instrumental style/title draft until those are explicitly revalidated for vocals.
+Refs: output/suno-20261110/lyrics-copy-qualified-source.json; output/suno-20261110/lyrics-copy-once.txt; output/suno-20261110/lyrics-copy-result.json; output/suno-20261110/draft-brief/lyrics-short.txt
