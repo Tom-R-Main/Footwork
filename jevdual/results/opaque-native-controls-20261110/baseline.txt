@@ -1,0 +1,23 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_native_opaque_controls_public_numeric_projection_and_action _______
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1070159e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1053af260>
+
+    def test_native_opaque_controls_public_numeric_projection_and_action(world, fw, monkeypatch):
+        _, _, clicked = _native_opaque_controls(world, monkeypatch)
+        code, out, err = fw('start', 'Inspect unnamed owned editor controls', '--app', 'Calculator')
+        assert code == 0, (out, err)
+        saved = {row['id']: row for row in _state(fw)['last_candidates']}
+>       assert saved[940]['label'] == 'hero-options'
+E       AssertionError: assert 'combobox' == 'hero-options'
+E         
+E         - hero-options
+E         + combobox
+
+tests/test_session_scenarios.py:3684: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_native_opaque_controls_public_numeric_projection_and_action
+1 failed, 316 deselected in 0.54s

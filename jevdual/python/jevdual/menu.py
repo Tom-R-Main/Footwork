@@ -69,6 +69,8 @@ class Candidate:
     native_dom_id: str | None = None
     native_document_url: str | None = None
     native_control_qualified: bool | None = None
+    #: Literal DOM identifier used because the independently read accessible name is empty.
+    native_control_opaque: bool | None = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
@@ -80,7 +82,7 @@ class Candidate:
         }
         for key in (
             "value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section", "placeholder",
-            "value_truncated", "href_qualified", "native_dom_id", "native_document_url", "native_control_qualified",
+            "value_truncated", "href_qualified", "native_dom_id", "native_document_url", "native_control_qualified", "native_control_opaque",
         ):
             val = getattr(self, key)
             if val is not None:
@@ -103,7 +105,7 @@ def qualified_link_href(candidate: Any) -> str | None:
     return href if get("role") == "link" and get("href_qualified") is True and isinstance(href, str) else None
 
 
-def qualified_control_identity(candidate: Any) -> tuple[str, str] | None:
+def qualified_control_identity(candidate: Any) -> tuple[str, str, bool] | None:
     def get(key: str) -> Any:
         return candidate.get(key) if isinstance(candidate, dict) else getattr(candidate, key, None)
 
@@ -111,7 +113,7 @@ def qualified_control_identity(candidate: Any) -> tuple[str, str] | None:
     if (get("native_control_qualified") is True and get("role") in ("button", "combobox")
             and isinstance(identifier, str) and identifier
             and isinstance(document, str) and document):
-        return document, identifier
+        return document, identifier, get("native_control_opaque") is True
     return None
 
 

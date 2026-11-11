@@ -295,3 +295,24 @@ def test_browser_unqualified_geometry_fails_before_capture(operator, monkeypatch
     )
     code, _, error = inspect(run)
     assert code == 4 and "surface_unsupported" in error
+
+
+@pytest.mark.parametrize('changed', [False, True])
+def test_opaque_control_inspection_records_provenance_and_refuses_name_drift(operator, monkeypatch, changed):
+    from tests.test_session_scenarios import _mac_selectors, _native_opaque_controls
+
+    world, path, run = operator
+    _mac_selectors(monkeypatch)
+    rows, _, _ = _native_opaque_controls(world, monkeypatch)
+    assert run('look')[0] == 0
+    if changed:
+        rows[0]['label'] = 'hero-options'  # identical display text, different actual name provenance
+    code, out, err = inspect(run, '940')
+    if changed:
+        assert code == 4 and 'target_identity_changed' in err, (out, err)
+    else:
+        assert code == 0, (out, err)
+        identity = manifest(path)['inspection']['target_identity']
+        assert identity['native_control_opaque'] is True
+        assert identity['label'] == identity['native_dom_id'] == 'hero-options'
+    assert world.presses == [] and not world.tool_calls

@@ -285,6 +285,45 @@ def control_identity(el: Any, *, label: str) -> dict[str, Any] | None:
     return None
 
 
+def control_backing(el: Any, *, pid: int, window: Any, role: str) -> dict[str, Any] | None:
+    """Read an opaque control's literal backing, including known absence of a DOM ID.
+
+    No purpose is inferred. A complete direct parent walk must prove this process/window and
+    the closest WebArea's actual document URL. Missing attributes never mean an empty name.
+    """
+    from ApplicationServices import AXUIElementGetPid
+
+    if role not in ("AXButton", "AXPopUpButton") or _attr(el, "AXRole") != role:
+        return None
+    identifier = _attr(el, "AXDOMIdentifier")
+    if (not isinstance(identifier, str) or len(identifier) > 512
+            or any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in identifier)):
+        return None
+    title, description = _attr(el, "AXTitle"), _attr(el, "AXDescription")
+    node, web_area, url = el, None, None
+    for _ in range(32):
+        error, owner = AXUIElementGetPid(node, None)
+        if error != 0 or owner != pid:
+            return None
+        role = _attr(node, "AXRole")
+        if role == "AXWebArea" and web_area is None:
+            web_area, url = node, _complete_http_url(_attr(node, "AXURL"))
+            if url is None:
+                return None
+        if same_element(node, window):
+            if web_area is None or role not in ("AXWindow", "AXSheet"):
+                return None
+            return {"dom_id": identifier, "document_url": url, "web_area": web_area,
+                    "unnamed": isinstance(title, str) and title == ""
+                    and isinstance(description, str) and description == ""}
+        if role in ("AXWindow", "AXSheet", "AXApplication"):
+            return None
+        node = _attr(node, "AXParent")
+        if node is None:
+            return None
+    return None
+
+
 def same_element(left: Any, right: Any) -> bool:
     from CoreFoundation import CFEqual
 

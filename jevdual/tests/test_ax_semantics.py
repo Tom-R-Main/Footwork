@@ -1,5 +1,6 @@
 """Explicit AX ancestor context survives the driver's collapsed-group projection."""
 
+import pytest
 from jevdual import ax
 
 
@@ -242,3 +243,34 @@ def test_semantic_section_stops_at_web_area_and_bounds_cycles(monkeypatch):
     reads.clear()
     assert ax.semantic_section(cyclic) is None
     assert len(reads) <= 32 * 4
+
+
+@pytest.mark.parametrize('role', ['AXButton', 'AXPopUpButton'])
+@pytest.mark.parametrize('change', ['none', 'absent_id', 'unreadable_id', 'bad_id', 'named', 'unknown_name',
+                                   'wrong_pid', 'wrong_window', 'wrong_role', 'bad_url', 'cycle'])
+def test_opaque_control_backing_requires_independent_bound_scope(monkeypatch, role, change):
+    import sys
+    from types import SimpleNamespace
+
+    window = {'AXRole': 'AXWindow'}
+    page = {'AXRole': 'AXWebArea', 'AXURL': 'https://example.test/edit/a', 'AXParent': window}
+    control = {'AXRole': role, 'AXTitle': '', 'AXDescription': '', 'AXDOMIdentifier': 'literal-id', 'AXParent': page}
+    monkeypatch.setattr(ax, '_attr', lambda element, key: element.get(key))
+    monkeypatch.setattr(ax, 'same_element', lambda left, right: left is right)
+    monkeypatch.setitem(sys.modules, 'ApplicationServices', SimpleNamespace(
+        AXUIElementGetPid=lambda element, _: (0, 78 if change == 'wrong_pid' else 77)))
+    if change == 'absent_id': control['AXDOMIdentifier'] = ''
+    if change == 'unreadable_id': control['AXDOMIdentifier'] = None
+    if change == 'bad_id': control['AXDOMIdentifier'] = 'bad id'
+    if change == 'named': control['AXTitle'] = 'Play'
+    if change == 'unknown_name': control['AXDescription'] = None
+    if change == 'wrong_window': page['AXParent'] = {'AXRole': 'AXWindow'}
+    if change == 'wrong_role': control['AXRole'] = 'AXGroup'
+    if change == 'bad_url': page['AXURL'] = '/relative'
+    if change == 'cycle': page['AXParent'] = page
+    proof = ax.control_backing(control, pid=77, window=window, role=role)
+    if change in ('none', 'absent_id', 'named', 'unknown_name'):
+        assert proof['dom_id'] == control['AXDOMIdentifier']
+        assert proof['unnamed'] is (change in ('none', 'absent_id'))
+    else:
+        assert proof is None

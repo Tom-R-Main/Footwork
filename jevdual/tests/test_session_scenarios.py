@@ -3661,3 +3661,95 @@ def test_native_form_truncated_duplicate_labels_require_context_for_every_peer(w
     assert fw("start", "Manage example.test", "--app", "Calculator")[0] == 0
     code, out, err = fw("do", "click", "301", "--no-judge")
     assert code == 4 and "target_ambiguous" in err and writes == [], (out, err)
+
+
+def _native_opaque_controls(world, monkeypatch, role='AXPopUpButton'):
+    from jevdual import ax
+
+    rows, backing, clicked = _native_identified_controls(world, monkeypatch)
+    for row in rows:
+        row['label'] = None
+        row['role'] = role
+    monkeypatch.setattr(ax, 'resolve', lambda pid, window, role, frame: next(row for row in rows if row['frame']['y'] == frame.y))
+    monkeypatch.setattr(ax, 'window_element', lambda pid, window: 'bound-window')
+    monkeypatch.setattr(ax, 'control_backing', lambda element, **kwargs: (
+        {**backing[element['frame']['y']], 'unnamed': not element.get('label')}
+        if backing[element['frame']['y']] is not None else None), raising=False)
+    return rows, backing, clicked
+
+
+@pytest.mark.parametrize('role', ['AXButton', 'AXPopUpButton'])
+def test_native_opaque_controls_public_numeric_projection_and_action(world, fw, monkeypatch, role):
+    _, _, clicked = _native_opaque_controls(world, monkeypatch, role)
+    code, out, err = fw('start', 'Inspect unnamed owned editor controls', '--app', 'Calculator')
+    assert code == 0, (out, err)
+    saved = {row['id']: row for row in _state(fw)['last_candidates']}
+    assert saved[940]['label'] == 'hero-options'
+    assert saved[940]['native_control_opaque'] is True
+    assert 'opaque identifier; accessible name empty' in out
+    code, out, err = fw('do', 'click', '941', '--no-judge')
+    assert code == 0 and len(clicked) == 1, (out, err)
+    assert clicked[0]['dom_id'] == 'footer-options'
+
+
+@pytest.mark.parametrize('during', [False, True])
+@pytest.mark.parametrize('change', ['dom_id', 'document_url', 'reorder', 'unreadable_peer', 'duplicate_id', 'named'])
+def test_native_opaque_controls_refuse_drift(world, fw, monkeypatch, during, change):
+    from jevdual.native import NativeBridge
+
+    rows, backing, clicked = _native_opaque_controls(world, monkeypatch)
+    assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+
+    def mutate():
+        if change == 'reorder': rows[0]['element_index'], rows[1]['element_index'] = 941, 940
+        elif change == 'unreadable_peer': backing[430] = None
+        elif change == 'duplicate_id': backing[430]['dom_id'] = backing[400]['dom_id']
+        elif change == 'document_url': backing[400]['document_url'] = 'https://example.test/other'
+        elif change == 'named': rows[0]['label'] = backing[400]['dom_id']
+        else: backing[400]['dom_id'] = 'replacement'
+
+    if during:
+        original, reads = NativeBridge.observe, [0]
+
+        async def after_preflight(bridge, **kwargs):
+            result = await original(bridge, **kwargs)
+            reads[0] += 1
+            if reads[0] == 1: mutate()
+            return result
+
+        monkeypatch.setattr(NativeBridge, 'observe', after_preflight)
+    else: mutate()
+    code, out, err = fw('do', 'click', '940', '--no-judge')
+    assert clicked == [] and any(marker in out + err for marker in ('target_changed', 'target_ambiguous', 'target_missing', 'Nothing dispatched')), (code, out, err)
+
+
+@pytest.mark.parametrize('failure', ['duplicate', 'named_duplicate', 'disabled_duplicate', 'unreadable', 'missing_frame', 'bound'])
+def test_native_opaque_controls_census_refuses_unknown_or_duplicate_backing(world, fw, monkeypatch, failure):
+    rows, backing, clicked = _native_opaque_controls(world, monkeypatch)
+    if failure in ('duplicate', 'named_duplicate', 'disabled_duplicate'):
+        backing[430]['dom_id'] = backing[400]['dom_id']
+        if failure == 'named_duplicate': rows[1]['label'] = 'Named peer'
+        if failure == 'disabled_duplicate': rows[1]['enabled'] = False
+    elif failure == 'unreadable': backing[430] = None
+    elif failure == 'missing_frame': rows[1]['frame'] = None
+    else:
+        for i in range(63):
+            world.base['elements'].append({**rows[0], 'element_index': 1000 + i})
+    assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+    saved = _state(fw)['last_candidates']
+    assert not any(row.get('native_control_opaque') for row in saved)
+    assert clicked == []
+
+
+def test_native_opaque_controls_readable_absent_id_peer_and_grant_provenance(world, fw, monkeypatch):
+    from dataclasses import replace
+
+    from jevdual.session import SessionState, _element_ref, _target_identity
+
+    _, backing, _ = _native_opaque_controls(world, monkeypatch)
+    backing[430]['dom_id'] = ''
+    assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+    candidate = SessionState.load(fw.session).last_menu().candidate(940)
+    assert candidate.native_control_opaque is True
+    assert _target_identity(candidate)['native_control_opaque'] is True
+    assert _element_ref(None, candidate) != _element_ref(None, replace(candidate, native_control_opaque=None))

@@ -70,6 +70,7 @@ _CAND_FIELDS = (
     "native_dom_id",
     "native_document_url",
     "native_control_qualified",
+    "native_control_opaque",
 )
 
 
@@ -949,6 +950,8 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
             extra += f" href={c.href!r}"
         if qualified_control_identity(c) is not None:
             extra += f" dom_id={c.native_dom_id!r} document={c.native_document_url!r}"
+        if c.native_control_opaque:
+            extra += " [opaque identifier; accessible name empty]"
         for key in ("checked", "pressed", "expanded"):
             if getattr(c, key) is not None:
                 extra += f" {key}={getattr(c, key)}"
@@ -3104,6 +3107,7 @@ def _proposal(
 def _target_identity(target: Any) -> dict[str, Any]:
     return {
         **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
+        **({"native_control_opaque": True} if getattr(target, "native_control_opaque", None) is True else {}),
         **({"href": target.href, "href_qualified": True} if qualified_link_href(target) is not None else {}),
         **({key: getattr(target, key) for key in ("native_dom_id", "native_document_url", "native_control_qualified")}
            if qualified_control_identity(target) is not None else {}),
