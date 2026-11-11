@@ -89,3 +89,14 @@ Test: one final bounded read-only new-window sampler around the unchanged public
 Predicts: exact owner matches, action-name read succeeds with an empty list, the HelpTag is not the key window and the standard requested window stays key.
 Against: role/owner differs, actions exist or are unreadable, focus moves to the transient, native resolution is ambiguous or the requested window is not key. No eligibility change follows an unknown result.
 Refs: output/suno-studio-20261111/transient-classification.json; output/suno-studio-20261111/window-order-sample.json
+
+## STU7 · update · 2026-11-11 03:21
+Resolves: ST10 = failed
+Observed: actual transient resolves by exact CGID to an owned AXHelpTag; action-list read succeeds with one action, contradicting the empty-action prediction. It explicitly reports AXFocused=false and focus-settable=false, is not key, and the requested standard window remains key. The new transient alone leads the same-process window order during verification. The structured SDK diagnostic confirms correct process/key target but refuses front-in-process position; all application input remains withheld.
+Next: identify the actual action name before considering any eligibility correction. Do not equate missing AX, a layer number or an empty title with harmlessness, and do not apply the earlier speculative Cocoa ordering change.
+Refs: output/suno-studio-20261111/helptag-interactivity.json; output/suno-studio-20261111/transient-classification.json; output/suno-studio-20261111/window-order-sample.json
+
+## ST11 · exploratory · 2026-11-11 03:21
+Question: is the HelpTag's single action only a native window-management action, or a content/menu operation that must remain blocking?
+Test: one further unchanged public guarded attempt with a read-only exact new-HelpTag metadata sampler. Record successful bounded action names, focused/settable flags, exact owner/CGID/role and key-window comparison, without invoking those actions or collecting text/pixels. Any content, menu, unknown or unreadable action prevents the proposed narrow classification; only explicit native window-management metadata can justify a separately preregistered ranking repair.
+Refs: output/suno-studio-20261111/helptag-interactivity.json
