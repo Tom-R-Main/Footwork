@@ -360,3 +360,17 @@ Test: fresh exact Lyrics editor SDK/AX resolution; compare full AXValue and AXSt
 Predicts: an independent complete text accessor agrees with the intended file even if the displayed/AXValue representation differs.
 Against: all readable exact accessors differ from the file, counts disagree, or no independent full string is available. Unsupported range text is missing evidence, not proof of content.
 Refs: output/suno-20261110/lyrics-full-replacement.txt; python/jevdual/ax.py
+
+## SUNU34 · update · 2026-11-10 19:02
+Resolves: SUN28 = failed
+Observed: direct complete AXValue and SDK value both have456characters and19LF, versus intended461characters and24LF. AXNumberOfCharacters is456. Both requested full AXStringForRange reads returned no value with error-25212. Suno's own counter remains461. No independent full AX accessor establishes the intended complete text, and no new input occurred.
+Inferred: the mismatch is not merely a rendered candidate preview; native text access omits five blank-line characters relative to Suno's count. Actual frontend content still requires an independent check.
+Next: one controlled copy of the fully selected run-owned lyrics, verifying only the new clipboard's equality to the intended file. Read no prior clipboard contents.
+Refs: output/suno-20261110/lyrics-full-value-comparison.json; output/suno-20261110/lyrics-full-replacement.txt
+
+## SUN29 · prediction · 2026-11-10 19:02
+Hypothesis: Suno's own plaintext copy retains the original461-character lyrics even though its AX text representation omits blank lines.
+Test: observe actual Edit Select All and Copy paths, select the focused run-owned Lyrics field, independently verify the field's whole AX range/selected text, record only the pasteboard change counter, invoke Copy once, and read new plaintext only after the counter advances. Compare in memory with the intended file; persist equality/count provenance, never unmatched clipboard text. No prior clipboard read or field modification; no generation.
+Predicts: newly copied plaintext exactly matches the intended file, independently qualifying lyrics content despite the AX mismatch.
+Against: full selection cannot be established, Copy is refused/unknown without changed counter, new clipboard does not match or no plaintext is available. Do not retry or print unrelated clipboard contents.
+Refs: output/suno-20261110/lyrics-full-value-comparison.json; output/suno-20261110/draft-brief/lyrics-short.txt
