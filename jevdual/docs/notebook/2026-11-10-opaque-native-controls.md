@@ -20,3 +20,15 @@ Test: complete default offline pytest suite on the frozen source with the focus1
 Predicts: the default suite passes with normal opt-in skips and unchanged measured source.
 Against: a named-control/default route regresses or source changes during the run.
 Refs: results/opaque-native-controls-20261110/focused.txt
+
+## O4 · update · 2026-11-10 20:28
+Resolves: O3 = held
+Observed: full default offline pytest on frozen1bdcd0b passed3301 tests with62 opt-in skips in203.87seconds, exit0. Hashes of ax/native/session/menu match before and after. No live/browser opt-ins were active.
+Next: hand off completed offline evidence; parent retains all live observation, inspection and editing.
+Refs: results/opaque-native-controls-20261110/full-default.json
+
+## O5 · summary · 2026-11-10 20:28
+Established: supported enabled unnamed buttons/popups can carry literal DOM identifiers with explicit persisted opaque provenance, exact process/window/document backing, observed-peer ID census and unchanged named-control qualification. 46 targeted opaque checks,516 affected tests and3301 full default tests pass with62 opt-in skips.
+Uncertain: the worker did not perform live native input. SUN34 did not prove every peer's full direct parent chain to the bound window; fresh live qualification may conservatively omit controls. The literal identifier proves no semantic purpose, and incomplete SDK coverage remains explicitly incomplete.
+Decision: close this source package at1bdcd0b with separate full regression evidence, no SDK build, runtime installation or UI action.
+Refs: results/opaque-native-controls-20261110/report.md; docs/native-opaque-controls.md
