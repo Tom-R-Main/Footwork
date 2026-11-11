@@ -20,3 +20,8 @@ Full default offline regression is recorded separately after the source freeze.
 No SDK change, build, installation or live UI input/probe was performed for this
 source package. Current live Suno qualification remains parent-owned. The prior
 read-only diagnosis is referenced, not proof that the new route has worked live.
+
+Full default offline result on frozen `ca4e7dc`: **3339 passed, 62 skipped** in
+222.32 seconds, exit 0. Before/after production hashes match and live/browser
+opt-ins were removed. `full-default.json` records command, runtime and hashes;
+`full-default.txt` records pytest output. Source/test hold is released.

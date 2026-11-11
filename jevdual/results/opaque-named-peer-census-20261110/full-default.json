@@ -1,0 +1,35 @@
+{
+  "source_commit": "ca4e7dc",
+  "started_at": "2026-11-11T01:58:41.612483+00:00",
+  "finished_at": "2026-11-11T02:02:25.434232+00:00",
+  "elapsed_seconds": 223.823,
+  "command": [
+    "/Users/thomasmain/projects/footwork/jevdual/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-q"
+  ],
+  "cwd": "/Users/thomasmain/projects/footwork/jevdual",
+  "pythonpath": "/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/overlay:/Users/thomasmain/projects/footwork/jevdual/python",
+  "live_browser_optins": false,
+  "exit_code": 0,
+  "pytest_summary": "3339 passed, 62 skipped in 222.32s (0:03:42)",
+  "counts": {
+    "passed": 3339,
+    "skipped": 62
+  },
+  "source_sha256": "561c6276af4365a013e61fdb65f07fd643a98f78a0ef09a2d793177b3a625d57",
+  "source_hashes_before": {
+    "ax.py": "561c6276af4365a013e61fdb65f07fd643a98f78a0ef09a2d793177b3a625d57",
+    "native.py": "a35e01109c8c758cd68a756726cda92304438b09d764dcae7fce2b597cb12455",
+    "session.py": "a3a8f5ebfeb7efbd8ca8e0b9ab144ea1ad433e251c9c63bf9d19fb40ddffe272",
+    "menu.py": "57b53b128e5200e93903a4ed201a9fccc96ec9c57e4b5c32cd7dcbb0cb7e3984"
+  },
+  "source_hashes_after": {
+    "ax.py": "561c6276af4365a013e61fdb65f07fd643a98f78a0ef09a2d793177b3a625d57",
+    "native.py": "a35e01109c8c758cd68a756726cda92304438b09d764dcae7fce2b597cb12455",
+    "session.py": "a3a8f5ebfeb7efbd8ca8e0b9ab144ea1ad433e251c9c63bf9d19fb40ddffe272",
+    "menu.py": "57b53b128e5200e93903a4ed201a9fccc96ec9c57e4b5c32cd7dcbb0cb7e3984"
+  },
+  "source_unchanged": true
+}

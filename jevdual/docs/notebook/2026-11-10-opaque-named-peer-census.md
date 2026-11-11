@@ -19,3 +19,15 @@ Test: full default offline pytest on frozen source with the existing focus1 over
 Predicts: full suite passes with normal opt-in skips and unchanged measured source.
 Against: existing named controls, native actions or unrelated routes regress, or measured source changes during the run.
 Refs: results/opaque-named-peer-census-20261110/focused.txt
+
+## ONF4 · update · 2026-11-10 21:02
+Resolves: ONF3 = held
+Observed: complete default offline pytest on frozen ca4e7dc passed 3339 tests with 62 opt-in skips in 222.32 seconds, exit 0. Production module hashes match before and after; no live/browser opt-ins were active.
+Next: hand off completed regression evidence; parent owns live editor qualification.
+Refs: results/opaque-named-peer-census-20261110/full-default.json; results/opaque-named-peer-census-20261110/full-default.txt
+
+## ONF5 · summary · 2026-11-10 21:02
+Established: a named unframed SDK peer can supply census-only duplicate-ID evidence through a complete bounded exact-name native lookup, existing independent PID/window/document proof and final unchanged name; it remains absent from action candidates. Nineteen new guards, 594 affected tests and all 3339 default tests pass with 62 opt-in skips.
+Uncertain: the worker performed no live qualification of the new resolver. Unknown native branches, missing/duplicate names, conflicting IDs/documents and traversal limits still refuse; no fallback silently ignores the peer.
+Decision: close this repair at ca4e7dc with separate full regression evidence; retain exact-window, action, named-control and opaque drift guards. No SDK build, installation or UI input.
+Refs: results/opaque-named-peer-census-20261110/report.md
