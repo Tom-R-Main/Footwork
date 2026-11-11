@@ -4131,3 +4131,43 @@ def test_post_action_observation_failure_retains_pending_exact_binding_without_r
         with SessionOperations(authority) as operations:
             operation, = operations.status()
             assert operations.receipt(operation) == authoritative
+
+
+@pytest.mark.parametrize('private_fields', [False, True])
+def test_public_foreground_intent_refusal_keeps_sanitized_diagnostic_without_input(world, fw, monkeypatch, private_fields):
+    _, attempts = _foreground_popup_fixture(world, monkeypatch)
+    original = world.call_tool
+    private = 'PRIVATE_TOOL_DETAIL_DO_NOT_RETAIN'
+
+    async def call(name, encoded):
+        if name != 'bring_to_front': return await original(name, encoded)
+        args = json.loads(encoded)
+        world.tool_calls.append((name, args))
+        record = {'code': private if private_fields else 'bring_to_front_exact_window_unverified',
+                  'status': private if private_fields else 'partial', 'request_accepted': True,
+                  'pid': 77, 'window_id': 40335,
+                  'exact_window_effect': {'verified': False, 'focused': False, 'secret': private},
+                  'observed': {'frontmost_pid': 88, 'focused_window_id': 999, 'title': private},
+                  'private': private}
+        return SimpleNamespace(action=SimpleNamespace(effect='refused', summary=private,
+                               error=SimpleNamespace(code=private, message=private)),
+                               is_error=True, error_code=record['code'], text=private,
+                               structured_json=json.dumps(record))
+
+    monkeypatch.setattr(world, 'call_tool', call)
+    assert fw('start', 'Open owned menu', '--app', 'Calculator', '--mode', 'foreground_permitted')[0] == 0
+    code, out, err = fw('do', 'click', 'More actions', '--click-delivery', 'foreground', '--authorize', 'More actions')
+    assert code == 0 and not attempts and world.presses == [], (out, err)
+    assert [name for name, _ in world.tool_calls] == ['bring_to_front']
+    log = (fw.session / 'session.jsonl').read_text()
+    records = [json.loads(line) for line in log.splitlines()]
+    action = next(record for record in records if record['kind'] == 'do')
+    proof = action['native_readback']['foreground_intent']
+    assert proof['code'] == ('unrecognized' if private_fields else 'bring_to_front_exact_window_unverified')
+    assert proof['status'] == ('unrecognized' if private_fields else 'partial')
+    assert proof['request_accepted'] is True and proof['action_effect'] == 'refused'
+    assert proof['observed']['frontmost_pid_matches_requested'] is False
+    assert proof['observed']['focused_window_id_matches_requested'] is False
+    assert proof['exact_window_effect']['verified'] is False
+    assert private not in log + out + err
+    assert action['dispatched'] is False

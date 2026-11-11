@@ -117,3 +117,33 @@ def test_exact_verified_activation_code_is_success_metadata_not_an_error():
     )
     effect, _driver, _, ax = exercise(result, clear_guard=True)
     assert effect.dispatched and ax.pressed == (["File", "Open"],)
+
+
+@pytest.mark.parametrize('variant', ['wrong_identity', 'malformed', 'unknown_fields', 'typed_mismatch'])
+def test_foreground_refusal_diagnostic_is_bounded_and_keeps_unknowns_unproven(variant):
+    private = 'PRIVATE_FOREGROUND_DIAGNOSTIC_DETAIL'
+    record = {'pid': 1, 'window_id': 999 if variant == 'wrong_identity' else 2,
+              'code': 'bring_to_front_exact_window_unverified', 'status': 'failed',
+              'request_accepted': False, 'observed': {'frontmost_pid': None, 'focused_window_id': None}}
+    if variant == 'unknown_fields':
+        record.update(code=private, status=private, request_accepted=private, text=private)
+    if variant == 'typed_mismatch':
+        record.update(request_accepted=1, observed={'frontmost_pid': True, 'focused_window_id': '2'})
+    result = SimpleNamespace(action=None, is_error=True, error_code=private, text=private,
+                             structured_json='{' if variant == 'malformed' else json.dumps(record))
+    effect, driver, activity, ax = exercise(result)
+    assert effect.dispatched is False and driver.names() == ['bring_to_front']
+    assert activity.activated == [] and ax.pressed == ()
+    proof = effect.native_readback['foreground_intent']
+    assert private not in json.dumps(effect.native_readback) + effect.summary
+    assert proof['requested'] == {'pid': 1, 'window_id': 2}
+    assert proof['observed']['frontmost_pid_matches_requested'] is None
+    assert proof['observed']['focused_window_id_matches_requested'] is None
+    assert proof['error_code'] == 'unrecognized'
+    if variant == 'wrong_identity':
+        assert proof['record_window_id_matches_requested'] is False
+    if variant == 'malformed':
+        assert proof['structured_present'] is True and proof['structured_valid'] is False
+    if variant in ('unknown_fields', 'typed_mismatch'):
+        assert proof['request_accepted'] is None
+    assert len(json.dumps(effect.native_readback)) < 1600

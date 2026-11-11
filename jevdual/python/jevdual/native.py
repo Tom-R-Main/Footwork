@@ -720,10 +720,63 @@ def menu_from_snapshot(
 
 
 class NativeBridgeError(Exception):
-    def __init__(self, reason: str, message: str, *, dispatched: bool = False):
+    def __init__(self, reason: str, message: str, *, dispatched: bool = False, diagnostic: dict[str, Any] | None = None):
         super().__init__(message)
         self.reason = reason
         self.dispatched = dispatched
+        self.diagnostic = diagnostic
+
+
+_FOREGROUND_INTENT_CODES = frozenset({
+    "bring_to_front_exact_window_verified", "bring_to_front_exact_window_unverified",
+    "bring_to_front_process_verified", "bring_to_front_process_unverified",
+    "bring_to_front_pid_out_of_range", "bring_to_front_window_id_out_of_range",
+    "bring_to_front_pid_not_found", "bring_to_front_window_not_found",
+    "bring_to_front_window_pid_mismatch", "bring_to_front_window_not_ordinary",
+})
+
+
+def _foreground_intent_diagnostic(outcome: Any, record: Any, *, pid: int, window_id: int) -> dict[str, Any]:
+    """Finite typed metadata only; never copy tool text, arbitrary codes, URLs or other identities."""
+    def recognized(value: Any, allowed: Any) -> str | None:
+        if value is None:
+            return None
+        return value if isinstance(value, str) and value in allowed else "unrecognized"
+
+    def boolean(value: Any) -> bool | None:
+        return value if type(value) is bool else None
+
+    def matches(value: Any, expected: int) -> bool | None:
+        return value == expected if type(value) is int else None
+
+    valid = isinstance(record, dict)
+    record = record if valid else {}
+    observed = record.get("observed")
+    observed = observed if isinstance(observed, dict) else {}
+    exact = record.get("exact_window_effect")
+    exact = exact if isinstance(exact, dict) else {}
+    action = getattr(outcome, "action", None)
+    return {"producer": "footwork.native", "kind": "foreground_intent_diagnostic", "foreground_intent": {
+        "structured_present": getattr(outcome, "structured_json", None) is not None,
+        "structured_valid": valid,
+        "code": recognized(record.get("code"), _FOREGROUND_INTENT_CODES),
+        "status": recognized(record.get("status"), {"activated", "partial", "failed"}),
+        "request_accepted": boolean(record.get("request_accepted")),
+        "action_effect": recognized(_enum_name(getattr(action, "effect", None)),
+                                    {"confirmed", "refused", "unverifiable", "partial", "suspected_noop"}),
+        "is_error": boolean(getattr(outcome, "is_error", None)),
+        "error_code": recognized(getattr(outcome, "error_code", None), _FOREGROUND_INTENT_CODES),
+        "action_error_code": recognized(getattr(getattr(action, "error", None), "code", None), _FOREGROUND_INTENT_CODES),
+        "requested": {"pid": pid, "window_id": window_id},
+        "record_pid_matches_requested": matches(record.get("pid"), pid),
+        "record_window_id_matches_requested": matches(record.get("window_id"), window_id),
+        "exact_window_effect": {key: boolean(exact.get(key)) for key in (
+            "verified", "focused", "front_in_process_on_display", "frontmost_ordinary", "target_visible_ordinary")},
+        "observed": {**{key + "_matches_requested": matches(observed.get(key), expected) for key, expected in (
+            ("frontmost_pid", pid), ("workspace_frontmost_pid", pid), ("focused_window_id", window_id),
+            ("frontmost_ordinary_window_id", window_id), ("process_front_window_on_display", window_id))},
+            "front_process_matches_target": boolean(observed.get("front_process_matches_target"))},
+    }}
 
 
 def accessibility_status() -> str:
@@ -1529,7 +1582,10 @@ class NativeBridge:
             if (isinstance(outcome, NativeBridgeError) and not outcome.dispatched) or (
                 isinstance(outcome, AXError) and code in _MENU_NOT_PRESSED
             ):
-                return self._not_sent(operation, target, label, str(code), str(outcome), delivery)
+                return dataclasses.replace(
+                    self._not_sent(operation, target, label, str(code), str(outcome), delivery),
+                    native_readback=getattr(outcome, "diagnostic", None),
+                )
             return NativeEffect(
                 operation,
                 target,
@@ -2985,7 +3041,8 @@ class NativeBridge:
             )
         except Exception as exc:
             raise NativeBridgeError(
-                "foreground_intent_failed", "the SDK foreground intent failed; application input not sent"
+                "foreground_intent_failed", "the SDK foreground intent failed; application input not sent",
+                diagnostic=_foreground_intent_diagnostic(None, None, pid=self.pid, window_id=self.window_id),
             ) from exc
         effect = effect_from_action_result("foreground_intent", -1, "foreground", outcome)
         record = None
@@ -3000,7 +3057,8 @@ class NativeBridge:
                     raise ValueError("foreground intent identity differs")
             except (TypeError, ValueError) as exc:
                 raise NativeBridgeError(
-                    "foreground_intent_target_changed", "the SDK foreground intent identity was not exact"
+                    "foreground_intent_target_changed", "the SDK foreground intent identity was not exact",
+                    diagnostic=_foreground_intent_diagnostic(outcome, record, pid=self.pid, window_id=self.window_id),
                 ) from exc
         verified_activation = (
             isinstance(record, dict)
@@ -3026,8 +3084,11 @@ class NativeBridge:
                 and not (verified_activation and effect.error_code == "bring_to_front_exact_window_verified")
             )
         ):
+            diagnostic = _foreground_intent_diagnostic(outcome, record, pid=self.pid, window_id=self.window_id)
+            status = diagnostic["foreground_intent"]["status"]
             raise NativeBridgeError(
-                "foreground_intent_refused", "the SDK foreground intent refused; application input not sent"
+                "foreground_intent_refused", f"the SDK foreground intent refused (status={status}); application input not sent",
+                diagnostic=diagnostic,
             )
         # activate first, then raise: activating the app re-keys whichever of its windows was key, so a raise
         # made before it is undone (Q19 frozen re-drive: the bound TextEdit document never became key)

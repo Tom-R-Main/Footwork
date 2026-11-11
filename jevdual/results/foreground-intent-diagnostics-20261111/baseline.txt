@@ -1,0 +1,88 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_public_foreground_intent_refusal_keeps_sanitized_diagnostic_without_input[False] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10b98efc0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a0a4620>
+private_fields = False
+
+    @pytest.mark.parametrize('private_fields', [False, True])
+    def test_public_foreground_intent_refusal_keeps_sanitized_diagnostic_without_input(world, fw, monkeypatch, private_fields):
+        _, attempts = _foreground_popup_fixture(world, monkeypatch)
+        original = world.call_tool
+        private = 'PRIVATE_TOOL_DETAIL_DO_NOT_RETAIN'
+    
+        async def call(name, encoded):
+            if name != 'bring_to_front': return await original(name, encoded)
+            args = json.loads(encoded)
+            world.tool_calls.append((name, args))
+            record = {'code': private if private_fields else 'bring_to_front_exact_window_unverified',
+                      'status': private if private_fields else 'partial', 'request_accepted': True,
+                      'pid': 77, 'window_id': 40335,
+                      'exact_window_effect': {'verified': False, 'focused': False, 'secret': private},
+                      'observed': {'frontmost_pid': 88, 'focused_window_id': 999, 'title': private},
+                      'private': private}
+            return SimpleNamespace(action=SimpleNamespace(effect='refused', summary=private,
+                                   error=SimpleNamespace(code=private, message=private)),
+                                   is_error=True, error_code=record['code'], text=private,
+                                   structured_json=json.dumps(record))
+    
+        monkeypatch.setattr(world, 'call_tool', call)
+        assert fw('start', 'Open owned menu', '--app', 'Calculator', '--mode', 'foreground_permitted')[0] == 0
+        code, out, err = fw('do', 'click', 'More actions', '--click-delivery', 'foreground', '--authorize', 'More actions')
+        assert code == 0 and not attempts and world.presses == [], (out, err)
+        assert [name for name, _ in world.tool_calls] == ['bring_to_front']
+        log = (fw.session / 'session.jsonl').read_text()
+        records = [json.loads(line) for line in log.splitlines()]
+        action = next(record for record in records if record['kind'] == 'do')
+>       proof = action['native_readback']['foreground_intent']
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'native_readback'
+
+tests/test_session_scenarios.py:4165: KeyError
+_ test_public_foreground_intent_refusal_keeps_sanitized_diagnostic_without_input[True] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10a0f20c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b739490>
+private_fields = True
+
+    @pytest.mark.parametrize('private_fields', [False, True])
+    def test_public_foreground_intent_refusal_keeps_sanitized_diagnostic_without_input(world, fw, monkeypatch, private_fields):
+        _, attempts = _foreground_popup_fixture(world, monkeypatch)
+        original = world.call_tool
+        private = 'PRIVATE_TOOL_DETAIL_DO_NOT_RETAIN'
+    
+        async def call(name, encoded):
+            if name != 'bring_to_front': return await original(name, encoded)
+            args = json.loads(encoded)
+            world.tool_calls.append((name, args))
+            record = {'code': private if private_fields else 'bring_to_front_exact_window_unverified',
+                      'status': private if private_fields else 'partial', 'request_accepted': True,
+                      'pid': 77, 'window_id': 40335,
+                      'exact_window_effect': {'verified': False, 'focused': False, 'secret': private},
+                      'observed': {'frontmost_pid': 88, 'focused_window_id': 999, 'title': private},
+                      'private': private}
+            return SimpleNamespace(action=SimpleNamespace(effect='refused', summary=private,
+                                   error=SimpleNamespace(code=private, message=private)),
+                                   is_error=True, error_code=record['code'], text=private,
+                                   structured_json=json.dumps(record))
+    
+        monkeypatch.setattr(world, 'call_tool', call)
+        assert fw('start', 'Open owned menu', '--app', 'Calculator', '--mode', 'foreground_permitted')[0] == 0
+        code, out, err = fw('do', 'click', 'More actions', '--click-delivery', 'foreground', '--authorize', 'More actions')
+        assert code == 0 and not attempts and world.presses == [], (out, err)
+        assert [name for name, _ in world.tool_calls] == ['bring_to_front']
+        log = (fw.session / 'session.jsonl').read_text()
+        records = [json.loads(line) for line in log.splitlines()]
+        action = next(record for record in records if record['kind'] == 'do')
+>       proof = action['native_readback']['foreground_intent']
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'native_readback'
+
+tests/test_session_scenarios.py:4165: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_public_foreground_intent_refusal_keeps_sanitized_diagnostic_without_input[False]
+FAILED tests/test_session_scenarios.py::test_public_foreground_intent_refusal_keeps_sanitized_diagnostic_without_input[True]
+2 failed, 378 deselected in 1.31s
