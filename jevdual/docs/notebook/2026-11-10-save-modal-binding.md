@@ -16,3 +16,10 @@ Established: exact owned Save modal is PID24992/CGWindow325928, associated direc
 Uncertain: raw SDK refusal code is unavailable from the lossy recorded exception; exact-window-unverified is a source-backed inference. SDK foreground activation and actual folder navigation were not exercised. No file was saved.
 Decision: retain exact-window enforcement, propose explicit modal rebinding plus bounded exact sheet resolution, and leave project-only destination selection to the parent after qualification.
 Refs: output/suno-20261110/save-modal-observation.json; output/suno-20261110/modal-bindability.json
+
+## SMB4 · prediction · 2026-11-10 19:36
+Hypothesis: exact requested modal CGWindow resolution can include a bounded AXSheet descendant of its same-PID top-level AXWindow with independently proven direct parent/window association, without accepting the parent as the modal or weakening exact-key checks.
+Test: public CLI simulated-Mac Save-session binding with SDK exact-foreground verification followed by real direct-AX resolver/raise behavior; AX regressions for top-window preservation, wrong PID, unrelated/ambiguous sheets, bounded traversal, association loss and non-key modal refusal.
+Predicts: a correctly rebound already-key Save sheet permits the existing guarded folder-navigation hotkey through one input call; parent bindings and unrelated/non-key/unproven/over-bound sheets send no hotkey. Already-key sheets need no AXRaise/AXMain writes; ordinary window raising is unchanged.
+Against: requested parent resolves its modal, an unproven sheet dispatches, another process supplies ownership, a non-key sheet or ambiguity is ignored, or failed input retries.
+Refs: output/suno-20261110/modal-bindability.json; output/suno-20261110/save-modal-observation.json
