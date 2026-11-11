@@ -3,7 +3,7 @@
 Reports only lengths, line-feed counts, SHA-256 digests and Suno's own counter text; the lyrics are not
 printed. Clears the editor afterwards. Creates nothing.
 
-Usage: .venv/bin/python -I scripts/probe_lyrics_paste.py PORT LYRICS_FILE
+Usage: .venv/bin/python -I scripts/probe_lyrics_paste.py PORT LYRICS_FILE [paste|type]
 """
 import asyncio, json, sys, urllib.request
 import websockets
@@ -52,10 +52,23 @@ async def main(port, path):
                     innerText: await stat(e.innerText), value: e.tagName === 'TEXTAREA' ? await stat(e.value) : null, counters: counters()}; })()"""))
         if not report["editor_before"]:
             print(json.dumps(report, indent=1)); return
-        if report["editor_before"]["tag"] == "TEXTAREA":
-            await ev(ws, 3, S("lyricsEditor().focus()"))
-            report["entry"] = "Input.insertText into focused textarea"
-            await call(ws, 4, "Input.insertText", {"text": text})
+        mode = sys.argv[3] if len(sys.argv) > 3 else "paste"
+        if report["editor_before"]["tag"] == "TEXTAREA" or mode == "type":
+            # AAD11: DevTools input on the focused editor, Enter once per line feed
+            await ev(ws, 3, S("(() => { const e = lyricsEditor(); e.focus(); const r = document.createRange(); r.selectNodeContents(e); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); return true; })()"))
+            report["entry"] = "Input.insertText per line, Enter key per line feed"
+            n = 100
+            for i, line in enumerate(text.split("\n")):
+                if i:
+                    for kind in ("keyDown", "keyUp"):
+                        n += 1
+                        await call(ws, n, "Input.dispatchKeyEvent", {"type": kind, "key": "Enter", "code": "Enter",
+                                   "windowsVirtualKeyCode": 13, "nativeVirtualKeyCode": 36,
+                                   **({"text": "\r"} if kind == "keyDown" else {})})
+                if line:
+                    n += 1
+                    await call(ws, n, "Input.insertText", {"text": line})
+                await asyncio.sleep(0.02)
         else:
             report["entry"] = "synthetic paste event, text/plain"
             report["paste"] = await ev(ws, 4, S("(() => { const e = lyricsEditor(); e.focus(); const dt = new DataTransfer(); dt.setData('text/plain', "
