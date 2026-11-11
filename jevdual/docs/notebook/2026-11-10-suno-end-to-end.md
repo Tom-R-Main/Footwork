@@ -396,3 +396,10 @@ Observed: owned-field hash/non-LF content and focused-element checks passed; one
 Inferred: the full original lyrics were delivered correctly. AXValue and AXSelectedText serialize their line breaks differently; their earlier partial receipt is not proof of lost lyrics and remains historically unchanged. Controlled new-copy equality independently verifies the requested content. No retyping is needed.
 Next: resume actual song-menu/export/editor journey on frozen a6defe1, using inspected scoped DOM identity. No generation from the still-instrumental style/title draft until those are explicitly revalidated for vocals.
 Refs: output/suno-20261110/lyrics-copy-qualified-source.json; output/suno-20261110/lyrics-copy-once.txt; output/suno-20261110/lyrics-copy-result.json; output/suno-20261110/draft-brief/lyrics-short.txt
+
+## SUN31 · prediction · 2026-11-10 19:15
+Hypothesis: scoped native DOM identity in a6defe1 permits the intended own-song menu to be selected and opened with correct visual context, despite its identical-label hero/player peer.
+Test: on the isolated source snapshot and unchanged SDK, navigate to the second owned song via its qualified actual href; verify page/player resources. Refresh both qualified menu identities, inspect the selected numeric target's capture/bounds and document identity, then explicitly foreground-click that same inspected control. Require actual song export/editor menu items, not merely any popup.
+Predicts: distinct complete identifiers plus the exact document scope qualify the selected hero or player menu, inspection places it on the intended song action button, and its song menu appears.
+Against: any peer/scope/inspection guard refuses, identity changes, resource differs, the target is another UI context or popup does not expose song operations. No download confirmation before the project path is selected.
+Refs: results/native-control-identity-20261110/report.md; output/suno-20261110/runtime-a6defe1/identity.json; output/suno-20261110/control-document-scope.json
