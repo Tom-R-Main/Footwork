@@ -478,6 +478,7 @@ def focus_text_field_ack(el: Any) -> None:
     """One explicit AXFocused preparation write; acknowledgement alone does not prove focus."""
     from ApplicationServices import AXUIElementSetAttributeValue
 
+    checkpoint()
     error = AXUIElementSetAttributeValue(el, "AXFocused", True)
     if error:
         raise AXError("focus_refused", f"AXFocused did not acknowledge the write ({error})")
