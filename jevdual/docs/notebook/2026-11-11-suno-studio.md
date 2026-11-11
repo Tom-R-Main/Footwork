@@ -82,3 +82,10 @@ Refs: output/suno-studio-20261111/foreground-diagnostic-0300/; results/foregroun
 Question: what native metadata identifies the newly appearing same-process layer0transient that defeats otherwise correct exact activation?
 Test: retain ST8's unchanged existing-window order and new transient evidence. One further ordinary public guarded attempt on5e6d30e, with a read-only sampler of only newly appearing target-PID layer0windows: bounded geometry, native AX role/subrole/identifier and exact-window lookup availability. Record pointer position as read-only geometry if useful; do not move it, collect pixels/child text, activate through the sampler or treat AX-unresolved as harmless. No ordering/eligibility guard patch before actual classification.
 Refs: output/suno-studio-20261111/window-order-sample.json; results/foreground-intent-diagnostics-20261111/report.md
+
+## ST10 · prediction · 2026-11-11 03:19
+Hypothesis: the newly appearing exact Chrome AXHelpTag is noninteractive and not key, while the requested standard window remains independently key; this can support a narrow ordinary-window eligibility correction without dropping unknown windows.
+Test: one final bounded read-only new-window sampler around the unchanged public guarded attempt. Resolve the transient's exact native CGID and owner; require AXHelpTag, read action-name availability/count and focus/settable evidence, and compare actual focused window to the requested standard window. No child text/pixels or sampler input. Missing/unreadable/interactive evidence contradicts the proposed narrow exclusion and must remain blocking.
+Predicts: exact owner matches, action-name read succeeds with an empty list, the HelpTag is not the key window and the standard requested window stays key.
+Against: role/owner differs, actions exist or are unreadable, focus moves to the transient, native resolution is ambiguous or the requested window is not key. No eligibility change follows an unknown result.
+Refs: output/suno-studio-20261111/transient-classification.json; output/suno-studio-20261111/window-order-sample.json
