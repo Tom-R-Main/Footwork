@@ -19,3 +19,15 @@ Test: complete default offline pytest suite on the frozen source using the exist
 Predicts: full default suite passes with normal opt-in skips and no native UI execution.
 Against: a previously passing default/title-based or unrelated route fails due to the selector addition.
 Refs: results/exact-window-start-20261110/focused.txt
+
+## EWS4 · update · 2026-11-10 19:57
+Resolves: EWS3 = held
+Observed: full default offline regression on frozena64b6f2 passed3256 tests with62 opt-in skips in213.96 seconds, exit0. Before/after hashes of the four production modules match; no live/browser opt-ins were active. Focused validation remains633 passing checks and14 public selector scenarios.
+Next: hand off the final evidence record; retain source unchanged and leave actual nested-panel input/file saving with the parent.
+Refs: results/exact-window-start-20261110/full-default.json; results/exact-window-start-20261110/report.md
+
+## EWS5 · summary · 2026-11-10 19:57
+Established: explicit same-process CGWindow selection includes untitled windows, refuses absent/duplicate identities without fallback, rejects invalid/mixed options before binding/reset and preserves later observation/policy checks. All633 focused and3256 full offline tests pass with62 opt-in skips.
+Uncertain: the worker performed no native input or Save. A new modal still needs its own observed identity; project folder and final output remain parent-owned live checks.
+Decision: close the selector package with frozena64b6f2 and its separate full-suite JSON/report, no SDK/native-byte changes or installation.
+Refs: results/exact-window-start-20261110/report.md; results/exact-window-start-20261110/full-default.json
