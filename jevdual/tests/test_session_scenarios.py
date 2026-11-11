@@ -3718,6 +3718,45 @@ def test_native_opaque_controls_public_numeric_projection_and_action(world, fw, 
     assert clicked[0]['dom_id'] == 'footer-options'
 
 
+def test_native_deep_control_ancestry_public_projection_still_requires_every_peer(world, fw, monkeypatch):
+    import sys
+
+    from jevdual import ax
+
+    actual_backing = ax.control_backing
+    rows, _, clicked = _native_opaque_controls(world, monkeypatch)
+    window = {'AXRole': 'AXWindow', '_pid': 77}
+    page = {'AXRole': 'AXWebArea', 'AXURL': 'https://example.test/editor/a',
+            'AXParent': window, '_pid': 77}
+    controls = []
+    for row, count, identifier in zip(rows, (33, 34), ('hero-options', 'footer-options'), strict=True):
+        parent = page
+        for _ in range(count - 3):
+            parent = {'AXRole': 'AXGroup', 'AXParent': parent, '_pid': 77}
+        controls.append({'AXRole': 'AXPopUpButton', 'AXTitle': '', 'AXDescription': '',
+                         'AXDOMIdentifier': identifier, 'AXParent': parent, '_pid': 77, 'frame': row['frame']})
+    monkeypatch.setattr(ax, 'control_backing', actual_backing)
+    monkeypatch.setattr(ax, '_attr', lambda node, name: node.get(name))
+    monkeypatch.setattr(ax, 'same_element', lambda left, right: left is right)
+    monkeypatch.setattr(ax, 'window_element', lambda pid, wid: window)
+    monkeypatch.setattr(ax, 'resolve', lambda pid, wid, role, frame: next(
+        control for control in controls if control['frame']['y'] == frame.y))
+    monkeypatch.setitem(sys.modules, 'ApplicationServices', SimpleNamespace(
+        AXUIElementGetPid=lambda node, out: (0, node['_pid'])))
+    code, out, err = fw('start', 'Inspect deeply nested owned controls', '--app', 'Calculator')
+    assert code == 0, (out, err)
+    saved = {row['id']: row for row in _state(fw)['last_candidates']}
+    assert saved[940]['native_dom_id'] == 'hero-options', (out, err)
+    assert saved[941]['native_dom_id'] == 'footer-options'
+    assert saved[940]['native_control_qualified'] and saved[941]['native_control_qualified']
+    controls[1]['AXParent'] = None
+    assert fw('look')[0] == 0
+    saved = {row['id']: row for row in _state(fw)['last_candidates']}
+    assert not any(row['native_control_qualified'] for key, row in saved.items() if key in (940, 941))
+    assert all(row['label'] not in ('hero-options', 'footer-options') for row in saved.values())
+    assert clicked == [] and world.tool_calls == []
+
+
 @pytest.mark.parametrize('during', [False, True])
 @pytest.mark.parametrize('change', ['dom_id', 'document_url', 'reorder', 'unreadable_peer', 'duplicate_id', 'named'])
 def test_native_opaque_controls_refuse_drift(world, fw, monkeypatch, during, change):

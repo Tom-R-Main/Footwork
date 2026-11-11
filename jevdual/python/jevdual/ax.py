@@ -350,8 +350,9 @@ def unique_named_control(window: Any, *, pid: int, role: str, label: str, limit:
 def control_backing(el: Any, *, pid: int, window: Any, role: str) -> dict[str, Any] | None:
     """Read an opaque control's literal backing, including known absence of a DOM ID.
 
-    No purpose is inferred. A complete direct parent walk must prove this process/window and
-    the closest WebArea's actual document URL. Missing attributes never mean an empty name.
+    No purpose is inferred. A complete direct parent walk of at most 64 nodes must prove this
+    process/window and the closest WebArea's actual document URL. Missing attributes never
+    mean an empty name. Native-object equality detects cycles, including aliased AX proxies.
     """
     from ApplicationServices import AXUIElementGetPid
 
@@ -363,11 +364,17 @@ def control_backing(el: Any, *, pid: int, window: Any, role: str) -> dict[str, A
         return None
     title, description = _attr(el, "AXTitle"), _attr(el, "AXDescription")
     node, web_area, url = el, None, None
-    for _ in range(32):
+    seen = []
+    for _ in range(64):
+        if any(same_element(node, prior) for prior in seen):
+            return None
+        seen.append(node)
         error, owner = AXUIElementGetPid(node, None)
         if error != 0 or owner != pid:
             return None
         role = _attr(node, "AXRole")
+        if not isinstance(role, str) or not role:
+            return None
         if role == "AXWebArea" and web_area is None:
             web_area, url = node, _complete_http_url(_attr(node, "AXURL"))
             if url is None:
