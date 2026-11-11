@@ -1,0 +1,60 @@
+F.F                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_native_multiline_lf_serialization_needs_independent_readback[Verse\nWords\nChorus\nWords-unverifiable] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1080a7f60>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107fc7fb0>
+actual = 'Verse\nWords\nChorus\nWords', effect = 'unverifiable'
+
+    @pytest.mark.parametrize(("actual", "effect"), [("Verse\nWords\nChorus\nWords", "unverifiable"),
+                                                   ("Verse\nWordx\nChorus\nWords", "partial")])
+    def test_native_multiline_lf_serialization_needs_independent_readback(world, fw, monkeypatch, actual, effect):
+        intended = "Verse\n\nWords\n\nChorus\n\nWords"
+        row = _native_styles_field(world, monkeypatch, actual_after=actual)
+        assert fw("start", "Fill own lyrics", "--app", "Calculator")[0] == 0
+        code, out, err = fw("do", "type", "Styles", intended, "--no-judge")
+        assert code == 0 and row["value"] == actual, (out, err)
+        records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+        receipt = next(record for record in records if record["kind"] == "receipt")
+>       assert receipt["effect"] == effect
+E       AssertionError: assert 'partial' == 'unverifiable'
+E         
+E         - unverifiable
+E         + partial
+
+tests/test_session_scenarios.py:2235: AssertionError
+_____ test_native_menu_no_visible_change_cannot_disprove_clipboard_effect ______
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107743b00>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107ed6240>
+
+    def test_native_menu_no_visible_change_cannot_disprove_clipboard_effect(world, fw, monkeypatch):
+        from jevdual import ax
+    
+        _foreground_styles_fixture(world, monkeypatch)
+        clipboard_generation = [10]
+        monkeypatch.setattr(ax, "menu_paths", lambda pid: ["Edit > Copy"])
+    
+        def copy(pid, path):
+            assert pid == 77 and path == ["Edit", "Copy"]
+            clipboard_generation[0] += 1
+    
+        monkeypatch.setattr(ax, "press_menu", copy)
+        assert fw("start", "Copy own lyrics", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "menu", "Edit > Copy", "--no-judge")
+        assert code == 0 and clipboard_generation[0] == 11, (out, err)
+        records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+        receipt = next(record for record in records if record["kind"] == "receipt")
+>       assert receipt["effect"] == "unverifiable"
+E       AssertionError: assert 'suspected_noop' == 'unverifiable'
+E         
+E         - unverifiable
+E         + suspected_noop
+
+tests/test_session_scenarios.py:2258: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_native_multiline_lf_serialization_needs_independent_readback[Verse\nWords\nChorus\nWords-unverifiable]
+FAILED tests/test_session_scenarios.py::test_native_menu_no_visible_change_cannot_disprove_clipboard_effect
+2 failed, 1 passed, 292 deselected in 1.73s

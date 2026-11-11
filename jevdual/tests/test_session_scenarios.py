@@ -2222,6 +2222,54 @@ def test_native_literal_ellipsis_is_not_projection_truncation(world, fw, monkeyp
     assert saved["value_truncated"] is False
 
 
+@pytest.mark.parametrize(("actual", "effect"), [("Verse\nWords\nChorus\nWords", "unverifiable"),
+                                               ("Verse\nWordx\nChorus\nWords", "partial")])
+def test_native_multiline_lf_serialization_needs_independent_readback(world, fw, monkeypatch, actual, effect):
+    intended = "Verse\n\nWords\n\nChorus\n\nWords"
+    row = _native_styles_field(world, monkeypatch, actual_after=actual)
+    assert fw("start", "Fill own lyrics", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "type", "Styles", intended, "--no-judge")
+    assert code == 0 and row["value"] == actual, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["effect"] == effect
+    if effect == "unverifiable":
+        assert "independent readback" in receipt["evidence"] and "do not retype" in receipt["evidence"]
+    assert len([args for name, args in world.tool_calls if name == "set_value"]) == 1
+
+
+def test_native_menu_no_visible_change_cannot_disprove_clipboard_effect(world, fw, monkeypatch):
+    from jevdual import ax
+
+    _foreground_styles_fixture(world, monkeypatch)
+    clipboard_generation = [10]
+    monkeypatch.setattr(ax, "menu_paths", lambda pid: ["Edit > Copy"])
+
+    def copy(pid, path):
+        assert pid == 77 and path == ["Edit", "Copy"]
+        clipboard_generation[0] += 1
+
+    monkeypatch.setattr(ax, "press_menu", copy)
+    assert fw("start", "Copy own lyrics", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "menu", "Edit > Copy", "--no-judge")
+    assert code == 0 and clipboard_generation[0] == 11, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["effect"] == "unverifiable"
+    assert "clipboard" in receipt["evidence"] and "no visible change" in receipt["evidence"]
+
+
+def test_lf_representation_receipt_keeps_selected_range_full_value_strict(world, fw, monkeypatch):
+    _foreground_selection_fixture(world, monkeypatch, actual_after="A\nB\n")
+    assert fw("start", "Edit own selected lyrics", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "A\n\nB", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["effect"] == "partial" and "internal LF" not in receipt["evidence"]
+
+
 @pytest.mark.parametrize("legacy", [False, True])
 def test_native_append_receipt_does_not_compare_a_truncated_persisted_baseline(
     world, fw, monkeypatch, legacy

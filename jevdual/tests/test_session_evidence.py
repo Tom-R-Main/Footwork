@@ -72,6 +72,64 @@ def test_trailing_whitespace_the_driver_strips_is_not_a_mismatch(tmp_path):
     assert r["effect"] == "confirmed"
 
 
+@pytest.mark.parametrize(("mode", "input_type", "actual", "expected", "effect"), [
+    ("native", "textarea", "A\nB", "A\n\nB", "unverifiable"),
+    ("native", "textarea", "A\nC", "A\n\nB", "partial"),
+    ("native", "textarea", "A\nB ", "A\n\nB", "partial"),
+    ("native", "textarea", "A\nB", "A\nB\n\n", "confirmed"),
+    ("browser", "textarea", "A\nB", "A\n\nB", "partial"),
+    ("native", None, "A\nB", "A\n\nB", "partial"),
+])
+def test_only_native_multiline_lf_representation_ambiguity_changes_classification(
+    tmp_path, mode, input_type, actual, expected, effect
+):
+    r = _receipt(tmp_path, _nm(_field("")), _nm(_field(actual, input_type=input_type)), mode=mode, intended=expected)
+    assert r["effect"] == effect
+
+
+def test_multiline_receipt_compares_non_lf_characters_without_normalizing_raw_values(tmp_path):
+    actual, intended = "  A\nB\t ", "  A\n\nB\t "
+    field = _field("A\nB", input_type="textarea")  # display preview removes indentation/trailing spaces
+    nm = _nm(field)
+    nm.values[1] = actual
+    r = _receipt(tmp_path, _nm(_field("")), nm, mode="native", intended=intended)
+    assert r["effect"] == "unverifiable"
+    assert nm.values[1] == actual and field.value == "A\nB"
+
+
+def test_lf_representation_classification_does_not_replace_truncation_or_secret_rules(tmp_path):
+    from dataclasses import replace
+
+    intended, actual = "A\n\nB", "A\nB"
+    field = replace(_field(actual, input_type="textarea"), value_truncated=True)
+    clipped = _receipt(tmp_path, _nm(_field("")), _nm(field), mode="native", intended=intended)
+    assert clipped["effect"] == "unverifiable" and "truncated" in clipped["evidence"]
+    state = _state(tmp_path, _nm(_field("")), mode="native", intended=None, secret=True)
+    secret = session.receipt_for(state, _nm(_field(actual, input_type="textarea")), secret_value=intended)
+    assert secret["effect"] == "partial" and "internal LF" not in secret["evidence"]
+
+
+@pytest.mark.parametrize(("mode", "dispatched", "effect"), [
+    ("native", True, "unverifiable"), ("browser", True, "suspected_noop"), ("native", False, "refused"),
+])
+def test_menu_no_visible_change_retains_surface_and_no_send_guards(mode, dispatched, effect):
+    from jevdual.receipts import Receipt
+
+    original = Receipt(1, ("menu(Edit > Copy)",), "suspected_noop" if dispatched else "refused", "no visible change")
+    result = session._outside_receipt(original, {"op": "menu", "mode": mode, "dispatched": dispatched})
+    assert result.effect == effect
+
+
+def test_menu_qualified_external_readback_is_not_downgraded():
+    from jevdual.receipts import Receipt
+
+    original = Receipt(1, ("menu(File > Save)",), "suspected_noop", "no visible change")
+    pending = {"op": "menu", "mode": "native", "dispatched": True,
+               "execution_receipt": {"effect": "confirmed", "producer": {"delivery_basis": "ax_menu_effect_readback"}},
+               "native_readback": {"predicate": "qualified external effect"}}
+    assert session._outside_receipt(original, pending).effect == "confirmed"
+
+
 def test_append_confirms_only_before_plus_insertion(tmp_path):
     already = _receipt(tmp_path, _nm(_field("Ada")), _nm(_field("Ada")), op="append")
     assert already["effect"] == "suspected_noop"

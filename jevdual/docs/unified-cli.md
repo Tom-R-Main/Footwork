@@ -121,6 +121,14 @@ failure, the overall input remains uncertain while a code-boundary receipt can e
 `type_text` was never called and zero text characters were dispatched. Focus is not retried; only
 its independent readback is polled until a 0.2-second cooperative deadline before refusing text.
 
+For an ordinary native multiline whole-field replacement, a complete untruncated readback that
+differs only in its internal LF pattern is `unverifiable`. Every non-LF character must match exactly;
+this classification neither normalizes the field nor confirms the edit. Obtain independent readback
+before retyping, since AX serialization can differ from copied content. Non-LF mismatches, browser
+and secret handling, trailing-whitespace legacy behavior and strict selected-range comparison keep
+their existing rules. A native menu invocation with no visible change is also `unverifiable`:
+clipboard, disk or another-window effects need their own readback before retrying.
+
 Native macOS links may show a complete `href` read independently from their exact bound AXLink.
 Same-title links with distinct qualified HTTP(S) resources remain offered as separate numeric IDs.
 Choose the ID from a fresh observation; the shared title still does not resolve uniquely. URL changes

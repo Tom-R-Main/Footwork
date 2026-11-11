@@ -665,6 +665,13 @@ def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
             evidence=f"the window changed ({r.evidence}); a menu item's effect may be in another window or app, "
             "which this observation does not show",
         )
+    if (pending.get("op") == "menu" and pending.get("mode", "native") == "native"
+            and r.effect == "suspected_noop"):
+        return dataclasses.replace(
+            r, effect="unverifiable",
+            evidence="no visible change after native menu invocation; clipboard, disk or another window may have "
+            "changed. Obtain independent readback before retrying",
+        )
     return r
 
 
@@ -878,6 +885,15 @@ def _field_receipt(
             return dataclasses.replace(
                 r, effect="unverifiable",
                 evidence=f"{label!r} earlier value preview is truncated; full append comparison is unavailable",
+            )
+        raw = getattr(nm, "values", {}).get(field.id)
+        if (pending["op"] == "type" and field.input_type == "textarea" and not secret
+                and isinstance(raw, str) and raw.rstrip() != intended.rstrip()
+                and raw.replace("\n", "") == intended.replace("\n", "")):
+            return dataclasses.replace(
+                r, effect="unverifiable",
+                evidence="native multiline readback has a different internal LF pattern while every non-LF character "
+                "matches; independent readback is needed, do not retype automatically",
             )
     alternates: tuple[str, ...] = ()
     if pending["op"] == "type":
