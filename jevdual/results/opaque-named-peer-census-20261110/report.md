@@ -28,9 +28,9 @@ opt-ins were removed. `full-default.json` records command, runtime and hashes;
 
 Parent-operated live qualification held on frozen `ca4e7dc` (SUN39, record
 `0d6c6d9`). A fresh owned derivative editor exposed literal-ID buttons, while the
-frameless Hide Tips peer remained absent from action candidates. Numeric target86
+frameless Hide Tips peer remained absent from action candidates. Numeric target 86
 inspection recorded `native_control_opaque: true`, qualified identity, the exact
-current document scope and DOM ID `base-ui-_r_p_`, with native frame761,576,36,36;
+current document scope and DOM ID `base-ui-_r_p_`, with native frame `(761, 576, 36, 36)`;
 the fresh screenshot showed the clip ellipsis. One explicit foreground click opened
 named Split (Cmd E) and Create Section menu items; Escape dismissed the menu.
 Evidence: `output/suno-20261110/opaque-final-editor-open.txt`,
