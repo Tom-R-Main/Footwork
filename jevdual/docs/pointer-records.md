@@ -4,9 +4,10 @@
 session) appends one compact JSON line to **`S/pointer-gestures.jsonl`**. `point`,
 automatic approaches before actions, and filmed drags use the same file. The old
 summary/stdout and latest-50 summary list are unchanged; the separate JSONL has no
-retention cap. A successful replacement `start` resets it together with the old
-session logs; a refused replacement preserves the old file. Copy the artifact
-with the take before reusing a session path. No filesystem work runs per sample.
+retention cap. A filmed start reserves the desktop, and a reserved session cannot
+be restarted in place: start each take in a fresh session directory, after
+`footwork control yield TOKEN` for the previous one. A refused start leaves the
+old file intact. No filesystem work runs per sample.
 
 Each line has `schema: "pointer_gesture/1"`. This is the D1 series subset of the
 pointer-motion plan's proposed record, not a claim that all of plan section 3.6

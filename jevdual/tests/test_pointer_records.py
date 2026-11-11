@@ -197,14 +197,30 @@ def test_instrumentation_preserves_uninstrumented_posts_deadlines_and_outcomes(t
         assert math.isclose(actual.max_gap_s, expected.max_gap_s)
 
 
-def test_restarted_session_gets_fresh_trace_and_refused_start_preserves_it(world, fw, filmed):
+def test_a_take_restarts_in_a_fresh_directory_and_a_refused_start_preserves_the_trace(world, fw, filmed, tmp_path, capsys):
+    # A filmed start reserves the desktop, and a reserved session cannot be restarted in place
+    # (coordination: "yield and use a fresh directory"). Each take therefore gets its own directory,
+    # as DemoGeek's take script already does; a refused replacement leaves the old trace intact.
+    from jevdual import cli
+
     _start(fw)
     assert fw('park', '100', '200')[0] == 0
     original = (fw.session / 'pointer-gestures.jsonl').read_text()
     assert fw('start', 'bad', '--app', 'does-not-exist')[0] != 0
     assert (fw.session / 'pointer-gestures.jsonl').read_text() == original
-    _start(fw)
-    assert not (fw.session / 'pointer-gestures.jsonl').exists()
+    code, _, err = fw('start', 'Film again', '--app', 'Calculator', '--mode', 'exclusive_desktop',
+                      '--pointer-motion', 'filmed', '--rest', '20,40')
+    assert code != 0 and 'fresh directory' in err
+    assert (fw.session / 'pointer-gestures.jsonl').read_text() == original
+
+    token = json.loads((fw.session / 'session.json').read_text())['coordination_token']
+    assert cli.main(['control', 'yield', token]) == 0
+    fresh = tmp_path / 'take-2'
+    code = cli.main(['start', 'Film again', '--app', 'Calculator', '--mode', 'exclusive_desktop',
+                     '--pointer-motion', 'filmed', '--rest', '20,40', '--session', str(fresh)])
+    assert code == 0, capsys.readouterr().err
+    assert not (fresh / 'pointer-gestures.jsonl').exists()
+    assert (fw.session / 'pointer-gestures.jsonl').read_text() == original
 
 
 def test_point_and_automatic_click_each_leave_a_record(world, fw, filmed, monkeypatch):
