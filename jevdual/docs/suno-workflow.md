@@ -65,6 +65,7 @@ Ask a critic for timestamped observations, severity, confidence, evidence and on
 | Layer | Candidate | Why it fits | Current boundary |
 | --- | --- | --- | --- |
 | Guarded UI actions | Footwork native CLI | Existing signed-in Chrome, fresh targets, posture and receipts | Creation and one authenticated export verified; actual candidate B audio reviewed; A/B selection/editor/derivative persistence remain unverified |
+| In-app semantic editing | [Suno Studio Chat](https://suno.com/blog/studio-chat-assistant) | Documented track naming, multi-fader changes, effects/parameter setup and feedback | Closed hosted assistant; no Studio Chat UI operation tested here, and documented examples do not qualify crop/fade control |
 | Browser state and controls | [Playwright MCP/CLI](https://github.com/microsoft/playwright-mcp) | Structured snapshots and browser automation | Default owned profile does not inherit this user's login; the documented [extension route](https://github.com/microsoft/playwright/blob/main/packages/extension/README.md) supports existing tabs but requires setup and connection approval |
 | Browser performance | [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) | Diagnose browser behavior and performance | Requires an actual permitted connection; distinct from an audio critic |
 | Capture | OBS + [obs-websocket](https://github.com/obsproject/obs-websocket) | Programmatic recording control | Screen and intended system/app audio must both be configured and checked; available MCP tools do not prove OBS is running or connected |
@@ -186,6 +187,12 @@ Two user-supplied research documents were reviewed on November 10. Their recomme
 Suno launched its [official MCP beta](https://suno.com/release-notes/suno-mcp-beta) on October 28, 2026. Its [capability overview](https://help.suno.com/en/articles/14551361) documents creation, covers, extensions, mashups, speech, audio upload and plan/credit queries. Its [FAQ](https://help.suno.com/en/articles/14486145) documents authenticated connection at `https://api.suno.com/mcp`. No Suno or Qwen tool was exposed in this chat's callable tool inventory when checked; no connection or installation was attempted.
 
 Evaluate the official service for supported semantic operations and independent library/credit readback once connected. Keep the requested Footwork creation/editor UI qualification explicit. MCP-created music would establish a different entry path, and the published feature list does not establish full Song Editor or Studio timeline control.
+
+### Suno Studio Chat as a separate semantic route
+
+Suno's [October 29 Studio Chat announcement](https://suno.com/blog/studio-chat-assistant) documents naming tracks from clips, changing multiple faders by a requested dB amount, adding EQ/compressor effects with parameters, and asking for feedback. The [Studio 2.0 announcement](https://suno.com/blog/studio-2) introduced the chat beta alongside MIDI, plugins and automation, and describes Premier multitrack/stem exports at 32-bit/48kHz. These vendor-documented capabilities are worth a separate Studio qualification; they are not evidence of an operation in this run or of an exposed external critique API.
+
+Start that qualification with one reversible change to a run-owned track. Capture its exact prior name or numeric fader value, submit one bounded request through the observed Chat control, then read the actual track/effect state and inspect exported audio where the change affects sound. Preserve an undo path and reopen the project before claiming persistence. Chat's confirmation or feedback is not independent readback. The cited posts do not document Chat selecting exact crop/fade boundaries, so retain the observed Song Editor route for those tests. Qwen through OpenRouter remains the user's selected external reviewer.
 
 ### Prioritize actual exported audio
 
