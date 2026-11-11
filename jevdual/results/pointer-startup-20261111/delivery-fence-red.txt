@@ -1,0 +1,58 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_foreign_key_during_scheduled_sleep_refuses_before_first_move[play_move] _
+
+player = <function play_move at 0x103031d00>
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    def test_foreign_key_during_scheduled_sleep_refuses_before_first_move(player):
+        moving_start = 100.12 if player is play_drag else 100.
+
+        class InterruptedClock(Clock):
+            def sleep_until(self, deadline):
+                super().sleep_until(deadline)
+                # A key arrives after the pre-sleep check but before the first move is due.
+                # For drag, the initial press-hold sleep itself remains undisturbed.
+                if self.now() > moving_start + .005:
+                    poster.foreign = lambda: 'key_down'
+
+        clock = InterruptedClock()
+        poster = DelayedPoster(clock)
+        result = player(plan(), poster, clock)
+        assert result.outcome == 'aborted:pointer_contended:key_down'
+>       assert poster.moves() == 0
+E       assert 1 == 0
+E        +  where 1 = moves()
+E        +    where moves = <tests.test_pointer_delivery.DelayedPoster object at 0x103024c20>.moves
+
+tests/test_pointer_delivery.py:165: AssertionError
+_ test_foreign_key_during_scheduled_sleep_refuses_before_first_move[play_drag] _
+
+player = <function play_drag at 0x103031e40>
+
+    @pytest.mark.parametrize('player', [play_move, play_drag])
+    def test_foreign_key_during_scheduled_sleep_refuses_before_first_move(player):
+        moving_start = 100.12 if player is play_drag else 100.
+
+        class InterruptedClock(Clock):
+            def sleep_until(self, deadline):
+                super().sleep_until(deadline)
+                # A key arrives after the pre-sleep check but before the first move is due.
+                # For drag, the initial press-hold sleep itself remains undisturbed.
+                if self.now() > moving_start + .005:
+                    poster.foreign = lambda: 'key_down'
+
+        clock = InterruptedClock()
+        poster = DelayedPoster(clock)
+        result = player(plan(), poster, clock)
+        assert result.outcome == 'aborted:pointer_contended:key_down'
+>       assert poster.moves() == 0
+E       assert 1 == 0
+E        +  where 1 = moves()
+E        +    where moves = <tests.test_pointer_delivery.DelayedPoster object at 0x1030d4ef0>.moves
+
+tests/test_pointer_delivery.py:165: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_pointer_delivery.py::test_foreign_key_during_scheduled_sleep_refuses_before_first_move[play_move]
+FAILED tests/test_pointer_delivery.py::test_foreign_key_during_scheduled_sleep_refuses_before_first_move[play_drag]
+2 failed in 0.14s

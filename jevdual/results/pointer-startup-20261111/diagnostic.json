@@ -1,0 +1,558 @@
+{
+  "target": "f821f032a81ba567a4c20298789fae55f79edc78",
+  "python": "/Users/thomasmain/.local/share/footwork/releases/f821f032a81ba567a4c20298789fae55f79edc78/bin/python",
+  "source": "/Users/thomasmain/.local/share/footwork/releases/f821f032a81ba567a4c20298789fae55f79edc78/lib/python3.12/site-packages/jevdual/__init__.py",
+  "sdk": "0.46.0+footwork.5486b624.cleanup2",
+  "criteria": {
+    "background_native_start": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "subject_native_start": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "filmed_native_start": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "persistent_desktop_subject_reservation": {
+      "passed": true
+    },
+    "saved_observe_only": {
+      "passed": true
+    },
+    "pointer_setup": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "filmed_point": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "independent_native_append": {
+      "passed": true,
+      "exit": 0,
+      "actual": "Owned background baseline\nBackground concurrency marker",
+      "error": ""
+    },
+    "pointer_readback": {
+      "passed": true,
+      "expected": [
+        550.0,
+        477.0
+      ],
+      "observed": [
+        550.0,
+        477.0
+      ],
+      "gestures": [
+        {
+          "kind": "place",
+          "label": "setup",
+          "from": [
+            593.640625,
+            810.1171875
+          ],
+          "to": [
+            200.0,
+            287.0
+          ],
+          "samples": 1,
+          "outcome": "arrived"
+        },
+        {
+          "kind": "approach",
+          "label": "Coordination target",
+          "from": [
+            200.0,
+            287.0
+          ],
+          "to": [
+            550.0,
+            477.0
+          ],
+          "samples": 87,
+          "duration_s": 0.896437356998477,
+          "posted": 86,
+          "max_gap_ms": 21.7,
+          "stall_gap_ms": null,
+          "max_post_ms": 21.3,
+          "outcome": "arrived"
+        }
+      ]
+    },
+    "background_did_not_steal_front": {
+      "passed": true,
+      "before": 57434,
+      "after": 57434
+    },
+    "independent_page_hover": {
+      "passed": true,
+      "events": [
+        {
+          "event": "pointerenter"
+        }
+      ]
+    },
+    "reserved_owner_continues_with_waiter": {
+      "passed": true,
+      "requests": [
+        {
+          "seq": 135,
+          "token": "e4966429529d42148b2e0d5cc9d9272a",
+          "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/subject",
+          "desktop": "console",
+          "resources": [
+            "session/%2FUsers%2Fthomasmain%2Fprojects%2Ffootwork%2F.local-reviews%2Fmacos-coordination%2Fjevdual%2Foutput%2Fpointer-startup-20261111%2Fnative-diagnostic%2Fsubject"
+          ],
+          "state": "active",
+          "reservation": "",
+          "pid": 57526
+        },
+        {
+          "seq": 136,
+          "token": "211bb1b5fb7e4974b3f31f7d5b026bb4",
+          "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/subject",
+          "desktop": "console",
+          "resources": [
+            "app/google%20chrome"
+          ],
+          "state": "waiting",
+          "reservation": "",
+          "pid": 57526
+        }
+      ]
+    },
+    "owner_completed_before_competitor_handoff": {
+      "passed": true,
+      "exit": 0
+    },
+    "revocation_fences_pointer": {
+      "passed": true,
+      "exit": 7,
+      "error": "stopped: coordination_refused: reservation unavailable; explicit handoff required\n"
+    },
+    "stale_yield_preserves_new_owner": {
+      "passed": true
+    }
+  },
+  "commands": [
+    {
+      "name": "00-background-start",
+      "args": [
+        "start",
+        "Append only to owned background fixture",
+        "--app",
+        "TextEdit",
+        "--pid",
+        "57456",
+        "--window",
+        "independent.txt",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/other"
+      ],
+      "pid": 57461,
+      "started": 1794416659.1816902,
+      "exit": 0,
+      "elapsed": 0.801
+    },
+    {
+      "name": "01-subject-start",
+      "args": [
+        "start",
+        "Observe owned subject",
+        "--app",
+        "Google Chrome",
+        "--pid",
+        "57434",
+        "--window",
+        "Footwork macOS coordination fixture",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/subject"
+      ],
+      "pid": 57484,
+      "started": 1794416659.9860852,
+      "exit": 0,
+      "elapsed": 0.839
+    },
+    {
+      "name": "02-film-start",
+      "args": [
+        "start",
+        "Film owned pointer rehearsal",
+        "--app",
+        "Google Chrome",
+        "--pid",
+        "57434",
+        "--window",
+        "Footwork macOS coordination fixture",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film",
+        "--mode",
+        "exclusive_desktop",
+        "--pointer-motion",
+        "filmed",
+        "--rest",
+        "100,100"
+      ],
+      "pid": 57493,
+      "started": 1794416660.828278,
+      "exit": 0,
+      "elapsed": 0.604
+    },
+    {
+      "name": "03-observe-only",
+      "args": [
+        "control",
+        "observe",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film"
+      ],
+      "pid": 57508,
+      "started": 1794416661.435359,
+      "exit": 0,
+      "elapsed": 0.082
+    },
+    {
+      "name": "04-park-place",
+      "args": [
+        "park",
+        "--place",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film"
+      ],
+      "pid": 57509,
+      "started": 1794416661.520811,
+      "exit": 0,
+      "elapsed": 0.208
+    },
+    {
+      "name": "05-filmed-point",
+      "args": [
+        "point",
+        "Coordination target",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film"
+      ],
+      "pid": 57513,
+      "started": 1794416661.74693,
+      "exit": 0,
+      "elapsed": 1.503
+    },
+    {
+      "name": "05-background-append",
+      "args": [
+        "do",
+        "append",
+        "1",
+        "Background concurrency marker",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/other"
+      ],
+      "pid": 57514,
+      "started": 1794416661.746978,
+      "exit": 0,
+      "elapsed": 1.845
+    },
+    {
+      "name": "07-competing-look",
+      "args": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/subject"
+      ],
+      "pid": 57526,
+      "started": 1794416663.8795872,
+      "exit": 7
+    },
+    {
+      "name": "08-owner-look",
+      "args": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film"
+      ],
+      "pid": 57527,
+      "started": 1794416663.9690628,
+      "exit": 0
+    },
+    {
+      "name": "09-cancel-waiter",
+      "args": [
+        "control",
+        "cancel",
+        "211bb1b5fb7e4974b3f31f7d5b026bb4"
+      ],
+      "pid": 57528,
+      "started": 1794416664.484307,
+      "exit": 0,
+      "elapsed": 0.081
+    },
+    {
+      "name": "10-cancel-reservation",
+      "args": [
+        "control",
+        "cancel",
+        "55fa888d56f946f380874675f28143da"
+      ],
+      "pid": 57531,
+      "started": 1794416664.583012,
+      "exit": 0,
+      "elapsed": 0.077
+    },
+    {
+      "name": "11-revoked-point",
+      "args": [
+        "point",
+        "Coordination target",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film"
+      ],
+      "pid": 57533,
+      "started": 1794416664.662804,
+      "exit": 7,
+      "elapsed": 0.081
+    },
+    {
+      "name": "12-explicit-handoff",
+      "args": [
+        "control",
+        "reserve",
+        "--session",
+        "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film"
+      ],
+      "pid": 57534,
+      "started": 1794416664.747234,
+      "exit": 0,
+      "elapsed": 0.082
+    },
+    {
+      "name": "13-stale-yield",
+      "args": [
+        "control",
+        "yield",
+        "55fa888d56f946f380874675f28143da"
+      ],
+      "pid": 57535,
+      "started": 1794416664.831845,
+      "exit": 0,
+      "elapsed": 0.077
+    },
+    {
+      "name": "14-yield-new-owner",
+      "args": [
+        "control",
+        "yield",
+        "ee3de9f95f3a46989a7eb9032d23bc4f"
+      ],
+      "pid": 57536,
+      "started": 1794416664.9118772,
+      "exit": 0,
+      "elapsed": 0.078
+    }
+  ],
+  "initial": {
+    "screen_locked": false,
+    "idle_seconds": 36.735177167,
+    "front_pid": 55569,
+    "pointer": [
+      593.640625,
+      810.1171875
+    ],
+    "existing_active_owners": 0
+  },
+  "owned_chrome": {
+    "pid": 57434,
+    "start": 1794416656.699266
+  },
+  "owned_textedit": {
+    "pid": 57456,
+    "windows": {
+      "independent.txt": 369751
+    }
+  },
+  "film_binding": {
+    "pid": 57434,
+    "window_id": 369743,
+    "token": "55fa888d56f946f380874675f28143da",
+    "geometry": {
+      "window": [
+        100.0,
+        100.0,
+        900.0,
+        650.0
+      ],
+      "content": [
+        100.0,
+        187.0,
+        900.0,
+        563.0
+      ],
+      "keep_out": null,
+      "rest": [
+        200.0,
+        287.0
+      ],
+      "margin_pt": 4.0,
+      "arcs": [
+        0.18,
+        0.1,
+        0.05,
+        0.0
+      ],
+      "timing": "DELIBERATE",
+      "dwell_s": 0.18,
+      "type_delay_ms": 65,
+      "continuity_pt": 2.0,
+      "take_ended": null,
+      "last_pointer": null,
+      "gestures": []
+    }
+  },
+  "video": {
+    "exit": 0,
+    "path": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/rehearsal.mov",
+    "exists": true
+  },
+  "cleanup_registry": {
+    "requests": [],
+    "reservations": [
+      {
+        "token": "1e7441ee6f8a46e8b796328aba6949cc",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111/native-live/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "477d870e504c4f0fa1d8580adc51bfa0",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111/native-live/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "9ac829e884a44a1185b5d0b02843cb8c",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-diagnosis/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "1ea01fb265a246b5a68a63247c74f474",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-diagnosis/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "68701585694f4f59a91b8bdc25c53321",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-final/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "523b4dbeacf24d05a1e0db6a3bfd4a86",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-final/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "1cd3316b5f864f8da699627a4b1eddf8",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "df84d06a221448debfddec80f577da04",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "257244274d154d71b205f2419e8f2236",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native-warm-capture/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "b03aead5c2b249428bf7c91b9948c940",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native-warm-capture/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "55fa888d56f946f380874675f28143da",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "ee3de9f95f3a46989a7eb9032d23bc4f",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      }
+    ]
+  },
+  "owned_chrome_exited": true,
+  "events": [
+    {
+      "event": "pointerenter"
+    }
+  ],
+  "final_pointer": [
+    550.0,
+    477.0
+  ]
+}

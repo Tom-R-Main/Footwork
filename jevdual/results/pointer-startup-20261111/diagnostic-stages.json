@@ -1,0 +1,471 @@
+{
+  "poster_init": {
+    "count": 1,
+    "first_ms": 47.73837490938604,
+    "max_ms": 47.73837490938604
+  },
+  "location": {
+    "count": 87,
+    "first_ms": 0.4658750258386135,
+    "max_ms": 0.4658750258386135
+  },
+  "foreign_input": {
+    "count": 86,
+    "first_ms": 0.011125113815069199,
+    "max_ms": 0.019249971956014633
+  },
+  "sleep_until": {
+    "count": 87,
+    "first_ms": 11.360583128407598,
+    "max_ms": 182.71537497639656
+  },
+  "checkpoint": {
+    "count": 86,
+    "first_ms": 0.3427919000387192,
+    "max_ms": 0.44895801693201065
+  },
+  "CGEventCreateMouseEvent": {
+    "count": 86,
+    "first_ms": 6.055958801880479,
+    "max_ms": 6.055958801880479
+  },
+  "CGEventSetIntegerValueField": {
+    "count": 86,
+    "first_ms": 0.004166970029473305,
+    "max_ms": 0.005542067810893059
+  },
+  "CGEventPost": {
+    "count": 86,
+    "first_ms": 13.684166828170419,
+    "max_ms": 13.684166828170419
+  },
+  "post_start_gaps_ms": [
+    14.442874817177653,
+    0.5745000671595335,
+    7.674708962440491,
+    11.62416604347527,
+    9.339791955426335,
+    10.463833110406995,
+    11.434333864599466,
+    10.212250053882599,
+    10.324791073799133,
+    9.660125011578202,
+    11.538249906152487,
+    10.159166995435953,
+    10.452792048454285,
+    11.122791096568108,
+    8.748499909415841,
+    11.249125003814697,
+    10.652499971911311,
+    10.325209004804492,
+    10.397541103884578,
+    10.386708891019225,
+    9.484833106398582,
+    10.476082796230912,
+    10.328125208616257,
+    10.412666946649551,
+    11.799416970461607,
+    9.54366591759026,
+    10.62620896846056,
+    10.50329115241766,
+    9.671791922301054,
+    11.448000092059374,
+    10.349457850679755,
+    10.499125113710761,
+    10.445791995152831,
+    9.410874918103218,
+    10.481875156983733,
+    11.808916926383972,
+    9.88100003451109,
+    10.920665925368667,
+    9.953374974429607,
+    10.462709004059434,
+    10.432790964841843,
+    10.38679201155901,
+    10.479958029463887,
+    10.36162511445582,
+    10.640458902344108,
+    10.221207980066538,
+    10.46529202722013,
+    9.441915899515152,
+    11.630709050223231,
+    10.115208104252815,
+    10.526166995987296,
+    10.339290834963322,
+    10.492291999980807,
+    10.437542106956244,
+    9.392957901582122,
+    10.409583104774356,
+    11.604249943047762,
+    10.332959005609155,
+    9.430499980226159,
+    10.391500080004334,
+    11.677874950692058,
+    10.091332951560616,
+    9.464208036661148,
+    10.518416995182633,
+    10.847666999325156,
+    11.058000149205327,
+    10.321749839931726,
+    10.374708101153374,
+    10.36504190415144,
+    10.519583011046052,
+    10.349167045205832,
+    10.513375047594309,
+    9.685874916613102,
+    10.007540928199887,
+    11.855834163725376,
+    10.067750001326203,
+    10.432915994897485,
+    10.375541867688298,
+    10.554000036790967,
+    9.326917119324207,
+    11.044540908187628,
+    10.913334088400006,
+    10.41604089550674,
+    9.298125049099326,
+    11.684708995744586
+  ],
+  "readback_lag": [
+    {
+      "distance_from_last_submitted": 0.006217674474589646,
+      "after_post_ms": 0.4371250979602337
+    },
+    {
+      "distance_from_last_submitted": 0.048872194988985436,
+      "after_post_ms": 0.3557500895112753
+    },
+    {
+      "distance_from_last_submitted": 0.16204527366225482,
+      "after_post_ms": 0.17725001089274883
+    },
+    {
+      "distance_from_last_submitted": 0.32845696058721674,
+      "after_post_ms": 0.252292025834322
+    },
+    {
+      "distance_from_last_submitted": 1.3258490370614222e-05,
+      "after_post_ms": 0.33204094506800175
+    },
+    {
+      "distance_from_last_submitted": 8.115170389537592e-06,
+      "after_post_ms": 0.2753329463303089
+    },
+    {
+      "distance_from_last_submitted": 0.6868178593458705,
+      "after_post_ms": 0.11741695925593376
+    },
+    {
+      "distance_from_last_submitted": 8.873987222271542e-06,
+      "after_post_ms": 0.10641617700457573
+    },
+    {
+      "distance_from_last_submitted": 1.0492699947417174e-05,
+      "after_post_ms": 0.1082499511539936
+    },
+    {
+      "distance_from_last_submitted": 1.3575171932843637,
+      "after_post_ms": 0.08779182098805904
+    },
+    {
+      "distance_from_last_submitted": 7.465003952562263e-06,
+      "after_post_ms": 0.12233294546604156
+    },
+    {
+      "distance_from_last_submitted": 1.88650812850748,
+      "after_post_ms": 0.13654190115630627
+    },
+    {
+      "distance_from_last_submitted": 4.298037109207037e-06,
+      "after_post_ms": 0.17224997282028198
+    },
+    {
+      "distance_from_last_submitted": 1.0500150161209577e-05,
+      "after_post_ms": 0.15345821157097816
+    },
+    {
+      "distance_from_last_submitted": 2.7618952371161005,
+      "after_post_ms": 0.16741687431931496
+    },
+    {
+      "distance_from_last_submitted": 9.593055295879235e-06,
+      "after_post_ms": 0.1573751214891672
+    },
+    {
+      "distance_from_last_submitted": 6.830467489036189e-06,
+      "after_post_ms": 0.3277920186519623
+    },
+    {
+      "distance_from_last_submitted": 3.6924152327516744,
+      "after_post_ms": 0.12262491509318352
+    },
+    {
+      "distance_from_last_submitted": 1.1953676652664198e-05,
+      "after_post_ms": 0.2284159418195486
+    },
+    {
+      "distance_from_last_submitted": 4.32101704139483,
+      "after_post_ms": 0.12341584078967571
+    },
+    {
+      "distance_from_last_submitted": 1.560912373571808e-06,
+      "after_post_ms": 0.09945803321897984
+    },
+    {
+      "distance_from_last_submitted": 3.30369239982525e-06,
+      "after_post_ms": 0.12354203499853611
+    },
+    {
+      "distance_from_last_submitted": 5.246841907561188,
+      "after_post_ms": 0.20812498405575752
+    },
+    {
+      "distance_from_last_submitted": 1.4395384563525816e-05,
+      "after_post_ms": 0.09508291259407997
+    },
+    {
+      "distance_from_last_submitted": 5.836710053562897,
+      "after_post_ms": 0.12208311818540096
+    },
+    {
+      "distance_from_last_submitted": 6.12004864959679,
+      "after_post_ms": 0.1457498874515295
+    },
+    {
+      "distance_from_last_submitted": 1.3521276360195456e-05,
+      "after_post_ms": 0.16583409160375595
+    },
+    {
+      "distance_from_last_submitted": 6.657928056659822,
+      "after_post_ms": 0.16700010746717453
+    },
+    {
+      "distance_from_last_submitted": 6.034793753255541e-06,
+      "after_post_ms": 0.15245797112584114
+    },
+    {
+      "distance_from_last_submitted": 1.5005509668782306e-05,
+      "after_post_ms": 0.10845786891877651
+    },
+    {
+      "distance_from_last_submitted": 7.378485148705873,
+      "after_post_ms": 0.1655840314924717
+    },
+    {
+      "distance_from_last_submitted": 4.219749963325376e-06,
+      "after_post_ms": 0.17875013872981071
+    },
+    {
+      "distance_from_last_submitted": 1.6288295508714724e-05,
+      "after_post_ms": 0.11583301238715649
+    },
+    {
+      "distance_from_last_submitted": 7.976687690552223,
+      "after_post_ms": 0.11137500405311584
+    },
+    {
+      "distance_from_last_submitted": 1.2954882421130007e-05,
+      "after_post_ms": 0.15941704623401165
+    },
+    {
+      "distance_from_last_submitted": 8.298903217555377,
+      "after_post_ms": 0.13733422383666039
+    },
+    {
+      "distance_from_last_submitted": 9.140434921464432e-06,
+      "after_post_ms": 0.14620902948081493
+    },
+    {
+      "distance_from_last_submitted": 1.2035238600822675e-05,
+      "after_post_ms": 0.1447501126676798
+    },
+    {
+      "distance_from_last_submitted": 8.657893150132406,
+      "after_post_ms": 0.14875014312565327
+    },
+    {
+      "distance_from_last_submitted": 1.3119066075301788e-05,
+      "after_post_ms": 0.12037507258355618
+    },
+    {
+      "distance_from_last_submitted": 5.088103262635567e-06,
+      "after_post_ms": 0.18379208631813526
+    },
+    {
+      "distance_from_last_submitted": 8.859626608383788,
+      "after_post_ms": 0.11512497439980507
+    },
+    {
+      "distance_from_last_submitted": 9.636718867560365e-06,
+      "after_post_ms": 0.08945795707404613
+    },
+    {
+      "distance_from_last_submitted": 8.904164240995243,
+      "after_post_ms": 0.09674998000264168
+    },
+    {
+      "distance_from_last_submitted": 1.1818342780880868e-05,
+      "after_post_ms": 0.19087502732872963
+    },
+    {
+      "distance_from_last_submitted": 4.89774704597983e-06,
+      "after_post_ms": 0.15962496399879456
+    },
+    {
+      "distance_from_last_submitted": 8.834709826835153,
+      "after_post_ms": 0.11124997399747372
+    },
+    {
+      "distance_from_last_submitted": 1.697116067248655e-05,
+      "after_post_ms": 0.23420783691108227
+    },
+    {
+      "distance_from_last_submitted": 1.8189036110291686e-05,
+      "after_post_ms": 0.11741602793335915
+    },
+    {
+      "distance_from_last_submitted": 8.602558883779457,
+      "after_post_ms": 0.15462515875697136
+    },
+    {
+      "distance_from_last_submitted": 7.270239654229589e-06,
+      "after_post_ms": 0.09283307008445263
+    },
+    {
+      "distance_from_last_submitted": 8.358876691291874,
+      "after_post_ms": 0.0963748898357153
+    },
+    {
+      "distance_from_last_submitted": 1.3185990504508715e-05,
+      "after_post_ms": 0.15808292664587498
+    },
+    {
+      "distance_from_last_submitted": 1.5830174154231576e-05,
+      "after_post_ms": 0.10595889762043953
+    },
+    {
+      "distance_from_last_submitted": 7.864733247823814,
+      "after_post_ms": 0.10479101911187172
+    },
+    {
+      "distance_from_last_submitted": 3.808617142546189e-06,
+      "after_post_ms": 0.10762480087578297
+    },
+    {
+      "distance_from_last_submitted": 1.549033975270436e-05,
+      "after_post_ms": 0.13266713358461857
+    },
+    {
+      "distance_from_last_submitted": 7.222621232271404,
+      "after_post_ms": 0.14262483455240726
+    },
+    {
+      "distance_from_last_submitted": 6.977703648484298,
+      "after_post_ms": 0.15566591173410416
+    },
+    {
+      "distance_from_last_submitted": 6.7174296988555104,
+      "after_post_ms": 0.14120806008577347
+    },
+    {
+      "distance_from_last_submitted": 1.4760833076569156e-05,
+      "after_post_ms": 0.17066695727407932
+    },
+    {
+      "distance_from_last_submitted": 1.1209134090147025e-05,
+      "after_post_ms": 0.1230000052601099
+    },
+    {
+      "distance_from_last_submitted": 5.853505371957352,
+      "after_post_ms": 0.1254999078810215
+    },
+    {
+      "distance_from_last_submitted": 2.9684526096426215e-05,
+      "after_post_ms": 0.1218330580741167
+    },
+    {
+      "distance_from_last_submitted": 1.6098550710702214e-05,
+      "after_post_ms": 0.27762516401708126
+    },
+    {
+      "distance_from_last_submitted": 4.876963183801824,
+      "after_post_ms": 0.11024996638298035
+    },
+    {
+      "distance_from_last_submitted": 1.9956434166402862e-05,
+      "after_post_ms": 0.10850001126527786
+    },
+    {
+      "distance_from_last_submitted": 4.17450032182932,
+      "after_post_ms": 0.10787509381771088
+    },
+    {
+      "distance_from_last_submitted": 1.7989992119272732e-05,
+      "after_post_ms": 0.1339591108262539
+    },
+    {
+      "distance_from_last_submitted": 4.1432753013134275e-06,
+      "after_post_ms": 0.13212510384619236
+    },
+    {
+      "distance_from_last_submitted": 3.06889067499942,
+      "after_post_ms": 0.1087910495698452
+    },
+    {
+      "distance_from_last_submitted": 8.377329400116131e-06,
+      "after_post_ms": 0.09470898658037186
+    },
+    {
+      "distance_from_last_submitted": 1.9893679184439518e-05,
+      "after_post_ms": 0.11474988423287868
+    },
+    {
+      "distance_from_last_submitted": 1.94408166719431,
+      "after_post_ms": 0.09304098784923553
+    },
+    {
+      "distance_from_last_submitted": 2.9972833810606152e-05,
+      "after_post_ms": 0.09495904669165611
+    },
+    {
+      "distance_from_last_submitted": 1.2185167416404858,
+      "after_post_ms": 0.1386671792715788
+    },
+    {
+      "distance_from_last_submitted": 1.7941208057653473e-05,
+      "after_post_ms": 0.16695796512067318
+    },
+    {
+      "distance_from_last_submitted": 9.419047557204572e-06,
+      "after_post_ms": 0.3137500025331974
+    },
+    {
+      "distance_from_last_submitted": 0.2494708907513228,
+      "after_post_ms": 0.10375003330409527
+    },
+    {
+      "distance_from_last_submitted": 8.803845658910465e-06,
+      "after_post_ms": 0.12345891445875168
+    },
+    {
+      "distance_from_last_submitted": 1.309386924647022e-05,
+      "after_post_ms": 0.09662494994699955
+    },
+    {
+      "distance_from_last_submitted": 0.4212224785541769,
+      "after_post_ms": 0.10583293624222279
+    },
+    {
+      "distance_from_last_submitted": 4.033770413840718e-06,
+      "after_post_ms": 0.09312480688095093
+    },
+    {
+      "distance_from_last_submitted": 1.759298004701088e-05,
+      "after_post_ms": 0.11712498962879181
+    },
+    {
+      "distance_from_last_submitted": 1.5657080177274934e-05,
+      "after_post_ms": 0.1941670197993517
+    }
+  ]
+}

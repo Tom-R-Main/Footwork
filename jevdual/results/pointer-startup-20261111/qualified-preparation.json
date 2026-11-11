@@ -1,0 +1,20 @@
+{
+  "source_commit": "2930faf4bfa5818fb33bd3369e92f843810ded13",
+  "source_tree": "11666cce7a1009be6959176117bd81b6cd5791ad",
+  "profile": "full",
+  "bundle_manifest": {
+    "cua": "cua_driver-0.46.0+footwork.5486b624.cleanup2-py3-none-macosx_13_0_arm64.whl",
+    "files": {
+      "cua_driver-0.46.0+footwork.5486b624.cleanup2-py3-none-macosx_13_0_arm64.whl": "e1e63134456aa8bc678a0b91769c0a1532aced9c9305f720de63d47b2c9aba8c",
+      "install.py": "471167c071b38638ceeadad6cb077bdf98b52512f35c30cb7d32ebcf96a3a4da",
+      "jevdual-0.0.1-py3-none-any.whl": "7e2e446eacc85339cc5b230964c5a274b1326a4584aecebc41cff8d377f9351c"
+    },
+    "product": "jevdual-0.0.1-py3-none-any.whl",
+    "profile": "full",
+    "schema_version": 2
+  },
+  "previous_release": "/Users/thomasmain/.local/share/footwork/releases/f821f032a81ba567a4c20298789fae55f79edc78",
+  "previous_metadata_sha256": "0d50a7588a759cc31d223dbe943b43a22367039467d045ed5057cd5c225ec572",
+  "launcher_sha256": "8b786ec4bebfd7b8fe62e478f6e017ed2048fe31489395fc180b15978f49e793",
+  "bundle_path": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/bundle-qualified"
+}

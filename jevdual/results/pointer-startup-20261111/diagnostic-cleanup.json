@@ -1,0 +1,23 @@
+{
+  "diagnostic_owned_pids_present": [],
+  "diagnostic_remaining_requests": [],
+  "diagnostic_owned_reservation_states": [
+    "revoked",
+    "revoked"
+  ],
+  "diagnostic_video": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 2024,
+        "height": 1524
+      }
+    ],
+    "format": {
+      "duration": "6.076667",
+      "size": "118228"
+    }
+  }
+}
