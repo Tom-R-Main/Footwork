@@ -2259,6 +2259,64 @@ def test_native_menu_no_visible_change_cannot_disprove_clipboard_effect(world, f
     assert "clipboard" in receipt["evidence"] and "no visible change" in receipt["evidence"]
 
 
+@pytest.mark.parametrize("variant", ["modal", "parent", "wrong_pid", "unrelated", "not_key", "overbound"])
+def test_public_save_modal_session_keeps_exact_window_hotkey_binding(world, fw, monkeypatch, variant):
+    from jevdual import posture
+
+    from tests.test_ax_semantics import _install_modal_ax_tree
+    from tests.test_posture import Activity
+
+    app, parent, sheet, mutations = _install_modal_ax_tree(monkeypatch)
+    world.base["elements"] = [{"element_index": 0, "role": "AXSheet", "label": "save", "enabled": True}]
+    world.base["app_name"] = "Calculator"
+    world.base["pid"] = 77
+    target_window = 40335 if variant == "parent" else 60066
+    world.base["window_id"] = target_window
+    world.window_id = target_window
+    if variant == "wrong_pid": sheet["_pid"] = 88
+    if variant == "unrelated":
+        other = {"AXRole": "AXWindow", "_pid": 77, "_wid": 999}
+        sheet["AXParent"] = other; sheet["AXWindow"] = other
+    if variant == "not_key": app["AXFocusedWindow"] = parent
+    if variant == "overbound":
+        node = sheet
+        for _ in range(40): node = {"AXRole": "AXGroup", "_pid": 77, "AXChildren": [node]}
+        parent["AXChildren"] = [node]
+        app["AXFocusedWindow"] = parent
+    monkeypatch.setattr(posture, "MacActivity", lambda: Activity(idle=60, fronts=(77,)))
+
+    async def windows(inp):
+        return SimpleNamespace(windows=[SimpleNamespace(window_id=target_window, title="Save",
+                                                       bounds=SimpleNamespace(width=880, height=448))])
+
+    monkeypatch.setattr(world, "list_windows", windows)
+
+    async def call(name, encoded):
+        args = json.loads(encoded)
+        world.tool_calls.append((name, args))
+        if name == "bring_to_front":
+            assert args["window_id"] == target_window
+            refused = variant == "parent"
+            return SimpleNamespace(is_error=refused, action=None,
+                error_code="bring_to_front_exact_window_unverified" if refused else "bring_to_front_exact_window_verified",
+                structured_json=json.dumps({"code": "bring_to_front_exact_window_unverified" if refused else "bring_to_front_exact_window_verified",
+                    "status": "partial" if refused else "activated", "request_accepted": True,
+                    "pid": 77, "window_id": target_window, "exact_window_effect": {"verified": not refused},
+                    "observed": {"frontmost_pid": 77, "focused_window_id": 60066}}), text="exact foreground intent")
+        assert name == "hotkey" and args["window_id"] == 60066
+        return SimpleNamespace(is_error=False, action=None, error_code=None, structured_json=None, text="folder chord posted")
+
+    monkeypatch.setattr(world, "call_tool", call)
+    code, out, err = fw("start", "Navigate own Save sheet to project exports", "--app", "Calculator", "--pid", "77",
+                        "--window", "Save", "--mode", "foreground_permitted")
+    assert code == 0 and _state(fw)["window_id"] == target_window, (out, err)
+    code, out, err = fw("do", "hotkey", "cmd", "shift", "g", "--no-judge", "--authorize", "hotkey")
+    assert code == 0, (out, err)
+    keys = [args for name, args in world.tool_calls if name == "hotkey"]
+    assert len(keys) == (1 if variant == "modal" else 0), (out, err)
+    assert mutations == []  # the SDK already proved the requested modal key; no AXMain/AXRaise needed
+
+
 def test_lf_representation_receipt_keeps_selected_range_full_value_strict(world, fw, monkeypatch):
     _foreground_selection_fixture(world, monkeypatch, actual_after="A\nB\n")
     assert fw("start", "Edit own selected lyrics", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0

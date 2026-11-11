@@ -3,6 +3,100 @@
 from jevdual import ax
 
 
+def _install_modal_ax_tree(monkeypatch):
+    import ctypes
+    import sys
+    from types import SimpleNamespace
+
+    parent = {"AXRole": "AXWindow", "_pid": 77, "_wid": 40335}
+    sheet = {"AXRole": "AXSheet", "AXDescription": "save", "_pid": 77, "_wid": 60066,
+             "AXParent": parent, "AXWindow": parent, "AXChildren": []}
+    parent["AXChildren"] = [sheet]
+    app = {"AXWindows": [parent], "AXFocusedWindow": sheet}
+    pointers, mutations = {}, []
+
+    def pointer(element):
+        pointers[id(element)] = element
+        return id(element)
+
+    def window(pointer, out):
+        number = pointers[pointer].get("_wid", 0)
+        ctypes.cast(out, ctypes.POINTER(ctypes.c_uint32))[0] = number
+        return 0 if number else -25212
+
+    monkeypatch.setitem(sys.modules, "objc", SimpleNamespace(pyobjc_id=pointer))
+    monkeypatch.setitem(sys.modules, "CoreFoundation", SimpleNamespace(CFEqual=lambda left, right: left is right))
+    monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+        AXUIElementCreateApplication=lambda pid: app,
+        AXUIElementGetPid=lambda element, out: (0, element.get("_pid")),
+        AXUIElementSetAttributeValue=lambda *args: mutations.append(("set", args)) or 0,
+        AXUIElementPerformAction=lambda *args: mutations.append(("action", args)) or 0,
+    ))
+    monkeypatch.setattr(ax, "_hi", lambda: window)
+    monkeypatch.setattr(ax, "_attr", lambda element, name: element.get(name) if element is not None else None)
+    return app, parent, sheet, mutations
+
+
+def test_exact_sheet_resolution_preserves_requested_parent_and_skips_unneeded_sheet_raise(monkeypatch):
+    _, parent, sheet, mutations = _install_modal_ax_tree(monkeypatch)
+    assert ax.window_element(77, 40335) is parent
+    assert ax.window_element(77, 60066) is sheet
+    ax.raise_window(77, 60066)
+    assert mutations == []
+    ax.raise_window(77, 40335)
+    assert [kind for kind, _ in mutations] == ["set", "action"]
+
+
+def test_exact_sheet_may_use_focused_reference_only_with_direct_parent_proof(monkeypatch):
+    _, parent, sheet, _ = _install_modal_ax_tree(monkeypatch)
+    parent["AXChildren"] = []
+    assert ax.window_element(77, 60066) is sheet
+
+
+def test_non_key_sheet_is_not_raised_through_its_parent(monkeypatch):
+    import pytest
+
+    app, parent, _, mutations = _install_modal_ax_tree(monkeypatch)
+    app["AXFocusedWindow"] = parent
+    with pytest.raises(ax.AXError, match="not the exact key window"):
+        ax.raise_window(77, 60066)
+    assert mutations == []
+
+
+def test_sheet_resolution_refuses_unproven_or_ambiguous_ownership(monkeypatch):
+    import pytest
+
+    _, parent, sheet, _ = _install_modal_ax_tree(monkeypatch)
+    sheet["_pid"] = 88
+    with pytest.raises(ax.AXError): ax.window_element(77, 60066)
+    sheet["_pid"] = 77
+    other = {"AXRole": "AXWindow", "_pid": 77, "_wid": 999}
+    sheet["AXWindow"] = other
+    with pytest.raises(ax.AXError): ax.window_element(77, 60066)
+    sheet["AXWindow"] = parent
+    sheet.pop("AXParent")
+    with pytest.raises(ax.AXError): ax.window_element(77, 60066)
+    sheet["AXParent"] = parent
+    duplicate = {**sheet}
+    parent["AXChildren"].append(duplicate)
+    with pytest.raises(ax.AXError, match="multiple AXSheets"):
+        ax.window_element(77, 60066)
+
+
+def test_sheet_resolution_refuses_webarea_inference_and_overbound_traversal(monkeypatch):
+    import pytest
+
+    app, parent, sheet, _ = _install_modal_ax_tree(monkeypatch)
+    sheet["AXParent"] = {"AXRole": "AXWebArea", "_pid": 77, "AXParent": parent}
+    with pytest.raises(ax.AXError): ax.window_element(77, 60066)
+    sheet["AXParent"] = parent
+    parent["AXChildren"] = [{"AXRole": "AXGroup", "_pid": 77} for _ in range(513)]
+    with pytest.raises(ax.AXError, match="enumeration exceeded"):
+        ax.window_element(77, 60066)
+    assert ax.window_element(77, 40335) is parent
+    app["AXFocusedWindow"] = parent
+
+
 def test_link_url_decodes_complete_url_without_truncation_or_normalization(monkeypatch):
     from types import SimpleNamespace
 

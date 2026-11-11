@@ -23,3 +23,16 @@ Test: public CLI simulated-Mac Save-session binding with SDK exact-foreground ve
 Predicts: a correctly rebound already-key Save sheet permits the existing guarded folder-navigation hotkey through one input call; parent bindings and unrelated/non-key/unproven/over-bound sheets send no hotkey. Already-key sheets need no AXRaise/AXMain writes; ordinary window raising is unchanged.
 Against: requested parent resolves its modal, an unproven sheet dispatches, another process supplies ownership, a non-key sheet or ambiguity is ignored, or failed input retries.
 Refs: output/suno-20261110/modal-bindability.json; output/suno-20261110/save-modal-observation.json
+
+## SMB5 · update · 2026-11-10 19:45
+Resolves: SMB4 = held
+Observed: the corrected public CLI fixture fails only the intended modal hotkey against the unmodified prior ax.py snapshot (one failure/five guard passes), and all six cases pass with the repair. The first fixture attempt had an inconsistent SDK PID and is retained separately rather than called a valid reproducer. 595 affected tests pass, including exact parent preservation, ownership/association/ambiguity/bounds and non-key-sheet guards. AXMain/AXRaise are not written for an already-key sheet; _front_and_key remains unchanged.
+Next: freeze source immediately for the parent live test, then run the full default offline suite on that commit and finish the evidence report.
+Refs: results/save-modal-binding-20261110/baseline.txt; results/save-modal-binding-20261110/focused.txt
+
+## SMB6 · prediction · 2026-11-10 19:45
+Hypothesis: adding exact same-PID modal sheet resolution leaves ordinary window lookup, authorization and non-modal routes unchanged across the default offline suite.
+Test: run the complete default pytest suite using the existing focus1 overlay, with no live/browser opt-ins, on the frozen repair commit.
+Predicts: the complete default suite passes with the normal opt-in skips; no ordinary-window regression or accidental native UI execution appears.
+Against: a previously passing non-modal test fails due to the new resolver or its ownership/read bounds.
+Refs: results/save-modal-binding-20261110/focused.txt

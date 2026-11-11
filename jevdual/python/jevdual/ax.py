@@ -46,16 +46,90 @@ def _attr(el: Any, name: str) -> Any:
 
 
 def window_element(pid: int, window_id: int) -> Any:
-    """The AX window of ``pid`` whose CGWindowID is ``window_id``."""
+    """The exact AXWindow or independently associated AXSheet with the requested CGWindowID."""
     import objc
     from ApplicationServices import AXUIElementCreateApplication
 
     get_window = _hi()
     app = AXUIElementCreateApplication(pid)
-    for w in _attr(app, "AXWindows") or ():
+    windows = list(_attr(app, "AXWindows") or ())
+
+    def number(element: Any) -> int | None:
         wid = ctypes.c_uint32(0)
-        if get_window(objc.pyobjc_id(w), ctypes.byref(wid)) == 0 and wid.value == window_id:
+        return wid.value if get_window(objc.pyobjc_id(element), ctypes.byref(wid)) == 0 else None
+
+    for w in windows:
+        if number(w) == window_id:
             return w
+    from ApplicationServices import AXUIElementGetPid
+
+    def owned(element: Any) -> bool:
+        error, owner = AXUIElementGetPid(element, None)
+        return error == 0 and owner == pid
+
+    if len(windows) > 64:
+        raise AXError("window_resolution_limit", "too many top-level windows for bounded modal resolution")
+    roots = [window for window in windows if _attr(window, "AXRole") == "AXWindow" and owned(window)]
+
+    def associated(sheet: Any, root: Any = None) -> bool:
+        if not owned(sheet):
+            return False
+        declared = _attr(sheet, "AXWindow")
+        node = sheet
+        for _ in range(32):
+            node = _attr(node, "AXParent")
+            if node is None or not owned(node):
+                return False
+            role = _attr(node, "AXRole")
+            if role == "AXWindow":
+                return (any(same_element(node, known) for known in roots)
+                        and (root is None or same_element(node, root))
+                        and (declared is None or same_element(node, declared)))
+            if role in ("AXWebArea", "AXApplication"):
+                return False
+        return False
+
+    matches = []
+
+    def retain(sheet: Any, root: Any = None) -> None:
+        if (number(sheet) == window_id and associated(sheet, root)
+                and not any(same_element(sheet, known) for known in matches)):
+            matches.append(sheet)
+
+    queue = [(root, root, 0) for root in roots]
+    seen = 0
+    while queue:
+        if seen >= 512:
+            raise AXError("window_resolution_limit", "modal descendant traversal exceeded its bound")
+        root, node, depth = queue.pop(0)
+        seen += 1
+        if depth > 16:
+            raise AXError("window_resolution_limit", "modal descendant depth exceeded its bound")
+        if not owned(node):
+            continue
+        role = _attr(node, "AXRole")
+        if role == "AXSheet":
+            retain(node, root)
+            # Do not census a Save panel's file browser. Nested direct sheets and
+            # the independently associated focused sheet are sufficient candidates.
+            children = _attr(node, "AXChildren") or ()
+            if len(children) > 512:
+                raise AXError("window_resolution_limit", "modal child enumeration exceeded its bound")
+            children = [child for child in children if _attr(child, "AXRole") == "AXSheet"]
+        elif role == "AXWebArea" or (role in ("AXWindow", "AXApplication") and node is not root):
+            continue
+        else:
+            children = _attr(node, "AXChildren") or ()
+        if seen + len(queue) + len(children) > 512:
+            raise AXError("window_resolution_limit", "modal descendant enumeration exceeded its bound")
+        queue.extend((root, child, depth + 1) for child in children)
+    focused = _attr(app, "AXFocusedWindow")
+    if focused is not None and _attr(focused, "AXRole") == "AXSheet":
+        retain(focused)
+    if len(matches) == 1:
+        return matches[0]
+    if matches:
+        raise AXError("window_ambiguous", f"multiple AXSheets match window {window_id}")
     raise AXError("window_missing", f"pid {pid} has no AX window {window_id}")
 
 
@@ -701,6 +775,10 @@ def raise_window(pid: int, window_id: int) -> None:
     from ApplicationServices import AXUIElementPerformAction, AXUIElementSetAttributeValue
 
     w = window_element(pid, window_id)
+    if _attr(w, "AXRole") == "AXSheet":
+        if focused_window_id(pid) == window_id:
+            return  # SDK foreground intent already established this exact modal as key.
+        raise AXError("sheet_not_key", f"requested modal {window_id} is not the exact key window; not raised")
     AXUIElementSetAttributeValue(w, "AXMain", True)
     err = AXUIElementPerformAction(w, "AXRaise")
     if err != 0:
