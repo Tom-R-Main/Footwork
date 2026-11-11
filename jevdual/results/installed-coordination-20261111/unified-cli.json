@@ -1,0 +1,1 @@
+{"passed": true, "checks": [{"command": ["tools"], "passed": true}, {"command": ["schema", "browser", "start"], "passed": true}, {"command": ["schema", "desktop", "do"], "passed": true}, {"command": ["schema", "capability", "config"], "passed": true}, {"command": ["workcell", "bench", "init"], "passed": true}, {"command": ["workcell", "bench", "status"], "passed": true}]}

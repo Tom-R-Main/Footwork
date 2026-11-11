@@ -1,0 +1,17 @@
+{
+  "job": "test",
+  "job_id": 130639624388,
+  "url": "https://github.com/Tom-R-Main/Footwork/actions/runs/43054331655/job/130639624388",
+  "head": "a3f3ff5b14ca8cd2e0e83e77d5e5b434d8f1127b",
+  "failed_step": "Install CUA source-build prerequisites",
+  "project_tests_started": false,
+  "exit": 100,
+  "evidence": [
+    "Temporary failure resolving 'azure.archive.ubuntu.com'",
+    "Temporary failure resolving 'archive.ubuntu.com'",
+    "Temporary failure resolving 'security.ubuntu.com'",
+    "W: Failed to fetch mirror+file:/etc/apt/apt-mirrors.txt/dists/resolute/InRelease  Temporary failure resolving 'security.ubuntu.com'",
+    "W: Failed to fetch mirror+file:/etc/apt/apt-mirrors.txt/dists/resolute-updates/InRelease  Temporary failure resolving 'security.ubuntu.com'"
+  ],
+  "interpretation": "Runner DNS/package acquisition failure before product installation or tests; not a passing Linux qualification."
+}
