@@ -1,0 +1,27 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_opaque_census_reads_unframed_named_peer_without_action_authority _____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x106557e20>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1066e25a0>
+
+    def test_opaque_census_reads_unframed_named_peer_without_action_authority(world, fw, monkeypatch):
+        from jevdual import ax
+    
+        rows, backing, clicked = _native_opaque_controls(world, monkeypatch)
+        peer = {'element_index': 942, 'element_token': 'initial:942', 'role': 'AXButton', 'label': 'Hide Tips',
+                'enabled': True, 'actions': ['AXPress'], 'in_web_content': True, 'frame': None}
+        world.base['elements'].append(peer)
+        backing[500] = {'dom_id': '', 'document_url': 'https://example.test/song/a', 'web_area': 'document'}
+        resolved = {**peer, 'frame': {'x': 450, 'y': 500, 'w': 40, 'h': 20}}
+        monkeypatch.setattr(ax, 'unique_named_control', lambda *args, **kwargs: resolved, raising=False)
+        assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+        saved = {row['id']: row for row in _state(fw)['last_candidates']}
+>       assert saved[940]['native_control_opaque'] is True
+E       assert None is True
+
+tests/test_session_scenarios.py:3873: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_opaque_census_reads_unframed_named_peer_without_action_authority
+1 failed, 355 deselected in 0.58s

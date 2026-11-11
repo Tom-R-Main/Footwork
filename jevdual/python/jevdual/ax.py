@@ -285,6 +285,68 @@ def control_identity(el: Any, *, label: str) -> dict[str, Any] | None:
     return None
 
 
+def exact_control_name(el: Any, *, role: str, label: str) -> bool:
+    title, description = _attr(el, "AXTitle"), _attr(el, "AXDescription")
+    return (_attr(el, "AXRole") == role and isinstance(title, str) and isinstance(description, str)
+            and label in (title, description))
+
+
+def unique_named_control(window: Any, *, pid: int, role: str, label: str, limit: int = 1024) -> Any:
+    """Census-only lookup, never an action target or positional fallback.
+
+    Traverse the entire exposed subtree, refusing unknown branches/names, traversal limits and
+    multiple distinct AX objects. Unsupported/no-value attributes are known absent, not failed reads.
+    """
+    from ApplicationServices import (
+        AXUIElementCopyAttributeValue,
+        AXUIElementGetPid,
+        kAXErrorAttributeUnsupported,
+        kAXErrorNoValue,
+    )
+
+    if role not in ("AXButton", "AXPopUpButton") or not isinstance(label, str) or not 0 < len(label) <= 512:
+        raise AXError("census_name_invalid", "census requires an exact readable supported native name")
+    stack, seen, matches = [(window, 0)], [], []
+    visits = 0
+    while stack:
+        node, depth = stack.pop()
+        visits += 1
+        if visits > limit or depth > 32:
+            raise AXError("census_lookup_limit", "named control census exceeded its traversal bound")
+        if any(same_element(node, prior) for prior in seen):
+            continue
+        seen.append(node)
+        error, owner = AXUIElementGetPid(node, None)
+        actual_role = _attr(node, "AXRole")
+        if error != 0 or owner != pid or not isinstance(actual_role, str):
+            raise AXError("census_unreadable", "native subtree ownership or role is unreadable")
+        if actual_role == role:
+            names = []
+            for attribute in ("AXTitle", "AXDescription"):
+                error, name = AXUIElementCopyAttributeValue(node, attribute, None)
+                if error in (kAXErrorAttributeUnsupported, kAXErrorNoValue):
+                    continue  # independently known absent attribute, not a failed name read
+                if error != 0 or not isinstance(name, str):
+                    raise AXError("census_unreadable", "a native peer name is unreadable")
+                names.append(name)
+            if label in names:
+                matches.append(node)
+        error, children = AXUIElementCopyAttributeValue(node, "AXChildren", None)
+        if error in (kAXErrorAttributeUnsupported, kAXErrorNoValue):
+            continue
+        if error != 0 or children is None or isinstance(children, (str, bytes, dict)):
+            raise AXError("census_unreadable", "a native child branch is unreadable")
+        from itertools import islice
+
+        children = list(islice(iter(children), limit + 1))
+        if len(children) > limit:
+            raise AXError("census_lookup_limit", "native child branch exceeded its traversal bound")
+        stack.extend((child, depth + 1) for child in reversed(children))
+    if len(matches) != 1:
+        raise AXError("census_name_ambiguous", "exact native census name does not identify one AX object")
+    return matches[0]
+
+
 def control_backing(el: Any, *, pid: int, window: Any, role: str) -> dict[str, Any] | None:
     """Read an opaque control's literal backing, including known absence of a DOM ID.
 

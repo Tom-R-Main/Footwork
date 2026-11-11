@@ -3856,3 +3856,47 @@ def test_public_window_inventory_deadline_cancels_read_and_shuts_down(world, mon
     result = json.loads(capsys.readouterr().out)
     assert result['error'] == 'window_inventory_timeout' and result['windows'] == []
     assert deadlines == [5, 2] and cancelled == [True] and cleanups == [True]
+
+
+def test_opaque_census_reads_unframed_named_peer_without_action_authority(world, fw, monkeypatch):
+    from jevdual import ax
+
+    _, backing, clicked = _native_opaque_controls(world, monkeypatch)
+    peer = {'element_index': 942, 'element_token': 'initial:942', 'role': 'AXButton', 'label': 'Hide Tips',
+            'enabled': True, 'actions': ['AXPress'], 'in_web_content': True, 'frame': None}
+    world.base['elements'].append(peer)
+    backing[500] = {'dom_id': '', 'document_url': 'https://example.test/song/a', 'web_area': 'document'}
+    resolved = {**peer, 'frame': {'x': 450, 'y': 500, 'w': 40, 'h': 20}}
+    monkeypatch.setattr(ax, 'unique_named_control', lambda *args, **kwargs: resolved, raising=False)
+    monkeypatch.setattr(ax, 'exact_control_name', lambda element, **kwargs: element.get('label') == kwargs['label'])
+    assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+    saved = {row['id']: row for row in _state(fw)['last_candidates']}
+    assert saved[940]['native_control_opaque'] is True
+    assert 942 not in saved  # census proof supplies no action token or candidate
+    code, out, err = fw('do', 'click', '941', '--no-judge')
+    assert code == 0 and len(clicked) == 1, (out, err)
+
+
+@pytest.mark.parametrize('failure', ['missing', 'duplicate', 'unreadable', 'bound', 'name_drift', 'document_drift', 'duplicate_id'])
+def test_opaque_unframed_named_peer_still_blocks_unknown_or_changed_census(world, fw, monkeypatch, failure):
+    from jevdual import ax
+
+    _, backing, clicked = _native_opaque_controls(world, monkeypatch)
+    peer = {'element_index': 942, 'element_token': 'initial:942', 'role': 'AXButton', 'label': 'Hide Tips',
+            'enabled': True, 'actions': ['AXPress'], 'in_web_content': True, 'frame': None}
+    world.base['elements'].append(peer)
+    resolved = {**peer, 'frame': {'x': 450, 'y': 500, 'w': 40, 'h': 20}}
+    backing[500] = {'dom_id': '', 'document_url': 'https://example.test/song/a', 'web_area': 'document'}
+    if failure == 'document_drift': backing[500]['document_url'] = 'https://example.test/song/changed'
+    if failure == 'duplicate_id': backing[500]['dom_id'] = backing[400]['dom_id']
+
+    def lookup(*args, **kwargs):
+        if failure in ('missing', 'duplicate', 'unreadable', 'bound'):
+            raise ax.AXError('census_unreadable', 'no complete unique census proof')
+        return resolved
+
+    monkeypatch.setattr(ax, 'unique_named_control', lookup)
+    monkeypatch.setattr(ax, 'exact_control_name', lambda element, **kwargs: failure != 'name_drift')
+    assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+    assert not any(row.get('native_control_opaque') for row in _state(fw)['last_candidates'])
+    assert clicked == []

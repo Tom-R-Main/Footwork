@@ -274,3 +274,39 @@ def test_opaque_control_backing_requires_independent_bound_scope(monkeypatch, ro
         assert proof['unnamed'] is (change in ('none', 'absent_id'))
     else:
         assert proof is None
+
+
+@pytest.mark.parametrize('failure', ['none', 'missing', 'duplicate', 'unknown_name', 'unreadable_children',
+                                   'wrong_pid', 'limit', 'depth', 'alias', 'unsupported_leaf', 'no_value_leaf'])
+def test_unique_named_control_census_is_complete_and_exact(monkeypatch, failure):
+    import sys
+    from types import SimpleNamespace
+
+    peer = {'AXRole': 'AXButton', 'AXTitle': 'Hide Tips', 'AXDescription': '', 'AXChildren': []}
+    other = {'AXRole': 'AXButton', 'AXTitle': 'Different', 'AXDescription': '', 'AXChildren': []}
+    window = {'AXRole': 'AXWindow', 'AXChildren': [peer, other]}
+    if failure == 'missing': peer['AXTitle'] = 'Not Hide Tips'
+    if failure == 'duplicate': other['AXTitle'] = 'Hide Tips'
+    if failure == 'unknown_name': other['AXTitle'] = None
+    if failure == 'alias': window['AXChildren'].append(peer)
+    if failure == 'depth':
+        for _ in range(33):
+            window = {'AXRole': 'AXGroup', 'AXChildren': [window]}
+
+    def copy(element, key, _):
+        if failure in ('unsupported_leaf', 'no_value_leaf') and element is other and key in ('AXChildren', 'AXTitle'):
+            return (-25205 if failure == 'unsupported_leaf' else -25212), None
+        if failure == 'unreadable_children' and element is other and key == 'AXChildren':
+            return -25204, None
+        return 0, element.get(key)
+
+    monkeypatch.setattr(ax, '_attr', lambda element, key: element.get(key))
+    monkeypatch.setattr(ax, 'same_element', lambda left, right: left is right)
+    monkeypatch.setitem(sys.modules, 'ApplicationServices', SimpleNamespace(
+        AXUIElementCopyAttributeValue=copy, kAXErrorAttributeUnsupported=-25205, kAXErrorNoValue=-25212,
+        AXUIElementGetPid=lambda element, _: (0, 88 if failure == 'wrong_pid' and element is other else 77)))
+    if failure in ('none', 'alias', 'unsupported_leaf', 'no_value_leaf'):
+        assert ax.unique_named_control(window, pid=77, role='AXButton', label='Hide Tips') is peer
+    else:
+        with pytest.raises(ax.AXError):
+            ax.unique_named_control(window, pid=77, role='AXButton', label='Hide Tips', limit=1 if failure == 'limit' else 1024)

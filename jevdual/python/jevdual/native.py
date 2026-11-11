@@ -407,6 +407,7 @@ def menu_from_snapshot(
     mac_links: dict[int, str] | None = None,
     mac_controls: dict[int, tuple[str, str]] | None = None,
     mac_opaque_controls: dict[int, tuple[str, str]] | None = None,
+    mac_census_only: set[int] | None = None,
 ) -> NativeMenu:
     """Build the System 1 menu from a Driver ``get_window_state`` result (SDK object or dict)."""
     b = budget or MenuBudget()
@@ -432,6 +433,9 @@ def menu_from_snapshot(
         if not token or idx is None:
             continue
         ax_role = str(_get(el, "role") or "")
+        if int(idx) in (mac_census_only or set()):
+            omitted["census_only_unframed"] = omitted.get("census_only_unframed", 0) + 1
+            continue
         linux_role = linux_text is not None and not ax_role.startswith("AX")
         if ax_role == "AXWindow":
             continue
@@ -1111,12 +1115,13 @@ class NativeBridge:
         mac_links = None
         mac_controls = None
         mac_opaque_controls = None
+        mac_census_only = None
         if sys.platform == "darwin":
             mac_text = await asyncio.to_thread(self._web_text_attributes, snap)
             mac_sections = await asyncio.to_thread(self._web_control_sections, snap)
             mac_links = await asyncio.to_thread(self._link_resources, snap)
             mac_controls = await asyncio.to_thread(self._control_identities, snap, mac_sections)
-            mac_opaque_controls = await asyncio.to_thread(self._opaque_control_identities, snap)
+            mac_opaque_controls, mac_census_only = await asyncio.to_thread(self._opaque_control_identities, snap)
         observed = menu_from_snapshot(
             snap, budget=budget, include_menu_bar=include_menu_bar, linux_text=linux_text,
             mac_text=mac_text,
@@ -1124,6 +1129,7 @@ class NativeBridge:
             mac_links=mac_links,
             mac_controls=mac_controls,
             mac_opaque_controls=mac_opaque_controls,
+            mac_census_only=mac_census_only,
         )
         if linux_text is not None:
             # Linux window managers may report the desktop ID as the app name.
@@ -1285,46 +1291,57 @@ class NativeBridge:
                         for row, proof in zip(peers, proofs, strict=True)})
         return out
 
-    def _opaque_control_identities(self, snapshot: Any) -> dict[int, tuple[str, str]]:
+    def _opaque_control_identities(self, snapshot: Any) -> tuple[dict[int, tuple[str, str]], set[int]]:
         """Bounded all-observed web-button census, including named/disabled ID collisions."""
         rows = [row for row in (_get(snapshot, "elements") or [])
                 if _get(row, "in_web_content") and _get(row, "role") in ("AXButton", "AXPopUpButton")]
         if not rows or len(rows) > 64:
-            return {}
+            return {}, set()
         # Skip this additional direct-AX census when no potentially unnamed control exists.
         if not any(not _get(row, "label") and not _get(row, "value_description") for row in rows):
-            return {}
-        proofs = []
+            return {}, set()
+        proofs, census_only = [], set()
         try:
             window = self.ax.window_element(self.pid, self.window_id)
             for row in rows:
                 index, frame = _get(row, "element_index"), _get(row, "frame")
                 coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
-                if index is None or not _get(row, "element_token") or any(v is None for v in coordinates):
-                    return {}
-                expected = self.ax.Frame(*coordinates)
-                element = self.ax.resolve(self.pid, self.window_id, _get(row, "role"), expected)
-                actual = self.ax.frame_of(element)
-                if actual is None or not actual.near(expected):
-                    return {}
+                if index is None or not _get(row, "element_token"):
+                    return {}, set()
+                named_peer = any(v is None for v in coordinates)
+                label = _get(row, "label") or _get(row, "value_description")
+                if named_peer:
+                    element = self.ax.unique_named_control(window, pid=self.pid, role=_get(row, "role"), label=label)
+                    census_only.add(int(index))
+                else:
+                    expected = self.ax.Frame(*coordinates)
+                    element = self.ax.resolve(self.pid, self.window_id, _get(row, "role"), expected)
+                    actual = self.ax.frame_of(element)
+                    if actual is None or not actual.near(expected):
+                        return {}, set()
                 proof = self.ax.control_backing(element, pid=self.pid, window=window, role=_get(row, "role"))
-                if not proof:
-                    return {}
+                if not proof or (named_peer and not self.ax.exact_control_name(element, role=_get(row, "role"), label=label)):
+                    return {}, set()
                 proofs.append(proof)
+            if census_only and len({proof["document_url"] for proof in proofs}) != 1:
+                return {}, set()
             # Distinct document objects claiming the same URL cannot qualify one another.
             for left in proofs:
                 if any(left["document_url"] == right["document_url"]
                        and not self.ax.same_element(left["web_area"], right["web_area"]) for right in proofs):
-                    return {}
+                    return {}, set()
             counts = Counter((proof["document_url"], proof["dom_id"]) for proof in proofs if proof["dom_id"])
+            if census_only and any(count > 1 for count in counts.values()):
+                return {}, set()
             return {int(_get(row, "element_index")): (proof["dom_id"], proof["document_url"])
                     for row, proof in zip(rows, proofs, strict=True)
                     if proof["unnamed"] and proof["dom_id"] and counts[proof["document_url"], proof["dom_id"]] == 1
                     and not _get(row, "label") and not _get(row, "value_description")
                     and _get(row, "value") in (None, "") and _get(row, "enabled") is True
-                    and "AXPress" in (_get(row, "actions") or ())}
+                    and int(_get(row, "element_index")) not in census_only
+                    and "AXPress" in (_get(row, "actions") or ())}, census_only
         except Exception:  # noqa: BLE001 - unreadable census never grants opaque identity
-            return {}
+            return {}, set()
 
     def _web_control_sections(self, snapshot: Any) -> dict[int, str]:
         """Recover explicit AX ancestor labels for repeated web controls whose groups CUA drops.
