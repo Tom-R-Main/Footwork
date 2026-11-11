@@ -6,6 +6,16 @@ User-selected reviewer: `qwen/qwen3.8-omni-flash` through OpenRouter, supersedin
 
 User-selected musical grounding: the existing songs on [Softtrigr's YouTube channel](https://www.youtube.com/@Softtrigr). Review actual media before deriving sonic characteristics; titles, channel description and lyrics are supporting context. Create new test songs iterating from those references while preserving existing material.
 
+## Current live evidence
+
+One observed Create submission produced two run-owned, complete, unpublished instrumentals. Exact song-page metadata reports durations of 214.88 and 204.8 seconds; the requested 90–120-second duration was not achieved. This qualifies creation, not audition or editing. The later original French-English lyrics were entered into the run-owned creation form and independently verified exactly, but no vocal generation from that form has been submitted.
+
+The first generated playback downloads were opaque `m4a-opus`/encoding 1.0.0 bytes that FFmpeg could not decode. Those bytes were not sent to the critic. The correct own-song menu has since been opened through an inspected, scoped control. Its authenticated export dialog allows an included download on the existing plan; MP3 was selected after clearing the initially selected M4A option, and Unlock Download was invoked once. The UI reported unlocked/Preparing MP3, and a later observation found a Save control. A project-scoped saved file and successful decode are still pending. Do not repeat the unlock to obtain cleaner evidence.
+
+The chosen Qwen route reviewed actual audio from three reference songs and passed limited synthetic audio checks. Seven successful paid requests report $0.02004055 combined. It has not reviewed the newly generated candidates. Its video checks missed known short defects and did not establish reliable embedded-audio perception or precise localization; explicit audio sidecar input improved the audible-event account, not the fine-defect result. These are development observations, not a general accuracy or taste benchmark.
+
+No bounded song-editor change, transition comparison or saved/reopened derivative is complete. Keep creation, field readback, model critique and editor persistence as separate milestones. Run evidence: [main report](../results/suno-20261110/report.md), [reference analysis](../results/suno-20261110/reference-analysis.md) and [video calibration](../results/suno-20261110/video-calibration.md).
+
 ## The useful sequence
 
 | Milestone | Required evidence | Friction to solve before advancing |
@@ -18,7 +28,7 @@ User-selected musical grounding: the existing songs on [Softtrigr's YouTube chan
 | 6. Check the joins | Before/after audio spanning each boundary, plus a whole-song context pass | Clicks, silence, abrupt timbre/loudness/tempo changes, unintended lyric or musical changes |
 | 7. Save and reopen | New song identity, saved derivative, reopened editor state and playable output | Delivery of Save is distinct from persistence; title changes alone prove little |
 
-For a fresh generic qualification, an instrumental and a fade isolate control failures from lyric alignment and stochastic regeneration. This user's run instead uses original French-English lyrics grounded in their selected references. Then test a lyric/section replacement. Test Studio/stems separately: a successful Song Editor journey does not qualify a different editor.
+For a fresh generic qualification, an instrumental and a fade isolate control failures from lyric alignment and stochastic regeneration. This run has created the instrumental batch and separately verified the original French-English lyric field, grounded in the selected references. First obtain decodable candidate audio, then make and verify a bounded editor change. Test lyric/section replacement and Studio/stems separately: a successful Song Editor journey does not qualify a different editor.
 
 Suno documents section replacement, alternative previews, draggable transition boundaries, fades and section rearrangement in its [Song Editor guide](https://help.suno.com/en/articles/6141505). Discover the current UI each time; do not assume that the historical guide describes every current account or plan.
 
@@ -54,11 +64,11 @@ Ask a critic for timestamped observations, severity, confidence, evidence and on
 
 | Layer | Candidate | Why it fits | Current boundary |
 | --- | --- | --- | --- |
-| Guarded UI actions | Footwork native CLI | Existing signed-in Chrome, fresh targets, posture and receipts | Live Suno creation/editor completion remains unverified; native Chrome AX can lag |
+| Guarded UI actions | Footwork native CLI | Existing signed-in Chrome, fresh targets, posture and receipts | One live creation batch verified; audition/editor/persistence remain unverified; native Chrome AX can lag |
 | Browser state and controls | [Playwright MCP/CLI](https://github.com/microsoft/playwright-mcp) | Structured snapshots and browser automation | Default owned profile does not inherit this user's login; the documented [extension route](https://github.com/microsoft/playwright/blob/main/packages/extension/README.md) supports existing tabs but requires setup and connection approval |
 | Browser performance | [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) | Diagnose browser behavior and performance | Requires an actual permitted connection; distinct from an audio critic |
 | Capture | OBS + [obs-websocket](https://github.com/obsproject/obs-websocket) | Programmatic recording control | Screen and intended system/app audio must both be configured and checked; available MCP tools do not prove OBS is running or connected |
-| Media mechanics | [FFmpeg](https://github.com/FFmpeg/FFmpeg), [librosa](https://github.com/librosa/librosa) | Clip/decode/probe media; derive audio and music features | Features support diagnosis, not taste; FFmpeg is installed locally, no new packages installed in this run |
+| Media mechanics | [FFmpeg](https://github.com/FFmpeg/FFmpeg), [librosa](https://github.com/librosa/librosa) | Clip/decode/probe media; derive audio and music features | Features support diagnosis, not taste; FFmpeg is installed. The user separately authorized project-only yt-dlp installation for reference acquisition |
 | Hosted multimodal perception | [Gemini video](https://ai.google.dev/gemini-api/docs/video-understanding) and [audio](https://ai.google.dev/gemini-api/docs/audio) APIs | Direct audio/video input and timestamped questions | Provider documentation notes fixed-rate video sampling can miss rapid events; validate critical excerpts at suitable resolution. Gemini was not activated in this run |
 | Open-weight multimodal perception | [Qwen3-Omni](https://github.com/QwenLM/Qwen3-Omni) | Text, images, audio and video in one model family | Benchmark against real Suno edits; assess model license and serving requirements before adoption |
 | Open music specialist | [Music Flamingo / Audio Flamingo](https://github.com/nvidia/audio-flamingo) | Music/audio understanding and question answering | Candidate critic, not proof of expert taste or browser control; not installed or benchmarked here |
@@ -78,6 +88,49 @@ MCP is a transport for tools. It supplies neither perception nor musical taste b
 5. Add an A/B review loop and saved-state readback, then exercise interrupt/restart and ordinary variants.
 
 The first target is a narrow end-to-end journey with inspectable failures. General autonomous creative judgment is a later, separately evaluated capability.
+
+## Recipes from the native Suno run
+
+The current source behavior is frozen at `6bf59a4`, using the exact focus-guarded CUA `0.46.0+footwork.5486b624.cleanup2.focus1` through a project-local overlay. Its full default offline suite passed 3231 tests with 62 skips; see the [recorded suite result](../results/suno-20261110/offline-suite-6bf59a4.json). The user-local installed release is unchanged. Establish the source/runtime from the run report before using the repaired commands; a passing source test is not an installed-release or live-editor qualification.
+
+### Bind, wait and inspect
+
+Use the observed PID and window rather than an app name alone when multiple Chrome processes exist. Keep one owner of the shared window and the foreground idle guard. Session start must use a new directory because it resets session files.
+
+```sh
+suno_fw=/absolute/footwork/jevdual/output/foreground-web-text/footwork
+suno_session=/absolute/footwork/jevdual/output/NEW-suno-session
+"$suno_fw" start "Create and edit only run-owned Suno drafts" --app "Google Chrome" --pid OBSERVED_PID --window "OBSERVED_WINDOW_TITLE" --mode foreground_permitted --session "$suno_session"
+"$suno_fw" look --until "EXACT_CREATION_CONTROL_LABEL" --timeout 10 --session "$suno_session"
+"$suno_fw" inspect-target OBSERVED_ID --operation click --postcondition "The own-song menu exposes Edit and Download" --session "$suno_session"
+"$suno_fw" do click OBSERVED_ID --click-delivery foreground --session "$suno_session"
+```
+
+Placeholders are selected from fresh observations; do not reuse the IDs in old receipts. The wait proves an offered label appeared, not complete page readiness. Before the click, match the inspected bounds, document and control identity to the intended UI context. One generic More actions control in this run opened a comment emoji picker; it was dismissed without submitting a comment. A popup alone does not establish that the song menu opened.
+
+Same-title native links now retain independently qualified complete hrefs; distinct buttons/popups can retain a complete DOM identifier scoped to their actual closest WebArea document. These qualify only the observed peer group and must survive fresh rematching. Choose a fresh numeric candidate when the label remains shared. Links do not lend identity to neighboring buttons, and unqualified duplicate Play controls still refuse. After internal song navigation, verify the player resource separately: the run observed a player retaining the previous song until Reload. Reload is appropriate only after checking that it will not discard unsaved work.
+
+Sources: [link resources](../results/native-link-resources-20261110/report.md), [foreground click](../results/foreground-native-click-20261110/report.md) and [scoped control identity](../results/native-control-identity-20261110/report.md).
+
+### Enter text without inventing a readback
+
+`do type OBSERVED_FIELD_ID "TASK_OWNED_TEXT" --web-text-delivery foreground` explicitly selects the guarded foreground route; ordinary background behavior remains unchanged. It requires the exact supported runtime, foreground posture, fresh target/value checks and addressed-field focus. `enter` presses Return; it does not type a trailing argument. Never use diagnostic text in a field that might be submitted as a song.
+
+For an already qualified selection, `--web-text-range START:LENGTH` uses UTF-16 units, not Python character counts. It does not select the requested region. The route performs bounded field-focus preparation, then independently requires the actual selection and exact text before one paced input. Preserve the full prefix/suffix; unreadable selection, terminal-LF mismatch or changed focus is a refusal, not permission to trim whitespace or retry.
+
+The original lyric payload illustrates the readback limit: intended text had 461 characters/24LF, while AXValue reported 456/19LF and selected text 442/5LF. Those conflicting native serializations did not prove lost lyrics. A controlled verification-only Select All/Copy, bound to the owned focused field, advanced the clipboard change counter from 3537 to 3538. Only the new plaintext was read, and it matched the intended 461-character text exactly. No prior clipboard content was read, and no unmatched clipboard text was retained. The non-LF agreement used to qualify that copy's source was not an edit normalization rule; the final equality criterion included every LF and accent.
+
+For a similar copy verification, establish source ownership and actual focus, observe Select All, record only the clipboard counter, invoke the observed Copy once, and compare new plaintext only after the counter advances. Store equality/provenance, not unrelated clipboard content. If provenance or exact equality fails, stop and retain uncertainty. This is an independent content check, not a generic whole-task completion mechanism.
+
+Sources: [foreground web text](../results/foreground-web-text-20261110/report.md), [selected-range decoding](../results/selected-range-decoding-20261110/report.md), [selected-range edits](../results/foreground-web-selection-20261110/report.md) and [focus preparation](../results/range-focus-preparation-20261110/report.md).
+
+### Read receipts at their actual scope
+
+A clipped field preview cannot prove full equality. Current ordinary multiline replacement reports unverifiable when native text differs only in internal LF representation; it never normalizes the value or confirms delivery from that condition. Strict selected-range receipts still require exact qualified readback.
+
+A menu action with no visible change is also unverifiable because clipboard, disk and other-window effects are not covered by that UI diff. The controlled Copy succeeded despite its older suspected-no-op receipt. Preserve that historical receipt and add the independent evidence; do not rewrite the past or repeat the action for a better receipt. Likewise Unlock Download is not proof that a file was saved or that generated audio is decodable. Verify selected format, actual project destination, file bytes, decode, duration and hash before any critic request.
+
+Source: [receipt ambiguities](../results/native-receipt-ambiguities-20261110/report.md). The broader [run report](../results/suno-20261110/report.md) retains the failed hypotheses and live limits.
 
 ## Live qualification of the selected reviewer
 
@@ -132,4 +185,4 @@ Use blinded A/B comparisons in both presentation orders. Include muted/swapped a
 - Keep editor responsiveness, recording defects and exported-output defects separate. A slow preview or poor recording does not prove the final media is damaged.
 - Treat fixed FPS settings, token counts, model rankings, commercial API access, benchmark scores and installation commands in the supplied notes as leads until checked for the selected version and task. No headline benchmark numbers were adopted as Footwork acceptance thresholds.
 
-The practical next milestone is still one identifiable Suno draft, actual audio supplied to a reviewer, a bounded UI edit, boundary comparison and reopened saved output. Capture/inspection plumbing supports that milestone; broad NLE integration is a separate work package.
+The practical next milestone is a decodable authenticated export of the already-created candidates, followed by actual candidate audition, one bounded UI edit, boundary comparison and reopened saved output. Do not regenerate the completed batch to bypass the export or targeting frictions. Broad NLE integration remains a separate work package.
