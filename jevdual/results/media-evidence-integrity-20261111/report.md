@@ -10,4 +10,8 @@ The provider response metadata was copied into `manifest.json`, whose writer pre
 
 ## Output ownership
 
-MEI2 remains pending in this first fix commit.
+A deterministic mkdir-boundary test creates a competing owner's pending intent after validation and fails this invocation's mkdir. Both dry-run and execute cases previously wrote a failed manifest into that directory (`red-ownership.txt`). A local ownership flag is now set only after successful exclusive mkdir; error persistence requires that flag. The loser leaves the directory unchanged and dispatches nothing. Existing owned-failure tests continue to retain evidence.
+
+`green-ownership.txt`:65 helper/notebook checks pass, including both integrity repairs. `ruff.txt` records changed-file lint. Notebook validation and `git diff --check` pass; result redaction changed zero files. Prediction commit: `581abf0`; redaction fix: `8312f72`. Both findings were source-audit discoveries confirmed by failing tests, not observed disclosure or corruption in the historical live run.
+
+These are reusable evidence-handling repairs. They do not change media routing, provider selection, request budgets, app-specific extenders or calibration results. The ownership flag addresses competing acquisition, not hostile path replacement after ownership. Exact-string redaction does not remove arbitrary transformed media or generally de-identify model output. No paid or live operation is needed to qualify this package.

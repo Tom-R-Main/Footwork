@@ -620,3 +620,27 @@ def test_metadata_media_echoes_redacted_from_every_artifact(setup, monkeypatch, 
         assert sensitive not in retained
     assert manifest["returned_model"] == "model [REDACTED]"
     assert manifest["returned_provider"] == "provider [REDACTED]"
+
+
+@pytest.mark.parametrize("execute", [False, True])
+def test_output_creation_loser_never_writes_competing_directory(setup, monkeypatch, execute):
+    _media, _prompt, env, out, argv = setup
+    original_mkdir = Path.mkdir
+    winner_intent = '{"status":"pending","owner":"other invocation"}\n'
+    raced = []
+
+    def competing_mkdir(path, *args, **kwargs):
+        if path == out:
+            raced.append(path)
+            original_mkdir(path, *args, **kwargs)
+            (path / "request-intent.json").write_text(winner_intent)
+            raise FileExistsError("another invocation acquired output first")
+        return original_mkdir(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "mkdir", competing_mkdir)
+    monkeypatch.setattr(review, "_request_with_deadline", lambda *a: pytest.fail("output loser sent request"))
+    options = ["--execute", "--env-file", str(env)] if execute else []
+    assert review.main([*argv, *options]) == 1
+    assert raced == [out]
+    assert (out / "request-intent.json").read_text() == winner_intent
+    assert {path.name for path in out.iterdir()} == {"request-intent.json"}

@@ -322,6 +322,7 @@ def parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     out = None
+    out_owned = False
     manifest = None
     key = ""
     encoded_media = ""
@@ -382,6 +383,7 @@ def main(argv: list[str] | None = None) -> int:
             "perception_verified": False,
         }
         out.mkdir(mode=0o700, parents=True, exist_ok=False)
+        out_owned = True
         if not args.execute:
             _write(out / "manifest.json", manifest, key, encoded_media, encoded_sidecar)
             print("Dry-run: media validated; no credential read or provider request sent.")
@@ -440,7 +442,7 @@ def main(argv: list[str] | None = None) -> int:
     except Exception:  # noqa: BLE001 -- final CLI boundary must not expose headers in library exceptions
         # Never expose a library exception that could contain request headers or response bytes.
         error = {"kind": "unexpected_error", "summary": "media review failed; no retry"}
-    if manifest is not None and out is not None and out.is_dir():
+    if out_owned and manifest is not None and out is not None and out.is_dir():
         completion = "unknown" if request_attempted else "not_attempted"
         if error.get("application_request_sent") is False:
             completion = "not_sent_tls_handshake"
