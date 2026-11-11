@@ -1,0 +1,34 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_public_window_inventory_lists_then_binds_untitled_exact_id ________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x112547920>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1123d0b00>
+capsys = <_pytest.capture.CaptureFixture object at 0x1125309e0>
+
+    def test_public_window_inventory_lists_then_binds_untitled_exact_id(world, fw, monkeypatch, capsys):
+        calls = []
+    
+        async def windows(inp):
+            calls.append(inp.pid)
+            assert inp.pid == 77
+            return SimpleNamespace(windows=[
+                SimpleNamespace(pid=77, window_id=40335, title='Main document'),
+                SimpleNamespace(pid=77, window_id=60066, title=None)])
+    
+        monkeypatch.setattr(world, 'list_windows', windows)
+>       assert cli.main(['windows', '--pid', '77']) == 0
+E       AssertionError: assert 2 == 0
+E        +  where 2 = <function main at 0x112be3ce0>(['windows', '--pid', '77'])
+E        +    where <function main at 0x112be3ce0> = cli.main
+
+tests/test_session_scenarios.py:3769: AssertionError
+----------------------------- Captured stderr call -----------------------------
+usage: footwork [-h]
+                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1,done,read,check-file,check-artifact,grant,snapshot-file,status}
+                ...
+footwork: error: argument cmd: invalid choice: 'windows' (choose from 'run', 'menu', 'apps', 'start', 'park', 'point', 'keep-out', 'look', 'inspect-target', 'visual-check', 'do', 's1', 'done', 'read', 'check-file', 'check-artifact', 'grant', 'snapshot-file', 'status')
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_public_window_inventory_lists_then_binds_untitled_exact_id
+1 failed, 337 deselected in 0.72s

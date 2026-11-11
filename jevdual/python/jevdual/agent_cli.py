@@ -14,6 +14,7 @@ LEGACY = (
     "run",
     "menu",
     "apps",
+    "windows",
     "start",
     "look",
     "inspect-target",

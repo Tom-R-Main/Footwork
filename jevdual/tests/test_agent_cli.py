@@ -296,3 +296,14 @@ def test_actual_secret_parser_redacts_escaped_malformed_values(structured, capsy
     text = json.loads(captured.out)["diagnostics"] if structured else captured.err
     assert value not in text and repr(value)[1:-1] not in text
     assert "[REDACTED]" in text
+
+
+def test_windows_discovery_schema_and_desktop_route_are_read_only(capsys):
+    assert route(['schema', 'desktop', 'windows'], lambda args: 99) == 0
+    schema = json.loads(capsys.readouterr().out)
+    assert '--pid' in json.dumps(schema)
+    seen = []
+    assert route(['desktop', 'windows', '--pid', '77'], lambda args: seen.append(args) or 0) == 0
+    assert seen == [['windows', '--pid', '77']]
+    assert route(['browser', 'windows', '--pid', '77'], lambda args: pytest.fail('browser inventory routed')) == 2
+    capsys.readouterr()

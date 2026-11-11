@@ -3753,3 +3753,106 @@ def test_native_opaque_controls_readable_absent_id_peer_and_grant_provenance(wor
     assert candidate.native_control_opaque is True
     assert _target_identity(candidate)['native_control_opaque'] is True
     assert _element_ref(None, candidate) != _element_ref(None, replace(candidate, native_control_opaque=None))
+
+
+def test_public_window_inventory_lists_then_binds_untitled_exact_id(world, fw, monkeypatch, capsys):
+    calls = []
+
+    async def windows(inp):
+        calls.append(inp.pid)
+        assert inp.pid == 77
+        return SimpleNamespace(windows=[
+            SimpleNamespace(pid=77, window_id=40335, title='Main document'),
+            SimpleNamespace(pid=77, window_id=60066, title=None),
+            SimpleNamespace(pid=77, window_id=60067, title='')])
+
+    monkeypatch.setattr(world, 'list_windows', windows)
+    observations_before = world.n
+    assert cli.main(['windows', '--pid', '77']) == 0
+    assert world.n == observations_before
+    inventory = json.loads(capsys.readouterr().out)
+    assert inventory['read_only'] is True and inventory['pid'] == 77
+    assert inventory['association_verified'] is False
+    panel, = [row for row in inventory['windows'] if row['title'] is None]
+    assert panel['window_id'] == 60066
+    assert world.tool_calls == [] and world.presses == []
+    world.base.update(pid=77, window_id=60066, window_title=None)
+    code, out, err = fw('start', 'Navigate own untitled panel', '--app', 'Calculator', '--pid', '77', '--window-id', str(panel['window_id']))
+    assert code == 0 and _state(fw)['window_id'] == 60066, (out, err)
+    assert calls == [77, 77]
+
+
+@pytest.mark.parametrize('failure', ['wrong_pid', 'unknown_pid', 'duplicate', 'bad_id', 'bad_title', 'missing_title',
+                                     'empty', 'bound', 'timeout', 'driver', 'cleanup'])
+def test_public_window_inventory_refuses_without_foreign_titles_or_session_mutation(world, fw, monkeypatch, capsys, failure):
+    assert fw('start', 'Keep existing observation', '--app', 'Calculator')[0] == 0
+    before = {name: (fw.session / name).read_bytes() for name in ('session.json', 'session.jsonl')}
+    calls, cleanups = [], []
+
+    async def windows(inp):
+        calls.append(inp.pid)
+        assert inp.pid == 77
+        if failure == 'timeout': raise TimeoutError('unrelated private title')
+        if failure == 'driver': raise RuntimeError('unrelated private title')
+        row = SimpleNamespace(pid=77, window_id=60066, title='unrelated private title')
+        if failure == 'wrong_pid': row.pid = 88
+        if failure == 'unknown_pid': row.pid = None
+        if failure == 'bad_id': row.window_id = 0
+        if failure == 'bad_title': row.title = object()
+        if failure == 'missing_title': del row.title
+        rows = [] if failure == 'empty' else [row]
+        if failure == 'duplicate': rows.append(row)
+        if failure == 'bound': rows *= 257
+        return SimpleNamespace(windows=rows)
+
+    async def shutdown():
+        cleanups.append(True)
+        if failure == 'cleanup': raise RuntimeError('unrelated private title')
+
+    monkeypatch.setattr(world, 'list_windows', windows)
+    monkeypatch.setattr(world, 'shutdown', shutdown)
+    assert cli.main(['windows', '--pid', '77']) == 4
+    captured = capsys.readouterr()
+    result = json.loads(captured.out)
+    assert result['windows'] == [] and result['error']
+    assert 'unrelated private title' not in captured.out + captured.err
+    assert calls == [77] and cleanups == [True]
+    assert all((fw.session / name).read_bytes() == old for name, old in before.items())
+    assert world.tool_calls == [] and world.presses == []
+
+
+@pytest.mark.parametrize('pid', [None, '0', '-1', '4294967296', 'invalid'])
+def test_public_window_inventory_invalid_pid_does_not_create_driver(world, monkeypatch, capsys, pid):
+    monkeypatch.setattr(cd.CuaDriver, 'create', lambda **kwargs: pytest.fail('invalid PID created driver'))
+    args = ['windows'] + (['--pid', pid] if pid is not None else [])
+    assert cli.main(args) == 2
+    assert 'PID' in capsys.readouterr().err or pid is None
+
+
+def test_public_window_inventory_deadline_cancels_read_and_shuts_down(world, monkeypatch, capsys):
+    import asyncio
+
+    deadlines, cancelled, cleanups = [], [], []
+    timeout = asyncio.timeout
+
+    def short_timeout(seconds):
+        deadlines.append(seconds)
+        return timeout(0.001 if seconds == 5 else seconds)
+
+    async def windows(inp):
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            cancelled.append(True)
+            raise
+
+    async def shutdown():
+        cleanups.append(True)
+
+    monkeypatch.setattr(cli.asyncio, 'timeout', short_timeout)
+    monkeypatch.setattr(world, 'list_windows', windows)
+    monkeypatch.setattr(world, 'shutdown', shutdown)
+    assert cli.main(['windows', '--pid', '77']) == 4
+    result = json.loads(capsys.readouterr().out)
+    assert result['error'] == 'window_inventory_timeout' and result['windows'] == []
+    assert deadlines == [5, 2] and cancelled == [True] and cleanups == [True]
