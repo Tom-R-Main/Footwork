@@ -2550,6 +2550,9 @@ async def cmd_do(args: Any) -> int:
             "secret": secret_used,
             "mode": state.mode,
             "app": state.app,
+            # the effector's escalation advice, retained for diagnosis only: it is never printed as
+            # a next step, because following it after a send can repeat a late-landing action
+            **({"driver_escalation": dict(eff.escalation)} if getattr(eff, "escalation", None) else {}),
             **({"carry": dataclasses.asdict(carried)} if carried is not None else {}),
             **({
                 **({"web_text_delivery": web_text_delivery} if web_text_delivery else {}),
