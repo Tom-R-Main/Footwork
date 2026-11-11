@@ -25,3 +25,6 @@ results/**/screenshots/
 results/**/chrome-profile/
 results/**/*.mp4
 results/**/*.sqlite.lock
+
+# Per-take planned and posted pointer series are private trace artifacts.
+pointer-gestures.jsonl

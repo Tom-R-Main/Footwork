@@ -173,12 +173,15 @@ def play_move(
     settings: DragSettings = DEFAULT,
     *,
     cancelled: Callable[[], bool] = lambda: False,
+    trace: Any = None,
 ) -> DragResult:
     """Move the pointer along ``plan`` with no button, as an approach before a press."""
     tolerance = 1.5 * plan.max_step_pt + 2.0
     result = DragResult("aborted:unknown")
     last = plan.start
     t0 = last_post = clock.now()
+    if trace is not None:
+        trace.started(t0, clock)
     try:
         for s in plan.samples[1:]:
             if cancelled():
@@ -213,6 +216,7 @@ def play_drag(
     settings: DragSettings = DEFAULT,
     *,
     cancelled: Callable[[], bool] = lambda: False,
+    trace: Any = None,
 ) -> DragResult:
     """Press at the start, play the samples, release. Every exit after the press releases exactly once."""
     tolerance = 1.5 * plan.max_step_pt + 2.0
@@ -240,6 +244,8 @@ def play_drag(
     poster.down(*plan.start)
     try:
         t0 = clock.now() + settings.press_hold_s
+        if trace is not None:
+            trace.started(t0, clock)
         clock.sleep_until(t0)
         last_post = clock.now()
         for s in plan.samples[1:]:
@@ -293,6 +299,7 @@ class QuartzPoster:
         import Quartz
 
         self.q = Quartz
+        self._pointer_trace: Any = None
         self.source = Quartz.CGEventSourceCreate(Quartz.kCGEventSourceStateHIDSystemState)
         self._kinds = (
             Quartz.kCGEventKeyDown,
@@ -314,7 +321,15 @@ class QuartzPoster:
         q.CGEventSetIntegerValueField(event, q.kCGEventSourceUserData, TAG)
         if click_state is not None:
             q.CGEventSetIntegerValueField(event, q.kCGMouseEventClickState, click_state)
-        q.CGEventPost(q.kCGHIDEventTap, event)
+        if self._pointer_trace is None:
+            q.CGEventPost(q.kCGHIDEventTap, event)
+        else:
+            name = {q.kCGEventMouseMoved: "move", q.kCGEventLeftMouseDragged: "drag",
+                    q.kCGEventLeftMouseDown: "down", q.kCGEventLeftMouseUp: "up"}[kind]
+            self._pointer_trace.post(name, x, y, lambda: q.CGEventPost(q.kCGHIDEventTap, event))
+
+    def record_posts(self, trace: Any) -> None:
+        self._pointer_trace = trace
 
     def move(self, x: float, y: float) -> None:
         self._mouse(self.q.kCGEventMouseMoved, x, y)

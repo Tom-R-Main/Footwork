@@ -1021,6 +1021,7 @@ def _filmed(state: SessionState, bridge: Any) -> Any:
         from jevdual.filmed import Filmed
 
         bridge.filmed = Filmed.from_record(state.filmed)
+        bridge.filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
     return bridge
 
 
@@ -1185,6 +1186,7 @@ async def cmd_point(args: Any) -> int:
         print("point needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
         return 2
     filmed = Filmed.from_record(state.filmed)
+    filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
     try:
         hits = await asyncio.to_thread(ax.labelled, ax.window_element(state.pid, state.window_id), args.label)
     except ax.AXError as exc:
@@ -1222,6 +1224,7 @@ async def cmd_keep_out(args: Any) -> int:
         print("keep-out needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
         return 2
     filmed = Filmed.from_record(state.filmed)
+    filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
     if args.rect.strip().lower() == "off":
         filmed.keep_out = None
     else:
@@ -1254,6 +1257,7 @@ async def cmd_park(args: Any) -> int:
         print("park takes both X and Y, or neither (the rest position)", file=sys.stderr)
         return 2
     filmed = Filmed.from_record(state.filmed)
+    filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
     point = filmed.viewport(args.x, args.y) if args.x is not None else None
     try:
         record = filmed.place(point) if getattr(args, "place", False) else await filmed.park(point)
@@ -1274,7 +1278,7 @@ async def cmd_park(args: Any) -> int:
 async def cmd_start(args: Any) -> int:
     """Initialize a replacement separately; a refused start must not erase the prior trail."""
     directory = session_dir(args.session)
-    names = ("session.json", "session.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS)
+    names = ("session.json", "session.jsonl", "pointer-gestures.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS)
     prior = directory / "session.json"
     durable = bool(getattr(args, "authority", None)) or (prior.exists() and SessionState.load(directory).authority)
     if durable or not any((directory / name).exists() for name in names):
@@ -1439,7 +1443,7 @@ async def _start_new(args: Any) -> int:
     d.mkdir(parents=True, exist_ok=True)
     # a new session inherits nothing: no carried value or destination snapshot from an older one in
     # the same directory can be used as if it were read in this one (secondary audit: stale carries)
-    for old in ("session.json", "session.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS):
+    for old in ("session.json", "session.jsonl", "pointer-gestures.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS):
         (d / old).unlink(missing_ok=True)
     if getattr(args, "browser", False):
         return await _start_browser(args, d)

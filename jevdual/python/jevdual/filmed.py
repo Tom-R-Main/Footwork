@@ -56,6 +56,7 @@ class Filmed:
     take_ended: str | None = None
     last_pointer: Point | None = None
     gestures: list[dict[str, Any]] = field(default_factory=list)
+    trace_path: str | None = None
 
     # ---- persistence
 
@@ -132,7 +133,17 @@ class Filmed:
         record: dict[str, Any] = {"kind": kind, "label": label, "from": here, "to": end}
         if math.dist(here, end) >= 1.0:
             plan = self.admit(here, end)
-            result = drag.play_move(plan, poster, clock, drag.DragSettings(arc_size=0.0))
+            from jevdual.pointer_trace import GestureTrace
+
+            trace = GestureTrace(self, kind, label, here, end, plan) if self.trace_path else None
+            result = None
+            try:
+                result = drag.play_move(plan, trace.poster(poster) if trace else poster, clock,
+                                        drag.DragSettings(arc_size=0.0), trace=trace)
+            except BaseException:
+                if trace is not None:
+                    trace.finish(poster, "exception", result)
+                raise
             record.update(
                 samples=len(plan.samples),
                 duration_s=plan.samples[-1].t,
@@ -141,12 +152,27 @@ class Filmed:
                 outcome=result.outcome,
             )
             if result.outcome != "arrived":
+                if trace is not None:
+                    trace.finish(poster, result.outcome, result)
                 self.end_take(result.outcome.removeprefix("aborted:"))
                 self.last_pointer = None
                 self.gestures.append(record)
                 raise FilmedRefusal("pointer_contended", f"the approach {result.outcome}; the take ended")
-            clock.sleep_until(clock.now() + self.dwell_s)
+            dwell_end = clock.now() + self.dwell_s
+            dwell_outcome = result.outcome
+            try:
+                clock.sleep_until(dwell_end)
+            except BaseException:
+                dwell_outcome = "exception:dwell"
+                raise
+            finally:
+                if trace is not None:
+                    trace.finish(poster, dwell_outcome, result)
         else:
+            if self.trace_path:
+                from jevdual.pointer_trace import GestureTrace
+
+                GestureTrace(self, kind, label, here, end).finish(poster, "arrived")
             record.update(samples=0, outcome="arrived")
         self.last_pointer = end
         self.gestures.append(record)
@@ -168,7 +194,14 @@ class Filmed:
             raise FilmedRefusal("rest_unset", "no rest position; start the take with --rest X,Y")
         poster = drag.QuartzPoster()
         here = poster.location()
-        poster.move(*target)
+        from jevdual.pointer_trace import GestureTrace
+
+        trace = GestureTrace(self, "place", "setup", here, target) if self.trace_path else None
+        try:
+            (trace.poster(poster) if trace else poster).move(*target)
+        finally:
+            if trace is not None:
+                trace.finish(poster, "arrived" if not trace.errors else "exception")
         self.last_pointer = target
         record = {
             "kind": "place",
@@ -187,3 +220,23 @@ class Filmed:
         if target is None:
             raise FilmedRefusal("rest_unset", "no rest position; start the take with --rest X,Y")
         return await asyncio.to_thread(self._move, target, "park", "rest" if point is None else "waypoint")
+
+    async def observe_sdk(self, kind: str, label: str, target: Point | None, call: Any) -> Any:
+        """Report opaque SDK input honestly; the SDK does not expose its posted samples."""
+        from jevdual import drag
+        from jevdual.pointer_trace import GestureTrace, uptime_raw_ns
+
+        poster = drag.QuartzPoster()
+        trace = GestureTrace(self, kind, label, poster.location(), target,
+                             completeness="unavailable_sdk_samples")
+        trace.record['planned_samples'] = None
+        trace.record['posted_samples'] = None
+        trace.record['call_started_ns'] = uptime_raw_ns()
+        outcome = 'exception'
+        try:
+            result = await call()
+            outcome = 'sdk_returned'
+            return result
+        finally:
+            trace.record['call_returned_ns'] = uptime_raw_ns()
+            trace.finish(poster, outcome)

@@ -2192,11 +2192,13 @@ class NativeBridge:
                 raise NativeBridgeError("target_changed", "the fresh target no longer offers click")
             self.last = None
             self.dispatches += 1
-            return await self._click_token(token, foreground=True)
+            frame = current.frames.get(target_id)
+            target_point = (frame[0] + frame[2] / 2, frame[1] + frame[3] / 2) if frame else None
+            return await self._click_token(token, foreground=True, target_point=target_point)
 
         return await self._foreground("click", id, cand.label, call, why=f"explicit foreground click {cand.label!r}")
 
-    async def _click_token(self, token: str, *, foreground: bool = False) -> Any:
+    async def _click_token(self, token: str, *, foreground: bool = False, target_point: Any = None) -> Any:
         from jevdual.effectors.cua import (
             background_delivery,
             click_input,
@@ -2204,16 +2206,21 @@ class NativeBridge:
             foreground_delivery,
         )
 
-        return await self.driver.click(
-            click_input(
-                target=self._target(),
-                position=element_position(element_token=token),
-                delivery_mode=foreground_delivery() if foreground else background_delivery(),
-                session=self.session,
-                button=None,
-                count=None,
+        async def call() -> Any:
+            return await self.driver.click(
+                click_input(
+                    target=self._target(),
+                    position=element_position(element_token=token),
+                    delivery_mode=foreground_delivery() if foreground else background_delivery(),
+                    session=self.session,
+                    button=None,
+                    count=None,
+                )
             )
-        )
+
+        if foreground and self.filmed is not None and getattr(self.filmed, "trace_path", None):
+            return await self.filmed.observe_sdk("foreground_click", token, target_point, call)
+        return await call()
 
     def resolve_file(self, nm: NativeMenu, selector: str) -> tuple[Any, int]:
         """Resolve the exact retained Finder inode in this fresh window."""
@@ -2848,7 +2855,20 @@ class NativeBridge:
                     f"drag approach {approach.outcome}", f"drag_{approach.outcome}",
                     delivery="desktop", dispatched=True,
                 )
-        result = await asyncio.to_thread(d.play_drag, plan, poster, clock, settings)
+        def play() -> Any:
+            from jevdual.pointer_trace import GestureTrace
+
+            trace = (GestureTrace(self.filmed, "drag", label, start, end, plan)
+                     if self.filmed is not None and getattr(self.filmed, "trace_path", None) else None)
+            result = None
+            try:
+                result = d.play_drag(plan, trace.poster(poster) if trace else poster, clock, settings, trace=trace)
+                return result
+            finally:
+                if trace is not None:
+                    trace.finish(poster, result.outcome if result else "exception", result)
+
+        result = await asyncio.to_thread(play)
         if self.filmed is not None:
             self.filmed.last_pointer = result.released_at
             if result.outcome != "dropped":
@@ -2968,10 +2988,16 @@ class NativeBridge:
                 )
             at = pointer.desktop_pixels(fx + fw / 2, fy + fh / 2, scale)
             try:
-                outcome = await self.driver.call_tool(
-                    "move_cursor",
-                    json.dumps({"x": at.x, "y": at.y, "scope": "desktop", "session": self.session}),
-                )
+                async def call() -> Any:
+                    return await self.driver.call_tool(
+                        "move_cursor",
+                        json.dumps({"x": at.x, "y": at.y, "scope": "desktop", "session": self.session}),
+                    )
+
+                if self.filmed is not None and getattr(self.filmed, "trace_path", None):
+                    outcome = await self.filmed.observe_sdk("hover_sdk", label, (fx + fw / 2, fy + fh / 2), call)
+                else:
+                    outcome = await call()
             except Exception as exc:  # noqa: BLE001
                 outcome = exc
             return self._effect("hover", id, label, outcome, "desktop")
@@ -3123,7 +3149,18 @@ class NativeBridge:
                 "the bound window did not become the key window and its title bar is covered; not pressed",
             )
         self._foreground_inputs += 1
-        await asyncio.to_thread(self.ax.click_at, *point)
+        if self.filmed is not None and getattr(self.filmed, "trace_path", None):
+            from jevdual import drag
+            from jevdual.pointer_trace import GestureTrace
+
+            poster = drag.QuartzPoster()
+            trace = GestureTrace(self.filmed, "title_bar_click", "key window", poster.location(), point)
+            try:
+                await asyncio.to_thread(self.ax.click_at, *point, trace=trace)
+            finally:
+                trace.finish(poster, "exception" if trace.errors else "returned")
+        else:
+            await asyncio.to_thread(self.ax.click_at, *point)
         if await keyed():
             return
         raise NativeBridgeError(

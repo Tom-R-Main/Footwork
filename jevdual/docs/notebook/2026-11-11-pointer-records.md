@@ -1,6 +1,6 @@
 # Filmed pointer host-clock records
 
-## PR1 · prediction · 2026-11-11 12:35
+## PGR1 · prediction · 2026-11-11 12:35
 Question: can filmed pointer playback expose planned and posted samples without changing its path, admission, scheduling or outcomes?
 Hypothesis: an optional in-memory observer around the existing poster calls, with CLOCK_UPTIME_RAW timestamps and serialization after playback, preserves fake-clock playback exactly and adds less than 0.1 ms to real-clock p95 lateness against the current player with a fake poster.
 Test: scenario and player fixtures cover parks, automatic approaches, drags, more than 50 moves, contention and poster exceptions; paired one-second real-clock fake-poster runs compare existing lateness figures; real Python 3.12 clock reads bracket mach_absolute_time and posted samples.

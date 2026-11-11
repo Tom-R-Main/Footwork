@@ -771,7 +771,7 @@ def title_bar_point(pid: int, window_id: int) -> tuple[float, float] | None:
     return x, y
 
 
-def click_at(x: float, y: float) -> None:
+def click_at(x: float, y: float, *, trace: Any = None) -> None:
     """One real left click at a screen point, the cursor put back where it was: the one input TextEdit
     takes to change its key window (Q19 U48: AX raises, the Window menu and AppleScript reorder its
     windows but leave the previous one key)."""
@@ -791,9 +791,17 @@ def click_at(x: float, y: float) -> None:
 
     back = CGEventGetLocation(CGEventCreate(None))
     for kind in (kCGEventLeftMouseDown, kCGEventLeftMouseUp):
-        CGEventPost(kCGHIDEventTap, CGEventCreateMouseEvent(None, kind, (x, y), kCGMouseButtonLeft))
+        event = CGEventCreateMouseEvent(None, kind, (x, y), kCGMouseButtonLeft)
+        if trace is None:
+            CGEventPost(kCGHIDEventTap, event)
+        else:
+            trace.post("down" if kind == kCGEventLeftMouseDown else "up", x, y,
+                       lambda event=event: CGEventPost(kCGHIDEventTap, event))
         time.sleep(0.03)
-    CGWarpMouseCursorPosition(back)
+    if trace is None:
+        CGWarpMouseCursorPosition(back)
+    else:
+        trace.post("warp", back.x, back.y, lambda: CGWarpMouseCursorPosition(back))
 
 
 def _title(el: Any) -> str:
