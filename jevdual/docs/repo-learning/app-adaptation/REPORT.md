@@ -393,8 +393,22 @@ reviewed.
   singleton from a slow first launch. And launching the browser takes the foreground in the default
   background posture.
 
+- **Test 1, sign-in: holds.** In a fresh profile launched with Footwork's arguments and a debugging
+  port, sign-in to Suno, Notion and Google worked, and survived a restart and an hour with the tabs
+  open (AAD7). Not tested in DemoGeek's default profile, by the owner's decision.
+- **Test 2, node text: innerText is not a faithful reader.** With the verified lyrics entered by
+  DevTools input, Suno's counter read 461, but innerText doubled the breaks between paragraphs (490
+  characters, 53 line feeds) and textContent dropped them. Joining the editor's paragraphs with one
+  line feed reproduced the file byte for byte; that reading was found after the data and needs a
+  second rich editor before step D relies on it (AAD10, AAD11). A synthetic paste was ignored.
+- **A1: converged and released.** PR #24 merges main; the release from its head passed 20 live
+  criteria and is active, with `eded45c` kept for rollback. Its largest posting gap was 47.8 ms of
+  the 50 ms limit (`results/converge-release-20261111/REPORT.md`).
+- **A2: the panel is frozen** (AAD9): ten of the owner's own sites, each with a task that sends
+  nothing. It runs once step D exists.
+
 Neither reopening condition for the lane is met: text replacement needs care, coordinate input does
-not need the foreground. Tests 1 and 2 need the owner to sign in and have not run.
+not need the foreground, and sign-in works in a launched profile.
 
 ## Limits of this review
 
