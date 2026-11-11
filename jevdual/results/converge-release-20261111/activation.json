@@ -1,0 +1,26 @@
+{
+  "source_commit": "6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "source_merged": false,
+  "active_release": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "previous_release": "/Users/thomasmain/.local/share/footwork/releases/eded45c48d550b6867e1ce1314de64c41cbcfae8",
+  "previous_release_kept": true,
+  "launcher_unchanged": true,
+  "offline_install": true,
+  "qualification": {
+    "installed_bytes": "passed",
+    "installed_discovery": "passed",
+    "native_immediate_start": "passed",
+    "native_checks_passed": 20,
+    "native_checks_total": 20,
+    "capture_startup_delay_seconds": 0,
+    "timing_wrapper": false,
+    "max_gap_ms": 47.8,
+    "max_post_ms": 12.0,
+    "max_ack_ms": 46.5,
+    "stall_gap_ms": null,
+    "gap_limit_ms": 50,
+    "pointer_record": "pointer_gesture/1 complete; recorded posts equal moving samples",
+    "qualified_at": "2026-11-11T23:15:29.928200+00:00",
+    "cleanup": "owned apps exited; requests empty; owned reservations revoked"
+  }
+}

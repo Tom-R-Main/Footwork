@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/Tom-R-Main/Footwork",
+  "source_commit": "6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "source_tree": "48c36d07a5b7f4802d7948cf63af0d4c12025372",
+  "source_branch": "claude/converge-main-20261111",
+  "source_merged": false,
+  "pull_request": "https://github.com/Tom-R-Main/Footwork/pull/24",
+  "installed_at": "2026-11-11T22:53:19.226640+00:00",
+  "profile": "full",
+  "bundle": "/Users/thomasmain/.local/share/footwork/bundles/6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "bundle_manifest": {
+    "cua": "cua_driver-0.46.0+footwork.5486b624.cleanup2.focus1-py3-none-macosx_13_0_arm64.whl",
+    "files": {
+      "cua_driver-0.46.0+footwork.5486b624.cleanup2.focus1-py3-none-macosx_13_0_arm64.whl": "22083ce34aa45a2404bda2b27ad120156c7380da8a659879e00df139a69393ec",
+      "install.py": "471167c071b38638ceeadad6cb077bdf98b52512f35c30cb7d32ebcf96a3a4da",
+      "jevdual-0.0.1-py3-none-any.whl": "12fb7da50ce9b9764e89e52a6ae72e755461675a26df86abf23bf7c5a5d24489"
+    },
+    "product": "jevdual-0.0.1-py3-none-any.whl",
+    "profile": "full",
+    "schema_version": 2
+  },
+  "installed_files": {
+    "jevdual": {
+      "version": "0.0.1",
+      "checked_files": 219,
+      "location": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/lib/python3.12/site-packages"
+    },
+    "cua-driver": {
+      "version": "0.46.0+footwork.5486b624.cleanup2.focus1",
+      "checked_files": 8,
+      "location": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/lib/python3.12/site-packages"
+    }
+  },
+  "previous_release": "/Users/thomasmain/.local/share/footwork/releases/eded45c48d550b6867e1ce1314de64c41cbcfae8",
+  "qualification": {
+    "installed_bytes": "passed",
+    "installed_discovery": "passed",
+    "native_immediate_start": "passed",
+    "native_checks_passed": 20,
+    "native_checks_total": 20,
+    "capture_startup_delay_seconds": 0,
+    "timing_wrapper": false,
+    "max_gap_ms": 47.8,
+    "max_post_ms": 12.0,
+    "max_ack_ms": 46.5,
+    "stall_gap_ms": null,
+    "gap_limit_ms": 50,
+    "pointer_record": "pointer_gesture/1 complete; recorded posts equal moving samples",
+    "qualified_at": "2026-11-11T23:15:29.928200+00:00",
+    "cleanup": "owned apps exited; requests empty; owned reservations revoked"
+  },
+  "evidence": "/Users/thomasmain/projects/footwork/.claude/worktrees/agent-a0ccfaa21406efbe9/jevdual/results/converge-release-20261111",
+  "qualification_directory": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/qualification",
+  "launcher": "/Users/thomasmain/.local/bin/footwork",
+  "launcher_sha256": "8b786ec4bebfd7b8fe62e478f6e017ed2048fe31489395fc180b15978f49e793",
+  "current": "/Users/thomasmain/.local/share/footwork/current"
+}
