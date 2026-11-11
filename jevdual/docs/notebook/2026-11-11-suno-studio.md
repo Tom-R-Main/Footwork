@@ -56,3 +56,8 @@ Observed: the active tab in the original task window changed out of task scope. 
 Inferred: task-window isolation is currently a workflow prerequisite for shared Chrome. Existing fixture URL scoping withholds screenshots, so a general origin-plus-visual contract is deferred rather than grafting on a Suno-specific guard or losing required format/target inspection. Playback/route changes must be reconciled by exact resource, not window title alone. A label containing a colon requires the public label: escape, as in label:Playbar: Pause button.
 Next: await the requested short idle handoff, download/decode the already-created baseline, then continue ST5 without repeating Duplicate Project or Full Song. Preserve the unresolved image/origin contract and richer stable-selector ergonomics as limitations rather than expanding core speculatively.
 Refs: results/suno-studio-20261111/full-default.json; results/suno-studio-20261111/full-default.txt; results/deep-control-ancestry-20261111/report.md; output/suno-studio-20261111/resources.json; output/suno-studio-20261111/studio-eq/; output/suno-studio-20261111/dedicated-studio/; docs/app-extenders.md
+
+## STU5 · update · 2026-11-11 00:40
+Observed: a fresh system-clock read is00:40. The preceding STU4 heading was incorrectly transcribed as00:42; its evidence and Git order10e07c6 remain the chronology for that entry, rather than the transcribed minute. Result redaction changes zero files. No dependent UI input was sent while the short idle handoff is pending.
+Next: retain this timestamp correction append-only and continue from the already-created baseline, preserving the no-repeat boundary.
+Refs: results/suno-studio-20261111/report.md; output/suno-studio-20261111/resources.json

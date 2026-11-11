@@ -2,6 +2,8 @@
 
 Continuation direction, November 11: actual Suno Studio is included in the user's end-to-end goal. Generic evidence/session fixes take priority; Suno-specific learning belongs in an [app extender or recipe](app-extenders.md), with reusable audio/video tools kept separate. Current Studio milestones and remaining prerequisites are tracked in the [continuation ledger](../results/suno-studio-20261111/report.md). The completed legacy result below does not qualify Studio editing.
 
+Current project core source is5e569f4, with **3406passed,62skipped** in the integrated offline suite and unchanged tracked source hashes. Its project-local wrapper is `output/suno-20261110/runtime-5e569f4/footwork`, using the existing focus1 SDK overlay. Repairs preserve existing sessions on failed start, retain delivery/recovery guidance when post-action observation fails, retain bounded numeric observations, qualify deeper complete control ancestry, and protect media manifests from exact media echoes and competing output acquisition. The global release is unchanged. Studio1.2 has been observed and its run-owned project duplicated; a first flat Full Song render is retained. Actual Studio EQ/export/reopen qualification remains in progress.
+
 Engineering findings and recommendations, November 10, 2026. A bounded creation-to-legacy-fade-to-Library-reopen journey and one further public-command fade/export/reopen pass are verified. A newer Song Editor clip menu also opened through an inspected opaque control. Canvas mutation, broad musical judgment and an ease/reliability rate remain separate qualifications.
 
 User-selected reviewer: `qwen/qwen3.8-omni-flash` through OpenRouter, superseding the tentative provider shortlist below. The credential destination is the Git-ignored `jevdual/.env`, variable `OPENROUTER_API_KEY`; enter the key locally and never retain it in reports or requests logged to disk. The [canonical model guide](https://openrouter.ai/qwen/qwen3.8-omni-flash/llms.txt) documents the Chat Completions endpoint. Qualify actual audio/video input on the chosen provider before claiming musical perception: text completion alone does not establish it, and [video URL support varies by provider](https://openrouter.ai/docs/guides/overview/multimodal/videos).
@@ -105,7 +107,7 @@ Core legacy edit/export/reopen actions used frozen `a64b6f2` with the exact focu
 Use the observed PID and window rather than an app name alone when multiple Chrome processes exist. Keep one owner of the shared window and the foreground idle guard. Session start must use a new directory because it resets session files.
 
 ```sh
-suno_fw=/absolute/footwork/jevdual/output/suno-20261110/runtime-ca4e7dc/footwork
+suno_fw=/absolute/footwork/jevdual/output/suno-20261110/runtime-5e569f4/footwork
 suno_session=/absolute/footwork/jevdual/output/NEW-suno-session
 "$suno_fw" windows --pid OBSERVED_PID
 "$suno_fw" start "Create and edit only run-owned Suno drafts" --app "Google Chrome" --pid OBSERVED_PID --window "OBSERVED_WINDOW_TITLE" --mode foreground_permitted --session "$suno_session"
