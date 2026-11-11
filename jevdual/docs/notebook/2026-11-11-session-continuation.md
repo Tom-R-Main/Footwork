@@ -19,3 +19,16 @@ Resolves: SCN1 = held
 Observed: all four public failed-replacement scenarios failed before the fix. Replacement initialization now runs in an owned temporary session, preserving existing JSON/log/carry/destination/grant bytes during binding, observation and driver cleanup. Six focused replacement cases cover failures, successful publication without old authority, and publication rollback. All 49 affected start/schema checks and Ruff pass.
 Next: freeze the failed-start preservation change separately, then resolve SCN2. Root will run integrated regression after concurrent packages are stable.
 Refs: results/session-continuation-20261111/start-baseline.txt; results/session-continuation-20261111/start-focused.txt
+
+## SCN4 · update · 2026-11-11 00:19
+Resolves: SCN2 = held
+Observed: three public post-action readback scenarios initially stopped generically with exit 7. Six ordinary/durable cases now return explicit unresolved exit 6 after one delivered or refused action, retain pending delivery and the last pre-action observation, log observation unavailable without raw driver detail, and give exact inventory/fresh-session guidance. Durable replay reuses the unchanged authoritative execution without another driver read or input. No receipt or closure/Save-success inference is created. All 610 affected checks and Ruff pass.
+Changes: failed-start source is d8e8d30; the earlier e456fd0 contains only its notebook/results. Seven replacement scenarios additionally qualify browser directory/tab and screenshot preservation, successful publication without prior authority, and rollback. Numeric integration is independently committed as fad0bb2 and was preserved.
+Next: freeze post-action continuation for root-owned integrated regression; do not run a redundant independent full suite.
+Refs: results/session-continuation-20261111/continuation-baseline.txt; results/session-continuation-20261111/continuation-scenarios.txt; results/session-continuation-20261111/focused.txt
+
+## SCN5 · summary · 2026-11-11 00:19
+Established: refused or failed replacement starts preserve old session records until successful initialization/cleanup/publication, with rollback on publication failure. Unavailable post-action observation preserves pending delivery, exact binding and stale-baseline status, emits no application-effect receipt and performs no automatic retry or retarget. Seven replacement and six continuation cases pass; 610 affected tests pass.
+Uncertain: the worker performed no live native UI. A missing observation does not prove modal closure, a saved artifact or a successful application operation. Generic failure reasons remain deliberately separate from retained authoritative delivery; root owns integrated regression and actual Studio qualification.
+Decision: close the two generic lifecycle fixes in separate source commits, with no native.py/parser changes, app-specific branches, UI/network/install/global activation or targeted-key expansion.
+Refs: results/session-continuation-20261111/report.md

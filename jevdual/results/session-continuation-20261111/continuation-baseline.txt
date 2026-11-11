@@ -1,0 +1,130 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_post_action_observation_failure_retains_pending_exact_binding_without_retry[closed_window] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104bae840>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104b5dbb0>
+failure = 'closed_window'
+
+    @pytest.mark.parametrize('failure', ['closed_window', 'generic_read_failure', 'not_sent'])
+    def test_post_action_observation_failure_retains_pending_exact_binding_without_retry(world, fw, monkeypatch, failure):
+        from jevdual.native import NativeBridge, NativeBridgeError
+    
+        assert fw('start', 'Act once then reconcile the bound window', '--app', 'Calculator')[0] == 0
+        before = _state(fw)
+        failed = [False]
+        original_read, original_act = world.get_window_state, NativeBridge.act
+    
+        async def read(inp):
+            if failed[0]:
+                if failure == 'closed_window': raise NativeBridgeError('window_missing', 'the exact modal is gone')
+                raise RuntimeError('private driver observation detail')
+            return await original_read(inp)
+    
+        async def act(bridge, nm, op, target, text=None, **kwargs):
+            if failure == 'not_sent':
+                result = bridge._not_sent(op, target, 'All Clear', 'test_refusal', 'input withheld', 'background')
+            else:
+                result = await original_act(bridge, nm, op, target, text, **kwargs)
+            failed[0] = True
+            return result
+    
+        monkeypatch.setattr(world, 'get_window_state', read)
+        monkeypatch.setattr(NativeBridge, 'act', act)
+        code, out, err = fw('do', 'click', 'All Clear', '--no-judge')
+>       assert code == 6 and 'post-action observation unavailable' in out, (out, err)
+E       AssertionError: ('judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+E         dispatched click(All Clear): driver says confirmed in 0.0s
+E         ', 'stopped: window_missing: the exact modal is gone
+E         ')
+E       assert (7 == 6)
+
+tests/test_session_scenarios.py:4063: AssertionError
+_ test_post_action_observation_failure_retains_pending_exact_binding_without_retry[generic_read_failure] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1040cf420>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104996300>
+failure = 'generic_read_failure'
+
+    @pytest.mark.parametrize('failure', ['closed_window', 'generic_read_failure', 'not_sent'])
+    def test_post_action_observation_failure_retains_pending_exact_binding_without_retry(world, fw, monkeypatch, failure):
+        from jevdual.native import NativeBridge, NativeBridgeError
+    
+        assert fw('start', 'Act once then reconcile the bound window', '--app', 'Calculator')[0] == 0
+        before = _state(fw)
+        failed = [False]
+        original_read, original_act = world.get_window_state, NativeBridge.act
+    
+        async def read(inp):
+            if failed[0]:
+                if failure == 'closed_window': raise NativeBridgeError('window_missing', 'the exact modal is gone')
+                raise RuntimeError('private driver observation detail')
+            return await original_read(inp)
+    
+        async def act(bridge, nm, op, target, text=None, **kwargs):
+            if failure == 'not_sent':
+                result = bridge._not_sent(op, target, 'All Clear', 'test_refusal', 'input withheld', 'background')
+            else:
+                result = await original_act(bridge, nm, op, target, text, **kwargs)
+            failed[0] = True
+            return result
+    
+        monkeypatch.setattr(world, 'get_window_state', read)
+        monkeypatch.setattr(NativeBridge, 'act', act)
+        code, out, err = fw('do', 'click', 'All Clear', '--no-judge')
+>       assert code == 6 and 'post-action observation unavailable' in out, (out, err)
+E       AssertionError: ('judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+E         dispatched click(All Clear): driver says confirmed in 0.0s
+E         ', 'stopped: RuntimeError: private driver observation detail
+E         ')
+E       assert (7 == 6)
+
+tests/test_session_scenarios.py:4063: AssertionError
+_ test_post_action_observation_failure_retains_pending_exact_binding_without_retry[not_sent] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104698fe0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1040d2420>
+failure = 'not_sent'
+
+    @pytest.mark.parametrize('failure', ['closed_window', 'generic_read_failure', 'not_sent'])
+    def test_post_action_observation_failure_retains_pending_exact_binding_without_retry(world, fw, monkeypatch, failure):
+        from jevdual.native import NativeBridge, NativeBridgeError
+    
+        assert fw('start', 'Act once then reconcile the bound window', '--app', 'Calculator')[0] == 0
+        before = _state(fw)
+        failed = [False]
+        original_read, original_act = world.get_window_state, NativeBridge.act
+    
+        async def read(inp):
+            if failed[0]:
+                if failure == 'closed_window': raise NativeBridgeError('window_missing', 'the exact modal is gone')
+                raise RuntimeError('private driver observation detail')
+            return await original_read(inp)
+    
+        async def act(bridge, nm, op, target, text=None, **kwargs):
+            if failure == 'not_sent':
+                result = bridge._not_sent(op, target, 'All Clear', 'test_refusal', 'input withheld', 'background')
+            else:
+                result = await original_act(bridge, nm, op, target, text, **kwargs)
+            failed[0] = True
+            return result
+    
+        monkeypatch.setattr(world, 'get_window_state', read)
+        monkeypatch.setattr(NativeBridge, 'act', act)
+        code, out, err = fw('do', 'click', 'All Clear', '--no-judge')
+>       assert code == 6 and 'post-action observation unavailable' in out, (out, err)
+E       AssertionError: ('judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+E         dispatched click(All Clear): d... says not sent (test_refusal: input withheld) in 0.0s
+E         ', 'stopped: RuntimeError: private driver observation detail
+E         ')
+E       assert (7 == 6)
+
+tests/test_session_scenarios.py:4063: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_post_action_observation_failure_retains_pending_exact_binding_without_retry[closed_window]
+FAILED tests/test_session_scenarios.py::test_post_action_observation_failure_retains_pending_exact_binding_without_retry[generic_read_failure]
+FAILED tests/test_session_scenarios.py::test_post_action_observation_failure_retains_pending_exact_binding_without_retry[not_sent]
+3 failed, 371 deselected in 0.91s

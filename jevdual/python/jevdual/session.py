@@ -2623,7 +2623,31 @@ async def cmd_do(args: Any) -> int:
             f"dispatched {line}: driver says {driver_effect}{(' (' + error + ')') if error else ''} in {exec_ms / 1000:.1f}s"
         )
         await asyncio.sleep(args.settle)
-        nm, receipt = await observe(state, bridge, secret_value=text if secret_used else None)
+        baseline = state.last_snapshot
+        try:
+            nm, receipt = await observe(state, bridge, secret_value=text if secret_used else None)
+        except Exception as exc:
+            if state.pending is None or state.last_snapshot != baseline:
+                raise  # a later persistence/reconciliation error is not an absent observation
+            state.log({
+                "kind": "post_action_observation_unavailable", "reason": type(exc).__name__,
+                "pid": state.pid, "window_id": state.window_id, "last_observation": baseline,
+                "dispatched": state.pending.get("dispatched"),
+                "operation_id": state.pending.get("operation_id"),
+            })
+            print("post-action observation unavailable; application outcome remains unverified.")
+            print(f"pending action retained (dispatched={state.pending.get('dispatched')!r}); "
+                  "no application-effect receipt was produced. Do not retry input until reconciled.")
+            print(f"The existing session remains bound to PID {state.pid}, window {state.window_id}; "
+                  "the prior observation is not a fresh readback.")
+            if state.mode == "native":
+                print(f"Read delivery evidence with footwork status --session {state.path}; "
+                      f"inventory with footwork windows --pid {state.pid}. If another window must be addressed, "
+                      "use its observed exact ID in a fresh session; no parent or replacement was selected.")
+            else:
+                print("Read retained delivery evidence with footwork status; reconcile the owned browser "
+                      "attachment before explicitly starting a fresh session. No replacement tab was selected.")
+            return 6
     finally:
         await driver.shutdown()
     print(render_observation(nm, text_chars=args.text, receipt=receipt))

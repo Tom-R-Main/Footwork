@@ -4032,3 +4032,63 @@ def test_browser_replacement_start_retains_real_directory_tab_and_screenshots(wo
     assert old_image.read_bytes() == b'previous screenshot'
     assert any(image.read_bytes() == b'new screenshot' for image in old_image.parent.iterdir())
     assert '.footwork-start-' not in out + (fw.session / 'session.json').read_text() + (fw.session / 'session.jsonl').read_text()
+
+
+@pytest.mark.parametrize('durable', [False, True])
+@pytest.mark.parametrize('failure', ['closed_window', 'generic_read_failure', 'not_sent'])
+def test_post_action_observation_failure_retains_pending_exact_binding_without_retry(world, fw, monkeypatch, tmp_path, failure, durable):
+    from jevdual.native import NativeBridge, NativeBridgeError
+
+    authority = _durable_start(fw, monkeypatch, tmp_path) if durable else None
+    if not durable:
+        assert fw('start', 'Act once then reconcile the bound window', '--app', 'Calculator')[0] == 0
+    before = _state(fw)
+    failed, decision = [False], []
+    original_read, original_act = world.get_window_state, NativeBridge.act
+
+    async def read(inp):
+        if failed[0]:
+            if failure == 'closed_window': raise NativeBridgeError('window_missing', 'the exact modal is gone')
+            raise RuntimeError('private driver observation detail')
+        return await original_read(inp)
+
+    async def act(bridge, nm, op, target, text=None, **kwargs):
+        decision.append(_state(fw))
+        if failure == 'not_sent':
+            result = bridge._not_sent(op, target, 'All Clear', 'test_refusal', 'input withheld', 'background')
+        else:
+            result = await original_act(bridge, nm, op, target, text, **kwargs)
+        failed[0] = True
+        return result
+
+    monkeypatch.setattr(world, 'get_window_state', read)
+    monkeypatch.setattr(NativeBridge, 'act', act)
+    args = ('do', 'click', 'All Clear', '--no-judge', *(['--token', 'once-before-unavailable'] if durable else []))
+    code, out, err = fw(*args)
+    assert code == 6 and 'post-action observation unavailable' in out, (out, err)
+    assert 'pending action retained' in out and 'Do not retry' in out
+    assert 'footwork windows --pid 77' in out and 'fresh session' in out
+    assert 'private driver observation detail' not in out + err
+    state = _state(fw)
+    assert state['pid'] == before['pid'] and state['window_id'] == before['window_id']
+    assert state['last_snapshot'] == decision[0]['last_snapshot']
+    assert state['pending']['dispatched'] is (failure != 'not_sent')
+    assert state['pending']['driver_effect'] == ('not sent' if failure == 'not_sent' else 'confirmed')
+    assert world.presses == ([] if failure == 'not_sent' else ['All Clear'])
+    records = [json.loads(line) for line in (fw.session / 'session.jsonl').read_text().splitlines()]
+    assert not any(record['kind'] == 'receipt' for record in records)
+    assert records[-1]['kind'] == 'post_action_observation_unavailable'
+    retained = next(record for record in records if record['kind'] == 'do')
+    assert all(retained[key] == value for key, value in state['pending'].items())
+    if durable:
+        from jevdual.session_operations import SessionOperations
+
+        with SessionOperations(authority) as operations:
+            operation, = operations.status()
+            authoritative = operations.receipt(operation)
+            assert authoritative['projection']['dispatched'] == state['pending']['dispatched']
+        assert fw(*args)[0] == 0  # replay uses retained execution, without any driver read or input
+        assert world.presses == ([] if failure == 'not_sent' else ['All Clear'])
+        with SessionOperations(authority) as operations:
+            operation, = operations.status()
+            assert operations.receipt(operation) == authoritative
