@@ -417,3 +417,9 @@ Test: frozen a6defe1 UI, actual second-song resource and existing Premier allowa
 Predicts: one included export reaches a project-scoped save, decodes as MP3 and matches the intended song's expected duration.
 Against: format/identity differs, unlock outcome is unknown, location cannot be controlled, a new purchase is required, save is missing or media is undecodable/wrong duration. No opaque bytes to critic.
 Refs: output/suno-20261110/download-settings-look.txt; output/suno-20261110/generated-audio/483fa375-ef3e-4cb2-b284-4e338f1d9cbf-metadata.json; output/suno-20261110/song-b-download-submenu.txt
+
+## SUNU38 · update · 2026-11-10 19:41
+Observed: the authenticated owner export accepted MP3 after the visually checked multi-select format controls were reconciled to MP3 only. One Unlock Download reached preparation and a native Save sheet. The parent-bound folder hotkey refused before application input. Read-only modal investigation proves Save is its own Chrome window325928, associated with parent306787. An explicitly modal-bound session observes the filename and destination; background addressed-field replacement confirms candidate-b.mp3, while Where remains Downloads. Save has not been clicked and no output file exists.
+Inferred: included export is progressing, but SUN32 remains open until a project-only save and complete decode. The modal binding defect has a separately preregistered source repair; implicit parent routing is not used.
+Next: freeze the qualified modal resolver and test project-folder navigation on the explicit Save session. Preserve the prepared export; do not unlock or submit it again.
+Refs: output/suno-20261110/song-b-export-save-wait.txt; output/suno-20261110/song-b-save-go-folder.txt; output/suno-20261110/modal-bindability.json; output/suno-20261110/save-b-set-filename.txt; docs/notebook/2026-11-10-save-modal-binding.md
