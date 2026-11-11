@@ -2056,6 +2056,142 @@ def test_native_same_title_links_still_require_unique_label_or_numeric_selection
     assert clicked == []
 
 
+def _native_identified_controls(world, monkeypatch, identities=None):
+    from jevdual import ax
+
+    identities = identities if identities is not None else [
+        {"dom_id": "hero-options", "document_url": "https://example.test/song/a", "web_area": "document"},
+        {"dom_id": "footer-options", "document_url": "https://example.test/song/a", "web_area": "document"},
+    ]
+    rows, backing, clicked = [], {}, []
+    for position, identity in enumerate(identities):
+        y = 400 + 30 * position
+        row = {"element_index": 940 + position, "element_token": f"initial:{940 + position}",
+               "role": "AXPopUpButton", "label": "More options for Song", "enabled": True,
+               "actions": ["AXPress"], "in_web_content": True,
+               "frame": {"x": 450, "y": y, "w": 40, "h": 20}}
+        rows.append(row); backing[y] = identity; world.base["elements"].append(row)
+
+    def resolve(pid, window_id, role, frame):
+        assert (pid, window_id, role) == (77, 40335, "AXPopUpButton")
+        row, = [row for row in rows if row["frame"]["y"] == frame.y]
+        return row
+
+    monkeypatch.setattr(ax, "resolve", resolve)
+    monkeypatch.setattr(ax, "semantic_section", lambda element: None)
+    monkeypatch.setattr(ax, "control_identity", lambda element, **kwargs: backing[element["frame"]["y"]], raising=False)
+    monkeypatch.setattr(ax, "frame_of", lambda element: ax.Frame(*(element["frame"][key] for key in ("x", "y", "w", "h"))))
+    monkeypatch.setattr(ax, "same_element", lambda left, right: left == right, raising=False)
+    click = world.click
+
+    async def act(inp):
+        index = int(inp.position.element_token.split(":")[-1])
+        row, = [row for row in rows if row["element_index"] == index]
+        clicked.append(backing[row["frame"]["y"]])
+        return await click(inp)
+
+    monkeypatch.setattr(world, "click", act)
+    return rows, backing, clicked
+
+
+@pytest.mark.parametrize("selected", [940, 941])
+def test_native_scoped_dom_controls_remain_distinct_and_persist(world, fw, monkeypatch, selected):
+    _, _, clicked = _native_identified_controls(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+    saved = [row for row in _state(fw)["last_candidates"] if row["label"] == "More options for Song"]
+    assert [row["id"] for row in saved] == [940, 941]
+    assert all(row["native_control_qualified"] is True for row in saved)
+    assert saved[0]["native_dom_id"] == "hero-options"
+    assert saved[0]["native_document_url"] == "https://example.test/song/a"
+    code, out, err = fw("do", "click", str(selected), "--no-judge")
+    assert code == 0 and len(clicked) == 1, (out, err)
+    assert clicked[0]["dom_id"] == ("hero-options" if selected == 940 else "footer-options")
+
+
+@pytest.mark.parametrize("failure", ["unreadable", "duplicate_id", "different_document", "different_webarea", "hidden_unreadable"])
+def test_native_scoped_dom_controls_require_all_observed_peers(world, fw, monkeypatch, failure):
+    first = {"dom_id": "hero", "document_url": "https://example.test/song/a", "web_area": "document"}
+    second = {**first, "dom_id": "footer"}
+    identities = [first, second]
+    if failure == "unreadable": identities[1] = None
+    if failure == "duplicate_id": second["dom_id"] = first["dom_id"]
+    if failure == "different_document": second["document_url"] = "https://example.test/song/b"
+    if failure == "different_webarea": second["web_area"] = "nested_document"
+    if failure == "hidden_unreadable": identities.append(None)
+    _, _, clicked = _native_identified_controls(world, monkeypatch, identities)
+    assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "940", "--no-judge")
+    assert code == 4 and "target_ambiguous" in out + err, (out, err)
+    assert clicked == []
+
+
+@pytest.mark.parametrize("during", [False, True])
+@pytest.mark.parametrize("change", ["dom_id", "document_url", "reorder", "unreadable_peer", "duplicate_id"])
+def test_native_scoped_dom_controls_refuse_identity_drift(world, fw, monkeypatch, during, change):
+    from jevdual.native import NativeBridge
+
+    rows, backing, clicked = _native_identified_controls(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+
+    def mutate():
+        if change == "reorder": rows[0]["element_index"], rows[1]["element_index"] = 941, 940
+        elif change == "unreadable_peer": backing[430] = None
+        elif change == "duplicate_id": backing[430]["dom_id"] = backing[400]["dom_id"]
+        elif change == "document_url":
+            for identity in backing.values(): identity["document_url"] = "https://example.test/song/changed"
+        else: backing[400]["dom_id"] = "replacement"
+
+    if during:
+        original = NativeBridge.observe
+        reads = [0]
+
+        async def after_preflight(bridge, **kwargs):
+            result = await original(bridge, **kwargs)
+            reads[0] += 1
+            if reads[0] == 1: mutate()
+            return result
+
+        monkeypatch.setattr(NativeBridge, "observe", after_preflight)
+    else: mutate()
+    code, out, err = fw("do", "click", "940", "--no-judge")
+    assert clicked == [] and any(marker in out + err for marker in ("target_changed", "target_ambiguous")), (code, out, err)
+
+
+def test_native_scoped_dom_control_grants_bind_document_and_identifier(world, fw, monkeypatch):
+    from dataclasses import replace
+
+    from jevdual import grants
+    from jevdual.session import SessionState, _element_ref
+
+    _native_identified_controls(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+    menu = SessionState.load(fw.session).last_menu()
+    first, second = (menu.candidate(index) for index in (940, 941))
+    assert first is not None and second is not None
+    reference = json.loads(_element_ref(SimpleNamespace(), first))
+    assert reference["native_dom_id"] == "hero-options"
+    assert reference["native_document_url"] == "https://example.test/song/a"
+    assert _element_ref(SimpleNamespace(), first) != _element_ref(SimpleNamespace(), second)
+    proposal = grants.Proposal("click", "app://fixture", first.role, first.label, None, None,
+                               element_ref=_element_ref(SimpleNamespace(), first))
+    grant = grants.issue(proposal)
+    assert grants.why_not(grant, proposal) is None
+    assert grants.why_not(grant, replace(proposal, element_ref=_element_ref(SimpleNamespace(), second)))
+    assert grants.why_not(grants.issue(replace(proposal, element_ref="1 of 2")), proposal)
+    changed = replace(first, native_document_url="https://example.test/song/replaced")
+    assert grants.why_not(grant, replace(proposal, element_ref=_element_ref(SimpleNamespace(), changed)))
+
+
+def test_native_scoped_dom_control_read_budget_retains_hidden_peer_ambiguity(world, fw, monkeypatch):
+    identities = [{"dom_id": f"control-{index}", "document_url": "https://example.test/song/a", "web_area": "document"}
+                  for index in range(65)]
+    _, _, clicked = _native_identified_controls(world, monkeypatch, identities)
+    assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "940", "--no-judge")
+    assert code == 4 and "target_ambiguous" in out + err, (out, err)
+    assert clicked == []
+
+
 @pytest.mark.parametrize("false_equality", [False, True])
 def test_native_type_bounded_preview_is_not_full_readback(world, fw, monkeypatch, false_equality):
     intended = "a" * 479 + "…" if false_equality else "a" * 600

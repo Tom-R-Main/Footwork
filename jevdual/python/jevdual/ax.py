@@ -156,14 +156,17 @@ def placeholder(el: Any) -> str | None:
 
 def link_url(el: Any, *, label: str | None = None) -> str | None:
     """Read a complete HTTP(S) AXURL without display truncation or URL normalization."""
-    from urllib.parse import urlsplit
-
     if label is not None and not any(
         isinstance(name, str) and " ".join(name.split()) == " ".join(label.split())
         for name in (_attr(el, "AXTitle"), _attr(el, "AXDescription"))
     ):
         return None
-    raw = _attr(el, "AXURL")
+    return _complete_http_url(_attr(el, "AXURL"))
+
+
+def _complete_http_url(raw: Any) -> str | None:
+    from urllib.parse import urlsplit
+
     if isinstance(raw, str):
         url = raw
     else:
@@ -181,6 +184,37 @@ def link_url(el: Any, *, label: str | None = None) -> str | None:
     except ValueError:
         return None
     return url
+
+
+def control_identity(el: Any, *, label: str) -> dict[str, Any] | None:
+    """Exact named DOM control scoped by its closest direct AXWebArea, never a sibling/row URL."""
+    if _attr(el, "AXRole") not in ("AXButton", "AXPopUpButton"):
+        return None
+    if not any(isinstance(name, str) and " ".join(name.split()) == " ".join(label.split())
+               for name in (_attr(el, "AXTitle"), _attr(el, "AXDescription"))):
+        return None
+    identifier = _attr(el, "AXDOMIdentifier")
+    if (not isinstance(identifier, str) or not identifier or len(identifier) > 512
+            or any(character.isspace() or ord(character) < 32 or ord(character) == 127 for character in identifier)):
+        return None
+    node = el
+    for _ in range(32):
+        node = _attr(node, "AXParent")
+        if node is None:
+            return None
+        role = _attr(node, "AXRole")
+        if role == "AXWebArea":
+            url = _complete_http_url(_attr(node, "AXURL"))
+            return {"dom_id": identifier, "document_url": url, "web_area": node} if url else None
+        if role in ("AXWindow", "AXApplication"):
+            return None
+    return None
+
+
+def same_element(left: Any, right: Any) -> bool:
+    from CoreFoundation import CFEqual
+
+    return left is not None and right is not None and bool(CFEqual(left, right))
 
 
 def semantic_section(el: Any) -> str | None:
@@ -268,12 +302,11 @@ def focus_text_field_ack(el: Any) -> None:
 def focused_element_matches(pid: int, window_id: int, el: Any) -> bool:
     """Independent application focused-element equality and exact key-window identity."""
     from ApplicationServices import AXUIElementCreateApplication
-    from CoreFoundation import CFEqual
 
     if focused_window_id(pid) != window_id:
         return False
     focused = _attr(AXUIElementCreateApplication(pid), "AXFocusedUIElement")
-    return focused is not None and bool(CFEqual(focused, el))
+    return same_element(focused, el)
 
 
 def can_set_value(el: Any) -> bool:

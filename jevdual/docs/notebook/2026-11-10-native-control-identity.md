@@ -16,3 +16,16 @@ Test: public CLI simulated-Mac scenarios for distinct identified controls, hidde
 Predicts: both controls survive pruning and only the freshly selected scoped ID dispatches; partial or duplicate evidence, document changes, ID changes and reorder refuse. No-DOM-ID controls retain existing ambiguity and default nonidentified controls retain behavior.
 Against: a partial/clipped identity clears ambiguity, an unknown hidden peer is ignored, a stale ID/document clicks another control, an ordinal grant authorizes a different scoped control, or inspect-target hides identity drift.
 Refs: results/native-link-resources-20261110/report.md; output/suno-20261110/control-document-scope.json
+
+## NCI4 · update · 2026-11-10 19:04
+Resolves: NCI3 = held
+Observed: both public CLI positive cases failed before implementation; 19 scoped-control scenarios and 805 affected source/contract tests now pass. Unknown/duplicate IDs, mixed documents, unequal WebArea ancestors, hidden peers, read limits, saved-choice and final-revalidation drift/reorder send no click. Inspection exposes exact scoped metadata and refuses drift; grants reject peer/document changes and old ordinal refs. New secret-bearing identity metadata redacts and loses qualification.
+Inferred: direct scoped DOM identity can distinguish the observed hero/footer controls without inferring a song-row URI or relaxing no-ID controls such as Main Play.
+Next: freeze source for parent-owned actual menu qualification; no worker input or further UI probe.
+Refs: results/native-control-identity-20261110/report.md; results/native-control-identity-20261110/baseline.txt; results/native-control-identity-20261110/focused.txt
+
+## NCI5 · summary · 2026-11-10 19:04
+Established: complete DOM IDs plus closest direct WebArea URL and equality proof refine native button/popup identity only when every observed semantic peer qualifies. Metadata persists, binds grants and inspections, and remains guarded at preflight and final rematching.
+Uncertain: AX snapshots can omit unobserved controls, DOM IDs can change on rerender, and no actual menu was clicked by this worker. The bounded read-only probe showed scope availability; synthetic checks do not establish live task completion.
+Decision: hand off frozen source with unchanged focus1 native bytes and existing project-local overlay; parent owns live verification.
+Refs: results/native-control-identity-20261110/report.md

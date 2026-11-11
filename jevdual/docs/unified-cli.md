@@ -130,6 +130,17 @@ distinguish the group. Missing peer evidence, duplicate URLs and the 64-link rea
 ambiguity even when menu pruning hides peers. URLs over 2048 characters, credentials, whitespace,
 relative and unsupported URLs are not qualified. Buttons in song rows do not inherit link identity.
 
+Named native AXButton and AXPopUpButton controls can also carry an exact `native_dom_id` scoped to
+their closest direct AXWebArea's complete HTTP(S) `native_document_url`. A semantic peer group is
+qualified only when every observed peer has a readable matching name/frame, a unique untruncated
+DOM ID, the same document URL and independently equal WebArea ancestor. Missing or duplicate IDs,
+mixed/unreadable document scopes and the 64-control read limit preserve ambiguity before pruning.
+DOM IDs over 512 characters or containing whitespace/control characters do not qualify. A changed
+ID, document or lost qualification requires a fresh choice; position and SDK index are not identity.
+The complete scoped identity appears in observations and inspect-target manifests/previews, binds
+grants, and is persisted across CLI calls. It does not infer a song-row resource or identify a Play
+button that exposes no DOM ID. Other native controls retain their existing identity rules.
+
 For a native macOS menu that needs its window in front, use
 `footwork do click "More actions" --click-delivery foreground`. This explicit option requires
 foreground posture, shared-desktop idle admission, and normal action gates; browser mode,

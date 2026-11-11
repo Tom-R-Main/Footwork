@@ -38,7 +38,14 @@ from pathlib import Path
 from typing import Any
 
 from jevdual import carry, grants
-from jevdual.menu import Candidate, Menu, MenuBudget, peer_position, qualified_link_href
+from jevdual.menu import (
+    Candidate,
+    Menu,
+    MenuBudget,
+    peer_position,
+    qualified_control_identity,
+    qualified_link_href,
+)
 from jevdual.native import NativeBridge, NativeBridgeError, NativeMenu
 
 SETTLE_S = 1.0
@@ -60,6 +67,9 @@ _CAND_FIELDS = (
     "placeholder",
     "value_truncated",
     "href_qualified",
+    "native_dom_id",
+    "native_document_url",
+    "native_control_qualified",
 )
 
 
@@ -697,6 +707,9 @@ def scrub(state: SessionState, nm: Any, extra: str | None = None) -> Any:
         dataclasses.replace(
             c, label=s(c.label), value=s(c.value), section=s(c.section),
             placeholder=s(c.placeholder), href=s(c.href),
+            native_dom_id=s(c.native_dom_id), native_document_url=s(c.native_document_url),
+            native_control_qualified=(False if s(c.native_dom_id) != c.native_dom_id
+                                      or s(c.native_document_url) != c.native_document_url else c.native_control_qualified),
         )
         for c in m.candidates
     )
@@ -918,6 +931,8 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
             extra += " [value preview truncated]"
         if qualified_link_href(c) is not None:
             extra += f" href={c.href!r}"
+        if qualified_control_identity(c) is not None:
+            extra += f" dom_id={c.native_dom_id!r} document={c.native_document_url!r}"
         for key in ("checked", "pressed", "expanded"):
             if getattr(c, key) is not None:
                 extra += f" {key}={getattr(c, key)}"
@@ -1650,6 +1665,9 @@ async def cmd_inspect_target(args: Any) -> int:
                 "target_identity_changed",
                 "the ID identifies a different target than the last session observation",
             )
+        if previous and (qualified_control_identity(previous) != qualified_control_identity(candidate)
+                         or qualified_link_href(previous) != qualified_link_href(candidate)):
+            return refused("target_identity_changed", "the target's qualified native resource or control identity changed")
     if args.operation not in candidate.operations:
         return refused("operation_unsupported", "the fresh target does not offer this operation")
     token = nm.token(candidate.id)
@@ -1690,6 +1708,7 @@ async def cmd_inspect_target(args: Any) -> int:
         "elements_complete": nm.elements_complete,
         "driver_reported_scale": capture.reported_scale,
         "target_label": candidate.label,
+        "target_identity": _target_identity(candidate),
         "authority": "read-only evidence; no model judgment, dispatch, consent or verified postcondition",
         "coverage_warning": None
         if nm.elements_complete
@@ -1728,6 +1747,7 @@ def _inspection_preview(record: dict[str, Any], manifest_name: str) -> str:
         record["inspection"]["coverage_warning"]
         or "The driver reported a complete observation; this capture does not check the current live screen."
     )
+    identity = escape(json.dumps(record["inspection"].get("target_identity", {}), ensure_ascii=False, sort_keys=True))
     return f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="script-src 'none'; object-src 'none'; base-uri 'none'">
@@ -1736,6 +1756,7 @@ def _inspection_preview(record: dict[str, Any], manifest_name: str) -> str:
 </head><body><h1>Target {escape(target["id"])}: {escape(target_label)}</h1>
 <dl><dt>Operation</dt><dd>{escape(target["operation"])}</dd><dt>Required postcondition</dt><dd>{escape(target["postcondition"])}</dd></dl>
 <p class="scope">{escape(scope)}</p><p class="scope">{escape(warning)}</p>
+<p class="scope">Observed target identity: <code>{identity}</code></p>
 <p><a href="{escape(manifest_name, quote=True)}">Capture manifest</a> · <a href="{escape(record["inspection"]["screenshot"], quote=True)}">Original PNG</a></p>
 <figure><div class="capture"><img src="{escape(record["inspection"]["screenshot"], quote=True)}" width="{width}" height="{height}" alt="Original bound-window capture">
 <div class="target-outline" style="{overlay}" aria-label="Offered target {escape(target["id"], quote=True)}"></div></div>
@@ -2093,6 +2114,10 @@ async def cmd_do(args: Any) -> int:
                 print(render_observation(nm, text_chars=args.text, receipt=None))
                 return targeting_refused("target_changed", "target label changed since selection")
             previous = next((c for c in chosen_cands if c["id"] == cid), None) if known is not None else None
+            if state.mode == "native" and previous is not None and qualified_control_identity(previous) != qualified_control_identity(target):
+                print("target_changed: the selected native control ID or document scope changed. "
+                      "Nothing dispatched. Choose again from a fresh observation.", file=sys.stderr)
+                return targeting_refused("target_changed", "native control identity changed since selection")
             if state.mode == "native" and previous is not None and qualified_link_href(previous) != qualified_link_href(target):
                 print("target_changed: the selected native link resource changed or lost qualification. "
                       "Nothing dispatched. Choose again from a fresh observation.", file=sys.stderr)
@@ -2287,10 +2312,7 @@ async def cmd_do(args: Any) -> int:
                 "op": op,
                 "target_id": target.id if target is not None else None,
                 "target_label": target.label if target is not None else None,
-                "target_identity": {
-                    **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
-                    **({"href": target.href, "href_qualified": True} if qualified_link_href(target) is not None else {}),
-                } if target is not None else None,
+                "target_identity": _target_identity(target) if target is not None else None,
                 "target_text_scope_signature": getattr(nm, "text_scope_signature", None),
                 "intended": None if secret_used else text,
                 "secret": secret_used,
@@ -2416,10 +2438,7 @@ async def cmd_do(args: Any) -> int:
             "op": op,
             "target_id": target.id if target is not None else None,
             "target_label": target.label if target is not None else None,
-            "target_identity": {
-                **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
-                **({"href": target.href, "href_qualified": True} if qualified_link_href(target) is not None else {}),
-            } if target is not None else None,
+            "target_identity": _target_identity(target) if target is not None else None,
             "target_text_scope_signature": getattr(nm, "text_scope_signature", None),
             "intended": None if secret_used else text,
             "secret": secret_used,
@@ -3053,11 +3072,22 @@ def _proposal(
     )
 
 
+def _target_identity(target: Any) -> dict[str, Any]:
+    return {
+        **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
+        **({"href": target.href, "href_qualified": True} if qualified_link_href(target) is not None else {}),
+        **({key: getattr(target, key) for key in ("native_dom_id", "native_document_url", "native_control_qualified")}
+           if qualified_control_identity(target) is not None else {}),
+    }
+
+
 def _element_ref(nm: Any, target: Any) -> str:
     """Q19 R2: "2 of 3" when other elements share the target's role and label (three "Delete draft" links),
     so a grant for one row does not clear another; empty when the element is unique."""
     if target is None:
         return ""
+    if qualified_control_identity(target) is not None:
+        return json.dumps({"kind": "qualified_native_control", **_target_identity(target)}, sort_keys=True)
     if target.section or target.placeholder:
         # Newly qualified controls bind grants to their semantic context, never their ordinal.
         # Legacy context-free refs remain compatible; an old ordinal grant cannot authorize a

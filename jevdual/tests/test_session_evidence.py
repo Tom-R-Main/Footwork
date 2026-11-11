@@ -155,6 +155,20 @@ def test_the_masked_value_is_still_compared_during_the_command(tmp_path, monkeyp
     assert right is not None and right["effect"] == "confirmed" and MARKER not in json.dumps(right)
 
 
+def test_scoped_native_control_identity_redacts_secrets_and_loses_qualification(tmp_path, monkeypatch):
+    from jevdual.menu import qualified_control_identity
+
+    monkeypatch.setenv("FOOTWORK_SECRET_TOKEN", MARKER)
+    control = Candidate(1, "More options", "button", ("click",), native_dom_id=f"control-{MARKER}",
+                        native_document_url=f"https://example.test/song?token={MARKER}", native_control_qualified=True)
+    st = _state(tmp_path, _nm(control))
+    st.secret_names = ["TOKEN"]
+    scrubbed = session.scrub(st, _nm(control))
+    candidate = scrubbed.menu.candidate(1)
+    assert MARKER not in json.dumps(candidate.to_state())
+    assert candidate.native_control_qualified is False and qualified_control_identity(candidate) is None
+
+
 # ---- A4: replacing existing content is a replacement at any length
 
 

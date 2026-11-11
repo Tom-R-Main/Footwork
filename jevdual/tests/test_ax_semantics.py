@@ -23,6 +23,45 @@ def test_link_url_rejects_incomplete_unsafe_or_unsupported_values(monkeypatch):
         assert ax.link_url("link") is None
 
 
+def test_control_identity_requires_exact_name_id_and_closest_direct_webarea(monkeypatch):
+    monkeypatch.setattr(ax, "_attr", lambda element, name: element.get(name))
+    page = {"AXRole": "AXWebArea", "AXURL": "https://example.test/song/a"}
+    group = {"AXRole": "AXGroup", "AXParent": page}
+    control = {"AXRole": "AXPopUpButton", "AXTitle": "More options", "AXDOMIdentifier": "base-ui-_R_hero_", "AXParent": group}
+    proof = ax.control_identity(control, label="More options")
+    assert proof == {"dom_id": "base-ui-_R_hero_", "document_url": "https://example.test/song/a", "web_area": page}
+    assert ax.control_identity(control, label="Different options") is None
+    control["AXParent"] = {"AXRole": "AXWebArea", "AXURL": "/relative", "AXParent": page}
+    assert ax.control_identity(control, label="More options") is None  # never borrow the outer document
+    control["AXParent"] = {"AXRole": "AXWindow", "AXURL": "https://example.test/not-a-document"}
+    assert ax.control_identity(control, label="More options") is None
+    control["AXParent"] = group
+    for value in (None, "", "contains whitespace", "bad\nidentifier", "x" * 513):
+        control["AXDOMIdentifier"] = value
+        assert ax.control_identity(control, label="More options") is None
+    control["AXDOMIdentifier"] = "x" * 512
+    assert ax.control_identity(control, label="More options")["dom_id"] == "x" * 512
+
+
+def test_control_identity_bounds_parent_walk_and_does_not_identify_main_play_without_id(monkeypatch):
+    reads = []
+
+    def attribute(element, name):
+        reads.append(name)
+        return element.get(name)
+
+    monkeypatch.setattr(ax, "_attr", attribute)
+    cyclic = {"AXRole": "AXGroup"}
+    cyclic["AXParent"] = cyclic
+    control = {"AXRole": "AXButton", "AXTitle": "Play", "AXDOMIdentifier": "play", "AXParent": cyclic}
+    assert ax.control_identity(control, label="Play") is None
+    assert reads.count("AXParent") == 32
+    control["AXDOMIdentifier"] = ""
+    reads.clear()
+    assert ax.control_identity(control, label="Play") is None
+    assert "AXParent" not in reads
+
+
 def test_unqualified_browser_hrefs_do_not_refine_native_peer_identity():
     from jevdual.menu import Candidate, peer_position
 

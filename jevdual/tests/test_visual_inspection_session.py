@@ -109,6 +109,30 @@ def test_fresh_exact_id_records_binding_without_models_or_dispatch(operator):
     assert not world.tool_calls
 
 
+@pytest.mark.parametrize("changed", [False, True])
+def test_inspection_exposes_scoped_native_control_identity_and_refuses_drift(operator, monkeypatch, changed):
+    from tests.test_session_scenarios import _mac_selectors, _native_identified_controls
+
+    world, path, run = operator
+    _mac_selectors(monkeypatch)
+    _, backing, _ = _native_identified_controls(world, monkeypatch)
+    assert run("look")[0] == 0
+    if changed:
+        backing[400]["dom_id"] = "replacement"
+    code, out, err = inspect(run, "940")
+    if changed:
+        assert code == 4 and "target_identity_changed" in err, (out, err)
+    else:
+        assert code == 0, (out, err)
+        identity = manifest(path)["inspection"]["target_identity"]
+        assert identity["native_control_qualified"] is True
+        assert identity["native_dom_id"] == "hero-options"
+        assert identity["native_document_url"] == "https://example.test/song/a"
+        preview = next((path / "inspection").glob("*.html")).read_text()
+        assert "hero-options" in preview and "https://example.test/song/a" in preview
+    assert world.presses == [] and world.tool_calls == []
+
+
 def test_preview_outlines_exact_pixel_binding_and_preserves_original_png(operator):
     import hashlib
 

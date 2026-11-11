@@ -50,6 +50,7 @@ from jevdual.menu import (
     Operation,
     estimate_tokens,
     peer_position,
+    qualified_control_identity,
     qualified_link_href,
 )
 
@@ -327,8 +328,8 @@ def _prune(
 
     cap = budget.native_menu_cap
 
-    def key_of(c: Candidate) -> tuple[str, str, str | None, str | None, str | None]:
-        return (c.role, c.label, c.value, c.section, qualified_link_href(c))
+    def key_of(c: Candidate) -> tuple[Any, ...]:
+        return (c.role, c.label, c.value, c.section, qualified_link_href(c), qualified_control_identity(c))
 
     named = []
     for c in candidates:
@@ -336,15 +337,15 @@ def _prune(
             omitted["unnamed"] = omitted.get("unnamed", 0) + 1
             continue
         named.append(c)
-    group: dict[tuple[str, str, str | None, str | None, str | None], int] = {}
+    group: dict[tuple[Any, ...], int] = {}
     for c in named:
         group[key_of(c)] = group.get(key_of(c), 0) + 1
 
     def dedupe(
-        cands: list[Candidate], whole: set[tuple[str, str, str | None, str | None, str | None]]
+        cands: list[Candidate], whole: set[tuple[Any, ...]]
     ) -> list[Candidate]:
         out: list[Candidate] = []
-        seen: set[tuple[str, str, str | None, str | None, str | None]] = set()
+        seen: set[tuple[Any, ...]] = set()
         for c in cands:
             stateful = c.checked is not None or c.pressed is not None or c.expanded is not None
             if key_of(c) in seen and not (stateful and key_of(c) in whole):
@@ -404,6 +405,7 @@ def menu_from_snapshot(
     mac_text: dict[int, dict[str, Any]] | None = None,
     mac_sections: dict[int, str] | None = None,
     mac_links: dict[int, str] | None = None,
+    mac_controls: dict[int, tuple[str, str]] | None = None,
 ) -> NativeMenu:
     """Build the System 1 menu from a Driver ``get_window_state`` result (SDK object or dict)."""
     b = budget or MenuBudget()
@@ -511,6 +513,10 @@ def menu_from_snapshot(
             placeholder=placeholder,
             value_truncated=value_truncated,
             href=(mac_links or {}).get(int(idx)) if ax_role == "AXLink" else None,
+            native_dom_id=(mac_controls or {}).get(int(idx), (None, None))[0]
+            if ax_role in ("AXButton", "AXPopUpButton") else None,
+            native_document_url=(mac_controls or {}).get(int(idx), (None, None))[1]
+            if ax_role in ("AXButton", "AXPopUpButton") else None,
         )
         candidates.append(cand)
         tokens[cand.id] = str(token)
@@ -542,9 +548,25 @@ def menu_from_snapshot(
         href=candidate.href if (candidate.role, candidate.label, candidate.section) in qualified_groups else None,
         href_qualified=True if (candidate.role, candidate.label, candidate.section) in qualified_groups else None,
     ) if candidate.role == "link" else candidate for candidate in candidates]
-    identity_counts = Counter((c.role, c.label, c.section, qualified_link_href(c)) for c in candidates)
+    control_groups: dict[tuple[str, str, str | None], list[Candidate]] = {}
+    for candidate in candidates:
+        if candidate.role in ("button", "combobox"):
+            control_groups.setdefault((candidate.role, candidate.label, candidate.section), []).append(candidate)
+    qualified_controls = {
+        key for key, peers in control_groups.items()
+        if all(peer.native_dom_id and peer.native_document_url for peer in peers)
+        and len({peer.native_dom_id for peer in peers}) == len(peers)
+        and len({peer.native_document_url for peer in peers}) == 1
+    }
+    candidates = [dataclasses.replace(
+        candidate,
+        native_dom_id=candidate.native_dom_id if (candidate.role, candidate.label, candidate.section) in qualified_controls else None,
+        native_document_url=candidate.native_document_url if (candidate.role, candidate.label, candidate.section) in qualified_controls else None,
+        native_control_qualified=True if (candidate.role, candidate.label, candidate.section) in qualified_controls else None,
+    ) if candidate.role in ("button", "combobox") else candidate for candidate in candidates]
+    identity_counts = Counter((c.role, c.label, c.section, qualified_link_href(c), qualified_control_identity(c)) for c in candidates)
     ambiguous_targets = frozenset(
-        c.id for c in candidates if identity_counts[c.role, c.label, c.section, qualified_link_href(c)] > 1
+        c.id for c in candidates if identity_counts[c.role, c.label, c.section, qualified_link_href(c), qualified_control_identity(c)] > 1
     )
     text_roster = sorted(
         (c.role, c.label, c.section or "", c.placeholder or "")
@@ -1079,15 +1101,18 @@ class NativeBridge:
         mac_text = None
         mac_sections = None
         mac_links = None
+        mac_controls = None
         if sys.platform == "darwin":
             mac_text = await asyncio.to_thread(self._web_text_attributes, snap)
             mac_sections = await asyncio.to_thread(self._web_control_sections, snap)
             mac_links = await asyncio.to_thread(self._link_resources, snap)
+            mac_controls = await asyncio.to_thread(self._control_identities, snap, mac_sections)
         observed = menu_from_snapshot(
             snap, budget=budget, include_menu_bar=include_menu_bar, linux_text=linux_text,
             mac_text=mac_text,
             mac_sections=mac_sections,
             mac_links=mac_links,
+            mac_controls=mac_controls,
         )
         if linux_text is not None:
             # Linux window managers may report the desktop ID as the app name.
@@ -1199,6 +1224,56 @@ class NativeBridge:
                 continue
         return out
 
+    def _control_identities(self, snapshot: Any, sections: dict[int, str]) -> dict[int, tuple[str, str]]:
+        rows = list(_get(snapshot, "elements") or [])
+        by_index = {int(_get(row, "element_index")): row for row in rows if _get(row, "element_index") is not None}
+        groups: dict[tuple[str, str, str | None], list[Any]] = {}
+        for row in rows:
+            role, index = _get(row, "role"), _get(row, "element_index")
+            if (role not in ("AXButton", "AXPopUpButton") or index is None
+                    or not _get(row, "element_token") or _get(row, "enabled") is False):
+                continue
+            label = _clean(_get(row, "label"), _LABEL_CAP) or _clean(_get(row, "value_description"), _LABEL_CAP) or ROLE_MAP[role][0]
+            if ROLE_MAP[role][0] in _TEXT_ROLES and _get(row, "value") not in (None, "") and label == _clean(_get(row, "value"), _LABEL_CAP):
+                label = ROLE_MAP[role][0]
+            groups.setdefault((ROLE_MAP[role][0], label, sections.get(int(index)) or _section_of(row, by_index)), []).append(row)
+        out: dict[int, tuple[str, str]] = {}
+        attempts = 0
+        for peers in sorted(groups.values(), key=lambda group: len(group) == 1):
+            if attempts + len(peers) > 64:
+                continue
+            proofs = []
+            for row in peers:
+                attempts += 1
+                try:
+                    frame, label = _get(row, "frame"), _get(row, "label") or _get(row, "value_description")
+                    coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
+                    if any(value is None for value in coordinates) or not isinstance(label, str) or not label:
+                        break
+                    expected_frame = self.ax.Frame(*coordinates)
+                    element = self.ax.resolve(self.pid, self.window_id, _get(row, "role"), expected_frame)
+                    actual_frame = self.ax.frame_of(element)
+                    if actual_frame is None or not actual_frame.near(expected_frame):
+                        break
+                    proof = self.ax.control_identity(element, label=label)
+                    if not proof:
+                        break
+                    proofs.append(proof)
+                except Exception:  # noqa: BLE001 - partial group evidence never clears ambiguity
+                    break
+            if len(proofs) != len(peers):
+                continue
+            try:
+                if (len({proof["dom_id"] for proof in proofs}) != len(peers)
+                        or len({proof["document_url"] for proof in proofs}) != 1
+                        or not all(self.ax.same_element(proofs[0]["web_area"], proof["web_area"]) for proof in proofs)):
+                    continue
+            except Exception:  # noqa: BLE001, S112 - unknown ancestor equality cannot qualify the group
+                continue
+            out.update({int(_get(row, "element_index")): (proof["dom_id"], proof["document_url"])
+                        for row, proof in zip(peers, proofs, strict=True)})
+        return out
+
     def _web_control_sections(self, snapshot: Any) -> dict[int, str]:
         """Recover explicit AX ancestor labels for repeated web controls whose groups CUA drops.
 
@@ -1280,15 +1355,17 @@ class NativeBridge:
         cand = nm.menu.candidate(id)
         assert cand is not None
         self._require_unambiguous(nm, id)
-        key = (cand.role, cand.label, cand.section, cand.placeholder, qualified_link_href(cand))
+        key = (cand.role, cand.label, cand.section, cand.placeholder, qualified_link_href(cand), qualified_control_identity(cand))
         same = fresh.menu.candidate(id)
+        if same is not None and qualified_control_identity(cand) is not None and qualified_control_identity(same) != qualified_control_identity(cand):
+            raise NativeBridgeError("target_changed", "the selected native control identity changed or lost document qualification")
         if same is not None and qualified_link_href(cand) is not None and qualified_link_href(same) != qualified_link_href(cand):
             raise NativeBridgeError("target_changed", "the selected native link resource changed or lost qualification")
-        if same is not None and (same.role, same.label, same.section, same.placeholder, qualified_link_href(same)) == key:
+        if same is not None and (same.role, same.label, same.section, same.placeholder, qualified_link_href(same), qualified_control_identity(same)) == key:
             hit = same
         else:
             matches = [c for c in fresh.menu.candidates
-                       if (c.role, c.label, c.section, c.placeholder, qualified_link_href(c)) == key]
+                       if (c.role, c.label, c.section, c.placeholder, qualified_link_href(c), qualified_control_identity(c)) == key]
             if len(matches) != 1:
                 raise NativeBridgeError(
                     "target_changed",

@@ -1,0 +1,44 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______ test_native_scoped_dom_controls_remain_distinct_and_persist[940] _______
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x11a1eed40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x11a2c4bc0>
+selected = 940
+
+    @pytest.mark.parametrize("selected", [940, 941])
+    def test_native_scoped_dom_controls_remain_distinct_and_persist(world, fw, monkeypatch, selected):
+        _, _, clicked = _native_identified_controls(world, monkeypatch)
+        assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+        saved = [row for row in _state(fw)["last_candidates"] if row["label"] == "More options for Song"]
+>       assert [row["id"] for row in saved] == [940, 941]
+E       assert [940] == [940, 941]
+E         
+E         Right contains one more item: 941
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:2101: AssertionError
+_______ test_native_scoped_dom_controls_remain_distinct_and_persist[941] _______
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x11a264f40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x11a1560c0>
+selected = 941
+
+    @pytest.mark.parametrize("selected", [940, 941])
+    def test_native_scoped_dom_controls_remain_distinct_and_persist(world, fw, monkeypatch, selected):
+        _, _, clicked = _native_identified_controls(world, monkeypatch)
+        assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+        saved = [row for row in _state(fw)["last_candidates"] if row["label"] == "More options for Song"]
+>       assert [row["id"] for row in saved] == [940, 941]
+E       assert [940] == [940, 941]
+E         
+E         Right contains one more item: 941
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:2101: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_native_scoped_dom_controls_remain_distinct_and_persist[940]
+FAILED tests/test_session_scenarios.py::test_native_scoped_dom_controls_remain_distinct_and_persist[941]
+2 failed, 289 deselected in 0.65s
