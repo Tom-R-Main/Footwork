@@ -1,0 +1,3 @@
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/ax/bindings.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/bring_to_front.rs'
+/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/package

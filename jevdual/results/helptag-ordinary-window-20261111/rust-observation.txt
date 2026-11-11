@@ -1,0 +1,22 @@
+    Finished `release` profile [optimized] target(s) in 0.65s
+     Running unittests src/lib.rs (/Users/thomasmain/projects/footwork/output/cua-046-upgrade/target/release/deps/platform_macos-8f1d1af4e6a6e40d)
+
+running 15 tests
+test tools::bring_to_front::tests::request_acceptance_or_z_order_alone_is_only_partial ... ok
+test tools::bring_to_front::tests::process_oracle_falls_back_to_workspace_only_when_skylight_is_unavailable ... ok
+test tools::bring_to_front::tests::no_request_and_no_observed_effect_is_failed ... ok
+test tools::bring_to_front::tests::a_sibling_window_of_the_same_application_in_front_is_only_partial ... ok
+test tools::bring_to_front::tests::exact_success_requires_process_focus_and_front_position_on_its_display ... ok
+test tools::bring_to_front::tests::help_tag_target_is_not_an_activation_target ... ok
+test tools::bring_to_front::tests::a_sibling_in_front_on_the_same_display_takes_the_front_position ... ok
+test tools::bring_to_front::tests::a_sibling_in_front_on_another_display_leaves_the_target_front_where_it_sits ... ok
+test tools::bring_to_front::tests::without_display_bounds_every_window_of_the_process_competes ... ok
+test tools::bring_to_front::tests::help_tag_unknown_interactive_or_ambiguous_peers_remain_competitors ... ok
+test tools::bring_to_front::tests::help_tag_only_proven_passive_surface_yields_to_requested_key_window ... ok
+test tools::bring_to_front::tests::verified_result_is_the_only_non_error_exact_mapping ... ok
+test tools::bring_to_front::tests::partial_result_keeps_request_process_and_exact_effect_distinct ... ok
+test tools::bring_to_front::tests::another_applications_window_on_top_does_not_unverify_the_reveal ... ok
+test tools::bring_to_front::tests::structured_frontmost_pid_never_echoes_stale_workspace_state_as_authoritative ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 730 filtered out; finished in 0.00s
+

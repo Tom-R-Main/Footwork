@@ -53,3 +53,16 @@ server persistence. The SDK retains its existing no-retry behavior for uncertain
 Build the CLI and SDK together with Rust 1.97.1, `--release --locked --jobs 2`, and `CUA_DRIVER_GIT_SHA` set to the complete release commit. Build helpers verify and restore the exact source archive. No published native binary is substituted into the custom distribution. See [`../../docs/upstream/cua-driver-build.md`](../../docs/upstream/cua-driver-build.md).
 
 The published macOS universal2 wheel used only for ABI comparison has SHA256 `80b1be9b9a6aca20d733b10f221f9e478e862cfbcac4ce413ce5af7c141aa46c`. Its successful import establishes matched published bindings, not the required cleanup guarantee. Final qualification must use the custom wheel and retain its checksum.
+
+## Optional project-local passive HelpTag overlay
+
+`patches/ordinary-helptag.patch` and its JSON manifest reconstruct a separately
+versioned `cleanup2.focus1.helptag1` candidate on top of the unchanged canonical
+focus1 archive. `scripts/build_cua_helptag_overlay.py` verifies the base/patch/final
+hashes, prepares a temporary package and uses the canonical offline native hook.
+This does not change the default dependency, canonical source archive, six Python
+binding files or historical focus1 overlay. The explicit project overlay carries
+its own native/wheel/runtime hash qualification under the corresponding results.
+Only positively identified exact owned passive AXHelpTags can be excluded from
+ordinary-window ranking; unknown/interactive peers stay ranked and HelpTag targets
+refuse before activation. Activation sequence and success predicates are unchanged.

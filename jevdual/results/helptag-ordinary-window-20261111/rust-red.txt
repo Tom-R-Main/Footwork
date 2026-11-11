@@ -1,0 +1,32 @@
+   Compiling platform-macos v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/source/libs/cua-driver/rust/crates/platform-macos)
+    Finished `release` profile [optimized] target(s) in 36.38s
+     Running unittests src/lib.rs (/Users/thomasmain/projects/footwork/output/cua-046-upgrade/target/release/deps/platform_macos-8f1d1af4e6a6e40d)
+
+running 3 tests
+test tools::bring_to_front::tests::help_tag_unknown_interactive_or_ambiguous_peers_remain_competitors ... ok
+test tools::bring_to_front::tests::help_tag_target_is_not_an_activation_target ... FAILED
+test tools::bring_to_front::tests::help_tag_only_proven_passive_surface_yields_to_requested_key_window ... FAILED
+
+failures:
+
+---- tools::bring_to_front::tests::help_tag_target_is_not_an_activation_target stdout ----
+
+thread 'tools::bring_to_front::tests::help_tag_target_is_not_an_activation_target' (132752595) panicked at crates/platform-macos/src/tools/bring_to_front.rs:946:9:
+assertion failed: target_is_help_tag(&[help_tag(7)], 42, 7)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- tools::bring_to_front::tests::help_tag_only_proven_passive_surface_yields_to_requested_key_window stdout ----
+
+thread 'tools::bring_to_front::tests::help_tag_only_proven_passive_surface_yields_to_requested_key_window' (132752594) panicked at crates/platform-macos/src/tools/bring_to_front.rs:940:13:
+assertion `left == right` failed
+  left: Some(8)
+ right: Some(7)
+
+
+failures:
+    tools::bring_to_front::tests::help_tag_only_proven_passive_surface_yields_to_requested_key_window
+    tools::bring_to_front::tests::help_tag_target_is_not_an_activation_target
+
+test result: FAILED. 1 passed; 2 failed; 0 ignored; 0 measured; 740 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p platform-macos --lib`
