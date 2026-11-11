@@ -1269,6 +1269,70 @@ async def cmd_park(args: Any) -> int:
 
 
 async def cmd_start(args: Any) -> int:
+    """Initialize a replacement separately; a refused start must not erase the prior trail."""
+    directory = session_dir(args.session)
+    names = ("session.json", "session.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS)
+    prior = directory / "session.json"
+    durable = bool(getattr(args, "authority", None)) or (prior.exists() and SessionState.load(directory).authority)
+    if durable or not any((directory / name).exists() for name in names):
+        return await _start_new(args)
+    import shutil
+    import tempfile
+
+    with tempfile.TemporaryDirectory(prefix=".footwork-start-", dir=directory.parent) as temporary:
+        staged = Path(temporary)
+        staged_args = copy.copy(args)
+        staged_args.session = str(staged)
+        staged_args._staged_start = True
+        try:
+            code = await _start_new(staged_args)
+        except Exception as exc:  # noqa: BLE001 - failed replacement diagnostics belong to its staging area
+            from jevdual.cli import _stopped
+
+            return _stopped(staged_args, exc)
+        if code != 0:
+            return code
+        replacement = json.loads((staged / "session.json").read_text())
+        replacement["dir"] = str(directory)
+        (staged / "session.json").write_text(json.dumps(replacement, indent=1))
+        # Initialization and driver cleanup succeeded. Publish only owned session files,
+        # retaining the old versions until all replacement writes can be rolled back.
+        backup = staged / "previous"
+        backup.mkdir()
+        touched = []
+        try:
+            for name in names:
+                target = directory / name
+                if target.exists():
+                    os.replace(target, backup / name)
+                touched.append(name)
+                source = staged / name
+                if source.exists():
+                    os.replace(source, target)
+            shots = staged / "screenshots"
+            if shots.exists():
+                destination = directory / "screenshots"
+                destination.mkdir(exist_ok=True)
+                for shot in shots.iterdir():
+                    target = destination / shot.name
+                    if target.exists():
+                        target = destination / f"{shot.stem}-{uuid.uuid4().hex}{shot.suffix}"
+                    shutil.move(str(shot), target)
+        except Exception as exc:  # noqa: BLE001 - retain old state if publication fails
+            for name in touched:
+                saved = backup / name
+                if saved.exists():
+                    os.replace(saved, directory / name)
+                else:
+                    (directory / name).unlink(missing_ok=True)
+            from jevdual.cli import _stopped
+
+            return _stopped(staged_args, exc)
+    print(f"\nsession: {directory}  (export FOOTWORK_SESSION={directory} to omit --session)")
+    return 0
+
+
+async def _start_new(args: Any) -> int:
     from jevdual.effectors import desktop_effector, require_available
     from jevdual.native import (
         address_bar,
@@ -1508,7 +1572,8 @@ async def cmd_start(args: Any) -> int:
         state.log({"kind": "start", "task": args.task, "requirements": state.requirements, "app": args.app})
         nm, _ = await observe(state, bridge)
         print(render_observation(nm, text_chars=args.text, receipt=None))
-        print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
+        if not getattr(args, "_staged_start", False):
+            print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
     finally:
         await driver.shutdown()
     return 0
@@ -1543,7 +1608,8 @@ async def _start_browser(args: Any, d: Path) -> int:
         state.log({"kind": "start", "task": args.task, "requirements": state.requirements, "mode": "browser"})
         nm, _ = await observe(state, bridge)
         print(render_observation(nm, text_chars=args.text, receipt=None))
-        print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
+        if not getattr(args, "_staged_start", False):
+            print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
     finally:
         await driver.shutdown()
     return 0

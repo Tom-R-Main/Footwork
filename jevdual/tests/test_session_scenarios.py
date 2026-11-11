@@ -3900,3 +3900,109 @@ def test_opaque_unframed_named_peer_still_blocks_unknown_or_changed_census(world
     assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
     assert not any(row.get('native_control_opaque') for row in _state(fw)['last_candidates'])
     assert clicked == []
+
+
+@pytest.mark.parametrize('failure', ['stale_id', 'binding_mismatch', 'observation', 'shutdown'])
+def test_failed_replacement_start_preserves_all_existing_session_files(world, fw, monkeypatch, failure):
+    assert fw('start', 'Retain previous task', '--app', 'Calculator')[0] == 0
+    names = ('session.json', 'session.jsonl', 'carries.json', 'destinations.json', 'grants.json')
+    for name in names[2:]: (fw.session / name).write_text('{"previous":true}')
+    before = {name: (fw.session / name).read_bytes() for name in names}
+    original = world.get_window_state
+
+    async def observe(inp):
+        assert all((fw.session / name).read_bytes() == value for name, value in before.items())
+        if failure == 'observation': raise RuntimeError('new observation unavailable')
+        result = await original(inp)
+        if failure == 'binding_mismatch': result['pid'] = 88
+        return result
+
+    async def shutdown():
+        if failure == 'shutdown': raise RuntimeError('new driver cleanup failed')
+
+    monkeypatch.setattr(world, 'get_window_state', observe)
+    monkeypatch.setattr(world, 'shutdown', shutdown)
+    code, out, err = fw('start', 'Replacement task', '--app', 'Calculator', '--pid', '77',
+                        '--window-id', '99999' if failure == 'stale_id' else '40335')
+    assert code != 0, (out, err)
+    assert all((fw.session / name).exists() and (fw.session / name).read_bytes() == value for name, value in before.items())
+    assert world.tool_calls == [] and world.presses == []
+
+
+def test_successful_replacement_start_publishes_new_binding_without_old_authority(world, fw, monkeypatch):
+    world.base.update(pid=77, window_id=40335, app_name='Calculator')
+    assert fw('start', 'Old task', '--app', 'Calculator')[0] == 0
+    names = ('session.json', 'session.jsonl', 'carries.json', 'destinations.json', 'grants.json')
+    for name in names[2:]: (fw.session / name).write_text('{"previous":true}')
+    before = {name: (fw.session / name).read_bytes() for name in names}
+    original = world.get_window_state
+
+    async def observe(inp):
+        assert all((fw.session / name).read_bytes() == value for name, value in before.items())
+        return await original(inp)
+
+    monkeypatch.setattr(world, 'get_window_state', observe)
+    code, out, err = fw('start', 'New task', '--app', 'Calculator', '--pid', '77', '--window-id', '40335')
+    assert code == 0, (out, err)
+    state = _state(fw)
+    assert state['dir'] == str(fw.session) and state['task'] == 'New task'
+    assert state['pid'] == 77 and state['window_id'] == 40335
+    assert all(not (fw.session / name).exists() for name in names[2:])
+    assert 'Old task' not in (fw.session / 'session.jsonl').read_text()
+    assert '.footwork-start-' not in out + (fw.session / 'session.json').read_text()
+    assert not list(fw.session.parent.glob('.footwork-start-*'))
+
+
+def test_replacement_publication_failure_rolls_back_old_session_without_error_log_mutation(world, fw, monkeypatch):
+    from jevdual import session
+
+    assert fw('start', 'Old task', '--app', 'Calculator')[0] == 0
+    names = ('session.json', 'session.jsonl', 'carries.json', 'destinations.json', 'grants.json')
+    for name in names[2:]: (fw.session / name).write_text('{"previous":true}')
+    before = {name: (fw.session / name).read_bytes() for name in names}
+    replace = session.os.replace
+
+    def fail_publish(source, destination):
+        if str(source).endswith('session.jsonl') and 'previous' not in str(source) and Path(destination) == fw.session / 'session.jsonl':
+            raise OSError('publication unavailable')
+        return replace(source, destination)
+
+    from pathlib import Path
+
+    monkeypatch.setattr(session.os, 'replace', fail_publish)
+    assert fw('start', 'New task', '--app', 'Calculator')[0] == 7
+    assert all((fw.session / name).read_bytes() == value for name, value in before.items())
+
+
+def test_browser_replacement_start_retains_real_directory_tab_and_screenshots(world, fw, monkeypatch):
+    from pathlib import Path
+
+    from jevdual import browser_driver, session
+    from jevdual.native import NativeBridge
+
+    assert fw('start', 'Old native task', '--app', 'Calculator')[0] == 0
+    old_image = fw.session / 'screenshots' / 'obs-000-1234.png'
+    old_image.write_bytes(b'previous screenshot')
+    monkeypatch.setattr(session.time, 'time', lambda: 1234)
+    original = world.get_window_state
+
+    async def capture(inp):
+        assert _state(fw)['task'] == 'Old native task'
+        Path(inp.screenshot_out_file).write_bytes(b'new screenshot')
+        return await original(inp)
+
+    async def browser(url, policy):
+        bridge = NativeBridge(world, 77, 40335)
+        bridge.tab_id = 'owned-browser-tab'
+        return world, bridge
+
+    monkeypatch.setattr(world, 'get_window_state', capture)
+    monkeypatch.setattr(browser_driver, 'bind_footwork_chrome', browser)
+    code, out, err = fw('start', 'New browser task', '--browser')
+    assert code == 0, (out, err)
+    state = _state(fw)
+    assert state['mode'] == 'browser' and state['browser_tab'] == 'owned-browser-tab'
+    assert state['dir'] == str(fw.session)
+    assert old_image.read_bytes() == b'previous screenshot'
+    assert any(image.read_bytes() == b'new screenshot' for image in old_image.parent.iterdir())
+    assert '.footwork-start-' not in out + (fw.session / 'session.json').read_text() + (fw.session / 'session.jsonl').read_text()
