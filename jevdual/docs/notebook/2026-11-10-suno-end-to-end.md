@@ -498,3 +498,22 @@ Test: frozen a64b6f2, exact candidate B legacy URL and actual204.8second baselin
 Predicts: From196.8seconds is retained and one application creates a204.8second new private derivative with a measurably attenuated final8seconds and preserved earlier musical content.
 Against: field/selection differs, any guard refuses, application outcome is unknown, original is overwritten, derivative identity or duration differs, export fails or measured audio does not support the selected fade. Do not infer a saved song from button delivery or a closed editor alone.
 Refs: output/suno-20261110/legacy-fade-mode.txt; output/suno-20261110/exports/candidate-b.mp3.validation.json; output/suno-20261110/exports/candidate-b-loudness.txt
+
+## SUNU47 · update · 2026-11-10 20:38
+Observed: one legacy Fade out application created a distinct song ID and actual song-page/player href. One included owner MP3 unlock and the repeated exact-modal project-save recipe produced candidate-b-fade-8s.mp3,204.8seconds,4693331bytes, SHA2569a02e024eb44a7b2caa8864a545b1db27a804b4539b6e06b71cb10bf1c5ae924; full decode succeeds and embedded comment names the new song ID. Direct optional HTTP metadata reads for source and derivative returned403; no bypass or retry was attempted.
+Inferred: there is an actual saved exported derivative, rather than only an accepted edit click. Original retention and Library reopen still need UI verification.
+Next: compare actual ending audio and reopen through Library, without repeating Fade out or unlock.
+Refs: output/suno-20261110/legacy-apply-fade-once.txt; output/suno-20261110/legacy-fade-result-look.txt; output/suno-20261110/fade-derivative-song-page.txt; output/suno-20261110/exports/candidate-b-fade-8s.mp3.validation.json; output/suno-20261110/save-fade-b-destination-confirmed.txt
+
+## SUNU48 · update · 2026-11-10 20:38
+Observed: decoded first196second float-PCM hashes differ. Independent8kHz mono alignment finds zero lag and prefix correlation0.99842, with prefix RMS0.3035dB lower in the derivative. Relative ending RMS attenuation grows across successive2second windows from-0.45to-1.93to-5.57to-10.90dB over the requested final8seconds. Both have1638400samples at the diagnostic rate.
+Inferred: progressive ending attenuation supports the requested fade; earlier musical content is strongly correlated but not sample-identical and has a small level shift. The data do not establish why that broader difference occurred, exact full-band/stereo preservation or aesthetic improvement.
+Next: blind boundary comparison in both orders and neutral full-track critique under the amended unchanged eleven-call cap; human preference remains separate.
+Refs: output/suno-20261110/exports/original-prefix-196s.hash; output/suno-20261110/exports/fade-prefix-196s.hash; output/suno-20261110/exports/fade-comparison.json
+
+## SUN37 · prediction · 2026-11-10 20:38
+Hypothesis: Qwen can make a stable coarse comparison of these actual endings despite unqualified fine timing, when source identity is hidden and order is reversed.
+Test: same neutral prompt, final24seconds from each real export with2second separation, both orders; no target brief or edited-version label. Record which underlying version each answer prefers or whether it cannot distinguish, audible reasons, actual bytes, provider/usage and errors. One request per order with reasoning off and120second limit; no retry.
+Predicts: any asserted preference or distinction refers consistently to the same underlying ending across both orders, with plausible audible evidence.
+Against: preference follows first/second position rather than version, accounts contradict, differences are invented, transport is unsupported or the model cannot distinguish. A stable preference is not proof of human taste agreement.
+Refs: docs/experiments/openrouter-media-live-20261110.md; output/suno-20261110/exports/fade-comparison.json
