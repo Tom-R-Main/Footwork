@@ -108,7 +108,11 @@ def test_bind_allows_restored_durable_secret_and_preserves_legacy_mode(
         monkeypatch.delenv("FOOTWORK_SECRET_FIXTURE", raising=False)
     else:
         monkeypatch.setenv("FOOTWORK_SECRET_FIXTURE", value)
-    driver, bridge = object(), SimpleNamespace()
+    class Driver:
+        async def list_windows(self, request):
+            return SimpleNamespace(windows=[SimpleNamespace(window_id=2)])
+
+    driver, bridge = Driver(), SimpleNamespace()
     monkeypatch.setattr(cua_driver.CuaDriver, "create", staticmethod(lambda **kwargs: driver))
     monkeypatch.setattr(session, "_native_bridge", lambda *args: bridge)
     assert asyncio.run(session.bind(state)) == (driver, bridge)

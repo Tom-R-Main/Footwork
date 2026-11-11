@@ -237,3 +237,19 @@ def test_point_rests_over_a_collapsed_group_and_refuses_an_ambiguous_name(world,
     assert _moves(filmed.events)[-1] == (585.0, 520.0) and world.presses == []
     code, _, err = fw("point", "Scene")
     assert code == 4 and "2 elements" in err
+
+
+def test_filmed_start_reserves_desktop_and_subject_until_explicit_handoff(world, fw, filmed):
+    from jevdual.coordination import Coordinator, app_resource
+
+    _start(fw)
+    state = _state(fw)
+    token = state["coordination_token"]
+    reservation, = Coordinator().status()["reservations"]
+    assert reservation["token"] == token and reservation["state"] == "active"
+    assert set(reservation["resources"]) == {"desktop", app_resource("Calculator")}
+    Coordinator().revoke(token)
+    before = len(filmed.events)
+    code, _, err = fw("park")
+    assert code == 7 and "reservation unavailable" in err
+    assert len(filmed.events) == before

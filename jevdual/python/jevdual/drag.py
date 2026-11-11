@@ -23,6 +23,9 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
+from jevdual.coordination import CoordinationError, checkpoint
+from jevdual.coordination import cancelled as ownership_cancelled
+
 #: tags every event this module posts (kCGEventSourceUserData), so a tap or a log can tell them apart
 TAG = 0x46574447  # "FWDG"
 ESCAPE_KEYCODE = 53
@@ -181,7 +184,7 @@ def play_move(
     t0 = last_post = clock.now()
     try:
         for s in plan.samples[1:]:
-            if cancelled():
+            if cancelled() or ownership_cancelled():
                 raise _Abort("cancelled")
             cause = poster.foreign_input()
             if cause is not None:
@@ -200,9 +203,9 @@ def play_move(
             result.posted_drags += 1
             last, last_post = (s.x, s.y), now
         result.outcome = "arrived"
-    except _Abort as abort:
-        result.outcome = f"aborted:{abort.cause}"
-        result.causes.append(abort.cause)
+    except (_Abort, CoordinationError) as abort:
+        result.outcome = f"aborted:{getattr(abort, 'cause', 'cancelled')}"
+        result.causes.append(getattr(abort, "cause", "cancelled"))
     return result
 
 
@@ -228,7 +231,7 @@ def play_drag(
             result.released_at = at
 
     def check() -> None:
-        if cancelled():
+        if cancelled() or ownership_cancelled():
             raise _Abort("cancelled")
         cause = poster.foreign_input()
         if cause is not None:
@@ -237,6 +240,7 @@ def play_drag(
         if math.dist(loc, last) > tolerance:
             raise _Abort(f"pointer_contended:pointer_moved {loc[0]:.1f},{loc[1]:.1f}")
 
+    checkpoint()
     poster.down(*plan.start)
     try:
         t0 = clock.now() + settings.press_hold_s
@@ -258,9 +262,9 @@ def play_drag(
         check()
         release(plan.end)
         result.outcome = "dropped"
-    except _Abort as abort:
-        result.outcome = f"aborted:{abort.cause}"
-        result.causes.append(abort.cause)
+    except (_Abort, CoordinationError) as abort:
+        result.outcome = f"aborted:{getattr(abort, 'cause', 'cancelled')}"
+        result.causes.append(getattr(abort, "cause", "cancelled"))
         if settings.cancel_with_escape:
             poster.escape()
             result.escape_sent = True
@@ -317,13 +321,16 @@ class QuartzPoster:
         q.CGEventPost(q.kCGHIDEventTap, event)
 
     def move(self, x: float, y: float) -> None:
+        checkpoint()
         self._mouse(self.q.kCGEventMouseMoved, x, y)
 
     def down(self, x: float, y: float) -> None:
+        checkpoint()
         self._own[self.q.kCGEventLeftMouseDown] += 1
         self._mouse(self.q.kCGEventLeftMouseDown, x, y, 1)
 
     def drag(self, x: float, y: float) -> None:
+        checkpoint()
         self._mouse(self.q.kCGEventLeftMouseDragged, x, y)
 
     def up(self, x: float, y: float) -> None:
