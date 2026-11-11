@@ -117,3 +117,10 @@ Refs: output/suno-20261110/draft-brief/lyrics-short.txt; docs/notebook/2026-11-1
 Observed: the times in the headings of ADP1 to ADPU7 (2026-11-11-app-adaptation-review.md) and AAD1 to AAD8 (this file) were not read from the clock and run ahead of it; AAD8's says 00:10. The clock read 17:10 when AAD8 was committed. The commit times are the record of order: ADP1 to ADPU7 and AAD1 to AAD5 in 5aeb174 at 16:54; AADU1, AADU2 and AAD6 in 7dbcf12 at 17:00; AADU3 in b2db468 at 17:01; AADU4 in 6468f99 at 17:04; AAD7 in ecf994a at 17:06; AADU5 in bfa8e5d at 17:09; AAD8 in 30c838e at 17:10. Each prediction was committed before the run that resolves it.
 Next: entries from here use the clock.
 Refs: git log of docs/notebook/2026-11-11-app-adaptation.md
+
+## AADU7 · update · 2026-11-11 17:11
+Resolves: AAD8 = inconclusive
+Observed: suno.com/create, opened in the signed-in test profile with no input, rendered one visible textarea, empty (value, innerText and textContent all length 0), and no contenteditable editor (results/signin-20261111/create-draft-read.json). The draft that held the verified lyrics on 2026-11-10 is not what this page shows: either the draft was cleared later that run (SUNU19 records New draft emptying the lyrics), drafts are kept per browser, or the lyrics editor only renders in a mode that needs a click.
+Inferred: no page in reach holds the 461-character lyrics, so the node-text comparison cannot run without entering them. Entering them is input into the owner's Suno account.
+Next: ask the owner whether the lyrics may be put into a Suno draft in the test profile for this read, and removed afterwards. Without that, AAD3's question stays open and the clipboard stays the verifier for this editor.
+Refs: results/signin-20261111/create-draft-read.json; scripts/probe_lyrics_node_text.py; docs/notebook/2026-11-10-suno-end-to-end.md
