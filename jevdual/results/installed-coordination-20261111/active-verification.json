@@ -1,0 +1,66 @@
+{
+  "prefix": "/Users/thomasmain/.local/share/footwork/releases/f821f032a81ba567a4c20298789fae55f79edc78",
+  "python": "/Users/thomasmain/.local/share/footwork/releases/f821f032a81ba567a4c20298789fae55f79edc78/bin/python",
+  "bundle": "/Users/thomasmain/.local/share/footwork/bundles/f821f032a81ba567a4c20298789fae55f79edc78",
+  "host": "/Users/thomasmain/.local/share/footwork/qualification/macos-coordination-20261111/host",
+  "wheel_checks": {
+    "jevdual": {
+      "version": "0.0.1",
+      "checked_files": 218,
+      "location": "/Users/thomasmain/.local/share/footwork/releases/f821f032a81ba567a4c20298789fae55f79edc78/lib/python3.12/site-packages"
+    },
+    "cua-driver": {
+      "version": "0.46.0+footwork.5486b624.cleanup2",
+      "checked_files": 8,
+      "location": "/Users/thomasmain/.local/share/footwork/releases/f821f032a81ba567a4c20298789fae55f79edc78/lib/python3.12/site-packages"
+    }
+  },
+  "commands": [
+    {
+      "args": [
+        "--json",
+        "tools"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/active-verification-tools.stdout"
+    },
+    {
+      "args": [
+        "--json",
+        "doctor"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/active-verification-doctor.stdout"
+    },
+    {
+      "args": [
+        "--json",
+        "schema",
+        "desktop",
+        "control"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/active-verification-control.stdout"
+    },
+    {
+      "args": [
+        "control",
+        "status"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/active-verification-status.stdout",
+      "active_requests": 0,
+      "active_reservations": 0
+    }
+  ],
+  "failures": [],
+  "imports": {
+    "jevdual": "/Users/thomasmain/.local/share/footwork/releases/f821f032a81ba567a4c20298789fae55f79edc78/lib/python3.12/site-packages/jevdual/__init__.py",
+    "cua_driver": "/Users/thomasmain/.local/share/footwork/releases/f821f032a81ba567a4c20298789fae55f79edc78/lib/python3.12/site-packages/cua_driver/__init__.py"
+  },
+  "passed": true
+}

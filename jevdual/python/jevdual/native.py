@@ -42,6 +42,7 @@ from pathlib import Path
 from typing import Any
 
 from jevdual import pointer
+from jevdual.coordination import checkpoint, owned_thread
 from jevdual.menu import (
     Candidate,
     ControlState,
@@ -2845,7 +2846,7 @@ class NativeBridge:
                 return refused
             here = start
         if math.dist(here, start) >= 1.0:
-            approach = await asyncio.to_thread(
+            approach = await owned_thread(
                 d.play_move, d.plan_path(here, start, settings, seed=seed + "|approach"), poster, clock, settings
             )
             if approach.outcome != "arrived":
@@ -2868,7 +2869,7 @@ class NativeBridge:
                 if trace is not None:
                     trace.finish(poster, result.outcome if result else "exception", result)
 
-        result = await asyncio.to_thread(play)
+        result = await owned_thread(play)
         if self.filmed is not None:
             self.filmed.last_pointer = result.released_at
             if result.outcome != "dropped":
@@ -3005,7 +3006,7 @@ class NativeBridge:
             if operation == "click":
                 outcome: Any = await self._click_token(token)
             elif operation == "type" and sys.platform == "linux":
-                return await asyncio.to_thread(self._type_linux, nm, id, cand, text or "")
+                return await owned_thread(self._type_linux, nm, id, cand, text or "")
             elif operation == "type" and id in nm.web:
                 return await self._type_web(nm, id, cand, token, text or "")
             elif operation == "type":
@@ -3120,7 +3121,8 @@ class NativeBridge:
             )
         # activate first, then raise: activating the app re-keys whichever of its windows was key, so a raise
         # made before it is undone (Q19 frozen re-drive: the bound TextEdit document never became key)
-        await asyncio.to_thread(self.policy._activity().activate, self.pid)
+        checkpoint()
+        await owned_thread(self.policy._activity().activate, self.pid)
         self.ax.raise_window(self.pid, self.window_id)
 
     async def _front_and_key(self) -> None:
@@ -3157,12 +3159,12 @@ class NativeBridge:
             trace = GestureTrace(self.filmed, "title_bar_click", "key window", poster.location(), point)
             outcome = "exception"
             try:
-                await asyncio.to_thread(self.ax.click_at, *point, trace=trace)
+                await owned_thread(self.ax.click_at, *point, trace=trace)
                 outcome = "returned"
             finally:
                 trace.finish(poster, outcome)
         else:
-            await asyncio.to_thread(self.ax.click_at, *point)
+            await owned_thread(self.ax.click_at, *point)
         if await keyed():
             return
         raise NativeBridgeError(

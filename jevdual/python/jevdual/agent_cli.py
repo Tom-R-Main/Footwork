@@ -11,6 +11,10 @@ from collections.abc import Callable
 from pathlib import Path
 
 LEGACY = (
+    "control",
+    "park",
+    "point",
+    "keep-out",
     "run",
     "menu",
     "apps",

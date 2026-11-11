@@ -1,0 +1,21 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_x11_screens_on_one_server_share_desktop_ownership ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-11/test_x11_screens_on_one_server0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9506b51490>
+
+    async def test_x11_screens_on_one_server_share_desktop_ownership(tmp_path, monkeypatch):
+        store = Coordinator(tmp_path / "registry.sqlite")
+        monkeypatch.setenv("DISPLAY", ":0.0")
+        async with store.claim("screen-zero", ["desktop"]):
+            monkeypatch.setenv("DISPLAY", ":0.1")
+            with pytest.raises(CoordinationError, match="busy"):
+                async with store.claim("screen-one", ["desktop"], timeout=0):
+>                   pytest.fail("two screens on one X server acquired the same pointer")
+E                   Failed: two screens on one X server acquired the same pointer
+
+tests/test_coordination.py:410: Failed
+=========================== short test summary info ============================
+FAILED tests/test_coordination.py::test_x11_screens_on_one_server_share_desktop_ownership
+1 failed in 0.23s

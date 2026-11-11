@@ -22,8 +22,9 @@ The session's mode decides which deliveries it may use:
   session, because the person is assumed present.
 * ``foreground_permitted``: background, and foreground when the person has been idle for ``idle_s``; with
   recent input the step yields (``human_active``) instead of taking the front. Never desktop.
-* ``exclusive_desktop``: everything; the harness assumes a desktop reserved for automation (the native
-  evaluation runs, a VM). No gate.
+* ``exclusive_desktop``: permits every delivery without the human-idle gate. The CLI separately
+  acquires a shared desktop claim through readback and cleanup; filmed sessions reserve it across
+  command gaps. Other people and nonparticipating programs are outside cooperative ownership.
 
 Restoring the front app afterwards does not make a foreground step equivalent to a background one: the
 person's keystrokes during the interval land in the agent's window. The idle gate makes that unlikely;

@@ -1,0 +1,5 @@
+{
+  "actual_runtime_commit": "cd630bb3a37ecdb7efbb658086fbfe568a356f48",
+  "copied_fixture_baseline_label": "ac892a75211900ca6e252a46bca4f0da2362af6b",
+  "note": "The diagnostic runner copied the old fixture label; runtime was cd630bb with no timing-related product change. Final ordinary CLI evidence uses the correct final source identity 768967a. Raw diagnostic trace and stage summary retain the actual event timings."
+}

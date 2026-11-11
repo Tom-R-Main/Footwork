@@ -1,0 +1,28 @@
+{
+  "source_runtime_commit": "bfbd44eb2e09b1b4fef2f9a11567f4bc1ee64d1b",
+  "installed_source_commit": "2930faf4bfa5818fb33bd3369e92f843810ded13",
+  "focused_tests": {
+    "passed": 197
+  },
+  "full_run": {
+    "passed": 3015,
+    "skipped": 106,
+    "failed": 1,
+    "failure": "duplicate notebook entry identifier; corrected in2930faf; no runtime change"
+  },
+  "corrected_notebook_test": "passed",
+  "final_notebook_validator": "passed",
+  "full_ruff": "passed",
+  "result_redaction": {
+    "changed_files": 0
+  },
+  "retained_output_normalization": {
+    "operation": "trailing whitespace only",
+    "files": [
+      "offline-full.txt",
+      "delivery-red.txt",
+      "delivery-fence-red.txt"
+    ],
+    "raw_private_directory": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/raw-check-output"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "head": "a3f3ff5b14ca8cd2e0e83e77d5e5b434d8f1127b",
+  "checks": [
+    {
+      "name": "test",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/Tom-R-Main/Footwork/actions/runs/43054331655/job/130639624388"
+    },
+    {
+      "name": "consumer-artifact (macos-15, 3.12, 45)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Tom-R-Main/Footwork/actions/runs/43054331519/job/130639623402"
+    },
+    {
+      "name": "light-consumer (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Tom-R-Main/Footwork/actions/runs/43054331519/job/130639622733"
+    },
+    {
+      "name": "light-consumer (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Tom-R-Main/Footwork/actions/runs/43054331519/job/130639622624"
+    },
+    {
+      "name": "consumer-artifact (macos-15, 3.14, 45)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Tom-R-Main/Footwork/actions/runs/43054331519/job/130639622373"
+    },
+    {
+      "name": "consumer-artifact (ubuntu-latest, 3.12, 60)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/Tom-R-Main/Footwork/actions/runs/43054331519/job/130639622078"
+    },
+    {
+      "name": "installed-linux-browser",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Tom-R-Main/Footwork/actions/runs/43054331429/job/130639620813"
+    }
+  ],
+  "linux_consumer_failure_excerpt": [
+    "2026-11-11T16:22:56.6424889Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/libx/libxdmcp/libxdmcp-dev_1.1.5-2_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6426790Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/x/xtrans/xtrans-dev_1.6.0-1build1_all.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6429102Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/libx/libxcb/libxcb1-dev_1.17.0-2ubuntu1_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6430568Z E: Failed to fetch mirror+file:/etc/apt/apt-mirrors.txt/pool/main/libx/libx11/libx11-dev_1.8.13-1ubuntu0.1_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6432156Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/libx/libxext/libxext-dev_1.3.4-1build3_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6433799Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/libx/libxfixes/libxfixes-dev_6.0.0-2build2_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6435437Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/libx/libxi/libxi-dev_1.8.2-2_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6436964Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/libx/libxkbcommon/libxkbcommon-dev_1.13.1-1_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6438504Z E: Failed to fetch mirror+file:/etc/apt/apt-mirrors.txt/pool/main/libx/libxtst/libxtst-dev_1.2.5-1ubuntu0.1_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6439871Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/libg/libglvnd/libegl1_1.7.0-3_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6441388Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/w/wayland/libwayland-bin_1.24.0-2_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6442740Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/w/wayland/libwayland-dev_1.24.0-2_amd64v3.deb  Temporary failure resolving 'security.ubuntu.com'",
+    "2026-11-11T16:22:56.6444231Z E: Unable to fetch some archives, maybe run apt update or try with --fix-missing?",
+    "2026-11-11T16:22:56.6456550Z ##[error]Process completed with exit code 100.",
+    "2026-11-11T16:22:56.8258705Z ##[error]No files were found with the provided path: output/ci-package/receipt.json"
+  ]
+}

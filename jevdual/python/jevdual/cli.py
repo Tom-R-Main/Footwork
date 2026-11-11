@@ -381,7 +381,7 @@ def build_parser() -> argparse.ArgumentParser:
         default="background_only",
         choices=("background_only", "foreground_permitted", "exclusive_desktop"),
         help="execution posture: background_only never takes the foreground (default); foreground_permitted "
-        "takes it only after 3 s without your input; exclusive_desktop assumes nobody is using this desktop",
+        "takes it only after 3 s without your input; exclusive_desktop claims this desktop for the command",
     )
     r.set_defaults(fn=cmd_run)
     m = sub.add_parser("menu", help="print the menu System 1 would see")
@@ -443,7 +443,7 @@ def build_parser() -> argparse.ArgumentParser:
         default="background_only",
         choices=("background_only", "foreground_permitted", "exclusive_desktop"),
         help="execution posture: background_only never takes the foreground (default); foreground_permitted "
-        "takes it only after 3 s without your input; exclusive_desktop assumes nobody is using this desktop",
+        "takes it only after 3 s without your input; exclusive_desktop claims this desktop for the command",
     )
     st.add_argument(
         "--pointer-motion",
@@ -604,6 +604,9 @@ def build_parser() -> argparse.ArgumentParser:
     stt.add_argument("--operation", help="select one operation owned by this session")
     common(stt)
     stt.set_defaults(fn=S.cmd_status)
+    from jevdual.coordination_cli import add_parser
+
+    add_parser(sub)
     return ap
 
 
@@ -643,7 +646,9 @@ def _stopped(args: argparse.Namespace, exc: BaseException) -> int:
     message = " ".join(raw_message.split())[:300]
     print(f"stopped: {reason}: {message}", file=sys.stderr)
     session = getattr(args, "session", None)
-    if session and (not getattr(args, "_durable_command", False) or getattr(args, "_authority_owned", False)):
+    if session and getattr(args, "_session_owned", False) and (
+        not getattr(args, "_durable_command", False) or getattr(args, "_authority_owned", False)
+    ):
         from pathlib import Path
 
         d = Path(session)

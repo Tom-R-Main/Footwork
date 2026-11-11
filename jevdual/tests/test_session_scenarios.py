@@ -611,6 +611,10 @@ def test_numeric_controls_keep_read_only_snapshot_values(world, fw):
 
 def test_linux_browser_start_recovers_window_in_exact_owned_profile(world, fw, monkeypatch):
     from jevdual import browser_driver as browser
+    from jevdual import browser_target
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": ""}]))
 
     opened, running = [], [False]
     monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
@@ -4171,3 +4175,141 @@ def test_public_foreground_intent_refusal_keeps_sanitized_diagnostic_without_inp
     assert proof['exact_window_effect']['verified'] is False
     assert private not in log + out + err
     assert action['dispatched'] is False
+
+
+def test_changed_bound_window_is_unavailable_before_any_input(world, fw):
+    code, out, error = fw("start", "Keep the original window", "--app", "Calculator")
+    assert code == 0, error
+    target = _id(out, "7")
+    world.window_id += 1
+    code, _, error = fw("do", "click", str(target), "--no-judge")
+    assert code == 7 and "target_changed" in error
+    assert world.presses == []
+
+
+async def test_capability_respects_another_operator_app_reservation(text_capability, monkeypatch):
+    from jevdual.coordination import CoordinationError, Coordinator, app_resource
+
+    world, tools = text_capability
+    observation = await tools.call("bind", {"name": "destination"})
+    target = _append_target(observation)["target"]
+    original = Coordinator.claim
+    monkeypatch.setattr(Coordinator, "claim", lambda self, *args, **kwargs:
+                        original(self, *args, **{**kwargs, "timeout": 0}))
+    store = Coordinator()
+    async with store.claim("film", [app_resource("TextEdit")]) as claim:
+        reservation = store.reserve(claim, claim.resources)
+    try:
+        with pytest.raises(CoordinationError, match="busy"):
+            await tools.call("act", {"target": target, "text": "must wait"})
+        assert world.writes == []
+    finally:
+        store.revoke(reservation)
+
+
+def test_reserved_native_session_can_observe_while_competing_subject_waits(world, fw, monkeypatch):
+    """The public next-command boundary must not wait on its own reservation's waiter."""
+    import asyncio
+    import threading
+    import time
+
+    from jevdual.coordination import CoordinationError, Coordinator, app_resource
+
+    assert fw('start', 'Keep owned calculation available', '--app', 'Calculator')[0] == 0
+    code, out, error = fw('control', 'reserve')
+    assert code == 0, error
+    reservation = json.loads(out)['token']
+    store = Coordinator()
+    original = Coordinator.claim
+    monkeypatch.setattr(Coordinator, 'claim', lambda self, *args, **kwargs:
+                        original(self, *args, **{**kwargs, 'timeout': .2}))
+    entered = []
+
+    def compete():
+        async def run():
+            try:
+                async with original(store, 'competing observer', [app_resource('Calculator')], timeout=3):
+                    entered.append(True)
+            except CoordinationError:
+                pass
+        asyncio.run(run())
+
+    thread = threading.Thread(target=compete)
+    thread.start()
+    waiter = None
+    try:
+        for _ in range(100):
+            waiter = next((r for r in store.status()['requests']
+                           if r['owner'] == 'competing observer' and r['state'] == 'waiting'), None)
+            if waiter:
+                break
+            time.sleep(.01)
+        assert waiter is not None, 'competing waiter must be established before the owner command'
+        code, _, error = fw('look')
+        assert code == 0, error
+        assert not entered, 'the competitor must remain excluded while the take owns its subject'
+        assert any(r['token'] == waiter['token'] and r['state'] == 'waiting'
+                   for r in store.status()['requests'])
+    finally:
+        if waiter:
+            store.revoke(waiter['token'])
+        thread.join(4)
+        store.revoke(reservation)
+    assert not thread.is_alive()
+
+
+def test_filmed_point_retains_failed_gap_without_delivering_a_late_event(world, fw, monkeypatch):
+    """A recorded stall must identify its failed interval, not only earlier successful gaps."""
+    from jevdual import ax, drag
+
+    from tests.test_filmed_session import CONTENT, WINDOW, Clock, Poster
+
+    class StalledClock(Clock):
+        def sleep_until(self, t):
+            self.t = max(self.t, t) + .2
+
+    Poster.events, Poster.pointer = [], (600., 400.)
+    monkeypatch.setattr(drag, 'QuartzPoster', Poster)
+    monkeypatch.setattr(drag, 'MonotonicClock', StalledClock)
+    monkeypatch.setattr(ax, 'window_element', lambda pid, wid: object())
+    monkeypatch.setattr(ax, 'frame_of', lambda element: ax.Frame(*WINDOW))
+    monkeypatch.setattr(ax, 'web_area_frame', lambda element: ax.Frame(*CONTENT))
+    monkeypatch.setattr(ax, 'labelled', lambda element, label:
+                        [('AXButton', 'Owned target', ax.Frame(440, 400, 30, 30))])
+    assert fw('start', 'Film only owned target', '--app', 'Calculator', '--mode', 'exclusive_desktop',
+              '--pointer-motion', 'filmed')[0] == 0
+    code, _, error = fw('point', 'Owned target')
+    assert code == 4 and 'playback_stall' in error
+    record = _state(fw)['filmed']['gestures'][-1]
+    assert record['stall_gap_ms'] >= 200
+    assert record['max_gap_ms'] == 0 and record['posted'] == 0
+    assert Poster.events == [] and world.presses == []
+
+
+def test_filmed_point_waits_for_delayed_native_delivery_before_claiming_arrival(world, fw, monkeypatch):
+    """Public point must not classify our queued move as foreign or save an undelivered endpoint."""
+    from jevdual import ax, drag
+
+    from tests.test_filmed_session import CONTENT, WINDOW
+    from tests.test_pointer_delivery import Clock, DelayedPoster
+
+    clock = Clock()
+    poster = DelayedPoster(clock)
+    poster.pointer = (600., 400.)
+    monkeypatch.setattr(drag, 'QuartzPoster', lambda: poster)
+    monkeypatch.setattr(drag, 'MonotonicClock', lambda: clock)
+    monkeypatch.setattr(ax, 'window_element', lambda pid, wid: object())
+    monkeypatch.setattr(ax, 'frame_of', lambda element: ax.Frame(*WINDOW))
+    monkeypatch.setattr(ax, 'web_area_frame', lambda element: ax.Frame(*CONTENT))
+    monkeypatch.setattr(ax, 'labelled', lambda element, label:
+                        [('AXButton', 'Owned target', ax.Frame(440, 400, 30, 30))])
+    assert fw('start', 'Film only owned target', '--app', 'Calculator', '--mode', 'exclusive_desktop',
+              '--pointer-motion', 'filmed')[0] == 0
+    code, _, error = fw('point', 'Owned target')
+    assert code == 0, error
+    record = _state(fw)['filmed']
+    assert record['take_ended'] is None
+    assert record['last_pointer'] == [455., 415.]
+    assert poster.location() == (455., 415.) and poster.max_pending == 1
+    assert record['gestures'][-1]['outcome'] == 'arrived'
+    assert world.presses == []

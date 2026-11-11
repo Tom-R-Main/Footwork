@@ -1,0 +1,10 @@
+{
+  "kind": "non-input real-registry timing probe",
+  "samples": 300,
+  "median_check_ms": 0.08639553561806679,
+  "max_check_ms": 1.0771660599857569,
+  "p99_check_ms": 0.691042048856616,
+  "planned_samples": 87,
+  "max_planned_gap_ms": 10.423690197656876,
+  "threshold_ms": 50.0
+}

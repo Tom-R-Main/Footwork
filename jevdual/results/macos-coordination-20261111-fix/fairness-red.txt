@@ -1,0 +1,295 @@
+FFFF......                                                               [100%]
+=================================== FAILURES ===================================
+_ test_reservation_owner_continues_past_waiter_blocked_by_its_reservation[reserved0-waiting0-requested0] _
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-740/test_reservation_owner_continu0')
+reserved = ['desktop'], waiting = ['desktop'], requested = ['desktop']
+
+    @pytest.mark.parametrize(
+        ("reserved", "waiting", "requested"),
+        [
+            (["desktop"], ["desktop"], ["desktop"]),
+            (["app/editor"], ["app/editor/window/2"], ["app/editor"]),
+            (["app/editor/window/1"], ["app/editor"], ["app/editor/window/1"]),
+            (["desktop"], ["desktop", "app/other"], ["app/other"]),
+        ],
+    )
+    async def test_reservation_owner_continues_past_waiter_blocked_by_its_reservation(
+        tmp_path, reserved, waiting, requested
+    ):
+        store = Coordinator(tmp_path / "registry.sqlite")
+        async with store.claim("film", reserved) as initial:
+            token = store.reserve(initial, reserved)
+        earlier, task = await _queued_claim(store, "competitor", waiting)
+        try:
+>           async with store.claim("film", requested, reservation=token, timeout=0):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+jevdual/tests/test_coordination.py:468: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <jevdual.coordination.Claim object at 0x106cd5820>
+
+    async def __aenter__(self):
+        self.lock = (self.registry.locks / self.token).open("a+")
+        fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            with self.registry.db() as db:
+                db.execute("INSERT INTO requests (token,owner,desktop,resources,state,reservation,pid) "
+                           "VALUES (?,?,?,?,?,?,?)", (self.token, self.owner, self.desktop,
+                           json.dumps(self.resources), "waiting", self.reservation, os.getpid()))
+            deadline = asyncio.get_running_loop().time() + self.timeout
+            while True:
+                with self.registry.db() as db:
+                    self.registry._prune(db)
+                    own = db.execute("SELECT * FROM requests WHERE token=?", (self.token,)).fetchone()
+                    if own is None or own["state"] == "revoked":
+                        raise CoordinationError("waiting request canceled")
+                    if self.reservation:
+                        saved = db.execute("SELECT * FROM reservations WHERE token=?",
+                                           (self.reservation,)).fetchone()
+                        if (saved is None or saved["state"] != "active" or saved["owner"] != self.owner
+                                or saved["desktop"] != self.desktop):
+                            raise CoordinationError("reservation unavailable; explicit handoff required")
+                    blocked = False
+                    for row in db.execute("SELECT * FROM reservations WHERE state='active'"):
+                        if row["token"] == self.reservation:
+                            continue
+                        if self.registry.overlap(self.desktop, self.resources, row):
+                            blocked = True
+                    for row in db.execute("SELECT * FROM requests WHERE token != ?", (self.token,)):
+                        # Active revoked commands retain ownership through cleanup.
+                        # Earlier conflicting waiters are a fairness barrier.
+                        if ((row["state"] in {"active", "revoked", "orphaned"} or row["seq"] < own["seq"])
+                                and self.registry.overlap(self.desktop, self.resources, row)):
+                            blocked = True
+                    if not blocked:
+                        db.execute("UPDATE requests SET state='active' WHERE token=?", (self.token,))
+                        return self
+                if asyncio.get_running_loop().time() >= deadline:
+>                   raise CoordinationError("resources busy; inspect footwork control status for owners and waiters")
+E                   jevdual.coordination.CoordinationError: resources busy; inspect footwork control status for owners and waiters
+
+jevdual/python/jevdual/coordination.py:214: CoordinationError
+_ test_reservation_owner_continues_past_waiter_blocked_by_its_reservation[reserved1-waiting1-requested1] _
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-740/test_reservation_owner_continu1')
+reserved = ['app/editor'], waiting = ['app/editor/window/2']
+requested = ['app/editor']
+
+    @pytest.mark.parametrize(
+        ("reserved", "waiting", "requested"),
+        [
+            (["desktop"], ["desktop"], ["desktop"]),
+            (["app/editor"], ["app/editor/window/2"], ["app/editor"]),
+            (["app/editor/window/1"], ["app/editor"], ["app/editor/window/1"]),
+            (["desktop"], ["desktop", "app/other"], ["app/other"]),
+        ],
+    )
+    async def test_reservation_owner_continues_past_waiter_blocked_by_its_reservation(
+        tmp_path, reserved, waiting, requested
+    ):
+        store = Coordinator(tmp_path / "registry.sqlite")
+        async with store.claim("film", reserved) as initial:
+            token = store.reserve(initial, reserved)
+        earlier, task = await _queued_claim(store, "competitor", waiting)
+        try:
+>           async with store.claim("film", requested, reservation=token, timeout=0):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+jevdual/tests/test_coordination.py:468: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <jevdual.coordination.Claim object at 0x107fe8080>
+
+    async def __aenter__(self):
+        self.lock = (self.registry.locks / self.token).open("a+")
+        fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            with self.registry.db() as db:
+                db.execute("INSERT INTO requests (token,owner,desktop,resources,state,reservation,pid) "
+                           "VALUES (?,?,?,?,?,?,?)", (self.token, self.owner, self.desktop,
+                           json.dumps(self.resources), "waiting", self.reservation, os.getpid()))
+            deadline = asyncio.get_running_loop().time() + self.timeout
+            while True:
+                with self.registry.db() as db:
+                    self.registry._prune(db)
+                    own = db.execute("SELECT * FROM requests WHERE token=?", (self.token,)).fetchone()
+                    if own is None or own["state"] == "revoked":
+                        raise CoordinationError("waiting request canceled")
+                    if self.reservation:
+                        saved = db.execute("SELECT * FROM reservations WHERE token=?",
+                                           (self.reservation,)).fetchone()
+                        if (saved is None or saved["state"] != "active" or saved["owner"] != self.owner
+                                or saved["desktop"] != self.desktop):
+                            raise CoordinationError("reservation unavailable; explicit handoff required")
+                    blocked = False
+                    for row in db.execute("SELECT * FROM reservations WHERE state='active'"):
+                        if row["token"] == self.reservation:
+                            continue
+                        if self.registry.overlap(self.desktop, self.resources, row):
+                            blocked = True
+                    for row in db.execute("SELECT * FROM requests WHERE token != ?", (self.token,)):
+                        # Active revoked commands retain ownership through cleanup.
+                        # Earlier conflicting waiters are a fairness barrier.
+                        if ((row["state"] in {"active", "revoked", "orphaned"} or row["seq"] < own["seq"])
+                                and self.registry.overlap(self.desktop, self.resources, row)):
+                            blocked = True
+                    if not blocked:
+                        db.execute("UPDATE requests SET state='active' WHERE token=?", (self.token,))
+                        return self
+                if asyncio.get_running_loop().time() >= deadline:
+>                   raise CoordinationError("resources busy; inspect footwork control status for owners and waiters")
+E                   jevdual.coordination.CoordinationError: resources busy; inspect footwork control status for owners and waiters
+
+jevdual/python/jevdual/coordination.py:214: CoordinationError
+_ test_reservation_owner_continues_past_waiter_blocked_by_its_reservation[reserved2-waiting2-requested2] _
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-740/test_reservation_owner_continu2')
+reserved = ['app/editor/window/1'], waiting = ['app/editor']
+requested = ['app/editor/window/1']
+
+    @pytest.mark.parametrize(
+        ("reserved", "waiting", "requested"),
+        [
+            (["desktop"], ["desktop"], ["desktop"]),
+            (["app/editor"], ["app/editor/window/2"], ["app/editor"]),
+            (["app/editor/window/1"], ["app/editor"], ["app/editor/window/1"]),
+            (["desktop"], ["desktop", "app/other"], ["app/other"]),
+        ],
+    )
+    async def test_reservation_owner_continues_past_waiter_blocked_by_its_reservation(
+        tmp_path, reserved, waiting, requested
+    ):
+        store = Coordinator(tmp_path / "registry.sqlite")
+        async with store.claim("film", reserved) as initial:
+            token = store.reserve(initial, reserved)
+        earlier, task = await _queued_claim(store, "competitor", waiting)
+        try:
+>           async with store.claim("film", requested, reservation=token, timeout=0):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+jevdual/tests/test_coordination.py:468: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <jevdual.coordination.Claim object at 0x106cd4fe0>
+
+    async def __aenter__(self):
+        self.lock = (self.registry.locks / self.token).open("a+")
+        fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            with self.registry.db() as db:
+                db.execute("INSERT INTO requests (token,owner,desktop,resources,state,reservation,pid) "
+                           "VALUES (?,?,?,?,?,?,?)", (self.token, self.owner, self.desktop,
+                           json.dumps(self.resources), "waiting", self.reservation, os.getpid()))
+            deadline = asyncio.get_running_loop().time() + self.timeout
+            while True:
+                with self.registry.db() as db:
+                    self.registry._prune(db)
+                    own = db.execute("SELECT * FROM requests WHERE token=?", (self.token,)).fetchone()
+                    if own is None or own["state"] == "revoked":
+                        raise CoordinationError("waiting request canceled")
+                    if self.reservation:
+                        saved = db.execute("SELECT * FROM reservations WHERE token=?",
+                                           (self.reservation,)).fetchone()
+                        if (saved is None or saved["state"] != "active" or saved["owner"] != self.owner
+                                or saved["desktop"] != self.desktop):
+                            raise CoordinationError("reservation unavailable; explicit handoff required")
+                    blocked = False
+                    for row in db.execute("SELECT * FROM reservations WHERE state='active'"):
+                        if row["token"] == self.reservation:
+                            continue
+                        if self.registry.overlap(self.desktop, self.resources, row):
+                            blocked = True
+                    for row in db.execute("SELECT * FROM requests WHERE token != ?", (self.token,)):
+                        # Active revoked commands retain ownership through cleanup.
+                        # Earlier conflicting waiters are a fairness barrier.
+                        if ((row["state"] in {"active", "revoked", "orphaned"} or row["seq"] < own["seq"])
+                                and self.registry.overlap(self.desktop, self.resources, row)):
+                            blocked = True
+                    if not blocked:
+                        db.execute("UPDATE requests SET state='active' WHERE token=?", (self.token,))
+                        return self
+                if asyncio.get_running_loop().time() >= deadline:
+>                   raise CoordinationError("resources busy; inspect footwork control status for owners and waiters")
+E                   jevdual.coordination.CoordinationError: resources busy; inspect footwork control status for owners and waiters
+
+jevdual/python/jevdual/coordination.py:214: CoordinationError
+_ test_reservation_owner_continues_past_waiter_blocked_by_its_reservation[reserved3-waiting3-requested3] _
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-740/test_reservation_owner_continu3')
+reserved = ['desktop'], waiting = ['desktop', 'app/other']
+requested = ['app/other']
+
+    @pytest.mark.parametrize(
+        ("reserved", "waiting", "requested"),
+        [
+            (["desktop"], ["desktop"], ["desktop"]),
+            (["app/editor"], ["app/editor/window/2"], ["app/editor"]),
+            (["app/editor/window/1"], ["app/editor"], ["app/editor/window/1"]),
+            (["desktop"], ["desktop", "app/other"], ["app/other"]),
+        ],
+    )
+    async def test_reservation_owner_continues_past_waiter_blocked_by_its_reservation(
+        tmp_path, reserved, waiting, requested
+    ):
+        store = Coordinator(tmp_path / "registry.sqlite")
+        async with store.claim("film", reserved) as initial:
+            token = store.reserve(initial, reserved)
+        earlier, task = await _queued_claim(store, "competitor", waiting)
+        try:
+>           async with store.claim("film", requested, reservation=token, timeout=0):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+jevdual/tests/test_coordination.py:468: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <jevdual.coordination.Claim object at 0x10454bb00>
+
+    async def __aenter__(self):
+        self.lock = (self.registry.locks / self.token).open("a+")
+        fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            with self.registry.db() as db:
+                db.execute("INSERT INTO requests (token,owner,desktop,resources,state,reservation,pid) "
+                           "VALUES (?,?,?,?,?,?,?)", (self.token, self.owner, self.desktop,
+                           json.dumps(self.resources), "waiting", self.reservation, os.getpid()))
+            deadline = asyncio.get_running_loop().time() + self.timeout
+            while True:
+                with self.registry.db() as db:
+                    self.registry._prune(db)
+                    own = db.execute("SELECT * FROM requests WHERE token=?", (self.token,)).fetchone()
+                    if own is None or own["state"] == "revoked":
+                        raise CoordinationError("waiting request canceled")
+                    if self.reservation:
+                        saved = db.execute("SELECT * FROM reservations WHERE token=?",
+                                           (self.reservation,)).fetchone()
+                        if (saved is None or saved["state"] != "active" or saved["owner"] != self.owner
+                                or saved["desktop"] != self.desktop):
+                            raise CoordinationError("reservation unavailable; explicit handoff required")
+                    blocked = False
+                    for row in db.execute("SELECT * FROM reservations WHERE state='active'"):
+                        if row["token"] == self.reservation:
+                            continue
+                        if self.registry.overlap(self.desktop, self.resources, row):
+                            blocked = True
+                    for row in db.execute("SELECT * FROM requests WHERE token != ?", (self.token,)):
+                        # Active revoked commands retain ownership through cleanup.
+                        # Earlier conflicting waiters are a fairness barrier.
+                        if ((row["state"] in {"active", "revoked", "orphaned"} or row["seq"] < own["seq"])
+                                and self.registry.overlap(self.desktop, self.resources, row)):
+                            blocked = True
+                    if not blocked:
+                        db.execute("UPDATE requests SET state='active' WHERE token=?", (self.token,))
+                        return self
+                if asyncio.get_running_loop().time() >= deadline:
+>                   raise CoordinationError("resources busy; inspect footwork control status for owners and waiters")
+E                   jevdual.coordination.CoordinationError: resources busy; inspect footwork control status for owners and waiters
+
+jevdual/python/jevdual/coordination.py:214: CoordinationError
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_coordination.py::test_reservation_owner_continues_past_waiter_blocked_by_its_reservation[reserved0-waiting0-requested0]
+FAILED jevdual/tests/test_coordination.py::test_reservation_owner_continues_past_waiter_blocked_by_its_reservation[reserved1-waiting1-requested1]
+FAILED jevdual/tests/test_coordination.py::test_reservation_owner_continues_past_waiter_blocked_by_its_reservation[reserved2-waiting2-requested2]
+FAILED jevdual/tests/test_coordination.py::test_reservation_owner_continues_past_waiter_blocked_by_its_reservation[reserved3-waiting3-requested3]
+4 failed, 6 passed, 25 deselected in 1.63s

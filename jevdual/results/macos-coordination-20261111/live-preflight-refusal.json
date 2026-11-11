@@ -1,0 +1,23 @@
+{
+  "target": "ac892a75211900ca6e252a46bca4f0da2362af6b",
+  "python": "/Users/thomasmain/projects/footwork/jevdual/.venv/bin/python",
+  "source": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/python/jevdual/__init__.py",
+  "sdk": "0.46.0+footwork.5486b624.cleanup2",
+  "criteria": {},
+  "commands": [],
+  "initial": {
+    "screen_locked": false,
+    "idle_seconds": 0.016478792,
+    "front_pid": 55569,
+    "pointer": [
+      621.3046875,
+      838.98828125
+    ]
+  },
+  "error": "RuntimeError: real desktop locked or human active; no fixture/input started",
+  "events": [],
+  "final_pointer": [
+    621.3046875,
+    838.98828125
+  ]
+}

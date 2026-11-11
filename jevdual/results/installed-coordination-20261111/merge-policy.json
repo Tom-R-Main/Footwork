@@ -1,0 +1,9 @@
+{
+  "observed_before_merge": true,
+  "main_protected": false,
+  "required_status_checks": [],
+  "branch_rules": [],
+  "merge_method": "merge",
+  "expected_head": "a3f3ff5b14ca8cd2e0e83e77d5e5b434d8f1127b",
+  "merge_commit": "f821f032a81ba567a4c20298789fae55f79edc78"
+}

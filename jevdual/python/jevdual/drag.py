@@ -18,10 +18,14 @@ from __future__ import annotations
 
 import itertools
 import math
+import struct
 import time
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
+
+from jevdual.coordination import CoordinationError, checkpoint
+from jevdual.coordination import cancelled as ownership_cancelled
 
 #: tags every event this module posts (kCGEventSourceUserData), so a tap or a log can tell them apart
 TAG = 0x46574447  # "FWDG"
@@ -75,6 +79,10 @@ class DragResult:
     causes: list[str] = field(default_factory=list)
     max_gap_s: float = 0.0
     lateness_s: list[float] = field(default_factory=list)
+    #: The refused interval is separate from gaps preceding successful posts.
+    stall_gap_s: float | None = None
+    max_post_s: float = 0.0
+    max_ack_s: float = 0.0
 
 
 class DragRefused(ValueError):
@@ -166,6 +174,47 @@ class _Abort(Exception):
         self.cause = cause
 
 
+def _check_pointer(poster: Poster, expected: tuple[float, float], tolerance: float,
+                   cancelled: Callable[[], bool]) -> tuple[float, float]:
+    if cancelled() or ownership_cancelled():
+        raise _Abort("cancelled")
+    cause = poster.foreign_input()
+    if cause is not None:
+        raise _Abort(f"pointer_contended:{cause}")
+    loc = poster.location()
+    if math.dist(loc, expected) > tolerance:
+        raise _Abort(f"pointer_contended:pointer_moved {loc[0]:.1f},{loc[1]:.1f}")
+    return loc
+
+
+def _acknowledge(poster: Poster, clock: Clock, expected: tuple[float, float], tolerance: float,
+                 posted_at: float, settings: DragSettings, result: DragResult,
+                 cancelled: Callable[[], bool]) -> None:
+    """Do not queue another post while WindowServer's pointer still trails this one.
+
+    Quartz posting inserts into an event stream, without acknowledging delivery. Native
+    pointer coordinates round to float32; compare at that precision, without adding spatial
+    grace. The previous acknowledged sample is one step behind, inside the ORIGINAL
+    contention tolerance. Anything beyond that region still refuses immediately.
+    Posting and acknowledgement share the original gap budget; no deadline is reset here.
+    """
+    started = clock.now()
+    deadline = posted_at + settings.max_gap_s
+    try:
+        while True:
+            loc = _check_pointer(poster, expected, tolerance, cancelled)
+            now = clock.now()
+            matched = struct.pack("ff", *loc) == struct.pack("ff", *expected)
+            if now - posted_at > settings.max_gap_s or (not matched and now >= deadline):
+                result.stall_gap_s = now - posted_at
+                raise _Abort("playback_stall")
+            if matched:
+                return
+            clock.sleep_until(min(deadline, now + 0.001))
+    finally:
+        result.max_ack_s = max(result.max_ack_s, clock.now() - started)
+
+
 def play_move(
     plan: DragPlan,
     poster: Poster,
@@ -184,28 +233,24 @@ def play_move(
         trace.started(t0, clock)
     try:
         for s in plan.samples[1:]:
-            if cancelled():
-                raise _Abort("cancelled")
-            cause = poster.foreign_input()
-            if cause is not None:
-                raise _Abort(f"pointer_contended:{cause}")
-            loc = poster.location()
-            if math.dist(loc, last) > tolerance:
-                raise _Abort(f"pointer_contended:pointer_moved {loc[0]:.1f},{loc[1]:.1f}")
             due = t0 + s.t
             clock.sleep_until(due)
+            _check_pointer(poster, last, tolerance, cancelled)
             now = clock.now()
             if now - last_post > settings.max_gap_s:
+                result.stall_gap_s = now - last_post
                 raise _Abort("playback_stall")
             poster.move(s.x, s.y)
+            result.max_post_s = max(result.max_post_s, clock.now() - now)
             result.lateness_s.append(now - due)
             result.max_gap_s = max(result.max_gap_s, now - last_post)
             result.posted_drags += 1
             last, last_post = (s.x, s.y), now
+            _acknowledge(poster, clock, last, tolerance, now, settings, result, cancelled)
         result.outcome = "arrived"
-    except _Abort as abort:
-        result.outcome = f"aborted:{abort.cause}"
-        result.causes.append(abort.cause)
+    except (_Abort, CoordinationError) as abort:
+        result.outcome = f"aborted:{getattr(abort, 'cause', 'cancelled')}"
+        result.causes.append(getattr(abort, "cause", "cancelled"))
     return result
 
 
@@ -232,15 +277,9 @@ def play_drag(
             result.released_at = at
 
     def check() -> None:
-        if cancelled():
-            raise _Abort("cancelled")
-        cause = poster.foreign_input()
-        if cause is not None:
-            raise _Abort(f"pointer_contended:{cause}")
-        loc = poster.location()
-        if math.dist(loc, last) > tolerance:
-            raise _Abort(f"pointer_contended:pointer_moved {loc[0]:.1f},{loc[1]:.1f}")
+        _check_pointer(poster, last, tolerance, cancelled)
 
+    checkpoint()
     poster.down(*plan.start)
     try:
         t0 = clock.now() + settings.press_hold_s
@@ -249,24 +288,27 @@ def play_drag(
         clock.sleep_until(t0)
         last_post = clock.now()
         for s in plan.samples[1:]:
-            check()
             due = t0 + s.t
             clock.sleep_until(due)
+            check()
             now = clock.now()
             if now - last_post > settings.max_gap_s:
+                result.stall_gap_s = now - last_post
                 raise _Abort("playback_stall")
             poster.drag(s.x, s.y)
+            result.max_post_s = max(result.max_post_s, clock.now() - now)
             result.lateness_s.append(now - due)
             result.max_gap_s = max(result.max_gap_s, now - last_post)
             result.posted_drags += 1
             last, last_post = (s.x, s.y), now
+            _acknowledge(poster, clock, last, tolerance, now, settings, result, cancelled)
         clock.sleep_until(clock.now() + settings.settle_s)
         check()
         release(plan.end)
         result.outcome = "dropped"
-    except _Abort as abort:
-        result.outcome = f"aborted:{abort.cause}"
-        result.causes.append(abort.cause)
+    except (_Abort, CoordinationError) as abort:
+        result.outcome = f"aborted:{getattr(abort, 'cause', 'cancelled')}"
+        result.causes.append(getattr(abort, "cause", "cancelled"))
         if settings.cancel_with_escape:
             poster.escape()
             result.escape_sent = True
@@ -309,36 +351,48 @@ class QuartzPoster:
         )
         self._own = dict.fromkeys(self._kinds, 0)
         self._base = {k: self._count(k) for k in self._kinds}
+        # PyObjC lazily resolves these bridges. Construct/tag an event without posting it
+        # before any playback clock starts, rather than spending a cold first call in motion.
+        self._event(Quartz.kCGEventMouseMoved, 0.0, 0.0)
+        self._post = Quartz.CGEventPost
 
     def _count(self, kind: int) -> int:
         return int(
             self.q.CGEventSourceCounterForEventType(self.q.kCGEventSourceStateCombinedSessionState, kind)
         )
 
-    def _mouse(self, kind: int, x: float, y: float, click_state: int | None = None) -> None:
+    def _event(self, kind: int, x: float, y: float, click_state: int | None = None) -> Any:
         q = self.q
         event = q.CGEventCreateMouseEvent(self.source, kind, q.CGPointMake(x, y), q.kCGMouseButtonLeft)
         q.CGEventSetIntegerValueField(event, q.kCGEventSourceUserData, TAG)
         if click_state is not None:
             q.CGEventSetIntegerValueField(event, q.kCGMouseEventClickState, click_state)
+        return event
+
+    def _mouse(self, kind: int, x: float, y: float, click_state: int | None = None) -> None:
+        q = self.q
+        event = self._event(kind, x, y, click_state)
         if self._pointer_trace is None:
-            q.CGEventPost(q.kCGHIDEventTap, event)
+            self._post(q.kCGHIDEventTap, event)
         else:
             name = {q.kCGEventMouseMoved: "move", q.kCGEventLeftMouseDragged: "drag",
                     q.kCGEventLeftMouseDown: "down", q.kCGEventLeftMouseUp: "up"}[kind]
-            self._pointer_trace.post(name, x, y, lambda: q.CGEventPost(q.kCGHIDEventTap, event))
+            self._pointer_trace.post(name, x, y, lambda: self._post(q.kCGHIDEventTap, event))
 
     def record_posts(self, trace: Any) -> None:
         self._pointer_trace = trace
 
     def move(self, x: float, y: float) -> None:
+        checkpoint()
         self._mouse(self.q.kCGEventMouseMoved, x, y)
 
     def down(self, x: float, y: float) -> None:
+        checkpoint()
         self._own[self.q.kCGEventLeftMouseDown] += 1
         self._mouse(self.q.kCGEventLeftMouseDown, x, y, 1)
 
     def drag(self, x: float, y: float) -> None:
+        checkpoint()
         self._mouse(self.q.kCGEventLeftMouseDragged, x, y)
 
     def up(self, x: float, y: float) -> None:

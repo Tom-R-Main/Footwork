@@ -16,10 +16,11 @@ and pointer location); the tagged event tap of the pointer-motion plan replaces 
 
 from __future__ import annotations
 
-import asyncio
 import math
 from dataclasses import asdict, dataclass, field
 from typing import Any
+
+from jevdual.coordination import owned_thread
 
 Point = tuple[float, float]
 Rect = tuple[float, float, float, float]
@@ -149,6 +150,9 @@ class Filmed:
                 duration_s=plan.samples[-1].t,
                 posted=result.posted_drags,
                 max_gap_ms=round(result.max_gap_s * 1000, 1),
+                stall_gap_ms=(round(result.stall_gap_s * 1000, 1) if result.stall_gap_s is not None else None),
+                max_post_ms=round(result.max_post_s * 1000, 1),
+                max_ack_ms=round(result.max_ack_s * 1000, 1),
                 outcome=result.outcome,
             )
             if result.outcome != "arrived":
@@ -181,7 +185,7 @@ class Filmed:
     async def approach(self, frame: Rect, label: str) -> dict[str, Any]:
         """Travel to the centre of ``frame`` (screen points) before an action on it."""
         x, y, w, h = frame
-        return await asyncio.to_thread(self._move, (x + w / 2, y + h / 2), "approach", label)
+        return await owned_thread(self._move, (x + w / 2, y + h / 2), "approach", label)
 
     def place(self, point: Point | None = None) -> dict[str, Any]:
         """Setup only, off camera: put the pointer at ``point`` (or the rest position) in one move,
@@ -221,7 +225,7 @@ class Filmed:
         target = point if point is not None else self.rest
         if target is None:
             raise FilmedRefusal("rest_unset", "no rest position; start the take with --rest X,Y")
-        return await asyncio.to_thread(self._move, target, "park", "rest" if point is None else "waypoint")
+        return await owned_thread(self._move, target, "park", "rest" if point is None else "waypoint")
 
     async def observe_sdk(self, kind: str, label: str, target: Point | None, call: Any) -> Any:
         """Report opaque SDK input honestly; the SDK does not expose its posted samples."""

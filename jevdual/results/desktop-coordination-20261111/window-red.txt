@@ -1,0 +1,20 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_changed_bound_window_is_unavailable_before_any_input ___________
+
+world = World(calc=Calc(entry='7', acc=None, op=None, expr='', fresh=False), apps=[('Calculator', 77, True)], window_id=40336,...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x7f5cc29140e0>
+
+    def test_changed_bound_window_is_unavailable_before_any_input(world, fw):
+        code, out, error = fw("start", "Keep the original window", "--app", "Calculator")
+        assert code == 0, error
+        target = _id(out, "7")
+        world.window_id += 1
+        code, _, error = fw("do", "click", str(target), "--no-judge")
+>       assert code == 7 and "target_changed" in error
+E       assert (0 == 7)
+
+tests/test_session_scenarios.py:2324: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_changed_bound_window_is_unavailable_before_any_input
+1 failed in 0.82s

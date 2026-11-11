@@ -1,0 +1,10 @@
+{
+  "previous_release": "/Users/thomasmain/.local/share/footwork/releases/f5d41c482e158eac18b15f5820bd6be150f00097",
+  "previous_source": "f5d41c482e158eac18b15f5820bd6be150f00097",
+  "previous_metadata_sha256": "381a5b9a4aa4c09c47d00d91aa2621feee618e3c4e2f9b46449b46e7b282b26f",
+  "launcher_sha256": "8b786ec4bebfd7b8fe62e478f6e017ed2048fe31489395fc180b15978f49e793",
+  "build_head": "a3f3ff5b14ca8cd2e0e83e77d5e5b434d8f1127b",
+  "build_tree": "c0fdea1798105147ae4f4fb0617ebb1ac2292a30",
+  "cua_wheel": "/Users/thomasmain/.local/share/footwork/bundles/f5d41c482e158eac18b15f5820bd6be150f00097/cua_driver-0.46.0+footwork.5486b624.cleanup2-py3-none-macosx_13_0_arm64.whl",
+  "cua_sha256": "e1e63134456aa8bc678a0b91769c0a1532aced9c9305f720de63d47b2c9aba8c"
+}

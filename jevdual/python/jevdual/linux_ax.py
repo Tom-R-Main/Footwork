@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any, Self
 
 from jevdual.ax import AXError, Frame
+from jevdual.coordination import checkpoint
 
 __all__ = ["AXError", "Frame", "can_insert", "can_set_value", "document_path", "frame_of",
            "insert_at_end", "resolve", "set_value_ack", "text_capabilities", "value"]
@@ -383,18 +384,21 @@ def _input_text(text: str) -> None:
 
 
 def set_value_ack(element: Element, text: str) -> None:
+    checkpoint()
     _input_text(text)
     with _bound(element) as bus:
         if not _writable(bus, element):
             raise AXError("not_writable", "the exact element does not expose writable text")
         _validate(bus, element)
         # No alternate route and no retry after a lost reply.
+        checkpoint()
         reply = bus.call(element.ref, _EDITABLE, "SetTextContents", "s", (text,))
         if reply != (True,):
             raise AXError("set_value_refused", "the single exact text replacement was not acknowledged")
 
 
 def insert_at_end(element: Element, text: str, *, expect: str | None = None) -> tuple[str, str]:
+    checkpoint()
     _input_text(text)
     with _bound(element) as bus:
         before = _value(bus, element)
@@ -407,6 +411,7 @@ def insert_at_end(element: Element, text: str, *, expect: str | None = None) -> 
         _validate(bus, element)
         if _value(bus, element) != before:
             raise AXError("precondition_changed", "the field changed before insertion")
+        checkpoint()
         reply = bus.call(element.ref, _EDITABLE, "InsertText", "isi",
                          (len(before), text, len(text.encode("utf-8"))))
         if reply != (True,):

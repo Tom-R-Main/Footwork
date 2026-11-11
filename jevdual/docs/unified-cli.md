@@ -247,3 +247,8 @@ printf '%s' '{"command":"schema","args":["browser","start"]}' | footwork invoke 
 Discovery and observation do not contact a model provider. Commands that request Jev judgment or model-driven execution retain their existing credential and admission requirements. Doctor reports runtime prerequisites; it does not validate model credentials or certify a completed GUI effect.
 
 The macOS CI artifacts include `ci-agent-bundle/install.py`, its manifest and both wheels. Download the artifact for the desired Python profile, then run its installer against a new environment as above. This path needs compatible Python and either uv or venv with pip/ensurepip; the consumer does not need a checkout or Rust compiler. Native control remains scoped to its [macOS permissions](quickstart.md) and [Linux X11 preview](linux-support.md); the explicit owned CDP route has the separate headless qualification described above.
+
+Shared-desktop operators should use separate session directories and the
+[coordination and take handoff commands](desktop-coordination.md). Filmed starts
+reserve both the desktop and subject app across command gaps; `control status`
+shows owners and waiters, and exact tokens govern yield/cancellation.

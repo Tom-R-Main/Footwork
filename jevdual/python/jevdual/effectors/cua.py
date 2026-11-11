@@ -45,7 +45,9 @@ def require_available(kind: str) -> None:
 
 
 def create_desktop_driver() -> Any:
-    return _sdk().CuaDriver.create(embedded=True)
+    from jevdual.coordination import guard_driver
+
+    return guard_driver(_sdk().CuaDriver.create(embedded=True))
 
 
 def authorization_host(pid: int, *, executable: str, owned_pid: Callable[[], int | None]) -> Any:
@@ -104,7 +106,9 @@ def create_browser_driver(pid: int, *, host_factory: Callable[[int], Any]) -> An
             max_idle_ttl_seconds=1800,
         ),
     )
-    return cd.CuaDriver.create_configured_with_authorization_host(opts, host_factory(pid)())
+    from jevdual.coordination import guard_driver
+
+    return guard_driver(cd.CuaDriver.create_configured_with_authorization_host(opts, host_factory(pid)()))
 
 
 def _frozen(value: Any) -> Mapping[str, Any] | None:

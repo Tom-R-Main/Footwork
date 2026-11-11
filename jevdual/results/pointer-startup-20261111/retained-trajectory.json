@@ -1,0 +1,21 @@
+{
+  "last_submitted": [
+    229.3391195560884,
+    294.63750253966987
+  ],
+  "final_readback": [
+    229.33912658691406,
+    294.63751220703125
+  ],
+  "same_float32": true,
+  "per_axis_error": [
+    7.030825656784145e-06,
+    9.667361382525996e-06
+  ],
+  "refused_error_point_rounded": [
+    213.0,
+    290.2
+  ],
+  "nearest_prefix_index": 14,
+  "caveat": "Rounded refusal coordinates alone do not prove input provenance."
+}
