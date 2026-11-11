@@ -7,7 +7,8 @@ import psutil
 
 from jevdual.coordination import Coordinator
 
-PRIVATE = Path('/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live')
+import os as _os
+PRIVATE = Path(_os.environ.get('FW_PROBE_PRIVATE', '/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live'))
 live = json.loads((PRIVATE/'release-live.json').read_text())
 status = Coordinator().status()
 owned = [r for r in status['reservations'] if str(r.get('owner', '')).startswith(str(PRIVATE))
@@ -54,5 +55,5 @@ record = {'target': live['target'], 'source': live['source'], 'sdk': live['sdk']
           'owned_chrome_exited': live.get('owned_chrome_exited'), 'current': current}
 record['clean'] = (not present and not status['requests'] and all(r['state'] != 'active' for r in owned)
                    and protected_same)
-Path(__file__).with_name('release-cleanup.json').write_text(json.dumps(record, indent=2)+'\n')
+(Path(_os.environ['FW_PROBE_CLEANUP']) if _os.environ.get('FW_PROBE_CLEANUP') else Path(__file__).with_name('release-cleanup.json')).write_text(json.dumps(record, indent=2)+'\n')
 print(json.dumps({k: record[k] for k in ('clean', 'owned_pids_present', 'owned_reservations', 'protected_chrome_unchanged', 'current')}, indent=2))

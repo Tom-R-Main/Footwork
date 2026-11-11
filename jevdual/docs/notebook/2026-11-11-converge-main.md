@@ -32,3 +32,12 @@ Inferred: the recorder is not what consumed the gap budget. The time went to wai
 Changes: activated per the brief's rule (every criterion passed) after confirming no Footwork process was running and the coordinator held no requests or active reservations. current moved atomically from eded45c to 6d571a1; the launcher is unchanged and eded45c is kept for rollback. Stable-launcher verification after activation passes (active-verification.json). Tradeoff, as the owner decided after CVM2: this release carries focus1 (cleanup plus foreground text focus) and lacks the HelpTag ranking repair the Suno menu route was qualified with; eded45c lacked both patches.
 Next: acknowledgement latency under concurrent desktop load needs more than one sample before the 50 ms margin is trusted; traced drags and clicks with yield or cancel mid-gesture, and the AXFocused fence against a revoked owner, remain untested live.
 Refs: results/converge-release-20261111/REPORT.md; results/converge-release-20261111/activation.json
+
+## CVM5 · prediction · 2026-11-11 18:27
+Question: is CVM4's 47.8 ms posting gap and 46.5 ms acknowledgement typical of the active release, or one slow run?
+Hypothesis: one slow run. The acknowledgement wait is main's unchanged code, which measured 9.8 ms in PSTR3, and the recorder costs about 0.01 ms per post.
+Alternatives: the converged release is slower to acknowledge every post (for example because the branch's recorder or trace setup changes timing before the first posts), so filmed moves will often approach the 50 ms limit.
+Test: three more runs of results/converge-release-20261111/release_probe.py against the active release (FW_PROBE_ACTIVE_OK=1), each in its own private directory and each gated on an unlocked screen and at least 10 s of idle, run one after another. Same owned apps and fixture; no browser profile in use is touched.
+Predicts: in all three runs every criterion passes and the largest posting gap is under 30 ms.
+Against: any run's largest gap is 40 ms or more, or any filmed move refuses on the gap limit. Decision fixed now: if two or more of the three runs reach 40 ms, or any refuses on the limit, point current back to eded45c and report; if all three are under 30 ms, keep the release; anything in between, keep it and report the spread.
+Refs: results/converge-release-20261111/REPORT.md; results/converge-release-20261111/timing-summary.json

@@ -34,7 +34,8 @@ from jevdual.posture import frontmost_pid, screen_locked
 RELEASE = Path('/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469')
 COMMAND = [str(RELEASE / 'bin/python'), '-I', '-m', 'jevdual.cli']
 HOST = Path('/Users/thomasmain/.local/share/footwork/qualification/converge-release-20261111/host')
-PRIVATE = Path('/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live')
+import os as _os
+PRIVATE = Path(_os.environ.get('FW_PROBE_PRIVATE', '/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live'))
 REPORT = PRIVATE / 'release-live.json'
 GAP_LIMIT_MS = 50.0
 IDLE_REQUIRED_S = 10.0
@@ -109,8 +110,9 @@ async def main():
         result['criteria'][name] = {'passed': bool(passed), **detail}
         write()
     if not (sys.executable.startswith(str(RELEASE)) and result['source'].startswith(str(RELEASE))
-            and result['cua_source'].startswith(str(RELEASE)) and current != RELEASE):
-        result['error'] = 'probe is not running from the unactivated release'
+            and result['cua_source'].startswith(str(RELEASE))
+            and (current != RELEASE or _os.environ.get('FW_PROBE_ACTIVE_OK') == '1')):
+        result['error'] = 'probe is not running from the unactivated release (set FW_PROBE_ACTIVE_OK=1 for repeat runs of the active one)'
         write(); return 1
     if not await idle_gate(result):
         result['error'] = 'never idle and unlocked within 30 minutes; nothing started'
