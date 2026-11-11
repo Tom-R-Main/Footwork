@@ -1,0 +1,37 @@
+{
+  "source_commit": "6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "source_tree": "48c36d07a5b7f4802d7948cf63af0d4c12025372",
+  "requested_cua_wheel": {
+    "file": "output/foreground-helptag/wheelhouse/cua_driver-0.46.0+footwork.5486b624.cleanup2.focus1.helptag1-py3-none-macosx_13_0_arm64.whl",
+    "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1",
+    "sha256": "69a8fe983985c99f083438c7d985bcc31f65dce03a72407385219401805b2ad0",
+    "provenance": {
+      "sha256_matches": ["results/helptag-ordinary-window-20261111/report.md", "results/helptag-ordinary-window-20261111/runtime.json", "results/helptag-ordinary-window-20261111/frozen-runtime.json"],
+      "eight_wheel_members_match_runtime_json": true,
+      "six_python_bindings_match_PROVENANCE_md": true,
+      "patch_chain": "upstream 257a36f5 + session-cleanup-join (a50fd8e1) = 23314990 + foreground-text-focus (abc312aa) = 804aeb8b (vendored native-source.tar.gz) + ordinary-helptag (306d8f01) = 93880055",
+      "build_plan_matches_vendored_ordinary_helptag_json": true,
+      "patched_rust_files_after_hashes_match": true,
+      "native_library_rebuilt_here": false
+    }
+  },
+  "bundle_build": {
+    "builder": "scripts/build_agent_bundle.py --profile full --cua-wheel <helptag1> from a git-archive export of the source commit",
+    "result": "refused: CUA wheel does not match the exact source pin",
+    "source_pin": "pyproject.toml desktop extra cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1"
+  },
+  "installer_resolution": {
+    "command": "uv pip install --dry-run --offline --only-binary :all: jevdual-0.0.1 wheel[desktop,agent,tools] + helptag1 wheel, as install.py does",
+    "result": "unsatisfiable: jevdual[desktop] depends on cua-driver==...cleanup2.focus1",
+    "focus1_control": "the same dry run with the focus1 wheel (sha256 22083ce34aa45a2404bda2b27ad120156c7380da8a659879e00df139a69393ec) resolves offline"
+  },
+  "offline_suite": {
+    "command": "PYTHONPATH=python jevdual/.venv/bin/python -m pytest -q -p no:cacheprovider -m \"not browser\"",
+    "result": "3415 passed, 98 skipped, 61 deselected, 2 failed",
+    "failed": ["tests/contract/test_cua_driver_seams.py::test_cua_driver_version_is_pinned", "tests/test_scaffold.py::test_backend_matches_env"],
+    "failures_are_known_environment_only": true
+  },
+  "installed": false,
+  "live_run": false,
+  "current_unchanged": "/Users/thomasmain/.local/share/footwork/releases/eded45c48d550b6867e1ce1314de64c41cbcfae8"
+}
