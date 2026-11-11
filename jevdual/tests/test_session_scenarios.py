@@ -1933,6 +1933,10 @@ def test_native_enter_without_text_still_sends_one_return(world, fw):
     assert "text" not in arguments
 
 
+#: A persistent page identity (origin/main browser_target); mutating commands refuse browser sessions without one.
+_BROWSER_PIN = {"pid": 77, "incarnation": 1.0, "target": "page-1"}
+
+
 def test_native_enter_arity_guard_does_not_change_browser_route(world, fw, monkeypatch):
     from jevdual import session
 
@@ -1940,6 +1944,7 @@ def test_native_enter_arity_guard_does_not_change_browser_route(world, fw, monke
     path = fw.session / "session.json"
     raw = json.loads(path.read_text())
     raw["mode"] = "browser"
+    raw["browser_target"] = _BROWSER_PIN  # a current browser session, not a legacy one
     path.write_text(json.dumps(raw))
 
     async def browser_bind(state):
@@ -2559,7 +2564,8 @@ def test_explicit_foreground_native_click_unsupported_refuses_before_binding(wor
               "background_only" if variant == "background_only" else "foreground_permitted")[0] == 0
     if variant == "browser":
         path = fw.session / "session.json"
-        state = json.loads(path.read_text()); state["mode"] = "browser"; path.write_text(json.dumps(state))
+        state = json.loads(path.read_text()); state["mode"] = "browser"; state["browser_target"] = _BROWSER_PIN
+        path.write_text(json.dumps(state))
     if variant == "nonmac":
         from jevdual import native
         monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
@@ -2956,7 +2962,8 @@ def test_foreground_web_range_unsupported_refuses_before_binding(world, fw, monk
               "background_only" if variant == "background_only" else "foreground_permitted")[0] == 0
     if variant == "browser":
         path = fw.session / "session.json"
-        state = json.loads(path.read_text()); state["mode"] = "browser"; path.write_text(json.dumps(state))
+        state = json.loads(path.read_text()); state["mode"] = "browser"; state["browser_target"] = _BROWSER_PIN
+        path.write_text(json.dumps(state))
 
     def forbidden(**kwargs):
         pytest.fail("unsupported selected range must refuse before binding")
@@ -2981,7 +2988,8 @@ def test_explicit_foreground_web_type_rejects_unsupported_before_binding(world, 
     assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", posture)[0] == 0
     if variant == "browser":
         path = fw.session / "session.json"
-        raw = json.loads(path.read_text()); raw["mode"] = "browser"; path.write_text(json.dumps(raw))
+        raw = json.loads(path.read_text()); raw["mode"] = "browser"; raw["browser_target"] = _BROWSER_PIN
+        path.write_text(json.dumps(raw))
     if variant == "old_runtime":
         monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2")
 
@@ -4046,9 +4054,12 @@ def test_replacement_publication_failure_rolls_back_old_session_without_error_lo
 def test_browser_replacement_start_retains_real_directory_tab_and_screenshots(world, fw, monkeypatch):
     from pathlib import Path
 
-    from jevdual import browser_driver, session
+    from jevdual import browser_driver, browser_target, session
     from jevdual.native import NativeBridge
 
+    # The owned Chrome's page catalogue (origin/main browser_target), as main's browser start tests supply it.
+    monkeypatch.setattr(browser_target, '_catalog', lambda pid: (
+        {'pid': pid, 'incarnation': 1.0}, [{'type': 'page', 'id': 'page-1', 'url': 'app://Calculator'}]))
     assert fw('start', 'Old native task', '--app', 'Calculator')[0] == 0
     old_image = fw.session / 'screenshots' / 'obs-000-1234.png'
     old_image.write_bytes(b'previous screenshot')
@@ -4057,7 +4068,8 @@ def test_browser_replacement_start_retains_real_directory_tab_and_screenshots(wo
 
     async def capture(inp):
         assert _state(fw)['task'] == 'Old native task'
-        Path(inp.screenshot_out_file).write_bytes(b'new screenshot')
+        if inp.screenshot_out_file:  # main's page-identity read observes once without a screenshot
+            Path(inp.screenshot_out_file).write_bytes(b'new screenshot')
         return await original(inp)
 
     async def browser(url, policy):
