@@ -24,3 +24,16 @@ Test: launch an invocation-owned headless Chrome with a private profile and fixe
 Predicts: initial pin records the owned PID/incarnation/profile/port and a nonempty page ID; resolution after replacement refuses the original as unavailable rather than selecting the new page.
 Against: the catalogue cannot establish the initial owned page, or resolution selects the same-URL replacement. This probe does not qualify native CUA dispatch, shared macOS input or filmed capture.
 Refs: python/jevdual/browser_target.py; results/desktop-coordination-20261111/catalogue-probe.py
+
+## MCU2 · update · 2026-11-11 06:28
+Resolves: MC1 = held; MC2 = held
+Observed: frozen implementation d34cdd8 passed2988 offline source tests with23 skips and67 deselections; one deselection is the installed CUA version assertion already observed failing against the unpatched0.46.0 environment. The real invocation-owned Chrome catalogue probe pinned the original page and refused its same-URL replacement after closing the original. Repository lint,103 resource snapshot files and97 Node checks passed. GitHub authentication recovered; origin/main still matches the implementation base f5d41c4.
+Inferred: the exercised cross-process, cancellation, exact-target and readback boundaries hold in source fixtures; the real catalogue test establishes page-ID conservation independently of the CUA handle mapping.
+Next: publish the PR, inspect CI and merge after required checks succeed.
+Refs: results/desktop-coordination-20261111/pytest-final.txt; results/desktop-coordination-20261111/catalogue-probe.json; results/desktop-coordination-20261111/ruff.txt; results/desktop-coordination-20261111/resources.txt; results/desktop-coordination-20261111/node.txt
+
+## MCS1 · summary · 2026-11-11 06:28
+Established: shared per-user coordination spans session state, app/window transactions, foreground claims, whole-take reservations and the native capability worker. Explicit tokens fence cancellation and delayed cleanup; active transactions retain ownership through readback/shutdown and orphaned desktop owners require explicit input recovery. New ordinary-browser sessions pin the original process/page; native reconnects refuse missing original windows.
+Uncertain: no live macOS foreground coexistence, CUA filmed capture, native window-birth identity, independent macOS Screen Sharing desktop, cross-user ownership or control over nonparticipating software is established. Cancellation cannot interrupt inside an already admitted opaque SDK RPC. The exact patched CUA runtime is unavailable locally; CI must qualify that installation.
+Decision: implementation is ready for CI and merge with these limits documented. The broad initial mechanism held, but review exposed wrapper compatibility and entrypoint gaps that required fixes; the native-window-loss counterexample failed before its repair. Keep the successful real headless catalogue probe distinct from native/filmed qualification.
+Refs: docs/desktop-coordination.md; results/desktop-coordination-20261111/report.md; d34cdd8
