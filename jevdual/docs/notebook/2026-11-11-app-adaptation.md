@@ -103,3 +103,12 @@ Observed: in the fresh profile launched with Footwork's arguments and a debuggin
 Inferred: the first two parts of AAD7 hold: sign-in completes in a browser started with a debugging port, and it survives a restart. That Notion was reached through Google sign-in is consistent with the Google cookies but was not observed directly. Token renewal is not yet tested.
 Next: leave the browser open with the Suno and Notion tabs and repeat the check after at least one hour, then resolve AAD7.
 Refs: results/signin-20261111/after-relaunch.json; scripts/probe_signin_state.py
+
+## AAD8 · prediction · 2026-11-11 00:10
+Revises: AAD3
+Question: does page-level node text keep the characters the accessibility value dropped?
+Hypothesis: unchanged from AAD3.
+Test: AAD3 named "the song that holds the verified lyrics", but no saved song holds them: the 461-character text (output/suno-20261110/draft-brief/lyrics-short.txt, SHA-256 prefix 74338bc435e4ec1c) was only ever in Suno's Create draft (results/suno-20261110/report.md, line 17). So: in the signed-in test profile of AAD7, open suno.com/create and, without sending input, read the lyrics editor's innerText and textContent (and value, if it is a form field). In the page compute length, line-feed count and SHA-256 of each; the text itself is not stored. Proceed to the comparison only if the editor's non-line-feed characters equal the file's; otherwise the draft no longer holds these lyrics and the test is inconclusive without input.
+Predicts: innerText equals the file after at most one declared normalisation (line-ending form, or one trailing line feed), with 461 characters and 24 line feeds.
+Against: the draft holds the lyrics and innerText loses or adds line feeds with no single fixed rule. Then the controlled clipboard read stays the verifier for this editor.
+Refs: output/suno-20261110/draft-brief/lyrics-short.txt; docs/notebook/2026-11-10-suno-end-to-end.md
