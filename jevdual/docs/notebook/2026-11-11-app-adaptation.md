@@ -112,3 +112,8 @@ Test: AAD3 named "the song that holds the verified lyrics", but no saved song ho
 Predicts: innerText equals the file after at most one declared normalisation (line-ending form, or one trailing line feed), with 461 characters and 24 line feeds.
 Against: the draft holds the lyrics and innerText loses or adds line feeds with no single fixed rule. Then the controlled clipboard read stays the verifier for this editor.
 Refs: output/suno-20261110/draft-brief/lyrics-short.txt; docs/notebook/2026-11-10-suno-end-to-end.md
+
+## AADU6 · update · 2026-11-11 17:12
+Observed: the times in the headings of ADP1 to ADPU7 (2026-11-11-app-adaptation-review.md) and AAD1 to AAD8 (this file) were not read from the clock and run ahead of it; AAD8's says 00:10. The clock read 17:10 when AAD8 was committed. The commit times are the record of order: ADP1 to ADPU7 and AAD1 to AAD5 in 5aeb174 at 16:54; AADU1, AADU2 and AAD6 in 7dbcf12 at 17:00; AADU3 in b2db468 at 17:01; AADU4 in 6468f99 at 17:04; AAD7 in ecf994a at 17:06; AADU5 in bfa8e5d at 17:09; AAD8 in 30c838e at 17:10. Each prediction was committed before the run that resolves it.
+Next: entries from here use the clock.
+Refs: git log of docs/notebook/2026-11-11-app-adaptation.md
