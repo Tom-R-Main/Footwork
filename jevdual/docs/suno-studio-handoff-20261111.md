@@ -1,5 +1,21 @@
 # Suno Studio continuation at 03:00 Detroit time
 
+## Latest handoff after the scheduled run
+
+The03:00run executed. The desktop initially was unlocked and idle for5687seconds, but the old SDK refused foreground activation because a newly visible **AXHelpTag** was ranked as an ordinary competing window. Native evidence identified the exact owned HelpTag, its sole AXRaise action, unfocused/nonsettable state, and the requested standard window remaining key. No song-menu input was delivered by those refused attempts.
+
+A narrow SDK eligibility correction is now built and tested, preserving the existing activation sequence, exact process/key/window predicates and refusal of unknown/interactive competitors. Current candidate source is **8e977ba**, SDK **0.46.0+footwork.5486b624.cleanup2.focus1.helptag1**. Use this new project-local source-pinned wrapper for the next attempt:
+
+`/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/footwork`
+
+Artifact and frozen-source identities are in results/helptag-ordinary-window-20261111/{runtime,frozen-runtime}.json. The new-overlay integrated suite passes **3418tests,62skipped** with unchanged tracked source. The old overlay, default dependency and global installation are unchanged. The older runtime described below remains historical context, not the entry point for qualifying the HelpTag correction.
+
+**Actual live qualification is still pending.** Before the first new-wrapper observation/input, Footwork returned screen_locked; an independent CGSession read confirmed the lock flag. The user has been asked to unlock the Mac and reply unlocked. Do not bypass that guard, attempt OS unlock, infer availability from clock time, or reuse an old observer to look through the lock. The intended next step is still to download the already-created flat baseline, then execute ST5. No actual baseline file, EQ change or edited render exists. Exact private resources remain in output/suno-studio-20261111/resources.json.
+
+The latest failed new-wrapper start directory is output/suno-studio-20261111/helptag-live/. It is not a qualified binding. The previous completed diagnostic session is foreground-diagnostic-0300, using the older SDK; preserve its evidence and start a **new** session after actual unlock, fresh PID/window inventory and resource checks. ST12 records the new SDK menu qualification as inconclusive, while ST5 remains pending. A private local analyzer is available at output/suno-studio-20261111/analyze-eq.py; its synthetic checks qualify mechanics only, and actual UI cutoff/exports must precede its real comparison.
+
+## Original 03:00 handoff and workflow
+
 The user requested a one-time continuation at **03:00 on November 11, 2026, America/Detroit**, expecting the computer may be free. That expectation does not waive Footwork's normal idle, focus, ownership or action guards. Pause on actual human activity rather than taking the desktop. Resume this existing task and preserve its current work.
 
 ## Read first and preserve source identity
