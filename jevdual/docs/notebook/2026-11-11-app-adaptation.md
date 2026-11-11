@@ -165,3 +165,10 @@ Observed: after DevTools input of the 25 lines with one Enter per line feed, Sun
 Inferred: the prediction fails as written: innerText is not a faithful reader of this editor, and neither is textContent. The page does hold the exact text, and reading the editor's block structure recovers it; that reading was found after seeing the data, so it is a candidate for step D's typing readback, to be confirmed on a second rich editor (Notion, panel item 2) before it is relied on. DevTools input entered the lyrics exactly, as Suno's counter and the block reading agree, where the accessibility route on 2026-11-10 needed the foreground and a clipboard check.
 Next: the one-hour sign-in check; then the live pointer qualification and release for PR #24.
 Refs: results/signin-20261111/lyrics-typed.json; results/signin-20261111/lyrics-structure-and-clear.json; scripts/probe_lyrics_paste.py; scripts/probe_lyrics_structure_and_clear.py
+
+## AADU10 · update · 2026-11-11 18:12
+Resolves: AAD7 = held
+Observed: at 18:11, 62 minutes after the relaunch, with the Suno and Notion tabs left open, both Suno tabs still had a nonzero Clerk sign-in time, Notion's getSpaces still returned 200, and the Google session cookies (SID, __Secure-1PSID, __Secure-3PSID, SAPISID, LSID) were still in the profile (results/signin-20261111/after-one-hour.json, hostnames only). By then the owner had also opened the panel sites in this profile, including signed-in Figma and LinkedIn pages.
+Inferred: sign-in to Suno, Notion and Google works in a browser launched with Footwork's arguments and a debugging port, and survives a restart and an hour of use. Suno's Clerk tokens live about a minute, so an hour with the tab open implies they were renewed, though no renewal was observed directly. This was a fresh profile, not DemoGeek's default one, by the owner's decision.
+Next: none for test 1.
+Refs: results/signin-20261111/after-one-hour.json; results/signin-20261111/after-relaunch.json

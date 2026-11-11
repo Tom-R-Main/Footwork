@@ -1,0 +1,47 @@
+[
+ {
+  "url": "www.uniqlo.com"
+ },
+ {
+  "url": "www.reddit.com"
+ },
+ {
+  "url": "grok.com"
+ },
+ {
+  "url": "www.usa.gov"
+ },
+ {
+  "url": "www.bbc.com"
+ },
+ {
+  "url": "www.youtube.com"
+ },
+ {
+  "url": "www.facebook.com"
+ },
+ {
+  "url": "www.figma.com"
+ },
+ {
+  "url": "www.linkedin.com"
+ },
+ {
+  "url": "suno.com",
+  "suno_client_uat_positive": true
+ },
+ {
+  "url": "app.notion.com",
+  "notion_getSpaces": {
+   "http": 200,
+   "spaces": 1
+  }
+ },
+ {
+  "url": "www.notion.com"
+ },
+ {
+  "url": "suno.com",
+  "suno_client_uat_positive": true
+ }
+]
