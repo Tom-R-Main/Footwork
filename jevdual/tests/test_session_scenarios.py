@@ -2394,3 +2394,31 @@ def test_reserved_native_session_can_observe_while_competing_subject_waits(world
         thread.join(4)
         store.revoke(reservation)
     assert not thread.is_alive()
+
+
+def test_filmed_point_retains_failed_gap_without_delivering_a_late_event(world, fw, monkeypatch):
+    """A recorded stall must identify its failed interval, not only earlier successful gaps."""
+    from jevdual import ax, drag
+
+    from tests.test_filmed_session import CONTENT, WINDOW, Clock, Poster
+
+    class StalledClock(Clock):
+        def sleep_until(self, t):
+            self.t = max(self.t, t) + .2
+
+    Poster.events, Poster.pointer = [], (600., 400.)
+    monkeypatch.setattr(drag, 'QuartzPoster', Poster)
+    monkeypatch.setattr(drag, 'MonotonicClock', StalledClock)
+    monkeypatch.setattr(ax, 'window_element', lambda pid, wid: object())
+    monkeypatch.setattr(ax, 'frame_of', lambda element: ax.Frame(*WINDOW))
+    monkeypatch.setattr(ax, 'web_area_frame', lambda element: ax.Frame(*CONTENT))
+    monkeypatch.setattr(ax, 'labelled', lambda element, label:
+                        [('AXButton', 'Owned target', ax.Frame(440, 400, 30, 30))])
+    assert fw('start', 'Film only owned target', '--app', 'Calculator', '--mode', 'exclusive_desktop',
+              '--pointer-motion', 'filmed')[0] == 0
+    code, _, error = fw('point', 'Owned target')
+    assert code == 4 and 'playback_stall' in error
+    record = _state(fw)['filmed']['gestures'][-1]
+    assert record['stall_gap_ms'] >= 200
+    assert record['max_gap_ms'] == 0 and record['posted'] == 0
+    assert Poster.events == [] and world.presses == []

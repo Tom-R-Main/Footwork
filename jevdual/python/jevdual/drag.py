@@ -78,6 +78,9 @@ class DragResult:
     causes: list[str] = field(default_factory=list)
     max_gap_s: float = 0.0
     lateness_s: list[float] = field(default_factory=list)
+    #: The refused interval is separate from gaps preceding successful posts.
+    stall_gap_s: float | None = None
+    max_post_s: float = 0.0
 
 
 class DragRefused(ValueError):
@@ -196,8 +199,10 @@ def play_move(
             clock.sleep_until(due)
             now = clock.now()
             if now - last_post > settings.max_gap_s:
+                result.stall_gap_s = now - last_post
                 raise _Abort("playback_stall")
             poster.move(s.x, s.y)
+            result.max_post_s = max(result.max_post_s, clock.now() - now)
             result.lateness_s.append(now - due)
             result.max_gap_s = max(result.max_gap_s, now - last_post)
             result.posted_drags += 1
@@ -252,8 +257,10 @@ def play_drag(
             clock.sleep_until(due)
             now = clock.now()
             if now - last_post > settings.max_gap_s:
+                result.stall_gap_s = now - last_post
                 raise _Abort("playback_stall")
             poster.drag(s.x, s.y)
+            result.max_post_s = max(result.max_post_s, clock.now() - now)
             result.lateness_s.append(now - due)
             result.max_gap_s = max(result.max_gap_s, now - last_post)
             result.posted_drags += 1
