@@ -2422,3 +2422,32 @@ def test_filmed_point_retains_failed_gap_without_delivering_a_late_event(world, 
     assert record['stall_gap_ms'] >= 200
     assert record['max_gap_ms'] == 0 and record['posted'] == 0
     assert Poster.events == [] and world.presses == []
+
+
+def test_filmed_point_waits_for_delayed_native_delivery_before_claiming_arrival(world, fw, monkeypatch):
+    """Public point must not classify our queued move as foreign or save an undelivered endpoint."""
+    from jevdual import ax, drag
+
+    from tests.test_filmed_session import CONTENT, WINDOW
+    from tests.test_pointer_delivery import Clock, DelayedPoster
+
+    clock = Clock()
+    poster = DelayedPoster(clock)
+    poster.pointer = (600., 400.)
+    monkeypatch.setattr(drag, 'QuartzPoster', lambda: poster)
+    monkeypatch.setattr(drag, 'MonotonicClock', lambda: clock)
+    monkeypatch.setattr(ax, 'window_element', lambda pid, wid: object())
+    monkeypatch.setattr(ax, 'frame_of', lambda element: ax.Frame(*WINDOW))
+    monkeypatch.setattr(ax, 'web_area_frame', lambda element: ax.Frame(*CONTENT))
+    monkeypatch.setattr(ax, 'labelled', lambda element, label:
+                        [('AXButton', 'Owned target', ax.Frame(440, 400, 30, 30))])
+    assert fw('start', 'Film only owned target', '--app', 'Calculator', '--mode', 'exclusive_desktop',
+              '--pointer-motion', 'filmed')[0] == 0
+    code, _, error = fw('point', 'Owned target')
+    assert code == 0, error
+    record = _state(fw)['filmed']
+    assert record['take_ended'] is None
+    assert record['last_pointer'] == [455., 415.]
+    assert poster.location() == (455., 415.) and poster.max_pending == 1
+    assert record['gestures'][-1]['outcome'] == 'arrived'
+    assert world.presses == []
