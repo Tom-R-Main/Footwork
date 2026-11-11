@@ -41,3 +41,16 @@ Refs: results/save-modal-binding-20261110/focused.txt
 Question: which exact same-PID window now owns the GoToWindow field after the successfully delivered folder-navigation chord, and how is it associated with Save325928?
 Test: bounded read-only observation of bound Save325928, application focused/key window and observed GoToWindow field67 direct parent/window links; SDK bindability only for a proven associated window. No input, focus/activation or Save. Full default offline validation of frozen16a67f4 continues with production source unchanged.
 Refs: output/suno-20261110/save-b-set-filename.txt
+
+## SMB8 · update · 2026-11-10 19:54
+Resolves: SMB6 = held
+Observed: full default offline pytest on frozen16a67f4 passed3242 tests with62 opt-in skips in203.13 seconds, exit0. Production source stayed unchanged until completion; no live/browser opt-in was active. The subsequent authorized read-only nested-modal probe resolved same-PID GoToWindow326559 with direct parent Save325928 then original306787. SDK observation and direct AX resolution work, but its SDK window title is empty.
+Inferred: existing exact window guards correctly rejected parent-bound typing into the nested modal; untitled modal selection needs an explicit public CGWindow selector, handled in a separate package.
+Next: preserve the full-suite result separately, complete exact-window-start validation on its own frozen source, and keep actual input with the parent.
+Refs: results/save-modal-binding-20261110/full-default.json; results/save-modal-binding-20261110/report.md; output/suno-20261110/go-to-bindability.json
+
+## SMB9 · summary · 2026-11-10 19:54
+Established: exact owned modal resolution passes595 focused checks and3242 full offline tests; requested parents remain parents and non-key/unproven/ambiguous/over-bound sheets refuse. All worker live observations were bounded read-only; the parent reported live folder-chord success on frozen16a.
+Uncertain: no worker file save occurred. A later nested modal has separate identity and an empty SDK title, requiring explicit rebinding rather than input through its Save parent. Project destination and final filesystem result remain parent-owned live checks.
+Decision: close the resolver package with its separate full-suite JSON/report; retain original uncertain receipts and the unchanged SDK pin.
+Refs: results/save-modal-binding-20261110/report.md; results/save-modal-binding-20261110/full-default.json
