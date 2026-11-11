@@ -36,3 +36,8 @@ Test: run the complete default pytest suite using the existing focus1 overlay, w
 Predicts: the complete default suite passes with the normal opt-in skips; no ordinary-window regression or accidental native UI execution appears.
 Against: a previously passing non-modal test fails due to the new resolver or its ownership/read bounds.
 Refs: results/save-modal-binding-20261110/focused.txt
+
+## SMB7 · exploratory · 2026-11-10 19:46
+Question: which exact same-PID window now owns the GoToWindow field after the successfully delivered folder-navigation chord, and how is it associated with Save325928?
+Test: bounded read-only observation of bound Save325928, application focused/key window and observed GoToWindow field67 direct parent/window links; SDK bindability only for a proven associated window. No input, focus/activation or Save. Full default offline validation of frozen16a67f4 continues with production source unchanged.
+Refs: output/suno-20261110/save-b-set-filename.txt
