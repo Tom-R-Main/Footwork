@@ -12,6 +12,7 @@ import contextvars
 import fcntl
 import json
 import os
+import socket
 import sqlite3
 import sys
 import uuid
@@ -29,8 +30,22 @@ _CURRENT: contextvars.ContextVar[Any] = contextvars.ContextVar("footwork_owner",
 def desktop_id() -> str:
     # A viewing stream, session name or authority database is not another desktop.
     if sys.platform.startswith("linux"):
-        display = os.environ.get("DISPLAY", "unavailable").removesuffix(".0")
-        return "x11:" + display.removeprefix("unix")
+        display = os.environ.get("DISPLAY", "unavailable")
+        host, separator, number = display.rpartition(":")
+        number, point, screen = number.partition(".")
+        if separator and number.isdigit() and (not point or screen.isdigit()):
+            # X screens share the server's core pointer. Local transport/host
+            # aliases also do not create independent desktops. No DNS lookup.
+            host = host.casefold()
+            if host.startswith("unix/") or host.endswith("/unix"):
+                host = ""
+            for prefix in ("tcp/", "inet/", "inet6/"):
+                host = host.removeprefix(prefix)
+            local = {"", "unix", "localhost", "127.0.0.1", "::1", "[::1]", socket.gethostname().casefold()}
+            if host in local:
+                host = ""
+            return f"x11:{host}:{int(number)}"
+        return "x11:" + display
     return "console"
 
 

@@ -1,6 +1,6 @@
 # Shared-desktop coordination validation
 
-Implementation: `d34cdd8`, based on `f5d41c4`.
+Primary implementation: `d34cdd8`, based on `f5d41c4`; subsequent X11 server-identity correction is recorded under MC3 in the notebook.
 
 The public CLI now serializes session read/modify/write transactions and coordinates
 app/window work across processes and authority databases. Foreground-capable work
@@ -37,3 +37,9 @@ desktops remain unqualified. Native window creation identity is unavailable.
 Only participating processes using this per-user registry are coordinated, and an
 already admitted opaque SDK RPC finishes under ownership before a new owner enters.
 See `docs/desktop-coordination.md` for exact scopes, migration and recovery commands.
+
+Follow-up review reproduced a second desktop owner on X11 screen one while screen
+zero of the same server was owned. The correction normalizes numeric screen
+suffixes and common local Unix/loopback aliases; all25 coordinator tests pass
+(`coordination-final.txt`), including independent X server coverage. The original
+failure is retained in `x11-screens-red.txt`. CI is rerun on the corrected head.

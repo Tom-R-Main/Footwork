@@ -398,3 +398,24 @@ async def test_headed_browser_start_owns_desktop_even_for_background_page_postur
                            browser=True, mode="background_only", fn=start)
     assert await run_command(args) == 0
     assert set(seen) == {"desktop", app_resource("Google Chrome")}
+
+
+async def test_x11_screens_on_one_server_share_desktop_ownership(tmp_path, monkeypatch):
+    store = Coordinator(tmp_path / "registry.sqlite")
+    monkeypatch.setenv("DISPLAY", ":0.0")
+    async with store.claim("screen-zero", ["desktop"]):
+        monkeypatch.setenv("DISPLAY", ":0.1")
+        with pytest.raises(CoordinationError, match="busy"):
+            async with store.claim("screen-one", ["desktop"], timeout=0):
+                pytest.fail("two screens on one X server acquired the same pointer")
+
+
+@pytest.mark.parametrize("display", [":0", ":0.0", ":0.1", "unix:0.2", "unix/:0.3",
+                                     "localhost:0.4", "127.0.0.1:0.5", "fixture-host:0.6"])
+def test_x11_local_screen_and_transport_aliases_share_one_pointer(monkeypatch, display):
+    from jevdual import coordination
+
+    monkeypatch.setattr(coordination, "sys", SimpleNamespace(platform="linux"))
+    monkeypatch.setattr(coordination.socket, "gethostname", lambda: "fixture-host")
+    monkeypatch.setenv("DISPLAY", display)
+    assert coordination.desktop_id() == "x11::0"

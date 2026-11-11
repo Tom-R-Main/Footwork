@@ -28,8 +28,9 @@ not grant permission to interrupt a person. Background-only commands need no
 desktop claim and still obey the existing delivery policy. Headed browser startup
 also claims the desktop because Chrome launch/recovery can activate a native
 window, even when subsequent page actions qualify for background delivery.
-On X11, `DISPLAY`
-identifies the desktop; macOS conservatively uses one console domain per user.
+On X11, the server in `DISPLAY` identifies the desktop; numeric screen suffixes
+and local Unix/loopback host aliases share ownership. Distinct local X servers
+can own independent desktops; macOS conservatively uses one console domain per user.
 A viewing stream or session name never creates a new pointer.
 
 ## Film a take and hand it off

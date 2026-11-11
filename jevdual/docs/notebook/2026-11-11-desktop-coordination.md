@@ -44,3 +44,10 @@ Test: hold the desktop with DISPLAY=:0.0 and request it with DISPLAY=:0.1; test 
 Predicts: the current screen-one request is incorrectly admitted; stripping every numeric screen suffix and canonicalizing local aliases blocks it while :0 and :1 remain independent.
 Against: screen-one already conflicts, or the repair merges distinct local X servers. This tests cooperative resource identity, not live X11 or macOS coexistence.
 Refs: python/jevdual/coordination.py desktop_id; tests/test_coordination.py; PR21
+
+## MCU3 · update · 2026-11-11 06:55
+Resolves: MC3 = held
+Observed: test_x11_screens_on_one_server_share_desktop_ownership admitted a second pointer owner before the repair (x11-screens-red.txt). After normalizing every numeric screen suffix and common local host/transport aliases, all25 coordinator tests pass; distinct X server display-number coverage remains green. Lint passes. The first PR head already passed all native package jobs and its full unit suite; its final simulation check was still running when this additional resource-identity issue was found.
+Changes: key X11 ownership by server, including its local Unix/loopback aliases, rather than by individual screen. No DNS lookup is required.
+Next: rerun CI on the corrected PR head and merge after checks complete.
+Refs: results/desktop-coordination-20261111/x11-screens-red.txt; results/desktop-coordination-20261111/coordination-final.txt; prediction1c69de8; PR21
