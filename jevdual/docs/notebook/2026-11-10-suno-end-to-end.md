@@ -543,3 +543,16 @@ Observed: frozen1cccdcb reopens the saved derivative in the new editor, but fres
 Inferred: at least one required direct-AX/census backing condition is unavailable or mishandled on the actual editor. Current evidence does not identify which.
 Next: one bounded read-only helper/peer diagnosis is delegated with root UI paused; retain the already verified legacy pathway and perform the promised repeat only on an identified frozen build.
 Refs: output/suno-20261110/runtime-1cccdcb/identity.json; output/suno-20261110/final-derivative-new-editor-reopen.txt; output/suno-20261110/opaque-editor-live-look.txt; results/opaque-native-controls-20261110/report.md
+
+## SUNU53 · update · 2026-11-10 20:54
+Observed: the bounded read-only live census independently resolves35of36web controls with complete owned parent chains. The sole blocking peer is named Hide Tips with no SDKframe; the opaque helper returns no identities rather than guessing that peer's DOM ID. The actual enabled clip button has readable identity and frame. Probe drivers are shut down; no input occurred.
+Inferred: readable backing is available for the intended control; one frameless named peer prevents the duplicate-ID census. A bounded exact-name read-only lookup may establish that peer's identity without making it actionable or omitting an unreadable collision. That source repair is separately delegated; the failed SUN35 result is retained.
+Next: root resumes the known legacy route on immutable1cccdcb while the source-only census repair proceeds independently.
+Refs: output/suno-20261110/opaque-live-diagnosis.json; output/suno-20261110/runtime-1cccdcb/identity.json
+
+## SUN38 · prediction · 2026-11-10 20:54
+Hypothesis: after the observed control/save repairs, the same public Footwork recipe can produce and reopen a second bounded ending derivative without another implementation change, user handoff or private SDK UI helper.
+Test: immutable1cccdcb and samefocus1overlay, fresh repeat session, original candidate B resource independently selected from Library. Via observed Edit Fade out or linked legacy mode, set exact03:20.80 against204.8second baseline and apply one4second fade. Use public windows inventory and exact PID/window binding for any untitled save panel, verify project-only destination and a new candidate-b-fade-4s-repeat.mp3, full decode/fileID/duration and measured final4seconds. Reopen its actual Library link. Keep source/8second derivative; no new generation, provider review, publication or purchase. Record all runtime IDs and any interruption.
+Predicts: one4second fade and one included export complete using existing public commands and fresh observations, with a distinct retained derivative,204.8second decoded audio and progressive ending attenuation; no source patch or user action is needed within this repeat.
+Against: control/path/identity/refusal needs an implementation change, private SDK input/observation helper or human action; save/apply outcome is unknown; file or resource is missing/wrong, original is lost or the measured ending does not support the requested fade. One repeat does not establish a statistical reliability rate or aesthetic improvement.
+Refs: output/suno-20261110/runtime-1cccdcb/identity.json; output/suno-20261110/exports/candidate-b.mp3.validation.json; docs/suno-workflow.md
