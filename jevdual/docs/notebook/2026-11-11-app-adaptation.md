@@ -87,3 +87,13 @@ Inferred: the hypothesis is wrong where it said the tab is not selected. Replaci
 Changes: none to code. The posture gate on replacing held text stays as it is.
 Next: record these results in the report. A key-sink test is needed before the gate could be relaxed; it is not needed to start step B. The launch failure on binding recurred once in six launches and belongs with step B's holder work.
 Refs: results/page-effects-20261111/run6/page-events.jsonl; results/page-effects-20261111/run8/page-events.jsonl; results/page-effects-20261111/run6/front-app.jsonl; results/page-effects-20261111/run8/front-app.jsonl; results/page-effects-20261111/run7/front-app.jsonl
+
+## AAD7 · prediction · 2026-11-11 23:45
+Revises: AAD2
+Question: can a person sign in to the sites Footwork must drive inside a browser Footwork launches?
+Hypothesis: unchanged from AAD2: a headed Chrome started with Footwork's launch arguments, its own persistent profile and a loopback debugging port accepts an ordinary interactive sign-in, and the session persists in that profile.
+Alternatives: the identity provider blocks sign-in in a browser started with a debugging port; or sign-in works but does not survive a restart or a token renewal.
+Test: as AAD2, except for the profile. The owner decided the test must not share DemoGeek's profile (the default ~/.config/jevdual/chrome-profile on port 9333). It uses a fresh dedicated profile, ~/.config/jevdual/chrome-profile-signin, on port 9555, launched with browser_driver._chrome_args and no driver attached during sign-in. The owner signs in by hand to Suno and to one site that uses Google sign-in; Footwork sends no input and captures nothing during sign-in. Afterwards: a read-only observation that the signed-in state is present; quit and relaunch the browser on the same profile and observe again; observe again after at least one hour.
+Predicts: both sign-ins complete without an error page, and the signed-in state is observed after the relaunch and after the wait.
+Against: either provider refuses the sign-in in this browser, or the signed-in state is gone after the relaunch or the wait. A pass says sign-in works in a Footwork-launched profile; it does not test the default profile itself.
+Refs: python/jevdual/browser_driver.py; docs/repo-learning/app-adaptation/REPORT.md
