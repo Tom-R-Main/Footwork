@@ -29,3 +29,16 @@ Established: an addressed foreground text target must hold verified OS field foc
 Uncertain: full default regression results and live Suno renderer, server persistence and editing success remain for root. AX focus/value/selection evidence does not independently prove DOM acceptance. Foreground append and other platforms are unsupported. The global installed release is unchanged.
 Decision: freeze and hand off this source/runtime candidate for root verification, without claiming the song workflow complete.
 Refs: results/foreground-web-text-20261110/report.md; docs/unified-cli.md
+
+## FWTU2 · update · 2026-11-10 21:24
+Resolves: FWT2 = held
+Observed: FWTU1 already recorded the red unreadable-value/pacing counterexamples and their passing repair, but combined two resolutions on one line; the notebook parser retained only FWT1. This explicit entry records the already observed FWT2 outcome, without a new test or rewriting that record. Later full default regressions include the same guarded path, ending with3339passed/62skipped on ca4e7dc. Root's actual foreground lyrics replacement was independently verified by controlled new-copy exact equality, and both legacy ending-time fields were visibly accepted and retained after blur.
+Inferred: the unreadable-value and one-paced-request guard contracts are held; rich-editor AX serialization still needs independent evidence rather than relaxed equality.
+Next: close this source package; keep the initial FWT1 inconclusive handoff result and the later live qualifications separately referenced.
+Refs: results/foreground-web-text-20261110/report.md; docs/notebook/2026-11-10-suno-end-to-end.md; results/opaque-named-peer-census-20261110/full-default.json
+
+## FWTS2 · summary · 2026-11-10 21:24
+Established: explicit guarded foreground web text works on the observed Suno fields; full461character lyric content was independently verified, and exact ending-time inputs survived blur and led to saved derivatives. Pacing, value readability, focus and exact-window guards remain enforced. Full default regression on the final source is green.
+Uncertain: raw rich-text AX serialization omits blank-line characters; universal web-field behavior, foreground append and other platforms remain outside qualification. The user-local global release remains unchanged.
+Decision: close the source package with the actual bounded live evidence and its receipt limits, keeping the project-local focus1 runtime explicit.
+Refs: docs/notebook/2026-11-10-suno-end-to-end.md; docs/suno-workflow.md

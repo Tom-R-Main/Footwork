@@ -60,3 +60,16 @@ Observed:61 helper/notebook tests pass. Mocked requests show default reasoning.e
 Changes: explicit reasoning mode, budget report and optional independently hashed audio sidecar; caller-owned synchronization remains unverified. Existing pinned model, private subprocess transport, total deadline and no-retry behavior remain.
 Next: parent qualifies joint audiovisual input on the known fixture as a distinct authorized protocol test. No real key/provider/UI access or install occurred in this worker follow-up.
 Refs: predictionc483bd9; results/openrouter-media-review-20261110/pytest-sidecar.txt; results/openrouter-media-review-20261110/report.md
+
+## OMRU5 · update · 2026-11-10 21:24
+Resolves: OMR2 = inconclusive
+Observed: request-local certifi trust retained certificate/hostname verification in the helper tests, and eleven subsequent selected-model media requests completed through the repaired helper with response/usage provenance. The initial checkout default-CA failure remains documented, but this closing audit does not independently establish every part of its original causal diagnosis or recover a separate public-metadata control. No disabled TLS verification or global trust change was used.
+Inferred: verified TLS transport is operational; the exact initial default-CA cause is supported but not established by later successes alone. Preserve that causal uncertainty rather than relabeling it as a proven root cause.
+Next: close the bounded transport package with the perception limits and actual request results below.
+Refs: results/openrouter-media-review-20261110/report.md; docs/notebook/2026-11-10-suno-end-to-end.md; results/suno-20261110/edited-song-analysis.md
+
+## OMRS2 · summary · 2026-11-10 21:24
+Established: the committed helper supplied actual local media to the pinned provider, retained hashes/usage/cost and safe failure metadata, and made no automatic retry or model fallback. Eleven successful responses report0.02146825dollars. Full reference/candidate/final audio and controlled video probes ran; technical decode/measurement evidence remained independent.
+Uncertain: fine video defects, exact temporal localization and subtle ending discrimination failed qualification. Both blind ending orders were called identical despite measured attenuation. Coarse model descriptions are not human preference, defect verification or editor persistence proof; max_tokens is not a hard spend cap.
+Decision: close at the committed eleven-call cap, preserve all failed probes and use the hybrid signal/model/human workflow in the guide. No more provider calls or transport helpers remain needed for this package.
+Refs: docs/experiments/openrouter-media-live-20261110.md; results/suno-20261110/video-calibration.md; results/suno-20261110/edited-song-analysis.md; docs/suno-workflow.md
