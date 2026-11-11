@@ -460,3 +460,15 @@ Refs: output/suno-20261110/runtime-a64b6f2/identity.json; output/suno-20261110/g
 Observed: the actual decoded full candidate B MP3 was sent once to the selected Qwen model with reasoning off. It describes restrained piano/bass/percussion, a complete natural ending and an overlong middle; its proposed bounded change is to reduce middle repetition. This is model judgment against a disclosed target, not human taste acceptance or calibrated temporal localization. Provider reports zero reasoning tokens and0.00052498dollars; eight successful package calls now total0.02056553dollars. A local timeout180validation error occurred before request/output-directory creation; the single actual request used the helper's permitted120second limit.
 Next: choose a bounded edit from actual observed editor affordances, preserving the original audio and resource. Do not invent a precise middle-cut timestamp from the critique.
 Refs: output/suno-20261110/review-candidate-b/response.json; output/suno-20261110/review-candidate-b/manifest.json; output/suno-20261110/draft-brief/instrumental-review-prompt.txt
+
+## SUNU43 · update · 2026-11-10 20:02
+Observed: actual song-menu Edit click leaves its submenu absent; the existing foreground Right key opens Edit options including Open in Editor, Fade in/out, Crop and Remove section. Open in Editor reaches the exact candidate B edit URL. After the welcome Try now, the new editor renders the complete-song green waveform and Save as New Song. Footwork projects47candidates but the screenshot includes fade, zoom and playback controls missing from that list. Current page also reports clips analyzing. No timeline edit or new-song save has occurred.
+Inferred: main editor navigation works via a reproducible keyboard submenu route. Missing controls may be projection loss or actual accessibility gaps; the current screenshot alone cannot distinguish them. Save button appearance alone does not establish editor readiness.
+Next: bounded read-only full SDK/direct AX affordance census under SUN34, with root input paused for the delegated probe. Preserve source a64b6f2 and the original audio.
+Refs: output/suno-20261110/song-b-edit-keyboard-right.txt; output/suno-20261110/song-b-open-editor.txt; output/suno-20261110/song-b-editor-onboarding.txt; output/suno-20261110/ready-drafts/inspection/000cc631608e49d183435bb69768bbee.json
+
+## SUNU44 · update · 2026-11-10 20:02
+Observed: exported MP3 embedded comment independently names the exact candidate B resource ID and creation timestamp; title/artist also match. The audio is stereo48kHz MP3. Full-file FFmpeg ebur128 measurement reports integrated-15.9LUFS, loudness range6.9LU and true peak-4.8dBFS. No changed derivative exists to compare yet.
+Inferred: export source identity has file-level evidence in addition to the UI sequence and exact duration. Loudness measurements describe signal properties, not aesthetic acceptance.
+Next: retain these as the unchanged original reference for boundary and derivative checks.
+Refs: output/suno-20261110/exports/candidate-b.mp3.validation.json; output/suno-20261110/exports/candidate-b-loudness.txt
