@@ -539,7 +539,7 @@ def build_parser() -> argparse.ArgumentParser:
     do.add_argument(
         "--route",
         choices=("trusted", "dom"),
-        help="browser mode: the click route (default trusted; dom for radio, checkbox, switch)",
+        help="browser mode: the click route (default dom; trusted for controls that ignore synthetic clicks)",
     )
     common(do)
     do.set_defaults(fn=S.cmd_do)

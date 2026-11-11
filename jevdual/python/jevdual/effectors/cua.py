@@ -145,6 +145,16 @@ def browser_reply(result: Any) -> BrowserReply:
     next_call = payload.get("next_call")
     if next_call is None and refusal is not None and refusal.detail is not None:
         next_call = refusal.detail.get("next_call")
+    # cua-driver 0.46 replaces a successful action tool's structured content with its typed result
+    # (cua-driver-core tool.rs publish_action_result; cua-driver-contract outputs.rs ActionResult):
+    # effect, route, delivery, evidence, escalation, summary, hint, and no status.
+    effect = payload.get("effect")
+    raw_evidence = payload.get("evidence")
+    evidence = tuple(
+        f"{item.get('kind')}: {item.get('detail')}" if item.get("detail") else str(item.get("kind"))
+        for item in (raw_evidence if isinstance(raw_evidence, list) else [])
+        if isinstance(item, dict) and isinstance(item.get("kind"), str)
+    )
     return BrowserReply(
         status=status if isinstance(status, str) else None,
         text=text,
@@ -153,6 +163,9 @@ def browser_reply(result: Any) -> BrowserReply:
         refusal=refusal,
         hint=hint if isinstance(hint, str) else None,
         next_call=_frozen(next_call),
+        effect=effect if isinstance(effect, str) else None,
+        evidence=evidence,
+        escalation=_frozen(payload.get("escalation")),
     )
 
 

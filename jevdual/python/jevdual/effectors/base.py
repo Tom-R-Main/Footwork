@@ -68,6 +68,14 @@ class BrowserReply:
     dispatched: bool | None = None
     #: qualified actual delivery route, when distinct from the caller's requested route
     route: str | None = None
+    #: the effector's own typed effect word for an action, when its reply carries one. It reads the
+    #: target's state before and after the action; it is not evidence of an application outcome.
+    effect: str | None = None
+    #: the effector's readback evidence, as its own short texts
+    evidence: tuple[str, ...] = ()
+    #: the effector's escalation advice (``target``, ``reason``). Diagnosis only, like ``next_call``:
+    #: following it after a send can repeat an action whose first attempt lands late.
+    escalation: Mapping[str, Any] | None = None
 
     @property
     def refused(self) -> bool:

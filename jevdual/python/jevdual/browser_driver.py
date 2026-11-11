@@ -367,6 +367,14 @@ class BrowserEffect:
     #: the effector's advisory recovery text and suggested call; diagnostic data, never agent-callable
     hint: str | None = None
     next_call: dict[str, Any] | None = None
+    #: the effector's escalation advice (target, reason); diagnostic data, never a next step
+    escalation: dict[str, Any] | None = None
+
+
+#: effector effect words carried through unchanged. Each reads the target's state around the action
+#: and settles nothing about the application. A non-error reply that says "refused" is not taken as
+#: proof that nothing was sent, and any other or missing word is no evidence of an effect.
+_CARRIED_EFFECTS = frozenset({"confirmed", "partial", "suspected_noop"})
 
 
 def _refusal_message(reply: BrowserReply) -> str:
@@ -484,7 +492,11 @@ class BrowserBridge:
         return c, ref
 
     def _effect(self, reply: BrowserReply, op: str, id: int, label: str) -> BrowserEffect:
-        advice = {"hint": reply.hint, "next_call": dict(reply.next_call) if reply.next_call else None}
+        advice = {
+            "hint": reply.hint,
+            "next_call": dict(reply.next_call) if reply.next_call else None,
+            "escalation": dict(reply.escalation) if reply.escalation else None,
+        }
         if reply.refused:
             refusal = reply.refusal
             return BrowserEffect(
@@ -500,7 +512,10 @@ class BrowserBridge:
                 dispatched=reply.dispatched is not False,
                 **advice,
             )
-        return BrowserEffect(op, id, label, "unverifiable", summary=reply.text[:200], **advice)
+        effect = reply.effect if reply.effect in _CARRIED_EFFECTS else "unverifiable"
+        return BrowserEffect(
+            op, id, label, effect, evidence=reply.evidence, summary=reply.text[:200], **advice
+        )
 
     #: form controls whose trusted (hardware-like) click did not toggle them in the background
     #: on 2026-09-25 (receipts said suspected no-op, the snapshot agreed): a synthetic DOM click
