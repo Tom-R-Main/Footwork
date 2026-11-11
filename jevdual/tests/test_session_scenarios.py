@@ -2343,3 +2343,54 @@ async def test_capability_respects_another_operator_app_reservation(text_capabil
         assert world.writes == []
     finally:
         store.revoke(reservation)
+
+
+def test_reserved_native_session_can_observe_while_competing_subject_waits(world, fw, monkeypatch):
+    """The public next-command boundary must not wait on its own reservation's waiter."""
+    import asyncio
+    import threading
+    import time
+
+    from jevdual.coordination import CoordinationError, Coordinator, app_resource
+
+    assert fw('start', 'Keep owned calculation available', '--app', 'Calculator')[0] == 0
+    code, out, error = fw('control', 'reserve')
+    assert code == 0, error
+    reservation = json.loads(out)['token']
+    store = Coordinator()
+    original = Coordinator.claim
+    monkeypatch.setattr(Coordinator, 'claim', lambda self, *args, **kwargs:
+                        original(self, *args, **{**kwargs, 'timeout': .2}))
+    entered = []
+
+    def compete():
+        async def run():
+            try:
+                async with original(store, 'competing observer', [app_resource('Calculator')], timeout=3):
+                    entered.append(True)
+            except CoordinationError:
+                pass
+        asyncio.run(run())
+
+    thread = threading.Thread(target=compete)
+    thread.start()
+    waiter = None
+    try:
+        for _ in range(100):
+            waiter = next((r for r in store.status()['requests']
+                           if r['owner'] == 'competing observer' and r['state'] == 'waiting'), None)
+            if waiter:
+                break
+            time.sleep(.01)
+        assert waiter is not None, 'competing waiter must be established before the owner command'
+        code, _, error = fw('look')
+        assert code == 0, error
+        assert not entered, 'the competitor must remain excluded while the take owns its subject'
+        assert any(r['token'] == waiter['token'] and r['state'] == 'waiting'
+                   for r in store.status()['requests'])
+    finally:
+        if waiter:
+            store.revoke(waiter['token'])
+        thread.join(4)
+        store.revoke(reservation)
+    assert not thread.is_alive()
