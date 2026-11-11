@@ -37,3 +37,10 @@ Established: shared per-user coordination spans session state, app/window transa
 Uncertain: no live macOS foreground coexistence, CUA filmed capture, native window-birth identity, independent macOS Screen Sharing desktop, cross-user ownership or control over nonparticipating software is established. Cancellation cannot interrupt inside an already admitted opaque SDK RPC. The exact patched CUA runtime is unavailable locally; CI must qualify that installation.
 Decision: implementation is ready for CI and merge with these limits documented. The broad initial mechanism held, but review exposed wrapper compatibility and entrypoint gaps that required fixes; the native-window-loss counterexample failed before its repair. Keep the successful real headless catalogue probe distinct from native/filmed qualification.
 Refs: docs/desktop-coordination.md; results/desktop-coordination-20261111/report.md; d34cdd8
+
+## MC3 · prediction · 2026-11-11 06:53
+Hypothesis: normalizing only X11 screen zero lets two screens on one X server acquire distinct desktop claims despite sharing its core pointer. The coordinator must key the X server rather than its screen suffix.
+Test: hold the desktop with DISPLAY=:0.0 and request it with DISPLAY=:0.1; test canonical local Unix/loopback host aliases and verify distinct X server display numbers remain independent.
+Predicts: the current screen-one request is incorrectly admitted; stripping every numeric screen suffix and canonicalizing local aliases blocks it while :0 and :1 remain independent.
+Against: screen-one already conflicts, or the repair merges distinct local X servers. This tests cooperative resource identity, not live X11 or macOS coexistence.
+Refs: python/jevdual/coordination.py desktop_id; tests/test_coordination.py; PR21
