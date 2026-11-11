@@ -253,3 +253,29 @@ def test_filmed_start_reserves_desktop_and_subject_until_explicit_handoff(world,
     code, _, err = fw("park")
     assert code == 7 and "reservation unavailable" in err
     assert len(filmed.events) == before
+
+
+@pytest.mark.parametrize("failure", ["observation", "binding_mismatch"])
+def test_failed_filmed_replacement_start_revokes_the_reservation_it_created(world, fw, filmed, monkeypatch, failure):
+    """A staged replacement start (existing session files) must not strand the take reservation it made."""
+    from jevdual.coordination import Coordinator
+
+    assert fw("start", "Plain earlier task", "--app", "Calculator")[0] == 0
+    assert not _state(fw).get("coordination_token")
+    before = (fw.session / "session.json").read_bytes()
+    original = world.get_window_state
+
+    async def observe(inp):
+        if failure == "observation":
+            raise RuntimeError("new observation unavailable")
+        result = await original(inp)
+        result["pid"] = 88
+        return result
+
+    monkeypatch.setattr(world, "get_window_state", observe)
+    extra = ("--pid", "77", "--window-id", "40335") if failure == "binding_mismatch" else ()
+    code, out, err = fw("start", "Film a replacement", "--app", "Calculator", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40", *extra)
+    assert code != 0, (out, err)
+    assert (fw.session / "session.json").read_bytes() == before
+    assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []

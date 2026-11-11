@@ -1389,6 +1389,10 @@ async def cmd_start(args: Any) -> int:
             from jevdual.cli import _stopped
 
             return _stopped(staged_args, exc)
+        finally:
+            # run_command revokes a take reservation created by a failed start; it reads the caller's args.
+            if getattr(staged_args, "_created_reservation", ""):
+                args._created_reservation = staged_args._created_reservation
         if code != 0:
             return code
         replacement = json.loads((staged / "session.json").read_text())
