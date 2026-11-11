@@ -1,0 +1,17 @@
+{"t": 1794434588.2089, "type": "loaded", "detail": {"visibility": "visible", "focused": false, "count_center": [84, 125]}, "received": 1794434588.228235}
+{"t": 1794434588.2268999, "type": "loaded", "detail": {"visibility": "visible", "focused": true, "count_center": [84, 125]}, "received": 1794434588.253462}
+{"t": 1794434589.6468, "type": "window_blur", "detail": {}, "received": 1794434589.652546}
+{"t": 1794434590.6726, "type": "visibility", "detail": {"state": "hidden"}, "received": 1794434590.6739168}
+{"t": 1794434590.6728, "type": "visibility", "detail": {"state": "hidden"}, "received": 1794434590.674007}
+{"t": 1794434591.8975, "type": "click", "detail": {"id": "cb", "trusted": false, "x": 50, "y": 49, "count": 0}, "received": 1794434591.8994298}
+{"t": 1794434591.8976002, "type": "input", "detail": {"id": "cb", "value": "on"}, "received": 1794434591.899966}
+{"t": 1794434591.8978, "type": "change", "detail": {"id": "cb", "checked": true}, "received": 1794434591.900116}
+{"t": 1794434593.118, "type": "click", "detail": {"id": "inert", "trusted": false, "x": 83, "y": 86, "count": 0}, "received": 1794434593.119294}
+{"t": 1794434594.749, "type": "window_focus", "detail": {}, "received": 1794434594.751264}
+{"t": 1794434594.7481, "type": "visibility", "detail": {"state": "visible"}, "received": 1794434594.7508}
+{"t": 1794434594.8795, "type": "input", "detail": {"id": "name", "value": "replacement"}, "received": 1794434594.881709}
+{"t": 1794434594.8833, "type": "visibility", "detail": {"state": "hidden"}, "received": 1794434594.890899}
+{"t": 1794434596.0203998, "type": "visibility", "detail": {"state": "visible"}, "received": 1794434596.021755}
+{"t": 1794434596.053, "type": "change", "detail": {"id": "name", "checked": false}, "received": 1794434596.054278}
+{"t": 1794434596.0554, "type": "click", "detail": {"id": "count", "trusted": true, "x": 84, "y": 125, "count": 0}, "received": 1794434596.056113}
+{"t": 1794434596.0578, "type": "visibility", "detail": {"state": "hidden"}, "received": 1794434596.059149}

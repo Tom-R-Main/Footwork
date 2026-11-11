@@ -1,0 +1,18 @@
+{"t": 1794434535.142, "type": "loaded", "detail": {"visibility": "visible", "focused": true, "count_center": [84, 125]}, "received": 1794434535.146719}
+{"t": 1794434535.142, "type": "loaded", "detail": {"visibility": "visible", "focused": false, "count_center": [84, 125]}, "received": 1794434535.146443}
+{"t": 1794434535.3676, "type": "click", "detail": {"id": null, "trusted": true, "x": 294, "y": 627, "count": 0}, "received": 1794434535.368595}
+{"t": 1794434536.4847, "type": "window_blur", "detail": {}, "received": 1794434536.492887}
+{"t": 1794434537.5212998, "type": "visibility", "detail": {"state": "hidden"}, "received": 1794434537.522942}
+{"t": 1794434537.5217, "type": "visibility", "detail": {"state": "hidden"}, "received": 1794434537.523018}
+{"t": 1794434538.6925, "type": "click", "detail": {"id": "cb", "trusted": false, "x": 50, "y": 49, "count": 0}, "received": 1794434538.693658}
+{"t": 1794434538.6925998, "type": "input", "detail": {"id": "cb", "value": "on"}, "received": 1794434538.69388}
+{"t": 1794434538.6928, "type": "change", "detail": {"id": "cb", "checked": true}, "received": 1794434538.69409}
+{"t": 1794434539.9211, "type": "click", "detail": {"id": "inert", "trusted": false, "x": 83, "y": 86, "count": 0}, "received": 1794434539.923564}
+{"t": 1794434541.5593, "type": "visibility", "detail": {"state": "visible"}, "received": 1794434541.560456}
+{"t": 1794434541.5597, "type": "window_focus", "detail": {}, "received": 1794434541.5606341}
+{"t": 1794434541.6658, "type": "input", "detail": {"id": "name", "value": "replacement"}, "received": 1794434541.667098}
+{"t": 1794434541.6667, "type": "visibility", "detail": {"state": "hidden"}, "received": 1794434541.667969}
+{"t": 1794434542.8185, "type": "visibility", "detail": {"state": "visible"}, "received": 1794434542.820309}
+{"t": 1794434542.8467, "type": "change", "detail": {"id": "name", "checked": false}, "received": 1794434542.848607}
+{"t": 1794434542.8481, "type": "click", "detail": {"id": "count", "trusted": true, "x": 84, "y": 125, "count": 0}, "received": 1794434542.848893}
+{"t": 1794434542.8497, "type": "visibility", "detail": {"state": "hidden"}, "received": 1794434542.8503418}

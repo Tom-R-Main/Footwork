@@ -366,6 +366,36 @@ Each prediction must be committed to the notebook before its test runs.
    Predicts the sign test passes, with zero wrong dispatches and no core mechanism change on the page
    arm. Against: the test fails, or a core change is needed for an application quirk.
 
+## First results, 2026-11-11
+
+Run after the review, on an owned local fixture in an isolated Footwork-launched Chrome 157 with the
+pinned driver (`docs/notebook/2026-11-11-app-adaptation.md`, `results/page-effects-20261111/`). Not
+reviewed.
+
+- **A4 is done.** The driver's typed result reaches Footwork: a page-route click on a checkbox reads
+  back `confirmed` with its evidence, and one on a control with no handler reads `unverifiable` with
+  an escalation. `_effect` now carries it (AAD1 held; 3440 tests pass).
+- **Attaching is a foreground step.** With the browser in the background the driver refuses
+  `browser_prepare` with `background_unavailable`: a new DevTools connection makes Chrome come
+  forward for its "Allow remote debugging?" prompt, unless the window is on another Space. Footwork
+  opens a new connection for every command. So the persistent holder (B1) is a precondition for
+  background page work, and the launched profile and the person's own Chrome reach the page through
+  the same consent mechanism. This was not in the review.
+- **Test 3, held-text replacement: still disturbs the page.** An occluded page becomes visible and
+  focused for 107 to 135 ms during the call, as on 2026-09-25. The browser did not become the
+  frontmost application (sampled at under 40 ms). Whether a real keystroke can land in that interval
+  is not shown. The posture gate stays (AAD4 inconclusive, AAD6 failed).
+- **Test 3, trusted click at coordinates: lands in the background**, three of three, with the page
+  visible for 31 to 37 ms and the frontmost application unchanged. Step E's "foreground step until
+  test 3 shows otherwise" can be dropped for single clicks, subject to the admission policy in test 5.
+- **Two defects found on the way.** Binding failed twice in seven launches with "owned Chrome identity
+  changed": the window-recovery helper, which carries no debugging port, appears to win the profile
+  singleton from a slow first launch. And launching the browser takes the foreground in the default
+  background posture.
+
+Neither reopening condition for the lane is met: text replacement needs care, coordinate input does
+not need the foreground. Tests 1 and 2 need the owner to sign in and have not run.
+
 ## Limits of this review
 
 No reference test was run. The friction tagging above is this review's reading of one results table.
