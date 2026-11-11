@@ -430,3 +430,9 @@ Test: after source repair is committed and archived, record its immutable identi
 Predicts: original sheet remains exact key, Go to Folder appears through one guarded dispatch and the project path can be selected before Save; final file exists only at the requested path.
 Against: any ownership/key/resolver guard refuses, input is unknown, another window receives input, project location cannot be proven, no file arrives or the export is not the intended complete MP3.
 Refs: docs/notebook/2026-11-10-save-modal-binding.md; output/suno-20261110/save-b-before-resolver-look.txt; output/suno-20261110/save-b-set-filename.txt
+
+## SUNU39 · update · 2026-11-10 19:45
+Observed: frozen16a67f4 plus unchanged focus1 overlay opened GoToWindow through one guarded cmd shift g on the exact Save325928 session. The new directory textbox67 is visible, but background addressed typing refused element_outside_target_window325928; readback retains the prior directory. No Save or filesystem write occurred.
+Inferred: exact modal resolution works live. GoToWindow is a nested separately scoped panel and needs its own proven identity before typing, as SUN33 anticipated. The exception describes refused background input even though the generic receipt reports unknown; do not infer content delivery from that receipt.
+Next: bounded read-only ownership/bindability probe for the new folder panel, then explicit binding if proven. UI slot temporarily held for that probe, no input.
+Refs: output/suno-20261110/runtime-16a67f4/identity.json; output/suno-20261110/save-b-go-folder-16a67f4.txt; output/suno-20261110/save-b-project-folder-type.txt
