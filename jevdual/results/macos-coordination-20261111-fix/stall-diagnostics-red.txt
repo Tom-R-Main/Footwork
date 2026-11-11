@@ -1,0 +1,117 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_____ test_filmed_point_retains_failed_gap_without_delivering_a_late_event _____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x113b9a8e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x111a808f0>
+
+    def test_filmed_point_retains_failed_gap_without_delivering_a_late_event(world, fw, monkeypatch):
+        """A recorded stall must identify its failed interval, not only earlier successful gaps."""
+        from jevdual import ax, drag
+        from tests.test_filmed_session import Clock, Poster, WINDOW, CONTENT
+    
+        class StalledClock(Clock):
+            def sleep_until(self, t):
+                self.t = max(self.t, t) + .2
+    
+        Poster.events, Poster.pointer = [], (600., 400.)
+        monkeypatch.setattr(drag, 'QuartzPoster', Poster)
+        monkeypatch.setattr(drag, 'MonotonicClock', StalledClock)
+        monkeypatch.setattr(ax, 'window_element', lambda pid, wid: object())
+        monkeypatch.setattr(ax, 'frame_of', lambda element: ax.Frame(*WINDOW))
+        monkeypatch.setattr(ax, 'web_area_frame', lambda element: ax.Frame(*CONTENT))
+        monkeypatch.setattr(ax, 'labelled', lambda element, label:
+                            [('AXButton', 'Owned target', ax.Frame(440, 400, 30, 30))])
+        assert fw('start', 'Film only owned target', '--app', 'Calculator', '--mode', 'exclusive_desktop',
+                  '--pointer-motion', 'filmed')[0] == 0
+        code, _, error = fw('point', 'Owned target')
+        assert code == 4 and 'playback_stall' in error
+        record = _state(fw)['filmed']['gestures'][-1]
+>       assert record['stall_gap_ms'] >= 200
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'stall_gap_ms'
+
+tests/test_session_scenarios.py:2421: KeyError
+___ test_move_stall_records_failed_interval_separately_from_successful_posts ___
+
+    def test_move_stall_records_failed_interval_separately_from_successful_posts():
+        from jevdual.drag import play_move
+    
+        plan = DragPlan((0., 0.), (20., 0.),
+                        (Sample(0, 0, 0), Sample(.01, 10, 0), Sample(.02, 20, 0)), 'test', 10)
+        clock = FakeClock()
+        clock.oversleep[1] = .2
+        poster = FakePoster()
+        poster.move = poster.drag
+        result = play_move(plan, poster, clock)
+        assert result.outcome == 'aborted:playback_stall'
+>       assert result.stall_gap_s == pytest.approx(.21)
+               ^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'DragResult' object has no attribute 'stall_gap_s'
+
+tests/test_drag.py:218: AttributeError
+_____ test_move_records_post_cost_without_hiding_slow_check_or_post[check] _____
+
+delay_stage = 'check'
+
+    @pytest.mark.parametrize('delay_stage', ['check', 'post'])
+    def test_move_records_post_cost_without_hiding_slow_check_or_post(delay_stage):
+        from jevdual.drag import play_move
+    
+        plan = DragPlan((0., 0.), (20., 0.),
+                        (Sample(0, 0, 0), Sample(.01, 10, 0), Sample(.02, 20, 0)), 'test', 10)
+        clock, poster = FakeClock(), FakePoster()
+    
+        def move(x, y):
+            poster.drag(x, y)
+            if delay_stage == 'post':
+                clock.t += .2
+        poster.move = move
+    
+        def cancel():
+            if delay_stage == 'check':
+                clock.t += .2
+            return False
+        result = play_move(plan, poster, clock, cancelled=cancel)
+        assert result.outcome == 'aborted:playback_stall'
+>       assert result.stall_gap_s >= .2
+               ^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'DragResult' object has no attribute 'stall_gap_s'
+
+tests/test_drag.py:242: AttributeError
+_____ test_move_records_post_cost_without_hiding_slow_check_or_post[post] ______
+
+delay_stage = 'post'
+
+    @pytest.mark.parametrize('delay_stage', ['check', 'post'])
+    def test_move_records_post_cost_without_hiding_slow_check_or_post(delay_stage):
+        from jevdual.drag import play_move
+    
+        plan = DragPlan((0., 0.), (20., 0.),
+                        (Sample(0, 0, 0), Sample(.01, 10, 0), Sample(.02, 20, 0)), 'test', 10)
+        clock, poster = FakeClock(), FakePoster()
+    
+        def move(x, y):
+            poster.drag(x, y)
+            if delay_stage == 'post':
+                clock.t += .2
+        poster.move = move
+    
+        def cancel():
+            if delay_stage == 'check':
+                clock.t += .2
+            return False
+        result = play_move(plan, poster, clock, cancelled=cancel)
+        assert result.outcome == 'aborted:playback_stall'
+>       assert result.stall_gap_s >= .2
+               ^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'DragResult' object has no attribute 'stall_gap_s'
+
+tests/test_drag.py:242: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_filmed_point_retains_failed_gap_without_delivering_a_late_event
+FAILED tests/test_drag.py::test_move_stall_records_failed_interval_separately_from_successful_posts
+FAILED tests/test_drag.py::test_move_records_post_cost_without_hiding_slow_check_or_post[check]
+FAILED tests/test_drag.py::test_move_records_post_cost_without_hiding_slow_check_or_post[post]
+4 failed in 0.49s

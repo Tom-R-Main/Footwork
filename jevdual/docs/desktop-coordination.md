@@ -18,7 +18,10 @@ browser window. Startup takes the app scope as a barrier; a native Chrome comman
 also conflicts with every ordinary-browser window. Independent apps and browser
 windows can overlap. Same-window tabs are deliberately serialized while CUA's
 tab handles remain connection-local. Queued conflicting requests run in order;
-unrelated requests can pass them. Acquisition waits up to 30 seconds, then stops
+unrelated requests can pass them. A valid reservation owner can continue past
+waiting requests blocked by its own reservation; active, revoked and orphaned
+transactions still retain ownership, and other waiters retain their FIFO order.
+Acquisition waits up to 30 seconds, then stops
 with `coordination_refused` and no dispatch from that command.
 
 Foreground-capable mutation commands acquire the desktop before evaluating the
@@ -76,6 +79,9 @@ async task cannot abandon a mutating worker thread: ownership remains until that
 thread has finished cleanup. Readback and driver shutdown remain possible after
 revocation, and conflicting work cannot start until the active command exits.
 This is cooperative cancellation, not interruption inside an opaque SDK RPC.
+Motion records retain a refused playback interval separately from successful
+post gaps, plus the longest poster-call duration. These diagnostics do not change
+the motion gap limit or suppress a stalled-take refusal.
 
 A hard kill cannot run cleanup. A dead foreground/pointer owner therefore leaves
 an `orphaned` claim that blocks conflicting work. Check and release that owner's

@@ -419,3 +419,146 @@ def test_x11_local_screen_and_transport_aliases_share_one_pointer(monkeypatch, d
     monkeypatch.setattr(coordination.socket, "gethostname", lambda: "fixture-host")
     monkeypatch.setenv("DISPLAY", display)
     assert coordination.desktop_id() == "x11::0"
+
+
+async def _queued_claim(store, owner, resources, *, reservation=""):
+    claim = store.claim(owner, resources, reservation=reservation, timeout=3)
+    task = asyncio.create_task(claim.__aenter__())
+    for _ in range(100):
+        if any(r["token"] == claim.token and r["state"] == "waiting" for r in store.status()["requests"]):
+            return claim, task
+        await asyncio.sleep(.01)
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+    claim.close()
+    pytest.fail("the earlier request did not queue")
+
+
+async def _close_queued_claim(claim, task):
+    if not task.done():
+        task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+    finally:
+        claim.close()
+
+
+@pytest.mark.parametrize(
+    ("reserved", "waiting", "requested"),
+    [
+        (["desktop"], ["desktop"], ["desktop"]),
+        (["app/editor"], ["app/editor/window/2"], ["app/editor"]),
+        (["app/editor/window/1"], ["app/editor"], ["app/editor/window/1"]),
+        (["desktop"], ["desktop", "app/other"], ["app/other"]),
+    ],
+)
+async def test_reservation_owner_continues_past_waiter_blocked_by_its_reservation(
+    tmp_path, reserved, waiting, requested
+):
+    store = Coordinator(tmp_path / "registry.sqlite")
+    async with store.claim("film", reserved) as initial:
+        token = store.reserve(initial, reserved)
+    earlier, task = await _queued_claim(store, "competitor", waiting)
+    try:
+        async with store.claim("film", requested, reservation=token, timeout=0):
+            assert not task.done(), "the competing request must remain blocked by the take"
+        store.revoke(token)
+        await task
+        assert task.result() is earlier, "the queued competitor proceeds after the take yields"
+    finally:
+        await _close_queued_claim(earlier, task)
+        store.revoke(token)
+
+
+@pytest.mark.parametrize("reserved", [False, True])
+async def test_earlier_waiter_not_blocked_by_own_reservation_keeps_fifo(tmp_path, reserved):
+    store = Coordinator(tmp_path / "registry.sqlite")
+    token = ""
+    if reserved:
+        async with store.claim("film", ["desktop"]) as initial:
+            token = store.reserve(initial, ["desktop"])
+    async with store.claim("blocker", ["app/other"]):
+        earlier, task = await _queued_claim(store, "competitor", ["app/editor", "app/other"])
+        try:
+            with pytest.raises(CoordinationError, match="busy"):
+                async with store.claim("film", ["app/editor"], reservation=token, timeout=0):
+                    pytest.fail("a reservation must not bypass an unrelated earlier waiter")
+            assert not task.done()
+        finally:
+            await _close_queued_claim(earlier, task)
+    if token:
+        store.revoke(token)
+
+
+async def test_same_reservation_waiter_keeps_fifo_for_additional_resources(tmp_path):
+    store = Coordinator(tmp_path / "registry.sqlite")
+    async with store.claim("film", ["app/editor"]) as initial:
+        token = store.reserve(initial, ["app/editor"])
+    async with store.claim("blocker", ["app/other"]):
+        earlier, task = await _queued_claim(
+            store, "film", ["app/editor", "app/other"], reservation=token
+        )
+        try:
+            with pytest.raises(CoordinationError, match="busy"):
+                async with store.claim("film", ["app/editor"], reservation=token, timeout=0):
+                    pytest.fail("the same reservation does not block its own earlier holder")
+        finally:
+            await _close_queued_claim(earlier, task)
+    store.revoke(token)
+
+
+@pytest.mark.parametrize("revoke", [False, True])
+async def test_reservation_owner_never_bypasses_active_or_revoked_cleanup(tmp_path, revoke):
+    store = Coordinator(tmp_path / "registry.sqlite")
+    async with store.claim("film", ["desktop"]) as initial:
+        token = store.reserve(initial, ["desktop"])
+    async with store.claim("film", ["desktop"], reservation=token) as active:
+        if revoke:
+            store.revoke(active.token)
+        with pytest.raises(CoordinationError, match="busy"):
+            async with store.claim("film", ["desktop"], reservation=token, timeout=0):
+                pytest.fail("a reservation cannot bypass active input or cleanup")
+    async with store.claim("film", ["desktop"], reservation=token, timeout=0):
+        pass
+    store.revoke(token)
+
+
+def _reserved_holder(path, token, acquired):
+    async def run():
+        async with Coordinator(path).claim("film", ["desktop"], reservation=token):
+            acquired.set()
+            await asyncio.sleep(10)
+    asyncio.run(run())
+
+
+async def test_reservation_owner_never_bypasses_hard_killed_input_owner(tmp_path):
+    store = Coordinator(tmp_path / "registry.sqlite")
+    async with store.claim("film", ["desktop"]) as initial:
+        token = store.reserve(initial, ["desktop"])
+    ctx = multiprocessing.get_context("spawn")
+    acquired = ctx.Event()
+    process = ctx.Process(target=_reserved_holder, args=(store.path, token, acquired))
+    process.start()
+    try:
+        assert acquired.wait(5)
+        process.kill()
+        process.join(5)
+        assert process.exitcode == -signal.SIGKILL
+        orphan, = store.status()["requests"]
+        assert orphan["state"] == "orphaned"
+        with pytest.raises(CoordinationError, match="busy"):
+            async with store.claim("film", ["desktop"], reservation=token, timeout=0):
+                pytest.fail("the reservation bypassed unqualified dead-owner cleanup")
+        store.recover(orphan["token"])
+        async with store.claim("film", ["desktop"], reservation=token, timeout=0):
+            pass
+    finally:
+        if process.is_alive():
+            process.kill()
+            process.join(5)
+        store.revoke(token)

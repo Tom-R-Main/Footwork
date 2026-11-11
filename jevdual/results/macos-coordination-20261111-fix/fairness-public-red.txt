@@ -1,0 +1,56 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_reserved_native_session_can_observe_while_competing_subject_waits ____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1085d6de0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10954e600>
+
+    def test_reserved_native_session_can_observe_while_competing_subject_waits(world, fw, monkeypatch):
+        """The public next-command boundary must not wait on its own reservation's waiter."""
+        import asyncio
+        import threading
+        import time
+    
+        from jevdual.coordination import CoordinationError, Coordinator, app_resource
+    
+        assert fw('start', 'Keep owned calculation available', '--app', 'Calculator')[0] == 0
+        code, out, error = fw('control', 'reserve')
+        assert code == 0, error
+        reservation = json.loads(out)['token']
+        store = Coordinator()
+        original = Coordinator.claim
+        monkeypatch.setattr(Coordinator, 'claim', lambda self, *args, **kwargs:
+                            original(self, *args, **{**kwargs, 'timeout': .2}))
+        entered = []
+    
+        def compete():
+            async def run():
+                try:
+                    async with original(store, 'competing observer', [app_resource('Calculator')], timeout=3):
+                        entered.append(True)
+                except CoordinationError:
+                    pass
+            asyncio.run(run())
+    
+        thread = threading.Thread(target=compete)
+        thread.start()
+        waiter = None
+        try:
+            for _ in range(100):
+                waiter = next((r for r in store.status()['requests']
+                               if r['owner'] == 'competing observer' and r['state'] == 'waiting'), None)
+                if waiter:
+                    break
+                time.sleep(.01)
+            assert waiter is not None, 'competing waiter must be established before the owner command'
+            code, _, error = fw('look')
+>           assert code == 0, error
+E           AssertionError: stopped: coordination_refused: resources busy; inspect footwork control status for owners and waiters
+E             
+E           assert 7 == 0
+
+tests/test_session_scenarios.py:2387: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_reserved_native_session_can_observe_while_competing_subject_waits
+1 failed in 0.71s

@@ -202,3 +202,43 @@ def test_samples_follow_the_planned_path_within_its_largest_step():
     straight = math.dist(START, END)
     assert plan.max_step_pt < straight / 20
     assert isinstance(plan.samples[0], Sample)
+
+
+def test_move_stall_records_failed_interval_separately_from_successful_posts():
+    from jevdual.drag import play_move
+
+    plan = DragPlan((0., 0.), (20., 0.),
+                    (Sample(0, 0, 0), Sample(.01, 10, 0), Sample(.02, 20, 0)), 'test', 10)
+    clock = FakeClock()
+    clock.oversleep[1] = .2
+    poster = FakePoster()
+    poster.move = poster.drag
+    result = play_move(plan, poster, clock)
+    assert result.outcome == 'aborted:playback_stall'
+    assert result.stall_gap_s == pytest.approx(.21)
+    assert result.max_gap_s == 0 and result.posted_drags == 0 and poster.events == []
+
+
+@pytest.mark.parametrize('delay_stage', ['check', 'post'])
+def test_move_records_post_cost_without_hiding_slow_check_or_post(delay_stage):
+    from jevdual.drag import play_move
+
+    plan = DragPlan((0., 0.), (20., 0.),
+                    (Sample(0, 0, 0), Sample(.01, 10, 0), Sample(.02, 20, 0)), 'test', 10)
+    clock, poster = FakeClock(), FakePoster()
+
+    def move(x, y):
+        poster.drag(x, y)
+        if delay_stage == 'post':
+            clock.t += .2
+    poster.move = move
+
+    def cancel():
+        if delay_stage == 'check':
+            clock.t += .2
+        return False
+    result = play_move(plan, poster, clock, cancelled=cancel)
+    assert result.outcome == 'aborted:playback_stall'
+    assert result.stall_gap_s >= .2
+    assert result.max_post_s == pytest.approx(.2 if delay_stage == 'post' else 0)
+    assert result.posted_drags == (1 if delay_stage == 'post' else 0)

@@ -139,6 +139,8 @@ class Filmed:
                 duration_s=plan.samples[-1].t,
                 posted=result.posted_drags,
                 max_gap_ms=round(result.max_gap_s * 1000, 1),
+                stall_gap_ms=(round(result.stall_gap_s * 1000, 1) if result.stall_gap_s is not None else None),
+                max_post_ms=round(result.max_post_s * 1000, 1),
                 outcome=result.outcome,
             )
             if result.outcome != "arrived":

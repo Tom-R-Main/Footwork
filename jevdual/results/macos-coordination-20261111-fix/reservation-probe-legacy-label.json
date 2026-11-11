@@ -1,0 +1,27 @@
+{
+  "target": "ac892a75211900ca6e252a46bca4f0da2362af6b",
+  "platform": "darwin",
+  "registry": "output/macos-coordination-20261111-fix/reservation-final/coordination.sqlite",
+  "checks": {
+    "owner_without_waiter": true,
+    "independent_background": true,
+    "owner_continues_with_waiter": true,
+    "owner_after_competitor_cancel": true
+  },
+  "owner_wait_seconds": 0.001,
+  "cleanup": {
+    "requests": [],
+    "reservations": [
+      {
+        "token": "903a9ba146754a2299f6837282ea74e7",
+        "owner": "film",
+        "desktop": "console",
+        "resources": [
+          "app/fixture",
+          "desktop"
+        ],
+        "state": "revoked"
+      }
+    ]
+  }
+}

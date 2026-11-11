@@ -1,0 +1,11 @@
+{
+  "chrome": {
+    "pid": 51896,
+    "exists": false
+  },
+  "textedit": {
+    "pid": 51937,
+    "exists": false
+  },
+  "remaining_owned_profile_processes": []
+}

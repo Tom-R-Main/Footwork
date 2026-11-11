@@ -1,0 +1,26 @@
+{
+  "checks": {
+    "background_native_start": true,
+    "subject_native_start": true,
+    "filmed_native_start": true,
+    "persistent_desktop_subject_reservation": true,
+    "saved_observe_only": true,
+    "pointer_setup": true,
+    "filmed_point": true,
+    "independent_native_append": true,
+    "pointer_readback": true,
+    "background_did_not_steal_front": true,
+    "independent_page_hover": true,
+    "reserved_owner_continues_with_waiter": true,
+    "owner_recovers_after_waiter_cancel": true,
+    "revocation_fences_pointer": true,
+    "stale_yield_preserves_new_owner": true
+  },
+  "error": null,
+  "report": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/results/macos-coordination-20261111-fix/live-diagnosis.json",
+  "video": {
+    "exit": 0,
+    "path": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-diagnosis/rehearsal.mov",
+    "exists": true
+  }
+}

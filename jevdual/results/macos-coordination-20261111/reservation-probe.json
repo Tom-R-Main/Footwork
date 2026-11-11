@@ -1,0 +1,28 @@
+{
+  "target": "ac892a75211900ca6e252a46bca4f0da2362af6b",
+  "platform": "darwin",
+  "registry": "output/macos-coordination-20261111/reservation-probe/coordination.sqlite",
+  "checks": {
+    "owner_without_waiter": true,
+    "independent_background": true,
+    "owner_continues_with_waiter": false,
+    "owner_after_competitor_cancel": true
+  },
+  "owner_error": "resources busy; inspect footwork control status for owners and waiters",
+  "owner_wait_seconds": 0.326,
+  "cleanup": {
+    "requests": [],
+    "reservations": [
+      {
+        "token": "7d78e5e561784dff85dd3d6c87ea6e92",
+        "owner": "film",
+        "desktop": "console",
+        "resources": [
+          "app/fixture",
+          "desktop"
+        ],
+        "state": "revoked"
+      }
+    ]
+  }
+}

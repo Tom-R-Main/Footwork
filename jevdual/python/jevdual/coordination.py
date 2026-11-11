@@ -189,6 +189,7 @@ class Claim:
                     own = db.execute("SELECT * FROM requests WHERE token=?", (self.token,)).fetchone()
                     if own is None or own["state"] == "revoked":
                         raise CoordinationError("waiting request canceled")
+                    saved = None
                     if self.reservation:
                         saved = db.execute("SELECT * FROM reservations WHERE token=?",
                                            (self.reservation,)).fetchone()
@@ -203,8 +204,17 @@ class Claim:
                             blocked = True
                     for row in db.execute("SELECT * FROM requests WHERE token != ?", (self.token,)):
                         # Active revoked commands retain ownership through cleanup.
-                        # Earlier conflicting waiters are a fairness barrier.
-                        if ((row["state"] in {"active", "revoked", "orphaned"} or row["seq"] < own["seq"])
+                        # A waiter blocked by our reservation cannot go first:
+                        # making this owner wait would prevent the take continuing.
+                        # Same-reservation waiters are not blocked by that token
+                        # and retain their normal FIFO position.
+                        blocked_by_reservation = (
+                            saved is not None and row["state"] == "waiting"
+                            and row["reservation"] != self.reservation
+                            and self.registry.overlap(row["desktop"], json.loads(row["resources"]), saved)
+                        )
+                        if ((row["state"] in {"active", "revoked", "orphaned"}
+                             or (row["seq"] < own["seq"] and not blocked_by_reservation))
                                 and self.registry.overlap(self.desktop, self.resources, row)):
                             blocked = True
                     if not blocked:
