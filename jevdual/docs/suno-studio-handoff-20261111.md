@@ -1,3 +1,13 @@
+# Completed bounded Studio route — November 11 daytime
+
+The user supplied unlock and then idle. Candidate8e977ba with the separately pinned helptag1 SDK completed the actual guarded menu/download route, one Hi-Pass 120 Hz / Q 0.71 edit, distinct Full Song render/download, independent audio comparison and full reload plus explicit Open Project copy selection. The original remains separately listed. Both MP3s fully decode to 204.78175 seconds; low-band attenuation is 15.147 dB relative to the reference. Exact private resources and file hashes are in output/suno-studio-20261111/resources.json; usable audio is in its exports/ directory. The [completion report](../results/suno-studio-20261111/report.md) and machine-readable live-completion.json supersede the historical pending instructions below.
+
+**Do not resume or repeat the completed baseline, edit or render from this old handoff.** Further work requires a new bounded question. The optional older standalone-song versus Studio-baseline alignment remained unresolved; preserve that limit. No arbitrary canvas, general all-feature ease, model-quality or global release qualification follows. No new source change, generation, unlock, media-review request or global install occurred in the successful phase.
+
+The retained public wrapper remains `/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/footwork`. Closing native panels returned exit 6 and was reconciled with independent file evidence. Native Enter/default-button reachability stayed conservative; browser Reload and the actual Open Project copy button completed persistence. The address-bar URL typed during the refused Enter route was never submitted. Normal idle/focus/identity guards remain mandatory.
+
+## Historical handoff
+
 # Suno Studio continuation at 03:00 Detroit time
 
 ## Latest handoff after the scheduled run

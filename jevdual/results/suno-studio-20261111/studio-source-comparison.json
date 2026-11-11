@@ -1,0 +1,126 @@
+{
+  "status": "alignment_unresolved",
+  "alignment": {
+    "qualified": false,
+    "anchors": [
+      {
+        "source_start_seconds": 32.130291666666665,
+        "duration_seconds": 4,
+        "lag_samples": -3047,
+        "lag_seconds": -0.06347916666666667,
+        "reference_band_correlation": 0.3927471339702606,
+        "search_boundary": false
+      },
+      {
+        "source_start_seconds": 100.390875,
+        "duration_seconds": 4,
+        "lag_samples": -6273,
+        "lag_seconds": -0.1306875,
+        "reference_band_correlation": 0.8923183679580688,
+        "search_boundary": false
+      },
+      {
+        "source_start_seconds": 168.65145833333332,
+        "duration_seconds": 4,
+        "lag_samples": -2329,
+        "lag_seconds": -0.04852083333333333,
+        "reference_band_correlation": 0.14024698734283447,
+        "search_boundary": false
+      }
+    ],
+    "lag_spread_samples": 3944,
+    "selected_lag_samples": null,
+    "lag_convention": "positive means edited signal is delayed; compare baseline[i] with edited[i+lag]"
+  },
+  "decoded_sample_counts": [
+    9830400,
+    9829524
+  ],
+  "decoded_duration_seconds": [
+    204.8,
+    204.78175
+  ],
+  "cutoff_hz_caller_supplied": 120.0,
+  "cutoff_verified_by_script": false,
+  "settings": {
+    "rate": 48000,
+    "channels": 2,
+    "welch_window": "Hann",
+    "welch_samples": 32768,
+    "welch_hop_samples": 16384,
+    "anchor_fractions": [
+      0.16666666666666666,
+      0.5,
+      0.8333333333333334
+    ],
+    "anchor_seconds": 4,
+    "alignment_search_samples": 12000,
+    "maximum_lag_spread_samples": 48,
+    "minimum_anchor_correlation": 0.5,
+    "interior_trim_seconds_each_end": 1,
+    "bands_hz": {
+      "low": [
+        30.0,
+        60.0
+      ],
+      "transition": [
+        60.0,
+        240.0
+      ],
+      "reference": [
+        1000,
+        4000
+      ]
+    }
+  },
+  "limits": [
+    "No aesthetic verdict or automatic EQ acceptance.",
+    "Reference-band change can include filter, encoding, limiter or gain changes.",
+    "Weak baseline band power makes its ratio uncertain; inspect retained powers.",
+    "No full-band/stereo sample-preservation or exact analog transfer-function proof."
+  ],
+  "inputs": [
+    {
+      "filename": "candidate-b.mp3",
+      "sha256": "138821e47c9a2e68c267942e308f3b055aa932cde5a031d0aae2df4d6d63d349",
+      "bytes": 4639077,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "48000",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "204.800000",
+          "size": "4639077"
+        }
+      }
+    },
+    {
+      "filename": "studio-flat-baseline.mp3",
+      "sha256": "a84ec832174313937bb97717a16348f74c1a14f45fa77fca239d62e6e8411b1e",
+      "bytes": 4761438,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "48000",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "204.781750",
+          "size": "4761438"
+        }
+      }
+    }
+  ],
+  "complete_decode": true,
+  "analyzer_sha256": "5ef6babafea2c5367d298bcf25da5f68acf3a94950b2f5a34ad4c8820876f3fd"
+}

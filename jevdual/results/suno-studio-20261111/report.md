@@ -1,3 +1,36 @@
+# Actual Studio route completed after unlock
+
+The November 11 daytime continuation used the unchanged archived 8e977ba public CLI and separately pinned helptag1 SDK. The guarded foreground song menu opened on the exact existing baseline resource, then the existing baseline downloaded without another render/unlock. One named Hi-Pass preset edit, one distinct Full Song render, separate project-local MP3 download, independent full decode/comparison, full document reload and explicit Open Project selection of the copy completed. The original remains separately listed. No further code change, generation, purchase, publication, media-critic call or global install occurred. The existing route used its normal action-destructiveness judgment; that is separate from the closed paid media-review protocol.
+
+| Checkpoint | Actual evidence |
+| --- | --- |
+| Studio project and comparison source | Previously observed duplicate project identity; copied title/single track; exact baseline Library song document and embedded exported song ID agree. The original and copy are separately listed in Open Project |
+| Bounded edit | Flat (Reset) screenshot precedes one Hi-Pass selection; active curve,120 Hz andQ 0.71 read back |
+| Actual media comparison | Both MP3s fully decode to 204.78175 seconds at 48 kHz stereo. All three high-band anchors align at zero samples, correlation 0.977–0.989. 30–60 Hz power falls 15.147 dB relative to 1–4 kHz; the reference itself changes −0.002 dB. Three interior segments show 14.877–15.377 dB relative low-band attenuation |
+| Persistence | Full Studio document reload followed by explicit Open Project copy selection retains title, track, Hi-Pass 120 Hz / Q 0.71 and active EQ curve |
+
+This qualifies the bounded Studio project/render route. It does not establish acoustic equivalence between Studio's flat render and the older standalone candidate-b.mp3: that optional three-anchor comparison was unresolved, with inconsistent offsets and two weak correlations. Preserve that failure; no aligned spectrum for that pair was emitted. Project/render identity is supported by the actual UI chain and embedded IDs, not title/duration alone. No claim is made about bit-exact source preservation, all original-song processing or musical improvement.
+
+Listen to the actual saved [flat baseline](../../output/suno-studio-20261111/exports/studio-flat-baseline.mp3) and [Hi-Pass render](../../output/suno-studio-20261111/exports/studio-hi-pass.mp3). Machine-readable evidence: [live completion](live-completion.json), [EQ comparison](studio-eq-comparison.json), [unresolved standalone-source comparison](studio-source-comparison.json). Exact private resource IDs, ffprobe tags, action receipts and screenshot paths remain in output/suno-studio-20261111/.
+
+## Frictions and disposition
+
+- Human input and screen lock: ordinary refusals preserved; continued only after actual idle/unlock.
+- Old SDK HelpTag ranking: corrected candidate now opens the intended menus through the public foreground route; no private activation/input or posture change. Offline 3418/62 result remains a separate source/ABI check.
+- Format buttons expose no AX selected state: suspected-no-op receipts were resolved through actual screenshots after each selection. M4A is a default multiselect choice; each download was verified MP3-only. No core state was invented.
+- Closing Go to Folder and Save destroys the bound sheet: exit6 preserved pending delivery; actual panel/file/embedded-ID/full-decode evidence reconciled outcomes without repeated Return or Save. Folder ancestry was independently read from Where before Save.
+- Hydration renumbered an edited-song target: target_changed refused before input; a fresh actual DOM ID/document resolved it.
+- The second Where-menu exports item was conservatively target_ambiguous. Its path was already independently observed; the distinct unique Save control completed the requested save. No identity guard was weakened.
+- Native Enter conservatively treats visible destructive buttons as reachable, even while Chrome's address bar is edited. Source review confirmed this is intentional; no broad confirm-default grant was supplied. The supported Reload and explicit Open Project controls completed persistence instead. The typed project URL was never submitted and is not claimed as navigation proof. A future narrower Enter capability needs certified toolbar/focus provenance, not an app label exemption.
+
+## Remaining scope
+
+One development pass is not a reliability rate or proof that all Studio editing is easy. Rich stable-selector ergonomics, general origin-plus-visual capture, targeted numeric keyboard actions, arbitrary canvas/timeline edits, Studio 2 and all audiovisual aesthetic judgments remain separate qualifications. Suno recipes stay above the generic core; no global extender writer/registry was installed.
+
+## Historical checkpoints below
+
+The following ledger records earlier partial states; the completed result above supersedes their pending status.
+
 # Core readiness and Studio continuation
 
 The user's November 11 clarification includes Suno Studio. The prior Legacy Song Editor fades remain verified historical results, not a Studio qualification. Core Footwork repairs take priority over new song edits.
