@@ -22,3 +22,10 @@ Test: archive committed fad0bb2 with the unchanged project focus1 overlay. Recor
 Predicts: the invalid exact window refuses with no dispatched input, all existing session files remain byte-identical and a subsequent look still observes the original task window. This qualifies failed-start preservation only, not modal-close continuation or a Studio edit.
 Against: existing history changes, a different window is selected, input is sent, staging artifacts replace the original binding, or the retained session cannot observe its originally bound live window.
 Refs: docs/notebook/2026-11-11-session-continuation.md; results/session-continuation-20261111/; output/suno-studio-20261111/preflight/
+
+## ST4 · prediction · 2026-11-11 00:18
+Hypothesis: the actual Studio opaque-control census is withheld because several readable peers exceed the complete parent-walk bound of32 once Chromium's ancestors above the closest WebArea are included, rather than because they have unknown IDs or mismatched ownership.
+Test: one additional bounded read-only exact-window probe, on the unchanged Studio surface. For the four previously identified blocked peers and qualified comparison peers, record every parent role/owner, closest document and arrival at the actual bound window, capped at64 ancestors with cycle/error detection. Compare with the unchanged public control_backing function. No activation, input or source repair during this diagnostic phase.
+Predicts: all blocked peers reach the exact bound window beyond32 nodes but within64, with readable identity/empty-ID evidence, same PID and closest document; comparison peers reach it within32. Only after that evidence consider a separately preregistered generic bounded traversal repair.
+Against: a blocked peer fails ownership/readability/document proof, reaches another window, never reaches the window within64, or fits within32. Do not infer the cause from subtree depth alone or raise the limit simply to make the census pass.
+Refs: output/suno-studio-20261111/affordances.json; python/jevdual/ax.py; docs/notebook/2026-11-10-suno-end-to-end.md
