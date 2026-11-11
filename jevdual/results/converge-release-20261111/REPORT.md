@@ -59,6 +59,21 @@ recorder itself costs microseconds, so the time is in main's unchanged wait for 
 (inferred). One run cannot say how often a filmed move would now reach the 50 ms limit; when it
 does, the move refuses rather than reporting arrival (`timing-summary.json`).
 
+### Three repeat runs (CVM5, CVM6)
+
+To see whether 47.8 ms was typical, the probe ran three more times against the active release, each
+idle-gated, with a rollback rule fixed beforehand (`repeat-summary.json`). All three passed 20 of 20.
+
+| Run | Largest gap | Largest post | Largest acknowledgement |
+| --- | --- | --- | --- |
+| Qualification | 47.8 ms | 12.0 ms | 46.5 ms |
+| Repeat 1 | 33.3 ms | 25.2 ms | 8.9 ms |
+| Repeat 2 | 23.7 ms | 12.6 ms | 11.0 ms |
+| Repeat 3 | 26.6 ms | 14.5 ms | 12.0 ms |
+
+The slow acknowledgement did not recur, so the release stays active. The prediction of every gap
+under 30 ms failed by one run; four runs give a range, not a rate.
+
 ## Cleanup
 
 Owned applications exited, coordinator requests are empty, both run reservations are revoked

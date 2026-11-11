@@ -1,0 +1,15 @@
+{
+  "prediction": "docs/notebook/2026-11-11-converge-main.md#CVM5",
+  "release": "6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "probe": "results/converge-release-20261111/release_probe.py with FW_PROBE_ACTIVE_OK=1, run one after another, each idle-gated",
+  "limit_ms": 50,
+  "runs": [
+    {"run": "CVM4 qualification", "criteria_passed": 20, "criteria_total": 20, "max_gap_ms": 47.8, "max_post_ms": 12.0, "max_ack_ms": 46.5},
+    {"run": "repeat-1", "started": "2026-11-11T18:27:17", "criteria_passed": 20, "criteria_total": 20, "max_gap_ms": 33.3, "max_post_ms": 25.2, "max_ack_ms": 8.9, "stall": null, "idle_gate_polls": 9},
+    {"run": "repeat-2", "started": "2026-11-11T18:29:51", "criteria_passed": 20, "criteria_total": 20, "max_gap_ms": 23.7, "max_post_ms": 12.6, "max_ack_ms": 11.0, "stall": null, "idle_gate_polls": 1},
+    {"run": "repeat-3", "started": "2026-11-11T18:30:24", "criteria_passed": 20, "criteria_total": 20, "max_gap_ms": 26.6, "max_post_ms": 14.5, "max_ack_ms": 12.0, "stall": null, "idle_gate_polls": 46}
+  ],
+  "decision": "keep 6d571a1 active and report the spread (CVM5's middle case)",
+  "current_after": "releases/6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "raw_records": "private, in output/converge-release-20261111/repeat-{1,2,3}/"
+}

@@ -41,3 +41,11 @@ Test: three more runs of results/converge-release-20261111/release_probe.py agai
 Predicts: in all three runs every criterion passes and the largest posting gap is under 30 ms.
 Against: any run's largest gap is 40 ms or more, or any filmed move refuses on the gap limit. Decision fixed now: if two or more of the three runs reach 40 ms, or any refuses on the limit, point current back to eded45c and report; if all three are under 30 ms, keep the release; anything in between, keep it and report the spread.
 Refs: results/converge-release-20261111/REPORT.md; results/converge-release-20261111/timing-summary.json
+
+## CVM6 · update · 2026-11-11 18:44
+Resolves: CVM5 = failed
+Observed: all three repeats passed 20 of 20 criteria with no stall and no refusal on the limit. Largest posting gaps 33.3, 23.7 and 26.6 ms; largest acknowledgements 8.9, 11.0 and 12.0 ms, back near PSTR3's 9.8 ms; largest post calls 25.2, 12.6 and 14.5 ms (results/converge-release-20261111/repeat-summary.json). Repeat 1's 33.3 ms gap misses the predicted 30 ms, so the prediction fails; no run reached the 40 ms against-threshold.
+Inferred: CVM4's 46.5 ms acknowledgement was one slow run, not the release's typical behaviour; repeat 1's largest gap came with a slow post call, not an acknowledgement wait.
+Changes: none. CVM5's middle case applies: 6d571a1 stays active, eded45c stays for rollback.
+Next: how often acknowledgement approaches 50 ms under concurrent desktop load is still unmeasured; four runs give a range, not a rate.
+Refs: results/converge-release-20261111/repeat-summary.json; results/converge-release-20261111/REPORT.md
