@@ -346,3 +346,17 @@ Test: on frozen4e3297a, fresh observation of the exact value, request whole-fiel
 Predicts: full-selection proof passes and the complete resulting lyric text including line breaks and accents agrees with the file and rendered editor.
 Against: selection/readability/focus refuses, text outcome is unknown, content is changed or truncated, newlines differ or only AX changes.
 Refs: output/suno-20261110/draft-brief/lyrics-short.txt; output/suno-20261110/range-focus-signal.txt
+
+## SUNU33 · update · 2026-11-10 19:00
+Resolves: SUN27 = inconclusive
+Observed: ordinary foreground replacement sent the original461-character lyrics; Suno's own counter reports461 and the AX preview shows the intended words/accents, but the receipt is partial and the displayed value appears to omit empty lines. No generation or repeated typing occurred. The exact underlying string has not yet been compared; the counter alone is not full text proof.
+Inferred: either rich-text delivery transformed blank lines or the AX/display representation is lossy. Current evidence does not distinguish them, so do not retype.
+Next: bounded read-only exact AX value/range comparison against the intended file.
+Refs: output/suno-20261110/lyrics-full-replacement.txt; output/suno-20261110/draft-brief/lyrics-short.txt
+
+## SUN28 · prediction · 2026-11-10 19:00
+Hypothesis: the partial receipt reflects a lossy AX/display representation of blank paragraphs while Suno retains all461 lyric characters.
+Test: fresh exact Lyrics editor SDK/AX resolution; compare full AXValue and AXStringForRange0throughAXNumberOfCharacters against the intended file, recording lengths/hashes and first mismatch only. No focus writes, selection, clipboard access or input.
+Predicts: an independent complete text accessor agrees with the intended file even if the displayed/AXValue representation differs.
+Against: all readable exact accessors differ from the file, counts disagree, or no independent full string is available. Unsupported range text is missing evidence, not proof of content.
+Refs: output/suno-20261110/lyrics-full-replacement.txt; python/jevdual/ax.py
