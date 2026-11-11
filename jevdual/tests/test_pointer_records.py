@@ -277,3 +277,21 @@ def test_dwell_exception_keeps_the_successfully_posted_move(tmp_path, monkeypatc
     assert len(record['posted_samples']) == 1
     assert record['final_location'] == [2, 0]
     assert record['outcome'] == 'exception:dwell'
+
+
+def test_setup_exception_before_post_is_not_reported_as_arrived(tmp_path, monkeypatch):
+    class BrokenPoster(FakePoster):
+        def record_posts(self, trace):
+            pass  # model failure before reaching the Quartz posting boundary
+
+        def move(self, x, y):
+            raise RuntimeError('event creation failed')
+
+    monkeypatch.setattr(drag, 'QuartzPoster', BrokenPoster)
+    path = tmp_path / 'pointer-gestures.jsonl'
+    film = Filmed((0, 0, 100, 100), (0, 0, 100, 100), trace_path=str(path))
+    with pytest.raises(RuntimeError, match='event creation failed'):
+        film.place((24, 24))
+    record = json.loads(path.read_text())
+    assert record['outcome'] == 'exception'
+    assert record['posted_samples'] == []

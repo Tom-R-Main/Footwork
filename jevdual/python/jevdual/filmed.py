@@ -197,11 +197,13 @@ class Filmed:
         from jevdual.pointer_trace import GestureTrace
 
         trace = GestureTrace(self, "place", "setup", here, target) if self.trace_path else None
+        outcome = "exception"
         try:
             (trace.poster(poster) if trace else poster).move(*target)
+            outcome = "arrived"
         finally:
             if trace is not None:
-                trace.finish(poster, "arrived" if not trace.errors else "exception")
+                trace.finish(poster, outcome)
         self.last_pointer = target
         record = {
             "kind": "place",

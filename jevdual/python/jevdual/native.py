@@ -3155,10 +3155,12 @@ class NativeBridge:
 
             poster = drag.QuartzPoster()
             trace = GestureTrace(self.filmed, "title_bar_click", "key window", poster.location(), point)
+            outcome = "exception"
             try:
                 await asyncio.to_thread(self.ax.click_at, *point, trace=trace)
+                outcome = "returned"
             finally:
-                trace.finish(poster, "exception" if trace.errors else "returned")
+                trace.finish(poster, outcome)
         else:
             await asyncio.to_thread(self.ax.click_at, *point)
         if await keyed():
