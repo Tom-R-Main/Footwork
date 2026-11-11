@@ -295,3 +295,26 @@ def test_setup_exception_before_post_is_not_reported_as_arrived(tmp_path, monkey
     record = json.loads(path.read_text())
     assert record['outcome'] == 'exception'
     assert record['posted_samples'] == []
+
+
+def test_metadata_preparation_is_not_reported_as_playback_start(tmp_path, monkeypatch):
+    raw = [100]
+    monkeypatch.setattr(pointer_trace, 'uptime_raw_ns', lambda: raw[0])
+    def delayed_geometry():
+        raw[0] = 1_000_000_000
+        return [{'id': 1, 'bounds': [0, 0, 1000, 1000], 'backing_scale': 2}]
+    monkeypatch.setattr(pointer_trace, 'display_geometry', delayed_geometry)
+    plan = drag.DragPlan((0, 0), (2, 0), (drag.Sample(0, 0, 0), drag.Sample(.01, 2, 0)), 'test', 2)
+    trace = _trace(tmp_path, plan)
+    assert trace.record['recording_started_ns'] == 100
+    assert trace.record['playback_started_ns'] is None
+    poster, clock = FakePoster(), FakeClock()
+    result = drag.play_move(plan, trace.poster(poster), clock, trace=trace)
+    record = trace.finish(poster, result.outcome, result)
+    assert record['playback_started_ns'] == record['t0_ns'] == 1_000_000_000
+
+
+def test_no_input_and_opaque_sdk_do_not_claim_a_playback_start(tmp_path):
+    trace = _trace(tmp_path)
+    trace.finish(FakePoster(), 'arrived')
+    assert trace.record['playback_started_ns'] is None and trace.record['t0_ns'] is None

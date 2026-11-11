@@ -42,7 +42,8 @@ class GestureTrace:
             'schema': 'pointer_gesture/1', 'clock': 'CLOCK_UPTIME_RAW',
             'timestamp_unit': 'ns', 'kind': kind, 'label': label,
             'start': list(start), 'requested_target': list(target) if target is not None else None,
-            't0_ns': started_ns, 'playback_started_ns': started_ns, 'planned_samples': [], 'posted_samples': [],
+            'recording_started_ns': started_ns, 't0_ns': None, 'playback_started_ns': None,
+            'planned_samples': [], 'posted_samples': [],
             'final_location': None, 'outcome': 'exception', 'completeness': completeness,
             'space': {'coordinates': 'global_screen_points', 'origin': 'top_left', 'unit': 'pt'},
             'window_origin': list(filmed.window[:2]), 'content_origin': list(filmed.content[:2]),
@@ -73,9 +74,15 @@ class GestureTrace:
         after = uptime_raw_ns()
         self.record['t0_ns'] = (before + after) // 2 + round((scheduler_t0 - scheduler_now) * 1e9)
         self.record['clock_mapping_uncertainty_ns'] = after - before
+        if self.record['playback_started_ns'] is None:
+            self.record['playback_started_ns'] = self.record['t0_ns']
 
     def post(self, event: str, x: float, y: float, call: Any) -> Any:
         began = uptime_raw_ns()
+        if self.record['playback_started_ns'] is None:
+            self.record['playback_started_ns'] = began
+        if self.record['t0_ns'] is None:
+            self.record['t0_ns'] = began
         try:
             result = call()
         except BaseException as exc:

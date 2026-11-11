@@ -14,9 +14,11 @@ is implemented (planner provenance and series hash remain future work).
 
 - `clock`: `CLOCK_UPTIME_RAW`; `timestamp_unit`: `ns`. These are macOS raw uptime
   nanoseconds, convertible to mach host ticks with the machine's timebase.
-- `playback_started_ns`: raw clock read when the recording context starts, before
-  any pointer input. `t0_ns`: scheduler motion-start anchor; for a drag, this is
-  **after** its button-down/press hold. The scheduler still uses its original
+- `recording_started_ns`: recording-context start before display metadata reads.
+  `playback_started_ns`: scheduler start for a planned move, or the first owned
+  post boundary for a drag/one-shot. It is null for no-input and opaque SDK rows.
+  `t0_ns`: scheduler motion-start anchor; for a drag, this is **after** its
+  button-down/press hold; for an owned one-shot, the first post boundary. The scheduler still uses its original
   `time.monotonic()` clock; a bracketed clock pairing maps its start into raw
   uptime. `clock_mapping_uncertainty_ns` is the width of that pairing interval.
 - `planned_samples`: objects `{t_ns,x,y}` at absolute scheduled raw times. The
