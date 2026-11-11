@@ -536,3 +536,10 @@ Observed: Library lists the new derivative and both original instrumental candid
 Inferred: the bounded legacy-editor creation/export/fade/save/reopen journey is verified, with original resources retained. This does not qualify bit-exact non-target preservation, aesthetic improvement, human preference, all new-editor canvas interactions or a reliability rate. The blind critic failure remains failed.
 Next: qualify the separate opaque-control repair in the reopened new Song Editor, then close reports and provide the tested recipe. Core edit actions and Library/reload checks used frozen a64b6f2; subsequent opaque/inventory work uses its separately identified new archive.
 Refs: output/suno-20261110/library-reopen-derivative-start.txt; output/suno-20261110/derivative-reopened-from-library.txt; output/suno-20261110/derivative-reopen-reload.txt; output/suno-20261110/derivative-reloaded-ready.txt; output/suno-20261110/exports/candidate-b-fade-8s.mp3.validation.json; output/suno-20261110/exports/fade-comparison.json
+
+## SUNU52 · update · 2026-11-10 20:50
+Resolves: SUN35 = failed
+Observed: frozen1cccdcb reopens the saved derivative in the new editor, but fresh look projects48candidates with no opaque identifier target. Therefore the intended clip control cannot be inspected or clicked under the preregistered route. No coordinate input, alternate driver input or timeline edit occurred. The source's conservative live qualification limit was retained rather than bypassed; the offline passes do not establish this live path.
+Inferred: at least one required direct-AX/census backing condition is unavailable or mishandled on the actual editor. Current evidence does not identify which.
+Next: one bounded read-only helper/peer diagnosis is delegated with root UI paused; retain the already verified legacy pathway and perform the promised repeat only on an identified frozen build.
+Refs: output/suno-20261110/runtime-1cccdcb/identity.json; output/suno-20261110/final-derivative-new-editor-reopen.txt; output/suno-20261110/opaque-editor-live-look.txt; results/opaque-native-controls-20261110/report.md
