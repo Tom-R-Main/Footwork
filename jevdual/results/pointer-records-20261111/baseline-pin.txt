@@ -1,0 +1,16 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________________ test_cua_driver_version_is_pinned _______________________
+
+    def test_cua_driver_version_is_pinned():
+        # every native module: the effect vocabulary and refusal codes below are this version's
+>       assert importlib.metadata.version("cua-driver") in {PINNED_VERSION, QUALIFIED_PROJECT_OVERLAY_VERSION}
+E       AssertionError: assert '0.46.0+footwork.5486b624.cleanup2' in {'0.46.0+footwork.5486b624.cleanup2.focus1', '0.46.0+footwork.5486b624.cleanup2.focus1.helptag1'}
+E        +  where '0.46.0+footwork.5486b624.cleanup2' = <function version at 0x1015bf920>('cua-driver')
+E        +    where <function version at 0x1015bf920> = <module 'importlib.metadata' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/metadata/__init__.py'>.version
+E        +      where <module 'importlib.metadata' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/metadata/__init__.py'> = importlib.metadata
+
+tests/contract/test_cua_driver_seams.py:37: AssertionError
+=========================== short test summary info ============================
+FAILED tests/contract/test_cua_driver_seams.py::test_cua_driver_version_is_pinned
+1 failed in 0.14s

@@ -1,0 +1,20 @@
+{
+  "summary": {
+    "baseline": {
+      "p50_ms": 0.00100000761449337,
+      "p95_ms": 0.003666849806904793,
+      "max_ms": 0.12895860709249973,
+      "max_gap_ms": 8.461375022307038
+    },
+    "instrumented": {
+      "p50_ms": 0.0009166542440652847,
+      "p95_ms": 0.0019995495676994324,
+      "max_ms": 0.04858383908867836,
+      "max_gap_ms": 8.380874991416931
+    },
+    "p95_delta_ms": -0.0016673002392053604
+  },
+  "record_bytes": 24641,
+  "clock_raw_brackets_mach": true,
+  "clock_raw_brackets_monotonic": true
+}
