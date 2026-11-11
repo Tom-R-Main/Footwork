@@ -318,3 +318,58 @@ def test_no_input_and_opaque_sdk_do_not_claim_a_playback_start(tmp_path):
     trace = _trace(tmp_path)
     trace.finish(FakePoster(), 'arrived')
     assert trace.record['playback_started_ns'] is None and trace.record['t0_ns'] is None
+
+
+def test_recorded_real_poster_keeps_prepared_bridge_and_acknowledged_posts(tmp_path, monkeypatch):
+    """Merge seam: main's prepared, acknowledged QuartzPoster under the branch's post recorder."""
+    from types import SimpleNamespace
+
+    class Quartz:
+        kCGEventSourceStateHIDSystemState, kCGEventSourceStateCombinedSessionState = 1, 2
+        kCGEventKeyDown, kCGEventLeftMouseDown, kCGEventRightMouseDown, kCGEventOtherMouseDown = 10, 1, 3, 25
+        kCGEventMouseMoved, kCGEventLeftMouseDragged, kCGEventLeftMouseUp = 5, 6, 2
+        kCGMouseButtonLeft, kCGEventSourceUserData, kCGHIDEventTap = 0, 42, 0
+
+        def __init__(self):
+            self.created, self.posts, self.pointer = 0, [], SimpleNamespace(x=0., y=0.)
+
+        def CGEventSourceCreate(self, state):
+            return object()
+
+        def CGEventSourceCounterForEventType(self, state, kind):
+            return 0
+
+        def CGPointMake(self, x, y):
+            return SimpleNamespace(x=x, y=y)
+
+        def CGEventCreateMouseEvent(self, source, kind, point, button):
+            self.created += 1
+            return {'point': point}
+
+        def CGEventSetIntegerValueField(self, event, field, value):
+            event[field] = value
+
+        def CGEventPost(self, tap, event):
+            self.posts.append(event)
+            self.pointer = event['point']
+
+        def CGEventCreate(self, source):
+            return {'point': self.pointer}
+
+        def CGEventGetLocation(self, event):
+            return event['point']
+
+    quartz = Quartz()
+    monkeypatch.setitem(sys.modules, 'Quartz', quartz)
+    poster = drag.QuartzPoster()
+    assert quartz.created == 1 and quartz.posts == [], 'preparation constructs, never posts'
+    plan = drag.DragPlan((0, 0), (20, 0), tuple(drag.Sample(i * .01, i * 5., 0.) for i in range(5)), 'test', 5)
+    trace = _trace(tmp_path, plan)
+    clock = FakeClock()
+    result = drag.play_move(plan, trace.poster(poster), clock, trace=trace)
+    record = trace.finish(poster, result.outcome, result)
+    assert result.outcome == 'arrived' and len(quartz.posts) == 4
+    assert record['posted_basis'] == 'CGEventPost call entry/return; not OS delivery'
+    assert [(s['x'], s['y'], s['event']) for s in record['posted_samples']] == [
+        (5., 0., 'move'), (10., 0., 'move'), (15., 0., 'move'), (20., 0., 'move')]
+    assert record['final_location'] == [20., 0.]
