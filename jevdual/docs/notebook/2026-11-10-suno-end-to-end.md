@@ -472,3 +472,16 @@ Observed: exported MP3 embedded comment independently names the exact candidate 
 Inferred: export source identity has file-level evidence in addition to the UI sequence and exact duration. Loudness measurements describe signal properties, not aesthetic acceptance.
 Next: retain these as the unchanged original reference for boundary and derivative checks.
 Refs: output/suno-20261110/exports/candidate-b.mp3.validation.json; output/suno-20261110/exports/candidate-b-loudness.txt
+
+## SUNU45 · update · 2026-11-10 20:09
+Observed: bounded SUN34 census records554SDKrows and253direct AXnodes without a walk cut. Footwork drops unnamed controls even when they have actual AXButton roles/actions/frames and distinct native DOM IDs. The visible FADE pill has no raw SDK entry; no AXSlider or editable timeline time fields are exposed. The clip toolbar includes two unnamed AXButtons with actual scoped DOM identifiers; disabled state must be freshly honored. Hide Tips removes the instructional overlay without a song edit, and a new screenshot confirms the underlying clip/menu controls remain visible.
+Inferred: this is both projection loss for some native buttons and a separate visual-only fade affordance. Exposing backed opaque controls may unlock the clip's real menu, but cannot be claimed to make FADE directly addressable. Source repair is delegated under a separate preregistration, preserving named-control ambiguity rules.
+Next: freeze the opaque-control repair, inspect a fresh screenshot-bound literal identifier target, and test the actual clip operations menu. No coordinate action or timeline edit yet.
+Refs: output/suno-20261110/editor-affordances-SUN34.json; output/suno-20261110/editor-hide-tips.txt; output/suno-20261110/ready-drafts/inspection/847808eefb4844c499004c1e7fc994fe.json
+
+## SUN35 · prediction · 2026-11-10 20:09
+Hypothesis: retaining freshly verified scoped native identifiers for otherwise unnamed buttons lets Footwork inspect and operate the actual clip menu without guessing its action name or selecting solely by position.
+Test: after the repair is committed and archived, observe the unchanged owned editor. Inspect the opaque numeric target's literal DOM ID, exact document URL and screenshot bounds. Select the target only if its capture shows the actual clip ellipsis; request one normal guarded foreground click and require the resulting menu to expose actual clip edit operations. Preserve every missing/duplicate/drift/disabled refusal; a different popup is a failed target selection, not success. No song edit/save from a generic button label.
+Predicts: the independently scoped enabled target survives a fresh rematch and opens actual clip operations, which can be observed before choosing any bounded edit.
+Against: identity or inspection is unqualified, control is disabled, any guard refuses, capture context differs, or resulting popup has another purpose/no usable edit operations. Do not retry after unknown delivery.
+Refs: output/suno-20261110/editor-affordances-SUN34.json; output/suno-20261110/ready-drafts/inspection/847808eefb4844c499004c1e7fc994fe.json
