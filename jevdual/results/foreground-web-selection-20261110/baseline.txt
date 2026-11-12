@@ -1,0 +1,502 @@
+FFFFFFFFFFFFFF                                                           [100%]
+=================================== FAILURES ===================================
+_ test_foreground_web_range_preserves_exact_prefix_suffix[\n-selection0--signal\n] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x108772340>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1087f2540>
+initial = '\n', selection = (0, 0), selected_text = '', expected = 'signal\n'
+
+    @pytest.mark.parametrize(("initial", "selection", "selected_text", "expected"), [
+        ("\n", (0, 0), "", "signal\n"),
+        ("ab😀cd\n", (2, 2), "😀", "absignalcd\n"),
+        ("a" * 600 + "\n", (600, 0), "", "a" * 600 + "signal\n"),
+    ])
+    def test_foreground_web_range_preserves_exact_prefix_suffix(
+        world, fw, monkeypatch, initial, selection, selected_text, expected
+    ):
+        row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection,
+                                            selected_text=selected_text)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", f"{selection[0]}:{selection[1]}", "--authorize", "replace")
+>       assert code == 0 and row["value"] == expected, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 0:0
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2141: AssertionError
+_ test_foreground_web_range_preserves_exact_prefix_suffix[ab\U0001f600cd\n-selection1-\U0001f600-absignalcd\n] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1087e8180>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107f0edb0>
+initial = 'ab😀cd\n', selection = (2, 2), selected_text = '😀'
+expected = 'absignalcd\n'
+
+    @pytest.mark.parametrize(("initial", "selection", "selected_text", "expected"), [
+        ("\n", (0, 0), "", "signal\n"),
+        ("ab😀cd\n", (2, 2), "😀", "absignalcd\n"),
+        ("a" * 600 + "\n", (600, 0), "", "a" * 600 + "signal\n"),
+    ])
+    def test_foreground_web_range_preserves_exact_prefix_suffix(
+        world, fw, monkeypatch, initial, selection, selected_text, expected
+    ):
+        row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection,
+                                            selected_text=selected_text)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", f"{selection[0]}:{selection[1]}", "--authorize", "replace")
+>       assert code == 0 and row["value"] == expected, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 2:2
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2141: AssertionError
+_ test_foreground_web_range_preserves_exact_prefix_suffix[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n-selection2--aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaasignal\n] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x108a39f80>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1087f3530>
+initial = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n'
+selection = (600, 0), selected_text = ''
+expected = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaasignal\n'
+
+    @pytest.mark.parametrize(("initial", "selection", "selected_text", "expected"), [
+        ("\n", (0, 0), "", "signal\n"),
+        ("ab😀cd\n", (2, 2), "😀", "absignalcd\n"),
+        ("a" * 600 + "\n", (600, 0), "", "a" * 600 + "signal\n"),
+    ])
+    def test_foreground_web_range_preserves_exact_prefix_suffix(
+        world, fw, monkeypatch, initial, selection, selected_text, expected
+    ):
+        row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection,
+                                            selected_text=selected_text)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", f"{selection[0]}:{selection[1]}", "--authorize", "replace")
+>       assert code == 0 and row["value"] == expected, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...t,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 600:0
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2141: AssertionError
+_ test_foreground_web_range_requires_independent_exact_selection[wrong_range] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x108772660>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x108337110>
+failure = 'wrong_range'
+
+    @pytest.mark.parametrize("failure", ["wrong_range", "wrong_text", "unreadable_text", "split_surrogate",
+                                         "outside_value", "changed_value", "changed_identity"])
+    def test_foreground_web_range_requires_independent_exact_selection(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        initial = "ab😀cd\n" if failure == "split_surrogate" else "prior\n"
+        selection = (3, 0) if failure == "split_surrogate" else (0, 0)
+        row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection)
+        if failure == "wrong_range":
+            monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0))
+        if failure in ("wrong_text", "unreadable_text"):
+            monkeypatch.setattr(ax, "selected_text", lambda element: "unselected" if failure == "wrong_text" else None)
+        if failure == "changed_value":
+            monkeypatch.setattr(ax, "value", lambda element: "different exact value")
+        if failure == "changed_identity":
+            original = world.call_tool
+    
+            async def change(name, encoded):
+                result = await original(name, encoded)
+                if name == "bring_to_front":
+                    row["label"] = "Different field"
+                return result
+    
+            monkeypatch.setattr(world, "call_tool", change)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        requested = "90:0" if failure == "outside_value" else f"{selection[0]}:{selection[1]}"
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", requested, "--authorize", "replace")
+>       assert code == 0 and "refused" in out + err, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 0:0
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2179: AssertionError
+__ test_foreground_web_range_requires_independent_exact_selection[wrong_text] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107d3d940>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107c4de50>
+failure = 'wrong_text'
+
+    @pytest.mark.parametrize("failure", ["wrong_range", "wrong_text", "unreadable_text", "split_surrogate",
+                                         "outside_value", "changed_value", "changed_identity"])
+    def test_foreground_web_range_requires_independent_exact_selection(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        initial = "ab😀cd\n" if failure == "split_surrogate" else "prior\n"
+        selection = (3, 0) if failure == "split_surrogate" else (0, 0)
+        row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection)
+        if failure == "wrong_range":
+            monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0))
+        if failure in ("wrong_text", "unreadable_text"):
+            monkeypatch.setattr(ax, "selected_text", lambda element: "unselected" if failure == "wrong_text" else None)
+        if failure == "changed_value":
+            monkeypatch.setattr(ax, "value", lambda element: "different exact value")
+        if failure == "changed_identity":
+            original = world.call_tool
+    
+            async def change(name, encoded):
+                result = await original(name, encoded)
+                if name == "bring_to_front":
+                    row["label"] = "Different field"
+                return result
+    
+            monkeypatch.setattr(world, "call_tool", change)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        requested = "90:0" if failure == "outside_value" else f"{selection[0]}:{selection[1]}"
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", requested, "--authorize", "replace")
+>       assert code == 0 and "refused" in out + err, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 0:0
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2179: AssertionError
+_ test_foreground_web_range_requires_independent_exact_selection[unreadable_text] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107d3dee0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x108334140>
+failure = 'unreadable_text'
+
+    @pytest.mark.parametrize("failure", ["wrong_range", "wrong_text", "unreadable_text", "split_surrogate",
+                                         "outside_value", "changed_value", "changed_identity"])
+    def test_foreground_web_range_requires_independent_exact_selection(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        initial = "ab😀cd\n" if failure == "split_surrogate" else "prior\n"
+        selection = (3, 0) if failure == "split_surrogate" else (0, 0)
+        row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection)
+        if failure == "wrong_range":
+            monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0))
+        if failure in ("wrong_text", "unreadable_text"):
+            monkeypatch.setattr(ax, "selected_text", lambda element: "unselected" if failure == "wrong_text" else None)
+        if failure == "changed_value":
+            monkeypatch.setattr(ax, "value", lambda element: "different exact value")
+        if failure == "changed_identity":
+            original = world.call_tool
+    
+            async def change(name, encoded):
+                result = await original(name, encoded)
+                if name == "bring_to_front":
+                    row["label"] = "Different field"
+                return result
+    
+            monkeypatch.setattr(world, "call_tool", change)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        requested = "90:0" if failure == "outside_value" else f"{selection[0]}:{selection[1]}"
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", requested, "--authorize", "replace")
+>       assert code == 0 and "refused" in out + err, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 0:0
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2179: AssertionError
+_ test_foreground_web_range_requires_independent_exact_selection[split_surrogate] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107d3df80>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1082e9610>
+failure = 'split_surrogate'
+
+    @pytest.mark.parametrize("failure", ["wrong_range", "wrong_text", "unreadable_text", "split_surrogate",
+                                         "outside_value", "changed_value", "changed_identity"])
+    def test_foreground_web_range_requires_independent_exact_selection(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        initial = "ab😀cd\n" if failure == "split_surrogate" else "prior\n"
+        selection = (3, 0) if failure == "split_surrogate" else (0, 0)
+        row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection)
+        if failure == "wrong_range":
+            monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0))
+        if failure in ("wrong_text", "unreadable_text"):
+            monkeypatch.setattr(ax, "selected_text", lambda element: "unselected" if failure == "wrong_text" else None)
+        if failure == "changed_value":
+            monkeypatch.setattr(ax, "value", lambda element: "different exact value")
+        if failure == "changed_identity":
+            original = world.call_tool
+    
+            async def change(name, encoded):
+                result = await original(name, encoded)
+                if name == "bring_to_front":
+                    row["label"] = "Different field"
+                return result
+    
+            monkeypatch.setattr(world, "call_tool", change)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        requested = "90:0" if failure == "outside_value" else f"{selection[0]}:{selection[1]}"
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", requested, "--authorize", "replace")
+>       assert code == 0 and "refused" in out + err, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 3:0
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2179: AssertionError
+_ test_foreground_web_range_requires_independent_exact_selection[outside_value] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107e69120>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107cfd730>
+failure = 'outside_value'
+
+    @pytest.mark.parametrize("failure", ["wrong_range", "wrong_text", "unreadable_text", "split_surrogate",
+                                         "outside_value", "changed_value", "changed_identity"])
+    def test_foreground_web_range_requires_independent_exact_selection(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        initial = "ab😀cd\n" if failure == "split_surrogate" else "prior\n"
+        selection = (3, 0) if failure == "split_surrogate" else (0, 0)
+        row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection)
+        if failure == "wrong_range":
+            monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0))
+        if failure in ("wrong_text", "unreadable_text"):
+            monkeypatch.setattr(ax, "selected_text", lambda element: "unselected" if failure == "wrong_text" else None)
+        if failure == "changed_value":
+            monkeypatch.setattr(ax, "value", lambda element: "different exact value")
+        if failure == "changed_identity":
+            original = world.call_tool
+    
+            async def change(name, encoded):
+                result = await original(name, encoded)
+                if name == "bring_to_front":
+                    row["label"] = "Different field"
+                return result
+    
+            monkeypatch.setattr(world, "call_tool", change)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        requested = "90:0" if failure == "outside_value" else f"{selection[0]}:{selection[1]}"
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", requested, "--authorize", "replace")
+>       assert code == 0 and "refused" in out + err, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...ct,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 90:0
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2179: AssertionError
+_ test_foreground_web_range_requires_independent_exact_selection[changed_value] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107e696c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10844e840>
+failure = 'changed_value'
+
+    @pytest.mark.parametrize("failure", ["wrong_range", "wrong_text", "unreadable_text", "split_surrogate",
+                                         "outside_value", "changed_value", "changed_identity"])
+    def test_foreground_web_range_requires_independent_exact_selection(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        initial = "ab😀cd\n" if failure == "split_surrogate" else "prior\n"
+        selection = (3, 0) if failure == "split_surrogate" else (0, 0)
+        row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection)
+        if failure == "wrong_range":
+            monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0))
+        if failure in ("wrong_text", "unreadable_text"):
+            monkeypatch.setattr(ax, "selected_text", lambda element: "unselected" if failure == "wrong_text" else None)
+        if failure == "changed_value":
+            monkeypatch.setattr(ax, "value", lambda element: "different exact value")
+        if failure == "changed_identity":
+            original = world.call_tool
+    
+            async def change(name, encoded):
+                result = await original(name, encoded)
+                if name == "bring_to_front":
+                    row["label"] = "Different field"
+                return result
+    
+            monkeypatch.setattr(world, "call_tool", change)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        requested = "90:0" if failure == "outside_value" else f"{selection[0]}:{selection[1]}"
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", requested, "--authorize", "replace")
+>       assert code == 0 and "refused" in out + err, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 0:0
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2179: AssertionError
+_ test_foreground_web_range_requires_independent_exact_selection[changed_identity] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107e694e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1082d43e0>
+failure = 'changed_identity'
+
+    @pytest.mark.parametrize("failure", ["wrong_range", "wrong_text", "unreadable_text", "split_surrogate",
+                                         "outside_value", "changed_value", "changed_identity"])
+    def test_foreground_web_range_requires_independent_exact_selection(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        initial = "ab😀cd\n" if failure == "split_surrogate" else "prior\n"
+        selection = (3, 0) if failure == "split_surrogate" else (0, 0)
+        row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection)
+        if failure == "wrong_range":
+            monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0))
+        if failure in ("wrong_text", "unreadable_text"):
+            monkeypatch.setattr(ax, "selected_text", lambda element: "unselected" if failure == "wrong_text" else None)
+        if failure == "changed_value":
+            monkeypatch.setattr(ax, "value", lambda element: "different exact value")
+        if failure == "changed_identity":
+            original = world.call_tool
+    
+            async def change(name, encoded):
+                result = await original(name, encoded)
+                if name == "bring_to_front":
+                    row["label"] = "Different field"
+                return result
+    
+            monkeypatch.setattr(world, "call_tool", change)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        requested = "90:0" if failure == "outside_value" else f"{selection[0]}:{selection[1]}"
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", requested, "--authorize", "replace")
+>       assert code == 0 and "refused" in out + err, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 0:0
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2179: AssertionError
+_____ test_foreground_web_range_receipt_compares_exact_full_value[signal] ______
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107d3e660>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107c696d0>
+actual = 'signal'
+
+    @pytest.mark.parametrize("actual", ["signal", "signal\n\n", "other\n"])
+    def test_foreground_web_range_receipt_compares_exact_full_value(world, fw, monkeypatch, actual):
+        _foreground_selection_fixture(world, monkeypatch, actual_after=actual)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 0:0
+E         ')
+E       assert 2 == 0
+
+tests/test_session_scenarios.py:2189: AssertionError
+___ test_foreground_web_range_receipt_compares_exact_full_value[signal\n\n] ____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107d3ef20>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107c69490>
+actual = 'signal\n\n'
+
+    @pytest.mark.parametrize("actual", ["signal", "signal\n\n", "other\n"])
+    def test_foreground_web_range_receipt_compares_exact_full_value(world, fw, monkeypatch, actual):
+        _foreground_selection_fixture(world, monkeypatch, actual_after=actual)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 0:0
+E         ')
+E       assert 2 == 0
+
+tests/test_session_scenarios.py:2189: AssertionError
+_____ test_foreground_web_range_receipt_compares_exact_full_value[other\n] _____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107d3e700>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107c6a0f0>
+actual = 'other\n'
+
+    @pytest.mark.parametrize("actual", ["signal", "signal\n\n", "other\n"])
+    def test_foreground_web_range_receipt_compares_exact_full_value(world, fw, monkeypatch, actual):
+        _foreground_selection_fixture(world, monkeypatch, actual_after=actual)
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 0:0
+E         ')
+E       assert 2 == 0
+
+tests/test_session_scenarios.py:2189: AssertionError
+___________ test_foreground_web_range_never_retries_uncertain_input ____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107e69080>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107cc1be0>
+
+    def test_foreground_web_range_never_retries_uncertain_input(world, fw, monkeypatch):
+        _foreground_selection_fixture(world, monkeypatch, outcome=RuntimeError("reply lost"))
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0 and "unverifiable" in out + err, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...act,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-range 0:0
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2199: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_preserves_exact_prefix_suffix[\n-selection0--signal\n]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_preserves_exact_prefix_suffix[ab\U0001f600cd\n-selection1-\U0001f600-absignalcd\n]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_preserves_exact_prefix_suffix[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n-selection2--aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaasignal\n]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_requires_independent_exact_selection[wrong_range]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_requires_independent_exact_selection[wrong_text]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_requires_independent_exact_selection[unreadable_text]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_requires_independent_exact_selection[split_surrogate]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_requires_independent_exact_selection[outside_value]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_requires_independent_exact_selection[changed_value]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_requires_independent_exact_selection[changed_identity]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_receipt_compares_exact_full_value[signal]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_receipt_compares_exact_full_value[signal\n\n]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_receipt_compares_exact_full_value[other\n]
+FAILED tests/test_session_scenarios.py::test_foreground_web_range_never_retries_uncertain_input
+14 failed, 213 deselected in 3.47s

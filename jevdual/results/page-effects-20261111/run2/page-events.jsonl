@@ -1,0 +1,11 @@
+{"t": 1794434355.4166, "type": "loaded", "detail": {"visibility": "visible", "focused": false, "count_center": [84, 125]}, "received": 1794434355.4345448}
+{"t": 1794434355.4165998, "type": "loaded", "detail": {"visibility": "visible", "focused": true, "count_center": [84, 125]}, "received": 1794434355.448405}
+{"t": 1794434356.8558, "type": "window_blur", "detail": {}, "received": 1794434356.861938}
+{"t": 1794434359.0630999, "type": "click", "detail": {"id": "cb", "trusted": false, "x": 50, "y": 49, "count": 0}, "received": 1794434359.064686}
+{"t": 1794434359.0633, "type": "input", "detail": {"id": "cb", "value": "on"}, "received": 1794434359.065044}
+{"t": 1794434359.0633998, "type": "change", "detail": {"id": "cb", "checked": true}, "received": 1794434359.0653188}
+{"t": 1794434360.2395, "type": "click", "detail": {"id": "inert", "trusted": false, "x": 83, "y": 86, "count": 0}, "received": 1794434360.24081}
+{"t": 1794434361.8086998, "type": "window_focus", "detail": {}, "received": 1794434361.8100631}
+{"t": 1794434361.9153998, "type": "input", "detail": {"id": "name", "value": "replacement"}, "received": 1794434361.916613}
+{"t": 1794434363.083, "type": "change", "detail": {"id": "name", "checked": false}, "received": 1794434363.084492}
+{"t": 1794434363.0847998, "type": "click", "detail": {"id": "count", "trusted": true, "x": 84, "y": 125, "count": 0}, "received": 1794434363.085567}

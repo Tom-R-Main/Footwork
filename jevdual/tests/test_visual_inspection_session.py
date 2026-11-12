@@ -109,6 +109,30 @@ def test_fresh_exact_id_records_binding_without_models_or_dispatch(operator):
     assert not world.tool_calls
 
 
+@pytest.mark.parametrize("changed", [False, True])
+def test_inspection_exposes_scoped_native_control_identity_and_refuses_drift(operator, monkeypatch, changed):
+    from tests.test_session_scenarios import _mac_selectors, _native_identified_controls
+
+    world, path, run = operator
+    _mac_selectors(monkeypatch)
+    _, backing, _ = _native_identified_controls(world, monkeypatch)
+    assert run("look")[0] == 0
+    if changed:
+        backing[400]["dom_id"] = "replacement"
+    code, out, err = inspect(run, "940")
+    if changed:
+        assert code == 4 and "target_identity_changed" in err, (out, err)
+    else:
+        assert code == 0, (out, err)
+        identity = manifest(path)["inspection"]["target_identity"]
+        assert identity["native_control_qualified"] is True
+        assert identity["native_dom_id"] == "hero-options"
+        assert identity["native_document_url"] == "https://example.test/song/a"
+        preview = next((path / "inspection").glob("*.html")).read_text()
+        assert "hero-options" in preview and "https://example.test/song/a" in preview
+    assert world.presses == [] and world.tool_calls == []
+
+
 def test_preview_outlines_exact_pixel_binding_and_preserves_original_png(operator):
     import hashlib
 
@@ -135,6 +159,26 @@ def test_preview_outlines_exact_pixel_binding_and_preserves_original_png(operato
     screenshot = path / "inspection" / evidence["inspection"]["screenshot"]
     assert hashlib.sha256(screenshot.read_bytes()).hexdigest() == evidence["image"]["sha256"]
     assert world.presses == []
+
+
+def test_inspection_keeps_numeric_snapshot_evidence_without_granting_an_edit(operator):
+    world, path, run = operator
+    world.base["elements"].append({
+        "element_index": 801, "role": "AXSlider", "label": "Track volume", "value": "0.75",
+        "min": 0, "max": 1, "value_description": "-2.5 dB", "enabled": True,
+        "actions": ["AXIncrement", "AXDecrement"],
+        "frame": {"x": 440., "y": 380., "w": 100., "h": 18.},
+    })
+    assert run("look")[0] == 0
+    code, out, err = inspect(run, "801")
+    assert code == 0, (out, err)
+    evidence = manifest(path)["inspection"]
+    assert evidence["target_numeric"] == {
+        "source": "cua.window_state", "value": .75, "min": 0., "max": 1., "range_valid": True,
+        "value_description": "-2.5 dB", "value_description_truncated": False,
+    }
+    assert "read-only" in evidence["authority"]
+    assert world.presses == [] and world.tool_calls == []
 
 
 def test_preview_escapes_native_labels_and_postconditions(operator):
@@ -271,3 +315,24 @@ def test_browser_unqualified_geometry_fails_before_capture(operator, monkeypatch
     )
     code, _, error = inspect(run)
     assert code == 4 and "surface_unsupported" in error
+
+
+@pytest.mark.parametrize('changed', [False, True])
+def test_opaque_control_inspection_records_provenance_and_refuses_name_drift(operator, monkeypatch, changed):
+    from tests.test_session_scenarios import _mac_selectors, _native_opaque_controls
+
+    world, path, run = operator
+    _mac_selectors(monkeypatch)
+    rows, _, _ = _native_opaque_controls(world, monkeypatch)
+    assert run('look')[0] == 0
+    if changed:
+        rows[0]['label'] = 'hero-options'  # identical display text, different actual name provenance
+    code, out, err = inspect(run, '940')
+    if changed:
+        assert code == 4 and 'target_identity_changed' in err, (out, err)
+    else:
+        assert code == 0, (out, err)
+        identity = manifest(path)['inspection']['target_identity']
+        assert identity['native_control_opaque'] is True
+        assert identity['label'] == identity['native_dom_id'] == 'hero-options'
+    assert world.presses == [] and not world.tool_calls

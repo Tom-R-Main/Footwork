@@ -1,0 +1,1058 @@
+{
+  "target": "6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "release": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "current_at_start": "/Users/thomasmain/.local/share/footwork/releases/eded45c48d550b6867e1ce1314de64c41cbcfae8",
+  "python": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/bin/python",
+  "source": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/lib/python3.12/site-packages/jevdual/__init__.py",
+  "cua_source": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/lib/python3.12/site-packages/cua_driver/__init__.py",
+  "sdk": "0.46.0+footwork.5486b624.cleanup2.focus1",
+  "criteria": {
+    "background_native_start": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "subject_native_start": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "filmed_native_start": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "persistent_desktop_subject_reservation": {
+      "passed": true
+    },
+    "saved_observe_only": {
+      "passed": true
+    },
+    "pointer_setup": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "filmed_point": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "independent_native_append": {
+      "passed": true,
+      "exit": 0,
+      "actual": "Owned background baseline\nBackground concurrency marker",
+      "error": ""
+    },
+    "pointer_readback": {
+      "passed": true,
+      "expected": [
+        550.0,
+        477.0
+      ],
+      "observed": [
+        550.0,
+        477.0
+      ],
+      "gestures": [
+        {
+          "kind": "place",
+          "label": "setup",
+          "from": [
+            515.26953125,
+            811.359375
+          ],
+          "to": [
+            200.0,
+            287.0
+          ],
+          "samples": 1,
+          "outcome": "arrived"
+        },
+        {
+          "kind": "approach",
+          "label": "Coordination target",
+          "from": [
+            200.0,
+            287.0
+          ],
+          "to": [
+            550.0,
+            477.0
+          ],
+          "samples": 87,
+          "duration_s": 0.896437356998477,
+          "posted": 86,
+          "max_gap_ms": 47.8,
+          "stall_gap_ms": null,
+          "max_post_ms": 12.0,
+          "max_ack_ms": 46.5,
+          "outcome": "arrived"
+        }
+      ]
+    },
+    "background_did_not_steal_front": {
+      "passed": true,
+      "before": 1163,
+      "after": 1163
+    },
+    "independent_page_hover": {
+      "passed": true,
+      "events": [
+        {
+          "event": "pointerenter"
+        }
+      ]
+    },
+    "pointer_record_complete": {
+      "passed": true,
+      "completeness": "complete",
+      "geometry_complete": true,
+      "posted_basis": "CGEventPost call entry/return; not OS delivery"
+    },
+    "recorded_posts_equal_moving_samples": {
+      "passed": true,
+      "recorded_posts": 86,
+      "moving_samples": 86,
+      "player_posted": 86,
+      "record_posted": 86,
+      "planned": 87
+    },
+    "posting_gap_under_unchanged_limit": {
+      "passed": true,
+      "max_gap_ms": 47.8,
+      "stall_gap_ms": null,
+      "limit_ms": 50.0,
+      "max_post_ms": 12.0,
+      "max_ack_ms": 46.5,
+      "recorder_max_post_call_ms": 11.461,
+      "recorder_median_post_call_ms": 0.013
+    },
+    "record_endpoint_matches_readback": {
+      "passed": true,
+      "requested": [
+        550.0,
+        477.0
+      ],
+      "last_posted": [
+        550.0,
+        477.0
+      ],
+      "record_final": [
+        550.0,
+        477.0
+      ],
+      "independent": [
+        550.0,
+        477.0
+      ]
+    },
+    "reserved_owner_continues_with_waiter": {
+      "passed": true,
+      "requests": [
+        {
+          "seq": 298,
+          "token": "55cda1cf0b4a4602aa7eeb1abd25c7fa",
+          "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/subject",
+          "desktop": "console",
+          "resources": [
+            "session/%2FUsers%2Fthomasmain%2Fprojects%2Ffootwork%2Fjevdual%2Foutput%2Fconverge-release-20261111%2Flive%2Fsubject"
+          ],
+          "state": "active",
+          "reservation": "",
+          "pid": 1326
+        },
+        {
+          "seq": 299,
+          "token": "e40b74af06ee485b802ef09216cfa73a",
+          "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/subject",
+          "desktop": "console",
+          "resources": [
+            "app/google%20chrome"
+          ],
+          "state": "waiting",
+          "reservation": "",
+          "pid": 1326
+        }
+      ]
+    },
+    "owner_completed_before_competitor_handoff": {
+      "passed": true,
+      "exit": 0
+    },
+    "revocation_fences_pointer": {
+      "passed": true,
+      "exit": 7,
+      "error": "stopped: coordination_refused: reservation unavailable; explicit handoff required\n"
+    },
+    "revoked_point_records_no_posts": {
+      "passed": true,
+      "new_lines": 0
+    },
+    "stale_yield_preserves_new_owner": {
+      "passed": true
+    }
+  },
+  "commands": [
+    {
+      "name": "00-background-start",
+      "args": [
+        "start",
+        "Append only to owned background fixture",
+        "--app",
+        "TextEdit",
+        "--pid",
+        "1226",
+        "--window",
+        "independent.txt",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/other"
+      ],
+      "pid": 1244,
+      "started": 1794438797.016688,
+      "exit": 0,
+      "elapsed": 0.979
+    },
+    {
+      "name": "01-subject-start",
+      "args": [
+        "start",
+        "Observe owned subject",
+        "--app",
+        "Google Chrome",
+        "--pid",
+        "1163",
+        "--window",
+        "Footwork macOS coordination fixture",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/subject"
+      ],
+      "pid": 1276,
+      "started": 1794438797.998305,
+      "exit": 0,
+      "elapsed": 1.031
+    },
+    {
+      "name": "02-film-start",
+      "args": [
+        "start",
+        "Film owned pointer rehearsal",
+        "--app",
+        "Google Chrome",
+        "--pid",
+        "1163",
+        "--window",
+        "Footwork macOS coordination fixture",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film",
+        "--mode",
+        "exclusive_desktop",
+        "--pointer-motion",
+        "filmed",
+        "--rest",
+        "100,100"
+      ],
+      "pid": 1286,
+      "started": 1794438799.032554,
+      "exit": 0,
+      "elapsed": 0.674
+    },
+    {
+      "name": "03-observe-only",
+      "args": [
+        "control",
+        "observe",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film"
+      ],
+      "pid": 1291,
+      "started": 1794438799.7117178,
+      "exit": 0,
+      "elapsed": 0.078
+    },
+    {
+      "name": "04-park-place",
+      "args": [
+        "park",
+        "--place",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film"
+      ],
+      "pid": 1292,
+      "started": 1794438799.793399,
+      "exit": 0,
+      "elapsed": 0.233
+    },
+    {
+      "name": "05-filmed-point",
+      "args": [
+        "point",
+        "Coordination target",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film"
+      ],
+      "pid": 1296,
+      "started": 1794438800.047773,
+      "exit": 0,
+      "elapsed": 1.451
+    },
+    {
+      "name": "05-background-append",
+      "args": [
+        "do",
+        "append",
+        "1",
+        "Background concurrency marker",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/other"
+      ],
+      "pid": 1297,
+      "started": 1794438800.047828,
+      "exit": 0,
+      "elapsed": 1.906
+    },
+    {
+      "name": "07-competing-look",
+      "args": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/subject"
+      ],
+      "pid": 1326,
+      "started": 1794438802.2359612,
+      "exit": 7
+    },
+    {
+      "name": "08-owner-look",
+      "args": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film"
+      ],
+      "pid": 1327,
+      "started": 1794438802.3516219,
+      "exit": 0
+    },
+    {
+      "name": "09-cancel-waiter",
+      "args": [
+        "control",
+        "cancel",
+        "e40b74af06ee485b802ef09216cfa73a"
+      ],
+      "pid": 1332,
+      "started": 1794438803.001795,
+      "exit": 0,
+      "elapsed": 0.126
+    },
+    {
+      "name": "10-cancel-reservation",
+      "args": [
+        "control",
+        "cancel",
+        "f411f1200cea450eaf0dc28eabf00756"
+      ],
+      "pid": 1333,
+      "started": 1794438803.154686,
+      "exit": 0,
+      "elapsed": 0.09
+    },
+    {
+      "name": "11-revoked-point",
+      "args": [
+        "point",
+        "Coordination target",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film"
+      ],
+      "pid": 1334,
+      "started": 1794438803.2471402,
+      "exit": 7,
+      "elapsed": 0.101
+    },
+    {
+      "name": "12-explicit-handoff",
+      "args": [
+        "control",
+        "reserve",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film"
+      ],
+      "pid": 1335,
+      "started": 1794438803.352225,
+      "exit": 0,
+      "elapsed": 0.095
+    },
+    {
+      "name": "13-stale-yield",
+      "args": [
+        "control",
+        "yield",
+        "f411f1200cea450eaf0dc28eabf00756"
+      ],
+      "pid": 1336,
+      "started": 1794438803.449857,
+      "exit": 0,
+      "elapsed": 0.089
+    },
+    {
+      "name": "14-yield-new-owner",
+      "args": [
+        "control",
+        "yield",
+        "7eae81a7109240ebafc843950eff3e15"
+      ],
+      "pid": 1337,
+      "started": 1794438803.550508,
+      "exit": 0,
+      "elapsed": 0.086
+    }
+  ],
+  "protected_chrome_before": {
+    "9333": {
+      "pid": 57088,
+      "start": 1794373802.56725
+    },
+    "9555": {
+      "pid": 78967,
+      "start": 1794437783.678094
+    }
+  },
+  "idle_gate": {
+    "required_idle_s": 10.0,
+    "polls": [
+      {
+        "at": 1794437803.486668,
+        "screen_locked": false,
+        "idle_seconds": 0.014011042
+      },
+      {
+        "at": 1794437818.5020428,
+        "screen_locked": false,
+        "idle_seconds": 0.025221875
+      },
+      {
+        "at": 1794437833.505931,
+        "screen_locked": false,
+        "idle_seconds": 0.187596791
+      },
+      {
+        "at": 1794437848.508321,
+        "screen_locked": false,
+        "idle_seconds": 0.002346958
+      },
+      {
+        "at": 1794437863.512903,
+        "screen_locked": false,
+        "idle_seconds": 0.001975291
+      },
+      {
+        "at": 1794437878.516605,
+        "screen_locked": false,
+        "idle_seconds": 0.011601917
+      },
+      {
+        "at": 1794437893.518389,
+        "screen_locked": false,
+        "idle_seconds": 0.033393875
+      },
+      {
+        "at": 1794437908.5210938,
+        "screen_locked": false,
+        "idle_seconds": 0.006119417
+      },
+      {
+        "at": 1794437923.523329,
+        "screen_locked": false,
+        "idle_seconds": 0.035914625
+      },
+      {
+        "at": 1794437938.526277,
+        "screen_locked": false,
+        "idle_seconds": 0.003320125
+      },
+      {
+        "at": 1794437953.5288372,
+        "screen_locked": false,
+        "idle_seconds": 0.008608333
+      },
+      {
+        "at": 1794437968.530435,
+        "screen_locked": false,
+        "idle_seconds": 0.01226275
+      },
+      {
+        "at": 1794437983.532182,
+        "screen_locked": false,
+        "idle_seconds": 1.441214042
+      },
+      {
+        "at": 1794437998.537521,
+        "screen_locked": false,
+        "idle_seconds": 0.06080775
+      },
+      {
+        "at": 1794438013.539254,
+        "screen_locked": false,
+        "idle_seconds": 0.001183209
+      },
+      {
+        "at": 1794438028.540781,
+        "screen_locked": false,
+        "idle_seconds": 0.002554833
+      },
+      {
+        "at": 1794438043.54631,
+        "screen_locked": false,
+        "idle_seconds": 0.029515
+      },
+      {
+        "at": 1794438058.54816,
+        "screen_locked": false,
+        "idle_seconds": 0.0076255
+      },
+      {
+        "at": 1794438073.549598,
+        "screen_locked": false,
+        "idle_seconds": 0.005426958
+      },
+      {
+        "at": 1794438088.55284,
+        "screen_locked": false,
+        "idle_seconds": 0.025812917
+      },
+      {
+        "at": 1794438103.55522,
+        "screen_locked": false,
+        "idle_seconds": 0.007524583
+      },
+      {
+        "at": 1794438118.557694,
+        "screen_locked": false,
+        "idle_seconds": 0.005279917
+      },
+      {
+        "at": 1794438133.55965,
+        "screen_locked": false,
+        "idle_seconds": 0.105656458
+      },
+      {
+        "at": 1794438148.561504,
+        "screen_locked": false,
+        "idle_seconds": 0.007402417
+      },
+      {
+        "at": 1794438163.563494,
+        "screen_locked": false,
+        "idle_seconds": 0.004940041
+      },
+      {
+        "at": 1794438178.5654988,
+        "screen_locked": false,
+        "idle_seconds": 0.020202584
+      },
+      {
+        "at": 1794438193.568108,
+        "screen_locked": false,
+        "idle_seconds": 0.000294833
+      },
+      {
+        "at": 1794438208.575388,
+        "screen_locked": false,
+        "idle_seconds": 0.003330708
+      },
+      {
+        "at": 1794438223.5773902,
+        "screen_locked": false,
+        "idle_seconds": 0.272182292
+      },
+      {
+        "at": 1794438238.5782678,
+        "screen_locked": false,
+        "idle_seconds": 0.002290667
+      },
+      {
+        "at": 1794438253.580414,
+        "screen_locked": false,
+        "idle_seconds": 0.699281125
+      },
+      {
+        "at": 1794438268.5824692,
+        "screen_locked": false,
+        "idle_seconds": 0.479150666
+      },
+      {
+        "at": 1794438283.613346,
+        "screen_locked": false,
+        "idle_seconds": 0.007338625
+      },
+      {
+        "at": 1794438298.642765,
+        "screen_locked": false,
+        "idle_seconds": 0.006982208
+      },
+      {
+        "at": 1794438313.6498592,
+        "screen_locked": false,
+        "idle_seconds": 0.000950875
+      },
+      {
+        "at": 1794438328.6658719,
+        "screen_locked": false,
+        "idle_seconds": 0.00536025
+      },
+      {
+        "at": 1794438343.677498,
+        "screen_locked": false,
+        "idle_seconds": 0.217029959
+      },
+      {
+        "at": 1794438358.6790972,
+        "screen_locked": false,
+        "idle_seconds": 0.003464708
+      },
+      {
+        "at": 1794438373.6810281,
+        "screen_locked": false,
+        "idle_seconds": 0.097798
+      },
+      {
+        "at": 1794438389.162036,
+        "screen_locked": false,
+        "idle_seconds": 0.114409083
+      },
+      {
+        "at": 1794438404.214315,
+        "screen_locked": false,
+        "idle_seconds": 0.001925
+      },
+      {
+        "at": 1794438419.215244,
+        "screen_locked": false,
+        "idle_seconds": 0.246156292
+      },
+      {
+        "at": 1794438434.2168052,
+        "screen_locked": false,
+        "idle_seconds": 0.044209208
+      },
+      {
+        "at": 1794438449.217847,
+        "screen_locked": false,
+        "idle_seconds": 0.000448334
+      },
+      {
+        "at": 1794438464.223558,
+        "screen_locked": false,
+        "idle_seconds": 0.004933209
+      },
+      {
+        "at": 1794438479.226241,
+        "screen_locked": false,
+        "idle_seconds": 0.011142625
+      },
+      {
+        "at": 1794438494.2281039,
+        "screen_locked": false,
+        "idle_seconds": 1.3152235
+      },
+      {
+        "at": 1794438509.2295198,
+        "screen_locked": false,
+        "idle_seconds": 0.038362166
+      },
+      {
+        "at": 1794438524.231012,
+        "screen_locked": false,
+        "idle_seconds": 0.087527416
+      },
+      {
+        "at": 1794438539.232981,
+        "screen_locked": false,
+        "idle_seconds": 0.012235333
+      },
+      {
+        "at": 1794438554.236547,
+        "screen_locked": false,
+        "idle_seconds": 0.002368875
+      },
+      {
+        "at": 1794438569.2395709,
+        "screen_locked": false,
+        "idle_seconds": 0.007952958
+      },
+      {
+        "at": 1794438584.241028,
+        "screen_locked": false,
+        "idle_seconds": 0.097769917
+      },
+      {
+        "at": 1794438599.241859,
+        "screen_locked": false,
+        "idle_seconds": 0.11044775
+      },
+      {
+        "at": 1794438614.2432342,
+        "screen_locked": false,
+        "idle_seconds": 0.34106975
+      },
+      {
+        "at": 1794438629.244828,
+        "screen_locked": false,
+        "idle_seconds": 0.0893785
+      },
+      {
+        "at": 1794438644.2463949,
+        "screen_locked": false,
+        "idle_seconds": 1.162307916
+      },
+      {
+        "at": 1794438659.2475882,
+        "screen_locked": false,
+        "idle_seconds": 0.974146083
+      },
+      {
+        "at": 1794438674.249046,
+        "screen_locked": false,
+        "idle_seconds": 1.361004875
+      },
+      {
+        "at": 1794438689.250544,
+        "screen_locked": false,
+        "idle_seconds": 0.004480291
+      },
+      {
+        "at": 1794438704.253203,
+        "screen_locked": false,
+        "idle_seconds": 0.018259709
+      },
+      {
+        "at": 1794438719.255163,
+        "screen_locked": false,
+        "idle_seconds": 0.373969625
+      },
+      {
+        "at": 1794438734.256682,
+        "screen_locked": false,
+        "idle_seconds": 0.044702125
+      },
+      {
+        "at": 1794438749.2581902,
+        "screen_locked": false,
+        "idle_seconds": 0.005649
+      },
+      {
+        "at": 1794438764.259527,
+        "screen_locked": false,
+        "idle_seconds": 0.027044583
+      },
+      {
+        "at": 1794438779.2611241,
+        "screen_locked": false,
+        "idle_seconds": 0.935990208
+      },
+      {
+        "at": 1794438794.261612,
+        "screen_locked": false,
+        "idle_seconds": 15.936442083
+      }
+    ],
+    "passed": true
+  },
+  "initial": {
+    "screen_locked": false,
+    "idle_seconds": 15.936646375,
+    "front_pid": 24992,
+    "pointer": [
+      515.26953125,
+      811.359375
+    ],
+    "existing_active_owners": 0
+  },
+  "owned_chrome": {
+    "pid": 1163,
+    "start": 1794438794.304071
+  },
+  "owned_textedit": {
+    "pid": 1226,
+    "windows": {
+      "independent.txt": 394377
+    }
+  },
+  "film_binding": {
+    "pid": 1163,
+    "window_id": 394369,
+    "token": "f411f1200cea450eaf0dc28eabf00756",
+    "geometry": {
+      "window": [
+        100.0,
+        100.0,
+        900.0,
+        650.0
+      ],
+      "content": [
+        100.0,
+        187.0,
+        900.0,
+        563.0
+      ],
+      "keep_out": null,
+      "rest": [
+        200.0,
+        287.0
+      ],
+      "margin_pt": 4.0,
+      "arcs": [
+        0.18,
+        0.1,
+        0.05,
+        0.0
+      ],
+      "timing": "DELIBERATE",
+      "dwell_s": 0.18,
+      "type_delay_ms": 65,
+      "continuity_pt": 2.0,
+      "take_ended": null,
+      "last_pointer": null,
+      "gestures": [],
+      "trace_path": null
+    }
+  },
+  "point_record_summary": [
+    {
+      "kind": "approach",
+      "label": "Coordination target",
+      "outcome": "arrived",
+      "completeness": "complete",
+      "posted_basis": "CGEventPost call entry/return; not OS delivery",
+      "posted": 86,
+      "planned": 87,
+      "posted_samples": 86
+    }
+  ],
+  "video": {
+    "exit": 0,
+    "path": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/rehearsal.mov",
+    "exists": true
+  },
+  "cleanup_registry": {
+    "requests": [],
+    "reservations": [
+      {
+        "token": "1e7441ee6f8a46e8b796328aba6949cc",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111/native-live/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "477d870e504c4f0fa1d8580adc51bfa0",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111/native-live/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "9ac829e884a44a1185b5d0b02843cb8c",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-diagnosis/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "1ea01fb265a246b5a68a63247c74f474",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-diagnosis/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "68701585694f4f59a91b8bdc25c53321",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-final/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "523b4dbeacf24d05a1e0db6a3bfd4a86",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-final/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "1cd3316b5f864f8da699627a4b1eddf8",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "df84d06a221448debfddec80f577da04",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "257244274d154d71b205f2419e8f2236",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native-warm-capture/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "b03aead5c2b249428bf7c91b9948c940",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native-warm-capture/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "55fa888d56f946f380874675f28143da",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "ee3de9f95f3a46989a7eb9032d23bc4f",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "750d6c808d164208ad5ef00451201770",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-installed-final/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "e6652e08473d4b10ab733023b14d88de",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-installed-final/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "d0a22176721f4b978dc0fee189c74b14",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/best-edit/takes-004",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "42b5f480b78f4df3ae6d10980aa172b4",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/best-edit/takes-005",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "38749585d1bb4ee5a66ee2f1215119e7",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/best-edit/takes-006",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "f411f1200cea450eaf0dc28eabf00756",
+        "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "7eae81a7109240ebafc843950eff3e15",
+        "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      }
+    ]
+  },
+  "owned_chrome_exited": true,
+  "events": [
+    {
+      "event": "pointerenter"
+    }
+  ],
+  "final_pointer": [
+    550.0,
+    477.0
+  ],
+  "owned_tokens": [
+    "f411f1200cea450eaf0dc28eabf00756",
+    "7eae81a7109240ebafc843950eff3e15"
+  ],
+  "protected_chrome_after": {
+    "9555": {
+      "pid": 99316,
+      "start": 1794438748.588582
+    },
+    "9333": {
+      "pid": 81411,
+      "start": 1794437934.417619
+    }
+  },
+  "current_at_end": "/Users/thomasmain/.local/share/footwork/releases/eded45c48d550b6867e1ce1314de64c41cbcfae8"
+}

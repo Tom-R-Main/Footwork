@@ -1,0 +1,5 @@
+Using CPython 3.12.6 interpreter at: jevdual/.venv/bin/python
+Resolved 1 package in 4ms
+Prepared 1 package in 170ms
+Installed 1 package in 3ms
+ + cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1.helptag1 (from file:///Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/wheelhouse/cua_driver-0.46.0+footwork.5486b624.cleanup2.focus1.helptag1-py3-none-macosx_13_0_arm64.whl)

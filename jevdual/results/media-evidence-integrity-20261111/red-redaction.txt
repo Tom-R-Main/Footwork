@@ -1,0 +1,126 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+________ test_metadata_media_echoes_redacted_from_every_artifact[False] ________
+
+setup = (PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-704/test_metadata_med...r/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-704/test_metadata_media_echoes_red0/review'])
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10454d580>
+capsys = <_pytest.capture.CaptureFixture object at 0x1045d4890>
+persistence_failure = False
+
+    @pytest.mark.parametrize("persistence_failure", [False, True])
+    def test_metadata_media_echoes_redacted_from_every_artifact(setup, monkeypatch, capsys, persistence_failure):
+        media, _prompt, env, out, argv = setup
+        video = media.with_suffix(".mp4")
+        media.rename(video)
+        argv[1] = str(video)
+        sidecar = video.parent / "sidecar.wav"
+        sidecar.write_bytes(b"distinct-fixture-sidecar-audio")
+        primary_encoded = base64.b64encode(video.read_bytes()).decode()
+        sidecar_encoded = base64.b64encode(sidecar.read_bytes()).decode()
+        credential = "fixture-credential-do-not-print"
+        calls = []
+    
+        def post(*args):
+            calls.append(args)
+            data = json.loads(response())
+            data.update(model=f"model {primary_encoded}", provider=f"provider {sidecar_encoded}",
+                        id=f"id {primary_encoded} {sidecar_encoded} {credential}")
+            data["choices"][0]["message"]["content"] = f"Review {primary_encoded} {sidecar_encoded} {credential}"
+            return json.dumps(data).encode()
+    
+        original_write = review._write
+    
+        def write(path, *args, **kwargs):
+            if persistence_failure and path.name == "response.json":
+                raise OSError("fixture local persistence failure")
+            return original_write(path, *args, **kwargs)
+    
+        monkeypatch.setattr(review, "_request_with_deadline", post)
+        monkeypatch.setattr(review, "_write", write)
+        assert review.main([*argv, "--audio-sidecar", str(sidecar), "--execute", "--env-file", str(env)]) == (
+            1 if persistence_failure else 0)
+        assert len(calls) == 1
+        manifest = json.loads((out / "manifest.json").read_text())
+        assert manifest["status"] == ("failed" if persistence_failure else "response_received")
+        assert manifest["media"]["sha256"] == review.hashlib.sha256(video.read_bytes()).hexdigest()
+        assert manifest["audio_sidecar"]["sha256"] == review.hashlib.sha256(sidecar.read_bytes()).hexdigest()
+        assert manifest["budget_report"]["reported_cost"] == .0001
+        retained = "".join(p.read_text() for p in out.iterdir()) + str(capsys.readouterr())
+        for sensitive in (credential, primary_encoded, sidecar_encoded):
+>           assert sensitive not in retained
+E           assert 'UklGRi1maXh0dXJlLWJ5dGVz' not in '{\n  "schem...', err=\'\')'
+E             
+E             'UklGRi1maXh0dXJlLWJ5dGVz' is contained here:
+E               ": "model UklGRi1maXh0dXJlLWJ5dGVz",
+E                 "returned_provider": "provider ZGlzdGluY3QtZml4dHVyZS1zaWRlY2FyLWF1ZGlv",
+E                 "response_id": "id UklGRi1maXh0dXJlLWJ5dGVz ZGlzdGluY3QtZml4dHVyZS1zaWRlY2FyLWF1ZGlv [REDACTED]",
+E                 "budget_report": {
+E                   "reasoning_disable_status": "unknown",...
+E             
+E             ...Full output truncated (61 lines hidden), use '-vv' to show
+
+tests/test_openrouter_media_review.py:620: AssertionError
+________ test_metadata_media_echoes_redacted_from_every_artifact[True] _________
+
+setup = (PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-704/test_metadata_med...r/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-704/test_metadata_media_echoes_red1/review'])
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1045d7a70>
+capsys = <_pytest.capture.CaptureFixture object at 0x1045d6fc0>
+persistence_failure = True
+
+    @pytest.mark.parametrize("persistence_failure", [False, True])
+    def test_metadata_media_echoes_redacted_from_every_artifact(setup, monkeypatch, capsys, persistence_failure):
+        media, _prompt, env, out, argv = setup
+        video = media.with_suffix(".mp4")
+        media.rename(video)
+        argv[1] = str(video)
+        sidecar = video.parent / "sidecar.wav"
+        sidecar.write_bytes(b"distinct-fixture-sidecar-audio")
+        primary_encoded = base64.b64encode(video.read_bytes()).decode()
+        sidecar_encoded = base64.b64encode(sidecar.read_bytes()).decode()
+        credential = "fixture-credential-do-not-print"
+        calls = []
+    
+        def post(*args):
+            calls.append(args)
+            data = json.loads(response())
+            data.update(model=f"model {primary_encoded}", provider=f"provider {sidecar_encoded}",
+                        id=f"id {primary_encoded} {sidecar_encoded} {credential}")
+            data["choices"][0]["message"]["content"] = f"Review {primary_encoded} {sidecar_encoded} {credential}"
+            return json.dumps(data).encode()
+    
+        original_write = review._write
+    
+        def write(path, *args, **kwargs):
+            if persistence_failure and path.name == "response.json":
+                raise OSError("fixture local persistence failure")
+            return original_write(path, *args, **kwargs)
+    
+        monkeypatch.setattr(review, "_request_with_deadline", post)
+        monkeypatch.setattr(review, "_write", write)
+        assert review.main([*argv, "--audio-sidecar", str(sidecar), "--execute", "--env-file", str(env)]) == (
+            1 if persistence_failure else 0)
+        assert len(calls) == 1
+        manifest = json.loads((out / "manifest.json").read_text())
+        assert manifest["status"] == ("failed" if persistence_failure else "response_received")
+        assert manifest["media"]["sha256"] == review.hashlib.sha256(video.read_bytes()).hexdigest()
+        assert manifest["audio_sidecar"]["sha256"] == review.hashlib.sha256(sidecar.read_bytes()).hexdigest()
+        assert manifest["budget_report"]["reported_cost"] == .0001
+        retained = "".join(p.read_text() for p in out.iterdir()) + str(capsys.readouterr())
+        for sensitive in (credential, primary_encoded, sidecar_encoded):
+>           assert sensitive not in retained
+E           assert 'UklGRi1maXh0dXJlLWJ5dGVz' not in '{\n  "schem...etry"}\\n\')'
+E             
+E             'UklGRi1maXh0dXJlLWJ5dGVz' is contained here:
+E               ": "model UklGRi1maXh0dXJlLWJ5dGVz",
+E                 "returned_provider": "provider ZGlzdGluY3QtZml4dHVyZS1zaWRlY2FyLWF1ZGlv",
+E                 "response_id": "id UklGRi1maXh0dXJlLWJ5dGVz ZGlzdGluY3QtZml4dHVyZS1zaWRlY2FyLWF1ZGlv [REDACTED]",
+E                 "budget_report": {
+E                   "reasoning_disable_status": "unknown",...
+E             
+E             ...Full output truncated (47 lines hidden), use '-vv' to show
+
+tests/test_openrouter_media_review.py:620: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_openrouter_media_review.py::test_metadata_media_echoes_redacted_from_every_artifact[False]
+FAILED tests/test_openrouter_media_review.py::test_metadata_media_echoes_redacted_from_every_artifact[True]
+2 failed, 56 deselected in 0.35s

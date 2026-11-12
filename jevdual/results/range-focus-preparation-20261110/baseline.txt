@@ -1,0 +1,476 @@
+FFFFFFFF                                                                 [100%]
+=================================== FAILURES ===================================
+___ test_foreground_range_prepares_focus_and_independently_requalifies[None] ___
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x110f39b20>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1078b3ec0>
+failure = None
+
+    @pytest.mark.parametrize("failure", [None, "setter_refused", "focus_unproven", "wrong_window",
+                                         "value_changed", "identity_changed", "selection_changed", "focus_stolen"])
+    def test_foreground_range_prepares_focus_and_independently_requalifies(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        row = _foreground_selection_fixture(world, monkeypatch)
+        focused = [False]
+        writes, checks = [], []
+    
+        def focus(element):
+            writes.append(element)
+            if failure == "setter_refused":
+                raise ax.AXError("focus_refused", "AXFocused setter refused")
+            focused[0] = True
+            if failure == "value_changed":
+                row["value"] += " "
+            if failure == "identity_changed":
+                row["label"] = "Different field"
+    
+        def matches(pid, window_id, element):
+            checks.append((pid, window_id, element))
+            if failure in ("focus_unproven", "wrong_window"):
+                return False
+            return focused[0] and not (failure == "focus_stolen" and len(checks) > 1)
+    
+        def selected_text(element):
+            if not focused[0]:
+                raise ax.AXError("selection_unreadable", "unfocused field exposes no selected text")
+            return ""
+    
+        monkeypatch.setattr(ax, "focus_text_field_ack", focus, raising=False)
+        monkeypatch.setattr(ax, "focused_element_matches", matches, raising=False)
+        monkeypatch.setattr(ax, "selected_text", selected_text)
+        monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0) if focused[0] and failure == "selection_changed" else (0, 0))
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0 and writes == ["styles"], (out, err)
+E       AssertionError: ("dispatched type(Styles) text='signal': driver says not sent (selection_unqualified: foreground (front app restored);...button     'Equals'
+E           [  22] button     'Show Sidebar'
+E           [  23] button     'Mode'
+E         page text (3 chars):
+E         0
+E         0
+E         ", '')
+E       assert (0 == 0 and [] == ['styles']
+E         
+E         Right contains one more item: 'styles'
+E         Use -v to get more diff)
+
+tests/test_session_scenarios.py:2414: AssertionError
+_ test_foreground_range_prepares_focus_and_independently_requalifies[setter_refused] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x111055c60>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x110f34e00>
+failure = 'setter_refused'
+
+    @pytest.mark.parametrize("failure", [None, "setter_refused", "focus_unproven", "wrong_window",
+                                         "value_changed", "identity_changed", "selection_changed", "focus_stolen"])
+    def test_foreground_range_prepares_focus_and_independently_requalifies(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        row = _foreground_selection_fixture(world, monkeypatch)
+        focused = [False]
+        writes, checks = [], []
+    
+        def focus(element):
+            writes.append(element)
+            if failure == "setter_refused":
+                raise ax.AXError("focus_refused", "AXFocused setter refused")
+            focused[0] = True
+            if failure == "value_changed":
+                row["value"] += " "
+            if failure == "identity_changed":
+                row["label"] = "Different field"
+    
+        def matches(pid, window_id, element):
+            checks.append((pid, window_id, element))
+            if failure in ("focus_unproven", "wrong_window"):
+                return False
+            return focused[0] and not (failure == "focus_stolen" and len(checks) > 1)
+    
+        def selected_text(element):
+            if not focused[0]:
+                raise ax.AXError("selection_unreadable", "unfocused field exposes no selected text")
+            return ""
+    
+        monkeypatch.setattr(ax, "focus_text_field_ack", focus, raising=False)
+        monkeypatch.setattr(ax, "focused_element_matches", matches, raising=False)
+        monkeypatch.setattr(ax, "selected_text", selected_text)
+        monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0) if focused[0] and failure == "selection_changed" else (0, 0))
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0 and writes == ["styles"], (out, err)
+E       AssertionError: ("dispatched type(Styles) text='signal': driver says not sent (selection_unqualified: foreground (front app restored);...button     'Equals'
+E           [  22] button     'Show Sidebar'
+E           [  23] button     'Mode'
+E         page text (3 chars):
+E         0
+E         0
+E         ", '')
+E       assert (0 == 0 and [] == ['styles']
+E         
+E         Right contains one more item: 'styles'
+E         Use -v to get more diff)
+
+tests/test_session_scenarios.py:2414: AssertionError
+_ test_foreground_range_prepares_focus_and_independently_requalifies[focus_unproven] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x110eee020>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x11094c6b0>
+failure = 'focus_unproven'
+
+    @pytest.mark.parametrize("failure", [None, "setter_refused", "focus_unproven", "wrong_window",
+                                         "value_changed", "identity_changed", "selection_changed", "focus_stolen"])
+    def test_foreground_range_prepares_focus_and_independently_requalifies(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        row = _foreground_selection_fixture(world, monkeypatch)
+        focused = [False]
+        writes, checks = [], []
+    
+        def focus(element):
+            writes.append(element)
+            if failure == "setter_refused":
+                raise ax.AXError("focus_refused", "AXFocused setter refused")
+            focused[0] = True
+            if failure == "value_changed":
+                row["value"] += " "
+            if failure == "identity_changed":
+                row["label"] = "Different field"
+    
+        def matches(pid, window_id, element):
+            checks.append((pid, window_id, element))
+            if failure in ("focus_unproven", "wrong_window"):
+                return False
+            return focused[0] and not (failure == "focus_stolen" and len(checks) > 1)
+    
+        def selected_text(element):
+            if not focused[0]:
+                raise ax.AXError("selection_unreadable", "unfocused field exposes no selected text")
+            return ""
+    
+        monkeypatch.setattr(ax, "focus_text_field_ack", focus, raising=False)
+        monkeypatch.setattr(ax, "focused_element_matches", matches, raising=False)
+        monkeypatch.setattr(ax, "selected_text", selected_text)
+        monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0) if focused[0] and failure == "selection_changed" else (0, 0))
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0 and writes == ["styles"], (out, err)
+E       AssertionError: ("dispatched type(Styles) text='signal': driver says not sent (selection_unqualified: foreground (front app restored);...button     'Equals'
+E           [  22] button     'Show Sidebar'
+E           [  23] button     'Mode'
+E         page text (3 chars):
+E         0
+E         0
+E         ", '')
+E       assert (0 == 0 and [] == ['styles']
+E         
+E         Right contains one more item: 'styles'
+E         Use -v to get more diff)
+
+tests/test_session_scenarios.py:2414: AssertionError
+_ test_foreground_range_prepares_focus_and_independently_requalifies[wrong_window] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x110f8bce0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x11094fdd0>
+failure = 'wrong_window'
+
+    @pytest.mark.parametrize("failure", [None, "setter_refused", "focus_unproven", "wrong_window",
+                                         "value_changed", "identity_changed", "selection_changed", "focus_stolen"])
+    def test_foreground_range_prepares_focus_and_independently_requalifies(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        row = _foreground_selection_fixture(world, monkeypatch)
+        focused = [False]
+        writes, checks = [], []
+    
+        def focus(element):
+            writes.append(element)
+            if failure == "setter_refused":
+                raise ax.AXError("focus_refused", "AXFocused setter refused")
+            focused[0] = True
+            if failure == "value_changed":
+                row["value"] += " "
+            if failure == "identity_changed":
+                row["label"] = "Different field"
+    
+        def matches(pid, window_id, element):
+            checks.append((pid, window_id, element))
+            if failure in ("focus_unproven", "wrong_window"):
+                return False
+            return focused[0] and not (failure == "focus_stolen" and len(checks) > 1)
+    
+        def selected_text(element):
+            if not focused[0]:
+                raise ax.AXError("selection_unreadable", "unfocused field exposes no selected text")
+            return ""
+    
+        monkeypatch.setattr(ax, "focus_text_field_ack", focus, raising=False)
+        monkeypatch.setattr(ax, "focused_element_matches", matches, raising=False)
+        monkeypatch.setattr(ax, "selected_text", selected_text)
+        monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0) if focused[0] and failure == "selection_changed" else (0, 0))
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0 and writes == ["styles"], (out, err)
+E       AssertionError: ("dispatched type(Styles) text='signal': driver says not sent (selection_unqualified: foreground (front app restored);...button     'Equals'
+E           [  22] button     'Show Sidebar'
+E           [  23] button     'Mode'
+E         page text (3 chars):
+E         0
+E         0
+E         ", '')
+E       assert (0 == 0 and [] == ['styles']
+E         
+E         Right contains one more item: 'styles'
+E         Use -v to get more diff)
+
+tests/test_session_scenarios.py:2414: AssertionError
+_ test_foreground_range_prepares_focus_and_independently_requalifies[value_changed] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x110964fe0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1109690d0>
+failure = 'value_changed'
+
+    @pytest.mark.parametrize("failure", [None, "setter_refused", "focus_unproven", "wrong_window",
+                                         "value_changed", "identity_changed", "selection_changed", "focus_stolen"])
+    def test_foreground_range_prepares_focus_and_independently_requalifies(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        row = _foreground_selection_fixture(world, monkeypatch)
+        focused = [False]
+        writes, checks = [], []
+    
+        def focus(element):
+            writes.append(element)
+            if failure == "setter_refused":
+                raise ax.AXError("focus_refused", "AXFocused setter refused")
+            focused[0] = True
+            if failure == "value_changed":
+                row["value"] += " "
+            if failure == "identity_changed":
+                row["label"] = "Different field"
+    
+        def matches(pid, window_id, element):
+            checks.append((pid, window_id, element))
+            if failure in ("focus_unproven", "wrong_window"):
+                return False
+            return focused[0] and not (failure == "focus_stolen" and len(checks) > 1)
+    
+        def selected_text(element):
+            if not focused[0]:
+                raise ax.AXError("selection_unreadable", "unfocused field exposes no selected text")
+            return ""
+    
+        monkeypatch.setattr(ax, "focus_text_field_ack", focus, raising=False)
+        monkeypatch.setattr(ax, "focused_element_matches", matches, raising=False)
+        monkeypatch.setattr(ax, "selected_text", selected_text)
+        monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0) if focused[0] and failure == "selection_changed" else (0, 0))
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0 and writes == ["styles"], (out, err)
+E       AssertionError: ("dispatched type(Styles) text='signal': driver says not sent (selection_unqualified: foreground (front app restored);...button     'Equals'
+E           [  22] button     'Show Sidebar'
+E           [  23] button     'Mode'
+E         page text (3 chars):
+E         0
+E         0
+E         ", '')
+E       assert (0 == 0 and [] == ['styles']
+E         
+E         Right contains one more item: 'styles'
+E         Use -v to get more diff)
+
+tests/test_session_scenarios.py:2414: AssertionError
+_ test_foreground_range_prepares_focus_and_independently_requalifies[identity_changed] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x110eed940>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x11096a000>
+failure = 'identity_changed'
+
+    @pytest.mark.parametrize("failure", [None, "setter_refused", "focus_unproven", "wrong_window",
+                                         "value_changed", "identity_changed", "selection_changed", "focus_stolen"])
+    def test_foreground_range_prepares_focus_and_independently_requalifies(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        row = _foreground_selection_fixture(world, monkeypatch)
+        focused = [False]
+        writes, checks = [], []
+    
+        def focus(element):
+            writes.append(element)
+            if failure == "setter_refused":
+                raise ax.AXError("focus_refused", "AXFocused setter refused")
+            focused[0] = True
+            if failure == "value_changed":
+                row["value"] += " "
+            if failure == "identity_changed":
+                row["label"] = "Different field"
+    
+        def matches(pid, window_id, element):
+            checks.append((pid, window_id, element))
+            if failure in ("focus_unproven", "wrong_window"):
+                return False
+            return focused[0] and not (failure == "focus_stolen" and len(checks) > 1)
+    
+        def selected_text(element):
+            if not focused[0]:
+                raise ax.AXError("selection_unreadable", "unfocused field exposes no selected text")
+            return ""
+    
+        monkeypatch.setattr(ax, "focus_text_field_ack", focus, raising=False)
+        monkeypatch.setattr(ax, "focused_element_matches", matches, raising=False)
+        monkeypatch.setattr(ax, "selected_text", selected_text)
+        monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0) if focused[0] and failure == "selection_changed" else (0, 0))
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0 and writes == ["styles"], (out, err)
+E       AssertionError: ("dispatched type(Styles) text='signal': driver says not sent (selection_unqualified: foreground (front app restored);...button     'Equals'
+E           [  22] button     'Show Sidebar'
+E           [  23] button     'Mode'
+E         page text (3 chars):
+E         0
+E         0
+E         ", '')
+E       assert (0 == 0 and [] == ['styles']
+E         
+E         Right contains one more item: 'styles'
+E         Use -v to get more diff)
+
+tests/test_session_scenarios.py:2414: AssertionError
+_ test_foreground_range_prepares_focus_and_independently_requalifies[selection_changed] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x110eedda0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x110968ef0>
+failure = 'selection_changed'
+
+    @pytest.mark.parametrize("failure", [None, "setter_refused", "focus_unproven", "wrong_window",
+                                         "value_changed", "identity_changed", "selection_changed", "focus_stolen"])
+    def test_foreground_range_prepares_focus_and_independently_requalifies(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        row = _foreground_selection_fixture(world, monkeypatch)
+        focused = [False]
+        writes, checks = [], []
+    
+        def focus(element):
+            writes.append(element)
+            if failure == "setter_refused":
+                raise ax.AXError("focus_refused", "AXFocused setter refused")
+            focused[0] = True
+            if failure == "value_changed":
+                row["value"] += " "
+            if failure == "identity_changed":
+                row["label"] = "Different field"
+    
+        def matches(pid, window_id, element):
+            checks.append((pid, window_id, element))
+            if failure in ("focus_unproven", "wrong_window"):
+                return False
+            return focused[0] and not (failure == "focus_stolen" and len(checks) > 1)
+    
+        def selected_text(element):
+            if not focused[0]:
+                raise ax.AXError("selection_unreadable", "unfocused field exposes no selected text")
+            return ""
+    
+        monkeypatch.setattr(ax, "focus_text_field_ack", focus, raising=False)
+        monkeypatch.setattr(ax, "focused_element_matches", matches, raising=False)
+        monkeypatch.setattr(ax, "selected_text", selected_text)
+        monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0) if focused[0] and failure == "selection_changed" else (0, 0))
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0 and writes == ["styles"], (out, err)
+E       AssertionError: ("dispatched type(Styles) text='signal': driver says not sent (selection_unqualified: foreground (front app restored);...button     'Equals'
+E           [  22] button     'Show Sidebar'
+E           [  23] button     'Mode'
+E         page text (3 chars):
+E         0
+E         0
+E         ", '')
+E       assert (0 == 0 and [] == ['styles']
+E         
+E         Right contains one more item: 'styles'
+E         Use -v to get more diff)
+
+tests/test_session_scenarios.py:2414: AssertionError
+_ test_foreground_range_prepares_focus_and_independently_requalifies[focus_stolen] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x110eede40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x110932a50>
+failure = 'focus_stolen'
+
+    @pytest.mark.parametrize("failure", [None, "setter_refused", "focus_unproven", "wrong_window",
+                                         "value_changed", "identity_changed", "selection_changed", "focus_stolen"])
+    def test_foreground_range_prepares_focus_and_independently_requalifies(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        row = _foreground_selection_fixture(world, monkeypatch)
+        focused = [False]
+        writes, checks = [], []
+    
+        def focus(element):
+            writes.append(element)
+            if failure == "setter_refused":
+                raise ax.AXError("focus_refused", "AXFocused setter refused")
+            focused[0] = True
+            if failure == "value_changed":
+                row["value"] += " "
+            if failure == "identity_changed":
+                row["label"] = "Different field"
+    
+        def matches(pid, window_id, element):
+            checks.append((pid, window_id, element))
+            if failure in ("focus_unproven", "wrong_window"):
+                return False
+            return focused[0] and not (failure == "focus_stolen" and len(checks) > 1)
+    
+        def selected_text(element):
+            if not focused[0]:
+                raise ax.AXError("selection_unreadable", "unfocused field exposes no selected text")
+            return ""
+    
+        monkeypatch.setattr(ax, "focus_text_field_ack", focus, raising=False)
+        monkeypatch.setattr(ax, "focused_element_matches", matches, raising=False)
+        monkeypatch.setattr(ax, "selected_text", selected_text)
+        monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0) if focused[0] and failure == "selection_changed" else (0, 0))
+        assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                            "--web-text-range", "0:0", "--authorize", "replace")
+>       assert code == 0 and writes == ["styles"], (out, err)
+E       AssertionError: ("dispatched type(Styles) text='signal': driver says not sent (selection_unqualified: foreground (front app restored);...button     'Equals'
+E           [  22] button     'Show Sidebar'
+E           [  23] button     'Mode'
+E         page text (3 chars):
+E         0
+E         0
+E         ", '')
+E       assert (0 == 0 and [] == ['styles']
+E         
+E         Right contains one more item: 'styles'
+E         Use -v to get more diff)
+
+tests/test_session_scenarios.py:2414: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_foreground_range_prepares_focus_and_independently_requalifies[None]
+FAILED tests/test_session_scenarios.py::test_foreground_range_prepares_focus_and_independently_requalifies[setter_refused]
+FAILED tests/test_session_scenarios.py::test_foreground_range_prepares_focus_and_independently_requalifies[focus_unproven]
+FAILED tests/test_session_scenarios.py::test_foreground_range_prepares_focus_and_independently_requalifies[wrong_window]
+FAILED tests/test_session_scenarios.py::test_foreground_range_prepares_focus_and_independently_requalifies[value_changed]
+FAILED tests/test_session_scenarios.py::test_foreground_range_prepares_focus_and_independently_requalifies[identity_changed]
+FAILED tests/test_session_scenarios.py::test_foreground_range_prepares_focus_and_independently_requalifies[selection_changed]
+FAILED tests/test_session_scenarios.py::test_foreground_range_prepares_focus_and_independently_requalifies[focus_stolen]
+8 failed, 265 deselected in 1.66s

@@ -1,0 +1,37 @@
+{
+  "id": "page-typing-reads-back-target-node-v1",
+  "title": "Enter text at page level and read the value back from the target node",
+  "problem": "Driving a rich web editor through the desktop accessibility tree loses text, selection and blank lines, and typing through keys needs window focus the person is using.",
+  "mechanism": "Confirm the intended node holds focus by checking the active element through shadow roots from an isolated world; select all with an editing command; insert the text through the protocol's insert-text call with the final character as a key event so editors see input; then read inner text (content-editable) or value (inputs) from that same node and compare with what was sent.",
+  "when_to_use": "Text entry into inputs and content-editable editors in a browser the tool can reach at page level.",
+  "when_not_to_use": "When the editor's internal model can diverge from the page (model-driven editors): the node text is then evidence of rendering, not of the saved value, and a second channel (the application's own copy, a reload, a network write) is needed.",
+  "tradeoffs": "No focus or foreground needed. The reference only reports a mismatch; a verifying tool must refuse on it.",
+  "counterexample": "A neighbouring tool clears a field by assigning an empty value, which does not clear a content-editable node, and never reads back.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "Re-enable typing on the Footwork-owned browser lane with this focus check and readback; the isolated-world focus check addresses the focus race recorded as the reason typing is disabled. Not implemented.",
+    "compatibility_checks": "Footwork's owned CDP lane disables typing and navigation; the older browser lane uses the driver's insert-text mode. Whether node inner text keeps the blank lines the accessibility value dropped in the Suno lyrics case is inferred, not observed.",
+    "next_test": "Content-editable fixture with a sanitizing input handler: type 461 characters with 24 line feeds; compare node inner text with the accessibility value. If inner text also drops lines, this channel does not replace the clipboard verifier."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised."
+  },
+  "evidence_ids": [
+    "ev-e77fea9a4bd8919233daf679",
+    "ev-91e7f6c7d9626b98d2086eb6",
+    "ev-40755ae03e014e2ce185eb62",
+    "ev-5f90cdfa630a54f70ed7148e",
+    "ev-13224c8135b7b9f3ff62f4cd"
+  ],
+  "tags": [
+    "contenteditable",
+    "rich text",
+    "lyrics",
+    "suno",
+    "cdp",
+    "insert text",
+    "web editor",
+    "browser"
+  ]
+}

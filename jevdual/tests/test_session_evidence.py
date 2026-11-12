@@ -72,6 +72,64 @@ def test_trailing_whitespace_the_driver_strips_is_not_a_mismatch(tmp_path):
     assert r["effect"] == "confirmed"
 
 
+@pytest.mark.parametrize(("mode", "input_type", "actual", "expected", "effect"), [
+    ("native", "textarea", "A\nB", "A\n\nB", "unverifiable"),
+    ("native", "textarea", "A\nC", "A\n\nB", "partial"),
+    ("native", "textarea", "A\nB ", "A\n\nB", "partial"),
+    ("native", "textarea", "A\nB", "A\nB\n\n", "confirmed"),
+    ("browser", "textarea", "A\nB", "A\n\nB", "partial"),
+    ("native", None, "A\nB", "A\n\nB", "partial"),
+])
+def test_only_native_multiline_lf_representation_ambiguity_changes_classification(
+    tmp_path, mode, input_type, actual, expected, effect
+):
+    r = _receipt(tmp_path, _nm(_field("")), _nm(_field(actual, input_type=input_type)), mode=mode, intended=expected)
+    assert r["effect"] == effect
+
+
+def test_multiline_receipt_compares_non_lf_characters_without_normalizing_raw_values(tmp_path):
+    actual, intended = "  A\nB\t ", "  A\n\nB\t "
+    field = _field("A\nB", input_type="textarea")  # display preview removes indentation/trailing spaces
+    nm = _nm(field)
+    nm.values[1] = actual
+    r = _receipt(tmp_path, _nm(_field("")), nm, mode="native", intended=intended)
+    assert r["effect"] == "unverifiable"
+    assert nm.values[1] == actual and field.value == "A\nB"
+
+
+def test_lf_representation_classification_does_not_replace_truncation_or_secret_rules(tmp_path):
+    from dataclasses import replace
+
+    intended, actual = "A\n\nB", "A\nB"
+    field = replace(_field(actual, input_type="textarea"), value_truncated=True)
+    clipped = _receipt(tmp_path, _nm(_field("")), _nm(field), mode="native", intended=intended)
+    assert clipped["effect"] == "unverifiable" and "truncated" in clipped["evidence"]
+    state = _state(tmp_path, _nm(_field("")), mode="native", intended=None, secret=True)
+    secret = session.receipt_for(state, _nm(_field(actual, input_type="textarea")), secret_value=intended)
+    assert secret["effect"] == "partial" and "internal LF" not in secret["evidence"]
+
+
+@pytest.mark.parametrize(("mode", "dispatched", "effect"), [
+    ("native", True, "unverifiable"), ("browser", True, "suspected_noop"), ("native", False, "refused"),
+])
+def test_menu_no_visible_change_retains_surface_and_no_send_guards(mode, dispatched, effect):
+    from jevdual.receipts import Receipt
+
+    original = Receipt(1, ("menu(Edit > Copy)",), "suspected_noop" if dispatched else "refused", "no visible change")
+    result = session._outside_receipt(original, {"op": "menu", "mode": mode, "dispatched": dispatched})
+    assert result.effect == effect
+
+
+def test_menu_qualified_external_readback_is_not_downgraded():
+    from jevdual.receipts import Receipt
+
+    original = Receipt(1, ("menu(File > Save)",), "suspected_noop", "no visible change")
+    pending = {"op": "menu", "mode": "native", "dispatched": True,
+               "execution_receipt": {"effect": "confirmed", "producer": {"delivery_basis": "ax_menu_effect_readback"}},
+               "native_readback": {"predicate": "qualified external effect"}}
+    assert session._outside_receipt(original, pending).effect == "confirmed"
+
+
 def test_append_confirms_only_before_plus_insertion(tmp_path):
     already = _receipt(tmp_path, _nm(_field("Ada")), _nm(_field("Ada")), op="append")
     assert already["effect"] == "suspected_noop"
@@ -100,6 +158,18 @@ def test_a_refusal_carried_on_the_receipt_is_kept():
     pending = {"op": "type", "target_label": "Name", "target_id": 1, "intended": "Ada", "secret": False}
     r = session._field_receipt(refused, pending, _nm(_field("Ada")))
     assert r.effect == "refused" and "requires_foreground" in r.evidence
+
+
+def test_truncated_preview_does_not_override_refusal_or_ambiguous_identity(tmp_path):
+    from dataclasses import replace
+
+    field = replace(_field("preview…"), value_truncated=True)
+    refused = _receipt(tmp_path, _nm(_field("")), _nm(field), driver_effect="refused")
+    assert refused["effect"] == "refused"
+    fresh = _nm(field)
+    fresh.ambiguous_targets = {field.id}
+    ambiguous = _receipt(tmp_path, _nm(_field("")), fresh)
+    assert ambiguous["effect"] == "unverifiable" and "ambiguous identity" in ambiguous["evidence"]
 
 
 def test_two_fields_with_one_label_bind_to_the_chosen_id(tmp_path):
@@ -141,6 +211,20 @@ def test_the_masked_value_is_still_compared_during_the_command(tmp_path, monkeyp
     assert wrong is not None and wrong["effect"] != "confirmed"
     right = session.receipt_for(st, _nm(_field(MARKER)), secret_value=MARKER)
     assert right is not None and right["effect"] == "confirmed" and MARKER not in json.dumps(right)
+
+
+def test_scoped_native_control_identity_redacts_secrets_and_loses_qualification(tmp_path, monkeypatch):
+    from jevdual.menu import qualified_control_identity
+
+    monkeypatch.setenv("FOOTWORK_SECRET_TOKEN", MARKER)
+    control = Candidate(1, "More options", "button", ("click",), native_dom_id=f"control-{MARKER}",
+                        native_document_url=f"https://example.test/song?token={MARKER}", native_control_qualified=True)
+    st = _state(tmp_path, _nm(control))
+    st.secret_names = ["TOKEN"]
+    scrubbed = session.scrub(st, _nm(control))
+    candidate = scrubbed.menu.candidate(1)
+    assert MARKER not in json.dumps(candidate.to_state())
+    assert candidate.native_control_qualified is False and qualified_control_identity(candidate) is None
 
 
 # ---- A4: replacing existing content is a replacement at any length

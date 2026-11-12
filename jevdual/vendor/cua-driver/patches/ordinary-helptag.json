@@ -1,0 +1,21 @@
+{
+  "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
+  "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1",
+  "base_archive_sha256": "804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2",
+  "patched_archive_sha256": "938800555df9485aa4ed800a74ef795d05575efdbdea9c5f4ce6f6dd61b02fda",
+  "patch_sha256": "306d8f015de0a9acefa23bd06b8727c6813a9dfda0b2b14a51a20323b9f406e9",
+  "files": {
+    "libs/cua-driver/rust/crates/platform-macos/src/ax/bindings.rs": {
+      "before": "f401ed5fdc1df99398d07d8c08460b3a22c079a3ef30ba89bbbd0d19a78cf79a",
+      "after": "89ee849357f67abc149653f5fa33a87bc8582837a9a71e7673e443ea05d015ba"
+    },
+    "libs/cua-driver/rust/crates/platform-macos/src/tools/bring_to_front.rs": {
+      "before": "43de9d430e8c3ac756dab231722fd3426fb782d408c6124a2ae21cb1ea061096",
+      "after": "a029e7ab8df6600923f6fd93ce9eaa674aa5b7b51c842eabfd87ca44629c74c1"
+    }
+  },
+  "abi": "unchanged six Python binding files; private macOS AX classification only",
+  "default_dependency": "unchanged focus1; explicit project overlay only",
+  "toolchain": "1.97.1"
+}

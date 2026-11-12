@@ -76,6 +76,97 @@ These profiles do not establish a RAM or startup improvement; small-host measure
 
 The legacy `footwork browser start/look/do` verbs and `footwork desktop` route to the existing session commands. `start`, `look`, `do`, `read`, `done`, and `status` retain the existing admission checks, fresh target identities, receipts and completion verification. Browser start uses Footwork's dedicated Chrome; desktop start selects a running native app. Use separate explicit `--session` directories for independent tasks. Initial same-Space Chrome attachment may require bringing that owned Chrome window to the foreground.
 
+For delayed native controls after navigation, use `footwork look --until "Song description" --timeout 10 --session /absolute/session`.
+This repeats fresh read-only observations until an exact offered candidate label appears, with a
+0.1–60 second deadline (default 10). It sends no input and prints the final available observation.
+Timeout exits 6; partial coverage does not establish absence. A matching title, address value or page
+text does not satisfy the check. Duplicate labels can satisfy appearance but retain all existing action
+ambiguity checks. Appearance proves neither task completion nor that an action is authorized.
+The deadline bounds cooperative observation and polling; driver shutdown still runs to completion.
+This option currently supports native sessions only; ordinary `look` is unchanged.
+
+On macOS, `footwork do type "Observed web field" "Text" --web-text-delivery foreground`
+explicitly uses the focus-guarded native web text route. It requires the exact
+`cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1` runtime and a session started with
+`--mode foreground_permitted` or `exclusive_desktop`. Shared foreground mode still requires three
+seconds without human input. Existing action and replacement authorization gates apply;
+`--no-judge`, browser mode, append and other operations refuse this option. A non-web target also
+refuses before field mutation.
+
+This is an explicit operation, never a fallback after uncertain background input. For a replacement,
+the route activates the exact window, reobserves the field, sends a token-bound foreground Select All,
+then revalidates identity/value and independently reads the complete selection before typing.
+The driver proves addressed field focus inside its foreground activation guard before text synthesis.
+If selection or delivery becomes uncertain, the command stops without retrying. A retained SDK
+zero-text refusal stays separate from earlier preparation input. Read the receipt and inspect the
+rendered field: AX value agreement does not establish that the renderer or server accepted the edit.
+The exact target must have a readable current value; missing readback is never assumed empty.
+The strict route requests positive character pacing, disabling the SDK's batched partial-tail retry
+even if web ancestry cannot be established during delivery.
+
+To edit only an existing selection, add `--web-text-range START:LENGTH`, measured in UTF-16
+code units. For example, `footwork do type "Lyrics editor" "signal" --web-text-delivery foreground
+--web-text-range 0:0` inserts at an already observed caret at offset zero. The option does not set
+a caret/selection offset or send Select All. It first makes one explicit AXFocused preparation write,
+requires independent application-focused-element equality and the exact bound key window, then
+reobserves/rematches the unchanged field and proves focus again. Focus acknowledgement alone is
+insufficient. Independent fresh AX range and selected-text
+reads must exactly match the requested slice of the unchanged raw field value. Surrogate splits,
+out-of-value ranges, and values/results above 65536 UTF-16 units refuse before text synthesis.
+The receipt compares the complete resulting value, including preserved prefix, suffix and trailing
+whitespace. Unavailable or contradictory readback stays unverified. This is separate from whole-field
+replacement; it does not normalize an AX terminal newline or establish rendered/server acceptance.
+Focus preparation and text dispatch have separate evidence: if a preparation attempt precedes a
+failure, the overall input remains uncertain while a code-boundary receipt can establish that
+`type_text` was never called and zero text characters were dispatched. Focus is not retried; only
+its independent readback is polled until a 0.2-second cooperative deadline before refusing text.
+
+For an ordinary native multiline whole-field replacement, a complete untruncated readback that
+differs only in its internal LF pattern is `unverifiable`. Every non-LF character must match exactly;
+this classification neither normalizes the field nor confirms the edit. Obtain independent readback
+before retyping, since AX serialization can differ from copied content. Non-LF mismatches, browser
+and secret handling, trailing-whitespace legacy behavior and strict selected-range comparison keep
+their existing rules. A native menu invocation with no visible change is also `unverifiable`:
+clipboard, disk or another-window effects need their own readback before retrying.
+
+Native macOS links may show a complete `href` read independently from their exact bound AXLink.
+Same-title links with distinct qualified HTTP(S) resources remain offered as separate numeric IDs.
+Choose the ID from a fresh observation; the shared title still does not resolve uniquely. URL changes
+or lost qualification require another observation and choice. Every observed same-title semantic peer
+must have a readable matching AX title/description and complete URL before resource identity can
+distinguish the group. Missing peer evidence, duplicate URLs and the 64-link read limit retain
+ambiguity even when menu pruning hides peers. URLs over 2048 characters, credentials, whitespace,
+relative and unsupported URLs are not qualified. Buttons in song rows do not inherit link identity.
+
+Named native AXButton and AXPopUpButton controls can also carry an exact `native_dom_id` scoped to
+their closest direct AXWebArea's complete HTTP(S) `native_document_url`. A semantic peer group is
+qualified only when every observed peer has a readable matching name/frame, a unique untruncated
+DOM ID, the same document URL and independently equal WebArea ancestor. Missing or duplicate IDs,
+mixed/unreadable document scopes and the 64-control read limit preserve ambiguity before pruning.
+DOM IDs over 512 characters or containing whitespace/control characters do not qualify. A changed
+ID, document or lost qualification requires a fresh choice; position and SDK index are not identity.
+The complete scoped identity appears in observations and inspect-target manifests/previews, binds
+grants, and is persisted across CLI calls. It does not infer a song-row resource or identify a Play
+button that exposes no DOM ID. Other native controls retain their existing identity rules.
+
+For a native macOS menu that needs its window in front, use
+`footwork do click "More actions" --click-delivery foreground`. This explicit option requires
+foreground posture, shared-desktop idle admission, and normal action gates; browser mode,
+`--no-judge`, other operations and mixed delivery options refuse before driver binding.
+The route activates the exact bound window, freshly reobserves and rematches the qualified target,
+then sends one SDK foreground click addressed by its fresh element token. Errors and refusals stop
+without retry or automatic fallback. The default remains background delivery. A click acknowledgement
+does not establish that the menu opened; reobserve its actual controls before continuing.
+
+To bind an observed untitled native panel, use `footwork start "Panel task" --app "Google Chrome"
+--pid PID --window-id CGWINDOWID`. Both IDs must be positive; the window ID must fit unsigned32 bits.
+The exact ID must appear once in that process's on-screen SDK window list, including untitled entries.
+An absent or duplicate ID refuses without falling back to a titled or larger window. `--window-id`
+requires `--pid` and cannot be combined with `--window`, `--browser` or `--url`. Invalid combinations
+refuse before driver creation or session reset. Later observed PID/window checks, posture and target
+guards remain in force. A panel opening a nested modal requires a new explicit observed binding;
+the caller's parent window never implicitly routes input to its child.
+
 For a read-only DOM observation, use `footwork browser lightpanda read URL --executable /absolute/lightpanda`.
 This separate profile owns one fresh external prebuilt engine and connection, withholds input/editable
 values, and supplies no input authority or geometry. Run `footwork browser lightpanda artifact` and

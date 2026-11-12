@@ -1,0 +1,13 @@
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/ax/bindings.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/bring_to_front.rs'
+   Compiling cua-driver-contract v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/native-cache/source-938800555df9/libs/cua-driver/rust/crates/cua-driver-contract)
+   Compiling cua-cursor-motion v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/native-cache/source-938800555df9/libs/cua-driver/rust/crates/cua-cursor-motion)
+   Compiling platform-macos v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/native-cache/source-938800555df9/libs/cua-driver/rust/crates/platform-macos)
+   Compiling pip-preview v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/native-cache/source-938800555df9/libs/cua-driver/rust/crates/pip-preview)
+   Compiling cua-driver-sdk v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/native-cache/source-938800555df9/libs/cua-driver/rust/crates/cua-driver-sdk)
+   Compiling cua-telemetry v0.18.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/native-cache/source-938800555df9/libs/cua/crates/cua-telemetry)
+   Compiling cua-driver v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/native-cache/source-938800555df9/libs/cua-driver/rust/crates/cua-driver)
+   Compiling cua-driver-core v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/native-cache/source-938800555df9/libs/cua-driver/rust/crates/cua-driver-core)
+   Compiling cursor-overlay v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/native-cache/source-938800555df9/libs/cua-driver/rust/crates/cursor-overlay)
+    Finished `release` profile [optimized] target(s) in 1m 44s
+/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/wheelhouse/cua_driver-0.46.0+footwork.5486b624.cleanup2.focus1.helptag1-py3-none-macosx_13_0_arm64.whl

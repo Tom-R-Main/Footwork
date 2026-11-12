@@ -1,0 +1,79 @@
+Baseline: unmodified HEAD ax.py loaded; corrected same-PID modal fixture
+F.....                                                                   [100%]
+=================================== FAILURES ===================================
+___ test_public_save_modal_session_keeps_exact_window_hotkey_binding[modal] ____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=60066, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 60066, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1117e2d40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1100c5a00>
+variant = 'modal'
+
+    @pytest.mark.parametrize("variant", ["modal", "parent", "wrong_pid", "unrelated", "not_key", "overbound"])
+    def test_public_save_modal_session_keeps_exact_window_hotkey_binding(world, fw, monkeypatch, variant):
+        from jevdual import posture
+    
+        from tests.test_ax_semantics import _install_modal_ax_tree
+        from tests.test_posture import Activity
+    
+        app, parent, sheet, mutations = _install_modal_ax_tree(monkeypatch)
+        world.base["elements"] = [{"element_index": 0, "role": "AXSheet", "label": "save", "enabled": True}]
+        world.base["app_name"] = "Calculator"
+        world.base["pid"] = 77
+        target_window = 40335 if variant == "parent" else 60066
+        world.base["window_id"] = target_window
+        world.window_id = target_window
+        if variant == "wrong_pid": sheet["_pid"] = 88
+        if variant == "unrelated":
+            other = {"AXRole": "AXWindow", "_pid": 77, "_wid": 999}
+            sheet["AXParent"] = other; sheet["AXWindow"] = other
+        if variant == "not_key": app["AXFocusedWindow"] = parent
+        if variant == "overbound":
+            node = sheet
+            for _ in range(40): node = {"AXRole": "AXGroup", "_pid": 77, "AXChildren": [node]}
+            parent["AXChildren"] = [node]
+            app["AXFocusedWindow"] = parent
+        monkeypatch.setattr(posture, "MacActivity", lambda: Activity(idle=60, fronts=(77,)))
+    
+        async def windows(inp):
+            return SimpleNamespace(windows=[SimpleNamespace(window_id=target_window, title="Save",
+                                                           bounds=SimpleNamespace(width=880, height=448))])
+    
+        monkeypatch.setattr(world, "list_windows", windows)
+    
+        async def call(name, encoded):
+            args = json.loads(encoded)
+            world.tool_calls.append((name, args))
+            if name == "bring_to_front":
+                assert args["window_id"] == target_window
+                refused = variant == "parent"
+                return SimpleNamespace(is_error=refused, action=None,
+                    error_code="bring_to_front_exact_window_unverified" if refused else "bring_to_front_exact_window_verified",
+                    structured_json=json.dumps({"code": "bring_to_front_exact_window_unverified" if refused else "bring_to_front_exact_window_verified",
+                        "status": "partial" if refused else "activated", "request_accepted": True,
+                        "pid": 77, "window_id": target_window, "exact_window_effect": {"verified": not refused},
+                        "observed": {"frontmost_pid": 77, "focused_window_id": 60066}}), text="exact foreground intent")
+            assert name == "hotkey" and args["window_id"] == 60066
+            return SimpleNamespace(is_error=False, action=None, error_code=None, structured_json=None, text="folder chord posted")
+    
+        monkeypatch.setattr(world, "call_tool", call)
+        code, out, err = fw("start", "Navigate own Save sheet to project exports", "--app", "Calculator", "--pid", "77",
+                            "--window", "Save", "--mode", "foreground_permitted")
+        assert code == 0 and _state(fw)["window_id"] == target_window, (out, err)
+        code, out, err = fw("do", "hotkey", "cmd", "shift", "g", "--no-judge", "--authorize", "hotkey")
+        assert code == 0, (out, err)
+        keys = [args for name, args in world.tool_calls if name == "hotkey"]
+>       assert len(keys) == (1 if variant == "modal" else 0), (out, err)
+E       AssertionError: ('judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+E         dispatched hotkey(cmd+shift+g)...n is shown here, and an answer drawn from it covers only what is shown
+E         0 elements:
+E         page text (3 chars):
+E         0
+E         0
+E         ', '')
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_session_scenarios.py:2316: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_public_save_modal_session_keeps_exact_window_hotkey_binding[modal]
+1 failed, 5 passed, 296 deselected in 2.77s

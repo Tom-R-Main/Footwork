@@ -1,0 +1,22 @@
+{
+  "source_commit": "16a67f4",
+  "started_at": "2026-11-11T00:45:36.946723+00:00",
+  "finished_at": "2026-11-11T00:49:01.017719+00:00",
+  "elapsed_seconds": 204.073,
+  "command": [
+    "/Users/thomasmain/projects/footwork/jevdual/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-q"
+  ],
+  "cwd": "/Users/thomasmain/projects/footwork/jevdual",
+  "pythonpath": "/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/overlay:/Users/thomasmain/projects/footwork/jevdual/python",
+  "live_browser_optins": false,
+  "exit_code": 0,
+  "pytest_summary": "3242 passed, 62 skipped in 203.13s (0:03:23)",
+  "counts": {
+    "passed": 3242,
+    "skipped": 62
+  },
+  "source_sha256": "cf562f78887e82ae6cddeb8968495c195183b21c7c8cda985488b8a453b6fac5"
+}

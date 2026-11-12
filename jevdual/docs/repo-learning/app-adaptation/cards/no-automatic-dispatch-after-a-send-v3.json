@@ -1,0 +1,45 @@
+{
+  "id": "no-automatic-dispatch-after-a-send-v3",
+  "title": "Try another rung only when nothing was sent; after a send, an absent effect is unknown",
+  "problem": "A fallback that fires when the first route shows no effect cannot tell a silent no-op from an effect that lands late, so it can act twice.",
+  "mechanism": "Each action returns a delivery outcome (not sent, sent, unknown) and an effect outcome (confirmed, absent at a declared bound, unreadable). Another rung may be tried automatically only when nothing was sent. After a send, an effect absent at the bound is an unknown outcome: no second dispatch, the typed outcome and escalation advice go to the caller. Sent with an unreadable effect blocks further mutation of that target until it is re-observed or acknowledged. Unknown delivery blocks all mutation in the domain and survives a crash.",
+  "when_to_use": "Any surface where a route can report success without acting or can act late.",
+  "when_not_to_use": "As a way to make progress unattended on surfaces whose first route often no-ops: this rule hands those cases to the caller. A later extension for absolute setters, whose mechanism yields the same state whether or not an earlier application lands, needs its own test.",
+  "tradeoffs": "Stops more often than any reference chain. Wording a goal as a target state does not make its mechanism repeat-safe: a second click on a toggle flips it.",
+  "counterexample": "The reference's right-click chain continues after unverified delivery, safe only because each step re-checks for an open menu. Its no-effect reading for selection sits inside a short settle window.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "Write the nine-cell delivery-by-effect table before widening the browser lane, and carry the pinned driver's Confirmed and Unverifiable effect through browser_driver._effect. A driver Confirmed is a target-state reading and does not settle the business effect. Not implemented.",
+    "compatibility_checks": "The CDP lane already blocks mutation after an acknowledged delivery with unverified effect; start --browser records delivery as unknown for every driver reply and has no crash-durable barrier.",
+    "next_test": "A click-toggle whose effect lands after the bound, a lost acknowledgement, an acknowledged action with unreadable effect, and a restart mid-action: exactly one dispatch in each, and a block on further mutation in the last three."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised. Revised after council rounds 1 and 2."
+  },
+  "evidence_ids": [
+    "ev-3d88ae816364a8a76d300fcb",
+    "ev-6af3ead68870e6c536d1cf72",
+    "ev-e223523288383250d3076ef3",
+    "ev-35ee441f125db3ebc8e80dd7",
+    "ev-9a65bbcb54dccfd51d407583",
+    "ev-8fe424e2f958236f2de4ce69"
+  ],
+  "tags": [
+    "fallback",
+    "escalation",
+    "action route",
+    "unverifiable",
+    "suno",
+    "app adaptation",
+    "channel ladder"
+  ],
+  "novelty": {
+    "nearest": [
+      "strict-target-loss-refuses-instead-of-retargeting-v1"
+    ],
+    "difference": "That card concerns keeping a bound target; this one concerns choosing the next action channel without a second dispatch.",
+    "decision": "new version; v2 let a timeout count as refutation for operations merely worded as target states"
+  },
+  "supersedes": "ladder-advances-only-for-repeat-safe-refuted-effects-v2"
+}

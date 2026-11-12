@@ -1,0 +1,99 @@
+{
+  "runtime_source": "8e977ba",
+  "sdk": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1",
+  "live_route_completed": true,
+  "scope": "One Studio 1.2 named track-EQ preset edit, distinct render/download, full reload and explicit Open Project copy selection",
+  "baseline": {
+    "file": "studio-flat-baseline.mp3",
+    "sha256": "a84ec832174313937bb97717a16348f74c1a14f45fa77fca239d62e6e8411b1e",
+    "bytes": 4761438,
+    "embedded_song_id_verified": true
+  },
+  "edited": {
+    "file": "studio-hi-pass.mp3",
+    "sha256": "14eb09ac836c613b4ce8f056fa1d8ec6350a6004e12c12e7fd2118c5d98e4985",
+    "bytes": 4641521,
+    "embedded_song_id_verified": true
+  },
+  "eq": {
+    "preset": "Hi-Pass",
+    "cutoff_hz": 120,
+    "q": 0.71,
+    "active_curve_observed": true
+  },
+  "comparison": {
+    "complete_decode": true,
+    "duration_seconds": [
+      204.78175,
+      204.78175
+    ],
+    "alignment": {
+      "qualified": true,
+      "anchors": [
+        {
+          "source_start_seconds": 32.130291666666665,
+          "duration_seconds": 4,
+          "lag_samples": 0,
+          "lag_seconds": 0.0,
+          "reference_band_correlation": 0.9880154728889465,
+          "search_boundary": false
+        },
+        {
+          "source_start_seconds": 100.390875,
+          "duration_seconds": 4,
+          "lag_samples": 0,
+          "lag_seconds": 0.0,
+          "reference_band_correlation": 0.9888713359832764,
+          "search_boundary": false
+        },
+        {
+          "source_start_seconds": 168.65145833333332,
+          "duration_seconds": 4,
+          "lag_samples": 0,
+          "lag_seconds": 0.0,
+          "reference_band_correlation": 0.9767945408821106,
+          "search_boundary": false
+        }
+      ],
+      "lag_spread_samples": 0,
+      "selected_lag_samples": 0,
+      "lag_convention": "positive means edited signal is delayed; compare baseline[i] with edited[i+lag]"
+    },
+    "low_band_hz": [
+      30,
+      60
+    ],
+    "low_relative_to_reference_db": -15.14711378522514,
+    "reference_band_hz": [
+      1000,
+      4000
+    ],
+    "reference_raw_change_db": -0.002134849058617895,
+    "overall_rms_change_db": -5.2212014713118915
+  },
+  "persistence": {
+    "full_document_reload_observed": true,
+    "explicit_project_chooser_copy_selected": true,
+    "original_separately_listed": true,
+    "retained": [
+      "copy title",
+      "single track title",
+      "Hi-Pass",
+      "120Hz",
+      "Q 0.71",
+      "active EQ curve"
+    ],
+    "screenshot": "output/suno-studio-20261111/unlocked-resume/inspection/311832cdfe344c578f24e0ed691891a5.png"
+  },
+  "prior_standalone_source_alignment": "unresolved; no acoustic-equivalence claim",
+  "new_code_changes_this_live_phase": false,
+  "limitations": [
+    "One development route, no reliability rate",
+    "Original standalone source equivalence unresolved",
+    "No aesthetic preference or critic qualification",
+    "No arbitrary canvas/timeline or Studio2 coverage",
+    "Global installation unchanged"
+  ],
+  "new_generation_or_unlock_or_media_critic_call": false,
+  "normal_action_destructiveness_judgment": "Used the existing guarded route; TypeSafe costs are not part of the closed media-critic budget"
+}

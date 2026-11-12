@@ -1,0 +1,45 @@
+{
+  "source": "private output/converge-release-20261111/live/film/pointer-gestures.jsonl (approach line); raw samples not committed",
+  "planned_samples": 87,
+  "posted_samples": 86,
+  "plan_spacing_ms": 10.42,
+  "player": {
+    "max_gap_ms": 47.8,
+    "causes": [],
+    "outcome": "arrived"
+  },
+  "session_gesture": {
+    "max_post_ms": 12.0,
+    "max_ack_ms": 46.5,
+    "stall_gap_ms": null
+  },
+  "recorded_interpost_gap_ms": {
+    "max": 48.29,
+    "between_posts": [
+      6,
+      7
+    ],
+    "top5": [
+      14.8,
+      15.5,
+      22.2,
+      33.1,
+      48.3
+    ]
+  },
+  "recorded_post_call_ms": {
+    "max": 11.461,
+    "p95": 0.018,
+    "median": 0.013,
+    "max_is_first_post": true
+  },
+  "lateness_vs_plan_ms": {
+    "max": 40.55,
+    "at_post": 7
+  },
+  "pstr3_reference": {
+    "max_gap_ms": 21.6,
+    "max_post_ms": 11.7,
+    "max_ack_ms": 9.8
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "ladder-advances-only-for-repeat-safe-refuted-effects-v2",
+  "title": "Advance a fallback ladder only for repeat-safe operations whose effect was refuted after a declared bound",
+  "problem": "A tool that falls back from a semantic action to a synthetic click whenever the first rung looks unsuccessful can act twice, and a tool with one fixed route per operation needs new code for every surface where that route fails.",
+  "mechanism": "Each rung returns a delivery outcome (not sent, sent, unknown) and an effect outcome (confirmed, refuted within a declared settle bound, unknown). Unknown delivery blocks further mutation. Another rung may run automatically only when the operation is declared repeat-safe, meaning it is expressed as a target state such as a field holding a value or a toggle being on, and its effect was read as refuted after that operation's bound. Presses, submissions and anything that spends money never advance automatically: the outcome and escalation advice go back to the caller. Every step records its mechanism.",
+  "when_to_use": "Setters with a readable target state on surfaces where the first channel can fail silently.",
+  "when_not_to_use": "Any action whose effect may land after the bound or elsewhere than the target. A reading of 'not changed yet' is not evidence that nothing will happen.",
+  "tradeoffs": "Stops more often than the reference chains do. Needs a per-operation bound and a repeat-safe declaration.",
+  "counterexample": "The reference's own right-click chain continues after unverified delivery, made safe only by re-checking for an open menu before each step. Its no-effect reading for selection is taken inside a short settle window. An application slower than the bound would receive a second dispatch under the v1 wording.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "Define the delivery-by-effect outcome table before widening the browser lane; carry the pinned driver's Confirmed and Unverifiable effect and its escalation through browser_driver._effect instead of collapsing them. A general ladder for native routes is not proposed until this holds on the browser lane. Not implemented.",
+    "compatibility_checks": "Footwork today has two automatic fallbacks (same-pid keyboard ambiguity to foreground; refused scroll to Page Down). Check that existing 'unverifiable' receipts map to delivered-unverified and that durable unknown-effect barriers still block a second dispatch.",
+    "next_test": "Fixture whose effect lands after the bound, one with a lost acknowledgement, one interrupted by restart: one dispatch, unknown outcome, no advance in all three."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised. Revised after council round 1."
+  },
+  "evidence_ids": [
+    "ev-3d88ae816364a8a76d300fcb",
+    "ev-6af3ead68870e6c536d1cf72",
+    "ev-e223523288383250d3076ef3",
+    "ev-35ee441f125db3ebc8e80dd7",
+    "ev-9a65bbcb54dccfd51d407583",
+    "ev-8fe424e2f958236f2de4ce69"
+  ],
+  "tags": [
+    "fallback",
+    "escalation",
+    "action route",
+    "unverifiable",
+    "suno",
+    "app adaptation",
+    "channel ladder"
+  ],
+  "novelty": {
+    "nearest": [
+      "strict-target-loss-refuses-instead-of-retargeting-v1"
+    ],
+    "difference": "That card concerns keeping a bound target; this one concerns choosing the next action channel without a second dispatch.",
+    "decision": "new version; v1 generalised a selection-specific reading into permission to dispatch again"
+  },
+  "supersedes": "ladder-advances-only-on-observed-no-effect-v1"
+}

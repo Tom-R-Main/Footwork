@@ -425,3 +425,61 @@ def test_explicit_tab_survives_its_own_navigation_without_selecting_url_peer():
     bridge = _bridge(wire)
     asyncio.run(bridge.attach(tab_id="original", expect_url=URL))
     assert bridge.tab_id == "original"
+
+
+# --- the effector's typed action result (AAD1) --------------------------------------------------
+
+def _published(effect: str, **extra) -> dict:
+    """A successful action reply as cua-driver 0.46 publishes it: the typed result, and no status."""
+    return {"effect": effect, "route": "dom", "delivery": {"mode": "background"}, **extra}
+
+
+def _click_with(reply: dict, *, text: str = "dispatched synthetic DOM click"):
+    async def run():
+        b = _bridge(Wire({"browser_click": reply}, text=text))
+        await b.attach()
+        nm = await b.observe()
+        return await b.act(nm, "click", 1)
+
+    return asyncio.run(run())
+
+
+def test_a_confirmed_target_state_change_is_carried_with_its_evidence():
+    eff = _click_with(_published(
+        "confirmed", evidence=[{"kind": "browser_readback", "detail": "bounded semantic target state changed"}],
+    ))
+    assert (eff.effect, eff.route, eff.dispatched) == ("confirmed", "dom_event", True)
+    assert eff.evidence == ("browser_readback: bounded semantic target state changed",)
+    assert eff.escalation is None
+
+
+def test_partial_and_suspected_noop_keep_their_own_words():
+    assert _click_with(_published("partial")).effect == "partial"
+    assert _click_with(_published("suspected_noop")).effect == "suspected_noop"
+
+
+def test_an_unconfirmed_click_carries_the_escalation_as_data_not_as_a_next_step():
+    escalation = {"target": "page", "reason": "bounded semantic target state remained unchanged"}
+    eff = _click_with(_published("unverifiable", escalation=escalation, hint="Refresh page state."))
+    assert eff.effect == "unverifiable" and eff.escalation == escalation
+    # nothing callable is derived from the advice
+    assert eff.next_call is None and eff.hint == "Refresh page state."
+
+
+def test_a_reply_without_a_typed_effect_is_never_reported_as_confirmed():
+    assert _click_with({"status": "ok"}).effect == "unverifiable"
+    assert _click_with(_published("landed")).effect == "unverifiable"  # an unknown word proves nothing
+    assert _click_with({"effect": ["confirmed"]}).effect == "unverifiable"  # nor does a malformed one
+
+
+def test_a_non_error_reply_that_says_refused_is_not_proof_that_nothing_was_sent():
+    eff = _click_with(_published("refused"))
+    assert eff.effect == "unverifiable" and eff.dispatched is True
+
+
+def test_malformed_evidence_and_escalation_are_dropped_not_trusted():
+    eff = _click_with(_published("confirmed", evidence="changed", escalation="page"))
+    assert eff.effect == "confirmed" and eff.evidence == () and eff.escalation is None
+    eff = _click_with(_published("confirmed", evidence=[{"detail": "no kind"}, 7, {"kind": "browser_readback"}]))
+    assert eff.evidence == ("browser_readback",)
+

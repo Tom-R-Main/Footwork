@@ -1,0 +1,337 @@
+FFFFFFFFFFFFF                                                            [100%]
+=================================== FAILURES ===================================
+_________ test_look_until_observes_delayed_exact_control_without_input _________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1051e8540>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1059912b0>
+
+    def test_look_until_observes_delayed_exact_control_without_input(world, fw, monkeypatch):
+        assert fw("start", "Observe delayed form", "--app", "Calculator")[0] == 0
+        original = world.get_window_state
+        calls = []
+    
+        async def delayed(inp):
+            snap = await original(inp)
+            calls.append(snap["snapshot_id"])
+            if len(calls) >= 2:
+                snap["elements"][0] = {**snap["elements"][0], "label": "Song description"}
+            return snap
+    
+        monkeypatch.setattr(world, "get_window_state", delayed)
+        code, out, err = fw("look", "--until", "Song description", "--timeout", "1")
+>       assert code == 0, err
+E       AssertionError: usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1,done,read,check-file,check-artifact,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --until Song description --timeout 1
+E         
+E       assert 2 == 0
+
+tests/test_session_scenarios.py:1741: AssertionError
+____ test_look_until_timeout_preserves_partial_menu_and_ignores_title_text _____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1057b6c00>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105991370>
+
+    def test_look_until_timeout_preserves_partial_menu_and_ignores_title_text(world, fw, monkeypatch):
+        assert fw("start", "Observe delayed form", "--app", "Calculator")[0] == 0
+        original = world.get_window_state
+    
+        async def only_text(inp):
+            snap = await original(inp)
+            snap["window_title"] = "Song description"
+            snap["tree_markdown"] += '\nAXStaticText = "Song description"'
+            snap["elements_complete"] = False
+            return snap
+    
+        monkeypatch.setattr(world, "get_window_state", only_text)
+        code, out, err = fw("look", "--until", "Song description", "--timeout", "0.1")
+>       assert code == 6
+E       assert 2 == 6
+
+tests/test_session_scenarios.py:1761: AssertionError
+________ test_look_until_duplicate_appearance_does_not_authorize_click _________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104caa160>
+
+    def test_look_until_duplicate_appearance_does_not_authorize_click(world, fw):
+        world.toggles = {910: ["Ready", "0"], 911: ["Ready", "0"]}
+        assert fw("start", "Observe duplicate controls", "--app", "Calculator")[0] == 0
+        code, out, err = fw("look", "--until", "Ready", "--timeout", "1")
+>       assert code == 0, err
+E       AssertionError: usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1,done,read,check-file,check-artifact,grant,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --until Ready --timeout 1
+E         
+E       assert 2 == 0
+
+tests/test_session_scenarios.py:1771: AssertionError
+_____________ test_look_until_invalid_bounds_do_not_bind[options0] _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10576c860>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10571e780>
+options = ['--until', '']
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+            ["--until", "Ready\n"], ["--timeout", "1"],
+            *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+        ],
+    )
+    def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+        def forbidden(**kwargs):
+            pytest.fail("invalid wait options must not create a driver")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        code, out, err = fw("look", *options)
+>       assert code == 2 and "look:" in err
+E       AssertionError: assert (2 == 2 and 'look:' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...e,check-artifact,grant,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --until \n')
+
+tests/test_session_scenarios.py:1792: AssertionError
+_____________ test_look_until_invalid_bounds_do_not_bind[options1] _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104ca9b20>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105772d50>
+options = ['--until', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx']
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+            ["--until", "Ready\n"], ["--timeout", "1"],
+            *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+        ],
+    )
+    def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+        def forbidden(**kwargs):
+            pytest.fail("invalid wait options must not create a driver")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        code, out, err = fw("look", *options)
+>       assert code == 2 and "look:" in err
+E       AssertionError: assert (2 == 2 and 'look:' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...r: unrecognized arguments: --until xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n')
+
+tests/test_session_scenarios.py:1792: AssertionError
+_____________ test_look_until_invalid_bounds_do_not_bind[options2] _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104ca87c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104cadb20>
+options = ['--until', ' x']
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+            ["--until", "Ready\n"], ["--timeout", "1"],
+            *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+        ],
+    )
+    def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+        def forbidden(**kwargs):
+            pytest.fail("invalid wait options must not create a driver")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        code, out, err = fw("look", *options)
+>       assert code == 2 and "look:" in err
+E       AssertionError: assert (2 == 2 and 'look:' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...check-artifact,grant,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --until  x\n')
+
+tests/test_session_scenarios.py:1792: AssertionError
+_____________ test_look_until_invalid_bounds_do_not_bind[options3] _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1057ecb80>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104cae7e0>
+options = ['--until', 'Ready\n']
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+            ["--until", "Ready\n"], ["--timeout", "1"],
+            *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+        ],
+    )
+    def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+        def forbidden(**kwargs):
+            pytest.fail("invalid wait options must not create a driver")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        code, out, err = fw("look", *options)
+>       assert code == 2 and "look:" in err
+E       AssertionError: assert (2 == 2 and 'look:' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...-artifact,grant,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --until Ready\n\n')
+
+tests/test_session_scenarios.py:1792: AssertionError
+_____________ test_look_until_invalid_bounds_do_not_bind[options4] _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104ca8720>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104caec60>
+options = ['--timeout', '1']
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+            ["--until", "Ready\n"], ["--timeout", "1"],
+            *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+        ],
+    )
+    def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+        def forbidden(**kwargs):
+            pytest.fail("invalid wait options must not create a driver")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        code, out, err = fw("look", *options)
+>       assert code == 2 and "look:" in err
+E       AssertionError: assert (2 == 2 and 'look:' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...heck-artifact,grant,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --timeout 1\n')
+
+tests/test_session_scenarios.py:1792: AssertionError
+_____________ test_look_until_invalid_bounds_do_not_bind[options5] _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104caa160>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10577e7e0>
+options = ['--until', 'Ready', '--timeout', '0']
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+            ["--until", "Ready\n"], ["--timeout", "1"],
+            *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+        ],
+    )
+    def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+        def forbidden(**kwargs):
+            pytest.fail("invalid wait options must not create a driver")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        code, out, err = fw("look", *options)
+>       assert code == 2 and "look:" in err
+E       AssertionError: assert (2 == 2 and 'look:' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...grant,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --until Ready --timeout 0\n')
+
+tests/test_session_scenarios.py:1792: AssertionError
+_____________ test_look_until_invalid_bounds_do_not_bind[options6] _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1057b5e40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104cf93a0>
+options = ['--until', 'Ready', '--timeout', '-1']
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+            ["--until", "Ready\n"], ["--timeout", "1"],
+            *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+        ],
+    )
+    def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+        def forbidden(**kwargs):
+            pytest.fail("invalid wait options must not create a driver")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        code, out, err = fw("look", *options)
+>       assert code == 2 and "look:" in err
+E       AssertionError: assert (2 == 2 and 'look:' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...rant,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --until Ready --timeout -1\n')
+
+tests/test_session_scenarios.py:1792: AssertionError
+_____________ test_look_until_invalid_bounds_do_not_bind[options7] _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1057b58a0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10571c6b0>
+options = ['--until', 'Ready', '--timeout', '61']
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+            ["--until", "Ready\n"], ["--timeout", "1"],
+            *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+        ],
+    )
+    def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+        def forbidden(**kwargs):
+            pytest.fail("invalid wait options must not create a driver")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        code, out, err = fw("look", *options)
+>       assert code == 2 and "look:" in err
+E       AssertionError: assert (2 == 2 and 'look:' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...rant,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --until Ready --timeout 61\n')
+
+tests/test_session_scenarios.py:1792: AssertionError
+_____________ test_look_until_invalid_bounds_do_not_bind[options8] _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10576d080>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105754380>
+options = ['--until', 'Ready', '--timeout', 'nan']
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+            ["--until", "Ready\n"], ["--timeout", "1"],
+            *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+        ],
+    )
+    def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+        def forbidden(**kwargs):
+            pytest.fail("invalid wait options must not create a driver")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        code, out, err = fw("look", *options)
+>       assert code == 2 and "look:" in err
+E       AssertionError: assert (2 == 2 and 'look:' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...ant,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --until Ready --timeout nan\n')
+
+tests/test_session_scenarios.py:1792: AssertionError
+_____________ test_look_until_invalid_bounds_do_not_bind[options9] _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104cab240>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105757800>
+options = ['--until', 'Ready', '--timeout', 'inf']
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+            ["--until", "Ready\n"], ["--timeout", "1"],
+            *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+        ],
+    )
+    def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+        def forbidden(**kwargs):
+            pytest.fail("invalid wait options must not create a driver")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        code, out, err = fw("look", *options)
+>       assert code == 2 and "look:" in err
+E       AssertionError: assert (2 == 2 and 'look:' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...ant,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --until Ready --timeout inf\n')
+
+tests/test_session_scenarios.py:1792: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_look_until_observes_delayed_exact_control_without_input
+FAILED tests/test_session_scenarios.py::test_look_until_timeout_preserves_partial_menu_and_ignores_title_text
+FAILED tests/test_session_scenarios.py::test_look_until_duplicate_appearance_does_not_authorize_click
+FAILED tests/test_session_scenarios.py::test_look_until_invalid_bounds_do_not_bind[options0]
+FAILED tests/test_session_scenarios.py::test_look_until_invalid_bounds_do_not_bind[options1]
+FAILED tests/test_session_scenarios.py::test_look_until_invalid_bounds_do_not_bind[options2]
+FAILED tests/test_session_scenarios.py::test_look_until_invalid_bounds_do_not_bind[options3]
+FAILED tests/test_session_scenarios.py::test_look_until_invalid_bounds_do_not_bind[options4]
+FAILED tests/test_session_scenarios.py::test_look_until_invalid_bounds_do_not_bind[options5]
+FAILED tests/test_session_scenarios.py::test_look_until_invalid_bounds_do_not_bind[options6]
+FAILED tests/test_session_scenarios.py::test_look_until_invalid_bounds_do_not_bind[options7]
+FAILED tests/test_session_scenarios.py::test_look_until_invalid_bounds_do_not_bind[options8]
+FAILED tests/test_session_scenarios.py::test_look_until_invalid_bounds_do_not_bind[options9]
+13 failed, 142 deselected in 0.78s

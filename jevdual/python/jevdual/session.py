@@ -27,6 +27,7 @@ import copy
 import dataclasses
 import html
 import json
+import math
 import os
 import re
 import sys
@@ -37,7 +38,14 @@ from pathlib import Path
 from typing import Any
 
 from jevdual import carry, grants
-from jevdual.menu import Candidate, Menu, MenuBudget, peer_position
+from jevdual.menu import (
+    Candidate,
+    Menu,
+    MenuBudget,
+    peer_position,
+    qualified_control_identity,
+    qualified_link_href,
+)
 from jevdual.native import NativeBridge, NativeBridgeError, NativeMenu
 
 SETTLE_S = 1.0
@@ -57,6 +65,13 @@ _CAND_FIELDS = (
     "pressed",
     "section",
     "placeholder",
+    "value_truncated",
+    "href_qualified",
+    "native_dom_id",
+    "native_document_url",
+    "native_control_qualified",
+    "native_control_opaque",
+    "numeric",
 )
 
 
@@ -325,6 +340,9 @@ def _operation_request(args: Any) -> dict[str, Any]:
         if getattr(args, "from_session", None)
         else None,
         "route": getattr(args, "route", None),
+        **({"web_text_delivery": args.web_text_delivery} if getattr(args, "web_text_delivery", None) else {}),
+        **({"web_text_range": args.web_text_range} if getattr(args, "web_text_range", None) is not None else {}),
+        **({"click_delivery": args.click_delivery} if getattr(args, "click_delivery", None) else {}),
     }
     if getattr(args, "_native_scope", None):
         request["native_scope"] = dict(args._native_scope)
@@ -499,7 +517,8 @@ def _structured_receipt(state: SessionState, pending: dict[str, Any], nm: Any) -
                 predicate="field_equals",
                 values=[rb["observed_value"]],
                 parameters={
-                    "source": "native.ax_insert_ack",
+                    "source": ("native.foreground_web_selection_readback"
+                               if rb.get("edit_kind") == "selected_range" else "native.ax_insert_ack"),
                     "label": rb.get("label"),
                     "target_id": rb["decision_target_id"],
                     "source_target_id": rb["target_id"],
@@ -721,6 +740,13 @@ def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
             evidence=f"the window changed ({r.evidence}); a menu item's effect may be in another window or app, "
             "which this observation does not show",
         )
+    if (pending.get("op") == "menu" and pending.get("mode", "native") == "native"
+            and r.effect == "suspected_noop"):
+        return dataclasses.replace(
+            r, effect="unverifiable",
+            evidence="no visible change after native menu invocation; clipboard, disk or another window may have "
+            "changed. Obtain independent readback before retrying",
+        )
     return r
 
 
@@ -763,6 +789,9 @@ def scrub(state: SessionState, nm: Any, extra: str | None = None) -> Any:
         dataclasses.replace(
             c, label=s(c.label), value=s(c.value), section=s(c.section),
             placeholder=s(c.placeholder), href=s(c.href),
+            native_dom_id=s(c.native_dom_id), native_document_url=s(c.native_document_url),
+            native_control_qualified=(False if s(c.native_dom_id) != c.native_dom_id
+                                      or s(c.native_document_url) != c.native_document_url else c.native_control_qualified),
         )
         for c in m.candidates
     )
@@ -813,6 +842,15 @@ def _bound_field(menu: Menu | None, pending: dict[str, Any]) -> Candidate | None
 
 #: characters a password field shows in place of what it holds
 _MASK_CHARS = frozenset("•●*·∙")
+
+
+def _bounded_native_value(field: Candidate) -> bool:
+    if field.value_truncated is not None:
+        return field.value_truncated
+    # Old persisted menus have no provenance bit. Their cap-shaped ellipsis
+    # cannot distinguish clipping from a literal ellipsis, so retain uncertainty.
+    cap = 480 if field.input_type == "textarea" else 120
+    return len(field.value or "") == cap and (field.value or "").endswith("…")
 
 
 def _field_receipt(
@@ -887,6 +925,51 @@ def _field_receipt(
             evidence=f"{label!r} {'changed' if changed else 'did not change'}; a secret is compared only during the command that typed it",
         )
     intended = (secret_value if secret else pending.get("intended")) or ""
+    if pending.get("web_text_range") is not None:
+        # This operation preserves the raw prefix/suffix, including terminal whitespace.
+        # Never feed it through the ordinary preview/rstrip-based replacement receipt.
+        rb = pending.get("field_readback")
+        if (not isinstance(rb, dict) or rb.get("complete") is not True
+                or rb.get("producer") != {"name": "footwork.native", "version": 1}
+                or rb.get("predicate") != "field_equals" or rb.get("edit_kind") != "selected_range"
+                or rb.get("selected_range") != pending["web_text_range"]
+                or rb.get("decision_target_id") != pending.get("target_id")
+                or not isinstance(rb.get("expected_value"), str)
+                or not isinstance(rb.get("observed_value"), str)
+                or field.id not in getattr(nm, "exact_ax_values", ())
+                or rb.get("role") != getattr(nm, "ax_roles", {}).get(field.id)
+                or rb.get("frame") != list(getattr(nm, "frames", {}).get(field.id) or ())):
+            return dataclasses.replace(r, effect="unverifiable", evidence="exact selected-range full-value readback is unavailable")
+        exact = getattr(nm, "values", {}).get(field.id)
+        if not isinstance(exact, str) or exact != rb["observed_value"]:
+            return dataclasses.replace(r, effect="unverifiable", evidence="the fresh field differs from its exact selected-range readback")
+        if exact == rb["expected_value"]:
+            return dataclasses.replace(r, effect="confirmed",
+                                       evidence="the exact full field matches the selected-range edit, preserving prefix and suffix")
+        return dataclasses.replace(
+            r, effect="suspected_noop" if exact == rb.get("before_value") else "partial",
+            evidence="the exact full field does not match the selected-range edit's preserved prefix and suffix",
+        )
+    if pending.get("mode", "native") == "native":
+        if _bounded_native_value(field):
+            return dataclasses.replace(
+                r, effect="unverifiable",
+                evidence=f"{label!r} value preview is truncated; full content comparison is unavailable",
+            )
+        if pending["op"] == "append" and was is not None and _bounded_native_value(was):
+            return dataclasses.replace(
+                r, effect="unverifiable",
+                evidence=f"{label!r} earlier value preview is truncated; full append comparison is unavailable",
+            )
+        raw = getattr(nm, "values", {}).get(field.id)
+        if (pending["op"] == "type" and field.input_type == "textarea" and not secret
+                and isinstance(raw, str) and raw.rstrip() != intended.rstrip()
+                and raw.replace("\n", "") == intended.replace("\n", "")):
+            return dataclasses.replace(
+                r, effect="unverifiable",
+                evidence="native multiline readback has a different internal LF pattern while every non-LF character "
+                "matches; independent readback is needed, do not retype automatically",
+            )
     alternates: tuple[str, ...] = ()
     if pending["op"] == "type":
         expected: str | None = intended
@@ -935,6 +1018,16 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
     lines.append(f"{len(m.candidates)} elements:")
     for c in m.candidates:
         extra = f" = {c.value!r}" if c.value else ""
+        if c.value_truncated:
+            extra += " [value preview truncated]"
+        if c.numeric is not None:
+            extra += " numeric=" + json.dumps(c.numeric, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
+        if qualified_link_href(c) is not None:
+            extra += f" href={c.href!r}"
+        if qualified_control_identity(c) is not None:
+            extra += f" dom_id={c.native_dom_id!r} document={c.native_document_url!r}"
+        if c.native_control_opaque:
+            extra += " [opaque identifier; accessible name empty]"
         for key in ("checked", "pressed", "expanded"):
             if getattr(c, key) is not None:
                 extra += f" {key}={getattr(c, key)}"
@@ -1020,6 +1113,7 @@ def _filmed(state: SessionState, bridge: Any) -> Any:
         from jevdual.filmed import Filmed
 
         bridge.filmed = Filmed.from_record(state.filmed)
+        bridge.filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
     return bridge
 
 
@@ -1048,7 +1142,7 @@ def _native_bridge(
 
 
 async def observe(
-    state: SessionState, bridge: NativeBridge, *, secret_value: str | None = None
+    state: SessionState, bridge: NativeBridge, *, secret_value: str | None = None, unique_capture: bool = False
 ) -> tuple[NativeMenu, dict[str, Any] | None]:
     shot: str | None = None
     if state.secret_names or secret_value:
@@ -1059,7 +1153,8 @@ async def observe(
     else:
         shots = state.path / "screenshots"
         shots.mkdir(exist_ok=True)
-        shot = str(shots / f"obs-{state.step:03d}-{int(time.time())}.png")
+        stamp = time.time_ns() if unique_capture else int(time.time())
+        shot = str(shots / f"obs-{state.step:03d}-{stamp}.png")
     started_at = time.time()
     nm = await bridge.observe(screenshot_path=shot)
     return finish_observation(
@@ -1183,6 +1278,7 @@ async def cmd_point(args: Any) -> int:
         print("point needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
         return 2
     filmed = Filmed.from_record(state.filmed)
+    filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
     try:
         hits = await asyncio.to_thread(ax.labelled, ax.window_element(state.pid, state.window_id), args.label)
     except ax.AXError as exc:
@@ -1220,6 +1316,7 @@ async def cmd_keep_out(args: Any) -> int:
         print("keep-out needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
         return 2
     filmed = Filmed.from_record(state.filmed)
+    filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
     if args.rect.strip().lower() == "off":
         filmed.keep_out = None
     else:
@@ -1252,6 +1349,7 @@ async def cmd_park(args: Any) -> int:
         print("park takes both X and Y, or neither (the rest position)", file=sys.stderr)
         return 2
     filmed = Filmed.from_record(state.filmed)
+    filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
     point = filmed.viewport(args.x, args.y) if args.x is not None else None
     try:
         record = filmed.place(point) if getattr(args, "place", False) else await filmed.park(point)
@@ -1270,6 +1368,74 @@ async def cmd_park(args: Any) -> int:
 
 
 async def cmd_start(args: Any) -> int:
+    """Initialize a replacement separately; a refused start must not erase the prior trail."""
+    directory = session_dir(args.session)
+    names = ("session.json", "session.jsonl", "pointer-gestures.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS)
+    prior = directory / "session.json"
+    durable = bool(getattr(args, "authority", None)) or (prior.exists() and SessionState.load(directory).authority)
+    if durable or not any((directory / name).exists() for name in names):
+        return await _start_new(args)
+    import shutil
+    import tempfile
+
+    with tempfile.TemporaryDirectory(prefix=".footwork-start-", dir=directory.parent) as temporary:
+        staged = Path(temporary)
+        staged_args = copy.copy(args)
+        staged_args.session = str(staged)
+        staged_args._staged_start = True
+        try:
+            code = await _start_new(staged_args)
+        except Exception as exc:  # noqa: BLE001 - failed replacement diagnostics belong to its staging area
+            from jevdual.cli import _stopped
+
+            return _stopped(staged_args, exc)
+        finally:
+            # run_command revokes a take reservation created by a failed start; it reads the caller's args.
+            if getattr(staged_args, "_created_reservation", ""):
+                args._created_reservation = staged_args._created_reservation
+        if code != 0:
+            return code
+        replacement = json.loads((staged / "session.json").read_text())
+        replacement["dir"] = str(directory)
+        (staged / "session.json").write_text(json.dumps(replacement, indent=1))
+        # Initialization and driver cleanup succeeded. Publish only owned session files,
+        # retaining the old versions until all replacement writes can be rolled back.
+        backup = staged / "previous"
+        backup.mkdir()
+        touched = []
+        try:
+            for name in names:
+                target = directory / name
+                if target.exists():
+                    os.replace(target, backup / name)
+                touched.append(name)
+                source = staged / name
+                if source.exists():
+                    os.replace(source, target)
+            shots = staged / "screenshots"
+            if shots.exists():
+                destination = directory / "screenshots"
+                destination.mkdir(exist_ok=True)
+                for shot in shots.iterdir():
+                    target = destination / shot.name
+                    if target.exists():
+                        target = destination / f"{shot.stem}-{uuid.uuid4().hex}{shot.suffix}"
+                    shutil.move(str(shot), target)
+        except Exception as exc:  # noqa: BLE001 - retain old state if publication fails
+            for name in touched:
+                saved = backup / name
+                if saved.exists():
+                    os.replace(saved, directory / name)
+                else:
+                    (directory / name).unlink(missing_ok=True)
+            from jevdual.cli import _stopped
+
+            return _stopped(staged_args, exc)
+    print(f"\nsession: {directory}  (export FOOTWORK_SESSION={directory} to omit --session)")
+    return 0
+
+
+async def _start_new(args: Any) -> int:
     from jevdual.effectors import desktop_effector, require_available
     from jevdual.native import (
         address_bar,
@@ -1287,6 +1453,14 @@ async def cmd_start(args: Any) -> int:
     operations = getattr(args, "_operations", None)
     durable = bool(getattr(args, "authority", None))
     explicit_pid = getattr(args, "pid", None)
+    explicit_window_id = getattr(args, "window_id", None)
+    if explicit_window_id is not None and (
+        explicit_pid is None or type(explicit_window_id) is not int or not 0 < explicit_window_id <= 0xFFFFFFFF
+        or getattr(args, "window", None) is not None or getattr(args, "browser", False) or getattr(args, "url", None)
+    ):
+        print("not starting: --window-id requires a positive native CGWindowID and --pid; "
+              "--window, --browser and --url are incompatible", file=sys.stderr)
+        return 2
     if getattr(args, "browser", False) and getattr(args, "native_menu_cap", 160) != 160:
         print("not starting: --native-menu-cap requires a native session", file=sys.stderr)
         return 2
@@ -1365,7 +1539,7 @@ async def cmd_start(args: Any) -> int:
     d.mkdir(parents=True, exist_ok=True)
     # a new session inherits nothing: no carried value or destination snapshot from an older one in
     # the same directory can be used as if it were read in this one (secondary audit: stale carries)
-    for old in ("session.json", "session.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS):
+    for old in ("session.json", "session.jsonl", "pointer-gestures.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS):
         (d / old).unlink(missing_ok=True)
     if getattr(args, "browser", False):
         return await _start_browser(args, d)
@@ -1374,7 +1548,10 @@ async def cmd_start(args: Any) -> int:
         try:
             if explicit_pid is not None:
                 pid = explicit_pid
-                wid, title = await find_window_for_pid(driver, pid, title_contains=args.window or "")
+                wid, title = await find_window_for_pid(
+                    driver, pid, title_contains=args.window or "",
+                    **({"window_id": explicit_window_id} if explicit_window_id is not None else {}),
+                )
             else:
                 pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
             if finder_scope:
@@ -1384,6 +1561,8 @@ async def cmd_start(args: Any) -> int:
                 windows = await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))
                 matches = []
                 for window in windows.windows:
+                    if explicit_window_id is not None and window.window_id != explicit_window_id:
+                        continue
                     if args.window and args.window.casefold() not in window.title.casefold():
                         continue
                     try:
@@ -1504,7 +1683,8 @@ async def cmd_start(args: Any) -> int:
         state.log({"kind": "start", "task": args.task, "requirements": state.requirements, "app": args.app})
         nm, _ = await observe(state, bridge)
         print(render_observation(nm, text_chars=args.text, receipt=None))
-        print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
+        if not getattr(args, "_staged_start", False):
+            print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
     finally:
         await driver.shutdown()
     return 0
@@ -1544,19 +1724,61 @@ async def _start_browser(args: Any, d: Path) -> int:
         bridge.target_pin = state.browser_target
         nm, _ = await observe(state, bridge)
         print(render_observation(nm, text_chars=args.text, receipt=None))
-        print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
+        if not getattr(args, "_staged_start", False):
+            print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
     finally:
         await driver.shutdown()
     return 0
 
 
 async def cmd_look(args: Any) -> int:
+    until = getattr(args, "until", None)
+    timeout = getattr(args, "timeout", None)
+    if until is None and timeout is not None:
+        print("look: --timeout requires --until", file=sys.stderr)
+        return 2
+    if until is not None:
+        if (
+            not until or until.strip() != until or len(until) > 80
+            or any(ord(c) < 32 or ord(c) == 127 for c in until)
+        ):
+            print(
+                "look: --until needs an exact nonempty label of at most 80 characters without control characters",
+                file=sys.stderr,
+            )
+            return 2
+        timeout = 10.0 if timeout is None else timeout
+        if not math.isfinite(timeout) or not 0.1 <= timeout <= 60:
+            print("look: --timeout must be finite and between 0.1 and 60 seconds", file=sys.stderr)
+            return 2
     state = SessionState.load(session_dir(args.session))
+    if until is not None and state.mode != "native":
+        print("look: --until currently supports native sessions only", file=sys.stderr)
+        return 2
     driver, bridge = await bind(state)
+    nm, receipt, matches = None, None, []
+    timed_out = False
     try:
-        nm, receipt = await observe(state, bridge)
+        if until is None:
+            nm, receipt = await observe(state, bridge)
+        else:
+            deadline = asyncio.timeout(timeout)
+            try:
+                async with deadline:
+                    while True:
+                        nm, fresh_receipt = await observe(state, bridge, unique_capture=True)
+                        if fresh_receipt is not None:
+                            receipt = fresh_receipt
+                        matches = [candidate for candidate in nm.menu.candidates if candidate.label == until]
+                        if matches:
+                            break
+                        await asyncio.sleep(0.25)
+            except TimeoutError:
+                if not deadline.expired():
+                    raise
+                timed_out = True
         menus = None
-        if getattr(args, "menu_bar", False) and state.mode == "native":
+        if not timed_out and getattr(args, "menu_bar", False) and state.mode == "native":
             # Q19 R4: the app's menu items, so a menu path is chosen from what exists (D09 guessed one); read
             # through AX, since the observation's element cap drops them
             from jevdual import ax
@@ -1564,7 +1786,22 @@ async def cmd_look(args: Any) -> int:
             menus = ax.menu_paths(state.pid)
     finally:
         await driver.shutdown()
-    print(render_observation(nm, text_chars=args.text, receipt=receipt))
+    if nm is not None:
+        print(render_observation(nm, text_chars=args.text, receipt=receipt))
+    if until is not None:
+        if timed_out:
+            print(
+                f"look: timed out after {timeout:g}s; exact candidate label {until!r} not observed; "
+                "absence is not established", file=sys.stderr,
+            )
+            if nm is None:
+                print("look: no observation completed before the deadline", file=sys.stderr)
+            return 6
+        count = len(matches)
+        print(
+            f"observed exact candidate label {until!r} ({count} {'match' if count == 1 else 'matches'}); "
+            "appearance only, not action authorization or task completion"
+        )
     if menus is not None:
         print(f"menu bar ({len(menus)} items):")
         for path in menus:
@@ -1642,6 +1879,9 @@ async def cmd_inspect_target(args: Any) -> int:
                 "target_identity_changed",
                 "the ID identifies a different target than the last session observation",
             )
+        if previous and (qualified_control_identity(previous) != qualified_control_identity(candidate)
+                         or qualified_link_href(previous) != qualified_link_href(candidate)):
+            return refused("target_identity_changed", "the target's qualified native resource or control identity changed")
     if args.operation not in candidate.operations:
         return refused("operation_unsupported", "the fresh target does not offer this operation")
     token = nm.token(candidate.id)
@@ -1682,6 +1922,8 @@ async def cmd_inspect_target(args: Any) -> int:
         "elements_complete": nm.elements_complete,
         "driver_reported_scale": capture.reported_scale,
         "target_label": candidate.label,
+        "target_identity": _target_identity(candidate),
+        **({"target_numeric": dict(candidate.numeric)} if candidate.numeric is not None else {}),
         "authority": "read-only evidence; no model judgment, dispatch, consent or verified postcondition",
         "coverage_warning": None
         if nm.elements_complete
@@ -1720,6 +1962,7 @@ def _inspection_preview(record: dict[str, Any], manifest_name: str) -> str:
         record["inspection"]["coverage_warning"]
         or "The driver reported a complete observation; this capture does not check the current live screen."
     )
+    identity = escape(json.dumps(record["inspection"].get("target_identity", {}), ensure_ascii=False, sort_keys=True))
     return f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="script-src 'none'; object-src 'none'; base-uri 'none'">
@@ -1728,6 +1971,7 @@ def _inspection_preview(record: dict[str, Any], manifest_name: str) -> str:
 </head><body><h1>Target {escape(target["id"])}: {escape(target_label)}</h1>
 <dl><dt>Operation</dt><dd>{escape(target["operation"])}</dd><dt>Required postcondition</dt><dd>{escape(target["postcondition"])}</dd></dl>
 <p class="scope">{escape(scope)}</p><p class="scope">{escape(warning)}</p>
+<p class="scope">Observed target identity: <code>{identity}</code></p>
 <p><a href="{escape(manifest_name, quote=True)}">Capture manifest</a> · <a href="{escape(record["inspection"]["screenshot"], quote=True)}">Original PNG</a></p>
 <figure><div class="capture"><img src="{escape(record["inspection"]["screenshot"], quote=True)}" width="{width}" height="{height}" alt="Original bound-window capture">
 <div class="target-outline" style="{overlay}" aria-label="Offered target {escape(target["id"], quote=True)}"></div></div>
@@ -1894,6 +2138,55 @@ async def cmd_do(args: Any) -> int:
         print("--token requires a durable session started with --authority", file=sys.stderr)
         return 2
     op, cid, raw_text, keys, path = parse_do(args.words)
+    web_text_delivery = getattr(args, "web_text_delivery", None)
+    click_delivery = getattr(args, "click_delivery", None)
+    if click_delivery:
+        from jevdual.native import require_foreground_click_runtime
+
+        if (state.mode != "native" or op != "click" or state.posture == "background_only"
+                or getattr(args, "no_judge", False) or str(cid).startswith("file:")
+                or getattr(args, "route", None) or web_text_delivery
+                or getattr(args, "web_text_range", None) is not None):
+            print("foreground click requires native click, foreground posture and normal action gates; "
+                  "other operations and delivery options are unsupported", file=sys.stderr)
+            return 2
+        try:
+            require_foreground_click_runtime()
+        except NativeBridgeError as exc:
+            print(f"foreground click unavailable: {exc}", file=sys.stderr)
+            return 2
+    web_text_range = None
+    range_text = getattr(args, "web_text_range", None)
+    if range_text is not None:
+        if (web_text_delivery != "foreground" or not re.fullmatch(r"[0-9]{1,5}:[0-9]{1,5}", range_text)):
+            print("--web-text-range requires --web-text-delivery foreground and START:LENGTH in UTF-16 units",
+                  file=sys.stderr)
+            return 2
+        web_text_range = tuple(int(part) for part in range_text.split(":"))
+        if sum(web_text_range) > 65_536:
+            print("--web-text-range START + LENGTH must be at most 65536 UTF-16 units", file=sys.stderr)
+            return 2
+    if web_text_delivery:
+        from jevdual.native import require_foreground_web_text_runtime
+
+        if (state.mode != "native" or op != "type" or state.posture == "background_only"
+                or getattr(args, "no_judge", False) or str(cid).startswith("file:")
+                or getattr(args, "route", None)):
+            print("foreground web text requires native type, foreground posture and normal action gates; "
+                  "append and browser/ordinary operations are unsupported", file=sys.stderr)
+            return 2
+        try:
+            require_foreground_web_text_runtime()
+        except NativeBridgeError as exc:
+            print(f"foreground web text unavailable: {exc}", file=sys.stderr)
+            return 2
+    if state.mode == "native" and op == "enter" and len(args.words) > 2:
+        print(
+            "native enter sends Return only and does not accept text. Use do type TARGET TEXT, "
+            "then reobserve and verify the field, then do enter TARGET.",
+            file=sys.stderr,
+        )
+        return 2
     carried = None
     ref = carry.is_ref(raw_text) if op in ("type", "append") else None
     if ref is not None:
@@ -2036,6 +2329,14 @@ async def cmd_do(args: Any) -> int:
                 print(render_observation(nm, text_chars=args.text, receipt=None))
                 return targeting_refused("target_changed", "target label changed since selection")
             previous = next((c for c in chosen_cands if c["id"] == cid), None) if known is not None else None
+            if state.mode == "native" and previous is not None and qualified_control_identity(previous) != qualified_control_identity(target):
+                print("target_changed: the selected native control ID or document scope changed. "
+                      "Nothing dispatched. Choose again from a fresh observation.", file=sys.stderr)
+                return targeting_refused("target_changed", "native control identity changed since selection")
+            if state.mode == "native" and previous is not None and qualified_link_href(previous) != qualified_link_href(target):
+                print("target_changed: the selected native link resource changed or lost qualification. "
+                      "Nothing dispatched. Choose again from a fresh observation.", file=sys.stderr)
+                return targeting_refused("target_changed", "native link resource changed since selection")
             if previous is not None and any(
                 previous.get(key) != getattr(target, key) for key in ("role", "section", "placeholder")
             ):
@@ -2226,9 +2527,7 @@ async def cmd_do(args: Any) -> int:
                 "op": op,
                 "target_id": target.id if target is not None else None,
                 "target_label": target.label if target is not None else None,
-                "target_identity": {
-                    key: getattr(target, key) for key in ("role", "label", "section", "placeholder")
-                } if target is not None else None,
+                "target_identity": _target_identity(target) if target is not None else None,
                 "target_text_scope_signature": getattr(nm, "text_scope_signature", None),
                 "intended": None if secret_used else text,
                 "secret": secret_used,
@@ -2308,6 +2607,11 @@ async def cmd_do(args: Any) -> int:
                     eff = await bridge.act(
                         nm, op, target.id, text, route="dom_event" if route_arg == "dom" else "trusted"
                     )
+                elif web_text_delivery:
+                    eff = await bridge.act(nm, op, target.id, text, web_text_delivery=web_text_delivery,
+                                           **({"web_text_range": web_text_range} if web_text_range is not None else {}))
+                elif click_delivery:
+                    eff = await bridge.act(nm, op, target.id, text, click_delivery=click_delivery)
                 else:
                     eff = await bridge.act(nm, op, target.id, text)
             ended_at = time.time()
@@ -2349,21 +2653,32 @@ async def cmd_do(args: Any) -> int:
             "op": op,
             "target_id": target.id if target is not None else None,
             "target_label": target.label if target is not None else None,
-            "target_identity": {
-                key: getattr(target, key) for key in ("role", "label", "section", "placeholder")
-            } if target is not None else None,
+            "target_identity": _target_identity(target) if target is not None else None,
             "target_text_scope_signature": getattr(nm, "text_scope_signature", None),
             "intended": None if secret_used else text,
             "secret": secret_used,
             "mode": state.mode,
             "app": state.app,
+            # the effector's escalation advice, retained for diagnosis only: it is never printed as
+            # a next step, because following it after a send can repeat a late-landing action
+            **({"driver_escalation": dict(eff.escalation)} if getattr(eff, "escalation", None) else {}),
             **({"carry": dataclasses.asdict(carried)} if carried is not None else {}),
+            **({
+                **({"web_text_delivery": web_text_delivery} if web_text_delivery else {}),
+                **({"click_delivery": click_delivery} if click_delivery else {}),
+                **({"web_text_range": list(web_text_range)} if web_text_range is not None else {}),
+                "native_delivery": {
+                    key: getattr(eff, key, None) for key in (
+                        "delivery", "driver_delivery", "dispatched", "delivered_count", "delivery_basis", "route"
+                    )
+                },
+            } if web_text_delivery or click_delivery else {}),
         }
         if getattr(eff, "readback", None) is not None:
             state.pending["save_readback"] = eff.readback
         if getattr(eff, "native_readback", None) is not None:
             state.pending["native_readback"] = _safe_operation_value(state, eff.native_readback)
-        if operations is not None and getattr(eff, "field_readback", None) is not None:
+        if (operations is not None or web_text_range is not None) and getattr(eff, "field_readback", None) is not None:
             state.pending["field_readback"] = _safe_field_readback(
                 state, eff.field_readback, text if secret_used else None
             )
@@ -2424,7 +2739,31 @@ async def cmd_do(args: Any) -> int:
             f"dispatched {line}: driver says {driver_effect}{(' (' + error + ')') if error else ''} in {exec_ms / 1000:.1f}s"
         )
         await asyncio.sleep(args.settle)
-        nm, receipt = await observe(state, bridge, secret_value=text if secret_used else None)
+        baseline = state.last_snapshot
+        try:
+            nm, receipt = await observe(state, bridge, secret_value=text if secret_used else None)
+        except Exception as exc:
+            if state.pending is None or state.last_snapshot != baseline:
+                raise  # a later persistence/reconciliation error is not an absent observation
+            state.log({
+                "kind": "post_action_observation_unavailable", "reason": type(exc).__name__,
+                "pid": state.pid, "window_id": state.window_id, "last_observation": baseline,
+                "dispatched": state.pending.get("dispatched"),
+                "operation_id": state.pending.get("operation_id"),
+            })
+            print("post-action observation unavailable; application outcome remains unverified.")
+            print(f"pending action retained (dispatched={state.pending.get('dispatched')!r}); "
+                  "no application-effect receipt was produced. Do not retry input until reconciled.")
+            print(f"The existing session remains bound to PID {state.pid}, window {state.window_id}; "
+                  "the prior observation is not a fresh readback.")
+            if state.mode == "native":
+                print(f"Read delivery evidence with footwork status --session {state.path}; "
+                      f"inventory with footwork windows --pid {state.pid}. If another window must be addressed, "
+                      "use its observed exact ID in a fresh session; no parent or replacement was selected.")
+            else:
+                print("Read retained delivery evidence with footwork status; reconcile the owned browser "
+                      "attachment before explicitly starting a fresh session. No replacement tab was selected.")
+            return 6
     finally:
         await driver.shutdown()
     print(render_observation(nm, text_chars=args.text, receipt=receipt))
@@ -2975,11 +3314,23 @@ def _proposal(
     )
 
 
+def _target_identity(target: Any) -> dict[str, Any]:
+    return {
+        **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
+        **({"native_control_opaque": True} if getattr(target, "native_control_opaque", None) is True else {}),
+        **({"href": target.href, "href_qualified": True} if qualified_link_href(target) is not None else {}),
+        **({key: getattr(target, key) for key in ("native_dom_id", "native_document_url", "native_control_qualified")}
+           if qualified_control_identity(target) is not None else {}),
+    }
+
+
 def _element_ref(nm: Any, target: Any) -> str:
     """Q19 R2: "2 of 3" when other elements share the target's role and label (three "Delete draft" links),
     so a grant for one row does not clear another; empty when the element is unique."""
     if target is None:
         return ""
+    if qualified_control_identity(target) is not None:
+        return json.dumps({"kind": "qualified_native_control", **_target_identity(target)}, sort_keys=True)
     if target.section or target.placeholder:
         # Newly qualified controls bind grants to their semantic context, never their ordinal.
         # Legacy context-free refs remain compatible; an old ordinal grant cannot authorize a

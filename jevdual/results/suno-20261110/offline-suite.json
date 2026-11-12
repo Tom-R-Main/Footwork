@@ -1,0 +1,11 @@
+{
+  "source_commit": "a516212",
+  "cua_version": "0.46.0+footwork.5486b624.cleanup2.focus1",
+  "entrypoint": "PYTHONPATH=output/foreground-web-text/overlay:python .venv/bin/python -m pytest -q",
+  "cwd": "/Users/thomasmain/projects/footwork/jevdual",
+  "exit_code": 0,
+  "summary": "3098 passed, 62 skipped in 261.07s (0:04:21)",
+  "source_log": "output/suno-20261110/full-offline-pytest.txt",
+  "source_log_sha256": "f41288642da5420d9625ba212c2252d149dedfc9fab12b8b626869405c422274",
+  "scope": "default offline suite; no live or browser opt-in flags"
+}

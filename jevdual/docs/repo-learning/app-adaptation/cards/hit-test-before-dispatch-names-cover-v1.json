@@ -1,0 +1,38 @@
+{
+  "id": "hit-test-before-dispatch-names-cover-v1",
+  "title": "Hit-test immediately before dispatch and refuse by naming what covers the target",
+  "problem": "A click sent to an element that is hidden, disabled, off-screen or under an overlay lands on something else or nowhere, and a bare failure gives the caller nothing to act on.",
+  "mechanism": "Scroll the target into view; check disconnected, disabled, inert, hidden and outside-viewport; ask the page which element is at the target's centre; if it is neither the target nor inside it, retry once centred, then refuse and report the covering element's role and name. Only visible text is eligible to be quoted as evidence, because the accessibility tree keeps zero-opacity text such as pre-rendered success banners.",
+  "when_to_use": "Page-level clicks beyond plain buttons; any reader that quotes page text as proof.",
+  "when_not_to_use": "When the check would run in the page's main world, where the page can override it. It does not replace a post-action readback: an overlay can appear between check and press.",
+  "tradeoffs": "One extra round trip per action; turns silent wrong clicks into refusals with a reason the caller can act on.",
+  "counterexample": "One reference passes silently when the node cannot be resolved; another counts the action as working when no events arrive at all.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "Use as the admission check that lets the owned browser lane accept more than plain buttons, mapping a failed check to not-sent with the cover named. Covers the DemoGeek case where a hidden zero-size element came back only as outside the window. Not implemented.",
+    "compatibility_checks": "Must run in an isolated world. Footwork already refuses on changed targets; this adds a reason.",
+    "next_test": "Fixture with a cookie banner over a button: not-sent naming the banner. Fixture that inserts an overlay on pointer-down: the pre-check alone is predicted to misreport, showing the readback is still required."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised."
+  },
+  "evidence_ids": [
+    "ev-f57b91387e5b3e22fc0f1c1b",
+    "ev-d69a318fb6a7cb0ab8f4280a",
+    "ev-9be1e529ed0406516c6b2554",
+    "ev-808bf0a09621ff659497f042",
+    "ev-35f2533a9c45359639ba4663",
+    "ev-3700a0203d30e947629e8716",
+    "ev-b813355e11dbdc75e6e91616"
+  ],
+  "tags": [
+    "actionability",
+    "occlusion",
+    "overlay",
+    "hidden element",
+    "visibility",
+    "demogeek",
+    "refusal reason"
+  ]
+}

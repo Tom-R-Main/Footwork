@@ -50,6 +50,16 @@ def _native_menu_cap(value: str) -> int:
     return count
 
 
+def _positive_pid(value: str) -> int:
+    try:
+        pid = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("PID must be a positive 32-bit integer") from None
+    if not 0 < pid <= 0xFFFFFFFF:
+        raise argparse.ArgumentTypeError("PID must be a positive 32-bit integer")
+    return pid
+
+
 def _out_dir(arg: str | None) -> Path:
     return Path(arg) if arg else Path("runs") / time.strftime("%Y%m%d-%H%M%S")
 
@@ -66,6 +76,61 @@ async def cmd_apps(_: argparse.Namespace) -> int:
     finally:
         await driver.shutdown()
     return 0
+
+
+async def cmd_windows(args: argparse.Namespace) -> int:
+    """Inventory only; a listed ID grants no action or modal/parent association."""
+    from jevdual.effectors import desktop_effector
+    from jevdual.effectors.cua import list_windows_input
+
+    payload: dict[str, Any] = {"read_only": True, "pid": args.pid, "source": "cua.list_windows",
+                               "on_screen_only": True, "association_verified": False, "windows": []}
+    driver, failure, rows = None, None, []
+    try:
+        driver = desktop_effector()
+        async with asyncio.timeout(5):
+            response = await driver.list_windows(list_windows_input(pid=args.pid, on_screen_only=True))
+        windows = response.windows
+        if not isinstance(windows, (list, tuple)) or len(windows) > 256:
+            failure = "window_inventory_limit"
+        else:
+            seen = set()
+            for window in windows:
+                unreadable = object()
+                pid, identifier, title = (getattr(window, key, unreadable) for key in ("pid", "window_id", "title"))
+                if type(pid) is not int or pid != args.pid:
+                    failure = "window_inventory_owner_unverified"
+                    break
+                if type(identifier) is not int or not 0 < identifier <= 0xFFFFFFFF:
+                    failure = "window_inventory_id_unreadable"
+                    break
+                if identifier in seen:
+                    failure = "window_inventory_duplicate_id"
+                    break
+                if title is not None and (not isinstance(title, str) or len(title) > 4096):
+                    failure = "window_inventory_title_unreadable"
+                    break
+                seen.add(identifier)
+                rows.append({"pid": pid, "window_id": identifier, "title": title})
+    except TimeoutError:
+        failure = "window_inventory_timeout"
+    except Exception:  # noqa: BLE001 - never disclose unrelated titles or raw driver diagnostics
+        failure = "window_inventory_failed"
+    finally:
+        if driver is not None:
+            try:
+                async with asyncio.timeout(2):
+                    await driver.shutdown()
+            except Exception:  # noqa: BLE001 - cleanup failure is an explicit unsuccessful inventory
+                failure = "window_inventory_cleanup_failed"
+    if failure:
+        payload["error"] = failure
+    elif not rows:
+        payload["error"] = "no_windows_for_pid"
+    else:
+        payload["windows"] = sorted(rows, key=lambda row: row["window_id"])
+    print(json.dumps(payload, sort_keys=True))
+    return 4 if "error" in payload else 0
 
 
 async def cmd_check_artifact(args: argparse.Namespace) -> int:
@@ -326,6 +391,9 @@ def build_parser() -> argparse.ArgumentParser:
     m.set_defaults(fn=cmd_menu)
     a = sub.add_parser("apps", help="list running apps")
     a.set_defaults(fn=cmd_apps)
+    windows = sub.add_parser("windows", help="read-only on-screen window IDs/titles for one PID, including untitled panels")
+    windows.add_argument("--pid", type=_positive_pid, required=True, help="inventory only this exact positive process ID")
+    windows.set_defaults(fn=cmd_windows)
 
     from jevdual import session as S
 
@@ -346,7 +414,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--browser", action="store_true", help="footwork's own Chrome through the Driver's DevTools route"
     )
     st.add_argument("--url")
-    st.add_argument("--window")
+    window_selector = st.add_mutually_exclusive_group()
+    window_selector.add_argument("--window", help="native window title substring")
+    window_selector.add_argument("--window-id", type=int, help="native exact positive CGWindowID; requires --pid and includes untitled windows")
     st.add_argument(
         "--native-menu-cap", type=_native_menu_cap, default=160,
         help="native candidate budget, persisted for this session (1-1000; default: 160)",
@@ -402,6 +472,8 @@ def build_parser() -> argparse.ArgumentParser:
     ko.set_defaults(fn=S.cmd_keep_out)
     lk = sub.add_parser("look", help="observe; prints the receipt for the last action")
     lk.add_argument("--menu-bar", action="store_true", help="native: also list the app's menu items")
+    lk.add_argument("--until", help="native: observe until this exact candidate label appears; sends no input")
+    lk.add_argument("--timeout", type=float, help="with --until: observation deadline in seconds (0.1-60; default 10)")
     common(lk)
     lk.set_defaults(fn=S.cmd_look)
     inspect = sub.add_parser(
@@ -453,9 +525,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     do.add_argument("--from", dest="from_session", help="the session an @NAME value was read in")
     do.add_argument(
+        "--web-text-delivery", choices=("foreground",),
+        help="explicit native macOS web type delivery; needs the focus-guarded CUA pin and foreground posture",
+    )
+    do.add_argument(
+        "--web-text-range", metavar="START:LENGTH",
+        help="with foreground web type: replace only this already selected UTF-16 range; does not set selection",
+    )
+    do.add_argument(
+        "--click-delivery", choices=("foreground",),
+        help="explicit native macOS foreground click on a fresh qualified element; normal gates and idle policy apply",
+    )
+    do.add_argument(
         "--route",
         choices=("trusted", "dom"),
-        help="browser mode: the click route (default trusted; dom for radio, checkbox, switch)",
+        help="browser mode: the click route (default dom; trusted for controls that ignore synthetic clicks)",
     )
     common(do)
     do.set_defaults(fn=S.cmd_do)

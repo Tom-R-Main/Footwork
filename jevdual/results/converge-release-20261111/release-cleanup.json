@@ -1,0 +1,71 @@
+{
+  "target": "6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "source": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469/lib/python3.12/site-packages/jevdual/__init__.py",
+  "sdk": "0.46.0+footwork.5486b624.cleanup2.focus1",
+  "criteria_passed": 20,
+  "criteria_total": 20,
+  "error": null,
+  "owned_pids_present": [],
+  "requests": [],
+  "owned_requests": [],
+  "owned_reservations": [
+    {
+      "token": "f411f1200cea450eaf0dc28eabf00756",
+      "state": "revoked"
+    },
+    {
+      "token": "7eae81a7109240ebafc843950eff3e15",
+      "state": "revoked"
+    }
+  ],
+  "protected_chrome_unchanged": true,
+  "protected_listeners": {
+    "9333": {
+      "pid": 57062,
+      "started": "Wed Nov 11 00:10:01 2026"
+    },
+    "9555": {
+      "pid": 29337,
+      "started": "Wed Nov 11 17:08:33 2026"
+    }
+  },
+  "protected_listener_baseline": {
+    "9333": {
+      "pid": 57062,
+      "started": "Wed Nov 11 00:10:01 2026"
+    },
+    "9555": {
+      "pid": 29337,
+      "started": "Wed Nov 11 17:08:33 2026"
+    }
+  },
+  "probe_helper_snapshots": {
+    "9555": {
+      "snapshot_changed": true,
+      "after_started_before_first_command": true,
+      "after_parent_is_protected_browser": false
+    },
+    "9333": {
+      "snapshot_changed": true,
+      "after_started_before_first_command": true,
+      "after_parent_is_protected_browser": true
+    }
+  },
+  "video": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 2024,
+        "height": 1524
+      }
+    ],
+    "format": {
+      "duration": "5.980000"
+    }
+  },
+  "owned_chrome_exited": true,
+  "current": "/Users/thomasmain/.local/share/footwork/releases/eded45c48d550b6867e1ce1314de64c41cbcfae8",
+  "clean": true
+}

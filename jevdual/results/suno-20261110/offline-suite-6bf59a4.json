@@ -1,0 +1,14 @@
+{
+  "source_commit": "6bf59a4ec475075e4da3a2a9bf3fb96a7ed306f9",
+  "cua_version": "0.46.0+footwork.5486b624.cleanup2.focus1",
+  "command": "PYTHONPATH=output/foreground-web-text/overlay:python .venv/bin/python -m pytest -q",
+  "cwd": "/Users/thomasmain/projects/footwork/jevdual",
+  "exit_code": 0,
+  "passed": 3231,
+  "skipped": 62,
+  "elapsed_seconds": 220.28,
+  "summary": "3231 passed, 62 skipped in 220.28s (0:03:40)",
+  "log_path": "output/suno-20261110/full-offline-6bf59a4.txt",
+  "log_sha256": "61c47e231792a970f277ff03e81c31cf56e4f609c4a9e30fa2f7744e058857ce",
+  "scope": "full default suite; no live/browser opt-in flags passed"
+}

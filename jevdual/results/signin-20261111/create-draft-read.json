@@ -1,0 +1,32 @@
+{
+ "url": "/create",
+ "candidates": [
+  {
+   "tag": "textarea",
+   "label": "",
+   "visible": true,
+   "value": {
+    "len": 0,
+    "lf": 0,
+    "cr": 0,
+    "sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "nonlf_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "innerText": {
+    "len": 0,
+    "lf": 0,
+    "cr": 0,
+    "sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "nonlf_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "textContent": {
+    "len": 0,
+    "lf": 0,
+    "cr": 0,
+    "sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "nonlf_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "blocks": null
+  }
+ ]
+}

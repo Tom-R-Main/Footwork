@@ -51,6 +51,32 @@ def test_buttons_are_click_candidates_with_labels(snapshot):
     assert nm.menu.by_operation["click"]
 
 
+@pytest.mark.parametrize(("role", "cap"), [("AXTextField", 120), ("AXTextArea", 480)])
+@pytest.mark.parametrize("extra", [0, 1])
+def test_native_value_projection_records_actual_clipping_not_literal_ellipsis(role, cap, extra):
+    value = "a" * (cap - 1) + "…" + "b" * extra
+    snap = {"elements": [{
+        "element_index": 1, "element_token": "s:1", "role": role,
+        "label": "Styles", "value": value,
+    }]}
+    nm = menu_from_snapshot(snap)
+    (candidate,) = nm.menu.candidates
+    assert candidate.value_truncated is bool(extra)
+    assert len(candidate.value) == cap
+    assert nm.values[1] == value
+    assert candidate.to_state()["value_truncated"] is bool(extra)
+
+
+def test_native_secure_field_does_not_derive_truncation_from_secret_length():
+    snap = {"elements": [{
+        "element_index": 1, "element_token": "s:1", "role": "AXSecureTextField",
+        "label": "Password", "value": "synthetic-secret" * 100,
+    }]}
+    (candidate,) = menu_from_snapshot(snap).menu.candidates
+    assert candidate.value is None and candidate.value_truncated is None
+    assert "value_truncated" not in candidate.to_state()
+
+
 def test_page_text_is_the_display_static_text(snapshot):
     nm = menu_from_snapshot(snapshot)
     # invisible direction marks are stripped; the display shows the expression and the result
@@ -102,6 +128,26 @@ def test_placeholder_text_roster_includes_fields_hidden_by_the_menu_budget():
                                budget=MenuBudget(native_menu_cap=1), mac_text=proof)
     assert before.menu.candidates == after.menu.candidates
     assert before.text_scope_signature != after.text_scope_signature
+
+
+@pytest.mark.parametrize("urls,ambiguous", [
+    ({1: "https://example.test/a", 2: "https://example.test/b"}, False),
+    ({1: "https://example.test/a"}, True),
+    ({1: "https://example.test/a", 2: "https://example.test/a"}, True),
+])
+def test_native_link_identity_is_qualified_before_pruning_without_button_inheritance(urls, ambiguous):
+    from jevdual.menu import MenuBudget
+
+    snapshot = {"elements": [
+        {"element_index": index, "element_token": f"s:{index}", "role": "AXLink", "label": "Song"}
+        for index in (1, 2)
+    ] + [{"element_index": 3, "element_token": "s:3", "role": "AXButton", "label": "Edit"}]}
+    projected = menu_from_snapshot(snapshot, budget=MenuBudget(native_menu_cap=1), mac_links={**urls, 3: "https://example.test/edit"})
+    assert [candidate.id for candidate in projected.menu.candidates] == [1]
+    assert (1 in projected.ambiguous_targets) is ambiguous
+    complete = menu_from_snapshot(snapshot, mac_links={**urls, 3: "https://example.test/edit"})
+    assert complete.menu.candidate(3).href is None
+    assert complete.menu.candidate(3).href_qualified is None
 
 
 @pytest.mark.parametrize("change", ["ambiguous", "missing"])

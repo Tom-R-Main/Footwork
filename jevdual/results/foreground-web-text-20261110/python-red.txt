@@ -1,0 +1,336 @@
+FFFFFFFFFFFF                                                             [100%]
+=================================== FAILURES ===================================
+______ test_explicit_foreground_web_type_preserves_target_and_readback[] _______
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1082bdbc0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1074dea80>
+initial = ''
+
+    @pytest.mark.parametrize("initial", ["", "prior text"])
+    def test_explicit_foreground_web_type_preserves_target_and_readback(world, fw, monkeypatch, initial):
+        row = _foreground_styles_fixture(world, monkeypatch, initial=initial)
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and row["value"] == "signal", (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-delivery foreground
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2051: AssertionError
+_ test_explicit_foreground_web_type_preserves_target_and_readback[prior text] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10821c040>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x108233770>
+initial = 'prior text'
+
+    @pytest.mark.parametrize("initial", ["", "prior text"])
+    def test_explicit_foreground_web_type_preserves_target_and_readback(world, fw, monkeypatch, initial):
+        row = _foreground_styles_fixture(world, monkeypatch, initial=initial)
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and row["value"] == "signal", (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-delivery foreground
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2051: AssertionError
+__________ test_explicit_foreground_web_type_yields_to_human_input[0] __________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10821c0e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10784af90>, idle = 0
+
+    @pytest.mark.parametrize("idle", [0, 2.9])
+    def test_explicit_foreground_web_type_yields_to_human_input(world, fw, monkeypatch, idle):
+        _foreground_styles_fixture(world, monkeypatch, idle=idle)
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground")
+>       assert "human_active" in out + err
+E       AssertionError: assert 'human_active' in ('' + 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --web-text-delivery foreground\n')
+
+tests/test_session_scenarios.py:2062: AssertionError
+_________ test_explicit_foreground_web_type_yields_to_human_input[2.9] _________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107412700>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1080f8d40>
+idle = 2.9
+
+    @pytest.mark.parametrize("idle", [0, 2.9])
+    def test_explicit_foreground_web_type_yields_to_human_input(world, fw, monkeypatch, idle):
+        _foreground_styles_fixture(world, monkeypatch, idle=idle)
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground")
+>       assert "human_active" in out + err
+E       AssertionError: assert 'human_active' in ('' + 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --web-text-delivery foreground\n')
+
+tests/test_session_scenarios.py:2062: AssertionError
+_ test_explicit_foreground_web_type_never_retries_after_selection_or_delivery[selection_changed] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1082119e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107853f50>
+failure = 'selection_changed'
+
+    @pytest.mark.parametrize("failure", ["selection_changed", "uncertain"])
+    def test_explicit_foreground_web_type_never_retries_after_selection_or_delivery(
+        world, fw, monkeypatch, failure
+    ):
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text",
+                                   selection_change=failure == "selection_changed",
+                                   outcome=RuntimeError("post reply lost") if failure == "uncertain" else None)
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+        types = [v for k, v in world.tool_calls if k == "type_text"]
+        assert len(types) == (1 if failure == "uncertain" else 0), (code, out, err)
+>       assert "unverifiable" in out + err
+E       AssertionError: assert 'unverifiable' in ('' + 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --web-text-delivery foreground\n')
+
+tests/test_session_scenarios.py:2077: AssertionError
+_ test_explicit_foreground_web_type_never_retries_after_selection_or_delivery[uncertain] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1077f80e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1078ab9b0>
+failure = 'uncertain'
+
+    @pytest.mark.parametrize("failure", ["selection_changed", "uncertain"])
+    def test_explicit_foreground_web_type_never_retries_after_selection_or_delivery(
+        world, fw, monkeypatch, failure
+    ):
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text",
+                                   selection_change=failure == "selection_changed",
+                                   outcome=RuntimeError("post reply lost") if failure == "uncertain" else None)
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+        types = [v for k, v in world.tool_calls if k == "type_text"]
+>       assert len(types) == (1 if failure == "uncertain" else 0), (code, out, err)
+E       AssertionError: (2, '', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-che...snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --web-text-delivery foreground
+E         ')
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_session_scenarios.py:2076: AssertionError
+_ test_explicit_foreground_web_type_rejects_unsupported_before_binding[background_only] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10781cb80>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1078a16a0>
+variant = 'background_only'
+
+    @pytest.mark.parametrize("variant", ["background_only", "append", "click", "browser", "old_runtime", "no_judge"])
+    def test_explicit_foreground_web_type_rejects_unsupported_before_binding(world, fw, monkeypatch, variant):
+        from jevdual import native
+    
+        _foreground_styles_fixture(world, monkeypatch)
+        posture = "background_only" if variant == "background_only" else "foreground_permitted"
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", posture)[0] == 0
+        if variant == "browser":
+            path = fw.session / "session.json"
+            raw = json.loads(path.read_text()); raw["mode"] = "browser"; path.write_text(json.dumps(raw))
+        if variant == "old_runtime":
+            monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2")
+    
+        def forbidden(**kwargs):
+            pytest.fail("unsupported foreground option must refuse before driver binding")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        operation = variant if variant in ("append", "click") else "type"
+        args = ["do", operation, "Styles", "signal", "--web-text-delivery", "foreground"]
+        if variant == "no_judge":
+            args.append("--no-judge")
+        code, _, err = fw(*args)
+>       assert code == 2 and "foreground web text" in err
+E       AssertionError: assert (2 == 2 and 'foreground web text' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --web-text-delivery foreground\n')
+
+tests/test_session_scenarios.py:2102: AssertionError
+_ test_explicit_foreground_web_type_rejects_unsupported_before_binding[append] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10781e660>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1078569c0>
+variant = 'append'
+
+    @pytest.mark.parametrize("variant", ["background_only", "append", "click", "browser", "old_runtime", "no_judge"])
+    def test_explicit_foreground_web_type_rejects_unsupported_before_binding(world, fw, monkeypatch, variant):
+        from jevdual import native
+    
+        _foreground_styles_fixture(world, monkeypatch)
+        posture = "background_only" if variant == "background_only" else "foreground_permitted"
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", posture)[0] == 0
+        if variant == "browser":
+            path = fw.session / "session.json"
+            raw = json.loads(path.read_text()); raw["mode"] = "browser"; path.write_text(json.dumps(raw))
+        if variant == "old_runtime":
+            monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2")
+    
+        def forbidden(**kwargs):
+            pytest.fail("unsupported foreground option must refuse before driver binding")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        operation = variant if variant in ("append", "click") else "type"
+        args = ["do", operation, "Styles", "signal", "--web-text-delivery", "foreground"]
+        if variant == "no_judge":
+            args.append("--no-judge")
+        code, _, err = fw(*args)
+>       assert code == 2 and "foreground web text" in err
+E       AssertionError: assert (2 == 2 and 'foreground web text' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --web-text-delivery foreground\n')
+
+tests/test_session_scenarios.py:2102: AssertionError
+_ test_explicit_foreground_web_type_rejects_unsupported_before_binding[click] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10781cc20>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107857740>
+variant = 'click'
+
+    @pytest.mark.parametrize("variant", ["background_only", "append", "click", "browser", "old_runtime", "no_judge"])
+    def test_explicit_foreground_web_type_rejects_unsupported_before_binding(world, fw, monkeypatch, variant):
+        from jevdual import native
+    
+        _foreground_styles_fixture(world, monkeypatch)
+        posture = "background_only" if variant == "background_only" else "foreground_permitted"
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", posture)[0] == 0
+        if variant == "browser":
+            path = fw.session / "session.json"
+            raw = json.loads(path.read_text()); raw["mode"] = "browser"; path.write_text(json.dumps(raw))
+        if variant == "old_runtime":
+            monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2")
+    
+        def forbidden(**kwargs):
+            pytest.fail("unsupported foreground option must refuse before driver binding")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        operation = variant if variant in ("append", "click") else "type"
+        args = ["do", operation, "Styles", "signal", "--web-text-delivery", "foreground"]
+        if variant == "no_judge":
+            args.append("--no-judge")
+        code, _, err = fw(*args)
+>       assert code == 2 and "foreground web text" in err
+E       AssertionError: assert (2 == 2 and 'foreground web text' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --web-text-delivery foreground\n')
+
+tests/test_session_scenarios.py:2102: AssertionError
+_ test_explicit_foreground_web_type_rejects_unsupported_before_binding[browser] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1077f8860>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107874ce0>
+variant = 'browser'
+
+    @pytest.mark.parametrize("variant", ["background_only", "append", "click", "browser", "old_runtime", "no_judge"])
+    def test_explicit_foreground_web_type_rejects_unsupported_before_binding(world, fw, monkeypatch, variant):
+        from jevdual import native
+    
+        _foreground_styles_fixture(world, monkeypatch)
+        posture = "background_only" if variant == "background_only" else "foreground_permitted"
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", posture)[0] == 0
+        if variant == "browser":
+            path = fw.session / "session.json"
+            raw = json.loads(path.read_text()); raw["mode"] = "browser"; path.write_text(json.dumps(raw))
+        if variant == "old_runtime":
+            monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2")
+    
+        def forbidden(**kwargs):
+            pytest.fail("unsupported foreground option must refuse before driver binding")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        operation = variant if variant in ("append", "click") else "type"
+        args = ["do", operation, "Styles", "signal", "--web-text-delivery", "foreground"]
+        if variant == "no_judge":
+            args.append("--no-judge")
+        code, _, err = fw(*args)
+>       assert code == 2 and "foreground web text" in err
+E       AssertionError: assert (2 == 2 and 'foreground web text' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --web-text-delivery foreground\n')
+
+tests/test_session_scenarios.py:2102: AssertionError
+_ test_explicit_foreground_web_type_rejects_unsupported_before_binding[old_runtime] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1077f8b80>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107a539b0>
+variant = 'old_runtime'
+
+    @pytest.mark.parametrize("variant", ["background_only", "append", "click", "browser", "old_runtime", "no_judge"])
+    def test_explicit_foreground_web_type_rejects_unsupported_before_binding(world, fw, monkeypatch, variant):
+        from jevdual import native
+    
+        _foreground_styles_fixture(world, monkeypatch)
+        posture = "background_only" if variant == "background_only" else "foreground_permitted"
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", posture)[0] == 0
+        if variant == "browser":
+            path = fw.session / "session.json"
+            raw = json.loads(path.read_text()); raw["mode"] = "browser"; path.write_text(json.dumps(raw))
+        if variant == "old_runtime":
+            monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2")
+    
+        def forbidden(**kwargs):
+            pytest.fail("unsupported foreground option must refuse before driver binding")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        operation = variant if variant in ("append", "click") else "type"
+        args = ["do", operation, "Styles", "signal", "--web-text-delivery", "foreground"]
+        if variant == "no_judge":
+            args.append("--no-judge")
+        code, _, err = fw(*args)
+>       assert code == 2 and "foreground web text" in err
+E       AssertionError: assert (2 == 2 and 'foreground web text' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --web-text-delivery foreground\n')
+
+tests/test_session_scenarios.py:2102: AssertionError
+_ test_explicit_foreground_web_type_rejects_unsupported_before_binding[no_judge] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1077fb060>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1075909b0>
+variant = 'no_judge'
+
+    @pytest.mark.parametrize("variant", ["background_only", "append", "click", "browser", "old_runtime", "no_judge"])
+    def test_explicit_foreground_web_type_rejects_unsupported_before_binding(world, fw, monkeypatch, variant):
+        from jevdual import native
+    
+        _foreground_styles_fixture(world, monkeypatch)
+        posture = "background_only" if variant == "background_only" else "foreground_permitted"
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", posture)[0] == 0
+        if variant == "browser":
+            path = fw.session / "session.json"
+            raw = json.loads(path.read_text()); raw["mode"] = "browser"; path.write_text(json.dumps(raw))
+        if variant == "old_runtime":
+            monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2")
+    
+        def forbidden(**kwargs):
+            pytest.fail("unsupported foreground option must refuse before driver binding")
+    
+        monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+        operation = variant if variant in ("append", "click") else "type"
+        args = ["do", operation, "Styles", "signal", "--web-text-delivery", "foreground"]
+        if variant == "no_judge":
+            args.append("--no-judge")
+        code, _, err = fw(*args)
+>       assert code == 2 and "foreground web text" in err
+E       AssertionError: assert (2 == 2 and 'foreground web text' in 'usage: footwork [-h]\n                {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,do,s1...,snapshot-file,status}\n                ...\nfootwork: error: unrecognized arguments: --web-text-delivery foreground\n')
+
+tests/test_session_scenarios.py:2102: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_preserves_target_and_readback[]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_preserves_target_and_readback[prior text]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_yields_to_human_input[0]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_yields_to_human_input[2.9]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_never_retries_after_selection_or_delivery[selection_changed]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_never_retries_after_selection_or_delivery[uncertain]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_rejects_unsupported_before_binding[background_only]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_rejects_unsupported_before_binding[append]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_rejects_unsupported_before_binding[click]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_rejects_unsupported_before_binding[browser]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_rejects_unsupported_before_binding[old_runtime]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_web_type_rejects_unsupported_before_binding[no_judge]
+12 failed, 168 deselected in 1.28s

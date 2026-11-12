@@ -1,0 +1,63 @@
+{
+ "advanced": "clicked",
+ "editor_before": {
+  "tag": "DIV",
+  "ph": "",
+  "innerText": {
+   "len": 1,
+   "lf": 1,
+   "cr": 0,
+   "sha": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+   "nonlf_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "value": null,
+  "counters": [
+   "0 of 5000 characters used.",
+   "0/5000",
+   "0/1000",
+   "0/500"
+  ]
+ },
+ "entry": "Input.insertText per line, Enter key per line feed",
+ "editor_after": {
+  "tag": "DIV",
+  "innerText": {
+   "len": 490,
+   "lf": 53,
+   "cr": 0,
+   "sha": "4dade7f491d4ffaf3a2ffb288337f5b7758310f7ffadeebed336b605b6971bec",
+   "nonlf_sha": "3978f3afb981a9d88abf832728b2cd9f4bd9f0031b7372532e514a0509f8141b"
+  },
+  "textContent": {
+   "len": 437,
+   "lf": 0,
+   "cr": 0,
+   "sha": "3978f3afb981a9d88abf832728b2cd9f4bd9f0031b7372532e514a0509f8141b",
+   "nonlf_sha": "3978f3afb981a9d88abf832728b2cd9f4bd9f0031b7372532e514a0509f8141b"
+  },
+  "value": null,
+  "paragraphs": 25,
+  "empty_paragraphs": 5,
+  "counters": [
+   "461 of 5000 characters used.",
+   "461/5000",
+   "0/1000",
+   "0/500"
+  ]
+ },
+ "cleared": {
+  "innerText": {
+   "len": 490,
+   "lf": 53,
+   "cr": 0,
+   "sha": "4dade7f491d4ffaf3a2ffb288337f5b7758310f7ffadeebed336b605b6971bec",
+   "nonlf_sha": "3978f3afb981a9d88abf832728b2cd9f4bd9f0031b7372532e514a0509f8141b"
+  },
+  "counters": [
+   "461 of 5000 characters used.",
+   "461/5000",
+   "0/1000",
+   "0/500"
+  ]
+ }
+}

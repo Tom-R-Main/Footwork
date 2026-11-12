@@ -62,6 +62,17 @@ class Candidate:
     pressed: ControlState = None
     #: Independently read field hint; never entered content or proof of a nonempty value.
     placeholder: str | None = None
+    #: Native display projection clipped this value. None means legacy/unreported, not exact readback.
+    value_truncated: bool | None = None
+    #: Complete native AXURL, qualified across its full semantic peer group before pruning.
+    href_qualified: bool | None = None
+    native_dom_id: str | None = None
+    native_document_url: str | None = None
+    native_control_qualified: bool | None = None
+    #: Literal DOM identifier used because the independently read accessible name is empty.
+    native_control_opaque: bool | None = None
+    #: Read-only numeric metadata from the native snapshot, never exact text/edit authority.
+    numeric: dict[str, Any] | None = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
@@ -72,7 +83,8 @@ class Candidate:
             "operations": list(self.operations),
         }
         for key in (
-            "value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section", "placeholder"
+            "value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section", "placeholder",
+            "value_truncated", "href_qualified", "native_dom_id", "native_document_url", "native_control_qualified", "native_control_opaque",
         ):
             val = getattr(self, key)
             if val is not None:
@@ -83,14 +95,38 @@ class Candidate:
             out["offscreen"] = True
         if self.has_value is not None and self.value is None:
             out["has_value"] = self.has_value
+        if self.numeric is not None:
+            out["numeric"] = dict(self.numeric)
         return out
+
+
+def qualified_link_href(candidate: Any) -> str | None:
+    """Only independently qualified native resources refine identity; browser hrefs do not."""
+    def get(key: str) -> Any:
+        return candidate.get(key) if isinstance(candidate, dict) else getattr(candidate, key, None)
+
+    href = get("href")
+    return href if get("role") == "link" and get("href_qualified") is True and isinstance(href, str) else None
+
+
+def qualified_control_identity(candidate: Any) -> tuple[str, str, bool] | None:
+    def get(key: str) -> Any:
+        return candidate.get(key) if isinstance(candidate, dict) else getattr(candidate, key, None)
+
+    identifier, document = get("native_dom_id"), get("native_document_url")
+    if (get("native_control_qualified") is True and get("role") in ("button", "combobox")
+            and isinstance(identifier, str) and identifier
+            and isinstance(document, str) and document):
+        return document, identifier, get("native_control_opaque") is True
+    return None
 
 
 def peer_position(candidates: Any, id: int) -> tuple[int, int] | None:
     """``(position, count)`` of ``id`` among the candidates sharing its role, label and section, in
     observation order; None when ``id`` is absent. Accepts Candidates or their saved dicts. Two
     same-label toggles are both offered, so an id that still carries the right label may name the
-    other one after the window shifts; the position among its peers tells them apart."""
+    other one after the window shifts. A qualified complete native link resource refines the peer
+    group; ordinary browser/display hrefs do not. Position alone is not action authority."""
 
     def get(c: Any, k: str) -> Any:
         return c.get(k) if isinstance(c, dict) else getattr(c, k, None)
@@ -99,8 +135,9 @@ def peer_position(candidates: Any, id: int) -> tuple[int, int] | None:
     me = next((c for c in cands if get(c, "id") == id), None)
     if me is None:
         return None
-    key = (get(me, "role"), get(me, "label"), get(me, "section"))
-    peers = [get(c, "id") for c in cands if (get(c, "role"), get(c, "label"), get(c, "section")) == key]
+    key = (get(me, "role"), get(me, "label"), get(me, "section"), qualified_link_href(me), qualified_control_identity(me))
+    peers = [get(c, "id") for c in cands
+             if (get(c, "role"), get(c, "label"), get(c, "section"), qualified_link_href(c), qualified_control_identity(c)) == key]
     return peers.index(id), len(peers)
 
 

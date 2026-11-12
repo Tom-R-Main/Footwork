@@ -1,0 +1,39 @@
+{
+  "id": "capture-identity-is-provenance-not-target-identity-v3",
+  "title": "Treat a single-use capture as provenance for a coordinate action, not as identity of the target",
+  "problem": "Canvas, WebGL and custom-drawn surfaces have no element tree, so the only address is a point; a bare coordinate can be replayed against a different screen.",
+  "mechanism": "A coordinate action names the capture it was chosen from; the driver checks target, session, expiry and frame size, acts and deletes the capture. This prevents replay and records where the point came from. It does not show what is at the point now, so admission also needs a freshness and ambiguity policy, and the effect needs evidence from a non-visual channel.",
+  "when_to_use": "Only where no accessibility or page reference exists, on web and native surfaces alike.",
+  "when_not_to_use": "When a tree reference exists. A bound tab identifies the document, not what sits at a viewport point after a scroll or redraw, so web coordinates get no exemption from the freshness and ambiguity policy.",
+  "tradeoffs": "Gives every surface an address with weak identity. An independent effect check can find a wrong click only after its consequences.",
+  "counterexample": "Admission compares identity and dimensions, not pixels: a surface that scrolls itself at the same size within the time limit is still admitted. A uniform grid shifted by one cell yields an identical crop and passes the pixel guard on the wrong item.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "Web canvases through the pinned driver's click tool at viewport coordinates on its trusted route, and its pointer tool for drag, hover and double-click. Treat as a foreground step until probed: Footwork's 2026-09-25 note records zero trusted-route successes in background posture. Screen-capture coordinates for native canvases after the same admission tests. Not implemented.",
+    "compatibility_checks": "The capture registry and pixel guard files are byte-identical in the vendored archive of the pinned driver and in the reference checkout the evidence was captured from. The reference perception detector is AGPL and must not be vendored.",
+    "next_test": "On a web canvas and on a native surface: one that scrolls itself without resizing, and a repeated grid shifted one cell. Capture or tab identity alone is predicted to admit both; the added policy must refuse both."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised. Revised after council rounds 1 and 2."
+  },
+  "evidence_ids": [
+    "ev-02424167da74b931c503a160",
+    "ev-8ae1afc05e2f9656eed6888c",
+    "ev-c7f8b491e3cd8670c816ac29",
+    "ev-3c7f274482946faf3bad279f",
+    "ev-47d5b765a8fb298775f9d7c6",
+    "ev-5164f72bf49f1121f3b02766"
+  ],
+  "tags": [
+    "canvas",
+    "coordinates",
+    "pixel",
+    "vision",
+    "screenshot",
+    "studio",
+    "webgl",
+    "tree-less surface"
+  ],
+  "supersedes": "capture-identity-is-provenance-not-target-identity-v2"
+}

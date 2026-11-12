@@ -1,0 +1,425 @@
+--- a/libs/cua-driver/rust/crates/platform-macos/src/ax/bindings.rs
++++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/bindings.rs
+@@ -64,6 +64,7 @@
+         names: *mut CFArrayRef,
+     ) -> AXError;
+     pub fn AXUIElementCopyActionNames(element: AXUIElementRef, names: *mut CFArrayRef) -> AXError;
++    pub fn AXUIElementGetPid(element: AXUIElementRef, pid: *mut i32) -> AXError;
+     pub fn AXUIElementCopyElementAtPosition(
+         application: AXUIElementRef,
+         x: f32,
+@@ -899,6 +900,151 @@
+         .collect()
+ }
+ 
++/// Checked facts for an exact top-level AX counterpart; None is unknown.
++#[derive(Clone, Debug)]
++pub(crate) struct HelpTagWindowEvidence {
++    pub window_id: u32,
++    pub owner_pid: Option<i32>,
++    pub role: Option<String>,
++    pub actions: Option<Vec<String>>,
++    pub focused: Option<bool>,
++    pub focus_settable: Option<bool>,
++}
++
++/// Decode a successful typed action array. Errors/invalid contents are unknown, never empty.
++unsafe fn checked_action_array(error: AXError, names: CFArrayRef) -> Option<Vec<String>> {
++    use core_foundation::{array::CFArray, base::TCFType, string::CFString};
++    if error != kAXErrorSuccess
++        || names.is_null()
++        || core_foundation::base::CFGetTypeID(names as CFTypeRef) != CFArray::<CFTypeRef>::type_id()
++    {
++        return None;
++    }
++    let array = CFArray::<CFTypeRef>::wrap_under_get_rule(names);
++    if array.len() > 16 {
++        return None;
++    }
++    let mut result = Vec::new();
++    for item in array.iter() {
++        if core_foundation::base::CFGetTypeID(*item) != CFString::type_id() {
++            return None;
++        }
++        result.push(CFString::wrap_under_get_rule(*item as _).to_string());
++    }
++    Some(result)
++}
++
++fn checked_help_tag_settable(error: AXError, settable: u8) -> Option<bool> {
++    if error == kAXErrorSuccess && settable <= 1 {
++        Some(settable == 1)
++    } else {
++        None
++    }
++}
++
++/// Bounded read-only exact-ID census. A failed/incomplete census supplies no exclusions.
++/// Array ownership keeps every inspected AX element alive until its evidence is copied.
++pub(crate) fn help_tag_window_evidence(
++    pid: i32,
++    ids: &[u32],
++) -> Option<Vec<HelpTagWindowEvidence>> {
++    use core_foundation::{array::CFArray, base::TCFType};
++    use std::time::{Duration, Instant};
++    if ids.len() > 64 {
++        return None;
++    }
++    let deadline = Instant::now() + Duration::from_millis(100);
++    // SAFETY: created app and copied arrays are released on every path; element types are
++    // checked before AX calls and retained by the live array. All operations below are reads.
++    unsafe {
++        let app = AXUIElementCreateApplication(pid);
++        if app.is_null() {
++            return None;
++        }
++        if AXUIElementSetMessagingTimeout(app, 0.025) != kAXErrorSuccess {
++            CFRelease(app as CFTypeRef);
++            return None;
++        }
++        let attribute = CFStr::new("AXWindows");
++        let mut raw: CFTypeRef = std::ptr::null();
++        let error = AXUIElementCopyAttributeValue(app, attribute.as_concrete_TypeRef(), &mut raw);
++        CFRelease(app as CFTypeRef);
++        if error != kAXErrorSuccess || raw.is_null() {
++            if !raw.is_null() {
++                CFRelease(raw);
++            }
++            return None;
++        }
++        if core_foundation::base::CFGetTypeID(raw) != CFArray::<CFTypeRef>::type_id() {
++            CFRelease(raw);
++            return None;
++        }
++        let windows = CFArray::<CFTypeRef>::wrap_under_create_rule(raw as _);
++        if windows.len() > 64 {
++            return None;
++        }
++        let mut evidence = Vec::new();
++        for item in windows.iter() {
++            if Instant::now() >= deadline
++                || core_foundation::base::CFGetTypeID(*item) != AXUIElementGetTypeID()
++            {
++                return None;
++            }
++            let element = *item as AXUIElementRef;
++            if AXUIElementSetMessagingTimeout(element, 0.025) != kAXErrorSuccess {
++                return None;
++            }
++            let window_id = ax_get_window_id(element)?;
++            if !ids.contains(&window_id) {
++                continue;
++            }
++            let mut owner = 0;
++            let owner_pid =
++                (AXUIElementGetPid(element, &mut owner) == kAXErrorSuccess).then_some(owner);
++            let role = copy_string_attr(element, "AXRole");
++            let mut proof = HelpTagWindowEvidence {
++                window_id,
++                owner_pid,
++                role,
++                actions: None,
++                focused: None,
++                focus_settable: None,
++            };
++            if proof.owner_pid == Some(pid) && proof.role.as_deref() == Some("AXHelpTag") {
++                if Instant::now() >= deadline {
++                    return None;
++                }
++                let mut actions: CFArrayRef = std::ptr::null_mut();
++                let error = AXUIElementCopyActionNames(element, &mut actions);
++                proof.actions = checked_action_array(error, actions);
++                if !actions.is_null() {
++                    CFRelease(actions as CFTypeRef);
++                }
++                if Instant::now() >= deadline {
++                    return None;
++                }
++                proof.focused = copy_binary_attr(element, "AXFocused");
++                if Instant::now() >= deadline {
++                    return None;
++                }
++                let focused_attribute = CFStr::new("AXFocused");
++                let mut settable = 0_u8;
++                let error = AXUIElementIsAttributeSettable(
++                    element,
++                    focused_attribute.as_concrete_TypeRef(),
++                    &mut settable,
++                );
++                proof.focus_settable = checked_help_tag_settable(error, settable);
++            }
++            evidence.push(proof);
++        }
++        if Instant::now() >= deadline {
++            return None;
++        }
++        Some(evidence)
++    }
++}
++
+ /// CGWindowIDs of `pid`'s `AXWindows`, or `None` when that list cannot be
+ /// read: the process is not trusted for Accessibility, the app does not
+ /// answer within a short timeout, or AX reports an error. `None` means
+@@ -1192,4 +1338,37 @@
+         assert_eq!(false_result.string_value, None);
+         assert_eq!(false_result.state_value, "0");
+     }
+-}
++    #[test]
++    fn help_tag_action_array_errors_and_nonarrays_are_not_empty_proof() {
++        use core_foundation::{array::CFArray, base::TCFType, string::CFString};
++        let empty = CFArray::<CFString>::from_CFTypes(&[]);
++        let raise = CFArray::from_CFTypes(&[CFString::new("AXRaise")]);
++        let text = CFString::new("not an array");
++        unsafe {
++            assert_eq!(
++                checked_action_array(0, empty.as_concrete_TypeRef()),
++                Some(vec![])
++            );
++            assert_eq!(
++                checked_action_array(0, raise.as_concrete_TypeRef()),
++                Some(vec!["AXRaise".into()])
++            );
++            assert_eq!(
++                checked_action_array(-25204, empty.as_concrete_TypeRef()),
++                None
++            );
++            assert_eq!(
++                checked_action_array(0, text.as_concrete_TypeRef() as _),
++                None
++            );
++            assert_eq!(checked_action_array(0, std::ptr::null_mut()), None);
++        }
++    }
++    #[test]
++    fn help_tag_settable_error_is_unknown_not_false() {
++        assert_eq!(checked_help_tag_settable(0, 0), Some(false));
++        assert_eq!(checked_help_tag_settable(0, 1), Some(true));
++        assert_eq!(checked_help_tag_settable(-25204, 0), None);
++        assert_eq!(checked_help_tag_settable(0, 2), None);
++    }
++}
+--- a/libs/cua-driver/rust/crates/platform-macos/src/tools/bring_to_front.rs
++++ b/libs/cua-driver/rust/crates/platform-macos/src/tools/bring_to_front.rs
+@@ -20,7 +20,9 @@
+ use objc2_app_kit::{NSApplicationActivationOptions, NSRunningApplication};
+ use serde_json::{json, Value};
+ 
+-use crate::ax::bindings::raise_exact_window_of_pid;
++use crate::ax::bindings::{
++    help_tag_window_evidence, raise_exact_window_of_pid, HelpTagWindowEvidence,
++};
+ use crate::windows::{WindowBounds, WindowInfo};
+ 
+ pub struct BringToFrontTool;
+@@ -186,9 +188,63 @@
+         .map(|window| window.window_id)
+ }
+ 
++fn ordinary_front_candidates(
++    windows: Vec<WindowInfo>,
++    evidence: &[HelpTagWindowEvidence],
++    pid: i32,
++    target: u32,
++    focused: Option<u32>,
++) -> Vec<WindowInfo> {
++    if focused != Some(target) {
++        return windows;
++    }
++    windows
++        .into_iter()
++        .filter(|window| {
++            if window.pid != pid || window.window_id == target {
++                return true;
++            }
++            let mut matches = evidence
++                .iter()
++                .filter(|proof| proof.window_id == window.window_id);
++            let Some(proof) = matches.next() else {
++                return true;
++            };
++            if matches.next().is_some() {
++                return true;
++            }
++            !(proof.owner_pid == Some(pid)
++                && proof.role.as_deref() == Some("AXHelpTag")
++                && proof.focused == Some(false)
++                && proof.focus_settable == Some(false)
++                && proof
++                    .actions
++                    .as_ref()
++                    .is_some_and(|actions| actions.iter().all(|action| action == "AXRaise")))
++        })
++        .collect()
++}
++
++fn target_is_help_tag(evidence: &[HelpTagWindowEvidence], pid: i32, target: u32) -> bool {
++    evidence.iter().any(|proof| {
++        proof.window_id == target
++            && proof.owner_pid == Some(pid)
++            && proof.role.as_deref() == Some("AXHelpTag")
++    })
++}
++
+ fn observe_exact_window(pid: i32, window_id: u32) -> ExactWindowObservation {
+     let mut windows = crate::windows::visible_windows();
+     windows.retain(|window| !crate::cursor::overlay::is_overlay_window(window.window_id));
++    let ids: Vec<u32> = windows
++        .iter()
++        .filter(|window| window.pid == pid)
++        .map(|window| window.window_id)
++        .collect();
++    let evidence = help_tag_window_evidence(pid, &ids).unwrap_or_default();
++    let focused_window_id =
++        crate::ax::bindings::focused_window_id_of_pid(pid).map(|window| window.own);
++    windows = ordinary_front_candidates(windows, &evidence, pid, window_id, focused_window_id);
+     let target_visible_ordinary = windows
+         .iter()
+         .any(|window| window.pid == pid && window.window_id == window_id && window.layer == 0);
+@@ -205,8 +261,7 @@
+     ExactWindowObservation {
+         workspace_frontmost_pid: crate::apps::frontmost_pid(),
+         front_process_matches_target: crate::input::skylight::front_process_matches(pid, window_id),
+-        focused_window_id: crate::ax::bindings::focused_window_id_of_pid(pid)
+-            .map(|window| window.own),
++        focused_window_id,
+         frontmost_ordinary_window_id,
+         process_front_window_on_display,
+         target_visible_ordinary,
+@@ -247,6 +302,10 @@
+     else {
+         return false;
+     };
++    let evidence = help_tag_window_evidence(pid, &[window_id]).unwrap_or_default();
++    if target_is_help_tag(&evidence, pid, window_id) {
++        return false;
++    }
+     crate::input::skylight::set_front_process_persistently(pid, window_id);
+     crate::input::skylight::make_exact_window_key(pid, window_id);
+     unsafe {
+@@ -441,6 +500,17 @@
+                     "activated": false,
+                     "request_accepted": false,
+                 }));
++            }
++
++            let evidence = help_tag_window_evidence(pid, &[window_id]).unwrap_or_default();
++            if target_is_help_tag(&evidence, pid, window_id) {
++                return ToolResult::error(
++                    "bring_to_front: an exact AXHelpTag is not an ordinary activation target",
++                )
++                .with_structured(
++                    json!({"code": "bring_to_front_window_not_ordinary", "pid": pid,
++                        "window_id": window_id, "activated": false, "request_accepted": false}),
++                );
+             }
+ 
+             // The persistent kCPSNoWindows request owns process activation
+@@ -916,4 +986,106 @@
+         assert_eq!(structured["activated"], true);
+         assert_eq!(structured["exact_window_effect"]["verified"], true);
+     }
+-}
++    fn help_tag(window_id: u32) -> HelpTagWindowEvidence {
++        HelpTagWindowEvidence {
++            window_id,
++            owner_pid: Some(42),
++            role: Some("AXHelpTag".into()),
++            actions: Some(vec!["AXRaise".into()]),
++            focused: Some(false),
++            focus_settable: Some(false),
++        }
++    }
++
++    #[test]
++    fn help_tag_only_proven_passive_surface_yields_to_requested_key_window() {
++        for actions in [vec![], vec!["AXRaise".into()]] {
++            let mut proof = help_tag(8);
++            proof.actions = Some(actions);
++            let candidates = ordinary_front_candidates(
++                vec![window(7, 42, 1, 0.0), window(8, 42, 2, 0.0)],
++                &[proof],
++                42,
++                7,
++                Some(7),
++            );
++            assert_eq!(
++                front_window_of_process_on_target_display(
++                    &candidates,
++                    &side_by_side_displays(),
++                    42,
++                    7
++                ),
++                Some(7)
++            );
++        }
++    }
++
++    #[test]
++    fn help_tag_target_is_not_an_activation_target() {
++        assert!(target_is_help_tag(&[help_tag(7)], 42, 7));
++    }
++
++    #[test]
++    fn help_tag_unknown_interactive_or_ambiguous_peers_remain_competitors() {
++        let original = help_tag(8);
++        let mut cases = vec![vec![], vec![original.clone(), original.clone()]];
++        for variant in 0..15 {
++            let mut proof = original.clone();
++            match variant {
++                0 => proof.owner_pid = None,
++                1 => proof.owner_pid = Some(99),
++                2 => proof.window_id = 999,
++                3 => proof.role = None,
++                4 => proof.role = Some("AXWindow".into()),
++                5 => proof.actions = None,
++                6 => proof.actions = Some(vec!["AXPress".into()]),
++                7 => proof.focused = None,
++                8 => proof.focus_settable = Some(true),
++                9 => proof.focused = Some(true),
++                10 => proof.focus_settable = None,
++                11 => proof.actions = Some(vec!["AXRaise".into(), "AXShowMenu".into()]),
++                12 => proof.role = Some("AXSheet".into()),
++                13 => proof.actions = Some(vec!["AXUnknownAction".into()]),
++                _ => proof.actions = Some(vec!["AXPick".into()]),
++            }
++            cases.push(vec![proof]);
++        }
++        for evidence in cases {
++            let candidates = ordinary_front_candidates(
++                vec![window(7, 42, 1, 0.0), window(8, 42, 2, 0.0)],
++                &evidence,
++                42,
++                7,
++                Some(7),
++            );
++            assert_eq!(
++                front_window_of_process_on_target_display(
++                    &candidates,
++                    &side_by_side_displays(),
++                    42,
++                    7
++                ),
++                Some(8)
++            );
++        }
++        for focused in [None, Some(8)] {
++            let candidates = ordinary_front_candidates(
++                vec![window(7, 42, 1, 0.0), window(8, 42, 2, 0.0)],
++                &[original.clone()],
++                42,
++                7,
++                focused,
++            );
++            assert_eq!(
++                front_window_of_process_on_target_display(
++                    &candidates,
++                    &side_by_side_displays(),
++                    42,
++                    7
++                ),
++                Some(8)
++            );
++        }
++    }
++}

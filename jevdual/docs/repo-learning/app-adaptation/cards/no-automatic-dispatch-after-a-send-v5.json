@@ -1,0 +1,45 @@
+{
+  "id": "no-automatic-dispatch-after-a-send-v5",
+  "title": "Try another rung only when nothing was sent; after a send, keep the custody the session already has",
+  "problem": "A fallback that fires when the first route shows no effect cannot tell a silent no-op from an effect that lands late, so it can act twice.",
+  "mechanism": "Each action returns a delivery outcome (not sent, sent, unknown) and an effect outcome (confirmed, absent at a declared bound, unreadable). Another rung may be tried automatically only when nothing was sent. After a send, an effect absent at the bound is an unknown outcome and no second dispatch follows. What an unknown outcome then does is set by the session's existing custody rule, not by this one. Footwork has three: an ordinary session blocks no mutation but refuses completion while the last input is unsettled, until it is re-observed; a durable native session blocks all mutation in its authority domain, across a crash, until a qualified reconciliation producer clears it; a durable browser session does the same and additionally never settles a sent action, because neither an acknowledgement nor a changed DOM establishes completion. The effector's escalation advice is carried for diagnosis only, never offered as a next step.",
+  "when_to_use": "Any surface where a route can report success without acting or can act late.",
+  "when_not_to_use": "As a way to make progress unattended on surfaces whose first route often no-ops: this rule hands those cases to the caller. A later extension for absolute setters, whose mechanism yields the same state whether or not an earlier application lands, needs its own test.",
+  "tradeoffs": "Stops more often than any reference chain. A durable browser session stops at the first sent action, so it serves one action that must not be sent twice; durable multi-step browser work needs a completion reader bound to evidence independent of the page. Wording a goal as a target state does not make its mechanism repeat-safe: a second click on a toggle flips it.",
+  "counterexample": "The reference's right-click chain continues after unverified delivery, safe only because each step re-checks for an open menu. Its no-effect reading for selection sits inside a short settle window.",
+  "transfer": {
+    "target": "Footwork 0aa1373 (branch codex/suno-end-to-end-20261110); source inspected, runtime not exercised",
+    "application": "State the browser lane's outcomes under the three existing custody rules before widening it, changing none of them, and carry the pinned driver's Confirmed and Unverifiable effect through browser_driver._effect. A driver Confirmed means the target's state differed before and after; on an ordinary session it leaves no pending uncertainty at completion, as for native actions, and on a durable browser session it settles nothing. Not implemented.",
+    "compatibility_checks": "session_operations.py:338-349 (native durable rule); browser_authority.py:1-7, 111-124, 212-215 (every acknowledged browser send is unverifiable and a confirmed or partial effect is refused); session.py:2838-2872 (done refused over unsettled pending input on any session) and 1084-1089 (the next observation with a receipt clears it); owned-cdp.md:39-63; durable-native-operator.md:63 (no general reconciliation producer). start --browser runs as an ordinary session and records delivery as unknown for every driver reply. The pinned driver advises retry_with_page_action for a page click whose target did not change.",
+    "next_test": "Five cases: a click-toggle whose effect lands after the bound, a lost acknowledgement, an acknowledged action with unreadable effect, a restart mid-action, and a page click the driver reads back as Confirmed. Exactly one dispatch in each; on a durable browser session all five stay unknown and block the next mutation, and observation does not clear them; on an ordinary session the first four refuse completion until re-observed."
+  },
+  "validation": {
+    "level": "source",
+    "result": "Reference source and test definitions read; no reference test run; Footwork runtime not exercised. Revised after council rounds 1 to 4 (rounds 3 and 4 partial)."
+  },
+  "evidence_ids": [
+    "ev-3d88ae816364a8a76d300fcb",
+    "ev-6af3ead68870e6c536d1cf72",
+    "ev-e223523288383250d3076ef3",
+    "ev-35ee441f125db3ebc8e80dd7",
+    "ev-9a65bbcb54dccfd51d407583",
+    "ev-8fe424e2f958236f2de4ce69"
+  ],
+  "tags": [
+    "fallback",
+    "escalation",
+    "action route",
+    "unverifiable",
+    "suno",
+    "app adaptation",
+    "channel ladder"
+  ],
+  "novelty": {
+    "nearest": [
+      "strict-target-loss-refuses-instead-of-retargeting-v1"
+    ],
+    "difference": "That card concerns keeping a bound target; this one concerns choosing the next action channel without a second dispatch.",
+    "decision": "new version; v4 described two custody levels, omitted the ordinary completion gate, and filed the browser lane under the native durable rule although its own rule never settles a sent action"
+  },
+  "supersedes": "no-automatic-dispatch-after-a-send-v4"
+}

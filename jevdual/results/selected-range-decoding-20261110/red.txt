@@ -1,0 +1,311 @@
+F.FFFFFFFF.F                                                             [100%]
+=================================== FAILURES ===================================
+__ test_foreground_web_replacement_decodes_real_range_representations[tuple] ___
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10a400720>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a4af5c0>
+representation = 'tuple'
+
+    @pytest.mark.parametrize("representation", ["tuple", "cfrange"])
+    def test_foreground_web_replacement_decodes_real_range_representations(world, fw, monkeypatch, representation):
+        import sys
+    
+        from jevdual import ax
+    
+        decode = ax.selected_range
+        prior = "prior text"
+        _foreground_styles_fixture(world, monkeypatch, initial=prior)
+        monkeypatch.setattr(ax, "selected_range", decode)
+        value = (0, len(prior)) if representation == "tuple" else SimpleNamespace(location=0, length=len(prior))
+        monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+            AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+        ))
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and "confirmed" in _state(fw)["memory"][-1], (out, err)
+E       AssertionError: ("dispatched type(Styles) text='signal': driver says unverifiable (AttributeError: foreground (front app restored); 't...quals'
+E           [  22] button     'Show Sidebar'
+E           [  23] button     'Mode'
+E         page text (14 chars):
+E         0
+E         0
+E         prior text
+E         ", '')
+E       assert (0 == 0 and 'confirmed' in "step 1: type(Styles) text='signal' -> unverifiable")
+
+tests/test_session_scenarios.py:2208: AssertionError
+_ test_foreground_web_replacement_rejects_malformed_range_before_text[value0] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10a402ac0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a4af6e0>
+value = (0,)
+
+    @pytest.mark.parametrize("value", [
+        (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+        SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+    ])
+    def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+        import sys
+    
+        from jevdual import ax
+    
+        decode = ax.selected_range
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+        monkeypatch.setattr(ax, "selected_range", decode)
+        monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+            AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+        ))
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and "selection_unreadable" in out + err
+E       assert (0 == 0 and 'selection_unreadable' in ("dispatched type(Styles) text='signal': driver says unverifiable (AttributeError: foreground (front app restored); 'tu...   'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (14 chars):\n0\n0\nprior text\n" + ''))
+
+tests/test_session_scenarios.py:2231: AssertionError
+_ test_foreground_web_replacement_rejects_malformed_range_before_text[value1] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x109b7ba60>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b92780>
+value = (0, 10, 2)
+
+    @pytest.mark.parametrize("value", [
+        (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+        SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+    ])
+    def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+        import sys
+    
+        from jevdual import ax
+    
+        decode = ax.selected_range
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+        monkeypatch.setattr(ax, "selected_range", decode)
+        monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+            AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+        ))
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and "selection_unreadable" in out + err
+E       assert (0 == 0 and 'selection_unreadable' in ("dispatched type(Styles) text='signal': driver says unverifiable (AttributeError: foreground (front app restored); 'tu...   'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (14 chars):\n0\n0\nprior text\n" + ''))
+
+tests/test_session_scenarios.py:2231: AssertionError
+_ test_foreground_web_replacement_rejects_malformed_range_before_text[value2] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x109b7b9c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b59ca0>
+value = (-1, 10)
+
+    @pytest.mark.parametrize("value", [
+        (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+        SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+    ])
+    def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+        import sys
+    
+        from jevdual import ax
+    
+        decode = ax.selected_range
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+        monkeypatch.setattr(ax, "selected_range", decode)
+        monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+            AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+        ))
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and "selection_unreadable" in out + err
+E       assert (0 == 0 and 'selection_unreadable' in ("dispatched type(Styles) text='signal': driver says unverifiable (AttributeError: foreground (front app restored); 'tu...   'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (14 chars):\n0\n0\nprior text\n" + ''))
+
+tests/test_session_scenarios.py:2231: AssertionError
+_ test_foreground_web_replacement_rejects_malformed_range_before_text[value3] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x109b7bd80>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b1b200>
+value = (0, -1)
+
+    @pytest.mark.parametrize("value", [
+        (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+        SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+    ])
+    def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+        import sys
+    
+        from jevdual import ax
+    
+        decode = ax.selected_range
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+        monkeypatch.setattr(ax, "selected_range", decode)
+        monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+            AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+        ))
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and "selection_unreadable" in out + err
+E       assert (0 == 0 and 'selection_unreadable' in ("dispatched type(Styles) text='signal': driver says unverifiable (AttributeError: foreground (front app restored); 'tu...   'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (14 chars):\n0\n0\nprior text\n" + ''))
+
+tests/test_session_scenarios.py:2231: AssertionError
+_ test_foreground_web_replacement_rejects_malformed_range_before_text[value4] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10a576de0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a559220>
+value = (False, 10)
+
+    @pytest.mark.parametrize("value", [
+        (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+        SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+    ])
+    def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+        import sys
+    
+        from jevdual import ax
+    
+        decode = ax.selected_range
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+        monkeypatch.setattr(ax, "selected_range", decode)
+        monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+            AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+        ))
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and "selection_unreadable" in out + err
+E       assert (0 == 0 and 'selection_unreadable' in ("dispatched type(Styles) text='signal': driver says unverifiable (AttributeError: foreground (front app restored); 'tu...   'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (14 chars):\n0\n0\nprior text\n" + ''))
+
+tests/test_session_scenarios.py:2231: AssertionError
+_ test_foreground_web_replacement_rejects_malformed_range_before_text[value5] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10a576f20>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109bc1f10>
+value = (0, 10.0)
+
+    @pytest.mark.parametrize("value", [
+        (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+        SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+    ])
+    def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+        import sys
+    
+        from jevdual import ax
+    
+        decode = ax.selected_range
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+        monkeypatch.setattr(ax, "selected_range", decode)
+        monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+            AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+        ))
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and "selection_unreadable" in out + err
+E       assert (0 == 0 and 'selection_unreadable' in ("dispatched type(Styles) text='signal': driver says unverifiable (AttributeError: foreground (front app restored); 'tu...   'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (14 chars):\n0\n0\nprior text\n" + ''))
+
+tests/test_session_scenarios.py:2231: AssertionError
+_ test_foreground_web_replacement_rejects_malformed_range_before_text[value6] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10a576a20>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a594b60>
+value = ('0', 10)
+
+    @pytest.mark.parametrize("value", [
+        (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+        SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+    ])
+    def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+        import sys
+    
+        from jevdual import ax
+    
+        decode = ax.selected_range
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+        monkeypatch.setattr(ax, "selected_range", decode)
+        monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+            AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+        ))
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and "selection_unreadable" in out + err
+E       assert (0 == 0 and 'selection_unreadable' in ("dispatched type(Styles) text='signal': driver says unverifiable (AttributeError: foreground (front app restored); 'tu...   'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (14 chars):\n0\n0\nprior text\n" + ''))
+
+tests/test_session_scenarios.py:2231: AssertionError
+_ test_foreground_web_replacement_rejects_malformed_range_before_text[value7] __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10a5767a0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a4999d0>
+value = namespace(location=0)
+
+    @pytest.mark.parametrize("value", [
+        (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+        SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+    ])
+    def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+        import sys
+    
+        from jevdual import ax
+    
+        decode = ax.selected_range
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+        monkeypatch.setattr(ax, "selected_range", decode)
+        monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+            AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+        ))
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and "selection_unreadable" in out + err
+E       assert (0 == 0 and 'selection_unreadable' in ("dispatched type(Styles) text='signal': driver says unverifiable (AttributeError: foreground (front app restored); 'ty...   'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (14 chars):\n0\n0\nprior text\n" + ''))
+
+tests/test_session_scenarios.py:2231: AssertionError
+__ test_foreground_web_replacement_rejects_malformed_range_before_text[None] ___
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10a5cff60>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109bac560>
+value = None
+
+    @pytest.mark.parametrize("value", [
+        (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+        SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+    ])
+    def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+        import sys
+    
+        from jevdual import ax
+    
+        decode = ax.selected_range
+        _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+        monkeypatch.setattr(ax, "selected_range", decode)
+        monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+            AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+        ))
+        assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+>       assert code == 0 and "selection_unreadable" in out + err
+E       assert (0 == 0 and 'selection_unreadable' in ("dispatched type(Styles) text='signal': driver says unverifiable (AttributeError: foreground (front app restored); 'No...   'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (14 chars):\n0\n0\nprior text\n" + ''))
+
+tests/test_session_scenarios.py:2231: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_foreground_web_replacement_decodes_real_range_representations[tuple]
+FAILED tests/test_session_scenarios.py::test_foreground_web_replacement_rejects_malformed_range_before_text[value0]
+FAILED tests/test_session_scenarios.py::test_foreground_web_replacement_rejects_malformed_range_before_text[value1]
+FAILED tests/test_session_scenarios.py::test_foreground_web_replacement_rejects_malformed_range_before_text[value2]
+FAILED tests/test_session_scenarios.py::test_foreground_web_replacement_rejects_malformed_range_before_text[value3]
+FAILED tests/test_session_scenarios.py::test_foreground_web_replacement_rejects_malformed_range_before_text[value4]
+FAILED tests/test_session_scenarios.py::test_foreground_web_replacement_rejects_malformed_range_before_text[value5]
+FAILED tests/test_session_scenarios.py::test_foreground_web_replacement_rejects_malformed_range_before_text[value6]
+FAILED tests/test_session_scenarios.py::test_foreground_web_replacement_rejects_malformed_range_before_text[value7]
+FAILED tests/test_session_scenarios.py::test_foreground_web_replacement_rejects_malformed_range_before_text[None]
+10 failed, 2 passed, 188 deselected in 1.07s

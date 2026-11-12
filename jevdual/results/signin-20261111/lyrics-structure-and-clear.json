@@ -1,0 +1,26 @@
+{
+ "before_clear": {
+  "block_tags": [
+   "P"
+  ],
+  "blocks": 25,
+  "paragraph_join": {
+   "len": 461,
+   "lf": 24,
+   "sha": "74338bc435e4ec1c2079ae7cc48f2d7e3cd708bcf09f2ee55fdab832375663ff"
+  },
+  "counter": "461 of 5000 characters used."
+ },
+ "after_clear": {
+  "block_tags": [
+   "P"
+  ],
+  "blocks": 1,
+  "paragraph_join": {
+   "len": 0,
+   "lf": 0,
+   "sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "counter": "0 of 5000 characters used."
+ }
+}

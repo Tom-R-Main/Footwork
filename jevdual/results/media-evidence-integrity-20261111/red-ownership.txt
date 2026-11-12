@@ -1,0 +1,80 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+______ test_output_creation_loser_never_writes_competing_directory[False] ______
+
+setup = (PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-709/test_output_creat...r/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-709/test_output_creation_loser_nev0/review'])
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x102733410>
+execute = False
+
+    @pytest.mark.parametrize("execute", [False, True])
+    def test_output_creation_loser_never_writes_competing_directory(setup, monkeypatch, execute):
+        _media, _prompt, env, out, argv = setup
+        original_mkdir = Path.mkdir
+        winner_intent = '{"status":"pending","owner":"other invocation"}\n'
+        raced = []
+    
+        def competing_mkdir(path, *args, **kwargs):
+            if path == out:
+                raced.append(path)
+                original_mkdir(path, *args, **kwargs)
+                (path / "request-intent.json").write_text(winner_intent)
+                raise FileExistsError("another invocation acquired output first")
+            return original_mkdir(path, *args, **kwargs)
+    
+        monkeypatch.setattr(Path, "mkdir", competing_mkdir)
+        monkeypatch.setattr(review, "_request_with_deadline", lambda *a: pytest.fail("output loser sent request"))
+        options = ["--execute", "--env-file", str(env)] if execute else []
+        assert review.main([*argv, *options]) == 1
+        assert raced == [out]
+        assert (out / "request-intent.json").read_text() == winner_intent
+>       assert {path.name for path in out.iterdir()} == {"request-intent.json"}
+E       AssertionError: assert {'manifest.js...-intent.json'} == {'request-intent.json'}
+E         
+E         Extra items in the left set:
+E         'manifest.json'
+E         Use -v to get more diff
+
+tests/test_openrouter_media_review.py:646: AssertionError
+----------------------------- Captured stderr call -----------------------------
+{"kind": "transport_or_filesystem_error", "application_request_sent": "unknown", "summary": "request or local I/O failed; no retry"}
+______ test_output_creation_loser_never_writes_competing_directory[True] _______
+
+setup = (PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-709/test_output_creat...r/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-709/test_output_creation_loser_nev1/review'])
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104802c00>
+execute = True
+
+    @pytest.mark.parametrize("execute", [False, True])
+    def test_output_creation_loser_never_writes_competing_directory(setup, monkeypatch, execute):
+        _media, _prompt, env, out, argv = setup
+        original_mkdir = Path.mkdir
+        winner_intent = '{"status":"pending","owner":"other invocation"}\n'
+        raced = []
+    
+        def competing_mkdir(path, *args, **kwargs):
+            if path == out:
+                raced.append(path)
+                original_mkdir(path, *args, **kwargs)
+                (path / "request-intent.json").write_text(winner_intent)
+                raise FileExistsError("another invocation acquired output first")
+            return original_mkdir(path, *args, **kwargs)
+    
+        monkeypatch.setattr(Path, "mkdir", competing_mkdir)
+        monkeypatch.setattr(review, "_request_with_deadline", lambda *a: pytest.fail("output loser sent request"))
+        options = ["--execute", "--env-file", str(env)] if execute else []
+        assert review.main([*argv, *options]) == 1
+        assert raced == [out]
+        assert (out / "request-intent.json").read_text() == winner_intent
+>       assert {path.name for path in out.iterdir()} == {"request-intent.json"}
+E       AssertionError: assert {'manifest.js...-intent.json'} == {'request-intent.json'}
+E         
+E         Extra items in the left set:
+E         'manifest.json'
+E         Use -v to get more diff
+
+tests/test_openrouter_media_review.py:646: AssertionError
+----------------------------- Captured stderr call -----------------------------
+{"kind": "transport_or_filesystem_error", "application_request_sent": "unknown", "summary": "request or local I/O failed; no retry"}
+=========================== short test summary info ============================
+FAILED tests/test_openrouter_media_review.py::test_output_creation_loser_never_writes_competing_directory[False]
+FAILED tests/test_openrouter_media_review.py::test_output_creation_loser_never_writes_competing_directory[True]
+2 failed, 58 deselected in 0.16s

@@ -1,0 +1,4 @@
+Baseline requested timeout=0.05 seconds; simulated active stream completed in 0.242 seconds
+Traceback (most recent call last):
+  File "<stdin>", line 19, in <module>
+AssertionError: baseline socket timeout did not bound total exchange

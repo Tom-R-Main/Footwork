@@ -1,0 +1,14 @@
+usage: footwork [--json] COMMAND ...
+
+Agent discovery: tools (or catalog), schema [COMMAND ...], doctor
+JSON input: invoke --input FILE (or - for stdin), request {command,args}
+Browser: browser start TASK --url URL --session DIR; browser look/do/read/done/status ...
+Owned headless browser: browser cdp {start,look,click,status,recover,stop,guide}; typing disabled
+Read-only Lightpanda: browser lightpanda {read,guide,artifact}; no input mutation
+Desktop: desktop start TASK --app APP --session DIR; desktop look/do/read/done/status ...
+Scoped MCP: capability {config,server,report,doctor}; mcp --scope FILE --journal FILE
+Auxiliary tools: tool FAMILY COMMAND ... (or FAMILY COMMAND ...)
+Use footwork tools to discover families and prerequisites; schema COMMAND for arguments.
+Prefix --json for structured output; command completion is not effect verification.
+
+Legacy commands: run, menu, apps, windows, start, look, inspect-target, visual-check, do, s1, done, read, check-file, check-artifact, grant, snapshot-file, status

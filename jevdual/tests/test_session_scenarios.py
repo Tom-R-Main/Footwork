@@ -28,10 +28,11 @@ def _mac_selectors(monkeypatch):
     """Select the simulated Mac routes without changing the interpreter's platform."""
     import sys
 
-    from jevdual import native
+    from jevdual import native, posture
     from jevdual.capability import backend, recovery
 
     monkeypatch.setattr(native, "sys", SimpleNamespace(platform="darwin"))
+    monkeypatch.setattr(posture, "sys", SimpleNamespace(platform="darwin"))
     monkeypatch.setattr(backend, "sys", SimpleNamespace(platform="darwin"))
     monkeypatch.setattr(recovery, "sys", SimpleNamespace(platform="darwin", executable=sys.executable))
 
@@ -581,6 +582,32 @@ def fw(tmp_path, capsys):
 
     run.session = tmp_path / "session"  # type: ignore[attr-defined]
     return run
+
+
+def test_numeric_controls_keep_read_only_snapshot_values(world, fw):
+    world.base["elements"].extend([
+        {"element_index": 801, "role": "AXSlider", "label": "Track volume",
+         "value": "0.75", "value_description": "-2.5 dB", "min": 0.0, "max": 1.0,
+         "actions": ["AXIncrement", "AXDecrement"], "enabled": True},
+        {"element_index": 802, "role": "AXIncrementor", "label": "Tempo", "value": "105",
+         "value_description": "105 BPM", "actions": ["AXIncrement", "AXDecrement"], "enabled": True},
+    ])
+    code, out, err = fw("start", "Read faders without changing them", "--app", "Calculator")
+    assert code == 0, (out, err)
+    assert "'Track volume' = '0.75'" in out
+    assert "'Tempo' = '105'" in out
+    code, out, err = fw("look")
+    assert code == 0 and "'Track volume' = '0.75'" in out, (out, err)
+    saved = json.loads((fw.session / "session.json").read_text())
+    controls = {c["label"]: c for c in saved["last_candidates"]}
+    assert controls["Track volume"]["numeric"] == {
+        "source": "cua.window_state", "value": 0.75, "min": 0.0, "max": 1.0,
+        "value_description": "-2.5 dB", "value_description_truncated": False, "range_valid": True,
+    }
+    assert controls["Tempo"]["numeric"]["value"] == 105
+    assert "min" not in controls["Tempo"]["numeric"]
+    assert all(controls[name]["operations"] == ["click"] for name in ("Track volume", "Tempo"))
+    assert world.presses == [] and world.tool_calls == []
 
 
 def test_linux_browser_start_recovers_window_in_exact_owned_profile(world, fw, monkeypatch):
@@ -1728,6 +1755,1368 @@ def test_native_start_and_look_use_a_cua_capture_session(world, fw, monkeypatch)
     assert world.presses == ["7"]
 
 
+def test_look_until_observes_delayed_exact_control_without_input(world, fw, monkeypatch):
+    assert fw("start", "Observe delayed form", "--app", "Calculator")[0] == 0
+    original = world.get_window_state
+    calls = []
+    captures = []
+
+    async def delayed(inp):
+        snap = await original(inp)
+        calls.append(snap["snapshot_id"])
+        captures.append(inp.screenshot_out_file)
+        if len(calls) >= 2:
+            snap["elements"] = [
+                {**row, "label": "Song description"} if row.get("label") == "7" else row
+                for row in snap["elements"]
+            ]
+        return snap
+
+    monkeypatch.setattr(world, "get_window_state", delayed)
+    code, out, err = fw("look", "--until", "Song description", "--timeout", "1")
+    assert code == 0, err
+    assert len(calls) == 2 and len(set(calls)) == 2
+    assert len(set(captures)) == 2
+    assert "observed exact candidate label 'Song description' (1 match)" in out
+    assert "not action authorization or task completion" in out
+    assert world.presses == [] and world.tool_calls == []
+
+
+def test_look_until_timeout_preserves_partial_menu_and_ignores_title_text(world, fw, monkeypatch):
+    world.toggles = {910: ["Song description helper", "0"]}
+    assert fw("start", "Observe delayed form", "--app", "Calculator")[0] == 0
+    original = world.get_window_state
+
+    async def only_text(inp):
+        snap = await original(inp)
+        snap["window_title"] = "Song description"
+        snap["tree_markdown"] += '\nAXStaticText = "Song description"'
+        snap["elements_complete"] = False
+        return snap
+
+    monkeypatch.setattr(world, "get_window_state", only_text)
+    code, out, err = fw("look", "--until", "Song description", "--timeout", "0.1")
+    assert code == 6
+    assert "exact candidate label 'Song description' not observed" in err
+    assert "elements:" in out and "this observation is incomplete" in out
+    assert world.presses == [] and world.tool_calls == []
+
+
+def test_look_until_duplicate_appearance_does_not_authorize_click(world, fw):
+    world.toggles = {910: ["Ready", "0"], 911: ["Ready", "0"]}
+    assert fw("start", "Observe duplicate controls", "--app", "Calculator")[0] == 0
+    code, out, err = fw("look", "--until", "Ready", "--timeout", "1")
+    assert code == 0, err
+    assert "(2 matches)" in out
+    code, out, err = fw("do", "click", "Ready", "--no-judge")
+    assert code == 4 and "matches 2 elements" in out + err
+    assert world.presses == []
+
+
+@pytest.mark.parametrize(
+    "options",
+    [
+        ["--until", ""], ["--until", "x" * 81], ["--until", " x"],
+        ["--until", "Ready\n"], ["--timeout", "1"],
+        *[["--until", "Ready", "--timeout", value] for value in ("0", "-1", "61", "nan", "inf")],
+    ],
+)
+def test_look_until_invalid_bounds_do_not_bind(world, fw, monkeypatch, options):
+    def forbidden(**kwargs):
+        pytest.fail("invalid wait options must not create a driver")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    code, _, err = fw("look", *options)
+    assert code == 2 and "look:" in err
+    assert world.n == 0
+
+
+def test_look_until_deadline_cancels_slow_observation_and_shuts_down(world, fw, monkeypatch):
+    import asyncio
+    import time
+
+    assert fw("start", "Observe delayed form", "--app", "Calculator")[0] == 0
+    events = []
+
+    async def slow(inp):
+        try:
+            await asyncio.sleep(2)
+        finally:
+            events.append("observation cancelled")
+
+    async def shutdown():
+        events.append("shutdown")
+
+    monkeypatch.setattr(world, "get_window_state", slow)
+    monkeypatch.setattr(world, "shutdown", shutdown)
+    started = time.monotonic()
+    code, out, err = fw("look", "--until", "Ready", "--timeout", "0.1")
+    assert code == 6 and time.monotonic() - started < 1
+    assert "no observation completed before the deadline" in err
+    assert "elements:" not in out
+    assert events == ["observation cancelled", "shutdown"]
+    assert world.presses == [] and world.tool_calls == []
+
+
+def test_look_until_driver_timeout_keeps_its_actual_failure(world, fw, monkeypatch):
+    assert fw("start", "Observe delayed form", "--app", "Calculator")[0] == 0
+
+    async def broken(inp):
+        raise TimeoutError("driver AX RPC expired")
+
+    monkeypatch.setattr(world, "get_window_state", broken)
+    code, _, err = fw("look", "--until", "Ready", "--timeout", "1")
+    assert code == 7 and "driver AX RPC expired" in err
+    assert "not observed" not in err
+
+
+def test_look_until_refuses_browser_before_driver_binding(world, fw, monkeypatch):
+    assert fw("start", "Observe form", "--app", "Calculator")[0] == 0
+    path = fw.session / "session.json"
+    raw = json.loads(path.read_text())
+    raw["mode"] = "browser"
+    path.write_text(json.dumps(raw))
+
+    def forbidden(**kwargs):
+        pytest.fail("unsupported browser wait must not create a driver")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    code, _, err = fw("look", "--until", "Ready")
+    assert code == 2 and "native sessions only" in err
+
+
+def _add_native_enter_field(world):
+    world.base["elements"].append({
+        "element_index": 910, "element_token": "initial:910", "role": "AXTextField",
+        "label": "Address and search bar", "value": "chrome://newtab", "enabled": True,
+        "actions": [], "frame": {"x": 10, "y": 20, "w": 300, "h": 20},
+    })
+
+
+@pytest.mark.parametrize("tail", ["https://suno.com/create", "", "{UNRESOLVED_SECRET}"])
+def test_native_enter_rejects_any_text_before_driver_binding(world, fw, monkeypatch, tail):
+    _add_native_enter_field(world)
+    assert fw("start", "Navigate own draft", "--app", "Calculator")[0] == 0
+    previous = (fw.session / "session.jsonl").read_bytes()
+    bindings = []
+    original_create = world.create
+
+    def counted_create(**kwargs):
+        bindings.append(True)
+        return original_create(**kwargs)
+
+    monkeypatch.setattr(cd.CuaDriver, "create", counted_create)
+    code, out, err = fw(
+        "do", "enter", "Address and search bar", tail, "--no-judge",
+        "--authorize", "enter:confirm the default button",
+    )
+    assert code == 2
+    assert "native enter sends Return only and does not accept text" in err
+    assert "do type TARGET TEXT" in err and "reobserve and verify the field" in err
+    assert "do enter TARGET" in err
+    assert bindings == [] and world.tool_calls == [] and world.presses == []
+    assert "text=" not in out and "dispatched" not in out
+    assert (fw.session / "session.jsonl").read_bytes() == previous
+
+
+def test_native_enter_without_text_still_sends_one_return(world, fw):
+    _add_native_enter_field(world)
+    assert fw("start", "Navigate own draft", "--app", "Calculator")[0] == 0
+    code, out, err = fw(
+        "do", "enter", "Address and search bar", "--no-judge",
+        "--authorize", "enter:confirm the default button",
+    )
+    assert code == 0, err
+    assert "dispatched enter(Address and search bar)" in out
+    assert len(world.tool_calls) == 1
+    name, arguments = world.tool_calls[0]
+    assert name == "press_key" and arguments["key"] == "return"
+    assert "text" not in arguments
+
+
+#: A persistent page identity (origin/main browser_target); mutating commands refuse browser sessions without one.
+_BROWSER_PIN = {"pid": 77, "incarnation": 1.0, "target": "page-1"}
+
+
+def test_native_enter_arity_guard_does_not_change_browser_route(world, fw, monkeypatch):
+    from jevdual import session
+
+    assert fw("start", "Browser operation scope", "--app", "Calculator")[0] == 0
+    path = fw.session / "session.json"
+    raw = json.loads(path.read_text())
+    raw["mode"] = "browser"
+    raw["browser_target"] = _BROWSER_PIN  # a current browser session, not a legacy one
+    path.write_text(json.dumps(raw))
+
+    async def browser_bind(state):
+        raise RuntimeError("browser route reached unchanged")
+
+    monkeypatch.setattr(session, "bind", browser_bind)
+    code, _, err = fw("do", "enter", "Field", "retained text")
+    assert code == 7 and "browser route reached unchanged" in err
+    assert "native enter sends Return only" not in err
+
+
+def _native_styles_field(world, monkeypatch, *, actual_after=None, initial=""):
+    row = {
+        "element_index": 910, "element_token": "initial:910", "role": "AXTextArea",
+        "label": "Styles", "value": initial, "enabled": True, "actions": [],
+        "frame": {"x": 10, "y": 20, "w": 300, "h": 100},
+    }
+    world.base["elements"].append(row)
+    original = world.call_tool
+
+    async def write(name, args_json):
+        arguments = json.loads(args_json)
+        if name == "set_value":
+            row["value"] = arguments["value"] if actual_after is None else actual_after
+        return await original(name, args_json)
+
+    monkeypatch.setattr(world, "call_tool", write)
+    return row
+
+
+def _native_song_links(world, monkeypatch, urls=("https://example.test/song/a", "https://example.test/song/b")):
+    from jevdual import ax
+
+    rows, resources, clicked = [], {}, []
+    for position, url in enumerate(urls):
+        y = 20 + position * 30
+        row = {"element_index": 920 + position, "element_token": f"initial:{920 + position}",
+               "role": "AXLink", "label": "Generated song", "enabled": True,
+               "actions": ["AXPress"], "in_web_content": True,
+               "frame": {"x": 10, "y": y, "w": 300, "h": 20}}
+        rows.append(row)
+        resources[y] = url
+        world.base["elements"].append(row)
+
+    def resolve(pid, window_id, role, frame):
+        assert (pid, window_id, role) == (77, 40335, "AXLink")
+        hits = [row for row in rows if row["frame"]["y"] == frame.y]
+        assert len(hits) == 1
+        return hits[0]
+
+    monkeypatch.setattr(ax, "resolve", resolve)
+    monkeypatch.setattr(ax, "link_url", lambda element, **kwargs: resources[element["frame"]["y"]], raising=False)
+    monkeypatch.setattr(ax, "semantic_section", lambda element: None)
+    original = world.click
+
+    async def click(inp):
+        index = int(inp.position.element_token.split(":")[-1])
+        row, = [row for row in rows if row["element_index"] == index]
+        clicked.append(resources[row["frame"]["y"]])
+        return await original(inp)
+
+    monkeypatch.setattr(world, "click", click)
+    return rows, resources, clicked
+
+
+@pytest.mark.parametrize("selected", [920, 921])
+def test_native_same_title_links_use_complete_qualified_resource_identity(world, fw, monkeypatch, selected):
+    _, _, clicked = _native_song_links(world, monkeypatch)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    saved = [row for row in _state(fw)["last_candidates"] if row["label"] == "Generated song"]
+    assert [row["id"] for row in saved] == [920, 921]
+    assert all(row["href_qualified"] is True for row in saved)
+    code, out, err = fw("do", "click", str(selected), "--no-judge")
+    assert code == 0 and clicked == [f"https://example.test/song/{'a' if selected == 920 else 'b'}"], (out, err)
+
+
+@pytest.mark.parametrize("variant", ["unreadable_peer", "same_url", "hidden_unreadable_peer"])
+def test_native_link_resource_ambiguity_survives_pruning(world, fw, monkeypatch, variant):
+    urls = {"unreadable_peer": ("https://example.test/song/a", None),
+            "same_url": ("https://example.test/song/a",) * 2,
+            "hidden_unreadable_peer": ("https://example.test/song/a", "https://example.test/song/b", None)}[variant]
+    _, _, clicked = _native_song_links(world, monkeypatch, urls)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "920", "--no-judge")
+    assert code == 4 and "target_ambiguous" in out + err, (out, err)
+    assert clicked == []
+
+
+@pytest.mark.parametrize("change", ["url", "qualification_lost", "reordered_ids"])
+def test_native_link_resource_changes_since_numeric_selection_refuse(world, fw, monkeypatch, change):
+    rows, resources, clicked = _native_song_links(world, monkeypatch)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    if change == "reordered_ids":
+        rows[0]["element_index"], rows[1]["element_index"] = 921, 920
+    else:
+        resources[20] = "https://example.test/song/replaced" if change == "url" else None
+    code, out, err = fw("do", "click", "920", "--no-judge")
+    assert code == 4 and ("target_changed" in out + err or "target_ambiguous" in out + err), (out, err)
+    assert clicked == []
+
+
+@pytest.mark.parametrize("change", ["url", "unreadable_peer", "same_url", "reordered_ids"])
+def test_native_link_resource_changes_during_final_revalidation_send_nothing(world, fw, monkeypatch, change):
+    from jevdual.native import NativeBridge
+
+    rows, resources, clicked = _native_song_links(world, monkeypatch)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    observes = [0]
+    observe = NativeBridge.observe
+
+    async def change_after_preflight(bridge, **kwargs):
+        result = await observe(bridge, **kwargs)
+        observes[0] += 1
+        if observes[0] == 1:
+            if change == "reordered_ids":
+                rows[0]["element_index"], rows[1]["element_index"] = 921, 920
+            elif change == "unreadable_peer":
+                resources[50] = None
+            elif change == "same_url":
+                resources[50] = resources[20]
+            else:
+                resources[20] = "https://example.test/song/replaced"
+        return result
+
+    monkeypatch.setattr(NativeBridge, "observe", change_after_preflight)
+    code, out, err = fw("do", "click", "920", "--no-judge")
+    assert clicked == [] and any(word in out + err for word in ("refused", "target_changed", "target_ambiguous")), (code, out, err)
+
+
+def test_native_link_resource_read_budget_keeps_unread_peers_ambiguous(world, fw, monkeypatch):
+    urls = tuple(f"https://example.test/song/{index}" for index in range(65))
+    _, _, clicked = _native_song_links(world, monkeypatch, urls)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "920", "--no-judge")
+    assert code == 4 and "target_ambiguous" in out + err, (out, err)
+    assert clicked == []
+
+
+def test_native_same_title_links_still_require_unique_label_or_numeric_selection(world, fw, monkeypatch):
+    _, _, clicked = _native_song_links(world, monkeypatch)
+    assert fw("start", "Open owned generated song", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "Generated song", "--no-judge")
+    assert code == 4 and "matches 2 elements" in out + err, (out, err)
+    assert clicked == []
+
+
+def _native_identified_controls(world, monkeypatch, identities=None):
+    from jevdual import ax
+
+    identities = identities if identities is not None else [
+        {"dom_id": "hero-options", "document_url": "https://example.test/song/a", "web_area": "document"},
+        {"dom_id": "footer-options", "document_url": "https://example.test/song/a", "web_area": "document"},
+    ]
+    rows, backing, clicked = [], {}, []
+    for position, identity in enumerate(identities):
+        y = 400 + 30 * position
+        row = {"element_index": 940 + position, "element_token": f"initial:{940 + position}",
+               "role": "AXPopUpButton", "label": "More options for Song", "enabled": True,
+               "actions": ["AXPress"], "in_web_content": True,
+               "frame": {"x": 450, "y": y, "w": 40, "h": 20}}
+        rows.append(row); backing[y] = identity; world.base["elements"].append(row)
+
+    def resolve(pid, window_id, role, frame):
+        assert (pid, window_id, role) == (77, 40335, "AXPopUpButton")
+        row, = [row for row in rows if row["frame"]["y"] == frame.y]
+        return row
+
+    monkeypatch.setattr(ax, "resolve", resolve)
+    monkeypatch.setattr(ax, "semantic_section", lambda element: None)
+    monkeypatch.setattr(ax, "control_identity", lambda element, **kwargs: backing[element["frame"]["y"]], raising=False)
+    monkeypatch.setattr(ax, "frame_of", lambda element: ax.Frame(*(element["frame"][key] for key in ("x", "y", "w", "h"))))
+    monkeypatch.setattr(ax, "same_element", lambda left, right: left == right, raising=False)
+    click = world.click
+
+    async def act(inp):
+        index = int(inp.position.element_token.split(":")[-1])
+        row, = [row for row in rows if row["element_index"] == index]
+        clicked.append(backing[row["frame"]["y"]])
+        return await click(inp)
+
+    monkeypatch.setattr(world, "click", act)
+    return rows, backing, clicked
+
+
+@pytest.mark.parametrize("selected", [940, 941])
+def test_native_scoped_dom_controls_remain_distinct_and_persist(world, fw, monkeypatch, selected):
+    _, _, clicked = _native_identified_controls(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+    saved = [row for row in _state(fw)["last_candidates"] if row["label"] == "More options for Song"]
+    assert [row["id"] for row in saved] == [940, 941]
+    assert all(row["native_control_qualified"] is True for row in saved)
+    assert saved[0]["native_dom_id"] == "hero-options"
+    assert saved[0]["native_document_url"] == "https://example.test/song/a"
+    code, out, err = fw("do", "click", str(selected), "--no-judge")
+    assert code == 0 and len(clicked) == 1, (out, err)
+    assert clicked[0]["dom_id"] == ("hero-options" if selected == 940 else "footer-options")
+
+
+@pytest.mark.parametrize("failure", ["unreadable", "duplicate_id", "different_document", "different_webarea", "hidden_unreadable"])
+def test_native_scoped_dom_controls_require_all_observed_peers(world, fw, monkeypatch, failure):
+    first = {"dom_id": "hero", "document_url": "https://example.test/song/a", "web_area": "document"}
+    second = {**first, "dom_id": "footer"}
+    identities = [first, second]
+    if failure == "unreadable": identities[1] = None
+    if failure == "duplicate_id": second["dom_id"] = first["dom_id"]
+    if failure == "different_document": second["document_url"] = "https://example.test/song/b"
+    if failure == "different_webarea": second["web_area"] = "nested_document"
+    if failure == "hidden_unreadable": identities.append(None)
+    _, _, clicked = _native_identified_controls(world, monkeypatch, identities)
+    assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "940", "--no-judge")
+    assert code == 4 and "target_ambiguous" in out + err, (out, err)
+    assert clicked == []
+
+
+@pytest.mark.parametrize("during", [False, True])
+@pytest.mark.parametrize("change", ["dom_id", "document_url", "reorder", "unreadable_peer", "duplicate_id"])
+def test_native_scoped_dom_controls_refuse_identity_drift(world, fw, monkeypatch, during, change):
+    from jevdual.native import NativeBridge
+
+    rows, backing, clicked = _native_identified_controls(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+
+    def mutate():
+        if change == "reorder": rows[0]["element_index"], rows[1]["element_index"] = 941, 940
+        elif change == "unreadable_peer": backing[430] = None
+        elif change == "duplicate_id": backing[430]["dom_id"] = backing[400]["dom_id"]
+        elif change == "document_url":
+            for identity in backing.values(): identity["document_url"] = "https://example.test/song/changed"
+        else: backing[400]["dom_id"] = "replacement"
+
+    if during:
+        original = NativeBridge.observe
+        reads = [0]
+
+        async def after_preflight(bridge, **kwargs):
+            result = await original(bridge, **kwargs)
+            reads[0] += 1
+            if reads[0] == 1: mutate()
+            return result
+
+        monkeypatch.setattr(NativeBridge, "observe", after_preflight)
+    else: mutate()
+    code, out, err = fw("do", "click", "940", "--no-judge")
+    assert clicked == [] and any(marker in out + err for marker in ("target_changed", "target_ambiguous")), (code, out, err)
+
+
+def test_native_scoped_dom_control_grants_bind_document_and_identifier(world, fw, monkeypatch):
+    from dataclasses import replace
+
+    from jevdual import grants
+    from jevdual.session import SessionState, _element_ref
+
+    _native_identified_controls(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+    menu = SessionState.load(fw.session).last_menu()
+    first, second = (menu.candidate(index) for index in (940, 941))
+    assert first is not None and second is not None
+    reference = json.loads(_element_ref(SimpleNamespace(), first))
+    assert reference["native_dom_id"] == "hero-options"
+    assert reference["native_document_url"] == "https://example.test/song/a"
+    assert _element_ref(SimpleNamespace(), first) != _element_ref(SimpleNamespace(), second)
+    proposal = grants.Proposal("click", "app://fixture", first.role, first.label, None, None,
+                               element_ref=_element_ref(SimpleNamespace(), first))
+    grant = grants.issue(proposal)
+    assert grants.why_not(grant, proposal) is None
+    assert grants.why_not(grant, replace(proposal, element_ref=_element_ref(SimpleNamespace(), second)))
+    assert grants.why_not(grants.issue(replace(proposal, element_ref="1 of 2")), proposal)
+    changed = replace(first, native_document_url="https://example.test/song/replaced")
+    assert grants.why_not(grant, replace(proposal, element_ref=_element_ref(SimpleNamespace(), changed)))
+
+
+def test_native_scoped_dom_control_read_budget_retains_hidden_peer_ambiguity(world, fw, monkeypatch):
+    identities = [{"dom_id": f"control-{index}", "document_url": "https://example.test/song/a", "web_area": "document"}
+                  for index in range(65)]
+    _, _, clicked = _native_identified_controls(world, monkeypatch, identities)
+    assert fw("start", "Open owned song menu", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "click", "940", "--no-judge")
+    assert code == 4 and "target_ambiguous" in out + err, (out, err)
+    assert clicked == []
+
+
+@pytest.mark.parametrize("false_equality", [False, True])
+def test_native_type_bounded_preview_is_not_full_readback(world, fw, monkeypatch, false_equality):
+    intended = "a" * 479 + "…" if false_equality else "a" * 600
+    actual = "a" * 479 + "different unseen suffix" if false_equality else intended
+    row = _native_styles_field(world, monkeypatch, actual_after=actual)
+    assert fw("start", "Fill own song styles", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "type", "Styles", intended, "--no-judge")
+    assert code == 0, err
+    assert row["value"] == actual
+    assert (row["value"] != intended) is false_equality
+    receipt = _state(fw)["memory"][-1]
+    assert "unverifiable" in receipt
+    assert "value preview is truncated" in out
+    assert "not the text typed" not in out
+    saved = next(c for c in _state(fw)["last_candidates"] if c["label"] == "Styles")
+    assert saved["value_truncated"] is True
+    assert len(saved["value"]) == 480
+
+
+def test_native_literal_ellipsis_is_not_projection_truncation(world, fw, monkeypatch):
+    payload = "a" * 479 + "…"
+    row = _native_styles_field(world, monkeypatch)
+    assert fw("start", "Fill own song styles", "--app", "Calculator")[0] == 0
+    code, _, err = fw("do", "type", "Styles", payload, "--no-judge")
+    assert code == 0 and row["value"] == payload, err
+    assert "confirmed" in _state(fw)["memory"][-1]
+    saved = next(c for c in _state(fw)["last_candidates"] if c["label"] == "Styles")
+    assert saved["value_truncated"] is False
+
+
+@pytest.mark.parametrize(("actual", "effect"), [("Verse\nWords\nChorus\nWords", "unverifiable"),
+                                               ("Verse\nWordx\nChorus\nWords", "partial")])
+def test_native_multiline_lf_serialization_needs_independent_readback(world, fw, monkeypatch, actual, effect):
+    intended = "Verse\n\nWords\n\nChorus\n\nWords"
+    row = _native_styles_field(world, monkeypatch, actual_after=actual)
+    assert fw("start", "Fill own lyrics", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "type", "Styles", intended, "--no-judge")
+    assert code == 0 and row["value"] == actual, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["effect"] == effect
+    if effect == "unverifiable":
+        assert "independent readback" in receipt["evidence"] and "do not retype" in receipt["evidence"]
+    assert len([args for name, args in world.tool_calls if name == "set_value"]) == 1
+
+
+def test_native_menu_no_visible_change_cannot_disprove_clipboard_effect(world, fw, monkeypatch):
+    from jevdual import ax
+
+    _foreground_styles_fixture(world, monkeypatch)
+    clipboard_generation = [10]
+    monkeypatch.setattr(ax, "menu_paths", lambda pid: ["Edit > Copy"])
+
+    def copy(pid, path):
+        assert pid == 77 and path == ["Edit", "Copy"]
+        clipboard_generation[0] += 1
+
+    monkeypatch.setattr(ax, "press_menu", copy)
+    assert fw("start", "Copy own lyrics", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "menu", "Edit > Copy", "--no-judge")
+    assert code == 0 and clipboard_generation[0] == 11, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["effect"] == "unverifiable"
+    assert "clipboard" in receipt["evidence"] and "no visible change" in receipt["evidence"]
+
+
+@pytest.mark.parametrize("variant", ["modal", "parent", "wrong_pid", "unrelated", "not_key", "overbound"])
+def test_public_save_modal_session_keeps_exact_window_hotkey_binding(world, fw, monkeypatch, variant):
+    from jevdual import posture
+
+    from tests.test_ax_semantics import _install_modal_ax_tree
+    from tests.test_posture import Activity
+
+    app, parent, sheet, mutations = _install_modal_ax_tree(monkeypatch)
+    world.base["elements"] = [{"element_index": 0, "role": "AXSheet", "label": "save", "enabled": True}]
+    world.base["app_name"] = "Calculator"
+    world.base["pid"] = 77
+    target_window = 40335 if variant == "parent" else 60066
+    world.base["window_id"] = target_window
+    world.window_id = target_window
+    if variant == "wrong_pid": sheet["_pid"] = 88
+    if variant == "unrelated":
+        other = {"AXRole": "AXWindow", "_pid": 77, "_wid": 999}
+        sheet["AXParent"] = other; sheet["AXWindow"] = other
+    if variant == "not_key": app["AXFocusedWindow"] = parent
+    if variant == "overbound":
+        node = sheet
+        for _ in range(40): node = {"AXRole": "AXGroup", "_pid": 77, "AXChildren": [node]}
+        parent["AXChildren"] = [node]
+        app["AXFocusedWindow"] = parent
+    monkeypatch.setattr(posture, "MacActivity", lambda: Activity(idle=60, fronts=(77,)))
+
+    async def windows(inp):
+        return SimpleNamespace(windows=[SimpleNamespace(window_id=target_window, title="Save",
+                                                       bounds=SimpleNamespace(width=880, height=448))])
+
+    monkeypatch.setattr(world, "list_windows", windows)
+
+    async def call(name, encoded):
+        args = json.loads(encoded)
+        world.tool_calls.append((name, args))
+        if name == "bring_to_front":
+            assert args["window_id"] == target_window
+            refused = variant == "parent"
+            return SimpleNamespace(is_error=refused, action=None,
+                error_code="bring_to_front_exact_window_unverified" if refused else "bring_to_front_exact_window_verified",
+                structured_json=json.dumps({"code": "bring_to_front_exact_window_unverified" if refused else "bring_to_front_exact_window_verified",
+                    "status": "partial" if refused else "activated", "request_accepted": True,
+                    "pid": 77, "window_id": target_window, "exact_window_effect": {"verified": not refused},
+                    "observed": {"frontmost_pid": 77, "focused_window_id": 60066}}), text="exact foreground intent")
+        assert name == "hotkey" and args["window_id"] == 60066
+        return SimpleNamespace(is_error=False, action=None, error_code=None, structured_json=None, text="folder chord posted")
+
+    monkeypatch.setattr(world, "call_tool", call)
+    code, out, err = fw("start", "Navigate own Save sheet to project exports", "--app", "Calculator", "--pid", "77",
+                        "--window", "Save", "--mode", "foreground_permitted")
+    assert code == 0 and _state(fw)["window_id"] == target_window, (out, err)
+    code, out, err = fw("do", "hotkey", "cmd", "shift", "g", "--no-judge", "--authorize", "hotkey")
+    assert code == 0, (out, err)
+    keys = [args for name, args in world.tool_calls if name == "hotkey"]
+    assert len(keys) == (1 if variant == "modal" else 0), (out, err)
+    assert mutations == []  # the SDK already proved the requested modal key; no AXMain/AXRaise needed
+
+
+@pytest.mark.parametrize("variant", ["untitled", "stale", "wrong_pid", "duplicate", "observation_drift"])
+def test_start_exact_window_id_binds_only_observed_owned_window(world, fw, monkeypatch, variant):
+    calls = []
+    world.base.update(pid=88 if variant == "observation_drift" else 77, window_id=60066,
+                      window_title=None, app_name="Calculator")
+    world.base["elements"] = [{"element_index": 0, "role": "AXSheet", "label": "GoToWindow"}]
+
+    async def windows(inp):
+        calls.append(inp.pid)
+        if inp.pid != 77:
+            return SimpleNamespace(windows=[])
+        rows = [SimpleNamespace(window_id=40335, title="Main document", bounds=SimpleNamespace(width=1200, height=900)),
+                SimpleNamespace(window_id=60066, title=None, bounds=SimpleNamespace(width=460, height=343))]
+        if variant == "duplicate": rows.append(rows[1])
+        return SimpleNamespace(windows=rows)
+
+    monkeypatch.setattr(world, "list_windows", windows)
+    code, out, err = fw("start", "Navigate own untitled folder panel", "--app", "Calculator",
+                        "--pid", "88" if variant == "wrong_pid" else "77", "--window-id",
+                        "60067" if variant == "stale" else "60066")
+    assert calls == [88 if variant == "wrong_pid" else 77]
+    if variant == "untitled":
+        assert code == 0 and _state(fw)["window_id"] == 60066, (out, err)
+        assert _state(fw)["pid"] == 77
+    else:
+        assert code == 2 and "not starting" in err, (out, err)
+        assert not (fw.session / "session.json").exists()
+    assert world.tool_calls == [] and world.presses == []
+
+
+@pytest.mark.parametrize("variant", ["missing_pid", "zero", "negative", "too_large", "noninteger", "title", "empty_title", "browser", "url"])
+def test_start_invalid_exact_window_selector_refuses_before_binding_and_reset(world, fw, monkeypatch, variant):
+    assert fw("start", "Keep existing observed session", "--app", "Calculator")[0] == 0
+    before = {name: (fw.session / name).read_bytes() for name in ("session.json", "session.jsonl")}
+
+    def forbidden(**kwargs):
+        pytest.fail("invalid exact window selector must refuse before binding")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    value = {"zero": "0", "negative": "-1", "too_large": "4294967296", "noninteger": "not-an-id"}.get(variant, "60066")
+    args = ["start", "Replace session only after valid exact binding", "--app", "Calculator", "--window-id", value]
+    if variant != "missing_pid": args.extend(["--pid", "77"])
+    if variant in ("title", "empty_title"): args.extend(["--window", "" if variant == "empty_title" else "Save"])
+    if variant == "browser": args.append("--browser")
+    if variant == "url": args.extend(["--url", "https://example.test/"])
+    assert fw(*args)[0] == 2
+    assert all((fw.session / name).read_bytes() == old for name, old in before.items())
+
+
+def test_lf_representation_receipt_keeps_selected_range_full_value_strict(world, fw, monkeypatch):
+    _foreground_selection_fixture(world, monkeypatch, actual_after="A\nB\n")
+    assert fw("start", "Edit own selected lyrics", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "A\n\nB", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["effect"] == "partial" and "internal LF" not in receipt["evidence"]
+
+
+@pytest.mark.parametrize("legacy", [False, True])
+def test_native_append_receipt_does_not_compare_a_truncated_persisted_baseline(
+    world, fw, monkeypatch, legacy
+):
+    from jevdual.session import SessionState
+
+    row = _native_styles_field(world, monkeypatch, initial="a" * 600)
+    assert fw("start", "Append own song note", "--app", "Calculator")[0] == 0
+    state = SessionState.load(fw.session)
+    state.pending = {
+        "line": "append(Styles)", "op": "append", "mode": "native", "target_id": 910,
+        "target_label": "Styles", "intended": "new ending", "dispatched": True,
+        "driver_effect": "unverifiable", "secret": False,
+    }
+    if legacy:
+        for saved in state.last_candidates:
+            saved.pop("value_truncated", None)
+    state.save()
+    # The action's eventual fresh state is short: only the old baseline is bounded.
+    row["value"] = "new ending"
+    code, out, err = fw("look")
+    assert code == 0, err
+    assert "unverifiable" in _state(fw)["memory"][-1]
+    assert "earlier value preview is truncated" in out
+    assert world.tool_calls == []
+
+
+def _foreground_styles_fixture(
+    world, monkeypatch, *, idle=60, initial="", selection_change=False, focus_change=False, outcome=None
+):
+    from jevdual import ax, native, posture
+
+    from tests.test_posture import Activity
+
+    row = _native_styles_field(world, monkeypatch, initial=initial)
+    row["in_web_content"] = True
+    selection = [(0, 0)]
+    monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2.focus1",
+                        raising=False)
+    monkeypatch.setattr(posture, "MacActivity", lambda: Activity(idle=idle, fronts=(77,)))
+    monkeypatch.setattr(ax, "raise_window", lambda *a: None)
+    monkeypatch.setattr(ax, "focused_window_id", lambda pid: 40335)
+    monkeypatch.setattr(ax, "resolve", lambda *a: "styles")
+    monkeypatch.setattr(ax, "value", lambda el: row["value"])
+    # the web text reader reads both; a real AX read fails off macOS, which drops the exact value
+    monkeypatch.setattr(ax, "placeholder", lambda el: None)
+    monkeypatch.setattr(ax, "selected_range", lambda el: selection[0], raising=False)
+
+    async def call(name, encoded):
+        args = json.loads(encoded)
+        world.tool_calls.append((name, args))
+        if name == "bring_to_front" and focus_change:
+            row["label"] = "Replaced field"
+        if name == "press_key":
+            assert args["delivery_mode"] == "foreground" and args["modifiers"] == ["cmd"]
+            selection[0] = (0, len(row["value"].encode("utf-16-le")) // 2)
+            if selection_change:
+                row["label"] = "Replaced field"
+        if name == "type_text":
+            assert args["delivery_mode"] == "foreground"
+            assert args["window_id"] == 40335 and args["element_token"].endswith(":910")
+            if isinstance(outcome, Exception):
+                raise outcome
+            if outcome is not None:
+                return outcome
+            row["value"] = args["text"]
+        return SimpleNamespace(
+            action=cd.ActionResult(
+                effect=cd.ActionEffect.UNVERIFIABLE, route=cd.ActionRoute.SYNTHETIC_EVENTS,
+                delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.FOREGROUND, delivered_count=None),
+                evidence=[], escalation=None, summary="foreground event post attempted", error=None,
+                hint=None, next_call=None, fast_path=None,
+            ), text="", is_error=False, error_code=None,
+            structured_json=json.dumps({"path": "key_events_fg", "effect": "unverifiable"}),
+        )
+
+    monkeypatch.setattr(world, "call_tool", call)
+    return row
+
+
+def _foreground_popup_fixture(world, monkeypatch, *, idle=60, outcome=None, changed=False):
+    row = _foreground_styles_fixture(world, monkeypatch, idle=idle, focus_change=changed)
+    row.update(role="AXPopUpButton", label="More actions")
+    attempts = []
+
+    async def click(inp):
+        attempts.append(inp)
+        if inp.delivery_mode.name == "BACKGROUND":
+            raise RuntimeError("Not opened: select_menu_would_raise_window; nothing was sent")
+        if isinstance(outcome, Exception):
+            raise outcome
+        if outcome is not None:
+            return outcome
+        world.presses.append("More actions")
+        return cd.ActionResult(
+            effect=cd.ActionEffect.UNVERIFIABLE, route=cd.ActionRoute.ACCESSIBILITY,
+            delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.FOREGROUND, delivered_count=1),
+            evidence=[], escalation=None, summary="menu press acknowledged", error=None,
+            hint=None, next_call=None, fast_path=None,
+        )
+
+    monkeypatch.setattr(world, "click", click)
+    return row, attempts
+
+
+def test_explicit_foreground_native_click_uses_fresh_token_and_sdk_delivery(world, fw, monkeypatch):
+    _, attempts = _foreground_popup_fixture(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+    assert code == 0 and world.presses == ["More actions"], (out, err)
+    click, = attempts
+    assert click.delivery_mode.name == "FOREGROUND"
+    assert click.position.element_token == f"s{world.n - 1:08x}:910"
+    assert click.target.pid == 77 and click.target.window_id == 40335
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["action"]["click_delivery"] == "foreground"
+    assert receipt["action"]["native_delivery"]["driver_delivery"] == "foreground"
+
+
+def test_native_dropdown_background_refusal_has_no_automatic_foreground_retry(world, fw, monkeypatch):
+    _, attempts = _foreground_popup_fixture(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "click", "More actions", "--authorize", "More actions")
+    assert code == 0 and "unverifiable" in out + err, (out, err)
+    assert len(attempts) == 1 and attempts[0].delivery_mode.name == "BACKGROUND"
+    assert not world.presses and world.tool_calls == []
+
+
+@pytest.mark.parametrize("failure", ["human_active", "target_changed", "window_changed", "uncertain"])
+def test_explicit_foreground_native_click_refuses_drift_and_never_retries(world, fw, monkeypatch, failure):
+    from jevdual import ax
+
+    _, attempts = _foreground_popup_fixture(world, monkeypatch, idle=0 if failure == "human_active" else 60,
+                                           changed=failure == "target_changed",
+                                           outcome=RuntimeError("click reply lost") if failure == "uncertain" else None)
+    if failure == "window_changed":
+        monkeypatch.setattr(ax, "focused_window_id", lambda pid: 999)
+        monkeypatch.setattr(ax, "title_bar_point", lambda *args: None)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+    assert code == 0, (out, err)
+    assert len(attempts) == (1 if failure == "uncertain" else 0)
+    assert ("unverifiable" in out + err if failure == "uncertain"
+            else any(word in out + err for word in ("refused", "not sent")))
+
+
+@pytest.mark.parametrize("variant", ["background_only", "browser", "type", "no_judge", "web_text", "route", "file_selector", "nonmac"])
+def test_explicit_foreground_native_click_unsupported_refuses_before_binding(world, fw, monkeypatch, variant):
+    _foreground_popup_fixture(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode",
+              "background_only" if variant == "background_only" else "foreground_permitted")[0] == 0
+    if variant == "browser":
+        path = fw.session / "session.json"
+        state = json.loads(path.read_text()); state["mode"] = "browser"; state["browser_target"] = _BROWSER_PIN
+        path.write_text(json.dumps(state))
+    if variant == "nonmac":
+        from jevdual import native
+        monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+
+    def forbidden(**kwargs):
+        pytest.fail("unsupported foreground click must refuse before binding")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    args = ["do", "type" if variant == "type" else "click",
+            "file:/owned/song" if variant == "file_selector" else "More actions"]
+    if variant == "type":
+        args.append("signal")
+    args.extend(["--click-delivery", "foreground"])
+    if variant == "no_judge":
+        args.append("--no-judge")
+    if variant == "web_text":
+        args.extend(["--web-text-delivery", "foreground"])
+    if variant == "route":
+        args.extend(["--route", "dom"])
+    code, _, err = fw(*args)
+    assert code == 2 and "foreground click" in err
+
+
+def test_explicit_foreground_native_click_does_not_retry_sdk_refusal(world, fw, monkeypatch):
+    refusal = cd.ActionResult(
+        effect=cd.ActionEffect.REFUSED, route=cd.ActionRoute.ACCESSIBILITY,
+        delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.FOREGROUND, delivered_count=0),
+        evidence=[], escalation=None, summary="fresh target refused", error=None,
+        hint=None, next_call=None, fast_path=None,
+    )
+    _, attempts = _foreground_popup_fixture(world, monkeypatch, outcome=refusal)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+    assert code == 0 and len(attempts) == 1 and world.presses == [], (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["dispatched"] is False
+
+
+def test_explicit_foreground_native_click_retains_hidden_peer_ambiguity_after_activation(world, fw, monkeypatch):
+    row, attempts = _foreground_popup_fixture(world, monkeypatch)
+    original = world.call_tool
+
+    async def add_peer(name, encoded):
+        result = await original(name, encoded)
+        if name == "bring_to_front":
+            world.base["elements"].append({**row, "element_index": 911, "element_token": "initial:911"})
+        return result
+
+    monkeypatch.setattr(world, "call_tool", add_peer)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+    assert code == 0 and "target_ambiguous" in out + err, (out, err)
+    assert not attempts
+
+
+@pytest.mark.parametrize("initial", ["", "prior text"])
+def test_explicit_foreground_web_type_preserves_target_and_readback(world, fw, monkeypatch, initial):
+    row = _foreground_styles_fixture(world, monkeypatch, initial=initial)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0 and row["value"] == "signal", (out, err)
+    assert len([v for k, v in world.tool_calls if k == "type_text"]) == 1
+    assert "confirmed" in _state(fw)["memory"][-1]
+    assert all(v.get("delivery_mode") == "foreground" for k, v in world.tool_calls if k in ("type_text", "press_key"))
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["action"]["web_text_delivery"] == "foreground"
+    assert receipt["action"]["native_delivery"]["driver_delivery"] == "foreground"
+
+
+@pytest.mark.parametrize("idle", [0, 2.9])
+def test_explicit_foreground_web_type_yields_to_human_input(world, fw, monkeypatch, idle):
+    _foreground_styles_fixture(world, monkeypatch, idle=idle)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    _, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground")
+    assert "human_active" in out + err
+    assert world.tool_calls == []
+
+
+@pytest.mark.parametrize("failure", ["focus_changed", "selection_changed", "uncertain"])
+def test_explicit_foreground_web_type_never_retries_after_selection_or_delivery(
+    world, fw, monkeypatch, failure
+):
+    _foreground_styles_fixture(world, monkeypatch, initial="prior text",
+                               selection_change=failure == "selection_changed",
+                               focus_change=failure == "focus_changed",
+                               outcome=RuntimeError("post reply lost") if failure == "uncertain" else None)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    types = [v for k, v in world.tool_calls if k == "type_text"]
+    assert len(types) == (1 if failure == "uncertain" else 0), (code, out, err)
+    assert ("refused" if failure == "focus_changed" else "unverifiable") in out + err
+
+
+def test_explicit_foreground_web_type_requires_independent_complete_selection(world, fw, monkeypatch):
+    from jevdual import ax
+
+    _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+    monkeypatch.setattr(ax, "selected_range", lambda el: (1, 1))
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0 and "selection_unqualified" in out + err
+    assert not [value for name, value in world.tool_calls if name == "type_text"]
+
+
+def _foreground_selection_fixture(world, monkeypatch, *, initial="\n", selection=(0, 0),
+                                  selected_text="", actual_after=None, outcome=None):
+    from jevdual import ax
+
+    row = _foreground_styles_fixture(world, monkeypatch, initial=initial, outcome=outcome)
+    monkeypatch.setattr(ax, "selected_range", lambda element: selection)
+    monkeypatch.setattr(ax, "selected_text", lambda element: selected_text, raising=False)
+    monkeypatch.setattr(ax, "focus_text_field_ack", lambda element: None, raising=False)
+    monkeypatch.setattr(ax, "focused_element_matches", lambda pid, window_id, element: True, raising=False)
+    original_call = world.call_tool
+
+    async def call(name, encoded):
+        if name == "press_key":
+            pytest.fail("explicit range edits must not change the selection")
+        before = row["value"]
+        result = await original_call(name, encoded)
+        if name == "type_text" and outcome is None:
+            args = json.loads(encoded)
+            raw = before.encode("utf-16-le")
+            start, length = selection
+            expected = (raw[:start * 2].decode("utf-16-le") + args["text"]
+                        + raw[(start + length) * 2:].decode("utf-16-le"))
+            row["value"] = expected if actual_after is None else actual_after
+        return result
+
+    monkeypatch.setattr(world, "call_tool", call)
+    return row
+
+
+@pytest.mark.parametrize("failure", [None, "setter_refused", "focus_unproven", "wrong_window",
+                                     "value_changed", "identity_changed", "selection_changed", "focus_stolen"])
+def test_foreground_range_prepares_focus_and_independently_requalifies(world, fw, monkeypatch, failure):
+    from jevdual import ax
+
+    row = _foreground_selection_fixture(world, monkeypatch)
+    focused = [False]
+    writes, checks = [], []
+
+    def focus(element):
+        writes.append(element)
+        if failure == "setter_refused":
+            raise ax.AXError("focus_refused", "AXFocused setter refused")
+        focused[0] = True
+        if failure == "value_changed":
+            row["value"] += " "
+        if failure == "identity_changed":
+            row["label"] = "Different field"
+
+    def matches(pid, window_id, element):
+        checks.append((pid, window_id, element))
+        if failure in ("focus_unproven", "wrong_window"):
+            return False
+        return focused[0] and not (failure == "focus_stolen" and len(checks) > 1)
+
+    def selected_text(element):
+        if not focused[0]:
+            raise ax.AXError("selection_unreadable", "unfocused field exposes no selected text")
+        return ""
+
+    monkeypatch.setattr(ax, "focus_text_field_ack", focus, raising=False)
+    monkeypatch.setattr(ax, "focused_element_matches", matches, raising=False)
+    monkeypatch.setattr(ax, "selected_text", selected_text)
+    monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0) if focused[0] and failure == "selection_changed" else (0, 0))
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0 and writes == ["styles"], (out, err)
+    types = [args for name, args in world.tool_calls if name == "type_text"]
+    assert len(types) == (0 if failure else 1)
+    assert not [args for name, args in world.tool_calls if name == "press_key"]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    proof = receipt["action"]["native_readback"]
+    assert proof["focus_preparation"]["attempted"] is True
+    if failure:
+        assert receipt["dispatched"] is True  # preparation attempt is not proven no input
+        assert receipt["effect"] == "unverifiable"
+        assert proof["text_dispatch"]["delivered_chars"] == 0
+        assert proof["text_dispatch"]["dispatched"] is False
+    else:
+        assert row["value"] == "signal\n" and proof["focus_preparation"]["confirmed"] is True
+
+
+@pytest.mark.parametrize(("initial", "selection", "selected_text", "expected"), [
+    ("\n", (0, 0), "", "signal\n"),
+    ("ab😀cd\n", (2, 2), "😀", "absignalcd\n"),
+    ("a" * 600 + "\n", (600, 0), "", "a" * 600 + "signal\n"),
+])
+def test_foreground_web_range_preserves_exact_prefix_suffix(
+    world, fw, monkeypatch, initial, selection, selected_text, expected
+):
+    row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection,
+                                        selected_text=selected_text)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", f"{selection[0]}:{selection[1]}", "--authorize", "replace")
+    assert code == 0 and row["value"] == expected, (out, err)
+    types = [args for name, args in world.tool_calls if name == "type_text"]
+    assert len(types) == 1 and types[0]["delay_ms"] > 0
+    assert "confirmed" in _state(fw)["memory"][-1]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["action"]["web_text_range"] == list(selection)
+    assert receipt["action"]["field_readback"]["expected_value"] == expected
+
+
+@pytest.mark.parametrize("failure", ["wrong_range", "wrong_text", "unreadable_text", "read_error", "split_surrogate",
+                                     "outside_value", "changed_value", "changed_identity"])
+def test_foreground_web_range_requires_independent_exact_selection(world, fw, monkeypatch, failure):
+    from jevdual import ax
+
+    initial = "ab😀cd\n" if failure == "split_surrogate" else "prior\n"
+    selection = (3, 0) if failure == "split_surrogate" else (0, 0)
+    row = _foreground_selection_fixture(world, monkeypatch, initial=initial, selection=selection)
+    if failure == "wrong_range":
+        monkeypatch.setattr(ax, "selected_range", lambda element: (1, 0))
+    if failure in ("wrong_text", "unreadable_text"):
+        monkeypatch.setattr(ax, "selected_text", lambda element: "unselected" if failure == "wrong_text" else None)
+    if failure == "read_error":
+        def unreadable(element):
+            raise ax.AXError("selection_unreadable", "selection unavailable")
+        monkeypatch.setattr(ax, "selected_text", unreadable)
+    if failure in ("changed_identity", "changed_value"):
+        original = world.call_tool
+
+        async def change(name, encoded):
+            result = await original(name, encoded)
+            if name == "bring_to_front":
+                if failure == "changed_identity":
+                    row["label"] = "Different field"
+                else:
+                    monkeypatch.setattr(ax, "value", lambda element: "different exact value")
+            return result
+
+        monkeypatch.setattr(world, "call_tool", change)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    requested = "90:0" if failure == "outside_value" else f"{selection[0]}:{selection[1]}"
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", requested, "--authorize", "replace")
+    prepared = failure in ("wrong_range", "wrong_text", "unreadable_text", "read_error")
+    assert code == 0 and ("unverifiable" if prepared else "refused") in out + err, (out, err)
+    if prepared:
+        records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+        receipt = next(record for record in records if record["kind"] == "receipt")
+        assert receipt["action"]["native_readback"]["text_dispatch"]["delivered_chars"] == 0
+    assert not [args for name, args in world.tool_calls if name in ("press_key", "type_text")]
+
+
+@pytest.mark.parametrize("actual", ["signal", "signal\n\n", "other\n"])
+def test_foreground_web_range_receipt_compares_exact_full_value(world, fw, monkeypatch, actual):
+    _foreground_selection_fixture(world, monkeypatch, actual_after=actual)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0, (out, err)
+    assert "confirmed" not in _state(fw)["memory"][-1]
+    assert len([args for name, args in world.tool_calls if name == "type_text"]) == 1
+
+
+def test_foreground_web_range_never_retries_uncertain_input(world, fw, monkeypatch):
+    _foreground_selection_fixture(world, monkeypatch, outcome=RuntimeError("reply lost"))
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0 and "unverifiable" in out + err, (out, err)
+    assert len([args for name, args in world.tool_calls if name == "type_text"]) == 1
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["action"]["native_readback"]["focus_preparation"]["confirmed"] is True
+    assert "text_dispatch" not in receipt["action"]["native_readback"]  # never invent zero after uncertain text
+
+
+def test_foreground_web_range_durable_provenance_and_replay(world, fw, monkeypatch, tmp_path):
+    from jevdual.session import SessionState
+
+    _foreground_selection_fixture(world, monkeypatch)
+    _durable_start(fw, monkeypatch, tmp_path)
+    state = SessionState.load(fw.session)
+    state.posture = "foreground_permitted"
+    state.save()
+    words = ["do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+             "--web-text-range", "0:0", "--authorize", "replace", "--token", "selection-once"]
+    code, out, err = fw(*words)
+    assert code == 0, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    fact, = receipt["structured_evidence"]["facts"]
+    assert fact["parameters"]["source"] == "native.foreground_web_selection_readback"
+    assert fact["values"] == ["signal\n"] and fact["limits"] == []
+    assert fw(*words)[0] == 0
+    different = words.copy()
+    different[different.index("0:0")] = "1:0"
+    code, out, err = fw(*different)
+    assert code != 0 and "conflict" in out + err, (out, err)
+    assert len([args for name, args in world.tool_calls if name == "type_text"]) == 1
+
+
+def test_foreground_web_range_secret_readback_is_redacted(world, fw, monkeypatch):
+    _foreground_selection_fixture(world, monkeypatch)
+    secret = "synthetic-private-selection-value"
+    monkeypatch.setenv("FOOTWORK_SECRET_SELECTION", secret)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "{SELECTION}", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0 and secret not in out + err, (out, err)
+    for name in ("session.json", "session.jsonl"):
+        assert secret not in (fw.session / name).read_text()
+    assert "confirmed" not in _state(fw)["memory"][-1]
+
+
+@pytest.mark.parametrize("failure", ["unreadable", "changed_identity", "stale_confirmation", "sdk_fallback"])
+def test_foreground_web_range_requires_post_input_and_receipt_time_readback(world, fw, monkeypatch, failure):
+    from jevdual import ax
+
+    row = _foreground_selection_fixture(world, monkeypatch)
+    original_call = world.call_tool
+
+    async def call(name, encoded):
+        result = await original_call(name, encoded)
+        if name == "type_text":
+            if failure == "unreadable":
+                def unavailable(element):
+                    raise ax.AXError("no_value", "field readback unavailable")
+                monkeypatch.setattr(ax, "value", unavailable)
+            elif failure == "changed_identity":
+                row["label"] = "Different field"
+            else:
+                reads = [0]
+
+                def delayed_change(element):
+                    reads[0] += 1
+                    # Immediate postcondition: supplement + independent direct read.
+                    # Receipt-time observation then sees an external later edit.
+                    if reads[0] <= 2:
+                        return row["value"]
+                    if failure == "sdk_fallback":
+                        raise ax.AXError("no_value", "only SDK projection remains readable")
+                    return "later edit\n"
+
+                monkeypatch.setattr(ax, "value", delayed_change)
+        return result
+
+    monkeypatch.setattr(world, "call_tool", call)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                        "--web-text-range", "0:0", "--authorize", "replace")
+    assert code == 0 and "unverifiable" in _state(fw)["memory"][-1], (out, err)
+    assert len([args for name, args in world.tool_calls if name == "type_text"]) == 1
+
+
+def test_foreground_web_range_does_not_relax_whole_field_lf_guard(world, fw, monkeypatch):
+    _foreground_selection_fixture(world, monkeypatch)
+    # The whole-field path still tries Select All, then rejects the LF not being selected.
+    original = world.call_tool
+
+    async def call(name, encoded):
+        if name == "press_key":
+            world.tool_calls.append((name, json.loads(encoded)))
+            return SimpleNamespace(text="selection attempted", is_error=False, error_code=None,
+                                   action=None, structured_json=None)
+        return await original(name, encoded)
+
+    monkeypatch.setattr(world, "call_tool", call)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0 and "selection_unqualified" in out + err, (out, err)
+    assert not [args for name, args in world.tool_calls if name == "type_text"]
+
+
+@pytest.mark.parametrize("range_text", ["-1:0", "0:-1", "0", "0:1:2", "65537:0", "65536:1", "a:0", ""])
+def test_foreground_web_range_invalid_bounds_refuse_before_binding(world, fw, monkeypatch, range_text):
+    _foreground_selection_fixture(world, monkeypatch)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+
+    def forbidden(**kwargs):
+        pytest.fail("invalid selected range must refuse before binding")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    code, _, _ = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground",
+                    "--web-text-range", range_text)
+    assert code == 2
+
+
+@pytest.mark.parametrize("variant", ["missing_foreground", "background_only", "append", "browser", "no_judge"])
+def test_foreground_web_range_unsupported_refuses_before_binding(world, fw, monkeypatch, variant):
+    _foreground_selection_fixture(world, monkeypatch)
+    assert fw("start", "Edit owned styles selection", "--app", "Calculator", "--mode",
+              "background_only" if variant == "background_only" else "foreground_permitted")[0] == 0
+    if variant == "browser":
+        path = fw.session / "session.json"
+        state = json.loads(path.read_text()); state["mode"] = "browser"; state["browser_target"] = _BROWSER_PIN
+        path.write_text(json.dumps(state))
+
+    def forbidden(**kwargs):
+        pytest.fail("unsupported selected range must refuse before binding")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    args = ["do", "append" if variant == "append" else "type", "Styles", "signal", "--web-text-range", "0:0"]
+    if variant != "missing_foreground":
+        args.extend(["--web-text-delivery", "foreground"])
+    if variant == "no_judge":
+        args.append("--no-judge")
+    assert fw(*args)[0] == 2
+
+
+@pytest.mark.parametrize("variant", [
+    "background_only", "append", "click", "browser", "old_runtime", "no_judge", "file_selector", "browser_route",
+])
+def test_explicit_foreground_web_type_rejects_unsupported_before_binding(world, fw, monkeypatch, variant):
+    from jevdual import native
+
+    _foreground_styles_fixture(world, monkeypatch)
+    posture = "background_only" if variant == "background_only" else "foreground_permitted"
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", posture)[0] == 0
+    if variant == "browser":
+        path = fw.session / "session.json"
+        raw = json.loads(path.read_text()); raw["mode"] = "browser"; raw["browser_target"] = _BROWSER_PIN
+        path.write_text(json.dumps(raw))
+    if variant == "old_runtime":
+        monkeypatch.setattr(native, "_foreground_web_text_version", lambda: "0.46.0+footwork.5486b624.cleanup2")
+
+    def forbidden(**kwargs):
+        pytest.fail("unsupported foreground option must refuse before driver binding")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    operation = variant if variant in ("append", "click") else "type"
+    target = "file:/owned/name.txt" if variant == "file_selector" else "Styles"
+    args = ["do", operation, target, "signal", "--web-text-delivery", "foreground"]
+    if variant == "no_judge":
+        args.append("--no-judge")
+    if variant == "browser_route":
+        args.extend(["--route", "dom"])
+    code, _, err = fw(*args)
+    assert code == 2 and "foreground web text" in err
+
+
+@pytest.mark.parametrize("initial", ["", "prior text"])
+def test_explicit_foreground_focus_refusal_retains_no_text_evidence(world, fw, monkeypatch, initial):
+    refused = SimpleNamespace(
+        action=cd.ActionResult(
+            effect=cd.ActionEffect.REFUSED, route=cd.ActionRoute.SYNTHETIC_EVENTS, delivery=None,
+            evidence=[], escalation=None, summary="no text dispatched", error=None,
+            hint=None, next_call=None, fast_path=None,
+        ), text="no text dispatched", is_error=True, error_code="target_focus_unconfirmed",
+        structured_json=json.dumps({
+            "code": "target_focus_unconfirmed", "effect": "refused", "dispatched": False, "delivered_chars": 0,
+        }),
+    )
+    _foreground_styles_fixture(world, monkeypatch, initial=initial, outcome=refused)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0, (out, err)
+    assert len([v for k, v in world.tool_calls if k == "type_text"]) == 1
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    proof = receipt["action"]["native_readback"]["text_dispatch"]
+    assert proof["dispatched"] is False and proof["delivered_chars"] == 0
+    assert receipt["dispatched"] is bool(initial)  # replacement selection is earlier input
+
+
+def test_explicit_foreground_web_type_refuses_unreadable_nonempty_field(world, fw, monkeypatch):
+    from jevdual import ax
+
+    row = _foreground_styles_fixture(world, monkeypatch, initial="unreadable existing text")
+    row["value"] = None
+
+    def unreadable(element):
+        raise ax.AXError("no_value", "the nonempty field does not expose its value")
+
+    monkeypatch.setattr(ax, "value", unreadable)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground")
+    assert code == 0 and "field_value_unreadable" in out + err
+    assert not [value for name, value in world.tool_calls if name in ("type_text", "press_key")]
+
+
+def test_explicit_foreground_web_type_partial_reply_uses_no_batched_tail_retry(world, fw, monkeypatch):
+    # The pinned SDK's incomplete-ancestry case can enter its native-tail branch
+    # only when delay_ms==0; explicit positive pacing must disable that branch.
+    partial = SimpleNamespace(
+        action=cd.ActionResult(
+            effect=cd.ActionEffect.PARTIAL, route=cd.ActionRoute.SYNTHETIC_EVENTS,
+            delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.FOREGROUND, delivered_count=1),
+            evidence=[], escalation=None, summary="one character observed, ancestry incomplete", error=None,
+            hint=None, next_call=None, fast_path=None,
+        ), text="type_text incomplete", is_error=True, error_code="type_text_incomplete",
+        structured_json=json.dumps({"code": "type_text_incomplete", "effect": "partial", "delivered_chars": 1}),
+    )
+    _foreground_styles_fixture(world, monkeypatch, outcome=partial)
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground")
+    types = [value for name, value in world.tool_calls if name == "type_text"]
+    assert code == 0 and "unverifiable" in out + err
+    assert len(types) == 1 and types[0].get("delay_ms", 0) > 0
+
+
+@pytest.mark.parametrize("representation", ["tuple", "cfrange"])
+def test_foreground_web_replacement_decodes_real_range_representations(world, fw, monkeypatch, representation):
+    import sys
+
+    from jevdual import ax
+
+    decode = ax.selected_range
+    prior = "prior text"
+    _foreground_styles_fixture(world, monkeypatch, initial=prior)
+    monkeypatch.setattr(ax, "selected_range", decode)
+    value = (0, len(prior)) if representation == "tuple" else SimpleNamespace(location=0, length=len(prior))
+    monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+    monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+        AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+    ))
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0 and "confirmed" in _state(fw)["memory"][-1], (out, err)
+    assert len([value for name, value in world.tool_calls if name == "press_key"]) == 1
+    assert len([value for name, value in world.tool_calls if name == "type_text"]) == 1
+
+
+@pytest.mark.parametrize("value", [
+    (0,), (0, 10, 2), (-1, 10), (0, -1), (False, 10), (0, 10.0), ("0", 10),
+    SimpleNamespace(location=0), SimpleNamespace(location=0, length=-1), None,
+])
+def test_foreground_web_replacement_rejects_malformed_range_before_text(world, fw, monkeypatch, value):
+    import sys
+
+    from jevdual import ax
+
+    decode = ax.selected_range
+    _foreground_styles_fixture(world, monkeypatch, initial="prior text")
+    monkeypatch.setattr(ax, "selected_range", decode)
+    monkeypatch.setattr(ax, "_attr", lambda element, attribute: "encoded-range" if attribute == "AXSelectedTextRange" else None)
+    monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+        AXValueGetValue=lambda raw, kind, out: (True, value), kAXValueCFRangeType=4,
+    ))
+    assert fw("start", "Edit owned styles", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "type", "Styles", "signal", "--web-text-delivery", "foreground", "--authorize", "replace")
+    assert code == 0 and "selection_unreadable" in out + err
+    assert len([value for name, value in world.tool_calls if name == "press_key"]) == 1
+    assert not [value for name, value in world.tool_calls if name == "type_text"]
+    assert "unverifiable" in out + err  # selection was attempted; no retroactive no-input claim
+
+
 @pytest.mark.parametrize("command", ["start", "look"])
 @pytest.mark.parametrize("permission", ["not_granted", "unavailable"])
 def test_denied_accessibility_is_an_explicit_observation_failure(world, fw, monkeypatch, command, permission):
@@ -2313,6 +3702,494 @@ def test_native_form_truncated_duplicate_labels_require_context_for_every_peer(w
     assert fw("start", "Manage example.test", "--app", "Calculator")[0] == 0
     code, out, err = fw("do", "click", "301", "--no-judge")
     assert code == 4 and "target_ambiguous" in err and writes == [], (out, err)
+
+
+def _native_opaque_controls(world, monkeypatch, role='AXPopUpButton'):
+    from jevdual import ax
+
+    rows, backing, clicked = _native_identified_controls(world, monkeypatch)
+    for row in rows:
+        row['label'] = None
+        row['role'] = role
+    monkeypatch.setattr(ax, 'resolve', lambda pid, window, role, frame: next(row for row in rows if row['frame']['y'] == frame.y))
+    monkeypatch.setattr(ax, 'window_element', lambda pid, window: 'bound-window')
+    monkeypatch.setattr(ax, 'control_backing', lambda element, **kwargs: (
+        {**backing[element['frame']['y']], 'unnamed': not element.get('label')}
+        if backing[element['frame']['y']] is not None else None), raising=False)
+    return rows, backing, clicked
+
+
+@pytest.mark.parametrize('role', ['AXButton', 'AXPopUpButton'])
+def test_native_opaque_controls_public_numeric_projection_and_action(world, fw, monkeypatch, role):
+    _, _, clicked = _native_opaque_controls(world, monkeypatch, role)
+    code, out, err = fw('start', 'Inspect unnamed owned editor controls', '--app', 'Calculator')
+    assert code == 0, (out, err)
+    saved = {row['id']: row for row in _state(fw)['last_candidates']}
+    assert saved[940]['label'] == 'hero-options'
+    assert saved[940]['native_control_opaque'] is True
+    assert 'opaque identifier; accessible name empty' in out
+    code, out, err = fw('do', 'click', '941', '--no-judge')
+    assert code == 0 and len(clicked) == 1, (out, err)
+    assert clicked[0]['dom_id'] == 'footer-options'
+
+
+def test_native_deep_control_ancestry_public_projection_still_requires_every_peer(world, fw, monkeypatch):
+    import sys
+
+    from jevdual import ax
+
+    actual_backing = ax.control_backing
+    rows, _, clicked = _native_opaque_controls(world, monkeypatch)
+    window = {'AXRole': 'AXWindow', '_pid': 77}
+    page = {'AXRole': 'AXWebArea', 'AXURL': 'https://example.test/editor/a',
+            'AXParent': window, '_pid': 77}
+    controls = []
+    for row, count, identifier in zip(rows, (33, 34), ('hero-options', 'footer-options'), strict=True):
+        parent = page
+        for _ in range(count - 3):
+            parent = {'AXRole': 'AXGroup', 'AXParent': parent, '_pid': 77}
+        controls.append({'AXRole': 'AXPopUpButton', 'AXTitle': '', 'AXDescription': '',
+                         'AXDOMIdentifier': identifier, 'AXParent': parent, '_pid': 77, 'frame': row['frame']})
+    monkeypatch.setattr(ax, 'control_backing', actual_backing)
+    monkeypatch.setattr(ax, '_attr', lambda node, name: node.get(name))
+    monkeypatch.setattr(ax, 'same_element', lambda left, right: left is right)
+    monkeypatch.setattr(ax, 'window_element', lambda pid, wid: window)
+    monkeypatch.setattr(ax, 'resolve', lambda pid, wid, role, frame: next(
+        control for control in controls if control['frame']['y'] == frame.y))
+    monkeypatch.setitem(sys.modules, 'ApplicationServices', SimpleNamespace(
+        AXUIElementGetPid=lambda node, out: (0, node['_pid'])))
+    code, out, err = fw('start', 'Inspect deeply nested owned controls', '--app', 'Calculator')
+    assert code == 0, (out, err)
+    saved = {row['id']: row for row in _state(fw)['last_candidates']}
+    assert saved[940]['native_dom_id'] == 'hero-options', (out, err)
+    assert saved[941]['native_dom_id'] == 'footer-options'
+    assert saved[940]['native_control_qualified'] and saved[941]['native_control_qualified']
+    controls[1]['AXParent'] = None
+    assert fw('look')[0] == 0
+    saved = {row['id']: row for row in _state(fw)['last_candidates']}
+    assert not any(row['native_control_qualified'] for key, row in saved.items() if key in (940, 941))
+    assert all(row['label'] not in ('hero-options', 'footer-options') for row in saved.values())
+    assert clicked == [] and world.tool_calls == []
+
+
+@pytest.mark.parametrize('during', [False, True])
+@pytest.mark.parametrize('change', ['dom_id', 'document_url', 'reorder', 'unreadable_peer', 'duplicate_id', 'named'])
+def test_native_opaque_controls_refuse_drift(world, fw, monkeypatch, during, change):
+    from jevdual.native import NativeBridge
+
+    rows, backing, clicked = _native_opaque_controls(world, monkeypatch)
+    assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+
+    def mutate():
+        if change == 'reorder': rows[0]['element_index'], rows[1]['element_index'] = 941, 940
+        elif change == 'unreadable_peer': backing[430] = None
+        elif change == 'duplicate_id': backing[430]['dom_id'] = backing[400]['dom_id']
+        elif change == 'document_url': backing[400]['document_url'] = 'https://example.test/other'
+        elif change == 'named': rows[0]['label'] = backing[400]['dom_id']
+        else: backing[400]['dom_id'] = 'replacement'
+
+    if during:
+        original, reads = NativeBridge.observe, [0]
+
+        async def after_preflight(bridge, **kwargs):
+            result = await original(bridge, **kwargs)
+            reads[0] += 1
+            if reads[0] == 1: mutate()
+            return result
+
+        monkeypatch.setattr(NativeBridge, 'observe', after_preflight)
+    else: mutate()
+    code, out, err = fw('do', 'click', '940', '--no-judge')
+    assert clicked == [] and any(marker in out + err for marker in ('target_changed', 'target_ambiguous', 'target_missing', 'Nothing dispatched')), (code, out, err)
+
+
+@pytest.mark.parametrize('failure', ['duplicate', 'named_duplicate', 'disabled_duplicate', 'unreadable', 'missing_frame', 'bound'])
+def test_native_opaque_controls_census_refuses_unknown_or_duplicate_backing(world, fw, monkeypatch, failure):
+    rows, backing, clicked = _native_opaque_controls(world, monkeypatch)
+    if failure in ('duplicate', 'named_duplicate', 'disabled_duplicate'):
+        backing[430]['dom_id'] = backing[400]['dom_id']
+        if failure == 'named_duplicate': rows[1]['label'] = 'Named peer'
+        if failure == 'disabled_duplicate': rows[1]['enabled'] = False
+    elif failure == 'unreadable': backing[430] = None
+    elif failure == 'missing_frame': rows[1]['frame'] = None
+    else:
+        for i in range(63):
+            world.base['elements'].append({**rows[0], 'element_index': 1000 + i})
+    assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+    saved = _state(fw)['last_candidates']
+    assert not any(row.get('native_control_opaque') for row in saved)
+    assert clicked == []
+
+
+def test_native_opaque_controls_readable_absent_id_peer_and_grant_provenance(world, fw, monkeypatch):
+    from dataclasses import replace
+
+    from jevdual.session import SessionState, _element_ref, _target_identity
+
+    _, backing, _ = _native_opaque_controls(world, monkeypatch)
+    backing[430]['dom_id'] = ''
+    assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+    candidate = SessionState.load(fw.session).last_menu().candidate(940)
+    assert candidate.native_control_opaque is True
+    assert _target_identity(candidate)['native_control_opaque'] is True
+    assert _element_ref(None, candidate) != _element_ref(None, replace(candidate, native_control_opaque=None))
+
+
+def test_public_window_inventory_lists_then_binds_untitled_exact_id(world, fw, monkeypatch, capsys):
+    calls = []
+
+    async def windows(inp):
+        calls.append(inp.pid)
+        assert inp.pid == 77
+        return SimpleNamespace(windows=[
+            SimpleNamespace(pid=77, window_id=40335, title='Main document'),
+            SimpleNamespace(pid=77, window_id=60066, title=None),
+            SimpleNamespace(pid=77, window_id=60067, title='')])
+
+    monkeypatch.setattr(world, 'list_windows', windows)
+    observations_before = world.n
+    assert cli.main(['windows', '--pid', '77']) == 0
+    assert world.n == observations_before
+    inventory = json.loads(capsys.readouterr().out)
+    assert inventory['read_only'] is True and inventory['pid'] == 77
+    assert inventory['association_verified'] is False
+    panel, = [row for row in inventory['windows'] if row['title'] is None]
+    assert panel['window_id'] == 60066
+    assert world.tool_calls == [] and world.presses == []
+    world.base.update(pid=77, window_id=60066, window_title=None)
+    code, out, err = fw('start', 'Navigate own untitled panel', '--app', 'Calculator', '--pid', '77', '--window-id', str(panel['window_id']))
+    assert code == 0 and _state(fw)['window_id'] == 60066, (out, err)
+    assert calls == [77, 77]
+
+
+@pytest.mark.parametrize('failure', ['wrong_pid', 'unknown_pid', 'duplicate', 'bad_id', 'bad_title', 'missing_title',
+                                     'empty', 'bound', 'timeout', 'driver', 'cleanup'])
+def test_public_window_inventory_refuses_without_foreign_titles_or_session_mutation(world, fw, monkeypatch, capsys, failure):
+    assert fw('start', 'Keep existing observation', '--app', 'Calculator')[0] == 0
+    before = {name: (fw.session / name).read_bytes() for name in ('session.json', 'session.jsonl')}
+    calls, cleanups = [], []
+
+    async def windows(inp):
+        calls.append(inp.pid)
+        assert inp.pid == 77
+        if failure == 'timeout': raise TimeoutError('unrelated private title')
+        if failure == 'driver': raise RuntimeError('unrelated private title')
+        row = SimpleNamespace(pid=77, window_id=60066, title='unrelated private title')
+        if failure == 'wrong_pid': row.pid = 88
+        if failure == 'unknown_pid': row.pid = None
+        if failure == 'bad_id': row.window_id = 0
+        if failure == 'bad_title': row.title = object()
+        if failure == 'missing_title': del row.title
+        rows = [] if failure == 'empty' else [row]
+        if failure == 'duplicate': rows.append(row)
+        if failure == 'bound': rows *= 257
+        return SimpleNamespace(windows=rows)
+
+    async def shutdown():
+        cleanups.append(True)
+        if failure == 'cleanup': raise RuntimeError('unrelated private title')
+
+    monkeypatch.setattr(world, 'list_windows', windows)
+    monkeypatch.setattr(world, 'shutdown', shutdown)
+    assert cli.main(['windows', '--pid', '77']) == 4
+    captured = capsys.readouterr()
+    result = json.loads(captured.out)
+    assert result['windows'] == [] and result['error']
+    assert 'unrelated private title' not in captured.out + captured.err
+    assert calls == [77] and cleanups == [True]
+    assert all((fw.session / name).read_bytes() == old for name, old in before.items())
+    assert world.tool_calls == [] and world.presses == []
+
+
+@pytest.mark.parametrize('pid', [None, '0', '-1', '4294967296', 'invalid'])
+def test_public_window_inventory_invalid_pid_does_not_create_driver(world, monkeypatch, capsys, pid):
+    monkeypatch.setattr(cd.CuaDriver, 'create', lambda **kwargs: pytest.fail('invalid PID created driver'))
+    args = ['windows'] + (['--pid', pid] if pid is not None else [])
+    assert cli.main(args) == 2
+    assert 'PID' in capsys.readouterr().err or pid is None
+
+
+def test_public_window_inventory_deadline_cancels_read_and_shuts_down(world, monkeypatch, capsys):
+    import asyncio
+
+    deadlines, cancelled, cleanups = [], [], []
+    timeout = asyncio.timeout
+
+    def short_timeout(seconds):
+        deadlines.append(seconds)
+        return timeout(0.001 if seconds == 5 else seconds)
+
+    async def windows(inp):
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            cancelled.append(True)
+            raise
+
+    async def shutdown():
+        cleanups.append(True)
+
+    monkeypatch.setattr(cli.asyncio, 'timeout', short_timeout)
+    monkeypatch.setattr(world, 'list_windows', windows)
+    monkeypatch.setattr(world, 'shutdown', shutdown)
+    assert cli.main(['windows', '--pid', '77']) == 4
+    result = json.loads(capsys.readouterr().out)
+    assert result['error'] == 'window_inventory_timeout' and result['windows'] == []
+    assert deadlines == [5, 2] and cancelled == [True] and cleanups == [True]
+
+
+def test_opaque_census_reads_unframed_named_peer_without_action_authority(world, fw, monkeypatch):
+    from jevdual import ax
+
+    _, backing, clicked = _native_opaque_controls(world, monkeypatch)
+    peer = {'element_index': 942, 'element_token': 'initial:942', 'role': 'AXButton', 'label': 'Hide Tips',
+            'enabled': True, 'actions': ['AXPress'], 'in_web_content': True, 'frame': None}
+    world.base['elements'].append(peer)
+    backing[500] = {'dom_id': '', 'document_url': 'https://example.test/song/a', 'web_area': 'document'}
+    resolved = {**peer, 'frame': {'x': 450, 'y': 500, 'w': 40, 'h': 20}}
+    monkeypatch.setattr(ax, 'unique_named_control', lambda *args, **kwargs: resolved, raising=False)
+    monkeypatch.setattr(ax, 'exact_control_name', lambda element, **kwargs: element.get('label') == kwargs['label'])
+    assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+    saved = {row['id']: row for row in _state(fw)['last_candidates']}
+    assert saved[940]['native_control_opaque'] is True
+    assert 942 not in saved  # census proof supplies no action token or candidate
+    code, out, err = fw('do', 'click', '941', '--no-judge')
+    assert code == 0 and len(clicked) == 1, (out, err)
+
+
+@pytest.mark.parametrize('failure', ['missing', 'duplicate', 'unreadable', 'bound', 'name_drift', 'document_drift', 'duplicate_id'])
+def test_opaque_unframed_named_peer_still_blocks_unknown_or_changed_census(world, fw, monkeypatch, failure):
+    from jevdual import ax
+
+    _, backing, clicked = _native_opaque_controls(world, monkeypatch)
+    peer = {'element_index': 942, 'element_token': 'initial:942', 'role': 'AXButton', 'label': 'Hide Tips',
+            'enabled': True, 'actions': ['AXPress'], 'in_web_content': True, 'frame': None}
+    world.base['elements'].append(peer)
+    resolved = {**peer, 'frame': {'x': 450, 'y': 500, 'w': 40, 'h': 20}}
+    backing[500] = {'dom_id': '', 'document_url': 'https://example.test/song/a', 'web_area': 'document'}
+    if failure == 'document_drift': backing[500]['document_url'] = 'https://example.test/song/changed'
+    if failure == 'duplicate_id': backing[500]['dom_id'] = backing[400]['dom_id']
+
+    def lookup(*args, **kwargs):
+        if failure in ('missing', 'duplicate', 'unreadable', 'bound'):
+            raise ax.AXError('census_unreadable', 'no complete unique census proof')
+        return resolved
+
+    monkeypatch.setattr(ax, 'unique_named_control', lookup)
+    monkeypatch.setattr(ax, 'exact_control_name', lambda element, **kwargs: failure != 'name_drift')
+    assert fw('start', 'Inspect own editor', '--app', 'Calculator')[0] == 0
+    assert not any(row.get('native_control_opaque') for row in _state(fw)['last_candidates'])
+    assert clicked == []
+
+
+@pytest.mark.parametrize('failure', ['stale_id', 'binding_mismatch', 'observation', 'shutdown'])
+def test_failed_replacement_start_preserves_all_existing_session_files(world, fw, monkeypatch, failure):
+    assert fw('start', 'Retain previous task', '--app', 'Calculator')[0] == 0
+    names = ('session.json', 'session.jsonl', 'carries.json', 'destinations.json', 'grants.json')
+    for name in names[2:]: (fw.session / name).write_text('{"previous":true}')
+    before = {name: (fw.session / name).read_bytes() for name in names}
+    original = world.get_window_state
+
+    async def observe(inp):
+        assert all((fw.session / name).read_bytes() == value for name, value in before.items())
+        if failure == 'observation': raise RuntimeError('new observation unavailable')
+        result = await original(inp)
+        if failure == 'binding_mismatch': result['pid'] = 88
+        return result
+
+    async def shutdown():
+        if failure == 'shutdown': raise RuntimeError('new driver cleanup failed')
+
+    monkeypatch.setattr(world, 'get_window_state', observe)
+    monkeypatch.setattr(world, 'shutdown', shutdown)
+    code, out, err = fw('start', 'Replacement task', '--app', 'Calculator', '--pid', '77',
+                        '--window-id', '99999' if failure == 'stale_id' else '40335')
+    assert code != 0, (out, err)
+    assert all((fw.session / name).exists() and (fw.session / name).read_bytes() == value for name, value in before.items())
+    assert world.tool_calls == [] and world.presses == []
+
+
+def test_successful_replacement_start_publishes_new_binding_without_old_authority(world, fw, monkeypatch):
+    world.base.update(pid=77, window_id=40335, app_name='Calculator')
+    assert fw('start', 'Old task', '--app', 'Calculator')[0] == 0
+    names = ('session.json', 'session.jsonl', 'carries.json', 'destinations.json', 'grants.json')
+    for name in names[2:]: (fw.session / name).write_text('{"previous":true}')
+    before = {name: (fw.session / name).read_bytes() for name in names}
+    original = world.get_window_state
+
+    async def observe(inp):
+        assert all((fw.session / name).read_bytes() == value for name, value in before.items())
+        return await original(inp)
+
+    monkeypatch.setattr(world, 'get_window_state', observe)
+    code, out, err = fw('start', 'New task', '--app', 'Calculator', '--pid', '77', '--window-id', '40335')
+    assert code == 0, (out, err)
+    state = _state(fw)
+    assert state['dir'] == str(fw.session) and state['task'] == 'New task'
+    assert state['pid'] == 77 and state['window_id'] == 40335
+    assert all(not (fw.session / name).exists() for name in names[2:])
+    assert 'Old task' not in (fw.session / 'session.jsonl').read_text()
+    assert '.footwork-start-' not in out + (fw.session / 'session.json').read_text()
+    assert not list(fw.session.parent.glob('.footwork-start-*'))
+
+
+def test_replacement_publication_failure_rolls_back_old_session_without_error_log_mutation(world, fw, monkeypatch):
+    from jevdual import session
+
+    assert fw('start', 'Old task', '--app', 'Calculator')[0] == 0
+    names = ('session.json', 'session.jsonl', 'carries.json', 'destinations.json', 'grants.json')
+    for name in names[2:]: (fw.session / name).write_text('{"previous":true}')
+    before = {name: (fw.session / name).read_bytes() for name in names}
+    replace = session.os.replace
+
+    def fail_publish(source, destination):
+        if str(source).endswith('session.jsonl') and 'previous' not in str(source) and Path(destination) == fw.session / 'session.jsonl':
+            raise OSError('publication unavailable')
+        return replace(source, destination)
+
+    from pathlib import Path
+
+    monkeypatch.setattr(session.os, 'replace', fail_publish)
+    assert fw('start', 'New task', '--app', 'Calculator')[0] == 7
+    assert all((fw.session / name).read_bytes() == value for name, value in before.items())
+
+
+def test_browser_replacement_start_retains_real_directory_tab_and_screenshots(world, fw, monkeypatch):
+    from pathlib import Path
+
+    from jevdual import browser_driver, browser_target, session
+    from jevdual.native import NativeBridge
+
+    # The owned Chrome's page catalogue (origin/main browser_target), as main's browser start tests supply it.
+    monkeypatch.setattr(browser_target, '_catalog', lambda pid: (
+        {'pid': pid, 'incarnation': 1.0}, [{'type': 'page', 'id': 'page-1', 'url': 'app://Calculator'}]))
+    assert fw('start', 'Old native task', '--app', 'Calculator')[0] == 0
+    old_image = fw.session / 'screenshots' / 'obs-000-1234.png'
+    old_image.write_bytes(b'previous screenshot')
+    monkeypatch.setattr(session.time, 'time', lambda: 1234)
+    original = world.get_window_state
+
+    async def capture(inp):
+        assert _state(fw)['task'] == 'Old native task'
+        if inp.screenshot_out_file:  # main's page-identity read observes once without a screenshot
+            Path(inp.screenshot_out_file).write_bytes(b'new screenshot')
+        return await original(inp)
+
+    async def browser(url, policy):
+        bridge = NativeBridge(world, 77, 40335)
+        bridge.tab_id = 'owned-browser-tab'
+        return world, bridge
+
+    monkeypatch.setattr(world, 'get_window_state', capture)
+    monkeypatch.setattr(browser_driver, 'bind_footwork_chrome', browser)
+    code, out, err = fw('start', 'New browser task', '--browser')
+    assert code == 0, (out, err)
+    state = _state(fw)
+    assert state['mode'] == 'browser' and state['browser_tab'] == 'owned-browser-tab'
+    assert state['dir'] == str(fw.session)
+    assert old_image.read_bytes() == b'previous screenshot'
+    assert any(image.read_bytes() == b'new screenshot' for image in old_image.parent.iterdir())
+    assert '.footwork-start-' not in out + (fw.session / 'session.json').read_text() + (fw.session / 'session.jsonl').read_text()
+
+
+@pytest.mark.parametrize('durable', [False, True])
+@pytest.mark.parametrize('failure', ['closed_window', 'generic_read_failure', 'not_sent'])
+def test_post_action_observation_failure_retains_pending_exact_binding_without_retry(world, fw, monkeypatch, tmp_path, failure, durable):
+    from jevdual.native import NativeBridge, NativeBridgeError
+
+    authority = _durable_start(fw, monkeypatch, tmp_path) if durable else None
+    if not durable:
+        assert fw('start', 'Act once then reconcile the bound window', '--app', 'Calculator')[0] == 0
+    before = _state(fw)
+    failed, decision = [False], []
+    original_read, original_act = world.get_window_state, NativeBridge.act
+
+    async def read(inp):
+        if failed[0]:
+            if failure == 'closed_window': raise NativeBridgeError('window_missing', 'the exact modal is gone')
+            raise RuntimeError('private driver observation detail')
+        return await original_read(inp)
+
+    async def act(bridge, nm, op, target, text=None, **kwargs):
+        decision.append(_state(fw))
+        if failure == 'not_sent':
+            result = bridge._not_sent(op, target, 'All Clear', 'test_refusal', 'input withheld', 'background')
+        else:
+            result = await original_act(bridge, nm, op, target, text, **kwargs)
+        failed[0] = True
+        return result
+
+    monkeypatch.setattr(world, 'get_window_state', read)
+    monkeypatch.setattr(NativeBridge, 'act', act)
+    args = ('do', 'click', 'All Clear', '--no-judge', *(['--token', 'once-before-unavailable'] if durable else []))
+    code, out, err = fw(*args)
+    assert code == 6 and 'post-action observation unavailable' in out, (out, err)
+    assert 'pending action retained' in out and 'Do not retry' in out
+    assert 'footwork windows --pid 77' in out and 'fresh session' in out
+    assert 'private driver observation detail' not in out + err
+    state = _state(fw)
+    assert state['pid'] == before['pid'] and state['window_id'] == before['window_id']
+    assert state['last_snapshot'] == decision[0]['last_snapshot']
+    assert state['pending']['dispatched'] is (failure != 'not_sent')
+    assert state['pending']['driver_effect'] == ('not sent' if failure == 'not_sent' else 'confirmed')
+    assert world.presses == ([] if failure == 'not_sent' else ['All Clear'])
+    records = [json.loads(line) for line in (fw.session / 'session.jsonl').read_text().splitlines()]
+    assert not any(record['kind'] == 'receipt' for record in records)
+    assert records[-1]['kind'] == 'post_action_observation_unavailable'
+    retained = next(record for record in records if record['kind'] == 'do')
+    assert all(retained[key] == value for key, value in state['pending'].items())
+    if durable:
+        from jevdual.session_operations import SessionOperations
+
+        with SessionOperations(authority) as operations:
+            operation, = operations.status()
+            authoritative = operations.receipt(operation)
+            assert authoritative['projection']['dispatched'] == state['pending']['dispatched']
+        assert fw(*args)[0] == 0  # replay uses retained execution, without any driver read or input
+        assert world.presses == ([] if failure == 'not_sent' else ['All Clear'])
+        with SessionOperations(authority) as operations:
+            operation, = operations.status()
+            assert operations.receipt(operation) == authoritative
+
+
+@pytest.mark.parametrize('private_fields', [False, True])
+def test_public_foreground_intent_refusal_keeps_sanitized_diagnostic_without_input(world, fw, monkeypatch, private_fields):
+    _, attempts = _foreground_popup_fixture(world, monkeypatch)
+    original = world.call_tool
+    private = 'PRIVATE_TOOL_DETAIL_DO_NOT_RETAIN'
+
+    async def call(name, encoded):
+        if name != 'bring_to_front': return await original(name, encoded)
+        args = json.loads(encoded)
+        world.tool_calls.append((name, args))
+        record = {'code': private if private_fields else 'bring_to_front_exact_window_unverified',
+                  'status': private if private_fields else 'partial', 'request_accepted': True,
+                  'pid': 77, 'window_id': 40335,
+                  'exact_window_effect': {'verified': False, 'focused': False, 'secret': private},
+                  'observed': {'frontmost_pid': 88, 'focused_window_id': 999, 'title': private},
+                  'private': private}
+        return SimpleNamespace(action=SimpleNamespace(effect='refused', summary=private,
+                               error=SimpleNamespace(code=private, message=private)),
+                               is_error=True, error_code=record['code'], text=private,
+                               structured_json=json.dumps(record))
+
+    monkeypatch.setattr(world, 'call_tool', call)
+    assert fw('start', 'Open owned menu', '--app', 'Calculator', '--mode', 'foreground_permitted')[0] == 0
+    code, out, err = fw('do', 'click', 'More actions', '--click-delivery', 'foreground', '--authorize', 'More actions')
+    assert code == 0 and not attempts and world.presses == [], (out, err)
+    assert [name for name, _ in world.tool_calls] == ['bring_to_front']
+    log = (fw.session / 'session.jsonl').read_text()
+    records = [json.loads(line) for line in log.splitlines()]
+    action = next(record for record in records if record['kind'] == 'do')
+    proof = action['native_readback']['foreground_intent']
+    assert proof['code'] == ('unrecognized' if private_fields else 'bring_to_front_exact_window_unverified')
+    assert proof['status'] == ('unrecognized' if private_fields else 'partial')
+    assert proof['request_accepted'] is True and proof['action_effect'] == 'refused'
+    assert proof['observed']['frontmost_pid_matches_requested'] is False
+    assert proof['observed']['focused_window_id_matches_requested'] is False
+    assert proof['exact_window_effect']['verified'] is False
+    assert private not in log + out + err
+    assert action['dispatched'] is False
 
 
 def test_changed_bound_window_is_unavailable_before_any_input(world, fw):

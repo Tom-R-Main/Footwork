@@ -222,12 +222,15 @@ def play_move(
     settings: DragSettings = DEFAULT,
     *,
     cancelled: Callable[[], bool] = lambda: False,
+    trace: Any = None,
 ) -> DragResult:
     """Move the pointer along ``plan`` with no button, as an approach before a press."""
     tolerance = 1.5 * plan.max_step_pt + 2.0
     result = DragResult("aborted:unknown")
     last = plan.start
     t0 = last_post = clock.now()
+    if trace is not None:
+        trace.started(t0, clock)
     try:
         for s in plan.samples[1:]:
             due = t0 + s.t
@@ -258,6 +261,7 @@ def play_drag(
     settings: DragSettings = DEFAULT,
     *,
     cancelled: Callable[[], bool] = lambda: False,
+    trace: Any = None,
 ) -> DragResult:
     """Press at the start, play the samples, release. Every exit after the press releases exactly once."""
     tolerance = 1.5 * plan.max_step_pt + 2.0
@@ -279,6 +283,8 @@ def play_drag(
     poster.down(*plan.start)
     try:
         t0 = clock.now() + settings.press_hold_s
+        if trace is not None:
+            trace.started(t0, clock)
         clock.sleep_until(t0)
         last_post = clock.now()
         for s in plan.samples[1:]:
@@ -335,6 +341,7 @@ class QuartzPoster:
         import Quartz
 
         self.q = Quartz
+        self._pointer_trace: Any = None
         self.source = Quartz.CGEventSourceCreate(Quartz.kCGEventSourceStateHIDSystemState)
         self._kinds = (
             Quartz.kCGEventKeyDown,
@@ -363,7 +370,17 @@ class QuartzPoster:
         return event
 
     def _mouse(self, kind: int, x: float, y: float, click_state: int | None = None) -> None:
-        self._post(self.q.kCGHIDEventTap, self._event(kind, x, y, click_state))
+        q = self.q
+        event = self._event(kind, x, y, click_state)
+        if self._pointer_trace is None:
+            self._post(q.kCGHIDEventTap, event)
+        else:
+            name = {q.kCGEventMouseMoved: "move", q.kCGEventLeftMouseDragged: "drag",
+                    q.kCGEventLeftMouseDown: "down", q.kCGEventLeftMouseUp: "up"}[kind]
+            self._pointer_trace.post(name, x, y, lambda: self._post(q.kCGHIDEventTap, event))
+
+    def record_posts(self, trace: Any) -> None:
+        self._pointer_trace = trace
 
     def move(self, x: float, y: float) -> None:
         checkpoint()

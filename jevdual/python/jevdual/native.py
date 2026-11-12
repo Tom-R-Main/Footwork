@@ -51,6 +51,8 @@ from jevdual.menu import (
     Operation,
     estimate_tokens,
     peer_position,
+    qualified_control_identity,
+    qualified_link_href,
 )
 
 log = logging.getLogger("jevdual.native")
@@ -91,6 +93,9 @@ _MENU_BAR_ROLES = frozenset({"AXMenuBar", "AXMenuBarItem"})
 _TEXT_ROLES = frozenset({"textbox", "searchbox", "combobox"})
 _LABEL_CAP = 80
 _VALUE_CAP = 120
+FOREGROUND_WEB_TEXT_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1"
+FOREGROUND_HELPTAG_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1"
+FOREGROUND_WEB_TEXT_CUA_VERSIONS = frozenset({FOREGROUND_WEB_TEXT_CUA_VERSION, FOREGROUND_HELPTAG_CUA_VERSION})
 _INVISIBLE = re.compile("[" + "\u200e\u200f\u202a-\u202e\u2066-\u2069" + "]")
 _WS = re.compile(r"\s+")
 #: ``AXStaticText = "..."`` optionally followed by ``[actions=[...]]`` or other bracketed attributes
@@ -128,6 +133,39 @@ def _get(obj: Any, key: str, default: Any = None) -> Any:
     if isinstance(obj, dict):
         return obj.get(key, default)
     return getattr(obj, key, default)
+
+
+def _finite_numeric(value: Any) -> float | None:
+    """Snapshot numbers only: no units, locale guesses, booleans or nonfinite JSON values."""
+    if type(value) not in (int, float, str):
+        return None
+    if isinstance(value, str) and (
+        len(value) > _VALUE_CAP
+        or re.fullmatch(r"[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?", value.strip()) is None
+    ):
+        return None
+    try:
+        number = float(value)
+    except (ValueError, OverflowError):
+        return None
+    return number if math.isfinite(number) and len(str(value)) <= _VALUE_CAP else None
+
+
+def _numeric_observation(element: Any) -> dict[str, Any] | None:
+    """Read-only SDK metadata; matching AX state is not renderer or persistence proof."""
+    out: dict[str, Any] = {}
+    for name in ("value", "min", "max"):
+        number = _finite_numeric(_get(element, name))
+        if number is not None:
+            out[name] = number
+    description = _get(element, "value_description")
+    if isinstance(description, str) and description:
+        # Bound the source before normalization; never hide clipping in a units description.
+        out["value_description"] = _clean(description[:_VALUE_CAP], _VALUE_CAP)
+        out["value_description_truncated"] = len(description) > _VALUE_CAP
+    if "min" in out and "max" in out:
+        out["range_valid"] = out["min"] <= out["max"]
+    return {"source": "cua.window_state", **out} if out else None
 
 
 @dataclass(frozen=True)
@@ -212,6 +250,8 @@ class NativeMenu:
     ambiguous_targets: frozenset[int] = frozenset()
     #: Full pre-pruning text roster; changes invalidate pending placeholder-qualified selections.
     text_scope_signature: str | None = None
+    #: Values independently supplemented by direct macOS AX reads, not the SDK's trimmed fallback.
+    exact_ax_values: frozenset[int] = frozenset()
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -314,7 +354,7 @@ def _prune(
     budget: MenuBudget,
 ) -> tuple[list[Candidate], dict[int, str], dict[int, tuple[float, float, float, float]]]:
     """Drop what System 1 cannot choose between: a control whose label is only its role (``button
-    'button'``) unless it is a text field, and repeats of the same (role, label, value, section) beyond
+    'button'``) unless it is a text field, and repeats of the same (role, label, value, section, qualified href) beyond
     the first (a page with 27 identical "More actions" buttons offers one). A toggle that reports its
     state is kept even when repeated, when its whole group is: two "Enabled" switches are two settings,
     and dropping the second hid its change from the effect diff. Such rows remain observable, but
@@ -324,8 +364,8 @@ def _prune(
 
     cap = budget.native_menu_cap
 
-    def key_of(c: Candidate) -> tuple[str, str, str | None, str | None]:
-        return (c.role, c.label, c.value, c.section)
+    def key_of(c: Candidate) -> tuple[Any, ...]:
+        return (c.role, c.label, c.value, c.section, qualified_link_href(c), qualified_control_identity(c))
 
     named = []
     for c in candidates:
@@ -333,15 +373,15 @@ def _prune(
             omitted["unnamed"] = omitted.get("unnamed", 0) + 1
             continue
         named.append(c)
-    group: dict[tuple[str, str, str | None, str | None], int] = {}
+    group: dict[tuple[Any, ...], int] = {}
     for c in named:
         group[key_of(c)] = group.get(key_of(c), 0) + 1
 
     def dedupe(
-        cands: list[Candidate], whole: set[tuple[str, str, str | None, str | None]]
+        cands: list[Candidate], whole: set[tuple[Any, ...]]
     ) -> list[Candidate]:
         out: list[Candidate] = []
-        seen: set[tuple[str, str, str | None, str | None]] = set()
+        seen: set[tuple[Any, ...]] = set()
         for c in cands:
             stateful = c.checked is not None or c.pressed is not None or c.expanded is not None
             if key_of(c) in seen and not (stateful and key_of(c) in whole):
@@ -400,6 +440,10 @@ def menu_from_snapshot(
     linux_text: dict[int, dict[str, Any]] | None = None,
     mac_text: dict[int, dict[str, Any]] | None = None,
     mac_sections: dict[int, str] | None = None,
+    mac_links: dict[int, str] | None = None,
+    mac_controls: dict[int, tuple[str, str]] | None = None,
+    mac_opaque_controls: dict[int, tuple[str, str]] | None = None,
+    mac_census_only: set[int] | None = None,
 ) -> NativeMenu:
     """Build the System 1 menu from a Driver ``get_window_state`` result (SDK object or dict)."""
     b = budget or MenuBudget()
@@ -415,6 +459,7 @@ def menu_from_snapshot(
     tokens: dict[int, str] = {}
     frames: dict[int, tuple[float, float, float, float]] = {}
     values: dict[int, str] = {}
+    exact_ax_values: set[int] = set()
     ax_roles: dict[int, str] = {}
     web: set[int] = set()
     omitted: dict[str, int] = {}
@@ -424,6 +469,9 @@ def menu_from_snapshot(
         if not token or idx is None:
             continue
         ax_role = str(_get(el, "role") or "")
+        if int(idx) in (mac_census_only or set()):
+            omitted["census_only_unframed"] = omitted.get("census_only_unframed", 0) + 1
+            continue
         linux_role = linux_text is not None and not ax_role.startswith("AX")
         if ax_role == "AXWindow":
             continue
@@ -481,10 +529,17 @@ def menu_from_snapshot(
         if placeholder and mac_proof.get("placeholder_qualified", True) and label in (role, "text area"):
             label = placeholder
         value: str | None = None
+        numeric = _numeric_observation(el) if role in ("slider", "spinbutton") else None
+        value_truncated = False if role in _TEXT_ROLES and not sensitive else None
         if role in _TEXT_ROLES and not sensitive and raw_value not in (None, ""):
-            value = (
-                _clean_multiline(raw_value, _VALUE_CAP * 4) if multiline else _clean(raw_value, _VALUE_CAP)
-            )
+            preview = _clean_multiline(raw_value) if multiline else _clean(raw_value)
+            cap = _VALUE_CAP * 4 if multiline else _VALUE_CAP
+            value_truncated = len(preview) > cap
+            value = preview[:cap - 1] + "…" if value_truncated else preview
+        elif numeric is not None and "value" in numeric:
+            # Keep the supplied spelling for display; numeric is an approximate float projection.
+            # Do not populate NativeMenu.values/exact_ax_values, which authorize editable text.
+            value = str(_get(el, "value")).strip()
         checked = _checked(raw_value) if role in ("checkbox", "radio", "switch") else None
         if linux_role and role in ("checkbox", "radio"):
             checked = _get(el, "selected")
@@ -502,6 +557,13 @@ def menu_from_snapshot(
             section=(mac_sections or {}).get(int(idx)) or _section_of(el, by_index),
             offscreen=_offscreen(frame, bounds),
             placeholder=placeholder,
+            value_truncated=value_truncated,
+            numeric=numeric,
+            href=(mac_links or {}).get(int(idx)) if ax_role == "AXLink" else None,
+            native_dom_id=(mac_controls or {}).get(int(idx), (None, None))[0]
+            if ax_role in ("AXButton", "AXPopUpButton") else None,
+            native_document_url=(mac_controls or {}).get(int(idx), (None, None))[1]
+            if ax_role in ("AXButton", "AXPopUpButton") else None,
         )
         candidates.append(cand)
         tokens[cand.id] = str(token)
@@ -510,6 +572,8 @@ def menu_from_snapshot(
             web.add(cand.id)
         if role in _TEXT_ROLES and not sensitive and raw_value is not None:
             values[cand.id] = str(raw_value)
+            if isinstance(mac_proof.get("value"), str):
+                exact_ax_values.add(cand.id)
         if frame is not None:
             fx, fy, fw, fh = (_get(frame, k) for k in ("x", "y", "w", "h"))
             if None not in (fx, fy, fw, fh):
@@ -521,9 +585,42 @@ def menu_from_snapshot(
         if candidate.role in ("textbox", "searchbox")
         and any(hint in candidate.label.casefold() for hint in ADDRESS_BAR_HINTS)
     )
-    identity_counts = Counter((c.role, c.label, c.section) for c in candidates)
+    link_groups: dict[tuple[str, str, str | None], list[Candidate]] = {}
+    for candidate in candidates:
+        if candidate.role == "link":
+            link_groups.setdefault((candidate.role, candidate.label, candidate.section), []).append(candidate)
+    qualified_groups = {key for key, peers in link_groups.items() if all(peer.href for peer in peers)}
+    candidates = [dataclasses.replace(
+        candidate,
+        href=candidate.href if (candidate.role, candidate.label, candidate.section) in qualified_groups else None,
+        href_qualified=True if (candidate.role, candidate.label, candidate.section) in qualified_groups else None,
+    ) if candidate.role == "link" else candidate for candidate in candidates]
+    control_groups: dict[tuple[str, str, str | None], list[Candidate]] = {}
+    for candidate in candidates:
+        if candidate.role in ("button", "combobox"):
+            control_groups.setdefault((candidate.role, candidate.label, candidate.section), []).append(candidate)
+    qualified_controls = {
+        key for key, peers in control_groups.items()
+        if all(peer.native_dom_id and peer.native_document_url for peer in peers)
+        and len({peer.native_dom_id for peer in peers}) == len(peers)
+        and len({peer.native_document_url for peer in peers}) == 1
+    }
+    candidates = [dataclasses.replace(
+        candidate,
+        native_dom_id=candidate.native_dom_id if (candidate.role, candidate.label, candidate.section) in qualified_controls else None,
+        native_document_url=candidate.native_document_url if (candidate.role, candidate.label, candidate.section) in qualified_controls else None,
+        native_control_qualified=True if (candidate.role, candidate.label, candidate.section) in qualified_controls else None,
+    ) if candidate.role in ("button", "combobox") else candidate for candidate in candidates]
+    # Opaque backing is separately qualified; never use it to relax named peer groups.
+    candidates = [dataclasses.replace(
+        candidate, label=mac_opaque_controls[candidate.id][0],
+        native_dom_id=mac_opaque_controls[candidate.id][0],
+        native_document_url=mac_opaque_controls[candidate.id][1],
+        native_control_qualified=True, native_control_opaque=True,
+    ) if candidate.id in (mac_opaque_controls or {}) else candidate for candidate in candidates]
+    identity_counts = Counter((c.role, c.label, c.section, qualified_link_href(c), qualified_control_identity(c)) for c in candidates)
     ambiguous_targets = frozenset(
-        c.id for c in candidates if identity_counts[c.role, c.label, c.section] > 1
+        c.id for c in candidates if identity_counts[c.role, c.label, c.section, qualified_link_href(c), qualified_control_identity(c)] > 1
     )
     text_roster = sorted(
         (c.role, c.label, c.section or "", c.placeholder or "")
@@ -611,6 +708,7 @@ def menu_from_snapshot(
         degraded=bool(_get(snapshot, "degraded") or False),
         frames=frames,
         values=values,
+        exact_ax_values=frozenset(exact_ax_values & kept),
         ax_roles=ax_roles,
         web=frozenset(i for i in web if i in kept),
         scope_address_bars=scope_address_bars,
@@ -625,10 +723,63 @@ def menu_from_snapshot(
 
 
 class NativeBridgeError(Exception):
-    def __init__(self, reason: str, message: str, *, dispatched: bool = False):
+    def __init__(self, reason: str, message: str, *, dispatched: bool = False, diagnostic: dict[str, Any] | None = None):
         super().__init__(message)
         self.reason = reason
         self.dispatched = dispatched
+        self.diagnostic = diagnostic
+
+
+_FOREGROUND_INTENT_CODES = frozenset({
+    "bring_to_front_exact_window_verified", "bring_to_front_exact_window_unverified",
+    "bring_to_front_process_verified", "bring_to_front_process_unverified",
+    "bring_to_front_pid_out_of_range", "bring_to_front_window_id_out_of_range",
+    "bring_to_front_pid_not_found", "bring_to_front_window_not_found",
+    "bring_to_front_window_pid_mismatch", "bring_to_front_window_not_ordinary",
+})
+
+
+def _foreground_intent_diagnostic(outcome: Any, record: Any, *, pid: int, window_id: int) -> dict[str, Any]:
+    """Finite typed metadata only; never copy tool text, arbitrary codes, URLs or other identities."""
+    def recognized(value: Any, allowed: Any) -> str | None:
+        if value is None:
+            return None
+        return value if isinstance(value, str) and value in allowed else "unrecognized"
+
+    def boolean(value: Any) -> bool | None:
+        return value if type(value) is bool else None
+
+    def matches(value: Any, expected: int) -> bool | None:
+        return value == expected if type(value) is int else None
+
+    valid = isinstance(record, dict)
+    record = record if valid else {}
+    observed = record.get("observed")
+    observed = observed if isinstance(observed, dict) else {}
+    exact = record.get("exact_window_effect")
+    exact = exact if isinstance(exact, dict) else {}
+    action = getattr(outcome, "action", None)
+    return {"producer": "footwork.native", "kind": "foreground_intent_diagnostic", "foreground_intent": {
+        "structured_present": getattr(outcome, "structured_json", None) is not None,
+        "structured_valid": valid,
+        "code": recognized(record.get("code"), _FOREGROUND_INTENT_CODES),
+        "status": recognized(record.get("status"), {"activated", "partial", "failed"}),
+        "request_accepted": boolean(record.get("request_accepted")),
+        "action_effect": recognized(_enum_name(getattr(action, "effect", None)),
+                                    {"confirmed", "refused", "unverifiable", "partial", "suspected_noop"}),
+        "is_error": boolean(getattr(outcome, "is_error", None)),
+        "error_code": recognized(getattr(outcome, "error_code", None), _FOREGROUND_INTENT_CODES),
+        "action_error_code": recognized(getattr(getattr(action, "error", None), "code", None), _FOREGROUND_INTENT_CODES),
+        "requested": {"pid": pid, "window_id": window_id},
+        "record_pid_matches_requested": matches(record.get("pid"), pid),
+        "record_window_id_matches_requested": matches(record.get("window_id"), window_id),
+        "exact_window_effect": {key: boolean(exact.get(key)) for key in (
+            "verified", "focused", "front_in_process_on_display", "frontmost_ordinary", "target_visible_ordinary")},
+        "observed": {**{key + "_matches_requested": matches(observed.get(key), expected) for key, expected in (
+            ("frontmost_pid", pid), ("workspace_frontmost_pid", pid), ("focused_window_id", window_id),
+            ("frontmost_ordinary_window_id", window_id), ("process_front_window_on_display", window_id))},
+            "front_process_matches_target": boolean(observed.get("front_process_matches_target"))},
+    }}
 
 
 def accessibility_status() -> str:
@@ -651,6 +802,28 @@ def require_accessibility() -> None:
             "Check System Settings > Privacy & Security > Accessibility, then run footwork doctor "
             "from the same host before retrying.",
         )
+
+
+def _foreground_web_text_version() -> str:
+    from importlib.metadata import PackageNotFoundError, version
+
+    try:
+        return version("cua-driver")
+    except PackageNotFoundError:
+        return ""
+
+
+def require_foreground_web_text_runtime() -> None:
+    if sys.platform != "darwin" or _foreground_web_text_version() not in FOREGROUND_WEB_TEXT_CUA_VERSIONS:
+        raise NativeBridgeError(
+            "foreground_web_text_runtime_unqualified",
+            f"requires macOS and qualified cua-driver in {sorted(FOREGROUND_WEB_TEXT_CUA_VERSIONS)}; no input sent",
+        )
+
+
+def require_foreground_click_runtime() -> None:
+    if sys.platform != "darwin":
+        raise NativeBridgeError("foreground_click_platform_unsupported", "explicit foreground click requires native macOS")
 
 
 @dataclass(frozen=True)
@@ -1034,13 +1207,24 @@ class NativeBridge:
                     linux_text[int(index)] = {}
         mac_text = None
         mac_sections = None
+        mac_links = None
+        mac_controls = None
+        mac_opaque_controls = None
+        mac_census_only = None
         if sys.platform == "darwin":
             mac_text = await asyncio.to_thread(self._web_text_attributes, snap)
             mac_sections = await asyncio.to_thread(self._web_control_sections, snap)
+            mac_links = await asyncio.to_thread(self._link_resources, snap)
+            mac_controls = await asyncio.to_thread(self._control_identities, snap, mac_sections)
+            mac_opaque_controls, mac_census_only = await asyncio.to_thread(self._opaque_control_identities, snap)
         observed = menu_from_snapshot(
             snap, budget=budget, include_menu_bar=include_menu_bar, linux_text=linux_text,
             mac_text=mac_text,
             mac_sections=mac_sections,
+            mac_links=mac_links,
+            mac_controls=mac_controls,
+            mac_opaque_controls=mac_opaque_controls,
+            mac_census_only=mac_census_only,
         )
         if linux_text is not None:
             # Linux window managers may report the desktop ID as the app name.
@@ -1127,6 +1311,133 @@ class NativeBridge:
                         out[index]["placeholder_qualified"] = False
         return out
 
+    def _link_resources(self, snapshot: Any) -> dict[int, str]:
+        """Read exact bound AXLink URLs before pruning; incomplete peer groups stay ambiguous."""
+        out: dict[int, str] = {}
+        attempts = 0
+        for row in _get(snapshot, "elements") or []:
+            index, frame = _get(row, "element_index"), _get(row, "frame")
+            if (_get(row, "role") != "AXLink" or index is None or frame is None
+                    or not _get(row, "element_token") or _get(row, "enabled") is False or attempts >= 64):
+                continue
+            attempts += 1
+            try:
+                coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
+                if any(value is None for value in coordinates):
+                    continue
+                element = self.ax.resolve(self.pid, self.window_id, "AXLink", self.ax.Frame(*coordinates))
+                label = _get(row, "label") or _get(row, "value_description")
+                if not isinstance(label, str) or not label:
+                    continue
+                url = self.ax.link_url(element, label=label)
+                if isinstance(url, str) and url:
+                    out[int(index)] = url
+            except Exception:  # noqa: BLE001, S112 - unreadable peers cannot qualify one another
+                continue
+        return out
+
+    def _control_identities(self, snapshot: Any, sections: dict[int, str]) -> dict[int, tuple[str, str]]:
+        rows = list(_get(snapshot, "elements") or [])
+        by_index = {int(_get(row, "element_index")): row for row in rows if _get(row, "element_index") is not None}
+        groups: dict[tuple[str, str, str | None], list[Any]] = {}
+        for row in rows:
+            role, index = _get(row, "role"), _get(row, "element_index")
+            if (role not in ("AXButton", "AXPopUpButton") or index is None
+                    or not _get(row, "element_token") or _get(row, "enabled") is False):
+                continue
+            label = _clean(_get(row, "label"), _LABEL_CAP) or _clean(_get(row, "value_description"), _LABEL_CAP) or ROLE_MAP[role][0]
+            if ROLE_MAP[role][0] in _TEXT_ROLES and _get(row, "value") not in (None, "") and label == _clean(_get(row, "value"), _LABEL_CAP):
+                label = ROLE_MAP[role][0]
+            groups.setdefault((ROLE_MAP[role][0], label, sections.get(int(index)) or _section_of(row, by_index)), []).append(row)
+        out: dict[int, tuple[str, str]] = {}
+        attempts = 0
+        for peers in sorted(groups.values(), key=lambda group: len(group) == 1):
+            if attempts + len(peers) > 64:
+                continue
+            proofs = []
+            for row in peers:
+                attempts += 1
+                try:
+                    frame, label = _get(row, "frame"), _get(row, "label") or _get(row, "value_description")
+                    coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
+                    if any(value is None for value in coordinates) or not isinstance(label, str) or not label:
+                        break
+                    expected_frame = self.ax.Frame(*coordinates)
+                    element = self.ax.resolve(self.pid, self.window_id, _get(row, "role"), expected_frame)
+                    actual_frame = self.ax.frame_of(element)
+                    if actual_frame is None or not actual_frame.near(expected_frame):
+                        break
+                    proof = self.ax.control_identity(element, label=label)
+                    if not proof:
+                        break
+                    proofs.append(proof)
+                except Exception:  # noqa: BLE001 - partial group evidence never clears ambiguity
+                    break
+            if len(proofs) != len(peers):
+                continue
+            try:
+                if (len({proof["dom_id"] for proof in proofs}) != len(peers)
+                        or len({proof["document_url"] for proof in proofs}) != 1
+                        or not all(self.ax.same_element(proofs[0]["web_area"], proof["web_area"]) for proof in proofs)):
+                    continue
+            except Exception:  # noqa: BLE001, S112 - unknown ancestor equality cannot qualify the group
+                continue
+            out.update({int(_get(row, "element_index")): (proof["dom_id"], proof["document_url"])
+                        for row, proof in zip(peers, proofs, strict=True)})
+        return out
+
+    def _opaque_control_identities(self, snapshot: Any) -> tuple[dict[int, tuple[str, str]], set[int]]:
+        """Bounded all-observed web-button census, including named/disabled ID collisions."""
+        rows = [row for row in (_get(snapshot, "elements") or [])
+                if _get(row, "in_web_content") and _get(row, "role") in ("AXButton", "AXPopUpButton")]
+        if not rows or len(rows) > 64:
+            return {}, set()
+        # Skip this additional direct-AX census when no potentially unnamed control exists.
+        if not any(not _get(row, "label") and not _get(row, "value_description") for row in rows):
+            return {}, set()
+        proofs, census_only = [], set()
+        try:
+            window = self.ax.window_element(self.pid, self.window_id)
+            for row in rows:
+                index, frame = _get(row, "element_index"), _get(row, "frame")
+                coordinates = [_get(frame, key) for key in ("x", "y", "w", "h")]
+                if index is None or not _get(row, "element_token"):
+                    return {}, set()
+                named_peer = any(v is None for v in coordinates)
+                label = _get(row, "label") or _get(row, "value_description")
+                if named_peer:
+                    element = self.ax.unique_named_control(window, pid=self.pid, role=_get(row, "role"), label=label)
+                    census_only.add(int(index))
+                else:
+                    expected = self.ax.Frame(*coordinates)
+                    element = self.ax.resolve(self.pid, self.window_id, _get(row, "role"), expected)
+                    actual = self.ax.frame_of(element)
+                    if actual is None or not actual.near(expected):
+                        return {}, set()
+                proof = self.ax.control_backing(element, pid=self.pid, window=window, role=_get(row, "role"))
+                if not proof or (named_peer and not self.ax.exact_control_name(element, role=_get(row, "role"), label=label)):
+                    return {}, set()
+                proofs.append(proof)
+            if census_only and len({proof["document_url"] for proof in proofs}) != 1:
+                return {}, set()
+            # Distinct document objects claiming the same URL cannot qualify one another.
+            for left in proofs:
+                if any(left["document_url"] == right["document_url"]
+                       and not self.ax.same_element(left["web_area"], right["web_area"]) for right in proofs):
+                    return {}, set()
+            counts = Counter((proof["document_url"], proof["dom_id"]) for proof in proofs if proof["dom_id"])
+            if census_only and any(count > 1 for count in counts.values()):
+                return {}, set()
+            return {int(_get(row, "element_index")): (proof["dom_id"], proof["document_url"])
+                    for row, proof in zip(rows, proofs, strict=True)
+                    if proof["unnamed"] and proof["dom_id"] and counts[proof["document_url"], proof["dom_id"]] == 1
+                    and not _get(row, "label") and not _get(row, "value_description")
+                    and _get(row, "value") in (None, "") and _get(row, "enabled") is True
+                    and int(_get(row, "element_index")) not in census_only
+                    and "AXPress" in (_get(row, "actions") or ())}, census_only
+        except Exception:  # noqa: BLE001 - unreadable census never grants opaque identity
+            return {}, set()
+
     def _web_control_sections(self, snapshot: Any) -> dict[int, str]:
         """Recover explicit AX ancestor labels for repeated web controls whose groups CUA drops.
 
@@ -1208,13 +1519,17 @@ class NativeBridge:
         cand = nm.menu.candidate(id)
         assert cand is not None
         self._require_unambiguous(nm, id)
-        key = (cand.role, cand.label, cand.section, cand.placeholder)
+        key = (cand.role, cand.label, cand.section, cand.placeholder, qualified_link_href(cand), qualified_control_identity(cand))
         same = fresh.menu.candidate(id)
-        if same is not None and (same.role, same.label, same.section, same.placeholder) == key:
+        if same is not None and qualified_control_identity(cand) is not None and qualified_control_identity(same) != qualified_control_identity(cand):
+            raise NativeBridgeError("target_changed", "the selected native control identity changed or lost document qualification")
+        if same is not None and qualified_link_href(cand) is not None and qualified_link_href(same) != qualified_link_href(cand):
+            raise NativeBridgeError("target_changed", "the selected native link resource changed or lost qualification")
+        if same is not None and (same.role, same.label, same.section, same.placeholder, qualified_link_href(same), qualified_control_identity(same)) == key:
             hit = same
         else:
             matches = [c for c in fresh.menu.candidates
-                       if (c.role, c.label, c.section, c.placeholder) == key]
+                       if (c.role, c.label, c.section, c.placeholder, qualified_link_href(c), qualified_control_identity(c)) == key]
             if len(matches) != 1:
                 raise NativeBridgeError(
                     "target_changed",
@@ -1270,7 +1585,10 @@ class NativeBridge:
             if (isinstance(outcome, NativeBridgeError) and not outcome.dispatched) or (
                 isinstance(outcome, AXError) and code in _MENU_NOT_PRESSED
             ):
-                return self._not_sent(operation, target, label, str(code), str(outcome), delivery)
+                return dataclasses.replace(
+                    self._not_sent(operation, target, label, str(code), str(outcome), delivery),
+                    native_readback=getattr(outcome, "diagnostic", None),
+                )
             return NativeEffect(
                 operation,
                 target,
@@ -1691,19 +2009,219 @@ class NativeBridge:
         except NativeBridgeError as exc:
             raise NativeBridgeError(exc.reason, str(exc), dispatched=True) from exc
 
-    async def _click_token(self, token: str) -> Any:
-        from jevdual.effectors.cua import background_delivery, click_input, element_position
+    async def _type_web_foreground(
+        self, nm: NativeMenu, id: int, cand: Candidate, text: str, *, text_range: tuple[int, int] | None = None
+    ) -> NativeEffect:
+        """Explicit foreground type, never a fallback from an uncertain background operation."""
+        selection_attempted = False
+        text_refusal = None
+        focus_preparation = None
+        text_attempted = False
 
-        return await self.driver.click(
-            click_input(
-                target=self._target(),
-                position=element_position(element_token=token),
-                delivery_mode=background_delivery(),
-                session=self.session,
-                button=None,
-                count=None,
+        async def call() -> Any:
+            nonlocal selection_attempted, text_refusal, focus_preparation, text_attempted
+            await self._front_and_key()
+            current, target_id = await self._live(nm, id, "type")
+            target, token = self._require_fresh(current, target_id)
+            if target_id not in current.web:
+                raise NativeBridgeError("web_field_changed", "the target is no longer a qualified web text field")
+            if target_id not in current.values:
+                raise NativeBridgeError(
+                    "field_value_unreadable", "the target's current value is unreadable; selection and typing withheld"
+                )
+            before = current.values[target_id]
+            expected = None
+            if text_range is not None:
+                role, frame = current.ax_roles.get(target_id), current.frames.get(target_id)
+                if role is None or frame is None or nm.values.get(id) != before:
+                    raise NativeBridgeError("selection_unqualified", "the exact field/value changed or is unavailable")
+                element = self.ax.resolve(self.pid, self.window_id, role, self.ax.Frame(*frame))
+                start, length = text_range
+                try:
+                    raw = before.encode("utf-16-le")
+                    if len(raw) // 2 > 65_536 or start + length > len(raw) // 2:
+                        raise ValueError("range outside bounded value")
+                    prefix = raw[:start * 2].decode("utf-16-le")
+                    selected_text = raw[start * 2:(start + length) * 2].decode("utf-16-le")
+                    suffix = raw[(start + length) * 2:].decode("utf-16-le")
+                    expected = prefix + text + suffix
+                    if len(expected.encode("utf-16-le")) // 2 > 65_536:
+                        raise ValueError("result exceeds bounded readback")
+                except (UnicodeError, ValueError) as exc:
+                    raise NativeBridgeError("selection_unqualified", "range splits UTF-16 text or exceeds the readable value") from exc
+                focus_preparation = {"attempted": True, "acknowledged": False, "confirmed": False}
+                self.ax.focus_text_field_ack(element)
+                focus_preparation["acknowledged"] = True
+                deadline = asyncio.get_running_loop().time() + 0.2
+                while not self.ax.focused_element_matches(self.pid, self.window_id, element):
+                    if asyncio.get_running_loop().time() >= deadline:
+                        raise NativeBridgeError("focus_unconfirmed", "the exact bound field did not acquire independent focus")
+                    await asyncio.sleep(0.02)
+                current, target_id = await self._live(current, target_id, "type")
+                target, token = self._require_fresh(current, target_id)
+                role, frame = current.ax_roles.get(target_id), current.frames.get(target_id)
+                if (role is None or frame is None or target_id not in current.web
+                        or current.values.get(target_id) != before):
+                    raise NativeBridgeError("selection_unqualified", "focus preparation changed the exact field/value")
+                element = self.ax.resolve(self.pid, self.window_id, role, self.ax.Frame(*frame))
+                if (self.policy._activity().frontmost_pid() != self.pid
+                        or not self.ax.focused_element_matches(self.pid, self.window_id, element)):
+                    raise NativeBridgeError("focus_unconfirmed", "the freshly resolved bound field no longer holds focus")
+                focus_preparation["confirmed"] = True
+                from jevdual.ax import AXError
+
+                try:
+                    selection_matches = (self.ax.value(element) == before
+                                         and self.ax.selected_range(element) == text_range
+                                         and self.ax.selected_text(element) == selected_text)
+                except AXError as exc:
+                    raise NativeBridgeError("selection_unqualified", "the exact selected range/text is unreadable") from exc
+                if not selection_matches:
+                    raise NativeBridgeError("selection_unqualified", "the exact selected range/text does not match the request")
+            elif before:
+                selection_attempted = True
+                outcome = await self.driver.call_tool("press_key", json.dumps({
+                    "pid": self.pid, "window_id": self.window_id, "element_token": token,
+                    "key": "a", "modifiers": ["cmd"], "delivery_mode": "foreground", "session": self.session,
+                }))
+                selected = self._effect("type", target_id, target.label, outcome, "foreground")
+                if not selected.dispatched or selected.error_code or getattr(outcome, "is_error", False):
+                    selection_attempted = selected.dispatched
+                    return selected
+                current, target_id = await self._live(current, target_id, "type")
+                target, token = self._require_fresh(current, target_id)
+                role, frame = current.ax_roles.get(target_id), current.frames.get(target_id)
+                if role is None or frame is None:
+                    raise NativeBridgeError("selection_unqualified", "the selected field has no qualified role/frame")
+                element = self.ax.resolve(self.pid, self.window_id, role, self.ax.Frame(*frame))
+                if self.ax.value(element) != before or self.ax.selected_range(element) != (
+                    0, len(before.encode("utf-16-le")) // 2
+                ):
+                    raise NativeBridgeError("selection_unqualified", "the exact field/value is not wholly selected")
+            text_attempted = True
+            outcome = await self.driver.call_tool("type_text", json.dumps({
+                "pid": self.pid, "window_id": self.window_id, "element_token": token,
+                # Positive pacing disables the SDK's batched native-tail retry,
+                # including when web ancestry becomes unreadable during delivery.
+                "text": text, "delay_ms": 1, "delivery_mode": "foreground", "session": self.session,
+            }))
+            try:
+                proof = json.loads(getattr(outcome, "structured_json", None) or "{}")
+            except (TypeError, ValueError):
+                proof = {}
+            action = getattr(outcome, "action", None)
+            action_effect = _enum_name(getattr(action, "effect", None))
+            delivered = getattr(getattr(action, "delivery", None), "delivered_count", None)
+            if (isinstance(proof, dict) and proof.get("code") == "target_focus_unconfirmed"
+                    and proof.get("effect") == "refused" and proof.get("dispatched") is False
+                    and type(proof.get("delivered_chars")) is int and proof["delivered_chars"] == 0
+                    and action_effect in (None, "refused") and delivered in (None, 0)
+                    and getattr(outcome, "is_error", False) is True):
+                text_refusal = {key: proof[key] for key in ("code", "effect", "dispatched", "delivered_chars")}
+                return self._not_sent("type", target_id, target.label, "target_focus_unconfirmed",
+                                      "the SDK refused text before synthesis; zero text characters dispatched", "foreground")
+            if text_range is None:
+                return outcome
+            sent = self._effect("type", target_id, target.label, outcome, "foreground")
+            if not sent.dispatched or sent.error_code or getattr(outcome, "is_error", False):
+                return sent
+            # Read a fresh, independently resolved field after the single text call. A new
+            # value is the postcondition, so rematch identity/roster without a pre-value gate.
+            try:
+                after = await self.observe()
+                after_id = self._rematch(current, after, target_id, "readback")
+                after_role, after_frame = after.ax_roles.get(after_id), after.frames.get(after_id)
+                if after_role != role or after_frame is None or after_id not in after.values:
+                    raise NativeBridgeError("readback_unqualified", "the edited field's exact value is unavailable")
+                after_element = self.ax.resolve(self.pid, self.window_id, after_role, self.ax.Frame(*after_frame))
+                actual = self.ax.value(after_element)
+                if actual != after.values[after_id] or len(actual.encode("utf-16-le")) // 2 > 65_536:
+                    raise NativeBridgeError("readback_unqualified", "the fresh exact field reads disagree or exceed bounds")
+            except Exception:  # noqa: BLE001 - input happened; never retry an unavailable readback
+                return dataclasses.replace(sent, effect="unverifiable",
+                                           evidence=(*sent.evidence, "exact selected-range postcondition is unavailable"))
+            finally:
+                self.last = None
+            readback = {
+                "schema_version": 1, "producer": {"name": "footwork.native", "version": 1},
+                "predicate": "field_equals", "edit_kind": "selected_range", "selected_range": list(text_range),
+                "before_value": before, "observed_value": actual, "expected_value": expected,
+                "matches": actual == expected, "complete": True, "target_id": after_id,
+                "label": target.label, "role": after_role, "frame": list(after_frame),
+                "snapshot_id": after.snapshot_id, "decision_snapshot_id": nm.snapshot_id, "decision_target_id": id,
+            }
+            return dataclasses.replace(
+                sent, effect="confirmed" if actual == expected else "partial", field_readback=readback,
+                evidence=(*sent.evidence, "exact selected-range full-value readback "
+                          + ("matches" if actual == expected else "differs")),
             )
+
+        effect = await self._foreground("type", id, cand.label, call, why=f"explicit foreground web text {cand.label!r}")
+        if selection_attempted and not effect.dispatched:
+            effect = dataclasses.replace(
+                effect, effect="unverifiable", dispatched=True, delivery_basis="unknown", delivered_count=None,
+                evidence=(*effect.evidence, "selection was attempted; subsequent typing was withheld"),
+            )
+        if text_refusal is not None:
+            effect = dataclasses.replace(effect, native_readback={
+                "producer": "cua_driver", "kind": "foreground_web_text_delivery", "text_dispatch": text_refusal,
+            }, evidence=(*effect.evidence, "SDK text-dispatch refusal: zero characters; preparation may have occurred"))
+        if focus_preparation is not None:
+            proof = effect.native_readback or {"producer": "footwork.native", "kind": "foreground_web_text_selection"}
+            proof = {**proof, "focus_preparation": focus_preparation}
+            if not text_attempted:
+                proof["text_dispatch"] = {"producer": "footwork.native", "dispatched": False, "delivered_chars": 0,
+                                          "basis": "type_text boundary not reached"}
+            effect = dataclasses.replace(effect, native_readback=proof)
+            if not effect.dispatched:
+                effect = dataclasses.replace(
+                    effect, effect="unverifiable", dispatched=True, delivery_basis="unknown", delivered_count=None,
+                    evidence=(*effect.evidence, "focus preparation was attempted; this is not proven no input"),
+                )
+        return effect
+
+    async def _click_foreground(self, nm: NativeMenu, id: int, cand: Candidate) -> NativeEffect:
+        refused = await self._filmed_gate("click", id, cand.label, nm.frames.get(id))
+        if refused is not None:
+            return refused
+
+        async def call() -> Any:
+            await self._front_and_key()
+            current, target_id = await self._live(nm, id, "click")
+            target, token = self._require_fresh(current, target_id)
+            if "click" not in target.operations:
+                raise NativeBridgeError("target_changed", "the fresh target no longer offers click")
+            self.last = None
+            self.dispatches += 1
+            frame = current.frames.get(target_id)
+            target_point = (frame[0] + frame[2] / 2, frame[1] + frame[3] / 2) if frame else None
+            return await self._click_token(token, foreground=True, target_point=target_point)
+
+        return await self._foreground("click", id, cand.label, call, why=f"explicit foreground click {cand.label!r}")
+
+    async def _click_token(self, token: str, *, foreground: bool = False, target_point: Any = None) -> Any:
+        from jevdual.effectors.cua import (
+            background_delivery,
+            click_input,
+            element_position,
+            foreground_delivery,
         )
+
+        async def call() -> Any:
+            return await self.driver.click(
+                click_input(
+                    target=self._target(),
+                    position=element_position(element_token=token),
+                    delivery_mode=foreground_delivery() if foreground else background_delivery(),
+                    session=self.session,
+                    button=None,
+                    count=None,
+                )
+            )
+
+        if foreground and self.filmed is not None and getattr(self.filmed, "trace_path", None):
+            return await self.filmed.observe_sdk("foreground_click", token, target_point, call)
+        return await call()
 
     def resolve_file(self, nm: NativeMenu, selector: str) -> tuple[Any, int]:
         """Resolve the exact retained Finder inode in this fresh window."""
@@ -2338,7 +2856,20 @@ class NativeBridge:
                     f"drag approach {approach.outcome}", f"drag_{approach.outcome}",
                     delivery="desktop", dispatched=True,
                 )
-        result = await owned_thread(d.play_drag, plan, poster, clock, settings)
+        def play() -> Any:
+            from jevdual.pointer_trace import GestureTrace
+
+            trace = (GestureTrace(self.filmed, "drag", label, start, end, plan)
+                     if self.filmed is not None and getattr(self.filmed, "trace_path", None) else None)
+            result = None
+            try:
+                result = d.play_drag(plan, trace.poster(poster) if trace else poster, clock, settings, trace=trace)
+                return result
+            finally:
+                if trace is not None:
+                    trace.finish(poster, result.outcome if result else "exception", result)
+
+        result = await owned_thread(play)
         if self.filmed is not None:
             self.filmed.last_pointer = result.released_at
             if result.outcome != "dropped":
@@ -2364,6 +2895,9 @@ class NativeBridge:
         text: str | None = None,
         *,
         append_precondition: AppendPrecondition | None = None,
+        web_text_delivery: str | None = None,
+        web_text_range: tuple[int, int] | None = None,
+        click_delivery: str | None = None,
     ) -> NativeEffect:
         """Dispatch exactly one operation. The caller must reobserve afterwards; ``self.last`` is
         cleared so a second act on the same snapshot is refused as stale."""
@@ -2372,6 +2906,29 @@ class NativeBridge:
                 "unknown_operation", "An exact append precondition only applies to append"
             )
         cand, token = self._require_fresh(nm, id)
+        if click_delivery is not None:
+            require_foreground_click_runtime()
+            if (click_delivery != "foreground" or operation != "click" or "click" not in cand.operations
+                    or web_text_delivery is not None or web_text_range is not None):
+                return self._not_sent(operation, id, cand.label, "foreground_click_unsupported",
+                                      "explicit foreground delivery supports only native click", "foreground")
+            self._require_unambiguous(nm, id)
+            return await self._click_foreground(nm, id, cand)
+        if web_text_range is not None and (
+            web_text_delivery != "foreground" or not isinstance(web_text_range, tuple) or len(web_text_range) != 2
+            or any(type(value) is not int or value < 0 for value in web_text_range) or sum(web_text_range) > 65_536
+        ):
+            raise NativeBridgeError("web_text_range_invalid", "a bounded UTF-16 range requires foreground web type")
+        if web_text_delivery is not None:
+            require_foreground_web_text_runtime()
+            if (web_text_delivery != "foreground" or operation != "type" or id not in nm.web
+                    or "type" not in cand.operations):
+                return self._not_sent(operation, id, cand.label, "web_text_route_unsupported",
+                                      "foreground web text supports only a qualified native web type target", "foreground")
+            self._require_unambiguous(nm, id)
+            if text is None:
+                raise NativeBridgeError("text_required", "foreground web type needs text")
+            return await self._type_web_foreground(nm, id, cand, text, text_range=web_text_range)
         if operation not in cand.operations:
             raise NativeBridgeError(
                 "unknown_operation", f"{operation!r} is not offered on [{id}] {cand.label!r} ({cand.role})"
@@ -2432,10 +2989,16 @@ class NativeBridge:
                 )
             at = pointer.desktop_pixels(fx + fw / 2, fy + fh / 2, scale)
             try:
-                outcome = await self.driver.call_tool(
-                    "move_cursor",
-                    json.dumps({"x": at.x, "y": at.y, "scope": "desktop", "session": self.session}),
-                )
+                async def call() -> Any:
+                    return await self.driver.call_tool(
+                        "move_cursor",
+                        json.dumps({"x": at.x, "y": at.y, "scope": "desktop", "session": self.session}),
+                    )
+
+                if self.filmed is not None and getattr(self.filmed, "trace_path", None):
+                    outcome = await self.filmed.observe_sdk("hover_sdk", label, (fx + fw / 2, fy + fh / 2), call)
+                else:
+                    outcome = await call()
             except Exception as exc:  # noqa: BLE001
                 outcome = exc
             return self._effect("hover", id, label, outcome, "desktop")
@@ -2507,7 +3070,8 @@ class NativeBridge:
             )
         except Exception as exc:
             raise NativeBridgeError(
-                "foreground_intent_failed", "the SDK foreground intent failed; application input not sent"
+                "foreground_intent_failed", "the SDK foreground intent failed; application input not sent",
+                diagnostic=_foreground_intent_diagnostic(None, None, pid=self.pid, window_id=self.window_id),
             ) from exc
         effect = effect_from_action_result("foreground_intent", -1, "foreground", outcome)
         record = None
@@ -2522,7 +3086,8 @@ class NativeBridge:
                     raise ValueError("foreground intent identity differs")
             except (TypeError, ValueError) as exc:
                 raise NativeBridgeError(
-                    "foreground_intent_target_changed", "the SDK foreground intent identity was not exact"
+                    "foreground_intent_target_changed", "the SDK foreground intent identity was not exact",
+                    diagnostic=_foreground_intent_diagnostic(outcome, record, pid=self.pid, window_id=self.window_id),
                 ) from exc
         verified_activation = (
             isinstance(record, dict)
@@ -2548,8 +3113,11 @@ class NativeBridge:
                 and not (verified_activation and effect.error_code == "bring_to_front_exact_window_verified")
             )
         ):
+            diagnostic = _foreground_intent_diagnostic(outcome, record, pid=self.pid, window_id=self.window_id)
+            status = diagnostic["foreground_intent"]["status"]
             raise NativeBridgeError(
-                "foreground_intent_refused", "the SDK foreground intent refused; application input not sent"
+                "foreground_intent_refused", f"the SDK foreground intent refused (status={status}); application input not sent",
+                diagnostic=diagnostic,
             )
         # activate first, then raise: activating the app re-keys whichever of its windows was key, so a raise
         # made before it is undone (Q19 frozen re-drive: the bound TextEdit document never became key)
@@ -2583,7 +3151,20 @@ class NativeBridge:
                 "the bound window did not become the key window and its title bar is covered; not pressed",
             )
         self._foreground_inputs += 1
-        await owned_thread(self.ax.click_at, *point)
+        if self.filmed is not None and getattr(self.filmed, "trace_path", None):
+            from jevdual import drag
+            from jevdual.pointer_trace import GestureTrace
+
+            poster = drag.QuartzPoster()
+            trace = GestureTrace(self.filmed, "title_bar_click", "key window", poster.location(), point)
+            outcome = "exception"
+            try:
+                await owned_thread(self.ax.click_at, *point, trace=trace)
+                outcome = "returned"
+            finally:
+                trace.finish(poster, outcome)
+        else:
+            await owned_thread(self.ax.click_at, *point)
         if await keyed():
             return
         raise NativeBridgeError(
@@ -2854,13 +3435,22 @@ async def find_window(driver: Any, app_name: str, *, title_contains: str = "") -
     return pid, w.window_id, w.title
 
 
-async def find_window_for_pid(driver: Any, pid: int, *, title_contains: str = "") -> tuple[int, str]:
+async def find_window_for_pid(
+    driver: Any, pid: int, *, title_contains: str = "", window_id: int | None = None
+) -> tuple[int, str]:
     """``(window_id, title)`` of the largest on-screen titled window of one process (whose title contains
     ``title_contains`` when given), or raise ``LookupError``. Used after ``launch_app`` returned the pid of a
     fresh instance: ``list_apps`` reports one pid per bundle, so a second instance is invisible to it."""
     from jevdual.effectors.cua import list_windows_input
 
+    if window_id is not None and (type(window_id) is not int or not 0 < window_id <= 0xFFFFFFFF or title_contains):
+        raise LookupError("exact native window selection needs a positive CGWindowID without a title filter")
     wins = await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))
+    if window_id is not None:
+        matches = [window for window in wins.windows if window.window_id == window_id]
+        if len(matches) != 1:
+            raise LookupError(f"pid {pid} has {len(matches)} on-screen windows matching exact CGWindowID {window_id}; no fallback")
+        return matches[0].window_id, matches[0].title or ""
     titled = [w for w in wins.windows if w.title]
     if title_contains:
         titled = [w for w in titled if title_contains.casefold() in w.title.casefold()]

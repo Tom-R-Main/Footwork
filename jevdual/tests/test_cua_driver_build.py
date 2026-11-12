@@ -142,12 +142,21 @@ def test_local_native_patch_has_inspectable_hash_bound_provenance():
 
     vendor = ROOT / 'vendor/cua-driver'
     manifest = json.loads((vendor / 'patches/session-cleanup-join.json').read_text())
+    foreground = json.loads((vendor / 'patches/foreground-text-focus.json').read_text())
     assert manifest['upstream_commit'] == BUILD.SOURCE_COMMIT
-    assert manifest['patched_archive_sha256'] == BUILD.SOURCE_SHA256
+    assert manifest['patched_archive_sha256'] == foreground['base_archive_sha256']
+    assert foreground['patched_archive_sha256'] == BUILD.SOURCE_SHA256
+    assert foreground['version'] == BUILD.VERSION
     patch = (vendor / 'patches/session-cleanup-join.patch').read_bytes()
     assert hashlib.sha256(patch).hexdigest() == manifest['patch_sha256']
     assert len(manifest['files']) == 4
     with tarfile.open(vendor / 'native-source.tar.gz') as source:
         for name, hashes in manifest['files'].items():
+            assert hashlib.sha256(source.extractfile(name).read()).hexdigest() == hashes['after']
+            assert hashes['before'] != hashes['after']
+        focus_patch = (vendor / 'patches/foreground-text-focus.patch').read_bytes()
+        assert hashlib.sha256(focus_patch).hexdigest() == foreground['patch_sha256']
+        assert len(foreground['files']) == 2
+        for name, hashes in foreground['files'].items():
             assert hashlib.sha256(source.extractfile(name).read()).hexdigest() == hashes['after']
             assert hashes['before'] != hashes['after']

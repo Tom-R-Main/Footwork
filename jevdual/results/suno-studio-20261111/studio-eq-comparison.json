@@ -1,0 +1,619 @@
+{
+  "status": "aligned_diagnostic",
+  "alignment": {
+    "qualified": true,
+    "anchors": [
+      {
+        "source_start_seconds": 32.130291666666665,
+        "duration_seconds": 4,
+        "lag_samples": 0,
+        "lag_seconds": 0.0,
+        "reference_band_correlation": 0.9880154728889465,
+        "search_boundary": false
+      },
+      {
+        "source_start_seconds": 100.390875,
+        "duration_seconds": 4,
+        "lag_samples": 0,
+        "lag_seconds": 0.0,
+        "reference_band_correlation": 0.9888713359832764,
+        "search_boundary": false
+      },
+      {
+        "source_start_seconds": 168.65145833333332,
+        "duration_seconds": 4,
+        "lag_samples": 0,
+        "lag_seconds": 0.0,
+        "reference_band_correlation": 0.9767945408821106,
+        "search_boundary": false
+      }
+    ],
+    "lag_spread_samples": 0,
+    "selected_lag_samples": 0,
+    "lag_convention": "positive means edited signal is delayed; compare baseline[i] with edited[i+lag]"
+  },
+  "decoded_sample_counts": [
+    9829524,
+    9829524
+  ],
+  "decoded_duration_seconds": [
+    204.78175,
+    204.78175
+  ],
+  "cutoff_hz_caller_supplied": 120.0,
+  "cutoff_verified_by_script": false,
+  "settings": {
+    "rate": 48000,
+    "channels": 2,
+    "welch_window": "Hann",
+    "welch_samples": 32768,
+    "welch_hop_samples": 16384,
+    "anchor_fractions": [
+      0.16666666666666666,
+      0.5,
+      0.8333333333333334
+    ],
+    "anchor_seconds": 4,
+    "alignment_search_samples": 12000,
+    "maximum_lag_spread_samples": 48,
+    "minimum_anchor_correlation": 0.5,
+    "interior_trim_seconds_each_end": 1,
+    "bands_hz": {
+      "low": [
+        30.0,
+        60.0
+      ],
+      "transition": [
+        60.0,
+        240.0
+      ],
+      "reference": [
+        1000,
+        4000
+      ]
+    }
+  },
+  "limits": [
+    "No aesthetic verdict or automatic EQ acceptance.",
+    "Reference-band change can include filter, encoding, limiter or gain changes.",
+    "Weak baseline band power makes its ratio uncertain; inspect retained powers.",
+    "No full-band/stereo sample-preservation or exact analog transfer-function proof."
+  ],
+  "aligned_interior": {
+    "baseline_from_seconds": 1.0,
+    "baseline_to_seconds": 203.78175,
+    "edited_from_seconds": 1.0,
+    "edited_to_seconds": 203.78175,
+    "samples": 9733524
+  },
+  "overall": {
+    "baseline_rms_per_channel": [
+      0.18797406483828397,
+      0.1874352900747117
+    ],
+    "edited_rms_per_channel": [
+      0.10309182374196105,
+      0.10270786261001198
+    ],
+    "baseline_rms_combined": 0.18770487076421155,
+    "edited_rms_combined": 0.10290002226520813,
+    "least_squares_gain_combined": 0.06073433416933673,
+    "correlation_combined": 0.11078841476655661,
+    "baseline_peak_per_channel": [
+      0.7420145869255066,
+      0.8015187382698059
+    ],
+    "edited_peak_per_channel": [
+      0.7500256896018982,
+      0.7676680088043213
+    ],
+    "rms_change_db_per_channel": [
+      -5.217474206941512,
+      -5.224953423530691
+    ],
+    "rms_change_db_combined": -5.2212014713118915,
+    "least_squares_gain_per_channel": [
+      0.05965164009076382,
+      0.0618232615097685
+    ],
+    "correlation_per_channel": [
+      0.10876673682868657,
+      0.11282350406266396
+    ]
+  },
+  "spectrum": {
+    "welch_frames": 593,
+    "bands": {
+      "low": {
+        "hz": [
+          30.0,
+          60.0
+        ],
+        "baseline_power_per_channel": [
+          0.01544982409369211,
+          0.015444308380126675
+        ],
+        "edited_power_per_channel": [
+          0.00047205375839881256,
+          0.0004719009152026181
+        ],
+        "baseline_power_combined": 0.015447066236909394,
+        "edited_power_combined": 0.0004719773368007153,
+        "raw_change_db_per_channel": [
+          -15.149320793139475,
+          -15.14917645085709
+        ],
+        "raw_change_db_combined": -15.149248634283756,
+        "reference_normalized_change_db_per_channel": [
+          -15.145808159739675,
+          -15.14840171627984
+        ],
+        "reference_normalized_change_db_combined": -15.14711378522514
+      },
+      "transition": {
+        "hz": [
+          60.0,
+          240.0
+        ],
+        "baseline_power_per_channel": [
+          0.014240349490813953,
+          0.013828942836454916
+        ],
+        "edited_power_per_channel": [
+          0.004644780484709426,
+          0.004358227786999052
+        ],
+        "baseline_power_combined": 0.014034646163634434,
+        "edited_power_combined": 0.004501504135854239,
+        "raw_change_db_per_channel": [
+          -4.86555454233354,
+          -5.014790560967767
+        ],
+        "raw_change_db_combined": -4.93843814336695,
+        "reference_normalized_change_db_per_channel": [
+          -4.8620419089337386,
+          -5.014015826390518
+        ],
+        "reference_normalized_change_db_combined": -4.936303294308332
+      },
+      "reference": {
+        "hz": [
+          1000,
+          4000
+        ],
+        "baseline_power_per_channel": [
+          5.217078722289379e-05,
+          5.2831905533986536e-05
+        ],
+        "edited_power_per_channel": [
+          5.2128607833798484e-05,
+          5.2822481731676525e-05
+        ],
+        "baseline_power_combined": 5.250134637844016e-05,
+        "edited_power_combined": 5.2475544782737505e-05,
+        "raw_change_db_per_channel": [
+          -0.0035126333998015697,
+          -0.0007747345772487499
+        ],
+        "raw_change_db_combined": -0.002134849058617895,
+        "reference_normalized_change_db_per_channel": [
+          0.0,
+          0.0
+        ],
+        "reference_normalized_change_db_combined": 0.0
+      }
+    }
+  },
+  "segments": [
+    {
+      "baseline_from_seconds": 1.0,
+      "baseline_to_seconds": 68.59391666666667,
+      "overall": {
+        "baseline_rms_per_channel": [
+          0.17651408291517817,
+          0.17507101746105486
+        ],
+        "edited_rms_per_channel": [
+          0.09240312638448106,
+          0.09002347726385639
+        ],
+        "baseline_rms_combined": 0.17579403093142182,
+        "edited_rms_combined": 0.0912210617793458,
+        "least_squares_gain_combined": 0.02423217405958245,
+        "correlation_combined": 0.046698333401007944,
+        "baseline_peak_per_channel": [
+          0.7026258111000061,
+          0.661872148513794
+        ],
+        "edited_peak_per_channel": [
+          0.6910383105278015,
+          0.7004531621932983
+        ],
+        "rms_change_db_per_channel": [
+          -5.621853903616479,
+          -5.777169433522857
+        ],
+        "rms_change_db_combined": -5.698180032033518,
+        "least_squares_gain_per_channel": [
+          0.029622842851363823,
+          0.018752271212574327
+        ],
+        "correlation_per_channel": [
+          0.05658735958231715,
+          0.03646803368046663
+        ]
+      },
+      "spectrum": {
+        "welch_frames": 197,
+        "bands": {
+          "low": {
+            "hz": [
+              30.0,
+              60.0
+            ],
+            "baseline_power_per_channel": [
+              0.014785133254499691,
+              0.014789671316510876
+            ],
+            "edited_power_per_channel": [
+              0.00045233257993146836,
+              0.000452783727754976
+            ],
+            "baseline_power_combined": 0.014787402285505284,
+            "edited_power_combined": 0.00045255815384322216,
+            "raw_change_db_per_channel": [
+              -15.143673734782599,
+              -15.140677117208018
+            ],
+            "raw_change_db_combined": -15.14217493763253,
+            "reference_normalized_change_db_per_channel": [
+              -15.148885210644861,
+              -15.153641268909505
+            ],
+            "reference_normalized_change_db_combined": -15.151092930813373
+          },
+          "transition": {
+            "hz": [
+              60.0,
+              240.0
+            ],
+            "baseline_power_per_channel": [
+              0.012560433187697622,
+              0.012438420182077605
+            ],
+            "edited_power_per_channel": [
+              0.004281315356959618,
+              0.0042309558185518285
+            ],
+            "baseline_power_combined": 0.012499426684887613,
+            "edited_power_combined": 0.004256135587755724,
+            "raw_change_db_per_channel": [
+              -4.674273990635107,
+              -4.6832673335395105
+            ],
+            "raw_change_db_combined": -4.678746387128683,
+            "reference_normalized_change_db_per_channel": [
+              -4.67948546649737,
+              -4.696231485240997
+            ],
+            "reference_normalized_change_db_combined": -4.687664380309527
+          },
+          "reference": {
+            "hz": [
+              1000,
+              4000
+            ],
+            "baseline_power_per_channel": [
+              4.692932493627987e-05,
+              4.295164592716867e-05
+            ],
+            "edited_power_per_channel": [
+              4.698567330220298e-05,
+              4.3080052712260684e-05
+            ],
+            "baseline_power_combined": 4.494048543172427e-05,
+            "edited_power_combined": 4.503286300723183e-05,
+            "raw_change_db_per_channel": [
+              0.005211475862263354,
+              0.012964151701486518
+            ],
+            "raw_change_db_combined": 0.008917993180843221,
+            "reference_normalized_change_db_per_channel": [
+              0.0,
+              0.0
+            ],
+            "reference_normalized_change_db_combined": 0.0
+          }
+        }
+      }
+    },
+    {
+      "baseline_from_seconds": 68.59391666666667,
+      "baseline_to_seconds": 136.18783333333334,
+      "overall": {
+        "baseline_rms_per_channel": [
+          0.1880279344419573,
+          0.18922741647491367
+        ],
+        "edited_rms_per_channel": [
+          0.11053067391145192,
+          0.11305504102406633
+        ],
+        "baseline_rms_combined": 0.18862862889322954,
+        "edited_rms_combined": 0.11179998250508145,
+        "least_squares_gain_combined": 0.11226498660757248,
+        "correlation_combined": 0.18941318256056683,
+        "baseline_peak_per_channel": [
+          0.7256086468696594,
+          0.7152696251869202
+        ],
+        "edited_peak_per_channel": [
+          0.6952316761016846,
+          0.7012595534324646
+        ],
+        "rms_change_db_per_channel": [
+          -4.614791144705727,
+          -4.473882561195318
+        ],
+        "rms_change_db_combined": -4.543317447183846,
+        "least_squares_gain_per_channel": [
+          0.10398560481480719,
+          0.12043973774498908
+        ],
+        "correlation_per_channel": [
+          0.17689386839972998,
+          0.2015876533055165
+        ]
+      },
+      "spectrum": {
+        "welch_frames": 197,
+        "bands": {
+          "low": {
+            "hz": [
+              30.0,
+              60.0
+            ],
+            "baseline_power_per_channel": [
+              0.013906221801556033,
+              0.013858115316669523
+            ],
+            "edited_power_per_channel": [
+              0.0004517581275663266,
+              0.0004502685212493571
+            ],
+            "baseline_power_combined": 0.013882168559112777,
+            "edited_power_combined": 0.00045101332440784184,
+            "raw_change_db_per_channel": [
+              -14.883031773363953,
+              -14.882325848443562
+            ],
+            "raw_change_db_combined": -14.882679408128823,
+            "reference_normalized_change_db_per_channel": [
+              -14.87682658190096,
+              -14.877764741052943
+            ],
+            "reference_normalized_change_db_combined": -14.877337123841253
+          },
+          "transition": {
+            "hz": [
+              60.0,
+              240.0
+            ],
+            "baseline_power_per_channel": [
+              0.014325059107691574,
+              0.013898418213206289
+            ],
+            "edited_power_per_channel": [
+              0.004871170635194714,
+              0.004511400157845209
+            ],
+            "baseline_power_combined": 0.01411173866044893,
+            "edited_power_combined": 0.004691285396519961,
+            "raw_change_db_per_channel": [
+              -4.6846307961447025,
+              -4.88654025362911
+            ],
+            "raw_change_db_combined": -4.782886707747155,
+            "reference_normalized_change_db_per_channel": [
+              -4.67842560468171,
+              -4.88197914623849
+            ],
+            "reference_normalized_change_db_combined": -4.777544423459585
+          },
+          "reference": {
+            "hz": [
+              1000,
+              4000
+            ],
+            "baseline_power_per_channel": [
+              5.955168892076794e-05,
+              6.576980714858367e-05
+            ],
+            "edited_power_per_channel": [
+              5.946666233600902e-05,
+              6.57007697339103e-05
+            ],
+            "baseline_power_combined": 6.266074803467581e-05,
+            "edited_power_combined": 6.258371603495966e-05,
+            "raw_change_db_per_channel": [
+              -0.006205191462992653,
+              -0.004561107390619487
+            ],
+            "raw_change_db_combined": -0.005342284287569392,
+            "reference_normalized_change_db_per_channel": [
+              0.0,
+              0.0
+            ],
+            "reference_normalized_change_db_combined": 0.0
+          }
+        }
+      }
+    },
+    {
+      "baseline_from_seconds": 136.18783333333334,
+      "baseline_to_seconds": 203.78175,
+      "overall": {
+        "baseline_rms_per_channel": [
+          0.1987234801365207,
+          0.19732989534161788
+        ],
+        "edited_rms_per_channel": [
+          0.10549125426485985,
+          0.10373546339659973
+        ],
+        "baseline_rms_combined": 0.1980279136297507,
+        "edited_rms_combined": 0.10461704233173626,
+        "least_squares_gain_combined": 0.04274497388100739,
+        "correlation_combined": 0.08091127226645234,
+        "baseline_peak_per_channel": [
+          0.7420145869255066,
+          0.8015187382698059
+        ],
+        "edited_peak_per_channel": [
+          0.7500256896018982,
+          0.7676680088043213
+        ],
+        "rms_change_db_per_channel": [
+          -5.500654562269579,
+          -5.585312684522367
+        ],
+        "rms_change_db_combined": -5.54247948244387,
+        "least_squares_gain_per_channel": [
+          0.04365328329845114,
+          0.041823789821488516
+        ],
+        "correlation_per_channel": [
+          0.08223366417346095,
+          0.07955894539855764
+        ]
+      },
+      "spectrum": {
+        "welch_frames": 197,
+        "bands": {
+          "low": {
+            "hz": [
+              30.0,
+              60.0
+            ],
+            "baseline_power_per_channel": [
+              0.017596933080857625,
+              0.01763537169848591
+            ],
+            "edited_power_per_channel": [
+              0.0005093645823195088,
+              0.0005103060812265647
+            ],
+            "baseline_power_combined": 0.017616152389671767,
+            "edited_power_combined": 0.0005098353317730367,
+            "raw_change_db_per_channel": [
+              -15.384082386151242,
+              -15.385538738965629
+            ],
+            "raw_change_db_combined": -15.384811295956302,
+            "reference_normalized_change_db_per_channel": [
+              -15.37604149285729,
+              -15.378862121064675
+            ],
+            "reference_normalized_change_db_combined": -15.377450418257183
+          },
+          "transition": {
+            "hz": [
+              60.0,
+              240.0
+            ],
+            "baseline_power_per_channel": [
+              0.015743721525222274,
+              0.015074550133725611
+            ],
+            "edited_power_per_channel": [
+              0.004763854698079373,
+              0.0043240502620294765
+            ],
+            "baseline_power_combined": 0.015409135829473942,
+            "edited_power_combined": 0.004543952480054425,
+            "raw_change_db_per_channel": [
+              -5.19148892724786,
+              -5.423536269806388
+            ],
+            "raw_change_db_combined": -5.303445024858746,
+            "reference_normalized_change_db_per_channel": [
+              -5.1834480339539075,
+              -5.416859651905434
+            ],
+            "reference_normalized_change_db_combined": -5.296084147159627
+          },
+          "reference": {
+            "hz": [
+              1000,
+              4000
+            ],
+            "baseline_power_per_channel": [
+              4.983353031911996e-05,
+              4.951665378650836e-05
+            ],
+            "edited_power_per_channel": [
+              4.974134969173873e-05,
+              4.944058793845665e-05
+            ],
+            "baseline_power_combined": 4.967509205281416e-05,
+            "edited_power_combined": 4.959096881509769e-05,
+            "raw_change_db_per_channel": [
+              -0.008040893293952613,
+              -0.0066766179009538126
+            ],
+            "raw_change_db_combined": -0.007360877699118975,
+            "reference_normalized_change_db_per_channel": [
+              0.0,
+              0.0
+            ],
+            "reference_normalized_change_db_combined": 0.0
+          }
+        }
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "filename": "studio-flat-baseline.mp3",
+      "sha256": "a84ec832174313937bb97717a16348f74c1a14f45fa77fca239d62e6e8411b1e",
+      "bytes": 4761438,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "48000",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "204.781750",
+          "size": "4761438"
+        }
+      }
+    },
+    {
+      "filename": "studio-hi-pass.mp3",
+      "sha256": "14eb09ac836c613b4ce8f056fa1d8ec6350a6004e12c12e7fd2118c5d98e4985",
+      "bytes": 4641521,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "48000",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "204.781750",
+          "size": "4641521"
+        }
+      }
+    }
+  ],
+  "complete_decode": true,
+  "analyzer_sha256": "5ef6babafea2c5367d298bcf25da5f68acf3a94950b2f5a34ad4c8820876f3fd"
+}

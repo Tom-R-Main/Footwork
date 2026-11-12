@@ -48,16 +48,90 @@ def _attr(el: Any, name: str) -> Any:
 
 
 def window_element(pid: int, window_id: int) -> Any:
-    """The AX window of ``pid`` whose CGWindowID is ``window_id``."""
+    """The exact AXWindow or independently associated AXSheet with the requested CGWindowID."""
     import objc
     from ApplicationServices import AXUIElementCreateApplication
 
     get_window = _hi()
     app = AXUIElementCreateApplication(pid)
-    for w in _attr(app, "AXWindows") or ():
+    windows = list(_attr(app, "AXWindows") or ())
+
+    def number(element: Any) -> int | None:
         wid = ctypes.c_uint32(0)
-        if get_window(objc.pyobjc_id(w), ctypes.byref(wid)) == 0 and wid.value == window_id:
+        return wid.value if get_window(objc.pyobjc_id(element), ctypes.byref(wid)) == 0 else None
+
+    for w in windows:
+        if number(w) == window_id:
             return w
+    from ApplicationServices import AXUIElementGetPid
+
+    def owned(element: Any) -> bool:
+        error, owner = AXUIElementGetPid(element, None)
+        return error == 0 and owner == pid
+
+    if len(windows) > 64:
+        raise AXError("window_resolution_limit", "too many top-level windows for bounded modal resolution")
+    roots = [window for window in windows if _attr(window, "AXRole") == "AXWindow" and owned(window)]
+
+    def associated(sheet: Any, root: Any = None) -> bool:
+        if not owned(sheet):
+            return False
+        declared = _attr(sheet, "AXWindow")
+        node = sheet
+        for _ in range(32):
+            node = _attr(node, "AXParent")
+            if node is None or not owned(node):
+                return False
+            role = _attr(node, "AXRole")
+            if role == "AXWindow":
+                return (any(same_element(node, known) for known in roots)
+                        and (root is None or same_element(node, root))
+                        and (declared is None or same_element(node, declared)))
+            if role in ("AXWebArea", "AXApplication"):
+                return False
+        return False
+
+    matches = []
+
+    def retain(sheet: Any, root: Any = None) -> None:
+        if (number(sheet) == window_id and associated(sheet, root)
+                and not any(same_element(sheet, known) for known in matches)):
+            matches.append(sheet)
+
+    queue = [(root, root, 0) for root in roots]
+    seen = 0
+    while queue:
+        if seen >= 512:
+            raise AXError("window_resolution_limit", "modal descendant traversal exceeded its bound")
+        root, node, depth = queue.pop(0)
+        seen += 1
+        if depth > 16:
+            raise AXError("window_resolution_limit", "modal descendant depth exceeded its bound")
+        if not owned(node):
+            continue
+        role = _attr(node, "AXRole")
+        if role == "AXSheet":
+            retain(node, root)
+            # Do not census a Save panel's file browser. Nested direct sheets and
+            # the independently associated focused sheet are sufficient candidates.
+            children = _attr(node, "AXChildren") or ()
+            if len(children) > 512:
+                raise AXError("window_resolution_limit", "modal child enumeration exceeded its bound")
+            children = [child for child in children if _attr(child, "AXRole") == "AXSheet"]
+        elif role == "AXWebArea" or (role in ("AXWindow", "AXApplication") and node is not root):
+            continue
+        else:
+            children = _attr(node, "AXChildren") or ()
+        if seen + len(queue) + len(children) > 512:
+            raise AXError("window_resolution_limit", "modal descendant enumeration exceeded its bound")
+        queue.extend((root, child, depth + 1) for child in children)
+    focused = _attr(app, "AXFocusedWindow")
+    if focused is not None and _attr(focused, "AXRole") == "AXSheet":
+        retain(focused)
+    if len(matches) == 1:
+        return matches[0]
+    if matches:
+        raise AXError("window_ambiguous", f"multiple AXSheets match window {window_id}")
     raise AXError("window_missing", f"pid {pid} has no AX window {window_id}")
 
 
@@ -156,6 +230,177 @@ def placeholder(el: Any) -> str | None:
     return None if v is None else str(v)
 
 
+def link_url(el: Any, *, label: str | None = None) -> str | None:
+    """Read a complete HTTP(S) AXURL without display truncation or URL normalization."""
+    if label is not None and not any(
+        isinstance(name, str) and " ".join(name.split()) == " ".join(label.split())
+        for name in (_attr(el, "AXTitle"), _attr(el, "AXDescription"))
+    ):
+        return None
+    return _complete_http_url(_attr(el, "AXURL"))
+
+
+def _complete_http_url(raw: Any) -> str | None:
+    from urllib.parse import urlsplit
+
+    if isinstance(raw, str):
+        url = raw
+    else:
+        absolute = getattr(raw, "absoluteString", None)
+        url = absolute() if callable(absolute) else None
+    if (not isinstance(url, str) or not url or len(url) > 2048
+            or any(character.isspace() or ord(character) < 32 or ord(character) == 127 for character in url)):
+        return None
+    try:
+        parsed = urlsplit(url)
+        if (parsed.scheme not in ("http", "https") or not parsed.hostname or not parsed.netloc
+                or parsed.username is not None or parsed.password is not None):
+            return None
+        _ = parsed.port  # validate a malformed or out-of-range port without rewriting the resource
+    except ValueError:
+        return None
+    return url
+
+
+def control_identity(el: Any, *, label: str) -> dict[str, Any] | None:
+    """Exact named DOM control scoped by its closest direct AXWebArea, never a sibling/row URL."""
+    if _attr(el, "AXRole") not in ("AXButton", "AXPopUpButton"):
+        return None
+    if not any(isinstance(name, str) and " ".join(name.split()) == " ".join(label.split())
+               for name in (_attr(el, "AXTitle"), _attr(el, "AXDescription"))):
+        return None
+    identifier = _attr(el, "AXDOMIdentifier")
+    if (not isinstance(identifier, str) or not identifier or len(identifier) > 512
+            or any(character.isspace() or ord(character) < 32 or ord(character) == 127 for character in identifier)):
+        return None
+    node = el
+    for _ in range(32):
+        node = _attr(node, "AXParent")
+        if node is None:
+            return None
+        role = _attr(node, "AXRole")
+        if role == "AXWebArea":
+            url = _complete_http_url(_attr(node, "AXURL"))
+            return {"dom_id": identifier, "document_url": url, "web_area": node} if url else None
+        if role in ("AXWindow", "AXApplication"):
+            return None
+    return None
+
+
+def exact_control_name(el: Any, *, role: str, label: str) -> bool:
+    title, description = _attr(el, "AXTitle"), _attr(el, "AXDescription")
+    return (_attr(el, "AXRole") == role and isinstance(title, str) and isinstance(description, str)
+            and label in (title, description))
+
+
+def unique_named_control(window: Any, *, pid: int, role: str, label: str, limit: int = 1024) -> Any:
+    """Census-only lookup, never an action target or positional fallback.
+
+    Traverse the entire exposed subtree, refusing unknown branches/names, traversal limits and
+    multiple distinct AX objects. Unsupported/no-value attributes are known absent, not failed reads.
+    """
+    from ApplicationServices import (
+        AXUIElementCopyAttributeValue,
+        AXUIElementGetPid,
+        kAXErrorAttributeUnsupported,
+        kAXErrorNoValue,
+    )
+
+    if role not in ("AXButton", "AXPopUpButton") or not isinstance(label, str) or not 0 < len(label) <= 512:
+        raise AXError("census_name_invalid", "census requires an exact readable supported native name")
+    stack, seen, matches = [(window, 0)], [], []
+    visits = 0
+    while stack:
+        node, depth = stack.pop()
+        visits += 1
+        if visits > limit or depth > 32:
+            raise AXError("census_lookup_limit", "named control census exceeded its traversal bound")
+        if any(same_element(node, prior) for prior in seen):
+            continue
+        seen.append(node)
+        error, owner = AXUIElementGetPid(node, None)
+        actual_role = _attr(node, "AXRole")
+        if error != 0 or owner != pid or not isinstance(actual_role, str):
+            raise AXError("census_unreadable", "native subtree ownership or role is unreadable")
+        if actual_role == role:
+            names = []
+            for attribute in ("AXTitle", "AXDescription"):
+                error, name = AXUIElementCopyAttributeValue(node, attribute, None)
+                if error in (kAXErrorAttributeUnsupported, kAXErrorNoValue):
+                    continue  # independently known absent attribute, not a failed name read
+                if error != 0 or not isinstance(name, str):
+                    raise AXError("census_unreadable", "a native peer name is unreadable")
+                names.append(name)
+            if label in names:
+                matches.append(node)
+        error, children = AXUIElementCopyAttributeValue(node, "AXChildren", None)
+        if error in (kAXErrorAttributeUnsupported, kAXErrorNoValue):
+            continue
+        if error != 0 or children is None or isinstance(children, (str, bytes, dict)):
+            raise AXError("census_unreadable", "a native child branch is unreadable")
+        from itertools import islice
+
+        children = list(islice(iter(children), limit + 1))
+        if len(children) > limit:
+            raise AXError("census_lookup_limit", "native child branch exceeded its traversal bound")
+        stack.extend((child, depth + 1) for child in reversed(children))
+    if len(matches) != 1:
+        raise AXError("census_name_ambiguous", "exact native census name does not identify one AX object")
+    return matches[0]
+
+
+def control_backing(el: Any, *, pid: int, window: Any, role: str) -> dict[str, Any] | None:
+    """Read an opaque control's literal backing, including known absence of a DOM ID.
+
+    No purpose is inferred. A complete direct parent walk of at most 64 nodes must prove this
+    process/window and the closest WebArea's actual document URL. Missing attributes never
+    mean an empty name. Native-object equality detects cycles, including aliased AX proxies.
+    """
+    from ApplicationServices import AXUIElementGetPid
+
+    if role not in ("AXButton", "AXPopUpButton") or _attr(el, "AXRole") != role:
+        return None
+    identifier = _attr(el, "AXDOMIdentifier")
+    if (not isinstance(identifier, str) or len(identifier) > 512
+            or any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in identifier)):
+        return None
+    title, description = _attr(el, "AXTitle"), _attr(el, "AXDescription")
+    node, web_area, url = el, None, None
+    seen = []
+    for _ in range(64):
+        if any(same_element(node, prior) for prior in seen):
+            return None
+        seen.append(node)
+        error, owner = AXUIElementGetPid(node, None)
+        if error != 0 or owner != pid:
+            return None
+        role = _attr(node, "AXRole")
+        if not isinstance(role, str) or not role:
+            return None
+        if role == "AXWebArea" and web_area is None:
+            web_area, url = node, _complete_http_url(_attr(node, "AXURL"))
+            if url is None:
+                return None
+        if same_element(node, window):
+            if web_area is None or role not in ("AXWindow", "AXSheet"):
+                return None
+            return {"dom_id": identifier, "document_url": url, "web_area": web_area,
+                    "unnamed": isinstance(title, str) and title == ""
+                    and isinstance(description, str) and description == ""}
+        if role in ("AXWindow", "AXSheet", "AXApplication"):
+            return None
+        node = _attr(node, "AXParent")
+        if node is None:
+            return None
+    return None
+
+
+def same_element(left: Any, right: Any) -> bool:
+    from CoreFoundation import CFEqual
+
+    return left is not None and right is not None and bool(CFEqual(left, right))
+
+
 def semantic_section(el: Any) -> str | None:
     """Read an explicit ancestor name, including groups omitted by CUA's projection.
 
@@ -202,6 +447,51 @@ def can_insert(el: Any) -> bool:
         if err or not settable:
             return False
     return True
+
+
+def selected_range(el: Any) -> tuple[int, int]:
+    """Read the field's current UTF-16 selection; no selection is inferred from a key receipt."""
+    from ApplicationServices import AXValueGetValue, kAXValueCFRangeType
+
+    raw = _attr(el, "AXSelectedTextRange")
+    if raw is None:
+        raise AXError("selection_unreadable", "the field's selected range is unavailable")
+    ok, value = AXValueGetValue(raw, kAXValueCFRangeType, None)
+    if isinstance(value, tuple) and len(value) == 2:
+        location, length = value
+    else:
+        location, length = getattr(value, "location", None), getattr(value, "length", None)
+    if not ok or type(location) is not int or type(length) is not int or location < 0 or length < 0:
+        raise AXError("selection_unreadable", "the field's selected range cannot be qualified")
+    return location, length
+
+
+def selected_text(el: Any) -> str:
+    """The independent exact AXSelectedText, including an explicitly empty selection."""
+    text = _attr(el, "AXSelectedText")
+    if not isinstance(text, str):
+        raise AXError("selection_unreadable", "the field's selected text is unavailable")
+    return text
+
+
+def focus_text_field_ack(el: Any) -> None:
+    """One explicit AXFocused preparation write; acknowledgement alone does not prove focus."""
+    from ApplicationServices import AXUIElementSetAttributeValue
+
+    checkpoint()
+    error = AXUIElementSetAttributeValue(el, "AXFocused", True)
+    if error:
+        raise AXError("focus_refused", f"AXFocused did not acknowledge the write ({error})")
+
+
+def focused_element_matches(pid: int, window_id: int, el: Any) -> bool:
+    """Independent application focused-element equality and exact key-window identity."""
+    from ApplicationServices import AXUIElementCreateApplication
+
+    if focused_window_id(pid) != window_id:
+        return False
+    focused = _attr(AXUIElementCreateApplication(pid), "AXFocusedUIElement")
+    return same_element(focused, el)
 
 
 def can_set_value(el: Any) -> bool:
@@ -488,7 +778,7 @@ def title_bar_point(pid: int, window_id: int) -> tuple[float, float] | None:
     return x, y
 
 
-def click_at(x: float, y: float) -> None:
+def click_at(x: float, y: float, *, trace: Any = None) -> None:
     """One real left click at a screen point, the cursor put back where it was: the one input TextEdit
     takes to change its key window (Q19 U48: AX raises, the Window menu and AppleScript reorder its
     windows but leave the previous one key)."""
@@ -509,9 +799,17 @@ def click_at(x: float, y: float) -> None:
     checkpoint()
     back = CGEventGetLocation(CGEventCreate(None))
     for kind in (kCGEventLeftMouseDown, kCGEventLeftMouseUp):
-        CGEventPost(kCGHIDEventTap, CGEventCreateMouseEvent(None, kind, (x, y), kCGMouseButtonLeft))
+        event = CGEventCreateMouseEvent(None, kind, (x, y), kCGMouseButtonLeft)
+        if trace is None:
+            CGEventPost(kCGHIDEventTap, event)
+        else:
+            trace.post("down" if kind == kCGEventLeftMouseDown else "up", x, y,
+                       lambda event=event: CGEventPost(kCGHIDEventTap, event))
         time.sleep(0.03)
-    CGWarpMouseCursorPosition(back)
+    if trace is None:
+        CGWarpMouseCursorPosition(back)
+    else:
+        trace.post("warp", back.x, back.y, lambda: CGWarpMouseCursorPosition(back))
 
 
 def _title(el: Any) -> str:
@@ -602,6 +900,10 @@ def raise_window(pid: int, window_id: int) -> None:
     from ApplicationServices import AXUIElementPerformAction, AXUIElementSetAttributeValue
 
     w = window_element(pid, window_id)
+    if _attr(w, "AXRole") == "AXSheet":
+        if focused_window_id(pid) == window_id:
+            return  # SDK foreground intent already established this exact modal as key.
+        raise AXError("sheet_not_key", f"requested modal {window_id} is not the exact key window; not raised")
     checkpoint()
     AXUIElementSetAttributeValue(w, "AXMain", True)
     checkpoint()

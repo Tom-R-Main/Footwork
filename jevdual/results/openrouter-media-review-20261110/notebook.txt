@@ -1,0 +1,2 @@
+975 entries, 324 predictions: 236 held, 50 failed, 27 inconclusive, 11 open
+held rate 236/286 of predictions resolved held or failed

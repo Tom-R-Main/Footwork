@@ -1,0 +1,138 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_________ test_native_type_bounded_preview_is_not_full_readback[False] _________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1089b9620>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107cfd490>
+false_equality = False
+
+    @pytest.mark.parametrize("false_equality", [False, True])
+    def test_native_type_bounded_preview_is_not_full_readback(world, fw, monkeypatch, false_equality):
+        intended = "a" * 479 + "…" if false_equality else "a" * 600
+        actual = "a" * 479 + "different unseen suffix" if false_equality else intended
+        row = _native_styles_field(world, monkeypatch, actual_after=actual)
+        assert fw("start", "Fill own song styles", "--app", "Calculator")[0] == 0
+        code, out, err = fw("do", "type", "Styles", intended, "--no-judge")
+        assert code == 0, err
+        assert row["value"] == actual
+        assert (row["value"] != intended) is false_equality
+        receipt = _state(fw)["memory"][-1]
+>       assert "unverifiable" in receipt
+E       assert 'unverifiable' in "step 1: type(Styles) text='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' -> partial"
+
+tests/test_session_scenarios.py:1954: AssertionError
+_________ test_native_type_bounded_preview_is_not_full_readback[True] __________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x108a7b240>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107cfc770>
+false_equality = True
+
+    @pytest.mark.parametrize("false_equality", [False, True])
+    def test_native_type_bounded_preview_is_not_full_readback(world, fw, monkeypatch, false_equality):
+        intended = "a" * 479 + "…" if false_equality else "a" * 600
+        actual = "a" * 479 + "different unseen suffix" if false_equality else intended
+        row = _native_styles_field(world, monkeypatch, actual_after=actual)
+        assert fw("start", "Fill own song styles", "--app", "Calculator")[0] == 0
+        code, out, err = fw("do", "type", "Styles", intended, "--no-judge")
+        assert code == 0, err
+        assert row["value"] == actual
+        assert (row["value"] != intended) is false_equality
+        receipt = _state(fw)["memory"][-1]
+>       assert "unverifiable" in receipt
+E       assert 'unverifiable' in "step 1: type(Styles) text='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' -> confirmed"
+
+tests/test_session_scenarios.py:1954: AssertionError
+__________ test_native_literal_ellipsis_is_not_projection_truncation ___________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x108a7a5c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107cfdee0>
+
+    def test_native_literal_ellipsis_is_not_projection_truncation(world, fw, monkeypatch):
+        payload = "a" * 479 + "…"
+        row = _native_styles_field(world, monkeypatch)
+        assert fw("start", "Fill own song styles", "--app", "Calculator")[0] == 0
+        code, out, err = fw("do", "type", "Styles", payload, "--no-judge")
+        assert code == 0 and row["value"] == payload, err
+        assert "confirmed" in _state(fw)["memory"][-1]
+        saved = next(c for c in _state(fw)["last_candidates"] if c["label"] == "Styles")
+>       assert saved["value_truncated"] is False
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'value_truncated'
+
+tests/test_session_scenarios.py:1970: KeyError
+_ test_native_append_receipt_does_not_compare_a_truncated_persisted_baseline[False] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x108a45c60>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1082eb5c0>
+legacy = False
+
+    @pytest.mark.parametrize("legacy", [False, True])
+    def test_native_append_receipt_does_not_compare_a_truncated_persisted_baseline(
+        world, fw, monkeypatch, legacy
+    ):
+        from jevdual.session import SessionState
+    
+        row = _native_styles_field(world, monkeypatch, initial="a" * 600)
+        assert fw("start", "Append own song note", "--app", "Calculator")[0] == 0
+        state = SessionState.load(fw.session)
+        state.pending = {
+            "line": "append(Styles)", "op": "append", "mode": "native", "target_id": 910,
+            "target_label": "Styles", "intended": "new ending", "dispatched": True,
+            "driver_effect": "unverifiable", "secret": False,
+        }
+        if legacy:
+            for saved in state.last_candidates:
+                saved.pop("value_truncated", None)
+        state.save()
+        # The action's eventual fresh state is short: only the old baseline is bounded.
+        row["value"] = "new ending"
+        code, out, err = fw("look")
+        assert code == 0, err
+>       assert "unverifiable" in _state(fw)["memory"][-1]
+E       AssertionError: assert 'unverifiable' in 'step 0: append(Styles) -> partial'
+
+tests/test_session_scenarios.py:1995: AssertionError
+_ test_native_append_receipt_does_not_compare_a_truncated_persisted_baseline[True] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1082434c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1082b2150>
+legacy = True
+
+    @pytest.mark.parametrize("legacy", [False, True])
+    def test_native_append_receipt_does_not_compare_a_truncated_persisted_baseline(
+        world, fw, monkeypatch, legacy
+    ):
+        from jevdual.session import SessionState
+    
+        row = _native_styles_field(world, monkeypatch, initial="a" * 600)
+        assert fw("start", "Append own song note", "--app", "Calculator")[0] == 0
+        state = SessionState.load(fw.session)
+        state.pending = {
+            "line": "append(Styles)", "op": "append", "mode": "native", "target_id": 910,
+            "target_label": "Styles", "intended": "new ending", "dispatched": True,
+            "driver_effect": "unverifiable", "secret": False,
+        }
+        if legacy:
+            for saved in state.last_candidates:
+                saved.pop("value_truncated", None)
+        state.save()
+        # The action's eventual fresh state is short: only the old baseline is bounded.
+        row["value"] = "new ending"
+        code, out, err = fw("look")
+        assert code == 0, err
+>       assert "unverifiable" in _state(fw)["memory"][-1]
+E       AssertionError: assert 'unverifiable' in 'step 0: append(Styles) -> partial'
+
+tests/test_session_scenarios.py:1995: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_native_type_bounded_preview_is_not_full_readback[False]
+FAILED tests/test_session_scenarios.py::test_native_type_bounded_preview_is_not_full_readback[True]
+FAILED tests/test_session_scenarios.py::test_native_literal_ellipsis_is_not_projection_truncation
+FAILED tests/test_session_scenarios.py::test_native_append_receipt_does_not_compare_a_truncated_persisted_baseline[False]
+FAILED tests/test_session_scenarios.py::test_native_append_receipt_does_not_compare_a_truncated_persisted_baseline[True]
+5 failed, 163 deselected in 0.62s

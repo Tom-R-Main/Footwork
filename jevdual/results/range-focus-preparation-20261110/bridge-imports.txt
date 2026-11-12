@@ -1,0 +1,1 @@
+{'CFEqual': True, 'AXUIElementCreateApplication': True, 'AXUIElementSetAttributeValue': True}

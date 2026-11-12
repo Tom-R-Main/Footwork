@@ -1,0 +1,8 @@
+   Compiling cua-driver-contract v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source-804aeb8b2ba5/libs/cua-driver/rust/crates/cua-driver-contract)
+   Compiling cua-driver-core v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source-804aeb8b2ba5/libs/cua-driver/rust/crates/cua-driver-core)
+   Compiling cursor-overlay v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source-804aeb8b2ba5/libs/cua-driver/rust/crates/cursor-overlay)
+   Compiling cua-driver-sdk v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source-804aeb8b2ba5/libs/cua-driver/rust/crates/cua-driver-sdk)
+   Compiling cua-telemetry v0.18.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source-804aeb8b2ba5/libs/cua/crates/cua-telemetry)
+   Compiling platform-macos v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source-804aeb8b2ba5/libs/cua-driver/rust/crates/platform-macos)
+   Compiling cua-driver v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source-804aeb8b2ba5/libs/cua-driver/rust/crates/cua-driver)
+    Finished `release` profile [optimized] target(s) in 3m 28s

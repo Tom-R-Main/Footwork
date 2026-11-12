@@ -1,0 +1,39 @@
+   Compiling uniffi v0.31.0
+   Compiling tokio-tungstenite v0.24.0
+   Compiling cua-driver-contract v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source/libs/cua-driver/rust/crates/cua-driver-contract)
+   Compiling doom-fish-utils v0.3.2
+   Compiling cua-driver-core v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source/libs/cua-driver/rust/crates/cua-driver-core)
+   Compiling apple-cf v0.9.3
+   Compiling cua-cursor-motion v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source/libs/cua-driver/rust/crates/cua-cursor-motion)
+   Compiling platform-macos v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source/libs/cua-driver/rust/crates/platform-macos)
+   Compiling cursor-overlay v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source/libs/cua-driver/rust/crates/cursor-overlay)
+   Compiling screencapturekit v8.0.1
+   Compiling pip-preview v0.46.0 (/Users/thomasmain/projects/footwork/jevdual/output/foreground-web-text/source/libs/cua-driver/rust/crates/pip-preview)
+    Finished `release` profile [optimized] target(s) in 2m 36s
+     Running unittests src/lib.rs (output/cua-046-upgrade/target/release/deps/platform_macos-8f1d1af4e6a6e40d)
+
+running 3 tests
+
+thread 'tools::type_text::tests::foreground_text_focus_failure_emits_no_text' (127289137) panicked at crates/platform-macos/src/tools/type_text.rs:1906:9:
+unverified focus must refuse
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tools::type_text::tests::foreground_text_focus_lost_during_settle_emits_no_text' (127289138) panicked at crates/platform-macos/src/tools/type_text.rs:1929:9:
+assertion failed: result.is_err()
+
+thread 'tools::type_text::tests::foreground_text_focus_error_emits_no_text' (127289136) panicked at crates/platform-macos/src/tools/type_text.rs:1917:9:
+assertion failed: result.is_err()
+test tools::type_text::tests::foreground_text_focus_error_emits_no_text ... FAILED
+test tools::type_text::tests::foreground_text_focus_lost_during_settle_emits_no_text ... FAILED
+test tools::type_text::tests::foreground_text_focus_failure_emits_no_text ... FAILED
+
+failures:
+
+failures:
+    tools::type_text::tests::foreground_text_focus_error_emits_no_text
+    tools::type_text::tests::foreground_text_focus_failure_emits_no_text
+    tools::type_text::tests::foreground_text_focus_lost_during_settle_emits_no_text
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 734 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p platform-macos --lib`

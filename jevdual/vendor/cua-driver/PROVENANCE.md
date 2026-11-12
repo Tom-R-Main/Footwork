@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2`. The published 0.46.0 wheel does not contain the required shutdown cleanup patch and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1`. The published 0.46.0 wheel does not contain the required shutdown cleanup and foreground text focus patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 The six Python files are copied byte-for-byte from the exact release source. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -20,7 +20,7 @@ The six Python files are copied byte-for-byte from the exact release source. The
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `233149903c53bb1ccdcf84c3693cabc3bcbf8bba4ebc25f3b5a7c60e63540ea4` (6,403,457 bytes).
+`native-source.tar.gz` SHA256: `804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2` (6,403,795 bytes).
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -32,8 +32,37 @@ The exact release still spawns untracked browser/grant session-end work and retu
 
 `patches/session-cleanup-join.patch` is the inspectable diff against this release. `patches/session-cleanup-join.json` binds the original and patched file hashes and archive hashes. The previous 0.38 cleanup2 provenance, diff and manifest are retained under `history/`; its native archive remains in Git history. Prior qualification does not automatically qualify this newer build.
 
+## Foreground text focus patch
+
+The cleanup-only archive SHA256 is `233149903c53bb1ccdcf84c3693cabc3bcbf8bba4ebc25f3b5a7c60e63540ea4`.
+`patches/foreground-text-focus.patch` applies on top of it. Its JSON manifest binds both archive
+hashes, the patch hash and the before/after hashes of two private macOS Rust files. The six upstream
+Python binding files and Rust dependencies remain unchanged; the four cleanup file hashes still
+match the final archive.
+
+The foreground text synthesizer previously ignored failed or lost field focus. The patch waits
+for activation settling, then uses the existing bounded confirmed-key-focus helper with the
+application's focused element identity immediately before synthesis. Failure returns
+`target_focus_unconfirmed`, `effect:refused`, `dispatched:false` and `delivered_chars:0`.
+An explicit foreground boolean controls the gate, including zero settling time. Existing
+background focus behavior is retained. The guard proves OS field focus, not DOM acceptance or
+server persistence. The SDK retains its existing no-retry behavior for uncertain web text.
+
 ## Build and qualification
 
 Build the CLI and SDK together with Rust 1.97.1, `--release --locked --jobs 2`, and `CUA_DRIVER_GIT_SHA` set to the complete release commit. Build helpers verify and restore the exact source archive. No published native binary is substituted into the custom distribution. See [`../../docs/upstream/cua-driver-build.md`](../../docs/upstream/cua-driver-build.md).
 
 The published macOS universal2 wheel used only for ABI comparison has SHA256 `80b1be9b9a6aca20d733b10f221f9e478e862cfbcac4ce413ce5af7c141aa46c`. Its successful import establishes matched published bindings, not the required cleanup guarantee. Final qualification must use the custom wheel and retain its checksum.
+
+## Optional project-local passive HelpTag overlay
+
+`patches/ordinary-helptag.patch` and its JSON manifest reconstruct a separately
+versioned `cleanup2.focus1.helptag1` candidate on top of the unchanged canonical
+focus1 archive. `scripts/build_cua_helptag_overlay.py` verifies the base/patch/final
+hashes, prepares a temporary package and uses the canonical offline native hook.
+This does not change the default dependency, canonical source archive, six Python
+binding files or historical focus1 overlay. The explicit project overlay carries
+its own native/wheel/runtime hash qualification under the corresponding results.
+Only positively identified exact owned passive AXHelpTags can be excluded from
+ordinary-window ranking; unknown/interactive peers stay ranked and HelpTag targets
+refuse before activation. Activation sequence and success predicates are unchanged.

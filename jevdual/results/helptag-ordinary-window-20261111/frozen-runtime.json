@@ -1,0 +1,14 @@
+{
+  "distribution_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1",
+  "cli_module": "/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/runtime-8e977ba/jevdual/python/jevdual/cli.py",
+  "native_python": "/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/runtime-8e977ba/jevdual/python/jevdual/native.py",
+  "native_python_sha256": "6f787ec4635c3bcb459daff31c1f77eca0e9bd8ccfbf09347cb71313b3d81008",
+  "native_library": "/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/overlay/cua_driver/libcua_driver_sdk.dylib",
+  "native_library_sha256": "e30d43b9014f544f746a21ca9d08aa8bb236a076c9b350f89c103ed0439ddef6",
+  "source_commit": "8e977ba",
+  "wrapper": "/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/footwork",
+  "pythonpath": "/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/overlay:/Users/thomasmain/projects/footwork/jevdual/output/foreground-helptag/runtime-8e977ba/jevdual/python",
+  "wheel_sha256": "69a8fe983985c99f083438c7d985bcc31f65dce03a72407385219401805b2ad0",
+  "source_archive_sha256": "938800555df9485aa4ed800a74ef795d05575efdbdea9c5f4ce6f6dd61b02fda",
+  "activation_or_driver_started": false
+}
