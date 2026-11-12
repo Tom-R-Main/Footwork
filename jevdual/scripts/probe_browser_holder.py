@@ -35,13 +35,47 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import probe_page_effects
-from probe_page_effects import _front, _sample_front, _serve
+from probe_page_effects import _front, _serve
 
 #: BH7 adds an empty field to the fixture, before its script
 NOTE_FIELD = '<p><label>Note <input id="note" size="30"></label></p>\n<script>'
 
 PROTECTED_PORTS = {"9333", "9555"}
 PROTECTED_PROFILES = {Path.home() / ".config/jevdual/chrome-profile", Path.home() / ".config/jevdual/chrome-profile-signin"}
+
+
+def _front_pid() -> int | None:
+    """The frontmost application's process ID: two Chromes share one application name."""
+    try:
+        asn = subprocess.run(["lsappinfo", "front"], capture_output=True, text=True, timeout=2, check=False).stdout.strip()
+        out = subprocess.run(["lsappinfo", "info", "-only", "pid", asn], capture_output=True, text=True, timeout=2,
+                             check=False).stdout
+        match = re.search(r"=\s*(\d+)", out)
+        return int(match.group(1)) if match else None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def _sample_front(out: Path, stop: threading.Event) -> None:
+    """Every change of the frontmost process, with the sample count and largest gap at the end."""
+    last, samples, largest_gap, previous = None, 0, 0.0, time.time()
+    with (out / "front-app.jsonl").open("a") as stream:
+        while not stop.is_set():
+            pid = _front_pid()
+            now = time.time()
+            samples += 1
+            largest_gap = max(largest_gap, now - previous)
+            previous = now
+            if pid != last:
+                stream.write(json.dumps({"t": now, "front_pid": pid}) + "\n")
+                stream.flush()
+                last = pid
+        stream.write(json.dumps({"t": time.time(), "samples": samples, "largest_gap_s": round(largest_gap, 4)}) + "\n")
+
+
+def _activate_pid(pid: int) -> None:
+    script = f'tell application "System Events" to set frontmost of (first process whose unix id is {pid}) to true'
+    subprocess.run(["osascript", "-e", script], capture_output=True, timeout=10, check=False)
 
 
 def _idle_s() -> float:
@@ -102,13 +136,13 @@ def _typing(env: dict, out: Path, session: Path, rounds: int, spacing: float, st
         seen = look(f"{i:02d}-look")
         name_id = _field_id(seen["stdout"], "Name")
         steps.append(_cli(env, out, f"{i:02d}-append", "do", "append", str(name_id), f" +{i}", "--no-judge",
-                          "--session", str(session)) if name_id else {"name": f"{i:02d}-append", "skipped": "no Name"})
+                          "--session", str(session)) if name_id is not None else {"name": f"{i:02d}-append", "skipped": "no Name"})
         time.sleep(spacing)
     for name, text in (("type-empty", "first note"), ("type-held", "second")):
         seen = look(f"{name}-look")
         note_id = _field_id(seen["stdout"], "Note")
         steps.append(_cli(env, out, name, "do", "type", str(note_id), text, "--no-judge", "--session", str(session))
-                     if note_id else {"name": name, "skipped": "no Note"})
+                     if note_id is not None else {"name": name, "skipped": "no Note"})
         time.sleep(3.0)
     final = look("final-look")
     return {"name": _field_value(final["stdout"], "Name"), "note": _field_value(final["stdout"], "Note")}
@@ -146,22 +180,25 @@ def main() -> None:
     url = f"http://127.0.0.1:{fixture_port}/"
     gate = _wait_idle()
     front_at_start = _front()
+    front_pid_at_start = _front_pid()
     stop = threading.Event()
     sampler = threading.Thread(target=_sample_front, args=(out, stop), daemon=True)
     sampler.start()
     steps: list[dict] = []
     record = {"arm": args.arm, "port": port, "profile": str(profile), "gate": gate,
-              "front_at_start": front_at_start, "fixture": url, "steps": steps}
+              "front_at_start": front_at_start, "front_pid_at_start": front_pid_at_start, "fixture": url, "steps": steps}
     try:
         steps.append(_cli(env, out, "00-start", "start", "probe the browser holder", "--browser", "--url", url,
                           "--session", str(session)))
         steps[-1]["tab"] = _tab(session)
         time.sleep(1.0)
-        if _front() != front_at_start:
-            subprocess.run(["osascript", "-e", f'tell application "{front_at_start}" to activate'],
-                           capture_output=True, timeout=10, check=False)
+        if front_pid_at_start and _front_pid() != front_pid_at_start:
+            _activate_pid(front_pid_at_start)
         time.sleep(5.0)
-        record["restored"] = {"t": time.time(), "front": _front()}
+        from jevdual.browser_driver import chrome_pid as _owned_pid
+
+        record["restored"] = {"t": time.time(), "front": _front(), "front_pid": _front_pid(),
+                              "owned_chrome_pid": _owned_pid()}
         if args.typing:
             record["final_values"] = _typing(env, out, session, args.rounds, args.spacing, steps)
         for i in range(1, 0 if args.typing else args.rounds + 1):

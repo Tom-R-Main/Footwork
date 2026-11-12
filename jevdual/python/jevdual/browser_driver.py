@@ -544,9 +544,24 @@ class BrowserBridge:
             # browser_type selects the bound tab for about 100 ms in every mode except
             # insert_text with replace=false (page visibility probe by footwork-9c, 2026-09-25): in
             # that window the person's keystrokes can land in the agent's tab. Inserting into an
-            # empty field, or appending, is the only background-safe form; replacing held text is a
-            # foreground step and asks the posture. Keystroke mode is never used.
+            # empty field is the background form; replacing held text is a foreground step and asks
+            # the posture. Keystroke mode is never used.
             holds = (c.value or "") if c.role != "password" else ""
+            if operation == "append" and (holds or c.role == "password"):
+                # Without replace, browser_type focuses the node and inserts at the caret focus
+                # leaves, which was the start of the field (BH7/BH8), so this route cannot append
+                # onto held text. Rebuilding the value from the observation is not safe either: the
+                # observation trims it. Nothing is sent; the caller can type the whole value.
+                self.last = None
+                return BrowserEffect(
+                    operation, id, c.label, "refused", route="cdp", dispatched=False,
+                    error_code="append_unavailable",
+                    summary=f"{c.label!r} "
+                            + ("may hold text this observation cannot read" if c.role == "password"
+                               else "holds text")
+                            + "; this route inserts at the start of held text, so nothing was sent. "
+                              "Type the whole intended value instead (a foreground step).",
+                )
             needs_replace = operation == "type" and bool(holds)
             if needs_replace:
                 refusal = self.policy.permits(

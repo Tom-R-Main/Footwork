@@ -103,7 +103,7 @@ def test_every_operation_sends_the_same_wire_request():
         nm = await b.observe()
         effects.append(await b.act(nm, "type", 3, "Grace"))
         nm = await b.observe()
-        effects.append(await b.act(nm, "append", 2, " Lovelace"))
+        effects.append(await b.act(nm, "append", 3, " Lovelace"))  # an empty field
         nm = await b.observe()
         effects.append(await b.act(nm, "type", 2, "Grace"))  # replaces held text
         effects.append(await b.navigate("https://example.invalid/next"))
@@ -123,7 +123,7 @@ def test_every_operation_sends_the_same_wire_request():
         state,
         ("browser_type", {**s, **tab, "ref": "snap-1:3", "text": "Grace", "mode": "insert_text", "replace": False}),
         state,
-        ("browser_type", {**s, **tab, "ref": "snap-1:2", "text": " Lovelace", "mode": "insert_text",
+        ("browser_type", {**s, **tab, "ref": "snap-1:3", "text": " Lovelace", "mode": "insert_text",
                           "replace": False}),
         state,
         ("browser_type", {**s, **tab, "ref": "snap-1:2", "text": "Grace", "mode": "insert_text", "replace": True}),
@@ -133,10 +133,62 @@ def test_every_operation_sends_the_same_wire_request():
         ("click", 1, "Continue", "unverifiable", "dom_event", (), "done", None, True),
         ("click", 1, "Continue", "unverifiable", "trusted", (), "done", None, True),
         ("type", 3, "Note", "unverifiable", "cdp", (), "done", None, True),
-        ("append", 2, "Name", "unverifiable", "cdp", (), "done", None, True),
+        ("append", 3, "Note", "unverifiable", "cdp", (), "done", None, True),
         ("type", 2, "Name", "unverifiable", "cdp", (), "done", None, True),
         ("navigate", -1, "https://example.invalid/next", "unverifiable", "cdp", (), "done", None, True),
     ]
+
+
+@pytest.mark.parametrize("posture", ["background_only", "foreground_permitted"])
+def test_an_append_onto_held_text_is_refused_before_sending(posture):
+    """BH7/BH8: without replace the driver inserts at the start of held text, and the observation trims
+    values, so an append onto a field that holds text cannot be delivered or rebuilt."""
+    wire = Wire()
+
+    async def run():
+        b = _bridge(wire)
+        b.policy = ExecutionPolicy(posture)
+        await b.attach()
+        nm = await b.observe()
+        return await b.act(nm, "append", 2, " Lovelace")
+
+    eff = asyncio.run(run())
+    assert eff.effect == "refused" and eff.dispatched is False and eff.error_code == "append_unavailable"
+    assert "Type the whole intended value" in eff.summary
+    assert not [c for c in wire.calls if c[0] == "browser_type"]
+
+
+def test_an_append_onto_a_password_field_is_refused_because_its_text_is_unreadable():
+    wire = Wire({"get_browser_state": None})
+    snapshot = {**SNAPSHOT, "refs": [*SNAPSHOT["refs"],
+                                     {"ref": "snap-1:4", "role": "password", "name": "Secret", "actions": ["type"]}]}
+
+    class Operations:
+        async def prepare(self, **kw):
+            return BrowserReply("ok", "", False, {})
+
+        async def bind(self, **kw):
+            return BrowserReply("ok", "", False, dict(BOUND))
+
+        async def snapshot(self, **kw):
+            return BrowserReply("ok", "", False, dict(snapshot))
+
+        async def type_text(self, **kw):
+            wire.calls.append(("browser_type", kw))
+            return BrowserReply("ok", "typed", False, {})
+
+    from jevdual.effectors import BrowserReply
+
+    async def run():
+        b = BrowserBridge(None, 42, 7, operations=Operations())
+        await b.attach()
+        nm = await b.observe()
+        secret = next(c.id for c in nm.menu.candidates if c.label == "Secret")
+        return await b.act(nm, "append", secret, "x")
+
+    eff = asyncio.run(run())
+    assert eff.effect == "refused" and eff.dispatched is False and "cannot read" in eff.summary
+    assert wire.calls == []
 
 
 def test_observation_projects_the_semantic_reply_unchanged():
