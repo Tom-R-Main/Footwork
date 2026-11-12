@@ -138,3 +138,11 @@ Test: scripts/probe_browser_holder.py --arm held (five rounds of look and click,
 Predicts: held: all ten commands exit 0 and the page logs five clicks, the frontmost PID never the owned browser's after the restore; second-client: the first and third clicks land, the second is refused browser_second_client naming the second process; in both runs the holder's process has exited by the end and its runtime record is gone.
 Against: any click refused browser_client_check_unavailable or ownership_revoked; the second-client click landing; a holder process still running after the probe.
 Refs: docs/notebook/2026-11-11-browser-holder.md#bh3; docs/notebook/2026-11-11-browser-holder.md#bh11
+
+## BH17 · update · 2026-11-11 22:24
+Resolves: BH16 = held
+Observed: held: all eleven commands (start, five looks, five clicks) exited 0; every click receipt confirmed; the page logged five clicks and no focus or visibility event after the restore; the frontmost PID was never the owned browser's after the restore (13391 samples, largest gap 91 ms). Second client: the first and third clicks landed; the second was refused "browser_second_client: … Python (pid 8069); nothing was sent" and the page logged two clicks in all. No command was refused browser_client_check_unavailable or ownership_revoked. Both holders stopped on request and no holder process was left running (results/browser-holder-20261111/bh16-summary.json).
+Inferred: the driver's websocket stays open for the holder's life, so the positive-evidence rule passes alone; the claim re-check accepts a live command's claim; retirement by runtime identity works on the real lane.
+Changes: none.
+Next: re-review of PR #25, then merge, then the driver isConnected patch with HelpTag.
+Refs: results/browser-holder-20261111/bh16-summary.json
