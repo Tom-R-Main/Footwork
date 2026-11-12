@@ -107,3 +107,12 @@ Inferred: Sol's four round-2 findings are closed for the cases modelled and test
 Changes: connected2 becomes connected3 (never released either).
 Next: a fresh Sol review of PR #26.
 Refs: #dc8; #dc12; results/driver-connected-20261112/dc8
+
+## DC14 · prediction · 2026-11-12 04:50
+Question: does deciding a DOM click from the call helper's own outcome and one dialog snapshot close the dialog-close race Sol's third review found in connected3?
+Hypothesis: Sol's round-3 review of 4c25148 (static trace, not reproduced) found that connected3 turned the helper's dialog outcome into Ok({}) and then read the dialog state twice: if a handler's dialog interrupted the sequence and closed between the first read (which skipped receipt validation because a dialog was open) and the second (which saw none), the click went to semantic readback without a receipt and could read Confirmed. Deciding in one pure function, where the helper's Err(dialog) stays a dialog outcome whatever happens after, a reply is checked against one snapshot, and readback is reachable only from a completed receipt, removes that path.
+Alternatives: (a) reporting a dialog that has already closed as blocking sends the caller to browser_dialog for nothing (accepted: browser_dialog already answers a vanished dialog); (b) moving the branches changes the text or records an existing dialog, error or readback test depends on.
+Test: unit tests of the decision function in cua-driver-core browser/tools.rs: a helper dialog outcome with no dialog left, a completed receipt with and without a dialog, interrupted and malformed replies, and a call error; then all cua-driver-core library tests. connected3 has no decision seam to test, so there is no red run; the race's absence before the change rests on Sol's trace.
+Predicts: the helper's dialog outcome is a dialog outcome even when the snapshot finds none; only a completed receipt with no dialog reaches readback; the other replies are interrupted and the error fails; every existing browser test passes unchanged, the dialog ones included.
+Against: any path from a reply without a completed receipt to readback; any existing browser test failing.
+Refs: #dc8; #dc13; https://github.com/Tom-R-Main/Footwork/pull/26
