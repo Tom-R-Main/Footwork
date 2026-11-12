@@ -160,3 +160,11 @@ Test: scripts/probe_browser_holder.py --arm held, fresh isolated profile, port 9
 Predicts: all eleven commands exit 0, five page clicks, the owned browser never frontmost after the restore; the holder's final status line reports exit "stopped"; no holder process remains.
 Against: any refused click; a holder process left running; the holder log showing it was terminated by signal rather than stopped.
 Refs: docs/notebook/2026-11-11-browser-holder.md#bh16
+
+## BH20 · update · 2026-11-11 22:42
+Resolves: BH19 = held
+Observed: all eleven commands exited 0; the page logged five clicks and no focus or visibility event after the restore; the owned browser was never frontmost after the restore (11817 samples, largest gap 85 ms); the holder's last log line reads exit "stopped" with five clicks served and no second-client refusal; no holder process remained (output run held-5, holder runtime log). Correction: BH18 and BH19 carry 22:58 and 22:59, but both were committed at 22:39 (87ca02f); they belong at 22:38 and 22:39.
+Inferred: retirement waiting on process exit and the later ownership check leave the live lane as it was.
+Changes: none.
+Next: the round-three review, then merge.
+Refs: docs/notebook/2026-11-11-browser-holder.md#bh16
