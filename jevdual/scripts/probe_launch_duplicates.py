@@ -57,7 +57,7 @@ async def _launch(url: str) -> dict:
             for _ in range(50):
                 if b.chrome_pid() is None:
                     break
-                time.sleep(0.1)
+                await asyncio.sleep(0.1)
 
 
 def main() -> None:

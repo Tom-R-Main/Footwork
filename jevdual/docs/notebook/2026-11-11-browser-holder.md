@@ -38,3 +38,11 @@ Test: with the helper deferred for a new launch until 5 s after the driver is re
 Predicts: one page target on the URL in each of the three launches, and the helper never runs.
 Against: two page targets on the URL in any launch with the helper not run.
 Refs: python/jevdual/browser_driver.py bind_footwork_chrome
+
+## BH5 · update · 2026-11-11 19:48
+Resolves: BH4 = held
+Observed: with a new launch given 5 s before window recovery, three launches on fresh profiles with the fixture URL each left one page target on it, and the recovery helper never ran; binding took 1.56 to 1.69 s (results/browser-holder-20261111/launch-duplicates.json). An offline test fails with the grace removed. The first BH3 attempt did not reach its question: both arms stopped at start on the duplicate page, before any background command (results/browser-holder-20261111/bh3-attempt-1-summary.json), so BH3 stays open.
+Inferred: before this fix, start --browser --url on a newly launched browser would refuse whenever the recovery helper ran first, with or without the holder; the holder was not involved.
+Changes: b32d81d. Correction to this file's headings, which ran ahead of the clock: BH1 was committed at 19:29 (heading 19:31), BH2 and BH3 at 19:42 (headings 19:44 and 19:46), BH4 at 19:46 (heading 19:58). Each prediction was still committed before its test.
+Next: rerun BH3 unchanged.
+Refs: results/browser-holder-20261111/launch-duplicates.json; results/browser-holder-20261111/bh3-attempt-1-summary.json
