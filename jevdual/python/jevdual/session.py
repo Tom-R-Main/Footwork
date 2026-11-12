@@ -1107,6 +1107,7 @@ async def bind(state: SessionState):
                 await driver.shutdown()
             raise
         state.browser_tab = bridge.tab_id or ""
+        _attach_filmed(state, bridge)
         return driver, bridge
     from jevdual.effectors import desktop_effector
 
@@ -1138,12 +1139,17 @@ async def bind(state: SessionState):
 
 def _filmed(state: SessionState, bridge: Any) -> Any:
     bridge.menu_budget = MenuBudget(native_menu_cap=state.native_menu_cap)
+    _attach_filmed(state, bridge)
+    return bridge
+
+
+def _attach_filmed(state: SessionState, bridge: Any) -> None:
+    """Give a native or page bridge the session's filmed pointer, when the take films one."""
     if state.filmed:
         from jevdual.filmed import Filmed
 
         bridge.filmed = Filmed.from_record(state.filmed)
         bridge.filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
-    return bridge
 
 
 def _native_bridge(

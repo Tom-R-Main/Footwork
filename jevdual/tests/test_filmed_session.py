@@ -357,3 +357,33 @@ def test_a_cancelled_browser_start_releases_the_reservation_it_created(world, fw
     assert isinstance(raised.value, (asyncio.CancelledError, KeyboardInterrupt, SystemExit)), raised.value
     assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
     assert not (fw.session / "session.json").exists()
+
+
+def test_a_filmed_browser_click_travels_to_the_page_target_before_the_page_click(world, fw, filmed, monkeypatch):
+    """FP1: in a filmed start --browser session, do click moves the real pointer to the target's centre on
+    screen (the content origin plus the ref's viewport rectangle) before the driver's page click."""
+    from jevdual import browser_driver, browser_target
+    from jevdual.browser_driver import BrowserBridge
+
+    from tests.test_filmed_page_pointer import URL, Wire
+
+    log: list = []
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy):
+        wire = Wire(log)
+        return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: Wire(log))
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    assert _state(fw)["filmed"]["content"] == list(CONTENT)
+    code, _, err = fw("do", "click", str(_id(out, "Go")), "--no-judge")
+    assert code == 0, err
+    go = (CONTENT[0] + 40.0 + 80.0 / 2, CONTENT[1] + 100.0 + 30.0 / 2)  # ref rect (40, 100, 80, 30)
+    assert _moves(filmed.events)[-1] == go
+    assert log[-1] == ("browser_click", "snap-1:1")
+    assert _state(fw)["filmed"]["last_pointer"] == list(go)

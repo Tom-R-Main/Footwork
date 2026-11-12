@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag and connected-node click patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and snapshot rectangle patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 The six Python files are copied byte-for-byte from the exact release source. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -20,7 +20,7 @@ The six Python files are copied byte-for-byte from the exact release source. The
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `6f673125f9bece9777ef01c42575a93911153c37a19780f02cd40ef68d2fb94a` (6,411,905 bytes). It is the end of a four-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
+`native-source.tar.gz` SHA256: `c50c4491c290a1f1d0fba74e59cb8b745d532bee5194c1f883053be95c5d82bb` (6,413,444 bytes). It is the end of a five-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, rects1. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -67,7 +67,7 @@ change; the six Python binding files do not.
 ## Connected-node click patch (connected4)
 
 `patches/connected-click.patch` and its JSON manifest apply on top of the helptag1 archive and
-produce the pinned archive. A page-route click (`browser_click` with `input_route:"dom_event"`)
+produce archive `6f673125f9bece9777ef01c42575a93911153c37a19780f02cd40ef68d2fb94a`. A page-route click (`browser_click` with `input_route:"dom_event"`)
 resolved its ref's backend node and ran the synthetic click sequence on it even when the page had
 removed that node from its document, so a removed button's handlers still ran (Footwork notebook
 BH13). The patch reads the node's `isConnected` on the resolved object, bounded by the existing
@@ -88,3 +88,15 @@ even after it closes, and only a completed receipt reaches semantic readback (DC
 before. Two cua-driver-core browser files change (the tool and its mock-CDP tests); the generated
 bindings and dependencies do not. connected1 (the guard alone), connected2 (without the receipt
 and containment checks) and connected3 (without the single dialog snapshot) were never released.
+
+## Snapshot rectangle patch (rects1)
+
+`patches/snapshot-rects.patch` and its JSON manifest apply on top of the connected4 archive and
+produce the pinned archive. A semantic snapshot (`snapshot_format:"semantic_v2"`) gives each ref a
+`rect` key: for a main-frame ref whose visibility is `in_viewport`, the part of its layout bounds
+inside the visual viewport, as `{x, y, width, height}` in CSS px relative to the viewport's top
+left; otherwise `null`. A child-frame, offscreen or unlaid-out ref, or one whose clipped area is
+empty, is `null`. The rectangle is geometry for moving a filmed pointer onto a target (Footwork
+notebook FP1), never an action authority: actions still go through the ref. Three cua-driver-core
+browser files change (the semantic node, the snapshot serializer and its mock-CDP tests); the
+generated bindings and dependencies do not.

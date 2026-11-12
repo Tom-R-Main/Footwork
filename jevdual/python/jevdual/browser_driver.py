@@ -20,6 +20,7 @@ from __future__ import annotations
 import asyncio
 import dataclasses
 import logging
+import math
 import os
 import shutil
 import signal
@@ -258,6 +259,19 @@ class WebMenu:
         return self.refs.get(id)
 
 
+def _viewport_rect(rect: Any) -> tuple[float, float, float, float] | None:
+    """The driver's viewport rectangle for a ref, or None when it gave none or gave it malformed."""
+    if not isinstance(rect, dict):
+        return None
+    try:
+        out = tuple(float(rect[key]) for key in ("x", "y", "width", "height"))
+    except (KeyError, TypeError, ValueError):
+        return None
+    if not all(math.isfinite(v) for v in out) or out[2] <= 0 or out[3] <= 0:
+        return None
+    return out  # type: ignore[return-value]
+
+
 def _ref_index(ref: str) -> int:
     return int(ref.split(":", 1)[1])
 
@@ -296,6 +310,7 @@ def menu_from_semantic(s: dict[str, Any]) -> WebMenu:
                 expanded=_tri(states.get("expanded")),
                 pressed=control_state(states.get("pressed")),
                 offscreen=x.get("visibility") not in (None, "in_viewport", "near_viewport"),
+                viewport_rect=_viewport_rect(x.get("rect")),
             )
         )
         refs[rid] = ref
@@ -421,6 +436,9 @@ class BrowserBridge:
         self.binding: BrowserBinding | None = None
         self.target_pin: dict[str, Any] = {}
         self.last: WebMenu | None = None
+        #: filmed pointer mode (``jevdual.filmed``, B7): the real pointer travels onto each page target
+        #: before the page action; set by the session from its filmed record
+        self.filmed: Any = None
 
     async def attach(self, *, tab_id: str | None = None, expect_url: str | None = None) -> dict[str, Any]:
         """Bind the window's browser target. With ``expect_url`` (the page a session last observed) the
@@ -536,6 +554,8 @@ class BrowserBridge:
             # successes); the DOM route did all of them. DOM is the default; the receipt proves the
             # outcome either way, and --route trusted is there for controls that ignore synthetic clicks.
             input_route = route or "dom_event"
+            if (refused := await self._filmed_approach(operation, id, c)) is not None:
+                return refused
             out = await self.operations.click(**base, input_route=input_route)
             eff = self._effect(out, operation, id, c.label)
             self.last = None
@@ -580,6 +600,8 @@ class BrowserBridge:
                         error_code=refusal.code,
                         dispatched=False,
                     )
+            if (refused := await self._filmed_approach(operation, id, c)) is not None:
+                return refused
             out = await self.operations.type_text(**base, text=text or "", replace=needs_replace)
         else:
             hint = (
@@ -593,6 +615,29 @@ class BrowserBridge:
             )
         self.last = None
         return self._effect(out, operation, id, c.label)
+
+    async def _filmed_approach(self, operation: str, id: int, c: Candidate) -> BrowserEffect | None:
+        """In a filmed take, move the real pointer onto the target's viewport rectangle before the page
+        action; refuse with nothing sent when the target has none or the take refuses the move."""
+        if self.filmed is None:
+            return None
+        from jevdual.filmed import FilmedRefusal
+
+        try:
+            rect = c.viewport_rect
+            if rect is None:
+                raise FilmedRefusal(
+                    "target_unlocated",
+                    f"{c.label!r} has no rectangle in the page's viewport (offscreen, covered, in a "
+                    "child frame, or not reported), so the pointer has nowhere to travel",
+                )
+            x, y = self.filmed.viewport(rect[0], rect[1])
+            await self.filmed.approach((x, y, rect[2], rect[3]), c.label)
+        except FilmedRefusal as refusal:
+            self.last = None
+            return BrowserEffect(operation, id, c.label, "refused", route="desktop", dispatched=False,
+                                 error_code=refusal.code, summary=refusal.reason[:200])
+        return None
 
     async def navigate(self, url: str) -> BrowserEffect:
         if self.target_id is None:

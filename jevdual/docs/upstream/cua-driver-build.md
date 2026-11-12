@@ -4,7 +4,7 @@ Footwork uses the exact CUA 0.46.0 release snapshot
 `5486b6246e4c807c0d793216e52df283671d9362`, including its native implementation.
 The release still lacks Footwork’s required session-cleanup drain. Footwork carries
 that four-file patch forward and identifies the complete build as
-`cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4` so the released native binary cannot
+`cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.rects1` so the released native binary cannot
 silently satisfy this dependency.
 
 The focus1 patch additionally requires verified addressed-field focus before foreground text
@@ -17,7 +17,9 @@ ranking; it was an optional project overlay and is now part of the pinned build.
 patch makes a page-route (`input_route:"dom_event"`) click read the ref's node `isConnected` before
 any event and refuse `browser_ref_stale` when the page has removed it, and checks the node again
 inside the click sequence before every event, stopping if the page or a handler removes it
-partway. Only a well-formed completion receipt counts as a completed click. Both are private Rust changes
+partway. Only a well-formed completion receipt counts as a completed click. The rects1 patch adds each
+in-view main-frame ref's viewport rectangle (CSS px) to a semantic snapshot, so a filmed pointer can
+travel to the target it is about to act on. All three are private Rust changes
 that keep the six Python binding files and the SDK ABI. `scripts/cua_source_chain.py` rebuilds the
 pinned archive from the focus1 archive in Git history and checks every step's hashes.
 
