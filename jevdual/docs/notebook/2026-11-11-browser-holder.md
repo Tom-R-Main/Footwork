@@ -175,3 +175,9 @@ Changes: retire waits on the recorded full identity (boot, PID, start) even with
 Inferred: the live lane's success path is unchanged from BH19 (the holder answers stop and exits within the grace), so this is not re-run live.
 Next: round-four review, then merge.
 Refs: tests/test_browser_session_holder.py; tests/test_filmed_session.py
+
+## BH22 · update · 2026-11-11 23:02
+Observed: the round-four review at 47a99aa found two gaps, each reproduced with doubles: a recorded identity missing boot or start was replaced by the live record, so a holder with another PID was stopped; any failure to inspect the recorded process counted as its exit, so a replacement start went through.
+Changes: every recorded field constrains retirement, and a holder differing in any is never stopped; an incomplete identity is completed only by a live record that matches it, is taken as exited only when no process has its PID, and otherwise raises HolderRetireUnknown; only a missing process, a zombie or a reused PID count as exit, and an inspection failure raises HolderRetireUnknown, which a replacement start refuses on. Each has a test that fails with its fix reverted; the offline suite passes (3509).
+Next: round-five review, then merge.
+Refs: tests/test_browser_session_holder.py

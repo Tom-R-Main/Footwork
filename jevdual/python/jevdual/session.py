@@ -3183,7 +3183,7 @@ async def _cmd_done_verified(args: Any, state: SessionState) -> int:
             try:
                 await bsh.retire_settled(bsh.recorded_runtime(state.browser_holder, state.path),
                                          expected=state.browser_holder)
-            except bsh.HolderStillRunning as exc:
+            except bsh.HolderRetireUnknown as exc:
                 print(f"note: {exc}; it exits after its idle timeout", file=sys.stderr)
         print("accepted. session closed.")
         return 0

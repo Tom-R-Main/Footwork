@@ -101,12 +101,19 @@ def ownership_refusal(claim: Mapping[str, Any]) -> BrowserReply | None:
 TERM_GRACE_S = 5.0
 
 
-class HolderStillRunning(RuntimeError):
-    """A holder asked to stop, then signalled, is still running: its DevTools connection may be open."""
+class HolderRetireUnknown(RuntimeError):
+    """It cannot be established that a holder has exited: its DevTools connection may be open."""
+
+    def __init__(self, pid: int, reason: str) -> None:
+        super().__init__(f"the browser holder (pid {pid}) {reason}")
+        self.pid = pid
+
+
+class HolderStillRunning(HolderRetireUnknown):
+    """A holder asked to stop, then signalled, is still running."""
 
     def __init__(self, pid: int) -> None:
-        super().__init__(f"the browser holder (pid {pid}) did not exit")
-        self.pid = pid
+        super().__init__(pid, "did not exit")
 
 
 class HolderUnavailable(RuntimeError):
@@ -676,17 +683,32 @@ async def retire(runtime: Path, *, expected: Mapping[str, Any] | None = None,
     """Stop a holder and wait, bounded, until its process has exited.
 
     With ``expected`` (the identity a session recorded) only that process is stopped, and it is
-    waited for even when its record is already gone (it removes the record as it exits). A holder
-    with another identity in the same runtime is left alone. If it does not exit after asking, it is
-    sent SIGTERM, checked against the same full identity first. Returns its last status, if it
-    answered; raises HolderStillRunning if it is still running after that."""
-    from jevdual.browser_holder import process_identity
-
+    waited for even when its record is already gone (it removes the record as it exits). Every field
+    of ``expected`` is kept: a holder that differs in any is another holder and is left alone. If it
+    does not exit after asking, it is sent SIGTERM, checked against the same full identity first.
+    Returns its last status, if it answered. Raises HolderRetireUnknown when its exit cannot be
+    established: still running after SIGTERM (HolderStillRunning), a process it cannot inspect, or an
+    incomplete identity with a process on its PID."""
     keys = ("boot", "pid", "start")
     live = holder_live(runtime)
-    target = expected if expected and all(expected.get(k) for k in keys) else live
-    if target is None:
-        return None
+    if expected is None:
+        if live is None:
+            return None
+        target: dict[str, Any] = {k: live[k] for k in keys}
+    else:
+        given = {k: expected[k] for k in keys if expected.get(k) not in (None, "")}
+        if "pid" not in given:
+            raise HolderRetireUnknown(0, "has no recorded PID")
+        if len(given) == len(keys):
+            target = given
+        elif live is not None and all(live.get(k) == v for k, v in given.items()):
+            target = {k: live[k] for k in keys}  # its own live record completes the identity
+        else:
+            import psutil
+
+            if not psutil.pid_exists(int(given["pid"])):
+                return None
+            raise HolderRetireUnknown(int(given["pid"]), "has an incomplete recorded identity and its PID is in use")
     pid = int(target["pid"])
     own = pid == os.getpid()  # a holder in this very process: the offline tests
     answering = live is not None and all(live.get(k) == target.get(k) for k in keys)
@@ -694,11 +716,7 @@ async def retire(runtime: Path, *, expected: Mapping[str, Any] | None = None,
         return None  # an in-process holder is gone once its record is
 
     def same() -> bool:
-        try:
-            current = process_identity(pid)
-        except Exception:  # noqa: BLE001 - exited
-            return False
-        return all(target.get(k) == current[k] for k in keys)
+        return not _exited(pid, target)
 
     def running() -> bool:
         if not own:
@@ -724,6 +742,22 @@ async def retire(runtime: Path, *, expected: Mapping[str, Any] | None = None,
     if running():
         raise HolderStillRunning(pid)
     return status
+
+
+def _exited(pid: int, target: Mapping[str, Any]) -> bool:
+    """True when the process ``target`` names is gone (exited, a zombie, or its PID reused); False
+    while it runs. Raises HolderRetireUnknown when the process cannot be inspected."""
+    import psutil
+
+    from jevdual.browser_holder import HolderRefused, process_identity
+
+    try:
+        current = process_identity(pid)
+    except (psutil.NoSuchProcess, HolderRefused):  # exited, or a zombie
+        return True
+    except Exception as exc:  # no evidence either way
+        raise HolderRetireUnknown(pid, f"could not be inspected ({type(exc).__name__})") from exc
+    return not all(target.get(k) == current[k] for k in ("boot", "pid", "start"))
 
 
 async def retire_settled(runtime: Path, *, expected: Mapping[str, Any] | None = None) -> dict[str, Any] | None:

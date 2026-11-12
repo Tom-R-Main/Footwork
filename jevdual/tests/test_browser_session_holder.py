@@ -769,3 +769,64 @@ def test_a_replacement_start_refuses_while_the_replaced_holder_may_be_connected(
     monkeypatch.undo()
     asyncio.run(bsh.retire(runtime))
     thread.join(timeout=10)
+
+
+def _stop_spy(monkeypatch):
+    stopped = []
+
+    async def call(runtime, method, *a, **k):
+        stopped.append(method)
+        return {"ok": True}
+
+    monkeypatch.setattr(bsh, "call", call)
+    return stopped
+
+
+@pytest.mark.parametrize("partial", [False, True])
+def test_a_live_holder_with_another_identity_is_never_stopped(tmp_path, monkeypatch, partial):
+    """Sol round 4 #1: every field of the recorded identity constrains which holder is retired."""
+    import subprocess
+
+    recorded, other = subprocess.Popen(["sleep", "30"]), subprocess.Popen(["sleep", "30"])
+    try:
+        live = {**_identity_of(other.pid), "nonce": "n"}
+        monkeypatch.setattr(bsh, "holder_live", lambda runtime: live)
+        monkeypatch.setattr(bsh, "TERM_GRACE_S", 0.3)
+        stopped = _stop_spy(monkeypatch)
+        expected = {"pid": recorded.pid} if partial else _identity_of(recorded.pid)
+        if partial:  # nothing establishes that the recorded holder exited: refuse, signal no one
+            with pytest.raises(bsh.HolderRetireUnknown):
+                asyncio.run(bsh.retire(tmp_path, expected=expected, timeout_s=0.3))
+            assert recorded.poll() is None
+        else:  # the recorded holder is the one waited for and signalled
+            asyncio.run(bsh.retire(tmp_path, expected=expected, timeout_s=0.3))
+            assert recorded.poll() is not None
+        assert stopped == [] and other.poll() is None
+    finally:
+        for child in (recorded, other):
+            child.kill()
+            child.wait()
+
+
+def test_a_partial_identity_whose_pid_is_free_has_exited(tmp_path, monkeypatch):
+    import subprocess
+
+    child = subprocess.Popen(["true"])
+    child.wait()
+    monkeypatch.setattr(bsh, "holder_live", lambda runtime: None)
+    assert asyncio.run(bsh.retire(tmp_path, expected={"pid": child.pid})) is None
+
+
+def test_a_process_that_cannot_be_inspected_is_not_taken_as_exited(tmp_path, monkeypatch):
+    """Sol round 4 #2: an inspection failure is no evidence of exit."""
+    from jevdual import browser_holder
+
+    identity = {"boot": "b", "pid": 4242, "start": "1.0"}
+    monkeypatch.setattr(bsh, "holder_live", lambda runtime: None)
+
+    def denied(pid):
+        raise PermissionError("not permitted")
+
+    monkeypatch.setattr(browser_holder, "process_identity", denied)
+    with pytest.raises(bsh.HolderRetireUnknown, match="could not be inspected"):
+        asyncio.run(bsh.retire(tmp_path, expected=identity, timeout_s=0.3))
