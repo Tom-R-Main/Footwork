@@ -20,3 +20,10 @@ Inferred: DC1's Rust half held. Its live half has not run: it needs a few second
 Changes: helptag1 moves from an optional overlay into the pinned chain; the overlay build script and its tests are retired in favour of the chain script.
 Next: the live probe (scripts/probe_document_binding.py on an isolated profile, port 9466) in a window Desktop grants; it resolves DC1.
 Refs: results/driver-connected-20261112; vendor/cua-driver/patches/connected-click.json
+
+## DC3 · update · 2026-11-12 03:14
+Observed: Desktop granted one probe run until 08:00 EST. At 08:11:47 UTC, scripts/probe_document_binding.py started on port 9466 with the screen locked: its gate (_locked in scripts/probe_browser_holder.py) matched ioreg's plist text at one tab of indentation, ioreg nests the key three tabs deep, so it read locked as unlocked (gate: one poll, idle 5734 s). The scratch Chrome loaded the fixture, then browser_prepare refused a background attachment (its "Allow remote debugging?" limitation) and the holder never became ready; Chrome exited within about a second with no click, no front-app change and nothing on screen (results/driver-connected-20261112/probe-locked-run). The window was released to the film session at once.
+Inferred: the run is no evidence for or against DC1; the probe never reached a step. The background refusal is plausibly the lock (the macOS attach guard needs the browser window on another Space than the user's active one, which a locked session may not report), but that is unproven; an unlocked rerun will show it.
+Changes: the gate now parses ioreg's output as a plist and fails closed, counting only the console session and treating unreadable or sessionless output as locked (tests/test_probe_lock_gate.py, including the nesting the old check missed).
+Next: rerun the probe in a fresh Desktop window, after unlock and the cut 22 render; it still resolves DC1.
+Refs: #dc1; results/driver-connected-20261112/probe-locked-run; scripts/probe_browser_holder.py
