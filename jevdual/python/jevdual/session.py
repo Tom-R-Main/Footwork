@@ -1402,11 +1402,20 @@ async def cmd_start(args: Any) -> int:
     names = ("session.json", "session.jsonl", "pointer-gestures.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS)
     prior = directory / "session.json"
     durable = bool(getattr(args, "authority", None)) or (prior.exists() and SessionState.load(directory).authority)
+    try:
+        previous_holder = json.loads(prior.read_text()).get("browser_holder") if prior.exists() else None
+    except (OSError, ValueError):
+        previous_holder = None
+    # One driver per browser, and none left behind: the session being replaced keeps its holder's
+    # DevTools connection open, which a replacement's holder would see as a second client and refuse
+    # to send past. So it is retired before the replacement binds. The prior session's files stay
+    # until publication; without its holder its later commands bind a driver of their own, as with
+    # FOOTWORK_BROWSER_HOLDER=0.
+    await _retire_holder(previous_holder, directory)
     if durable or not any((directory / name).exists() for name in names):
         return await _start_new(args)
     import shutil
     import tempfile
-
     with tempfile.TemporaryDirectory(prefix=".footwork-start-", dir=directory.parent) as temporary:
         staged = Path(temporary)
         staged_args = copy.copy(args)
@@ -1426,10 +1435,6 @@ async def cmd_start(args: Any) -> int:
             return code
         replacement = json.loads((staged / "session.json").read_text())
         replacement["dir"] = str(directory)
-        try:
-            previous_holder = json.loads(prior.read_text()).get("browser_holder") if prior.exists() else None
-        except (OSError, ValueError):
-            previous_holder = None
         (staged / "session.json").write_text(json.dumps(replacement, indent=1))
         # Initialization and driver cleanup succeeded. Publish only owned session files,
         # retaining the old versions until all replacement writes can be rolled back.
@@ -1465,8 +1470,6 @@ async def cmd_start(args: Any) -> int:
             from jevdual.cli import _stopped
 
             return _stopped(staged_args, exc)
-        # the replacement is published; the session it replaced no longer owns its browser holder
-        await _retire_holder(previous_holder, directory)
     print(f"\nsession: {directory}  (export FOOTWORK_SESSION={directory} to omit --session)")
     return 0
 
@@ -1795,6 +1798,13 @@ async def _start_browser(args: Any, d: Path) -> int:
         if args.url:
             eff = await bridge.navigate(args.url)
             print(f"navigate {args.url}: {eff.effect} {eff.summary[:80]}")
+            if eff.effect == "refused":
+                # a session must not start bound to whatever page the browser already showed
+                print(f"not starting: the first navigation was refused: {eff.error_code or eff.summary[:120]}",
+                      file=sys.stderr)
+                if holder:
+                    await bsh.retire(Path(holder["runtime"]), expected=holder)
+                return 2
             await asyncio.sleep(2.0)
         state.log({"kind": "start", "task": args.task, "requirements": state.requirements, "mode": "browser"})
         initial = await bridge.observe()

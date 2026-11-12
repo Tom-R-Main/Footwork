@@ -182,7 +182,10 @@ def devtools_clients(port: int) -> list[dict[str, Any]] | None:
                               capture_output=True, text=True, timeout=5, check=False)
     except (OSError, subprocess.SubprocessError):
         return None
-    if proc.returncode not in (0, 1):  # 1: no matching connection
+    if proc.returncode != 0:
+        # 1 is also lsof's status for an inspection error, whose partial output could show this
+        # holder's connection and miss another; with no match at all the positive-evidence rule
+        # refuses anyway, so only a clean exit counts as a scan
         return None
     clients: dict[int, dict[str, Any]] = {}
     pid, command = None, ""
@@ -283,10 +286,11 @@ class Holder:
         self.last_request = time.monotonic()
         async with self.lock:
             refusal = None
-            if method in SENDING and claim is not None:
-                refusal = await asyncio.to_thread(ownership_refusal, claim)
-            if refusal is None and method in SENDING and self.clients is not None:
+            if method in SENDING and self.clients is not None:
                 refusal = second_client_refusal(await asyncio.to_thread(self.clients))
+            # last before dispatch: a claim revoked while the scan ran must not be acted for
+            if refusal is None and method in SENDING and claim is not None:
+                refusal = await asyncio.to_thread(ownership_refusal, claim)
             if refusal is not None:
                 if refusal.refusal and refusal.refusal.code != "ownership_revoked":
                     self.refused_second_client += 1
@@ -391,8 +395,6 @@ async def serve(
     try:
         reason = await _watch(holder, chrome_alive)
     finally:
-        with contextlib.suppress(FileNotFoundError):
-            (runtime / HOLDER_FILE).unlink()
         server.close()
         with contextlib.suppress(Exception):
             await asyncio.wait_for(server.wait_closed(), 2)
@@ -400,6 +402,10 @@ async def serve(
             sock.unlink()
         with contextlib.suppress(Exception):
             await asyncio.wait_for(driver.shutdown(), 5)
+        # last, once the driver's DevTools connection is closed: an in-process holder is retired
+        # when its record is gone (a subprocess holder when its process has exited)
+        with contextlib.suppress(FileNotFoundError):
+            (runtime / HOLDER_FILE).unlink()
         print(json.dumps({"t": time.time(), "exit": reason, **holder.status()}), flush=True)
     return reason
 
@@ -618,25 +624,31 @@ def spawn(*, url: str | None) -> dict[str, Any]:
     raise HolderUnavailable(f"the browser holder did not become ready: {tail.strip()}")
 
 
+async def _settle(task: asyncio.Future[Any]) -> None:
+    """Wait for ``task`` to finish however often the waiter is cancelled meanwhile."""
+    while not task.done():
+        try:
+            await asyncio.shield(task)
+        except asyncio.CancelledError:
+            continue
+        except Exception:  # noqa: BLE001 - the caller reads the task's own outcome
+            break
+
+
 async def spawn_owned(*, url: str | None) -> dict[str, Any]:
-    """``spawn`` that a cancelled caller cannot abandon: on cancellation it waits for the spawn to
-    finish and retires the holder it produced before re-raising."""
+    """``spawn`` that a cancelled caller cannot abandon: on cancellation, however repeated, it
+    waits for the spawn to finish and for the holder it produced to be retired, then re-raises."""
     task = asyncio.ensure_future(asyncio.to_thread(spawn, url=url))
     try:
         return await asyncio.shield(task)
     except asyncio.CancelledError:
-        while not task.done():
-            try:
-                await asyncio.shield(task)
-            except asyncio.CancelledError:
-                continue
-            except Exception:  # noqa: BLE001 - a failed spawn terminated its own process
-                break
+        await _settle(task)
         identity = None
         with contextlib.suppress(Exception):
             identity = task.result()
         if identity is not None:
-            await retire(Path(identity["runtime"]), expected=identity)
+            cleanup = asyncio.ensure_future(retire(Path(identity["runtime"]), expected=identity))
+            await _settle(cleanup)
         raise
 
 
@@ -669,10 +681,11 @@ async def retire(runtime: Path, *, expected: Mapping[str, Any] | None = None,
         return all(live.get(k) == current[k] for k in ("boot", "pid", "start"))
 
     def running() -> bool:
-        # the holder removes its record as it exits; a holder in this very process (the offline
-        # tests) is gone once its record is
+        if int(live["pid"]) != os.getpid():
+            return same()  # a subprocess holder is gone only once its process has exited
+        # a holder in this very process (the offline tests) removes its record after shutdown
         current = holder_live(runtime)
-        return same() and current is not None and current.get("nonce") == live.get("nonce")
+        return current is not None and current.get("nonce") == live.get("nonce")
 
     for signalled in (False, True):
         deadline = time.monotonic() + (timeout_s if not signalled else 5.0)

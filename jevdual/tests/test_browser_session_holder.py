@@ -284,7 +284,8 @@ def test_devtools_clients_reads_the_client_ends_of_a_real_connection():
     finally:
         for s in (client, accepted, server):
             s.close()
-    assert bsh.devtools_clients(port) == []
+    # with no connection lsof exits 1, which is no scan: the positive-evidence rule refuses
+    assert bsh.second_client_refusal(bsh.devtools_clients(port)).refusal.code == "browser_client_check_unavailable"
 
 
 def test_another_client_or_an_unreadable_check_refuses_before_sending():
@@ -447,6 +448,8 @@ async def test_a_cancelled_start_retires_the_holder_its_spawn_produced(monkeypat
 
 @pytest.mark.parametrize(("returncode", "stdout", "code"), [
     (1, "", "browser_client_check_unavailable"),            # no rows, maybe an inspection error
+    # an inspection error's partial output can show this holder and miss another client
+    (1, "pSELF\ncpython\nn127.0.0.1:50001->127.0.0.1:9466\n", "browser_client_check_unavailable"),
     (2, "", "browser_client_check_unavailable"),            # lsof failed
     (0, "p4242\ncnode\nn127.0.0.1:50000->127.0.0.1:9466\n", "browser_second_client"),
     (0, ("pSELF\ncpython\nn127.0.0.1:50001->127.0.0.1:9466\n"
@@ -469,14 +472,10 @@ def test_the_client_scan_needs_positive_evidence(monkeypatch, returncode, stdout
         assert refusal.dispatched is False
 
 
-def test_a_replacement_start_retires_the_holder_of_the_session_it_replaces(world, fw, tmp_path):  # noqa: F811
-    """Sol #3: a published replacement retires the previous session's holder."""
-    import json
+def _threaded_holder(runtime: Path):
+    """A holder serving on its own thread and loop, as a separate session's would."""
     import threading
 
-    from jevdual import browser_target  # noqa: F401 - imported for the scenario fixtures
-
-    runtime = tmp_path / "old-rt"
     runtime.mkdir(mode=0o700)
     ready = threading.Event()
 
@@ -495,12 +494,193 @@ def test_a_replacement_start_retires_the_holder_of_the_session_it_replaces(world
     thread = threading.Thread(target=holder_thread, daemon=True)
     thread.start()
     assert ready.wait(5)
-    assert fw("start", "Old native task", "--app", "Calculator")[0] == 0
-    saved = json.loads((fw.session / "session.json").read_text())
+    return thread
+
+
+def _record_holder(cli, runtime: Path) -> None:
+    import json
+
+    saved = json.loads((cli.session / "session.json").read_text())
     live = bsh.holder_live(runtime)
     saved["browser_holder"] = {**{k: live[k] for k in ("boot", "pid", "start")}, "runtime": str(runtime)}
-    (fw.session / "session.json").write_text(json.dumps(saved))
+    (cli.session / "session.json").write_text(json.dumps(saved))
+
+
+def test_a_replacement_start_retires_the_holder_of_the_session_it_replaces(world, fw, tmp_path):  # noqa: F811
+    """Sol #3: a published replacement retires the previous session's holder."""
+
+    from jevdual import browser_target  # noqa: F401 - imported for the scenario fixtures
+
+    runtime = tmp_path / "old-rt"
+    thread = _threaded_holder(runtime)
+    assert fw("start", "Old native task", "--app", "Calculator")[0] == 0
+    _record_holder(fw, runtime)
     code, out, err = fw("start", "New native task", "--app", "Calculator")
     assert code == 0, (out, err)
     thread.join(timeout=10)
     assert not thread.is_alive() and bsh.holder_live(runtime) is None
+
+
+@pytest.mark.parametrize("durable", [False, True])
+def test_the_replaced_sessions_holder_is_gone_before_the_replacement_binds(world, fw, tmp_path, monkeypatch,  # noqa: F811
+                                                                          durable):
+    """Sol re-review #2: the old holder's DevTools connection would make the new holder refuse its
+    first navigation as a second client, so it is retired before the replacement starts."""
+    from jevdual import session
+
+    runtime = tmp_path / "old-rt"
+    thread = _threaded_holder(runtime)
+    assert fw("start", "Old native task", "--app", "Calculator")[0] == 0
+    _record_holder(fw, runtime)
+    seen = []
+
+    async def start_new(args):
+        seen.append(bsh.holder_live(runtime))
+        return 2
+
+    monkeypatch.setattr(session, "_start_new", start_new)
+    args = ["start", "New task", "--app", "Calculator"]
+    if durable:
+        args += ["--authority", str(tmp_path / "authority.db")]
+    fw(*args)
+    assert seen == [None]
+    thread.join(timeout=10)
+    assert not thread.is_alive()
+
+
+async def test_a_refused_first_navigation_refuses_the_start(tmp_path, monkeypatch, capsys):
+    """Sol re-review #2: a start must not be published bound to whatever page the browser showed."""
+    from types import SimpleNamespace
+
+    from jevdual import browser_driver, session
+    from jevdual.browser_driver import BrowserEffect
+
+    class Bridge:
+        pid, window_id, tab_id = 42, 7, "tab-1"
+        observed = False
+
+        async def navigate(self, url):
+            return BrowserEffect("navigate", -1, url, "refused", summary="another DevTools client",
+                                 error_code="browser_second_client", dispatched=False)
+
+        async def observe(self):
+            Bridge.observed = True
+            raise AssertionError("a refused start must not observe")
+
+    driver = FakeDriver()
+
+    async def bind(url, *, policy=None, wrap_operations=None):
+        return driver, Bridge()
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", bind)
+    args = SimpleNamespace(mode=None, url="http://127.0.0.1:1/", task="t", require="", authorize="",
+                           answer=None, pointer_motion="off", text=0)
+    assert await session._start_browser(args, tmp_path) == 2
+    assert "browser_second_client" in capsys.readouterr().err
+    assert driver.shut and not Bridge.observed and not (tmp_path / "session.json").exists()
+
+
+async def test_the_holder_rechecks_ownership_after_the_client_scan(tmp_path):
+    """Sol re-review #1: a claim revoked while the client scan runs is not acted for."""
+    import os
+
+    from jevdual.coordination import Coordinator
+
+    registry = Coordinator()
+    pending = {}
+
+    def scan():
+        registry.revoke(pending["token"])  # revoked mid-scan
+        return [{"pid": os.getpid(), "command": "python", "connections": 1}]
+
+    inner = FakeOperations()
+    task, _ = await _held(tmp_path, inner, clients=scan)
+    try:
+        async with registry.claim("owner-d", ["app/test"]) as claim:
+            pending["token"] = claim.token
+            fields = {"token": claim.token, "owner": claim.owner, "reservation": "", "desktop": claim.desktop}
+            args = {"target_id": "t", "tab_id": "t", "ref": "r", "input_route": "dom_event"}
+            fenced = bsh.reply_from_wire((await bsh.call(tmp_path, "click", args, claim=fields))["reply"])
+            assert fenced.refusal.code == "ownership_revoked" and fenced.dispatched is False
+        assert inner.calls == []
+    finally:
+        await bsh.stop_async(tmp_path)
+        await asyncio.wait_for(task, 5)
+
+
+async def test_retirement_waits_until_the_driver_has_shut_down(tmp_path):
+    """Sol re-review #4: the old driver's DevTools connection is closed before retire returns."""
+    class SlowDriver(FakeDriver):
+        async def shutdown(self):
+            await asyncio.sleep(0.5)
+            self.shut = True
+
+    driver = SlowDriver()
+    task = asyncio.create_task(bsh.serve(
+        tmp_path, driver=driver, operations=bsh.PrepareOnce(FakeOperations()),
+        binding={"chrome_pid": 42, "window_id": 7}, chrome_alive=lambda: True, idle_s=60,
+        install_signals=False))
+    for _ in range(100):
+        if bsh.holder_live(tmp_path):
+            break
+        await asyncio.sleep(0.02)
+    await bsh.retire(tmp_path)
+    assert driver.shut
+    await asyncio.wait_for(task, 5)
+
+
+def test_a_subprocess_holder_is_retired_only_once_its_process_has_exited(tmp_path, monkeypatch):
+    """Sol re-review #4: a missing record is not proof that another process has exited."""
+    import subprocess
+    import time
+
+    from jevdual.browser_holder import process_identity
+
+    child = subprocess.Popen(["sleep", "30"])
+    try:
+        record = {**process_identity(child.pid), "nonce": "n"}
+        state = {"record": True}
+        monkeypatch.setattr(bsh, "holder_live", lambda runtime: record if state["record"] else None)
+
+        async def stop(runtime, method, *a, **k):
+            state["record"] = False  # the record goes; the process lingers until SIGTERM
+            return {"ok": True}
+
+        monkeypatch.setattr(bsh, "call", stop)
+        started = time.monotonic()
+        asyncio.run(bsh.retire(tmp_path, timeout_s=0.5))
+        assert child.poll() is not None  # it was terminated, not taken as gone
+        assert time.monotonic() - started >= 0.5
+    finally:
+        child.kill()
+        child.wait()
+
+
+async def test_spawn_cleanup_survives_repeated_cancellation(monkeypatch):
+    """Sol re-review #5: a second cancellation during retirement does not abandon it."""
+    import threading
+
+    gate = threading.Event()
+    identity = {"pid": 4242, "boot": "b", "start": "1.0", "runtime": "/nonexistent/runtime"}
+    entered, finished = asyncio.Event(), []
+
+    def slow_spawn(*, url):
+        gate.wait(5)
+        return identity
+
+    async def retire(runtime, *, expected=None, timeout_s=10.0):
+        entered.set()
+        await asyncio.sleep(0.3)
+        finished.append(str(runtime))
+
+    monkeypatch.setattr(bsh, "spawn", slow_spawn)
+    monkeypatch.setattr(bsh, "retire", retire)
+    starting = asyncio.create_task(bsh.spawn_owned(url=None))
+    await asyncio.sleep(0.1)
+    starting.cancel()
+    gate.set()
+    await asyncio.wait_for(entered.wait(), 5)
+    starting.cancel()  # again, while retiring
+    with pytest.raises(asyncio.CancelledError):
+        await starting
+    assert finished == ["/nonexistent/runtime"]

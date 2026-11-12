@@ -146,3 +146,17 @@ Inferred: the driver's websocket stays open for the holder's life, so the positi
 Changes: none.
 Next: re-review of PR #25, then merge, then the driver isConnected patch with HelpTag.
 Refs: results/browser-holder-20261111/bh16-summary.json
+
+## BH18 · update · 2026-11-11 22:58
+Observed: the re-review at 400a3a7 found five gaps in the round-one fixes, each reproduced offline: the claim was checked before the client scan, so a revocation during the scan still dispatched; a replacement browser start retired the previous holder only after publication, so the new holder's first navigation saw it as a second client, and the start printed the refusal and published anyway; lsof's exit status 1 (also an inspection error) with partial output showing only this holder passed the scan; the holder removed its record before its driver shut down, and retire took a missing record as exit; a second cancellation during spawn cleanup abandoned the retirement.
+Changes: ownership is re-checked after the scan, last before dispatch; a start retires the replaced session's holder before binding, on both start paths, and a refused first navigation refuses the start; only lsof exit 0 counts as a scan; the record goes last and retire waits for a subprocess holder's process to exit; spawn cleanup settles through repeated cancellation. Each has a test that fails with its fix reverted; the offline suite passes (3500).
+Next: BH19, the live lane after these changes.
+Refs: tests/test_browser_session_holder.py
+
+## BH19 · prediction · 2026-11-11 22:59
+Question: with retirement now waiting for the holder's process to exit and the ownership check after the scan, does the live held lane still pass?
+Hypothesis: the changes touch only ordering; the holder exits within the stop request's grace, so retire returns without SIGTERM.
+Test: scripts/probe_browser_holder.py --arm held, fresh isolated profile, port 9466, browser restored to the background by PID.
+Predicts: all eleven commands exit 0, five page clicks, the owned browser never frontmost after the restore; the holder's final status line reports exit "stopped"; no holder process remains.
+Against: any refused click; a holder process left running; the holder log showing it was terminated by signal rather than stopped.
+Refs: docs/notebook/2026-11-11-browser-holder.md#bh16
