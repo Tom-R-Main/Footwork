@@ -1,11 +1,9 @@
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
-@@ -193,8 +193,84 @@
-     builder
-         .build()
+@@ -195,6 +195,123 @@
          .expect("DOM click action record must satisfy the stable contract")
-+}
-+
+ }
+ 
 +/// What a DOM click sequence's reply says about its delivery. Only a
 +/// well-formed receipt counts: an exception, a missing value or any other
 +/// shape is an interrupted click, never a completed or an undelivered one.
@@ -43,6 +41,47 @@
 +    }
 +}
 +
++/// What a DOM click does after its sequence call returns.
++#[derive(Debug, PartialEq)]
++enum DomClickNext {
++    /// The sequence completed: read the target back.
++    Readback,
++    /// A page dialog interrupted the sequence or is blocking the page.
++    Dialog(super::cdp_ws::CdpDialogState),
++    /// The ref's node left its document before the first event.
++    Refuse,
++    Partial {
++        count: u64,
++        last: String,
++    },
++    Interrupted(&'static str),
++    Failed(String),
++}
++
++/// Decide from the call's outcome and one dialog snapshot. A dialog the call
++/// helper saw interrupt the sequence stays the outcome even if it has closed
++/// since, and readback is reachable only from a completed receipt, so a
++/// sequence that never reported completing cannot be read back as confirmed.
++fn dom_click_next(
++    outcome: Result<anyhow::Result<Value>, super::cdp_ws::CdpDialogState>,
++    dialog_now: impl FnOnce() -> Option<super::cdp_ws::CdpDialogState>,
++) -> DomClickNext {
++    let reply = match outcome {
++        Err(open) => return DomClickNext::Dialog(open),
++        Ok(Err(error)) => return DomClickNext::Failed(error.to_string()),
++        Ok(Ok(reply)) => reply,
++    };
++    if let Some(open) = dialog_now() {
++        return DomClickNext::Dialog(open);
++    }
++    match dom_click_receipt(&reply) {
++        DomClickReceipt::Completed => DomClickNext::Readback,
++        DomClickReceipt::Detached { count: 0, .. } => DomClickNext::Refuse,
++        DomClickReceipt::Detached { count, last } => DomClickNext::Partial { count, last },
++        DomClickReceipt::Interrupted(reason) => DomClickNext::Interrupted(reason),
++    }
++}
++
 +fn dom_click_stopped_action_record(count: u64, last: &str) -> ActionExecutionRecord {
 +    ActionExecutionRecord::builder(
 +        ActionEffect::Unverifiable,
@@ -63,8 +102,8 @@
 +    })
 +    .build()
 +    .expect("DOM click action record must satisfy the stable contract")
- }
- 
++}
++
 +fn dom_click_interrupted_action_record(reason: &str) -> ActionExecutionRecord {
 +    ActionExecutionRecord::builder(
 +        ActionEffect::Unverifiable,
@@ -85,7 +124,7 @@
  /// The public caller session id, falling back to the daemon's internal mirror.
  fn session_of(args: &Value) -> String {
      args.opt_str("session")
-@@ -1408,6 +1484,36 @@
+@@ -1408,6 +1525,36 @@
                      .to_tool_result()
                  }
              };
@@ -122,53 +161,99 @@
              // Cursor feedback is best-effort and visual-only. A missing box
              // must not turn a valid DOM-event action into a refusal.
              let _ = conn
-@@ -1446,11 +1552,45 @@
+@@ -1446,42 +1593,38 @@
                  json!({
                      "objectId": object_id,
                      "functionDeclaration": DOM_EVENT_CLICK_SEQUENCE,
 +                    "returnByValue": true,
                  }),
              );
-             let outcome = call_until_dialog(conn, cdp_target_id, click)
-                 .await
-                 .unwrap_or(Ok(json!({})));
-+            if let (Ok(reply), None) = (&outcome, conn.dialog_state(cdp_target_id)) {
-+                let ext = ext_ref.as_deref().unwrap_or("?");
-+                match dom_click_receipt(reply) {
-+                    DomClickReceipt::Completed => {}
-+                    DomClickReceipt::Detached { count: 0, .. } => {
-+                        return BrowserRefusal::new(
-+                            BrowserRefusalCode::BrowserRefStale,
-+                            "the ref's node left its document before the click's first event",
-+                        )
-+                        .to_tool_result();
-+                    }
-+                    DomClickReceipt::Detached { count, last } => {
-+                        let text = format!(
-+                            "sent part of a synthetic DOM click on {ext} in {tab_id}: the ref's \
-+                             node left its document after {last}, so the rest of the sequence \
-+                             was not sent; application effect is unverifiable. Refresh page \
-+                             state and verify the expected postcondition"
-+                        );
-+                        return ToolResult::text(text)
-+                            .with_action_record(dom_click_stopped_action_record(count, &last));
-+                    }
-+                    DomClickReceipt::Interrupted(reason) => {
-+                        let text = format!(
-+                            "ran a synthetic DOM click on {ext} in {tab_id}, but its sequence did \
-+                             not report completing ({reason}); some of its events may have been \
-+                             sent and application effect is unverifiable. Refresh page state and \
-+                             verify the expected postcondition"
-+                        );
-+                        return ToolResult::text(text)
-+                            .with_action_record(dom_click_interrupted_action_record(reason));
-+                    }
-+                }
-+            }
-             return match (outcome, conn.dialog_state(cdp_target_id)) {
-                 (Ok(_), None) => {
+-            let outcome = call_until_dialog(conn, cdp_target_id, click)
+-                .await
+-                .unwrap_or(Ok(json!({})));
+-            return match (outcome, conn.dialog_state(cdp_target_id)) {
+-                (Ok(_), None) => {
++            let ext = ext_ref.as_deref().unwrap_or("?");
++            let outcome = call_until_dialog(conn, cdp_target_id, click).await;
++            return match dom_click_next(outcome, || conn.dialog_state(cdp_target_id)) {
++                DomClickNext::Readback => {
                      let observation = observe_dom_click(conn, cdp, &object_id, before).await;
-@@ -1723,6 +1863,9 @@
+                     let text = match observation.effect {
+                         ActionEffect::Confirmed => format!(
+-                            "dispatched synthetic DOM click on {} in {tab_id}; bounded semantic \
+-                             readback confirmed a target-state change",
+-                            ext_ref.as_deref().unwrap_or("?")
++                            "dispatched synthetic DOM click on {ext} in {tab_id}; bounded semantic \
++                             readback confirmed a target-state change"
+                         ),
+                         _ if observation.readback_available => format!(
+-                            "dispatched synthetic DOM click on {} in {tab_id}; bounded semantic \
++                            "dispatched synthetic DOM click on {ext} in {tab_id}; bounded semantic \
+                              target state remained unchanged; application effect is unverifiable. \
+-                             Refresh page state and verify the expected postcondition",
+-                            ext_ref.as_deref().unwrap_or("?")
++                             Refresh page state and verify the expected postcondition"
+                         ),
+                         _ => format!(
+-                            "dispatched synthetic DOM click on {} in {tab_id}; application effect \
++                            "dispatched synthetic DOM click on {ext} in {tab_id}; application effect \
+                              not verified because semantic target readback was unavailable. Refresh \
+-                             page state and verify the expected postcondition",
+-                            ext_ref.as_deref().unwrap_or("?")
++                             page state and verify the expected postcondition"
+                         ),
+                     };
+                     let action_record = dom_click_action_record(&observation);
+                     ToolResult::text(text).with_action_record(action_record)
+                 }
+-                (Ok(_), Some(open)) => {
++                DomClickNext::Dialog(open) => {
+                     let text = format!(
+-                        "dispatched synthetic DOM click on {} in {tab_id}; its handler opened \
++                        "dispatched synthetic DOM click on {ext} in {tab_id}; its handler opened \
+                          a {} dialog that is blocking the page. Inspect and resolve it with \
+                          browser_dialog (dialog_id {}) before any other action on this tab",
+-                        ext_ref.as_deref().unwrap_or("?"),
+                         open.kind,
+                         dialog_capability_id(open.generation)
+                     );
+@@ -1500,7 +1643,34 @@
+                         },
+                     }))
+                 }
+-                (Err(e), _) => ToolResult::error(format!("DOM click failed: {e}")),
++                DomClickNext::Refuse => BrowserRefusal::new(
++                    BrowserRefusalCode::BrowserRefStale,
++                    "the ref's node left its document before the click's first event",
++                )
++                .to_tool_result(),
++                DomClickNext::Partial { count, last } => {
++                    let text = format!(
++                        "sent part of a synthetic DOM click on {ext} in {tab_id}: the ref's node \
++                         left its document after {last}, so the rest of the sequence was not \
++                         sent; application effect is unverifiable. Refresh page state and \
++                         verify the expected postcondition"
++                    );
++                    ToolResult::text(text)
++                        .with_action_record(dom_click_stopped_action_record(count, &last))
++                }
++                DomClickNext::Interrupted(reason) => {
++                    let text = format!(
++                        "ran a synthetic DOM click on {ext} in {tab_id}, but its sequence did not \
++                         report completing ({reason}); some of its events may have been sent and \
++                         application effect is unverifiable. Refresh page state and verify the \
++                         expected postcondition"
++                    );
++                    ToolResult::text(text)
++                        .with_action_record(dom_click_interrupted_action_record(reason))
++                }
++                DomClickNext::Failed(error) => {
++                    ToolResult::error(format!("DOM click failed: {error}"))
++                }
+             };
+         }
+ 
+@@ -1723,6 +1893,9 @@
      Some((xs.iter().sum::<f64>() / 4.0, ys.iter().sum::<f64>() / 4.0))
  }
  
@@ -178,7 +263,7 @@
  /// Synthetic click for `input_route:"dom_event"`, evaluated ON the ref's node.
  ///
  /// `HTMLElement.click()` fires only a bare `click` with no coordinates, so
-@@ -1733,35 +1876,65 @@
+@@ -1733,35 +1906,65 @@
  /// a real click, `preventDefault()` on `pointerdown` suppresses the
  /// compatibility mouse events, and on `mousedown` suppresses the focus move.
  /// The events stay untrusted (`isTrusted === false`).
@@ -258,6 +343,62 @@
  }";
  
  // ── browser_type ─────────────────────────────────────────────────────────────
+@@ -3177,6 +3380,55 @@
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++
++    fn dialog(generation: u64) -> super::super::cdp_ws::CdpDialogState {
++        super::super::cdp_ws::CdpDialogState {
++            generation,
++            kind: "alert".to_owned(),
++            session_id: "page".to_owned(),
++            detached: false,
++        }
++    }
++
++    #[test]
++    fn dom_click_keeps_a_dialog_that_closed_after_interrupting_its_sequence() {
++        // The helper saw the dialog interrupt the sequence; by the time the
++        // click decides, the dialog has closed. It must not reach readback.
++        let next = dom_click_next(Err(dialog(3)), || None);
++        assert_eq!(next, DomClickNext::Dialog(dialog(3)));
++    }
++
++    #[test]
++    fn dom_click_reads_back_only_a_completed_receipt() {
++        let completed = json!({ "result": { "value": {
++            "complete": true, "stopped": null, "count": 11, "last": "click", "retargeted": false,
++        } } });
++        assert_eq!(
++            dom_click_next(Ok(Ok(completed.clone())), || None),
++            DomClickNext::Readback
++        );
++        assert_eq!(
++            dom_click_next(Ok(Ok(completed)), || Some(dialog(4))),
++            DomClickNext::Dialog(dialog(4))
++        );
++        for reply in [
++            json!({}),
++            json!({ "result": { "value": true } }),
++            json!({ "result": {}, "exceptionDetails": { "text": "Uncaught" } }),
++        ] {
++            assert!(
++                matches!(
++                    dom_click_next(Ok(Ok(reply.clone())), || None),
++                    DomClickNext::Interrupted(_)
++                ),
++                "{reply}"
++            );
++        }
++        assert!(matches!(
++            dom_click_next(Ok(Err(anyhow::anyhow!("socket closed"))), || None),
++            DomClickNext::Failed(_)
++        ));
++    }
+     use crate::browser::platform::{
+         BrowserPlatform, PrepareAction, PrepareOutcome, PrepareRequest,
+     };
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
 @@ -113,6 +113,14 @@

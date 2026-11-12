@@ -116,3 +116,11 @@ Test: unit tests of the decision function in cua-driver-core browser/tools.rs: a
 Predicts: the helper's dialog outcome is a dialog outcome even when the snapshot finds none; only a completed receipt with no dialog reaches readback; the other replies are interrupted and the error fails; every existing browser test passes unchanged, the dialog ones included.
 Against: any path from a reply without a completed receipt to readback; any existing browser test failing.
 Refs: #dc8; #dc13; https://github.com/Tom-R-Main/Footwork/pull/26
+
+## DC15 · update · 2026-11-12 05:04
+Resolves: DC14 = held
+Observed: the browser click now decides in dom_click_next from the call helper's outcome and one dialog snapshot. Its unit tests pass: a helper dialog outcome stays a dialog outcome when the snapshot finds none; a completed receipt reaches readback only with no dialog; an empty reply, a bare true and exceptionDetails are interrupted; a call error fails. All 1241 cua-driver-core library tests pass with no warnings, the dialog tests unchanged (results/driver-connected-20261112/dc14/rust-green.txt). There was no red run, as DC14 said. scripts/cua_source_chain.py reproduces the new archive (6f673125, 6,411,905 bytes); it installs as connected4 (dc14/runtime.json); the offline suite passes at normal priority (3513 passed, 52 skipped).
+Inferred: the race Sol traced has no path left to readback; the absence of the race before the change is Sol's static trace, not an observation.
+Changes: connected3 becomes connected4 (never released).
+Next: a fresh Sol review of PR #26.
+Refs: #dc14; results/driver-connected-20261112/dc14

@@ -4,7 +4,7 @@ Footwork uses the exact CUA 0.46.0 release snapshot
 `5486b6246e4c807c0d793216e52df283671d9362`, including its native implementation.
 The release still lacks Footwork’s required session-cleanup drain. Footwork carries
 that four-file patch forward and identifies the complete build as
-`cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected3` so the released native binary cannot
+`cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4` so the released native binary cannot
 silently satisfy this dependency.
 
 The focus1 patch additionally requires verified addressed-field focus before foreground text
@@ -13,7 +13,7 @@ a structured zero-text refusal. Foreground intent is an explicit boolean, so zer
 cannot skip the gate. This private Rust change preserves the generated SDK ABI and cleanup2 patch.
 
 The helptag1 patch keeps positively identified, owned passive AXHelpTags out of ordinary-window
-ranking; it was an optional project overlay and is now part of the pinned build. The connected3
+ranking; it was an optional project overlay and is now part of the pinned build. The connected4
 patch makes a page-route (`input_route:"dom_event"`) click read the ref's node `isConnected` before
 any event and refuse `browser_ref_stale` when the page has removed it, and checks the node again
 inside the click sequence before every event, stopping if the page or a handler removes it

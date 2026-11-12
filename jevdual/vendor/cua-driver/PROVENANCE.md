@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected3`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag and connected-node click patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag and connected-node click patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 The six Python files are copied byte-for-byte from the exact release source. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -20,7 +20,7 @@ The six Python files are copied byte-for-byte from the exact release source. The
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `4e012c8c67c21b45fb2828ddd03ec834555d947ddc9fff6146e2f96ff2f427da` (6,410,990 bytes). It is the end of a four-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected3. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
+`native-source.tar.gz` SHA256: `6f673125f9bece9777ef01c42575a93911153c37a19780f02cd40ef68d2fb94a` (6,411,905 bytes). It is the end of a four-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -64,7 +64,7 @@ ordinary-window ranking; unknown/interactive peers stay ranked and HelpTag targe
 activation. Activation sequence and success predicates are unchanged. Two private macOS Rust files
 change; the six Python binding files do not.
 
-## Connected-node click patch (connected3)
+## Connected-node click patch (connected4)
 
 `patches/connected-click.patch` and its JSON manifest apply on top of the helptag1 archive and
 produce the pinned archive. A page-route click (`browser_click` with `input_route:"dom_event"`)
@@ -82,7 +82,9 @@ icon re-rendered inside a button, or moved into another one) the remaining event
 node, and the focus candidate is chosen after that check. The sequence counts in local primitives,
 not page-replaceable built-ins, and returns an explicit completion receipt; an exception, a missing
 value or any malformed receipt is reported as an interrupted, unverifiable click, never as a
-confirmed or an undelivered one (Footwork notebook DC8). A connected node is clicked exactly as
+confirmed or an undelivered one (Footwork notebook DC8). The click decides from the call helper's
+own outcome and one dialog snapshot, so a dialog that interrupted the sequence stays the outcome
+even after it closes, and only a completed receipt reaches semantic readback (DC14). A connected node is clicked exactly as
 before. Two cua-driver-core browser files change (the tool and its mock-CDP tests); the generated
-bindings and dependencies do not. connected1 (the guard alone) and connected2 (without the receipt
-and containment checks) were never released.
+bindings and dependencies do not. connected1 (the guard alone), connected2 (without the receipt
+and containment checks) and connected3 (without the single dialog snapshot) were never released.
