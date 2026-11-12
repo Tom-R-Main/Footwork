@@ -87,7 +87,7 @@ This option currently supports native sessions only; ordinary `look` is unchange
 
 On macOS, `footwork do type "Observed web field" "Text" --web-text-delivery foreground`
 explicitly uses the focus-guarded native web text route. It requires the exact
-`cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.rects1` runtime (or an earlier qualified focus1 build) and a session started with
+`cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate1` runtime (or an earlier qualified focus1 build) and a session started with
 `--mode foreground_permitted` or `exclusive_desktop`. Shared foreground mode still requires three
 seconds without human input. Existing action and replacement authorization gates apply;
 `--no-judge`, browser mode, append and other operations refuse this option. A non-web target also

@@ -73,9 +73,6 @@ class Candidate:
     native_control_opaque: bool | None = None
     #: Read-only numeric metadata from the native snapshot, never exact text/edit authority.
     numeric: dict[str, Any] | None = None
-    #: Page refs only: where the target shows in the viewport, ``(x, y, width, height)`` in CSS px,
-    #: from the driver's layout. Geometry for moving a filmed pointer, not an action authority.
-    viewport_rect: tuple[float, float, float, float] | None = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""

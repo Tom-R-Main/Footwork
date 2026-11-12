@@ -161,7 +161,10 @@ class Filmed:
                 self.end_take(result.outcome.removeprefix("aborted:"))
                 self.last_pointer = None
                 self.gestures.append(record)
-                raise FilmedRefusal("pointer_contended", f"the approach {result.outcome}; the take ended")
+                raise FilmedRefusal(
+                    "pointer_contended",
+                    f"the approach {result.outcome} after {result.posted_drags} pointer events; the take ended",
+                )
             dwell_end = clock.now() + self.dwell_s
             dwell_outcome = result.outcome
             try:

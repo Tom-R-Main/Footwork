@@ -1,0 +1,20 @@
+{
+  "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
+  "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate1",
+  "base_archive_sha256": "6f673125f9bece9777ef01c42575a93911153c37a19780f02cd40ef68d2fb94a",
+  "patched_archive_sha256": "07eaae28ea9c689085cdd189c3565c684af6bb91cd09b4ddcb445ec97ba07f8b",
+  "patch_sha256": "298b974a2d0d84eb7b8eab921d4492a8db13753040adedeabd161712514250d1",
+  "files": {
+    "libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs": {
+      "before": "0296798424f2fc9197d35849936dbc91fc5dff71d59a322ef3c20b7433409ce4",
+      "after": "e4a37133a091b4f60bc0379adcc6e081dcc3d5f00b0c9c21e663b58f85f66ce5"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs": {
+      "before": "cf2f59d4f53de9f3c65d20c0c2c66221fed95ead0d1b4d8a42b9f71621f8b4c6",
+      "after": "a45aee07adfd3c4375cc436ad1a09f512e48533ab05a840533a5cc64ce349c3b"
+    }
+  },
+  "abi": "unchanged six Python binding files; get_browser_state gains a read-only locate_ref mode",
+  "toolchain": "1.97.1"
+}

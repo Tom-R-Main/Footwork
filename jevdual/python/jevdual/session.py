@@ -2734,7 +2734,8 @@ async def cmd_do(args: Any) -> int:
             driver_effect = eff.effect
             dispatched = getattr(eff, "dispatched", True)
             if not getattr(eff, "dispatched", True):
-                # the posture refused it: nothing reached any window
+                # the action itself was not dispatched. A filmed approach may already have moved the
+                # pointer before it refused; its summary says so.
                 driver_effect = "not sent"
                 error = f"{eff.error_code}: {eff.summary[:140]}"
             elif eff.effect == "refused":

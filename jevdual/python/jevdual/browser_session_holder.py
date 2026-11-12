@@ -58,6 +58,7 @@ OPERATIONS: dict[str, frozenset[str]] = {
     "bind": frozenset({"pid", "window_id"}),
     "snapshot": frozenset({"target_id", "tab_id"}),
     "click": frozenset({"target_id", "tab_id", "ref", "input_route"}),
+    "locate": frozenset({"target_id", "tab_id", "ref"}),
     "type_text": frozenset({"target_id", "tab_id", "ref", "text", "replace"}),
     "navigate": frozenset({"target_id", "tab_id", "url"}),
 }
@@ -582,6 +583,9 @@ class RemoteBrowserOperations:
 
     async def click(self, *, target_id: str, tab_id: str | None, ref: str, input_route: str) -> BrowserReply:
         return await self._op("click", target_id=target_id, tab_id=tab_id, ref=ref, input_route=input_route)
+
+    async def locate(self, *, target_id: str, tab_id: str | None, ref: str) -> BrowserReply:
+        return await self._op("locate", target_id=target_id, tab_id=tab_id, ref=ref)
 
     async def type_text(self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool) -> BrowserReply:
         return await self._op("type_text", target_id=target_id, tab_id=tab_id, ref=ref, text=text, replace=replace)

@@ -27,7 +27,7 @@ from pathlib import Path
 
 VENDOR = Path(__file__).resolve().parents[1] / "vendor/cua-driver"
 #: Applied in order on top of the cleanup2.focus1 archive; the last one produces the pinned archive.
-STEPS = ("ordinary-helptag", "connected-click", "snapshot-rects")
+STEPS = ("ordinary-helptag", "connected-click", "ref-locate")
 
 
 def sha(data: bytes) -> str:

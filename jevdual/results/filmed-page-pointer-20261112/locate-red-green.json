@@ -1,0 +1,29 @@
+{
+  "prediction": "FP4 as revised by FP6",
+  "driver": {
+    "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
+    "red": {
+      "tree": "connected4 tools.rs with the locate1 mock-CDP tests",
+      "log": "locate-rust-red.txt",
+      "outcome": "5 failed, 0 passed"
+    },
+    "green": {
+      "tree": "locate1 (patches/ref-locate.patch)",
+      "summary": [
+        "test result: ok. 1250 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 19.66s"
+      ],
+      "warnings": 0
+    }
+  },
+  "footwork": {
+    "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_filmed_session.py",
+    "red": {
+      "tree": "main c7cac4f python/ with the new tests",
+      "log": "locate-python-red.txt",
+      "outcome": "29 failed, 19 passed"
+    },
+    "green": {
+      "outcome": "49 passed (the two filmed files); offline suite 3545 passed, 52 skipped on the installed locate1 driver"
+    }
+  }
+}

@@ -1,0 +1,567 @@
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
+@@ -33,7 +33,7 @@
+ use super::pointer::BrowserPointerTool;
+ use super::refusal::{BrowserRefusal, BrowserRefusalCode};
+ use super::session_schema as schema_session;
+-use super::store::BrowserActionKind;
++use super::store::{BrowserActionKind, FrameKind};
+ use super::types::BindingQuality;
+ 
+ /// Register the complete browser surface against one shared engine. Platform
+@@ -549,7 +549,10 @@
+                 semantic_v2 joins accessibility, DOM, layout, and viewport state; \
+                 ranks visible content before retained/offscreen state; and returns a \
+                 semantic outline, typed action refs, content refs, scoped reads, and \
+-                opaque continuation. Never performs setup: a browser that is not \
++                opaque continuation. Mode 3 (locate): pass target_id + tab_id + \
++                locate_ref to read where one current ref's element is in the viewport \
++                and what is at its centre; it scrolls nothing and mints no snapshot. \
++                Never performs setup: a browser that is not \
+                 attached yet refuses with browser_consent_required or \
+                 browser_requires_setup, and detail.next_call names the browser_prepare call \
+                 that attaches it. Use this route for any web page in Chrome, Edge or Brave; \
+@@ -580,6 +583,15 @@
+                         "type": "string",
+                         "description": "Opaque continuation minted by an earlier semantic_v2 response."
+                     },
++                    "locate_ref": {
++                        "type": "string",
++                        "description": "A current ref. Returns only `locate`: the element's \
++                            rectangle and centre in viewport CSS px, whether the element at \
++                            that centre is the target or inside it, the border-box centre \
++                            from DOM.getBoxModel, and the viewport's size, zoom and pinch \
++                            scale. Read-only: nothing is scrolled, focused or dispatched, and \
++                            no snapshot is taken. Unavailable for a ref in a child frame."
++                    },
+                     "include_screenshot": {
+                         "type": "boolean",
+                         "default": false,
+@@ -646,6 +658,30 @@
+                     .to_tool_result()
+                 }
+             };
++            if let Some(locate_ref) = args.opt_str("locate_ref") {
++                return match locate_browser_ref(
++                    &self.engine,
++                    &session,
++                    &target_id,
++                    &tab_id,
++                    &locate_ref,
++                )
++                .await
++                {
++                    Ok(locate) => ToolResult::text(format!(
++                        "located {locate_ref} in {tab_id}; nothing was scrolled or dispatched"
++                    ))
++                    .with_structured(json!({
++                        "status": "ok",
++                        "mode": "locate",
++                        "target_id": target_id,
++                        "tab_id": tab_id,
++                        "ref": locate_ref,
++                        "locate": locate,
++                    })),
++                    Err(refusal) => refusal.to_tool_result(),
++                };
++            }
+             let snapshot_format = args
+                 .opt_str("snapshot_format")
+                 .unwrap_or_else(|| "dom_refs_v1".into());
+@@ -1876,11 +1912,207 @@
+         "dialog_id": dialog_capability_id(dialog.generation),
+         "resolvable": !dialog.detached,
+     })
++}
++
++/// Where one current ref's element is, for `get_browser_state`'s locate
++/// mode. It proves the binding and the ref's document as a click does and
++/// refuses a stale or removed node the same way, then only reads: the
++/// node's rectangle and the hit test at its centre (page script on the
++/// node, the click sequence's own geometry), the border-box centre from
++/// `DOM.getBoxModel`, and the viewport's zoom and scale. Nothing is
++/// scrolled, focused or dispatched.
++async fn locate_browser_ref(
++    engine: &Arc<BrowserEngine>,
++    session: &str,
++    target_id: &str,
++    tab_id: &str,
++    ext_ref: &str,
++) -> Result<Value, BrowserRefusal> {
++    let validated = engine
++        .revalidate_for_mutation(session, target_id, Some(tab_id))
++        .await?;
++    // A page-owned dialog blocks the renderer; every read below would wait
++    // out its timeout.
++    if let Some(open) = validated
++        .conn
++        .dialog_state(validated.tab.cdp_target_id.as_str())
++    {
++        return Err(BrowserRefusal::new(
++            BrowserRefusalCode::BrowserActionUnavailable,
++            format!(
++                "a {} dialog is open on the exact tab; the page cannot be read until it is resolved",
++                open.kind
++            ),
++        )
++        .with_detail(json!({ "dialog": dialog_block(&open) })));
++    }
++    let entry = engine
++        .store
++        .resolve_ref(session, target_id, tab_id, ext_ref)?;
++    if entry.frame.kind != FrameKind::Main {
++        // The node's rectangle is relative to its own frame's viewport, not
++        // the tab's.
++        return Ok(json!({ "available": false, "reason": "child_frame" }));
++    }
++    let cdp_session = engine
++        .frame_session_for_mutation(session, target_id, tab_id, &validated, &entry.frame)
++        .await?;
++    let conn = &validated.conn;
++    let cdp = cdp_session.as_str();
++    let backend = entry.backend_node_id;
++    let stale = |message: &str| BrowserRefusal::new(BrowserRefusalCode::BrowserRefStale, message);
++    let resolved = conn
++        .call(
++            Some(cdp),
++            "DOM.resolveNode",
++            json!({ "backendNodeId": backend }),
++        )
++        .await
++        .map_err(|_| stale("the ref's node no longer resolves in the live page"))?;
++    let object_id = resolved
++        .get("object")
++        .and_then(|o| o.get("objectId"))
++        .and_then(Value::as_str)
++        .ok_or_else(|| stale("the ref's node has no live object in the page"))?
++        .to_owned();
++    let on_node = |declaration: &'static str| {
++        let call = conn.call(
++            Some(cdp),
++            "Runtime.callFunctionOn",
++            json!({
++                "objectId": object_id,
++                "functionDeclaration": declaration,
++                "returnByValue": true,
++            }),
++        );
++        async move {
++            tokio::time::timeout(DOM_CLICK_BASELINE_DEADLINE, call)
++                .await
++                .ok()
++                .and_then(Result::ok)
++        }
++    };
++    let connected = on_node(DOM_NODE_CONNECTED_CHECK)
++        .await
++        .and_then(|reply| reply.pointer("/result/value").and_then(Value::as_bool));
++    if connected != Some(true) {
++        return Err(stale(if connected == Some(false) {
++            "the ref's node is no longer in its document"
++        } else {
++            "the ref's node could not be confirmed in its document"
++        }));
++    }
++    let located = on_node(DOM_NODE_LOCATE).await;
++    let box_center = conn
++        .call(
++            Some(cdp),
++            "DOM.getBoxModel",
++            json!({ "backendNodeId": backend }),
++        )
++        .await
++        .ok()
++        .as_ref()
++        .and_then(border_center);
++    let metrics = conn
++        .call(Some(cdp), "Page.getLayoutMetrics", json!({}))
++        .await
++        .ok();
++    Ok(dom_locate_value(
++        located.as_ref(),
++        box_center,
++        metrics.as_ref(),
++    ))
+ }
+ 
+ /// Center of the content quad from a `DOM.getBoxModel` result.
+ fn quad_center(box_model: &Value) -> Option<(f64, f64)> {
+-    let quad = box_model.get("model")?.get("content")?.as_array()?;
++    quad_center_of(box_model, "content")
++}
++
++/// Center of the border quad (the box `getBoundingClientRect` describes), or
++/// of the content quad when the model has no border quad.
++fn border_center(box_model: &Value) -> Option<(f64, f64)> {
++    quad_center_of(box_model, "border").or_else(|| quad_center_of(box_model, "content"))
++}
++
++/// Where the ref's node is, evaluated ON the node with the click sequence's
++/// own geometry: its bounding rectangle in viewport CSS px and what
++/// `elementFromPoint` finds at its centre.
++const DOM_NODE_LOCATE: &str = "function() { \
++    const node = this; \
++    const r = node.getBoundingClientRect(); \
++    const x = r.left + r.width / 2, y = r.top + r.height / 2; \
++    const root = node.getRootNode(); \
++    const at = ('elementFromPoint' in root) ? root.elementFromPoint(x, y) : null; \
++    const hit = !at ? 'none' : (at === node ? 'target' : (node.contains(at) ? 'descendant' : 'other')); \
++    const view = node.ownerDocument.defaultView; \
++    return { rect: [r.left, r.top, r.width, r.height], hit, inner: [view.innerWidth, view.innerHeight] }; \
++}";
++
++/// The `locate` block of a `locate_only` click from the locate script's
++/// reply, the box model's centre and the layout metrics. Anything but a
++/// well-formed reply with a positive-area rectangle is unavailable; the
++/// box-model centre and the viewport's zoom and scale are `null` when they
++/// could not be read, for the caller to refuse on.
++fn dom_locate_value(
++    located: Option<&Value>,
++    box_center: Option<(f64, f64)>,
++    metrics: Option<&Value>,
++) -> Value {
++    let unavailable = |reason: &str| json!({ "available": false, "reason": reason });
++    let Some(reply) = located else {
++        return unavailable("unreadable");
++    };
++    if reply.get("exceptionDetails").is_some() {
++        return unavailable("unreadable");
++    }
++    let Some(value) = reply.pointer("/result/value") else {
++        return unavailable("unreadable");
++    };
++    let numbers = |field: &str, len: usize| -> Option<Vec<f64>> {
++        let items = value.get(field)?.as_array()?;
++        let numbers: Vec<f64> = items
++            .iter()
++            .filter_map(Value::as_f64)
++            .filter(|n| n.is_finite())
++            .collect();
++        (items.len() == len && numbers.len() == len).then_some(numbers)
++    };
++    let Some(rect) = numbers("rect", 4) else {
++        return unavailable("unreadable");
++    };
++    let hit = match value.get("hit").and_then(Value::as_str) {
++        Some(hit @ ("target" | "descendant" | "other" | "none")) => hit,
++        _ => return unavailable("unreadable"),
++    };
++    if rect[2] <= 0.0 || rect[3] <= 0.0 {
++        return unavailable("no_box");
++    }
++    let inner = numbers("inner", 2);
++    let viewport = metrics.and_then(|m| m.get("cssVisualViewport"));
++    let factor = |field: &str| {
++        viewport
++            .and_then(|v| v.get(field))
++            .and_then(Value::as_f64)
++            .filter(|n| n.is_finite())
++    };
++    json!({
++        "available": true,
++        "rect": { "x": rect[0], "y": rect[1], "width": rect[2], "height": rect[3] },
++        "center": { "x": rect[0] + rect[2] / 2.0, "y": rect[1] + rect[3] / 2.0 },
++        "hit": hit,
++        "box_center": box_center.map(|(x, y)| json!({ "x": x, "y": y })),
++        "viewport": {
++            "width": inner.as_ref().map(|i| i[0]),
++            "height": inner.as_ref().map(|i| i[1]),
++            "zoom": factor("zoom"),
++            "scale": factor("scale"),
++        },
++    })
++}
++
++fn quad_center_of(box_model: &Value, quad: &str) -> Option<(f64, f64)> {
++    let quad = box_model.get("model")?.get(quad)?.as_array()?;
+     if quad.len() < 8 {
+         return None;
+     }
+@@ -3380,6 +3612,76 @@
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++
++    fn located(value: Value) -> Value {
++        json!({ "result": { "value": value } })
++    }
++
++    #[test]
++    fn locate_value_reports_the_rectangle_its_centre_and_the_viewport() {
++        let reply = located(
++            json!({ "rect": [10.0, 20.0, 100.0, 40.0], "hit": "descendant", "inner": [800.0, 600.0] }),
++        );
++        let metrics = json!({ "cssVisualViewport": { "zoom": 1.25, "scale": 2.0 } });
++        let value = dom_locate_value(Some(&reply), Some((60.0, 40.0)), Some(&metrics));
++        assert_eq!(value["available"], true);
++        assert_eq!(value["center"], json!({ "x": 60.0, "y": 40.0 }));
++        assert_eq!(value["hit"], "descendant");
++        assert_eq!(value["box_center"], json!({ "x": 60.0, "y": 40.0 }));
++        assert_eq!(
++            value["viewport"],
++            json!({ "width": 800.0, "height": 600.0, "zoom": 1.25, "scale": 2.0 })
++        );
++    }
++
++    #[test]
++    fn locate_value_leaves_unread_checks_null_for_the_caller_to_refuse_on() {
++        let reply = located(
++            json!({ "rect": [0.0, 0.0, 1.0, 1.0], "hit": "target", "inner": [800.0, 600.0] }),
++        );
++        let value = dom_locate_value(Some(&reply), None, None);
++        assert_eq!(value["available"], true);
++        assert!(value["box_center"].is_null());
++        assert!(value["viewport"]["zoom"].is_null() && value["viewport"]["scale"].is_null());
++    }
++
++    #[test]
++    fn locate_value_is_unavailable_for_anything_but_a_well_formed_reply() {
++        let unreadable = json!({ "available": false, "reason": "unreadable" });
++        assert_eq!(dom_locate_value(None, None, None), unreadable);
++        for reply in [
++            json!({ "exceptionDetails": { "text": "boom" }, "result": { "value": { "rect": [0, 0, 1, 1], "hit": "target" } } }),
++            json!({ "result": {} }),
++            located(json!({ "rect": [0.0, 0.0, 1.0], "hit": "target" })),
++            located(json!({ "rect": [0.0, "a", 1.0, 1.0], "hit": "target" })),
++            located(json!({ "rect": [0.0, 0.0, 1.0, 1.0], "hit": "nearby" })),
++            located(json!({ "rect": [0.0, 0.0, 1.0, 1.0] })),
++        ] {
++            assert_eq!(
++                dom_locate_value(Some(&reply), None, None),
++                unreadable,
++                "{reply}"
++            );
++        }
++        let empty = located(json!({ "rect": [5.0, 5.0, 0.0, 10.0], "hit": "none" }));
++        assert_eq!(
++            dom_locate_value(Some(&empty), None, None),
++            json!({ "available": false, "reason": "no_box" })
++        );
++    }
++
++    #[test]
++    fn border_center_prefers_the_border_quad() {
++        let model = json!({ "model": {
++            "content": [10.0, 10.0, 20.0, 10.0, 20.0, 20.0, 10.0, 20.0],
++            "border": [0.0, 0.0, 40.0, 0.0, 40.0, 20.0, 0.0, 20.0],
++        } });
++        assert_eq!(border_center(&model), Some((20.0, 10.0)));
++        assert_eq!(quad_center(&model), Some((15.0, 15.0)));
++        let content_only =
++            json!({ "model": { "content": [10.0, 10.0, 20.0, 10.0, 20.0, 20.0, 10.0, 20.0] } });
++        assert_eq!(border_center(&content_only), Some((15.0, 15.0)));
++    }
+ 
+     fn dialog(generation: u64) -> super::super::cdp_ws::CdpDialogState {
+         super::super::cdp_ws::CdpDialogState {
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
+@@ -115,6 +115,8 @@
+     dom_click_focused: bool,
+     /// The ref's node resolves but the page has removed it from its document.
+     dom_click_node_detached: bool,
++    /// What the locate script reports; the default is the main button, hit.
++    dom_locate_reply: Option<Value>,
+     /// The click sequence finds the ref's node detached after sending these
+     /// events, and stops.
+     dom_click_sequence_stops_after: Option<Vec<&'static str>>,
+@@ -173,6 +175,7 @@
+             dom_click_generation: 0,
+             dom_click_focused: false,
+             dom_click_node_detached: false,
++            dom_locate_reply: None,
+             dom_click_sequence_stops_after: None,
+             dom_click_sequence_reply: None,
+             dom_click_reads_before_failure: None,
+@@ -685,7 +688,9 @@
+                     "pageX": 0.0,
+                     "pageY": 0.0,
+                     "clientWidth": st.viewport_css_width,
+-                    "clientHeight": st.viewport_css_height
++                    "clientHeight": st.viewport_css_height,
++                    "scale": 1.0,
++                    "zoom": 1.0
+                 }
+             })),
+             "Runtime.evaluate"
+@@ -868,6 +873,22 @@
+                 if call.params["functionDeclaration"]
+                     .as_str()
+                     .is_some_and(|function| {
++                        function.contains("'descendant'") && !function.contains("'pointerdown'")
++                    }) =>
++            {
++                assert_eq!(call.params["returnByValue"], true);
++                MockReply::ok(st.dom_locate_reply.clone().unwrap_or_else(|| {
++                    json!({ "result": { "value": {
++                        "rect": [100.0, 100.0, 20.0, 10.0],
++                        "hit": "target",
++                        "inner": [800.0, 600.0],
++                    } } })
++                }))
++            }
++            "Runtime.callFunctionOn"
++                if call.params["functionDeclaration"]
++                    .as_str()
++                    .is_some_and(|function| {
+                         function.contains("isConnected") && !function.contains("'pointerdown'")
+                     }) =>
+             {
+@@ -3405,6 +3426,157 @@
+     assert_eq!(state.dom_click_generation, 0);
+     drop(state);
+     assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
++}
++
++async fn locate(f: &Fixture, target: &str, tab: &str, r: &str) -> ToolResult {
++    GetBrowserStateTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target,
++            "tab_id": tab,
++            "locate_ref": r,
++            "session": SESSION,
++        }))
++        .await
++}
++
++fn sent_any_event(f: &Fixture) -> bool {
++    recorded_calls(f, "Runtime.callFunctionOn")
++        .iter()
++        .filter_map(|(_, params)| params["functionDeclaration"].as_str().map(str::to_owned))
++        .any(|declaration| declaration.contains("'pointerdown'"))
++        || !recorded_calls(f, "Input.dispatchMouseEvent").is_empty()
++}
++
++fn locate_reads(f: &Fixture) -> usize {
++    recorded_calls(f, "Runtime.callFunctionOn")
++        .iter()
++        .filter(|(_, params)| {
++            params["functionDeclaration"]
++                .as_str()
++                .is_some_and(|declaration| declaration.contains("'descendant'"))
++        })
++        .count()
++}
++
++#[tokio::test]
++async fn locate_ref_reports_where_the_element_is_and_changes_nothing() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    let snapshots_before = recorded_calls(&f, "DOMSnapshot.captureSnapshot").len()
++        + recorded_calls(&f, "DOM.getDocument").len();
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    let reply = structured(&result);
++    assert_eq!(reply["status"], "ok", "{reply}");
++    assert_eq!(reply["mode"], "locate", "{reply}");
++    assert_eq!(reply["ref"], main_ref.as_str(), "{reply}");
++    let found = &reply["locate"];
++    assert_eq!(found["available"], true, "{reply}");
++    assert_eq!(
++        found["rect"],
++        json!({ "x": 100.0, "y": 100.0, "width": 20.0, "height": 10.0 })
++    );
++    assert_eq!(found["center"], json!({ "x": 110.0, "y": 105.0 }));
++    assert_eq!(found["hit"], "target");
++    // the mock's box model for this node has the same centre, read without page script
++    assert_eq!(found["box_center"], json!({ "x": 110.0, "y": 105.0 }));
++    assert_eq!(
++        found["viewport"],
++        json!({ "width": 800.0, "height": 600.0, "zoom": 1.0, "scale": 1.0 })
++    );
++    assert!(!sent_any_event(&f), "a locate sends no event");
++    assert!(recorded_calls(&f, "DOM.scrollIntoViewIfNeeded").is_empty());
++    assert!(recorded_calls(&f, "DOM.focus").is_empty());
++    assert_eq!(
++        recorded_calls(&f, "DOMSnapshot.captureSnapshot").len()
++            + recorded_calls(&f, "DOM.getDocument").len(),
++        snapshots_before,
++        "a locate takes no snapshot"
++    );
++    {
++        let state = f.state.lock().unwrap();
++        assert!(!state.dom_click_focused);
++        assert_eq!(state.dom_click_generation, 0);
++    }
++    // the ref it located is still current: the click it precedes goes through
++    let clicked = BrowserClickTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target, "tab_id": tab, "ref": main_ref,
++            "input_route": "dom_event", "session": SESSION,
++        }))
++        .await;
++    assert_ne!(clicked.is_error, Some(true), "{}", result_text(&clicked));
++    assert!(sent_any_event(&f));
++}
++
++#[tokio::test]
++async fn locate_ref_passes_on_what_is_at_the_centre() {
++    let f = fixture_with(|state| {
++        state.dom_locate_reply = Some(json!({ "result": { "value": {
++            "rect": [100.0, 100.0, 20.0, 10.0], "hit": "other", "inner": [800.0, 600.0],
++        } } }))
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    assert_eq!(structured(&result)["locate"]["hit"], "other");
++    assert!(!sent_any_event(&f));
++}
++
++#[tokio::test]
++async fn locate_ref_refuses_a_removed_node_as_a_click_does() {
++    let f = fixture_with(|state| state.dom_click_node_detached = true).await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    assert_eq!(structured(&result)["refusal"]["code"], "browser_ref_stale");
++    assert_eq!(locate_reads(&f), 0, "a removed node is not measured");
++}
++
++#[tokio::test]
++async fn locate_ref_refuses_a_ref_that_is_not_current() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    snapshot(&f, &target, &tab).await;
++
++    let result = locate(&f, &target, &tab, "p99:0").await;
++
++    assert_eq!(
++        structured(&result)["refusal"]["code"],
++        "browser_ref_stale",
++        "{}",
++        result_text(&result)
++    );
++    assert_eq!(locate_reads(&f), 0);
++}
++
++#[tokio::test]
++async fn locate_ref_is_unavailable_in_a_child_frame_without_touching_it() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let oopif_ref = ref_of(&snap, "oopif", "ad-input");
++
++    let result = locate(&f, &target, &tab, &oopif_ref).await;
++
++    let reply = structured(&result);
++    assert_eq!(
++        reply["locate"],
++        json!({ "available": false, "reason": "child_frame" }),
++        "{reply}"
++    );
++    assert_eq!(locate_reads(&f), 0);
++    assert!(!sent_any_event(&f));
+ }
+ 
+ #[tokio::test]

@@ -387,3 +387,31 @@ def test_a_filmed_browser_click_travels_to_the_page_target_before_the_page_click
     assert _moves(filmed.events)[-1] == go
     assert log[-1] == ("browser_click", "snap-1:1")
     assert _state(fw)["filmed"]["last_pointer"] == list(go)
+
+
+def test_a_filmed_browser_click_on_a_covered_target_sends_nothing_and_moves_nothing(world, fw, filmed, monkeypatch):
+    """FP4: when another element is at the target's centre, do click reports target_unlocated; the pointer
+    stays where it was and the page receives no click."""
+    from jevdual import browser_driver, browser_target
+    from jevdual.browser_driver import BrowserBridge
+
+    from tests.test_filmed_page_pointer import URL, Wire, at
+
+    log: list = []
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy):
+        wire = Wire(log)
+        return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: Wire(log, [at(hit="other")]))
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    before = len(filmed.events)
+    code, out, err = fw("do", "click", str(_id(out, "Go")), "--no-judge")
+    assert "target_unlocated" in out + err and "another element is at its centre" in out + err, (code, out, err)
+    assert len(filmed.events) == before
+    assert [entry[0] for entry in log if entry[0] != "locate"] == []

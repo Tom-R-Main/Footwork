@@ -4,7 +4,7 @@
     "base": "connected4 source (6f673125...); red tree = connected4 + the new v2 test only",
     "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
     "red": {
-      "log": "rust-red.log",
+      "log": "rust-red.txt",
       "test": "browser::v2_tests::semantic_snapshot_reports_a_viewport_rect_only_for_main_frame_refs_in_view",
       "outcome": "failed: every ref carries rect (ref p1:0 has no rect key)"
     },
