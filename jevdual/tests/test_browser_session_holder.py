@@ -205,3 +205,53 @@ async def test_a_session_uses_only_the_holder_it_recorded(tmp_path, capsys):
     finally:
         await bsh.stop_async(tmp_path)
         await asyncio.wait_for(task, 5)
+
+
+@pytest.mark.parametrize("new_launch", [True, False])
+async def test_a_new_launch_gets_its_own_window_before_any_recovery_window(monkeypatch, new_launch):
+    """BH4: recovering a window before a new launch's own window is on screen opened a second window
+    on the same page, which the unique-page pin then refused. An existing browser recovers at once."""
+    from types import SimpleNamespace
+
+    from jevdual import browser_driver as browser
+
+    opened: list[list[str]] = []
+    first_list = [None]
+    process = SimpleNamespace(poll=lambda: None, wait=lambda **_: 0, pid=42)
+    monkeypatch.setattr(browser, "sys", SimpleNamespace(platform="darwin"))
+    monkeypatch.setattr(browser, "_begin_chrome", lambda url: (42, process if new_launch else None))
+    monkeypatch.setattr(browser, "chrome_pid", lambda: 42)
+    monkeypatch.setattr(browser, "_incarnation", lambda pid: 1.0)
+    monkeypatch.setattr(browser, "_stop_launch", lambda p: None)
+    monkeypatch.setattr(browser, "RECOVERY_GRACE_S", 0.5)
+    monkeypatch.setattr("jevdual.effectors.require_available", lambda kind: None)
+    monkeypatch.setattr("jevdual.effectors.cua.list_windows_input", lambda **kw: kw)
+
+    class Driver:
+        async def list_windows(self, _):
+            loop = asyncio.get_running_loop()
+            first_list[0] = first_list[0] or loop.time()
+            late = loop.time() - first_list[0] >= 0.2  # the launch's own window appears after 0.2 s
+            on = late or bool(opened)
+            window = SimpleNamespace(pid=42, window_id=7, bounds=SimpleNamespace(width=100, height=100))
+            return SimpleNamespace(windows=[window] if on else [])
+
+        async def shutdown(self):
+            pass
+
+    def spawn(args, **_):
+        opened.append(args)
+        return SimpleNamespace(pid=99, poll=lambda: 0, wait=lambda **_: 0)
+
+    async def attach(self, **_):
+        self.target_id, self.tab_id = "target", "tab"
+        return {}
+
+    monkeypatch.setattr(browser, "configured_driver", lambda pid: Driver())
+    monkeypatch.setattr(browser.subprocess, "Popen", spawn)
+    monkeypatch.setattr(browser.BrowserBridge, "attach", attach)
+    await browser.bind_footwork_chrome("http://127.0.0.1:1/")
+    if new_launch:
+        assert opened == []
+    else:
+        assert len(opened) == 1 and "--new-window" in opened[0]

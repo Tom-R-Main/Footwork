@@ -41,6 +41,8 @@ PROFILE_DIR = Path(
 )
 PORT = int(os.environ.get("FOOTWORK_CHROME_PORT", "9333"))
 SESSION_LABEL = "footwork"
+#: seconds a new launch gets to put its own window on screen before a recovery window is opened
+RECOVERY_GRACE_S = 5.0
 _CHROME_LAUNCHES: dict[int, subprocess.Popen] = {}
 
 
@@ -628,6 +630,10 @@ async def bind_footwork_chrome(
                 raise RuntimeError('owned Chrome readiness timed out')
             await asyncio.sleep(.1)
         driver = configured_driver(pid)
+        # A new launch's own window can take a few seconds to reach the screen. Recovering a window
+        # before then opens a second one on the same page, which the unique-page pin then refuses
+        # (BH4). An existing browser without a window is recovered at once.
+        recover_after = time.monotonic() + (RECOVERY_GRACE_S if launch is not None else 0.0)
         while True:
             if not identity():
                 raise RuntimeError('owned Chrome identity changed during window binding')
@@ -640,6 +646,9 @@ async def bind_footwork_chrome(
                 if any(w.pid != pid for w in wins.windows):
                     raise RuntimeError('window discovery returned an unrelated browser process')
                 break
+            if helper is None and time.monotonic() < recover_after:
+                await asyncio.sleep(.1)
+                continue
             if helper is None:
                 if sys.platform == 'linux':
                     args = _chrome_args(url or 'about:blank', new_window=True)
