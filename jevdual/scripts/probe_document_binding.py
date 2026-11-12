@@ -81,7 +81,7 @@ async def _case(bridge, name: str, trigger: str, steps: list[dict]) -> None:
     nm = await bridge.observe()
     t = time.time()
     eff = await bridge.act(nm, "click", _id(nm, trigger))
-    steps.append({"step": f"{name}-trigger", "t": t, "effect": eff.effect})
+    steps.append({"step": f"{name}-trigger", "t": t, "effect": eff.effect, "summary": eff.summary[:300]})
     stale = await bridge.observe()  # the observation the late click uses
     steps.append({"step": f"{name}-observed", "t": time.time(), "snapshot": stale.snapshot_id})
     await asyncio.sleep(3.5)  # the page changes 1.5 s after the trigger
@@ -93,7 +93,8 @@ async def _case(bridge, name: str, trigger: str, steps: list[dict]) -> None:
     fresh = await bridge.observe()
     t = time.time()
     eff = await bridge.act(fresh, "click", _id(fresh, "Count clicks"))
-    steps.append({"step": f"{name}-fresh-click", "t": t, "effect": eff.effect, "error_code": eff.error_code})
+    steps.append({"step": f"{name}-fresh-click", "t": t, "effect": eff.effect, "error_code": eff.error_code,
+                  "summary": eff.summary[:300]})
     await asyncio.sleep(1.0)
 
 

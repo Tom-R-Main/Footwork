@@ -76,3 +76,19 @@ Test: scripts/probe_document_binding.py once on the installed connected3, port 9
 Predicts: the same outcomes as DC6 on connected2: both late clicks refuse browser_ref_stale, the page logs no handler activation for the removed counter button, both fresh clicks land once and are not reported as interrupted, and the vanish click reports a partial delivery stopped after pointerdown with no vanish_click.
 Against: any fresh click reported as interrupted ("did not report completing"), the vanish click reported as interrupted or refused, or any handler activation on a removed button.
 Refs: #dc6; #dc8; results/driver-connected-20261112/dc8
+
+## DC10 · update · 2026-11-12 04:24
+Resolves: DC9 = inconclusive
+Observed: in Desktop's grant until 09:37 UTC the probe ran once on connected3 (port 9466, fresh profile), launching at 09:22:51 after the gate read unlocked and 2874 s idle; 24 s, Chrome closed at 09:23:15, prior app restored (results/driver-connected-20261112/dc9-live). Both late clicks refused browser_ref_stale, the page logged no handler activation for the removed counter button, both fresh clicks landed once, and the vanish click reported a partial delivery stopped after pointerdown with no vanish_click. The fresh clicks' result texts were not recorded: the probe kept only their effect, which is unverifiable for both a completed and an interrupted click.
+Inferred: Chrome returns count as an integer (the vanish case's detached receipt parsed with count 7), but whether a completed receipt's null stopped arrives as the classifier expects is unobserved, so DC9's main criterion is undecided.
+Changes: the probe now records the result text of every click.
+Next: DC11, the same run with the texts recorded, in a fresh window.
+Refs: #dc9; results/driver-connected-20261112/dc9-live; scripts/probe_document_binding.py
+
+## DC11 · prediction · 2026-11-12 04:24
+Revises: DC9
+Hypothesis: as DC9: real Chrome returns connected3's completion receipt in the shape the strict classifier accepts, so a click on a connected node takes the completed path.
+Test: scripts/probe_document_binding.py, now recording every click's result text, once on the installed connected3, port 9466, a fresh profile, in a fresh Desktop window.
+Predicts: both fresh clicks' texts begin "dispatched synthetic DOM click" and none contains "did not report completing"; both late clicks refuse browser_ref_stale with no handler activation on the removed counter button; the vanish click reports a partial delivery stopped after pointerdown with no vanish_click.
+Against: any click text containing "did not report completing"; the vanish click refused or interrupted; any handler activation on a removed button.
+Refs: #dc9; #dc10

@@ -1,0 +1,71 @@
+{
+ "run": "document-binding-connected3",
+ "driver": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected3",
+ "port": "9466",
+ "gate": {
+  "polls": 1,
+  "idle_s": 2873.6,
+  "waited_s": 0.0
+ },
+ "front_restored": true,
+ "holder_stop_ok": true,
+ "steps_dt_from_first": [
+  {
+   "step": "reload-trigger",
+   "t": 0.0,
+   "effect": "unverifiable"
+  },
+  {
+   "step": "reload-observed",
+   "t": 0.68,
+   "snapshot": "p2"
+  },
+  {
+   "step": "reload-late-click",
+   "t": 4.18,
+   "effect": "refused",
+   "error_code": "browser_ref_stale",
+   "dispatched": true,
+   "summary": "the ref's frame navigated or was removed since the snapshot \u2014 re-run get_browser_state to re-snapshot"
+  },
+  {
+   "step": "reload-fresh-click",
+   "t": 5.48,
+   "effect": "unverifiable",
+   "error_code": null
+  },
+  {
+   "step": "rerender-trigger",
+   "t": 7.16,
+   "effect": "unverifiable"
+  },
+  {
+   "step": "rerender-observed",
+   "t": 7.85,
+   "snapshot": "p5"
+  },
+  {
+   "step": "rerender-late-click",
+   "t": 11.35,
+   "effect": "refused",
+   "error_code": "browser_ref_stale",
+   "dispatched": true,
+   "summary": "the ref's node is no longer in its document"
+  },
+  {
+   "step": "rerender-fresh-click",
+   "t": 12.64,
+   "effect": "unverifiable",
+   "error_code": null
+  },
+  {
+   "step": "vanish-click",
+   "t": 14.35,
+   "effect": "unverifiable",
+   "error_code": null,
+   "dispatched": true,
+   "summary": "sent part of a synthetic DOM click on p7:3 in tab-\u2026: the ref's node left its document after pointerdown, so the rest of the sequence was not sent; application effect"
+  }
+ ],
+ "note": "fresh-click summaries were not recorded by this probe version"
+}
