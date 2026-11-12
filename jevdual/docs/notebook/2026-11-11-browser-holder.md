@@ -122,3 +122,10 @@ Inferred: (1) document binding holds across reloads through the driver's loader_
 Changes: none yet.
 Next: read effect "refused" as a refusal with the summary's code and delivery unknown; then decide between a driver patch that refuses a page-route click on a disconnected node and a Footwork-side check.
 Refs: results/browser-holder-20261111/bh13-summary.json
+
+## BH15 · update · 2026-11-11 21:54
+Observed: BH14's refusal-reading fix is in 708dd53; the full offline suite passes (3478), after updating a session test that still pinned the append BH8 refuses. The detached-node click is not fixed. The page-route click calls Runtime.callFunctionOn with its click sequence on the ref's resolved object without checking that the node is still in its document (cua-driver-core browser/tools.rs, the dom_event branch of browser_click and DOM_EVENT_CLICK_SEQUENCE).
+Inferred: the fix belongs in the driver: before the click call, read the node's isConnected and refuse browser_ref_stale when it is false, before any event is dispatched. Footwork cannot make that check itself through its bounded operations, which evaluate no script.
+Changes: none to the driver. A driver patch changes the shipped pin and its provenance chain, and the HelpTag patch is already waiting on a packaging change, so the owner decides whether to carry both in one driver release. Until then Footwork's do observes immediately before each click, which keeps the window to milliseconds.
+Next: owner decision on the driver patch; B7 (one session binding the filmed pointer and the page) for DemoGeek.
+Refs: results/browser-holder-20261111/bh13-summary.json

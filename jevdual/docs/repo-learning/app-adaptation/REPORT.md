@@ -423,6 +423,18 @@ reviewed.
   inserts at the caret focus leaves, the start, and the receipt only caught it after sending. It is
   now refused before sending; the observation trims values, so the value is not rebuilt from it.
   Later navigation and coordinate input through the holder remain untested in the background.
+- **B2, a second DevTools client: detected** (BH11). Before each click, type or navigate the holder
+  lists the processes connected to the browser's DevTools port; another process, or a check that
+  cannot run, refuses the action with nothing sent, and observation continues. This detects; it does
+  not exclude. A second client's connection did not bring this Footwork-launched browser forward
+  (one observation).
+- **B3, input bound to the document: half held** (BH13). The driver re-proves each ref's document
+  (loader id) before input, so a click observed before a reload is refused. A same-document
+  re-render is not caught: the page-route click ran the handler of a button the page had already
+  removed. The fix is a pre-send connectedness check in the driver, a driver patch the owner
+  decides on, alongside the HelpTag patch's packaging. Separately, cua-driver 0.46 reports an
+  action refusal only as an effect word with the code in its summary text; Footwork misread it as
+  a sent, unverifiable action, and now reads it as a refusal whose delivery is unknown.
 
 Neither reopening condition for the lane is met: text replacement needs care, coordinate input does
 not need the foreground, and sign-in works in a launched profile.
