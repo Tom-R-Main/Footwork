@@ -22,6 +22,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from probe_page_effects import _front, _serve
 
 
+def _pages(port: int) -> list[dict]:
+    with urlopen(f"http://127.0.0.1:{port}/json/list", timeout=2) as response:
+        return json.load(response)
+
+
 async def _launch(url: str) -> dict:
     from jevdual import browser_driver as b
 
@@ -36,13 +41,12 @@ async def _launch(url: str) -> dict:
     b.subprocess.Popen = watched
     started = time.time()
     try:
-        driver, bridge = await b.bind_footwork_chrome(url)
+        driver, _bridge = await b.bind_footwork_chrome(url)
     finally:
         b.subprocess.Popen = real
     try:
         await asyncio.sleep(1.0)
-        with urlopen(f"http://127.0.0.1:{b.PORT}/json/list", timeout=2) as response:
-            pages = [p for p in json.load(response) if p.get("type") == "page"]
+        pages = [p for p in await asyncio.to_thread(_pages, b.PORT) if p.get("type") == "page"]
         return {"bind_s": round(time.time() - started, 2), "helper_runs": len(helpers),
                 "pages_on_url": sum(p.get("url") == url for p in pages), "pages": len(pages)}
     finally:
