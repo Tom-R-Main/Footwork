@@ -28,10 +28,11 @@ def _mac_selectors(monkeypatch):
     """Select the simulated Mac routes without changing the interpreter's platform."""
     import sys
 
-    from jevdual import native
+    from jevdual import native, posture
     from jevdual.capability import backend, recovery
 
     monkeypatch.setattr(native, "sys", SimpleNamespace(platform="darwin"))
+    monkeypatch.setattr(posture, "sys", SimpleNamespace(platform="darwin"))
     monkeypatch.setattr(backend, "sys", SimpleNamespace(platform="darwin"))
     monkeypatch.setattr(recovery, "sys", SimpleNamespace(platform="darwin", executable=sys.executable))
 
