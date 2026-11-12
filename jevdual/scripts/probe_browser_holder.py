@@ -34,7 +34,11 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import probe_page_effects
 from probe_page_effects import _front, _sample_front, _serve
+
+#: BH7 adds an empty field to the fixture, before its script
+NOTE_FIELD = '<p><label>Note <input id="note" size="30"></label></p>\n<script>'
 
 PROTECTED_PORTS = {"9333", "9555"}
 PROTECTED_PROFILES = {Path.home() / ".config/jevdual/chrome-profile", Path.home() / ".config/jevdual/chrome-profile-signin"}
@@ -77,6 +81,39 @@ def _counter_id(text: str) -> int | None:
     return int(match.group(1)) if match else None
 
 
+def _field_id(text: str, label: str) -> int | None:
+    match = re.search(rf"\[\s*(\d+)\]\s+\w+\s+'{label}'", text)
+    return int(match.group(1)) if match else None
+
+
+def _field_value(text: str, label: str) -> str | None:
+    match = re.search(rf"\[\s*\d+\]\s+\w+\s+'{label}' = '([^']*)'", text)
+    return match.group(1) if match else None
+
+
+def _typing(env: dict, out: Path, session: Path, rounds: int, spacing: float, steps: list[dict]) -> dict:
+    """BH7: appends to Name, a type into the empty Note, then a type into Note that holds text."""
+    def look(name: str) -> dict:
+        step = _cli(env, out, name, "look", "--session", str(session))
+        steps.append(step)
+        return step
+
+    for i in range(1, rounds + 1):
+        seen = look(f"{i:02d}-look")
+        name_id = _field_id(seen["stdout"], "Name")
+        steps.append(_cli(env, out, f"{i:02d}-append", "do", "append", str(name_id), f" +{i}", "--no-judge",
+                          "--session", str(session)) if name_id else {"name": f"{i:02d}-append", "skipped": "no Name"})
+        time.sleep(spacing)
+    for name, text in (("type-empty", "first note"), ("type-held", "second")):
+        seen = look(f"{name}-look")
+        note_id = _field_id(seen["stdout"], "Note")
+        steps.append(_cli(env, out, name, "do", "type", str(note_id), text, "--no-judge", "--session", str(session))
+                     if note_id else {"name": name, "skipped": "no Note"})
+        time.sleep(3.0)
+    final = look("final-look")
+    return {"name": _field_value(final["stdout"], "Name"), "note": _field_value(final["stdout"], "Note")}
+
+
 def _tab(session: Path) -> str | None:
     try:
         return json.loads((session / "session.json").read_text()).get("browser_tab")
@@ -90,6 +127,7 @@ def main() -> None:
     parser.add_argument("--out", required=True)
     parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--spacing", type=float, default=25.0, help="seconds between rounds")
+    parser.add_argument("--typing", action="store_true", help="BH7: append and type instead of clicking")
     args = parser.parse_args()
     out = Path(args.out)
     if not out.is_absolute():
@@ -102,6 +140,8 @@ def main() -> None:
     session = out / "session"
     env = {**os.environ, "FOOTWORK_BROWSER_HOLDER": "1" if args.arm == "held" else "0"}
 
+    if args.typing:
+        probe_page_effects.FIXTURE = probe_page_effects.FIXTURE.replace("<script>", NOTE_FIELD, 1)
     server, fixture_port = _serve(out)
     url = f"http://127.0.0.1:{fixture_port}/"
     gate = _wait_idle()
@@ -122,7 +162,9 @@ def main() -> None:
                            capture_output=True, timeout=10, check=False)
         time.sleep(5.0)
         record["restored"] = {"t": time.time(), "front": _front()}
-        for i in range(1, args.rounds + 1):
+        if args.typing:
+            record["final_values"] = _typing(env, out, session, args.rounds, args.spacing, steps)
+        for i in range(1, 0 if args.typing else args.rounds + 1):
             look = _cli(env, out, f"{i:02d}-look", "look", "--session", str(session))
             look["tab"] = _tab(session)
             steps.append(look)
