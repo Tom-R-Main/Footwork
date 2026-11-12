@@ -96,7 +96,8 @@ async def _run(out: Path, session: Path, url: str, record: dict) -> None:
     from jevdual import browser_session_holder as bsh
     from jevdual.browser_driver import BrowserBridge
 
-    identity = await asyncio.to_thread(bsh.spawn, session, url=url)
+    identity = await bsh.spawn_owned(url=url)
+    runtime = Path(identity["runtime"])
     record["holder_pid"] = identity["pid"]
     record["owned_chrome_pid"] = identity["chrome_pid"]
     await asyncio.sleep(1.0)
@@ -106,13 +107,13 @@ async def _run(out: Path, session: Path, url: str, record: dict) -> None:
     record["restored"] = {"t": time.time(), "front_pid": _front_pid()}
     try:
         bridge = BrowserBridge(bsh.HeldDriver(), identity["chrome_pid"], identity["window_id"],
-                               operations=bsh.RemoteBrowserOperations(session))
+                               operations=bsh.RemoteBrowserOperations(runtime))
         await bridge.attach()
         steps: list[dict] = record["steps"]
         await _case(bridge, "reload", "Reload soon", steps)
         await _case(bridge, "rerender", "Rerender soon", steps)
     finally:
-        record["holder_stop"] = await bsh.stop_async(session)
+        record["holder_stop"] = await bsh.retire(runtime, expected=identity)
 
 
 def main() -> None:

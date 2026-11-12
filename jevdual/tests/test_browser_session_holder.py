@@ -14,6 +14,8 @@ from jevdual import browser_session_holder as bsh
 from jevdual.browser_driver import BrowserBridge
 from jevdual.effectors.base import BrowserRefusal, BrowserReply
 
+from tests.test_session_scenarios import fw, world  # noqa: F401 - scenario fixtures
+
 URL = "https://example.invalid/form"
 BOUND = {"status": "ok", "target_id": "target-1", "tabs": [{"tab_id": "tab-1", "active": True, "url": URL}]}
 SNAPSHOT = {
@@ -190,20 +192,27 @@ async def test_an_idle_holder_exits_and_releases_its_driver(tmp_path):
 
 
 async def test_a_session_uses_only_the_holder_it_recorded(tmp_path, capsys):
+    """The holder's runtime lives outside the session directory (Sol #3), so publishing a staged
+    replacement cannot strand it; the session finds it through the recorded runtime."""
     from jevdual.session import SessionState, _held_operations
 
-    task, _ = await _held(tmp_path, FakeOperations())
+    runtime, session = tmp_path / "rt", tmp_path / "session"
+    runtime.mkdir(mode=0o700)
+    session.mkdir()
+    task, _ = await _held(runtime, FakeOperations())
     try:
-        live = bsh.holder_live(tmp_path)
-        state = SessionState(dir=str(tmp_path), app="Google Chrome (footwork)", pid=42, window_id=7, task="t",
-                             mode="browser", browser_holder={k: live[k] for k in ("boot", "pid", "start")})
-        assert isinstance(_held_operations(state), bsh.RemoteBrowserOperations)
-        state.browser_holder = {**state.browser_holder, "start": "0.0"}
+        live = bsh.holder_live(runtime)
+        record = {**{k: live[k] for k in ("boot", "pid", "start")}, "runtime": str(runtime)}
+        state = SessionState(dir=str(session), app="Google Chrome (footwork)", pid=42, window_id=7, task="t",
+                             mode="browser", browser_holder=record)
+        held = _held_operations(state)
+        assert isinstance(held, bsh.RemoteBrowserOperations) and held.runtime == runtime
+        state.browser_holder = {**record, "start": "0.0"}
         assert _held_operations(state) is None
         assert "builds its own driver" in capsys.readouterr().err
-        assert _held_operations(SessionState(dir=str(tmp_path), app="x", pid=1, window_id=1, task="t")) is None
+        assert _held_operations(SessionState(dir=str(session), app="x", pid=1, window_id=1, task="t")) is None
     finally:
-        await bsh.stop_async(tmp_path)
+        await bsh.stop_async(runtime)
         await asyncio.wait_for(task, 5)
 
 
@@ -310,3 +319,188 @@ async def test_the_holder_refuses_sending_operations_while_another_client_is_con
     finally:
         await bsh.stop_async(tmp_path)
         await asyncio.wait_for(task, 5)
+
+
+async def test_an_exception_after_dispatch_is_unknown_even_when_it_is_a_value_error(tmp_path):
+    """Sol #1: only parsing may answer "invalid" (read as not sent)."""
+    class LateValueError(FakeOperations):
+        async def click(self, **kw):
+            self.calls.append(("click", kw))
+            raise ValueError("raised after the event was dispatched")
+
+    inner = LateValueError()
+    task, _ = await _held(tmp_path, inner)
+    try:
+        reply = await bsh.RemoteBrowserOperations(tmp_path).click(target_id="t", tab_id="t", ref="r",
+                                                                 input_route="dom_event")
+        assert [n for n, _ in inner.calls] == ["click"]
+        assert reply.dispatched is None and reply.refusal.code == "browser_holder_response_unknown"
+        assert reply.refusal.delivery == "unknown"
+    finally:
+        await bsh.stop_async(tmp_path)
+        await asyncio.wait_for(task, 5)
+
+
+async def test_a_revoked_claim_fences_the_holder_before_dispatch(tmp_path):
+    """Sol #2: the holder re-checks the command's claim in the coordination registry before sending."""
+    from jevdual.coordination import Coordinator
+
+    inner = FakeOperations()
+    task, _ = await _held(tmp_path, inner)
+    registry = Coordinator()
+    try:
+        async with registry.claim("owner-a", ["app/test"]) as claim:
+            fields = {"token": claim.token, "owner": claim.owner, "reservation": "", "desktop": claim.desktop}
+            args = {"target_id": "t", "tab_id": "t", "ref": "r", "input_route": "dom_event"}
+            live = await bsh.call(tmp_path, "click", args, claim=fields)
+            assert live["ok"] and live["reply"]["status"] == "ok"
+            registry.revoke(claim.token)
+            fenced = bsh.reply_from_wire((await bsh.call(tmp_path, "click", args, claim=fields))["reply"])
+            assert fenced.refusal.code == "ownership_revoked" and fenced.dispatched is False
+        assert [n for n, _ in inner.calls] == ["click"]
+    finally:
+        await bsh.stop_async(tmp_path)
+        await asyncio.wait_for(task, 5)
+
+
+async def test_a_revoked_command_sends_nothing_to_the_holder(tmp_path):
+    from jevdual.coordination import CoordinationError, Coordinator, activated
+
+    inner = FakeOperations()
+    task, _ = await _held(tmp_path, inner)
+    registry = Coordinator()
+    try:
+        async with registry.claim("owner-b", ["app/test"]) as claim:
+            with activated(claim):
+                registry.revoke(claim.token)
+                with pytest.raises(CoordinationError):
+                    await bsh.RemoteBrowserOperations(tmp_path).click(target_id="t", tab_id="t", ref="r",
+                                                                     input_route="dom_event")
+        assert inner.calls == []
+    finally:
+        await bsh.stop_async(tmp_path)
+        await asyncio.wait_for(task, 5)
+
+
+async def test_a_cancelled_command_keeps_ownership_until_the_admitted_send_settles(tmp_path):
+    """Sol #2: cancellation mid-request revokes further input and waits for the holder's answer."""
+    from jevdual.coordination import CoordinationError, Coordinator, activated
+
+    started, release = asyncio.Event(), asyncio.Event()
+
+    class Slow(FakeOperations):
+        async def click(self, **kw):
+            started.set()
+            await release.wait()
+            return await super().click(**kw)
+
+    inner = Slow()
+    task, _ = await _held(tmp_path, inner)
+    registry = Coordinator()
+    try:
+        async with registry.claim("owner-c", ["app/test"]) as claim:
+            with activated(claim):
+                request = asyncio.create_task(bsh.RemoteBrowserOperations(tmp_path).click(
+                    target_id="t", tab_id="t", ref="r", input_route="dom_event"))
+                await asyncio.wait_for(started.wait(), 5)
+                request.cancel()
+                await asyncio.sleep(0.2)
+                assert not request.done()  # still owned while the holder is dispatching
+                release.set()
+                with pytest.raises(asyncio.CancelledError):
+                    await request
+            with pytest.raises(CoordinationError):
+                claim.check()
+        assert [n for n, _ in inner.calls] == ["click"]
+    finally:
+        await bsh.stop_async(tmp_path)
+        await asyncio.wait_for(task, 5)
+
+
+async def test_a_cancelled_start_retires_the_holder_its_spawn_produced(monkeypatch):
+    """Sol #4: the spawn thread outlives a cancelled caller; its holder must not be abandoned."""
+    import threading
+
+    gate = threading.Event()
+    identity = {"pid": 4242, "boot": "b", "start": "1.0", "runtime": "/nonexistent/runtime"}
+    retired = []
+
+    def slow_spawn(*, url):
+        gate.wait(5)
+        return identity
+
+    async def retire(runtime, *, expected=None, timeout_s=10.0):
+        retired.append((str(runtime), expected))
+
+    monkeypatch.setattr(bsh, "spawn", slow_spawn)
+    monkeypatch.setattr(bsh, "retire", retire)
+    starting = asyncio.create_task(bsh.spawn_owned(url=None))
+    await asyncio.sleep(0.1)
+    starting.cancel()
+    await asyncio.sleep(0.1)
+    assert not starting.done()
+    gate.set()
+    with pytest.raises(asyncio.CancelledError):
+        await starting
+    assert retired == [("/nonexistent/runtime", identity)]
+
+
+@pytest.mark.parametrize(("returncode", "stdout", "code"), [
+    (1, "", "browser_client_check_unavailable"),            # no rows, maybe an inspection error
+    (2, "", "browser_client_check_unavailable"),            # lsof failed
+    (0, "p4242\ncnode\nn127.0.0.1:50000->127.0.0.1:9466\n", "browser_second_client"),
+    (0, ("pSELF\ncpython\nn127.0.0.1:50001->127.0.0.1:9466\n"
+         "p4242\ncnode\nn127.0.0.1:50000->127.0.0.1:9466\n"), "browser_second_client"),
+    (0, "pSELF\ncpython\nn127.0.0.1:50001->127.0.0.1:9466\n", None),
+    (0, "pSELF\ncpython\nn127.0.0.1:9466->127.0.0.1:50001\n", "browser_client_check_unavailable"),
+])
+def test_the_client_scan_needs_positive_evidence(monkeypatch, returncode, stdout, code):
+    """Sol #5: an empty or failed scan, or one without this holder's own connection, refuses."""
+    import os
+    import subprocess
+    from types import SimpleNamespace
+
+    out = stdout.replace("SELF", str(os.getpid()))
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: SimpleNamespace(returncode=returncode, stdout=out,
+                                                                           stderr="lsof: an error"))
+    refusal = bsh.second_client_refusal(bsh.devtools_clients(9466))
+    assert (refusal.refusal.code if refusal else None) == code
+    if refusal:
+        assert refusal.dispatched is False
+
+
+def test_a_replacement_start_retires_the_holder_of_the_session_it_replaces(world, fw, tmp_path):  # noqa: F811
+    """Sol #3: a published replacement retires the previous session's holder."""
+    import json
+    import threading
+
+    from jevdual import browser_target  # noqa: F401 - imported for the scenario fixtures
+
+    runtime = tmp_path / "old-rt"
+    runtime.mkdir(mode=0o700)
+    ready = threading.Event()
+
+    def holder_thread():
+        async def run():
+            serving = asyncio.create_task(bsh.serve(
+                runtime, driver=FakeDriver(), operations=bsh.PrepareOnce(FakeOperations()),
+                binding={"chrome_pid": 42, "window_id": 7}, chrome_alive=lambda: True, idle_s=60,
+                install_signals=False))
+            while bsh.holder_live(runtime) is None:
+                await asyncio.sleep(0.02)
+            ready.set()
+            await serving
+        asyncio.run(run())
+
+    thread = threading.Thread(target=holder_thread, daemon=True)
+    thread.start()
+    assert ready.wait(5)
+    assert fw("start", "Old native task", "--app", "Calculator")[0] == 0
+    saved = json.loads((fw.session / "session.json").read_text())
+    live = bsh.holder_live(runtime)
+    saved["browser_holder"] = {**{k: live[k] for k in ("boot", "pid", "start")}, "runtime": str(runtime)}
+    (fw.session / "session.json").write_text(json.dumps(saved))
+    code, out, err = fw("start", "New native task", "--app", "Calculator")
+    assert code == 0, (out, err)
+    thread.join(timeout=10)
+    assert not thread.is_alive() and bsh.holder_live(runtime) is None

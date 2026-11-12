@@ -16,6 +16,12 @@ or late response is never reported as not sent.
 Transport: a private Unix socket whose peer UID and PID are checked on both sides, plus a nonce from
 the holder's private identity record. That identifies the session's own holder; it is not a security
 boundary against code running as the same user.
+
+Each holder has its own private runtime directory, outside the session directory, which the session
+records with the holder's process identity; a replacement start retires the holder it replaces.
+Sending operations carry the command's coordination claim, and the holder re-checks it immediately
+before dispatch, so revoking a command's ownership fences the holder as it fences a command's own
+driver (coordination.GuardedDriver).
 """
 
 from __future__ import annotations
@@ -58,6 +64,37 @@ OPERATIONS: dict[str, frozenset[str]] = {
 #: operations that may have reached the page; a lost response to one of these is unknown, not unsent
 SENDING = frozenset({"click", "type_text", "navigate"})
 CONTROL = frozenset({"status", "stop"})
+#: the coordination claim fields a sending request carries (coordination.Claim)
+CLAIM_FIELDS = frozenset({"token", "owner", "reservation", "desktop"})
+#: holder answers given before any driver call
+NOT_SENT_CODES = frozenset({"holder_nonce_mismatch", "holder_request_invalid", "holder_peer_mismatch"})
+
+
+def current_claim() -> dict[str, Any] | None:
+    """The calling command's coordination claim, as a sending request carries it."""
+    from jevdual import coordination
+
+    claim = coordination._CURRENT.get()
+    if claim is None:
+        return None
+    return {"token": claim.token, "owner": claim.owner, "reservation": claim.reservation or "",
+            "desktop": claim.desktop}
+
+
+def ownership_refusal(claim: Mapping[str, Any]) -> BrowserReply | None:
+    """A not-sent refusal when the command's claim is no longer active, checked in the holder
+    immediately before dispatch."""
+    from jevdual.coordination import CoordinationError, check_ownership
+
+    try:
+        check_ownership(token=claim["token"], owner=claim["owner"], reservation=claim["reservation"] or None,
+                        desktop=claim["desktop"])
+    except CoordinationError as exc:
+        message = f"{exc}; nothing was sent"
+        return BrowserReply(status="refused", text=message, is_error=True, dispatched=False,
+                            refusal=BrowserRefusal(code="ownership_revoked", message=message,
+                                                   detail={"delivery": "not_sent", "retryable": False}))
+    return None
 
 
 class HolderUnavailable(RuntimeError):
@@ -68,14 +105,28 @@ def enabled() -> bool:
     return os.environ.get("FOOTWORK_BROWSER_HOLDER", "1") != "0"
 
 
-def runtime_dir(session_dir: Path) -> Path:
+def _base() -> Path:
+    return Path(tempfile.gettempdir()) / f"fw-bh-{os.getuid()}"
+
+
+def new_runtime() -> Path:
+    """A fresh private runtime directory for one holder: its identity record and log."""
+    base = _base()
+    _private_socket_dir(base)
+    runtime = base / secrets.token_hex(8)
+    runtime.mkdir(mode=0o700)
+    return runtime
+
+
+def legacy_runtime(session_dir: Path) -> Path:
+    """Where holders started before runtime directories were recorded kept their identity."""
     return Path(session_dir) / "browser-holder"
 
 
-def socket_path(session_dir: Path) -> Path:
-    """A short private path: sockaddr_un allows about 104 bytes on macOS, session paths can exceed it."""
-    digest = hashlib.sha256(str(Path(session_dir).resolve()).encode()).hexdigest()[:20]
-    return Path(tempfile.gettempdir()) / f"fw-bh-{os.getuid()}" / f"{digest}.sock"
+def socket_path(runtime: Path) -> Path:
+    """A short private path: sockaddr_un allows about 104 bytes on macOS."""
+    digest = hashlib.sha256(str(Path(runtime).resolve()).encode()).hexdigest()[:20]
+    return _base() / f"{digest}.sock"
 
 
 def _plain(value: Any) -> Any:
@@ -150,16 +201,24 @@ def devtools_clients(port: int) -> list[dict[str, Any]] | None:
 
 def second_client_refusal(clients: list[dict[str, Any]] | None) -> BrowserReply | None:
     """A refusal when a process other than this holder is connected to the browser, or when that
-    cannot be checked. Nothing is sent: another client could change the page between this holder's
-    observation and its input, and this holder could not tell."""
-    if clients is not None:
-        foreign = [c for c in clients if c["pid"] != os.getpid()]
-        if not foreign:
-            return None
+    cannot be established. Nothing is sent: another client could change the page between this
+    holder's observation and its input, and this holder could not tell.
+
+    An empty or partial scan is not evidence of no other client, so the scan must also show this
+    holder's own connection (its driver keeps one open); without it the check refuses. This is a
+    check at one instant: a client that attaches after it is not seen."""
+    foreign = [c for c in clients or () if c["pid"] != os.getpid()]
+    if foreign:
         names = ", ".join(f"{c['command']} (pid {c['pid']})" for c in foreign[:4])
         code, message = "browser_second_client", f"another DevTools client is connected to this browser: {names}"
-    else:
+    elif clients is None:
         code, message = "browser_client_check_unavailable", "could not check for another DevTools client"
+    elif not any(c["pid"] == os.getpid() for c in clients):
+        code = "browser_client_check_unavailable"
+        message = ("the client scan did not show this holder's own DevTools connection, so it cannot "
+                   "show that no other client is connected")
+    else:
+        return None
     return BrowserReply(status="refused", text=message, is_error=True, dispatched=False,
                         refusal=BrowserRefusal(code=code, message=f"{message}; nothing was sent",
                                                detail={"delivery": "not_sent", "retryable": True,
@@ -212,6 +271,9 @@ class Holder:
             return {"ok": False, "code": "holder_nonce_mismatch"}
         method = request.get("method")
         args = request.get("args") or {}
+        claim = request.get("claim")
+        if claim is not None and (not isinstance(claim, dict) or set(claim) != CLAIM_FIELDS):
+            return {"ok": False, "code": "holder_request_invalid"}
         if method in CONTROL:
             if method == "stop":
                 self.stopping.set()
@@ -221,10 +283,13 @@ class Holder:
         self.last_request = time.monotonic()
         async with self.lock:
             refusal = None
-            if method in SENDING and self.clients is not None:
+            if method in SENDING and claim is not None:
+                refusal = await asyncio.to_thread(ownership_refusal, claim)
+            if refusal is None and method in SENDING and self.clients is not None:
                 refusal = second_client_refusal(await asyncio.to_thread(self.clients))
             if refusal is not None:
-                self.refused_second_client += 1
+                if refusal.refusal and refusal.refusal.code != "ownership_revoked":
+                    self.refused_second_client += 1
                 reply = refusal
             else:
                 reply = await getattr(self.operations, method)(**args)
@@ -245,18 +310,28 @@ class Holder:
     async def serve(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         from jevdual.browser_holder import _peer_credentials
 
-        result: dict[str, Any]
+        result: dict[str, Any] | None = None
+        request: Any = None
+        # Only reading and parsing may answer "invalid", which the client reads as not sent. Once the
+        # request is handed to handle(), any exception may follow a dispatch and is unknown.
         try:
             if _peer_credentials(writer)[1] != os.getuid():
                 result = {"ok": False, "code": "holder_peer_mismatch"}
             else:
                 raw = await asyncio.wait_for(reader.readuntil(b"\n"), 5.0)
                 request = json.loads(raw)
-                result = await asyncio.wait_for(self.handle(request), REQUEST_TIMEOUT)
-        except (asyncio.LimitOverrunError, asyncio.IncompleteReadError, ValueError):
+                if not isinstance(request, dict):
+                    result = {"ok": False, "code": "holder_request_invalid"}
+        except (asyncio.LimitOverrunError, asyncio.IncompleteReadError, ValueError, TimeoutError):
             result = {"ok": False, "code": "holder_request_invalid"}
-        except Exception as exc:  # noqa: BLE001 - an operation that raised may still have reached the page
-            result = {"ok": False, "code": "holder_response_unknown", "error": f"{type(exc).__name__}: {exc}"[:300]}
+        except Exception as exc:  # noqa: BLE001 - nothing was handed to the driver yet
+            result = {"ok": False, "code": "holder_request_invalid", "error": f"{type(exc).__name__}"[:100]}
+        if result is None:
+            try:
+                result = await asyncio.wait_for(self.handle(request), REQUEST_TIMEOUT)
+            except Exception as exc:  # noqa: BLE001 - an operation that raised may still have reached the page
+                result = {"ok": False, "code": "holder_response_unknown",
+                          "error": f"{type(exc).__name__}: {exc}"[:300]}
         try:
             encoded = json.dumps(result, separators=(",", ":"), default=str).encode() + b"\n"
             if len(encoded) > MAX_RESPONSE:
@@ -290,20 +365,20 @@ async def _watch(holder: Holder, chrome_alive: Any) -> str:
 
 
 async def serve(
-    session_dir: Path, *, driver: Any, operations: PrepareOnce, binding: Mapping[str, Any],
+    runtime: Path, *, driver: Any, operations: PrepareOnce, binding: Mapping[str, Any],
     chrome_alive: Any, idle_s: float, install_signals: bool = True, clients: Any = None,
 ) -> str:
-    """Serve ``operations`` on the session's socket until stopped, idle, or the browser goes away."""
+    """Serve ``operations`` on the runtime's socket until stopped, idle, or the browser goes away."""
     from jevdual.browser_holder import _write_private, process_identity
 
-    runtime = runtime_dir(session_dir)
+    runtime = Path(runtime)
     _private_socket_dir(runtime)
-    sock = socket_path(session_dir)
+    sock = socket_path(runtime)
     _private_socket_dir(sock.parent)
     if sock.exists():
         sock.unlink()  # this session's own path; spawn refuses while a live holder has it
     identity = {"version": 1, **process_identity(os.getpid()), "nonce": secrets.token_hex(32),
-                "socket": str(sock), **binding}
+                "socket": str(sock), "runtime": str(runtime.resolve()), **binding}
     holder = Holder(driver=driver, operations=operations, identity=identity, idle_s=idle_s, clients=clients)
     server = await asyncio.start_unix_server(holder.serve, path=str(sock), limit=MAX_REQUEST)
     os.chmod(sock, 0o600)
@@ -329,7 +404,7 @@ async def serve(
     return reason
 
 
-async def run(session_dir: Path, *, url: str | None, idle_s: float) -> int:
+async def run(runtime: Path, *, url: str | None, idle_s: float) -> int:
     from jevdual.browser_driver import _incarnation, bind_footwork_chrome, chrome_pid
 
     wrapped: list[PrepareOnce] = []
@@ -348,7 +423,7 @@ async def run(session_dir: Path, *, url: str | None, idle_s: float) -> int:
     }
     from jevdual.browser_driver import PORT
 
-    await serve(session_dir, driver=driver, operations=wrapped[-1], binding={**binding, "port": PORT},
+    await serve(runtime, driver=driver, operations=wrapped[-1], binding={**binding, "port": PORT},
                 idle_s=idle_s, chrome_alive=lambda: chrome_pid() == pid and _incarnation(pid) == incarnation,
                 clients=lambda: devtools_clients(PORT))
     return 0
@@ -356,21 +431,21 @@ async def run(session_dir: Path, *, url: str | None, idle_s: float) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="hold one browser driver for a footwork session")
-    parser.add_argument("--session", required=True)
+    parser.add_argument("--runtime", required=True, help="this holder's private runtime directory")
     parser.add_argument("--url")
     parser.add_argument("--idle", type=float, default=float(os.environ.get("FOOTWORK_BROWSER_HOLDER_IDLE_S", DEFAULT_IDLE_S)))
     args = parser.parse_args(argv)
-    return asyncio.run(run(Path(args.session), url=args.url, idle_s=args.idle))
+    return asyncio.run(run(Path(args.runtime), url=args.url, idle_s=args.idle))
 
 
 # ---------------------------------------------------------------- client side
 
 
-def _read_identity(session_dir: Path) -> dict[str, Any]:
+def _read_identity(runtime: Path) -> dict[str, Any]:
     from jevdual.browser_holder import HolderRefused, _read_private
 
     try:
-        return _read_private(runtime_dir(session_dir) / HOLDER_FILE)
+        return _read_private(Path(runtime) / HOLDER_FILE)
     except (FileNotFoundError, HolderRefused, ValueError) as exc:
         raise HolderUnavailable(f"no live browser holder record: {exc}") from exc
 
@@ -386,14 +461,17 @@ def _check_alive(identity: Mapping[str, Any]) -> None:
         raise HolderUnavailable("the session's browser holder process changed identity")
 
 
-async def call(session_dir: Path, method: str, args: Mapping[str, Any] | None = None) -> dict[str, Any]:
-    """One request to the session's holder. Raises HolderUnavailable only when nothing was sent."""
+async def call(runtime: Path, method: str, args: Mapping[str, Any] | None = None, *,
+               claim: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    """One request to a holder. Raises HolderUnavailable only when nothing was sent."""
     from jevdual.browser_holder import _peer_credentials
 
-    identity = _read_identity(session_dir)
+    identity = _read_identity(runtime)
     _check_alive(identity)
-    raw = json.dumps({"nonce": identity["nonce"], "method": method, "args": dict(args or {})},
-                     separators=(",", ":")).encode() + b"\n"
+    request: dict[str, Any] = {"nonce": identity["nonce"], "method": method, "args": dict(args or {})}
+    if claim is not None:
+        request["claim"] = dict(claim)
+    raw = json.dumps(request, separators=(",", ":")).encode() + b"\n"
     if len(raw) > MAX_REQUEST:
         raise HolderUnavailable("the browser request exceeds the holder's request bound")
     try:
@@ -423,14 +501,37 @@ async def call(session_dir: Path, method: str, args: Mapping[str, Any] | None = 
 
 
 class RemoteBrowserOperations:
-    """``BrowserOperations`` served by the session's holder."""
+    """``BrowserOperations`` served by a session's holder, under the calling command's ownership."""
 
-    def __init__(self, session_dir: Path):
-        self.session_dir = Path(session_dir)
+    def __init__(self, runtime: Path):
+        self.runtime = Path(runtime)
 
     async def _op(self, name: str, **args: Any) -> BrowserReply:
+        from jevdual import coordination
+
+        claim = None
+        if name in SENDING:
+            coordination.checkpoint()  # as GuardedDriver does before a command's own non-read-only call
+            claim = current_claim()
+        task = asyncio.ensure_future(call(self.runtime, name, args, claim=claim))
         try:
-            value = await call(self.session_dir, name, args)
+            value = await asyncio.shield(task)
+        except asyncio.CancelledError:
+            # The holder may already be dispatching. Fence further input and keep this command's
+            # ownership until the admitted request settles (coordination.owned_thread).
+            owner = coordination._CURRENT.get()
+            if owner is not None and name in SENDING:
+                owner.registry.revoke(owner.token)
+            while not task.done():
+                try:
+                    await asyncio.shield(task)
+                except asyncio.CancelledError:
+                    continue
+                except Exception:  # noqa: BLE001 - consume the request's failure, keep the cancellation
+                    break
+            with contextlib.suppress(Exception):
+                task.result()
+            raise
         except HolderUnavailable as exc:  # raised only before anything was written to the socket
             return BrowserReply(status="refused", text=str(exc), is_error=True, dispatched=False,
                                 refusal=BrowserRefusal(code="browser_holder_unavailable", message=str(exc),
@@ -438,7 +539,7 @@ class RemoteBrowserOperations:
         if value.get("ok") and isinstance(value.get("reply"), dict):
             return reply_from_wire(value["reply"])
         code = str(value.get("code") or "holder_response_unknown")
-        if code in {"holder_nonce_mismatch", "holder_request_invalid", "holder_peer_mismatch"}:
+        if code in NOT_SENT_CODES:
             # refused by the holder before any driver call
             return BrowserReply(status="refused", text=code, is_error=True, dispatched=False,
                                 refusal=BrowserRefusal(code=code, message=code,
@@ -473,28 +574,26 @@ class HeldDriver:
         return None
 
 
-def holder_live(session_dir: Path) -> dict[str, Any] | None:
+def holder_live(runtime: Path) -> dict[str, Any] | None:
     try:
-        identity = _read_identity(session_dir)
+        identity = _read_identity(runtime)
         _check_alive(identity)
         return identity
     except HolderUnavailable:
         return None
 
 
-def spawn(session_dir: Path, *, url: str | None) -> dict[str, Any]:
-    """Start the session's holder and wait until it has bound the browser. Raises on failure."""
+def spawn(*, url: str | None) -> dict[str, Any]:
+    """Start a holder in a new runtime directory and wait until it has bound the browser.
+
+    Returns its identity record, which names its runtime. Raises when it does not become ready, after
+    terminating the process it started."""
     import subprocess
 
-    runtime = runtime_dir(session_dir)
-    _private_socket_dir(runtime)
-    if holder_live(session_dir):
-        raise HolderUnavailable("this session already has a live browser holder")
-    with contextlib.suppress(FileNotFoundError):
-        (runtime / HOLDER_FILE).unlink()
+    runtime = new_runtime()
     # the release launcher runs isolated (-I); the holder runs the same way from the same interpreter
     command = [sys.executable, *(["-I"] if sys.flags.isolated else []), "-m", "jevdual.browser_session_holder",
-               "--session", str(Path(session_dir).resolve())]
+               "--runtime", str(runtime)]
     if url:
         command += ["--url", url]
     log = (runtime / LOG_FILE).open("ab")
@@ -503,7 +602,7 @@ def spawn(session_dir: Path, *, url: str | None) -> dict[str, Any]:
     deadline = time.monotonic() + READY_TIMEOUT_S
     try:
         while time.monotonic() < deadline:
-            identity = holder_live(session_dir)
+            identity = holder_live(runtime)
             if identity is not None and identity.get("pid") == process.pid:
                 return identity
             if process.poll() is not None:
@@ -513,17 +612,83 @@ def spawn(session_dir: Path, *, url: str | None) -> dict[str, Any]:
         log.close()
     if process.poll() is None:
         process.terminate()
+        with contextlib.suppress(subprocess.TimeoutExpired):
+            process.wait(timeout=10)
     tail = (runtime / LOG_FILE).read_text(errors="replace")[-600:]
     raise HolderUnavailable(f"the browser holder did not become ready: {tail.strip()}")
 
 
-async def stop_async(session_dir: Path) -> dict[str, Any] | None:
-    if holder_live(session_dir) is None:
-        return None
+async def spawn_owned(*, url: str | None) -> dict[str, Any]:
+    """``spawn`` that a cancelled caller cannot abandon: on cancellation it waits for the spawn to
+    finish and retires the holder it produced before re-raising."""
+    task = asyncio.ensure_future(asyncio.to_thread(spawn, url=url))
     try:
-        return await call(session_dir, "stop")
-    except HolderUnavailable:
+        return await asyncio.shield(task)
+    except asyncio.CancelledError:
+        while not task.done():
+            try:
+                await asyncio.shield(task)
+            except asyncio.CancelledError:
+                continue
+            except Exception:  # noqa: BLE001 - a failed spawn terminated its own process
+                break
+        identity = None
+        with contextlib.suppress(Exception):
+            identity = task.result()
+        if identity is not None:
+            await retire(Path(identity["runtime"]), expected=identity)
+        raise
+
+
+def recorded_runtime(record: Mapping[str, Any], session_dir: Path) -> Path:
+    """The runtime directory a session's holder record names (older records kept it in the session)."""
+    return Path(record["runtime"]) if record.get("runtime") else legacy_runtime(session_dir)
+
+
+async def retire(runtime: Path, *, expected: Mapping[str, Any] | None = None,
+                 timeout_s: float = 10.0) -> dict[str, Any] | None:
+    """Stop a holder and wait, bounded, until its process has exited.
+
+    With ``expected`` (the identity a session recorded) only that process is stopped; a holder with
+    another identity in the same runtime is left alone. If it does not exit after asking, it is sent
+    SIGTERM, checked against the same identity first. Returns its last status, if it answered."""
+    from jevdual.browser_holder import process_identity
+
+    live = holder_live(runtime)
+    if live is None or (expected and any(live.get(k) != expected.get(k) for k in ("boot", "pid", "start"))):
         return None
+    status = None
+    with contextlib.suppress(HolderUnavailable):
+        status = await call(runtime, "stop")
+
+    def same() -> bool:
+        try:
+            current = process_identity(int(live["pid"]))
+        except Exception:  # noqa: BLE001 - exited
+            return False
+        return all(live.get(k) == current[k] for k in ("boot", "pid", "start"))
+
+    def running() -> bool:
+        # the holder removes its record as it exits; a holder in this very process (the offline
+        # tests) is gone once its record is
+        current = holder_live(runtime)
+        return same() and current is not None and current.get("nonce") == live.get("nonce")
+
+    for signalled in (False, True):
+        deadline = time.monotonic() + (timeout_s if not signalled else 5.0)
+        while time.monotonic() < deadline:
+            if not running():
+                return status
+            await asyncio.sleep(0.1)
+        if not signalled and same() and int(live["pid"]) != os.getpid():
+            with contextlib.suppress(ProcessLookupError):
+                os.kill(int(live["pid"]), signal.SIGTERM)
+    return status
+
+
+async def stop_async(runtime: Path) -> dict[str, Any] | None:
+    """Ask a holder to stop and wait for it to exit."""
+    return await retire(runtime)
 
 
 if __name__ == "__main__":

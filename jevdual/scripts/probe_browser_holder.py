@@ -263,7 +263,13 @@ def main() -> None:
         record["finished"] = time.time()
         from jevdual import browser_session_holder as bsh
 
-        record["holder_stop"] = asyncio.run(bsh.stop_async(session)) if args.arm == "held" else None
+        holder = {}
+        try:
+            holder = json.loads((session / "session.json").read_text()).get("browser_holder") or {}
+        except (OSError, ValueError):
+            pass
+        record["holder_stop"] = (asyncio.run(bsh.retire(bsh.recorded_runtime(holder, session), expected=holder))
+                                 if args.arm == "held" and holder else None)
         time.sleep(1.0)
         from jevdual.browser_driver import chrome_pid
 
