@@ -63,3 +63,11 @@ Test: scripts/probe_browser_holder.py --arm held --typing on a fresh isolated pr
 Predicts: the three appends and the first type exit 0; the final observation shows Name "held text +1 +2 +3" and Note "first note"; the second type into Note is refused with nothing dispatched and the page logs no input for it; after the restore the frontmost application never becomes Chrome and the page logs no focus or visible event.
 Against: any focus or visible page event, or Chrome frontmost, after the restore; either final value differing; any input event logged for the refused type.
 Refs: docs/notebook/2026-11-11-browser-holder.md#bh6; python/jevdual/browser_driver.py BrowserBridge.act
+
+## BH8 · update · 2026-11-11 21:27
+Resolves: BH7 = failed
+Observed: the append put its text at the start of the field: the page logged Name " +1held text" and Footwork's receipt said partial ("not its earlier value plus the insertion"), so nothing claimed success. The type into the empty Note gave exactly "first note". The type into Note while it held text was refused before sending (requires_foreground) and the page logged no input for it. Only one append ran: the Name control has id 0, which the probe treated as missing. The background clauses cannot be assessed: the person's own Chrome was frontmost when the probe started, and the probe records the frontmost application by name, so it neither restored anything nor can tell the two Chromes apart; the page logged a window focus during the type into Note, whose cause the run cannot distinguish (results/browser-holder-20261111/bh7-summary.json).
+Inferred: without replace, browser_type focuses the node (DOM.focus) and inserts at the caret that focus leaves (cua-driver-core browser/tools.rs, the browser_type tool), which for this input is the start. So Footwork's append onto a field that holds text was never an append on this route; this predates the holder, and the receipt check catches it only after sending.
+Changes: none yet.
+Next: deliver an append onto held text as a replacement with the held value plus the text (a foreground step the posture gate refuses in background_only), and refuse it when the held value is truncated or a password; make the probe track the frontmost process by PID and restore by PID; then BH9.
+Refs: results/browser-holder-20261111/bh7-summary.json

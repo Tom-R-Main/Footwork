@@ -1,0 +1,129 @@
+{
+ "run": "typing-1",
+ "front_at_start": "Google Chrome",
+ "restored_front": "Google Chrome",
+ "final_values": {
+  "name": "+1held text",
+  "note": "first note"
+ },
+ "commands": [
+  {
+   "name": "00-start",
+   "exit": 0,
+   "skipped": null
+  },
+  {
+   "name": "01-look",
+   "exit": 0,
+   "skipped": null
+  },
+  {
+   "name": "01-append",
+   "exit": 0,
+   "skipped": null
+  },
+  {
+   "name": "02-look",
+   "exit": 0,
+   "skipped": null
+  },
+  {
+   "name": "02-append",
+   "exit": null,
+   "skipped": "no Name"
+  },
+  {
+   "name": "03-look",
+   "exit": 0,
+   "skipped": null
+  },
+  {
+   "name": "03-append",
+   "exit": null,
+   "skipped": "no Name"
+  },
+  {
+   "name": "type-empty-look",
+   "exit": 0,
+   "skipped": null
+  },
+  {
+   "name": "type-empty",
+   "exit": 0,
+   "skipped": null
+  },
+  {
+   "name": "type-held-look",
+   "exit": 0,
+   "skipped": null
+  },
+  {
+   "name": "type-held",
+   "exit": 0,
+   "skipped": null
+  },
+  {
+   "name": "final-look",
+   "exit": 0,
+   "skipped": null
+  }
+ ],
+ "page_events_after_restore_s": [
+  {
+   "dt": -8.42,
+   "type": "visibility",
+   "detail": {
+    "state": "hidden"
+   }
+  },
+  {
+   "dt": 1.02,
+   "type": "input",
+   "detail": {
+    "id": "name",
+    "value": " +1held text"
+   }
+  },
+  {
+   "dt": 14.56,
+   "type": "change",
+   "detail": {
+    "id": "name",
+    "checked": false
+   }
+  },
+  {
+   "dt": 14.56,
+   "type": "window_blur",
+   "detail": {}
+  },
+  {
+   "dt": 63.96,
+   "type": "window_focus",
+   "detail": {}
+  },
+  {
+   "dt": 63.97,
+   "type": "input",
+   "detail": {
+    "id": "note",
+    "value": "first note"
+   }
+  }
+ ],
+ "append_receipt": "partial ('Name' changed and holds '+1held text', not its earlier value plus the insertion)",
+ "held_type_receipt": "refused (not applied: requires_foreground ...)",
+ "holder_status": {
+  "served": {
+   "prepare": 10,
+   "bind": 10,
+   "navigate": 1,
+   "snapshot": 14,
+   "type_text": 2
+  },
+  "prepare_repeats_answered": 10,
+  "idle_s": 0.095,
+  "chrome_pid": 53302,
+  "window_id": 401951
+ }
+}
