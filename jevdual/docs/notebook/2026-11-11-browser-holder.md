@@ -54,3 +54,12 @@ Inferred: the per-command driver is what made background page work impossible on
 Changes: none beyond BH5.
 Next: B2 (refuse or detect a second DevTools client) and B3 (input bound to the document generation); typing through the holder in the background; DemoGeek's take primitives (rectangles, waits, per-character insertText, file inputs, window bounds) for step D.
 Refs: results/browser-holder-20261111/bh3-summary.json; scripts/probe_browser_holder.py
+
+## BH7 · prediction · 2026-11-11 20:44
+Question: does typing through the holder stay in the background, and does the posture gate still refuse replacing held text?
+Hypothesis: browser_type inserts without selecting the tab when it neither replaces nor uses keystrokes (the bridge's note from the 2026-09-25 tab probe); appending to a field and typing into an empty one take that route, so through the held driver they land with the page hidden. Typing into a field that holds text is a replacement, which selects the tab for about 100 ms, so in background_only the bridge refuses it before sending, as without a holder.
+Alternatives: (a) insert_text without replace also makes the page visible or focused, or brings the browser forward; (b) it reaches the field but the value differs (lost or doubled characters); (c) the refusal is skipped or something is sent through the holder.
+Test: scripts/probe_browser_holder.py --arm held --typing on a fresh isolated profile, port 9466, on the fixture extended with an empty field "Note": after the restore, three rounds of do append to "Name" with " +<round>", 20 s apart; then do type "first note" into "Note"; then do type "second" into "Note" again. Each command is its own process; the sampler and the page's own focus, visibility and input log run throughout.
+Predicts: the three appends and the first type exit 0; the final observation shows Name "held text +1 +2 +3" and Note "first note"; the second type into Note is refused with nothing dispatched and the page logs no input for it; after the restore the frontmost application never becomes Chrome and the page logs no focus or visible event.
+Against: any focus or visible page event, or Chrome frontmost, after the restore; either final value differing; any input event logged for the refused type.
+Refs: docs/notebook/2026-11-11-browser-holder.md#bh6; python/jevdual/browser_driver.py BrowserBridge.act
