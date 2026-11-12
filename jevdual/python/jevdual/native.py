@@ -96,7 +96,7 @@ _VALUE_CAP = 120
 FOREGROUND_WEB_TEXT_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1"
 FOREGROUND_HELPTAG_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1"
 #: the pinned release: focus1 and helptag1, plus a connected-node check before a page-route click
-FOREGROUND_CONNECTED_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected2"
+FOREGROUND_CONNECTED_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected3"
 FOREGROUND_WEB_TEXT_CUA_VERSIONS = frozenset({FOREGROUND_WEB_TEXT_CUA_VERSION, FOREGROUND_HELPTAG_CUA_VERSION,
                                              FOREGROUND_CONNECTED_CUA_VERSION})
 _INVISIBLE = re.compile("[" + "\u200e\u200f\u202a-\u202e\u2066-\u2069" + "]")

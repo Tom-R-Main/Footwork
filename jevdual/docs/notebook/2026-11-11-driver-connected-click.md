@@ -92,3 +92,18 @@ Test: scripts/probe_document_binding.py, now recording every click's result text
 Predicts: both fresh clicks' texts begin "dispatched synthetic DOM click" and none contains "did not report completing"; both late clicks refuse browser_ref_stale with no handler activation on the removed counter button; the vanish click reports a partial delivery stopped after pointerdown with no vanish_click.
 Against: any click text containing "did not report completing"; the vanish click refused or interrupted; any handler activation on a removed button.
 Refs: #dc9; #dc10
+
+## DC12 · update · 2026-11-12 04:26
+Resolves: DC11 = held
+Observed: in Desktop's grant until 09:39 UTC the probe at 27a5c4f ran once on connected3 (port 9466, fresh profile), launching at 09:25:13 after the gate read unlocked and 3016 s idle; 24 s, Chrome closed at 09:25:37, prior app restored (results/driver-connected-20261112/dc11-live). All four clicks on connected nodes (both triggers and both fresh clicks) report "dispatched synthetic DOM click … bounded semantic target state remained unchanged", the completed path, and no click text contains "did not report completing". Both late clicks refused browser_ref_stale, the page logged no handler activation for the removed counter button, both fresh clicks landed once, and the vanish click reported a partial delivery stopped after pointerdown with no vanish_click.
+Inferred: real Chrome returns the completion receipt in the shape the classifier accepts; DC8's change keeps connected clicks on the completed path.
+Next: a fresh Sol review of PR #26 on connected3.
+Refs: #dc11; results/driver-connected-20261112/dc11-live
+
+## DC13 · update · 2026-11-12 04:42
+Resolves: DC8 = held
+Observed: in the Node DOM-stub model (results/driver-connected-20261112/dc8/node-model.json, after removing two harness artifacts: the stubs' own event log and listener registration used Array.prototype.push, and the moved-icon count included events from before the move), connected2 focused a detached focusable icon, sent four more events including the click to an icon moved into another button (which took focus), aborted on a throwing dispatch wrapper, and reported an empty receipt after seven events with a no-op push; the new sequence focused the connected button, sent nothing to the moved icon, left no receipt when the wrapper threw, and reported count 7 stopped after pointerdown (or 11 completed) with the no-op push. On connected2's tools.rs four browser tests fail, the two new ones and the two whose receipt assertions changed, and the exception test fails because the click is reported "bounded semantic readback confirmed a target-state change" (rust-red.txt); with the change all 1239 cua-driver-core library tests pass (rust-green.txt). scripts/cua_source_chain.py reproduces the new archive (4e012c8c, 6,410,990 bytes); it installs as connected3 (dc8/runtime.json); the offline suite passes at normal priority (3513 passed, 52 skipped). At background priority one timing test fails, as recorded in dc8/offline-suite.txt; it uses a fake poster and its code is unchanged here. Real Chrome accepted the receipt (DC12).
+Inferred: Sol's four round-2 findings are closed for the cases modelled and tested; a page that replaces Node.prototype.contains or the isConnected getter can still steer the checks (DC8 alternative (a), accepted).
+Changes: connected2 becomes connected3 (never released either).
+Next: a fresh Sol review of PR #26.
+Refs: #dc8; #dc12; results/driver-connected-20261112/dc8

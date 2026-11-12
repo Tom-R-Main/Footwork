@@ -1,0 +1,250 @@
+{
+ "connected2": {
+  "focusable_icon_removed_on_mousedown": {
+   "result": {
+    "sent": [
+     "pointerover",
+     "pointerenter",
+     "mouseover",
+     "mouseenter",
+     "pointermove",
+     "mousemove",
+     "pointerdown",
+     "mousedown",
+     "pointerup",
+     "mouseup",
+     "click"
+    ],
+    "stopped": null,
+    "retargeted": true
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "icon:mousedown",
+    "icon:focus(detached)",
+    "button:pointerup",
+    "button:mouseup",
+    "button:click"
+   ],
+   "to_detached": 1,
+   "to_moved_icon": 0
+  },
+  "icon_moved_to_another_button_on_pointerdown": {
+   "result": {
+    "sent": [
+     "pointerover",
+     "pointerenter",
+     "mouseover",
+     "mouseenter",
+     "pointermove",
+     "mousemove",
+     "pointerdown",
+     "mousedown",
+     "pointerup",
+     "mouseup",
+     "click"
+    ],
+    "stopped": null,
+    "retargeted": false
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "icon:mousedown",
+    "other-button:focus",
+    "icon:pointerup",
+    "icon:mouseup",
+    "icon:click"
+   ],
+   "to_detached": 0,
+   "to_moved_icon": 4
+  },
+  "dispatch_wrapper_throws_before_click": {
+   "result": {
+    "threw": "wrapper"
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "icon:mousedown",
+    "button:focus",
+    "icon:pointerup"
+   ],
+   "to_detached": 0,
+   "to_moved_icon": 0
+  },
+  "noop_array_push_then_ref_removed_on_pointerdown": {
+   "result": {
+    "sent": [],
+    "stopped": "detached",
+    "retargeted": false
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown"
+   ],
+   "to_detached": 0,
+   "to_moved_icon": 0
+  },
+  "noop_array_push_connected": {
+   "result": {
+    "sent": [],
+    "stopped": null,
+    "retargeted": false
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "icon:mousedown",
+    "button:focus",
+    "icon:pointerup",
+    "icon:mouseup",
+    "icon:click"
+   ],
+   "to_detached": 0,
+   "to_moved_icon": 0
+  }
+ },
+ "new": {
+  "focusable_icon_removed_on_mousedown": {
+   "result": {
+    "complete": true,
+    "stopped": null,
+    "count": 11,
+    "last": "click",
+    "retargeted": true
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "icon:mousedown",
+    "button:focus",
+    "button:pointerup",
+    "button:mouseup",
+    "button:click"
+   ],
+   "to_detached": 0,
+   "to_moved_icon": 0
+  },
+  "icon_moved_to_another_button_on_pointerdown": {
+   "result": {
+    "complete": true,
+    "stopped": null,
+    "count": 11,
+    "last": "click",
+    "retargeted": true
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "button:mousedown",
+    "button:focus",
+    "button:pointerup",
+    "button:mouseup",
+    "button:click"
+   ],
+   "to_detached": 0,
+   "to_moved_icon": 0
+  },
+  "dispatch_wrapper_throws_before_click": {
+   "result": {
+    "threw": "wrapper"
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "icon:mousedown",
+    "button:focus",
+    "icon:pointerup"
+   ],
+   "to_detached": 0,
+   "to_moved_icon": 0
+  },
+  "noop_array_push_then_ref_removed_on_pointerdown": {
+   "result": {
+    "complete": false,
+    "stopped": "detached",
+    "count": 7,
+    "last": "pointerdown",
+    "retargeted": false
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown"
+   ],
+   "to_detached": 0,
+   "to_moved_icon": 0
+  },
+  "noop_array_push_connected": {
+   "result": {
+    "complete": true,
+    "stopped": null,
+    "count": 11,
+    "last": "click",
+    "retargeted": false
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "icon:mousedown",
+    "button:focus",
+    "icon:pointerup",
+    "icon:mouseup",
+    "icon:click"
+   ],
+   "to_detached": 0,
+   "to_moved_icon": 0
+  }
+ }
+}

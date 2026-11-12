@@ -1,33 +1,49 @@
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
-@@ -193,6 +193,50 @@
+@@ -193,8 +193,84 @@
      builder
          .build()
          .expect("DOM click action record must satisfy the stable contract")
 +}
 +
-+/// The events a DOM click sequence sent before it stopped because the ref's
-+/// node left its document, or `None` when it completed or reported nothing.
-+fn dom_click_sequence_stopped(reply: &Value) -> Option<Vec<String>> {
-+    let value = reply.pointer("/result/value")?;
-+    if value.get("stopped").and_then(Value::as_str) != Some("detached") {
-+        return None;
-+    }
-+    Some(
-+        value
-+            .get("sent")
-+            .and_then(Value::as_array)
-+            .map(|sent| {
-+                sent.iter()
-+                    .filter_map(Value::as_str)
-+                    .map(str::to_owned)
-+                    .collect()
-+            })
-+            .unwrap_or_default(),
-+    )
++/// What a DOM click sequence's reply says about its delivery. Only a
++/// well-formed receipt counts: an exception, a missing value or any other
++/// shape is an interrupted click, never a completed or an undelivered one.
++#[derive(Debug, PartialEq)]
++enum DomClickReceipt {
++    Completed,
++    Detached { count: u64, last: String },
++    Interrupted(&'static str),
 +}
 +
-+fn dom_click_stopped_action_record(sent: &[String]) -> ActionExecutionRecord {
++fn dom_click_receipt(reply: &Value) -> DomClickReceipt {
++    if reply.get("exceptionDetails").is_some() {
++        return DomClickReceipt::Interrupted("the sequence threw");
++    }
++    let Some(value) = reply.pointer("/result/value") else {
++        return DomClickReceipt::Interrupted("no completion receipt");
++    };
++    let count = value.get("count").and_then(Value::as_u64);
++    match (
++        value.get("complete").and_then(Value::as_bool),
++        value.get("stopped"),
++        count,
++    ) {
++        (Some(true), Some(Value::Null), Some(_)) => DomClickReceipt::Completed,
++        (Some(false), Some(Value::String(stopped)), Some(count)) if stopped == "detached" => {
++            match value.get("last").and_then(Value::as_str) {
++                Some(last) if count == 0 || !last.is_empty() => DomClickReceipt::Detached {
++                    count,
++                    last: last.to_owned(),
++                },
++                _ => DomClickReceipt::Interrupted("a malformed receipt"),
++            }
++        }
++        _ => DomClickReceipt::Interrupted("a malformed receipt"),
++    }
++}
++
++fn dom_click_stopped_action_record(count: u64, last: &str) -> ActionExecutionRecord {
 +    ActionExecutionRecord::builder(
 +        ActionEffect::Unverifiable,
 +        ActionTransport::BrowserCdpRuntimeFunction,
@@ -37,9 +53,8 @@
 +    .evidence(ActionEvidence {
 +        kind: EvidenceKind::EventReceipt,
 +        detail: format!(
-+            "the click sequence stopped after {} because the ref's node left its document; sent: {}",
-+            sent.last().map(String::as_str).unwrap_or("?"),
-+            sent.join(", ")
++            "the click sequence stopped after {last} because the ref's node left its document; \
++             {count} events sent"
 +        ),
 +    })
 +    .escalation(ActionEscalation {
@@ -50,8 +65,27 @@
 +    .expect("DOM click action record must satisfy the stable contract")
  }
  
++fn dom_click_interrupted_action_record(reason: &str) -> ActionExecutionRecord {
++    ActionExecutionRecord::builder(
++        ActionEffect::Unverifiable,
++        ActionTransport::BrowserCdpRuntimeFunction,
++        RequestedDelivery::NotApplicable,
++    )
++    .actual_delivery(ActualDelivery::Background)
++    .escalation(ActionEscalation {
++        kind: EscalationKind::RefreshPageState,
++        detail: Some(format!(
++            "the click sequence did not report completing: {reason}"
++        )),
++    })
++    .build()
++    .expect("DOM click action record must satisfy the stable contract")
++}
++
  /// The public caller session id, falling back to the daemon's internal mirror.
-@@ -1408,6 +1452,36 @@
+ fn session_of(args: &Value) -> String {
+     args.opt_str("session")
+@@ -1408,6 +1484,36 @@
                      .to_tool_result()
                  }
              };
@@ -88,7 +122,7 @@
              // Cursor feedback is best-effort and visual-only. A missing box
              // must not turn a valid DOM-event action into a refusal.
              let _ = conn
-@@ -1446,11 +1520,33 @@
+@@ -1446,11 +1552,45 @@
                  json!({
                      "objectId": object_id,
                      "functionDeclaration": DOM_EVENT_CLICK_SEQUENCE,
@@ -98,41 +132,53 @@
              let outcome = call_until_dialog(conn, cdp_target_id, click)
                  .await
                  .unwrap_or(Ok(json!({})));
-+            if let Ok(reply) = &outcome {
-+                if let Some(sent) = dom_click_sequence_stopped(reply) {
-+                    let ext = ext_ref.as_deref().unwrap_or("?");
-+                    if sent.is_empty() {
++            if let (Ok(reply), None) = (&outcome, conn.dialog_state(cdp_target_id)) {
++                let ext = ext_ref.as_deref().unwrap_or("?");
++                match dom_click_receipt(reply) {
++                    DomClickReceipt::Completed => {}
++                    DomClickReceipt::Detached { count: 0, .. } => {
 +                        return BrowserRefusal::new(
 +                            BrowserRefusalCode::BrowserRefStale,
 +                            "the ref's node left its document before the click's first event",
 +                        )
 +                        .to_tool_result();
 +                    }
-+                    let last = sent.last().map(String::as_str).unwrap_or("?");
-+                    let text = format!(
-+                        "sent part of a synthetic DOM click on {ext} in {tab_id}: the ref's node \
-+                         left its document after {last}, so the rest of the sequence was not \
-+                         sent; application effect is unverifiable. Refresh page state and \
-+                         verify the expected postcondition"
-+                    );
-+                    return ToolResult::text(text)
-+                        .with_action_record(dom_click_stopped_action_record(&sent));
++                    DomClickReceipt::Detached { count, last } => {
++                        let text = format!(
++                            "sent part of a synthetic DOM click on {ext} in {tab_id}: the ref's \
++                             node left its document after {last}, so the rest of the sequence \
++                             was not sent; application effect is unverifiable. Refresh page \
++                             state and verify the expected postcondition"
++                        );
++                        return ToolResult::text(text)
++                            .with_action_record(dom_click_stopped_action_record(count, &last));
++                    }
++                    DomClickReceipt::Interrupted(reason) => {
++                        let text = format!(
++                            "ran a synthetic DOM click on {ext} in {tab_id}, but its sequence did \
++                             not report completing ({reason}); some of its events may have been \
++                             sent and application effect is unverifiable. Refresh page state and \
++                             verify the expected postcondition"
++                        );
++                        return ToolResult::text(text)
++                            .with_action_record(dom_click_interrupted_action_record(reason));
++                    }
 +                }
 +            }
              return match (outcome, conn.dialog_state(cdp_target_id)) {
                  (Ok(_), None) => {
                      let observation = observe_dom_click(conn, cdp, &object_id, before).await;
-@@ -1722,6 +1818,9 @@
-     let ys = [nums[1], nums[3], nums[5], nums[7]];
+@@ -1723,6 +1863,9 @@
      Some((xs.iter().sum::<f64>() / 4.0, ys.iter().sum::<f64>() / 4.0))
  }
-+
+ 
 +/// Whether the ref's node is still in its document, evaluated ON the node.
 +const DOM_NODE_CONNECTED_CHECK: &str = "function() { return this.isConnected === true; }";
- 
++
  /// Synthetic click for `input_route:"dom_event"`, evaluated ON the ref's node.
  ///
-@@ -1733,35 +1832,61 @@
+ /// `HTMLElement.click()` fires only a bare `click` with no coordinates, so
+@@ -1733,35 +1876,65 @@
  /// a real click, `preventDefault()` on `pointerdown` suppresses the
  /// compatibility mouse events, and on `mousedown` suppresses the focus move.
  /// The events stay untrusted (`isTrusted === false`).
@@ -144,14 +190,18 @@
 +/// between press and release. When only the hit-tested descendant left (an
 +/// icon re-rendered inside a button), the remaining events go to the ref's
 +/// node, as a browser sends them to the surviving ancestor. JavaScript runs
-+/// to completion, so the page cannot act between a check and its event. It
-+/// returns `{ sent, stopped, retargeted }`: the event types dispatched, in
-+/// order; `"detached"` when it stopped early or `null` when it completed; and
-+/// whether it moved to the ref's node.
++/// to completion, so the page cannot act between a check and its event. The
++/// target is also rechecked to still be inside the ref's node, so a descendant
++/// a handler moves elsewhere gets no further events, and the focus candidate is
++/// chosen after that check. It returns `{ complete, stopped, count, last,
++/// retargeted }`, counted in local primitives rather than page-replaceable
++/// built-ins: whether it completed, `"detached"` when it stopped early, how
++/// many events it dispatched and the last one's type, and whether it moved to
++/// the ref's node. An exception that interrupts it leaves no such receipt.
  const DOM_EVENT_CLICK_SEQUENCE: &str = "function() { \
      const el = this; \
-+    const sent = []; \
-+    if (!el.isConnected) return { sent, stopped: 'detached' }; \
++    let count = 0, last = '', retargeted = false; \
++    if (!el.isConnected) return { complete: false, stopped: 'detached', count, last, retargeted }; \
      const doc = el.ownerDocument; \
      const view = doc.defaultView; \
      const r = el.getBoundingClientRect(); \
@@ -160,7 +210,6 @@
      const hit = ('elementFromPoint' in root) ? root.elementFromPoint(x, y) : null; \
 -    const target = (hit && el.contains(hit)) ? hit : el; \
 +    let target = (hit && el.contains(hit)) ? hit : el; \
-+    let retargeted = false; \
      const sx = x + (view.screenX || 0), sy = y + (view.screenY || 0); \
      const base = { bubbles: true, cancelable: true, composed: true, view, \
          clientX: x, clientY: y, screenX: sx, screenY: sy, button: 0 }; \
@@ -168,9 +217,9 @@
 +    const DETACHED = {}; \
 +    const live = () => { \
 +        if (!el.isConnected) throw DETACHED; \
-+        if (!target.isConnected) { target = el; retargeted = true; } \
++        if (target !== el && !(target.isConnected && el.contains(target))) { target = el; retargeted = true; } \
 +    }; \
-+    const send = (type, event) => { live(); const kept = target.dispatchEvent(event); sent.push(type); return kept; }; \
++    const send = (type, event) => { live(); const kept = target.dispatchEvent(event); count += 1; last = type; return kept; }; \
 +    const P = (type, buttons, extra) => send(type, new view.PointerEvent(type, \
          { ...base, buttons, pointerId: 1, pointerType: 'mouse', isPrimary: true, \
            width: 1, height: 1, pressure: buttons ? 0.5 : 0, ...extra })); \
@@ -190,27 +239,28 @@
 +        P('pointermove', 0); M('mousemove', 0); \
 +        const compat = P('pointerdown', 1); \
 +        if (compat && M('mousedown', 1, { detail: 1 })) { \
++            live(); \
 +            const focusable = target.closest('a[href],button,input,select,textarea,summary,[tabindex],[contenteditable=\"\"],[contenteditable=\"true\"]'); \
-+            if (focusable && typeof focusable.focus === 'function') { live(); focusable.focus({ preventScroll: true }); } \
++            if (focusable && focusable.isConnected && typeof focusable.focus === 'function') focusable.focus({ preventScroll: true }); \
 +        } \
 +        P('pointerup', 0); \
 +        if (compat) M('mouseup', 0, { detail: 1 }); \
 +        M('click', 0, { detail: 1 }); \
 +    } catch (error) { \
-+        if (error === DETACHED) return { sent, stopped: 'detached', retargeted }; \
++        if (error === DETACHED) return { complete: false, stopped: 'detached', count, last, retargeted }; \
 +        throw error; \
      } \
 -    P('pointerup', 0); \
 -    if (compat) M('mouseup', 0, { detail: 1 }); \
 -    M('click', 0, { detail: 1 }); \
 -    return true; \
-+    return { sent, stopped: null, retargeted }; \
++    return { complete: true, stopped: null, count, last, retargeted }; \
  }";
  
  // ── browser_type ─────────────────────────────────────────────────────────────
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
-@@ -113,6 +113,11 @@
+@@ -113,6 +113,14 @@
      dom_click_stall_after: Option<usize>,
      dom_click_generation: u64,
      dom_click_focused: bool,
@@ -219,19 +269,23 @@
 +    /// The click sequence finds the ref's node detached after sending these
 +    /// events, and stops.
 +    dom_click_sequence_stops_after: Option<Vec<&'static str>>,
++    /// The click sequence's raw CDP reply, after it has changed the target's
++    /// state (an exception or a malformed receipt).
++    dom_click_sequence_reply: Option<Value>,
      dom_click_reads_before_failure: Option<usize>,
      /// Answer every post-snapshot semantic readback after this delay.
      dom_click_readback_delay: Option<std::time::Duration>,
-@@ -164,6 +169,8 @@
+@@ -164,6 +172,9 @@
              dom_click_stall_after: None,
              dom_click_generation: 0,
              dom_click_focused: false,
 +            dom_click_node_detached: false,
 +            dom_click_sequence_stops_after: None,
++            dom_click_sequence_reply: None,
              dom_click_reads_before_failure: None,
              dom_click_readback_delay: None,
              calls: Vec::new(),
-@@ -852,7 +859,31 @@
+@@ -852,6 +863,36 @@
                  let mut reply = MockReply::ok(json!({ "result": { "value": value } }));
                  reply.delay = st.dom_click_readback_delay;
                  reply
@@ -245,7 +299,7 @@
 +            {
 +                assert_eq!(call.params["returnByValue"], true);
 +                MockReply::ok(json!({ "result": { "value": !st.dom_click_node_detached } }))
-             }
++            }
 +            "Runtime.callFunctionOn"
 +                if st.dom_click_sequence_stops_after.is_some()
 +                    && call.params["functionDeclaration"]
@@ -257,18 +311,44 @@
 +                    st.dom_click_focused = true;
 +                }
 +                MockReply::ok(json!({
-+                    "result": { "value": { "sent": sent, "stopped": "detached", "retargeted": false } }
++                    "result": { "value": {
++                        "complete": false,
++                        "stopped": "detached",
++                        "count": sent.len(),
++                        "last": sent.last().copied().unwrap_or(""),
++                        "retargeted": false,
++                    } }
 +                }))
-+            }
+             }
              "Runtime.callFunctionOn" => {
                  st.dom_click_focused = true;
-                 if st.dom_click_changes_readback {
-@@ -1346,6 +1377,18 @@
-         .structured_content
-         .as_ref()
+@@ -878,7 +919,21 @@
+                         .collect();
+                     return MockReply::hang().with_events(events);
+                 }
+-                MockReply::ok(json!({ "result": { "value": true } }))
++                if !declaration.contains("'pointerdown'") {
++                    return MockReply::ok(json!({ "result": { "value": true } }));
++                }
++                if let Some(reply) = st.dom_click_sequence_reply.clone() {
++                    return MockReply::ok(reply);
++                }
++                MockReply::ok(json!({
++                    "result": { "value": {
++                        "complete": true,
++                        "stopped": null,
++                        "count": 11,
++                        "last": "click",
++                        "retargeted": false,
++                    } }
++                }))
+             }
+             "Page.handleJavaScriptDialog" if is_tab && st.dialog_vanished => {
+                 MockReply::err(-32602, "No dialog is showing")
+@@ -1348,6 +1403,18 @@
          .expect("structured content")
-+}
-+
+ }
+ 
 +fn result_text(result: &ToolResult) -> String {
 +    result
 +        .content
@@ -279,10 +359,12 @@
 +        })
 +        .collect::<Vec<_>>()
 +        .join("\n")
- }
- 
++}
++
  const SESSION: &str = "run-v2";
-@@ -3304,6 +3347,193 @@
+ 
+ async fn bind(f: &Fixture) -> (String, String) {
+@@ -3304,9 +3371,276 @@
      assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
      assert!(recorded_calls(&f, "Page.bringToFront").is_empty());
      assert!(recorded_calls(&f, "Target.activateTarget").is_empty());
@@ -425,7 +507,9 @@
 +        crate::action_record::EvidenceKind::EventReceipt
 +    );
 +    assert!(
-+        record.evidence[0].detail.contains("sent: pointerover"),
++        record.evidence[0].detail.contains(
++            "stopped after pointerover because the ref's node left its document; 1 events sent"
++        ),
 +        "{record:?}"
 +    );
 +    assert_eq!(
@@ -433,9 +517,9 @@
 +        Some(crate::action_record::EscalationKind::RefreshPageState)
 +    );
 +    assert_eq!(f.state.lock().unwrap().dom_click_generation, 0);
-+}
-+
-+#[tokio::test]
+ }
+ 
+ #[tokio::test]
 +async fn dom_event_click_sequence_checks_its_node_before_every_event_and_reports_by_value() {
 +    let f = fixture().await;
 +    let (target, tab) = bind(&f).await;
@@ -468,11 +552,92 @@
 +        "{declaration}"
 +    );
 +    assert!(
++        declaration.contains("!(target.isConnected && el.contains(target))"),
++        "{declaration}"
++    );
++    assert!(!declaration.contains(".push("), "{declaration}");
++    assert!(
 +        declaration.contains("const send = (type, event) => { live();"),
 +        "{declaration}"
 +    );
 +    assert!(result_text(&result).contains("dispatched synthetic DOM click"));
 +    assert_eq!(f.state.lock().unwrap().dom_click_generation, 1);
- }
- 
- #[tokio::test]
++}
++
++async fn dom_event_click_with_sequence_reply(reply: Value) -> (Fixture, ToolResult) {
++    let f = fixture_with(move |state| state.dom_click_sequence_reply = Some(reply)).await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    let result = BrowserClickTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target,
++            "tab_id": tab,
++            "ref": main_ref,
++            "input_route": "dom_event",
++            "session": SESSION,
++        }))
++        .await;
++    (f, result)
++}
++
++fn assert_interrupted_click(f: &Fixture, result: &ToolResult, reason: &str) {
++    let text = result_text(result);
++    assert!(text.contains("did not report completing"), "{text}");
++    assert!(text.contains(reason), "{text}");
++    assert!(!text.contains("confirmed"), "{text}");
++    let record = result
++        .action_record
++        .as_ref()
++        .expect("typed browser click action record");
++    assert_eq!(
++        record.effect,
++        crate::action_record::ActionEffect::Unverifiable
++    );
++    assert!(record.evidence.is_empty(), "{record:?}");
++    assert!(
++        result
++            .structured_content
++            .as_ref()
++            .map_or(true, |structured| structured["refusal"].is_null()),
++        "an interrupted click is not a refusal"
++    );
++    // The page's state changed before the interruption; it must not be read
++    // back as a confirmed click.
++    assert_eq!(f.state.lock().unwrap().dom_click_generation, 1);
++}
++
++#[tokio::test]
++async fn dom_event_click_that_throws_is_unverifiable_even_when_its_target_changed() {
++    let (f, result) = dom_event_click_with_sequence_reply(json!({
++        "result": { "type": "object", "subtype": "error", "description": "Error: wrapper" },
++        "exceptionDetails": { "exceptionId": 1, "text": "Uncaught", "lineNumber": 0, "columnNumber": 0 },
++    }))
++    .await;
++    assert_interrupted_click(&f, &result, "the sequence threw");
++}
++
++#[tokio::test]
++async fn dom_event_click_without_a_well_formed_receipt_is_unverifiable() {
++    for reply in [
++        json!({}),
++        json!({ "result": { "value": true } }),
++        json!({ "result": { "value": { "complete": true, "stopped": null } } }),
++        json!({ "result": { "value": { "complete": false, "stopped": "detached", "last": "" } } }),
++        json!({ "result": { "value": { "complete": false, "stopped": "detached", "count": 3, "last": "" } } }),
++        json!({ "result": { "value": { "complete": "yes", "stopped": null, "count": 11 } } }),
++    ] {
++        let (f, result) = dom_event_click_with_sequence_reply(reply.clone()).await;
++        let reason = if reply.pointer("/result/value").is_some() {
++            "a malformed receipt"
++        } else {
++            "no completion receipt"
++        };
++        assert_interrupted_click(&f, &result, reason);
++    }
++}
++
++#[tokio::test]
+ async fn dom_event_click_remains_unverifiable_when_only_focus_changes() {
+     let f = fixture_with(|state| state.dom_click_changes_readback = false).await;
+     assert!(!f.state.lock().unwrap().dom_click_focused);

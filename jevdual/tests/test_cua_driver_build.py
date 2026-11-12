@@ -147,7 +147,7 @@ def test_local_native_patch_has_inspectable_hash_bound_provenance():
     assert manifest['patched_archive_sha256'] == foreground['base_archive_sha256']
     helptag = json.loads((vendor / 'patches/ordinary-helptag.json').read_text())
     connected = json.loads((vendor / 'patches/connected-click.json').read_text())
-    # the pinned archive is the end of one hash-bound chain: cleanup2, focus1, helptag1, connected2
+    # the pinned archive is the end of one hash-bound chain: cleanup2, focus1, helptag1, connected3
     assert foreground['patched_archive_sha256'] == helptag['base_archive_sha256']
     assert helptag['patched_archive_sha256'] == connected['base_archive_sha256']
     assert connected['patched_archive_sha256'] == BUILD.SOURCE_SHA256

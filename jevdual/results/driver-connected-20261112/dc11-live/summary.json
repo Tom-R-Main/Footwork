@@ -1,0 +1,75 @@
+{
+ "run": "document-binding-connected3-texts",
+ "driver": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected3",
+ "probe_commit": "27a5c4f",
+ "port": "9466",
+ "gate": {
+  "polls": 1,
+  "idle_s": 3015.9,
+  "waited_s": 0.0
+ },
+ "front_restored": true,
+ "holder_stop_ok": true,
+ "steps_dt_from_first": [
+  {
+   "step": "reload-trigger",
+   "t": 0.0,
+   "effect": "unverifiable",
+   "summary": "dispatched synthetic DOM click on p1:1 in tab-\u2026; bounded semantic target state remained unchanged; application effect is unverifiable. Refresh page state and verify "
+  },
+  {
+   "step": "reload-observed",
+   "t": 0.68,
+   "snapshot": "p2"
+  },
+  {
+   "step": "reload-late-click",
+   "t": 4.18,
+   "effect": "refused",
+   "error_code": "browser_ref_stale",
+   "dispatched": true,
+   "summary": "the ref's frame navigated or was removed since the snapshot \u2014 re-run get_browser_state to re-snapshot"
+  },
+  {
+   "step": "reload-fresh-click",
+   "t": 5.45,
+   "effect": "unverifiable",
+   "error_code": null,
+   "summary": "dispatched synthetic DOM click on p3:0 in tab-\u2026; bounded semantic target state remained unchanged; application effect is unverifiable. Refresh page state and verify "
+  },
+  {
+   "step": "rerender-trigger",
+   "t": 7.18,
+   "effect": "unverifiable",
+   "summary": "dispatched synthetic DOM click on p4:2 in tab-\u2026; bounded semantic target state remained unchanged; application effect is unverifiable. Refresh page state and verify "
+  },
+  {
+   "step": "rerender-observed",
+   "t": 7.87,
+   "snapshot": "p5"
+  },
+  {
+   "step": "rerender-late-click",
+   "t": 11.37,
+   "effect": "refused",
+   "error_code": "browser_ref_stale",
+   "dispatched": true,
+   "summary": "the ref's node is no longer in its document"
+  },
+  {
+   "step": "rerender-fresh-click",
+   "t": 12.63,
+   "effect": "unverifiable",
+   "error_code": null,
+   "summary": "dispatched synthetic DOM click on p6:1 in tab-\u2026; bounded semantic target state remained unchanged; application effect is unverifiable. Refresh page state and verify "
+  },
+  {
+   "step": "vanish-click",
+   "t": 14.31,
+   "effect": "unverifiable",
+   "error_code": null,
+   "dispatched": true,
+   "summary": "sent part of a synthetic DOM click on p7:3 in tab-\u2026: the ref's node left its document after pointerdown, so the rest of the sequence was not sent; application effect"
+  }
+ ]
+}
