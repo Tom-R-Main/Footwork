@@ -29,3 +29,12 @@ Test: as BH1's held arm (scripts/probe_browser_holder.py --arm held), isolated p
 Predicts: held: all ten commands exit 0 with no background_unavailable; the page log shows five clicks on the counter; the frontmost application is never Chrome after the restore. Control: the first background look refuses with background_unavailable.
 Against: any held-arm refusal, or Chrome frontmost after the restore during the held arm; or the control arm's first background look succeeding.
 Refs: docs/notebook/2026-11-11-browser-holder.md#bh1
+
+## BH4 · prediction · 2026-11-11 19:58
+Question: is the duplicated start page the window-recovery helper opening a second window on a launch whose own window has not appeared yet?
+Hypothesis: both BH3 arms stopped at start with "initial browser page requires one unique exact URL"; the control arm, which never uses the holder, stopped the same way. A direct launch on a fresh profile (bind_footwork_chrome with a URL, port 9466) left two page targets on the fixture URL. bind_footwork_chrome starts the `open -na … --new-window <url>` helper on the first empty on-screen window list, which for a new launch can come before Chrome's own window is on screen. Waiting a bounded grace for a new launch's window before recovering would leave one page.
+Alternatives: the duplicate comes from Chrome itself (the launch URL opened twice, or a restored session), so a grace period changes nothing.
+Test: with the helper deferred for a new launch until 5 s after the driver is ready (an existing browser without a window still recovers at once), launch three times on fresh profiles through bind_footwork_chrome with the fixture URL, and count page targets on that URL in /json/list after binding.
+Predicts: one page target on the URL in each of the three launches, and the helper never runs.
+Against: two page targets on the URL in any launch with the helper not run.
+Refs: python/jevdual/browser_driver.py bind_footwork_chrome
