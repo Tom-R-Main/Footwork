@@ -105,3 +105,12 @@ Inferred: the driver's own connection is a client end lsof attributes to the hol
 Changes: none.
 Next: B3, input bound to the document generation.
 Refs: results/browser-holder-20261111/bh11-summary.json
+
+## BH13 · prediction · 2026-11-11 21:40
+Question: is a click bound to the document and the node it was observed on, through the holder?
+Hypothesis: the driver binds each ref to its frame's frame_id and loader_id and re-proves them against the live frame tree before input (cua-driver-core browser/store.rs, engine.rs frame_session_for_mutation), so a click on an observation taken before a reload refuses with browser_ref_stale. A same-document re-render keeps the loader_id; the old ref's node is then detached, and the page-route click resolves the node and calls click() on it, which can still run the detached button's handler.
+Alternatives: (a) the reload is not caught (the ref's frame carries no identity, the v1-compat path) and the click lands on the new document's button; (b) the re-render is refused too (node liveness catches a detached node).
+Test: scripts/probe_document_binding.py, fresh profile, port 9466, holder spawned directly, browser restored to the background by PID. For each case (reload, then re-render): observe, click the trigger, observe again, wait 3.5 s while the page changes 1.5 s after the trigger, click "Count clicks" from that earlier observation, then observe fresh and click again. The counter button's own handler logs each activation with its generation and whether it is attached.
+Predicts: reload: the late click is refused browser_ref_stale with nothing dispatched and no handler activation; the fresh click activates once. Re-render: the late click is not refused and activates the detached generation-0 handler (attached false); the fresh click activates the generation-1 button once.
+Against: the reload's late click activating any handler; or the re-render's late click refused, or activating an attached button.
+Refs: scripts/probe_document_binding.py
