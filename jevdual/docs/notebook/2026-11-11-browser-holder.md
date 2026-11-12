@@ -97,3 +97,11 @@ Test: scripts/probe_browser_holder.py --arm held --second-client, fresh profile,
 Predicts: the first and third clicks land (the page logs two clicks in all); the second click is refused with browser_second_client naming the second process's PID, nothing dispatched, and no page click; the looks all succeed. Not predicted, recorded: whether the browser comes forward when the second client connects.
 Against: the first or third click refused; the second click landing or refused for another reason.
 Refs: python/jevdual/browser_session_holder.py devtools_clients
+
+## BH12 · update · 2026-11-11 21:38
+Resolves: BH11 = held
+Observed: the click alone landed and its receipt confirmed it; with a separate process holding a websocket on the browser endpoint (connected 7.7 s after the restore), the next click was refused "browser_second_client: another DevTools client is connected to this browser: Python (pid 9219); nothing was sent" and the page logged no click; after that process exited, the next click landed. The page logged exactly two clicks; every look succeeded; the holder counted one refusal (results/browser-holder-20261111/bh11-summary.json). Unpredicted: the frontmost PID did not change when the second client connected, nor at any point after the restore (sampler largest gap 95 ms).
+Inferred: the driver's own connection is a client end lsof attributes to the holder, and another process's connection is visible to it, so detection works on this lane. That a new DevTools connection did not bring this Footwork-launched browser forward is one observation; if it holds, the driver's static background refusal of browser_prepare is broader than this launch needs, which matters only for a session without a holder.
+Changes: none.
+Next: B3, input bound to the document generation.
+Refs: results/browser-holder-20261111/bh11-summary.json
