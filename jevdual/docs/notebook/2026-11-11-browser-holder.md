@@ -71,3 +71,12 @@ Inferred: without replace, browser_type focuses the node (DOM.focus) and inserts
 Changes: none yet.
 Next: deliver an append onto held text as a replacement with the held value plus the text (a foreground step the posture gate refuses in background_only), and refuse it when the held value is truncated or a password; make the probe track the frontmost process by PID and restore by PID; then BH9.
 Refs: results/browser-holder-20261111/bh7-summary.json
+
+## BH9 · prediction · 2026-11-11 21:29
+Question: through the holder in the background, does typing into an empty field land without the page taking focus, and are both unsafe edits now refused before sending?
+Hypothesis: an append onto held text is refused by the bridge before any call (BH8 change); a type into an empty field is insert_text without replace, which does not select the tab; a type into held text is refused by the posture gate. BH7's window focus during the type came from something other than the driver (the person's own Chrome was in front, and the run could not tell the windows apart).
+Alternatives: insert_text into an empty field focuses the page's window (BH7's focus event was the driver), which would make background typing a foreground disturbance.
+Test: scripts/probe_browser_holder.py --arm held --typing --rounds 3 --spacing 20, fresh profile, port 9466, with the frontmost process sampled and restored by PID.
+Predicts: the three appends onto Name are refused with append_unavailable and nothing dispatched; the type into the empty Note lands "first note"; the type into Note holding text is refused with requires_foreground; final values Name "held text" and Note "first note"; the page logs exactly one input event after the restore (the Note text) and no focus or visible event; the frontmost PID is never the owned Chrome's after the restore.
+Against: a page focus or visible event after the restore, or the owned Chrome's PID frontmost after the restore; any input event for a refused command; either final value differing.
+Refs: docs/notebook/2026-11-11-browser-holder.md#bh8
