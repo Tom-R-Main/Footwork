@@ -9,8 +9,9 @@ observation taken before the change:
 
 The counter button's own handler logs every activation, so a click on a detached button is visible
 even though it no longer bubbles to the document. A fresh observation and click follow each case as
-a control. Waits for an unlocked screen and 10 s of idle before launching. Refuses Footwork's default
-port and the sign-in test's.
+a control. Then a third button removes itself on pointerdown (DC4), so a click that keeps sending
+to it after the press shows as vanish_click. Waits for an unlocked screen and 10 s of idle before
+launching. Refuses Footwork's default port and the sign-in test's.
 
 Run from ``jevdual/`` with the pinned driver installed::
 
@@ -42,6 +43,7 @@ FIXTURE = """<!doctype html>
 <p id="slot"><button type="button" id="count">Count clicks</button></p>
 <p><button type="button" id="reload">Reload soon</button>
 <button type="button" id="rerender">Rerender soon</button></p>
+<p id="vanish-slot"><button type="button" id="vanish">Vanish on press</button></p>
 <script>
 const post = (type, detail) => fetch('/log', {method: 'POST', keepalive: true,
   body: JSON.stringify({t: (performance.timeOrigin + performance.now()) / 1000, type, detail})});
@@ -54,6 +56,9 @@ function counter() {
   return b;
 }
 document.getElementById('slot').replaceChildren(counter());
+const vanish = document.getElementById('vanish');
+vanish.addEventListener('pointerdown', () => { vanish.remove(); post('vanish_pointerdown', {attached: vanish.isConnected}); });
+vanish.addEventListener('click', () => post('vanish_click', {attached: vanish.isConnected}));
 document.getElementById('reload').addEventListener('click', () => setTimeout(() => location.reload(), 1500));
 document.getElementById('rerender').addEventListener('click', () => setTimeout(() => {
   generation += 1; document.getElementById('slot').replaceChildren(counter()); post('rerendered', {generation});
@@ -92,6 +97,17 @@ async def _case(bridge, name: str, trigger: str, steps: list[dict]) -> None:
     await asyncio.sleep(1.0)
 
 
+async def _press_removal(bridge, steps: list[dict]) -> None:
+    """DC4: a button whose own pointerdown handler removes it. A click sequence that stops when its
+    node leaves the document sends no click; the page logs vanish_click if one arrives."""
+    nm = await bridge.observe()
+    t = time.time()
+    eff = await bridge.act(nm, "click", _id(nm, "Vanish on press"))
+    steps.append({"step": "vanish-click", "t": t, "effect": eff.effect, "error_code": eff.error_code,
+                  "dispatched": eff.dispatched, "summary": eff.summary[:300]})
+    await asyncio.sleep(1.0)
+
+
 async def _run(out: Path, session: Path, url: str, record: dict) -> None:
     from jevdual import browser_session_holder as bsh
     from jevdual.browser_driver import BrowserBridge
@@ -112,6 +128,7 @@ async def _run(out: Path, session: Path, url: str, record: dict) -> None:
         steps: list[dict] = record["steps"]
         await _case(bridge, "reload", "Reload soon", steps)
         await _case(bridge, "rerender", "Rerender soon", steps)
+        await _press_removal(bridge, steps)
     finally:
         record["holder_stop"] = await bsh.retire(runtime, expected=identity)
 
