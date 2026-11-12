@@ -1098,11 +1098,9 @@ async def bind(state: SessionState):
             bridge = BrowserBridge(driver, state.pid, state.window_id, policy=ExecutionPolicy(state.posture))  # type: ignore[arg-type]
         bridge.target_pin = state.browser_target
         try:
-            if held is not None and state.browser_tab:
-                # one driver for the session: its tab handle is still this session's tab
-                await bridge.attach(tab_id=state.browser_tab)
-            else:
-                await bridge.attach(expect_url=current_url)
+            # Tab handles are new on every get_browser_state call, even on the holder's one driver
+            # (BH2), so a session rebinds by page whether or not a holder keeps its driver.
+            await bridge.attach(expect_url=current_url)
         except BaseException:
             with contextlib.suppress(Exception):
                 await driver.shutdown()
@@ -1738,7 +1736,7 @@ async def _start_browser(args: Any, d: Path) -> int:
         bridge = BrowserBridge(driver, identity["chrome_pid"], identity["window_id"],  # type: ignore[arg-type]
                                policy=ExecutionPolicy(posture), operations=bsh.RemoteBrowserOperations(d))
         try:
-            await bridge.attach(tab_id=identity["tab_id"])
+            await bridge.attach()  # the active tab of the window the holder just bound, as without one
         except BaseException:
             await bsh.stop_async(d)
             raise

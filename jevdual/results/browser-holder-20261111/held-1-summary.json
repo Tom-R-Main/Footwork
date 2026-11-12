@@ -1,0 +1,19 @@
+{
+ "run": "held-1",
+ "prediction": "BH1",
+ "start_exit": 7,
+ "start_error": "stopped: RuntimeError: the session's tab tab-c6f53922-09df-4b89-835c-ab14a48943de is no longer in this window; nothing dispatched. Start a new session on the tab you want.",
+ "holder_exit": {
+  "served": {
+   "prepare": 1,
+   "bind": 1
+  },
+  "prepare_repeats_answered": 1
+ },
+ "later_commands": "all refused: no initialized session",
+ "gate": {
+  "polls": 1,
+  "idle_s": 571.0,
+  "waited_s": 0.0
+ }
+}

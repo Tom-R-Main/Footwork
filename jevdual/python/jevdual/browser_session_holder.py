@@ -5,8 +5,9 @@ connection makes Chrome come forward. Its ``browser_prepare`` refuses in the bac
 already connected. A session that builds a driver per command therefore needs the browser in front
 for every command. The holder builds the driver once, at ``start``, runs ``browser_prepare`` once
 while the launch has the browser in front anyway, answers later ``prepare`` calls from that reply,
-and serves the other browser operations through the same driver, so tab handles also survive
-between commands.
+and serves the other browser operations through the same driver. Tab handles do not survive even
+so: the driver issues new ones on every ``get_browser_state`` call (notebook BH2), so a session still
+rebinds by page.
 
 The holder owns no session state and decides nothing: each command still builds its own
 ``BrowserBridge`` and keeps every check it makes today; only the operations cross the socket. A lost
