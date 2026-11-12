@@ -830,3 +830,27 @@ def test_a_process_that_cannot_be_inspected_is_not_taken_as_exited(tmp_path, mon
     monkeypatch.setattr(browser_holder, "process_identity", denied)
     with pytest.raises(bsh.HolderRetireUnknown, match="could not be inspected"):
         asyncio.run(bsh.retire(tmp_path, expected=identity, timeout_s=0.3))
+
+
+@pytest.mark.parametrize("record", [{"runtime": "/nonexistent", "boot": "b", "start": "1.0"}, "garbled"])
+def test_a_replacement_start_refuses_a_holder_record_without_a_pid(world, fw, monkeypatch, record):  # noqa: F811
+    """Sol round 5: a recorded holder whose process cannot be named may still be connected."""
+    import json
+
+    from jevdual import session
+
+    assert fw("start", "Old native task", "--app", "Calculator")[0] == 0
+    saved = json.loads((fw.session / "session.json").read_text())
+    saved["browser_holder"] = record
+    (fw.session / "session.json").write_text(json.dumps(saved))
+    before = (fw.session / "session.json").read_bytes()
+    started = []
+
+    async def start_new(args):
+        started.append(args)
+        return 0
+
+    monkeypatch.setattr(session, "_start_new", start_new)
+    code, out, err = fw("start", "New task", "--app", "Calculator")
+    assert code == 2 and "did not stop" in err and "without a PID" in err, (out, err)
+    assert started == [] and (fw.session / "session.json").read_bytes() == before

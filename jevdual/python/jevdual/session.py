@@ -1481,10 +1481,14 @@ async def cmd_start(args: Any) -> int:
 async def _retire_holder(record: Any, directory: Path, *, required: bool = False) -> None:
     """Retire a session's recorded holder. With ``required`` a holder that may still be running
     raises; otherwise this is best-effort cleanup."""
-    if not isinstance(record, dict) or not record.get("pid"):
-        return
+    if not record:
+        return  # no holder recorded
     from jevdual import browser_session_holder as bsh
 
+    if not isinstance(record, dict) or not record.get("pid"):
+        if required:  # a holder was recorded, but which process it is cannot be established
+            raise bsh.HolderRetireUnknown(0, "is recorded without a PID")
+        return
     try:
         await bsh.retire_settled(bsh.recorded_runtime(record, directory), expected=record)
     except Exception:

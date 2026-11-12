@@ -181,3 +181,9 @@ Observed: the round-four review at 47a99aa found two gaps, each reproduced with 
 Changes: every recorded field constrains retirement, and a holder differing in any is never stopped; an incomplete identity is completed only by a live record that matches it, is taken as exited only when no process has its PID, and otherwise raises HolderRetireUnknown; only a missing process, a zombie or a reused PID count as exit, and an inspection failure raises HolderRetireUnknown, which a replacement start refuses on. Each has a test that fails with its fix reverted; the offline suite passes (3509).
 Next: round-five review, then merge.
 Refs: tests/test_browser_session_holder.py
+
+## BH23 · update · 2026-11-11 23:18
+Observed: the round-five review at bfe1114 found that a replacement start skipped retirement for a holder record without a PID, so it went on to bind although retire itself refuses such a record.
+Changes: an empty holder record is still nothing to retire; a nonempty record without a PID refuses the replacement start (HolderRetireUnknown) before binding, and the prior session's files stay. A command-level test covers a record without a PID and a garbled one, and fails with the fix reverted; the offline suite passes (3511).
+Next: round-six check, then merge.
+Refs: tests/test_browser_session_holder.py
