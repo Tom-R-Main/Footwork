@@ -20,3 +20,13 @@ Test: with the machine otherwise idle and no Footwork build, test run or review 
 Predicts: arm 3's start refusals and its mid-take interruptions are each within one event of arm 1's and arm 2's; every park in arm 3 exits 0; no refusal line in arm 3 names a cause that arms 1 and 2 never show.
 Against: arm 3 has two or more events of either kind beyond both other arms, or a refusal line in arm 3 names a cause absent from the others. Zero events in every arm is inconclusive for cause: twenty clean cycles only bound a rate below about 14%.
 Refs: #dgr1; DemoGeek best-edit TAKES.md run 4; DemoGeek a2eeb4ef
+
+## DGR3 · prediction · 2026-11-12 18:04
+Revises: DGR2
+Question: as DGR2, with the arm 3 treatment and the comparison changed before any cycle ran.
+Hypothesis: as DGR2.
+Alternatives: as DGR2.
+Test: as DGR2, except: (1) Desktop's glide arm moves the pointer about every 2.5 s through six screen points for each 22 s take, so arm 3 now does the same through footwork park (about seven parks per take through those points, starting none after 18 s) instead of one park per take; the arms then differ in the pointer driver and not in how much the pointer moves. (2) The order is none 20, glide 20, footwork 20, then none 5 as a drift block. (3) Desktop's runner drives every arm on one throwaway Chrome window; arm 3's session is started and ended by scripts/recorder_sweep_arm3.py watch through a file handshake, with no model in the loop. (4) Desktop observed, today, before the sweep and with no Footwork session open, two start refusals in four takes on the same harness and window ("Witnessed source session failed", "Source start interrupted"), so the rate without Footwork is not near zero and arm 3 is read against arm 1 and the drift block.
+Predicts: arm 3's start-refusal count and its mid-take interruption count each lie within what arm 1 and the drift block show (no more than two events above arm 1's count per twenty cycles); every park exits 0; no refusal line in arm 3 names a cause the other arms never show.
+Against: arm 3 exceeds both arm 1 and arm 2 by three or more events of either kind in twenty cycles, or a refusal line in arm 3 names a cause absent from the others. A smaller difference means extending the arm, as agreed with Desktop, not a conclusion.
+Refs: #dgr2; DemoGeek .local-reviews/application-film/sweep-2026-11-12 (run-sweep.zsh, sweep.zsh); scripts/recorder_sweep_arm3.py
