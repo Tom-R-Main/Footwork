@@ -67,3 +67,12 @@ Test: the Node DOM-stub model extended with Sol's four cases (focusable icon rem
 Predicts: Node: on connected2, the four cases show focus on the detached icon, events and click on the moved icon, an aborted sequence, and an empty receipt after seven events; on the new sequence, focus goes to the connected button, remaining events go to the ref after the move, the throwing case returns no completion receipt, and the no-op push case reports count 7 and stopped detached when the ref leaves, or completes with count 11. Rust: the new tests fail on connected2 and pass after; every existing browser test passes with the mock returning real receipts.
 Against: an event or the focus reaching a detached or moved-out node in the new model; any interrupted or malformed reply reported Confirmed or as zero delivery; any existing browser test failing apart from the mock receipt change.
 Refs: #dc4; #dc7; https://github.com/Tom-R-Main/Footwork/pull/26
+
+## DC9 · prediction · 2026-11-12 04:22
+Question: does real Chrome return the connected3 sequence's completion receipt in the shape the strict Rust classifier accepts?
+Hypothesis: Runtime.callFunctionOn with returnByValue serializes the sequence's plain object literal as JSON, so complete, stopped (null on completion), count and last arrive as a boolean, a null, an integer and a string, and a click on a connected node takes the completed path exactly as it did on connected2.
+Alternatives: (a) Chrome reports count as a float (11.0) that Value::as_u64 rejects, or drops the null stopped, so every completed click reads as interrupted; (b) a page-side difference from the mock makes the detached receipt malformed, so the vanish case reads as interrupted instead of partial.
+Test: scripts/probe_document_binding.py once on the installed connected3, port 9466, a fresh profile, in a fresh Desktop window.
+Predicts: the same outcomes as DC6 on connected2: both late clicks refuse browser_ref_stale, the page logs no handler activation for the removed counter button, both fresh clicks land once and are not reported as interrupted, and the vanish click reports a partial delivery stopped after pointerdown with no vanish_click.
+Against: any fresh click reported as interrupted ("did not report completing"), the vanish click reported as interrupted or refused, or any handler activation on a removed button.
+Refs: #dc6; #dc8; results/driver-connected-20261112/dc8
