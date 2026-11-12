@@ -684,3 +684,88 @@ async def test_spawn_cleanup_survives_repeated_cancellation(monkeypatch):
     with pytest.raises(asyncio.CancelledError):
         await starting
     assert finished == ["/nonexistent/runtime"]
+
+
+def _identity_of(pid: int) -> dict:
+    from jevdual.browser_holder import process_identity
+
+    return {**process_identity(pid), "runtime": "/nonexistent"}
+
+
+def test_a_holder_whose_record_is_gone_is_still_waited_for(tmp_path, monkeypatch):
+    """Sol round 3 #1: a recorded identity is waited for even after its record is removed."""
+    import subprocess
+
+    child = subprocess.Popen(["sleep", "30"])
+    try:
+        monkeypatch.setattr(bsh, "holder_live", lambda runtime: None)
+        asyncio.run(bsh.retire(tmp_path, expected=_identity_of(child.pid), timeout_s=0.3))
+        assert child.poll() is not None  # it was waited for and terminated, not taken as gone
+    finally:
+        child.kill()
+        child.wait()
+
+
+def test_a_reused_pid_is_not_retired(tmp_path, monkeypatch):
+    import subprocess
+
+    child = subprocess.Popen(["sleep", "30"])
+    try:
+        monkeypatch.setattr(bsh, "holder_live", lambda runtime: None)
+        stale = {**_identity_of(child.pid), "start": "0.0"}  # same PID, another process start
+        assert asyncio.run(bsh.retire(tmp_path, expected=stale, timeout_s=0.3)) is None
+        assert child.poll() is None
+    finally:
+        child.kill()
+        child.wait()
+
+
+def test_a_holder_that_survives_sigterm_is_reported_still_running(tmp_path, monkeypatch):
+    """Sol round 3 #2: a timeout is not a completed retirement."""
+    import subprocess
+    import sys
+    import time
+
+    code = ("import signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+            "print('ready', flush=True); time.sleep(30)")
+    child = subprocess.Popen([sys.executable, "-c", code], stdout=subprocess.PIPE)
+    try:
+        assert child.stdout.readline().strip() == b"ready"
+        monkeypatch.setattr(bsh, "holder_live", lambda runtime: None)
+        monkeypatch.setattr(bsh, "TERM_GRACE_S", 0.3)
+        with pytest.raises(bsh.HolderStillRunning):
+            asyncio.run(bsh.retire(tmp_path, expected=_identity_of(child.pid), timeout_s=0.3))
+        time.sleep(0.1)
+        assert child.poll() is None
+    finally:
+        child.kill()
+        child.wait()
+
+
+def test_a_replacement_start_refuses_while_the_replaced_holder_may_be_connected(world, fw, tmp_path,  # noqa: F811
+                                                                              monkeypatch):
+    """Sol round 3 #2: a holder that did not stop blocks the replacement before it binds."""
+    from jevdual import session
+
+    runtime = tmp_path / "old-rt"
+    thread = _threaded_holder(runtime)
+    assert fw("start", "Old native task", "--app", "Calculator")[0] == 0
+    _record_holder(fw, runtime)
+    before = (fw.session / "session.json").read_bytes()
+    started = []
+
+    async def survives(runtime, *, expected=None, timeout_s=10.0):
+        raise bsh.HolderStillRunning(int(expected["pid"]))
+
+    async def start_new(args):
+        started.append(args)
+        return 0
+
+    monkeypatch.setattr(bsh, "retire", survives)
+    monkeypatch.setattr(session, "_start_new", start_new)
+    code, out, err = fw("start", "New task", "--app", "Calculator")
+    assert code == 2 and "did not stop" in err, (out, err)
+    assert started == [] and (fw.session / "session.json").read_bytes() == before
+    monkeypatch.undo()
+    asyncio.run(bsh.retire(runtime))
+    thread.join(timeout=10)

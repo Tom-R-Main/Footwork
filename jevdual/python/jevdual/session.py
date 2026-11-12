@@ -246,7 +246,7 @@ async def run_command(args: Any) -> int:
                 if result and getattr(args, "_created_reservation", ""):
                     registry.revoke(args._created_reservation)
                 return result
-        except (KeyboardInterrupt, SystemExit):
+        except (KeyboardInterrupt, SystemExit, asyncio.CancelledError):
             if getattr(args, "_created_reservation", ""):
                 registry.revoke(args._created_reservation)
             raise
@@ -1411,7 +1411,11 @@ async def cmd_start(args: Any) -> int:
     # to send past. So it is retired before the replacement binds. The prior session's files stay
     # until publication; without its holder its later commands bind a driver of their own, as with
     # FOOTWORK_BROWSER_HOLDER=0.
-    await _retire_holder(previous_holder, directory)
+    try:
+        await _retire_holder(previous_holder, directory, required=True)
+    except Exception as exc:  # noqa: BLE001 - a holder that may still be connected blocks the start
+        print(f"not starting: the replaced session's browser holder did not stop: {exc}", file=sys.stderr)
+        return 2
     if durable or not any((directory / name).exists() for name in names):
         return await _start_new(args)
     import shutil
@@ -1474,13 +1478,18 @@ async def cmd_start(args: Any) -> int:
     return 0
 
 
-async def _retire_holder(record: Any, directory: Path) -> None:
+async def _retire_holder(record: Any, directory: Path, *, required: bool = False) -> None:
+    """Retire a session's recorded holder. With ``required`` a holder that may still be running
+    raises; otherwise this is best-effort cleanup."""
     if not isinstance(record, dict) or not record.get("pid"):
         return
     from jevdual import browser_session_holder as bsh
 
-    with contextlib.suppress(Exception):
-        await bsh.retire(bsh.recorded_runtime(record, directory), expected=record)
+    try:
+        await bsh.retire_settled(bsh.recorded_runtime(record, directory), expected=record)
+    except Exception:
+        if required:
+            raise
 
 
 async def _start_new(args: Any) -> int:
@@ -1759,7 +1768,8 @@ async def _start_browser(args: Any, d: Path) -> int:
         try:
             await bridge.attach()  # the active tab of the window the holder just bound, as without one
         except BaseException:
-            await bsh.retire(runtime, expected=identity)
+            with contextlib.suppress(Exception):
+                await bsh.retire_settled(runtime, expected=identity)
             raise
         print(f"browser holder pid {identity['pid']} keeps this session's driver")
     else:
@@ -1785,7 +1795,7 @@ async def _start_browser(args: Any, d: Path) -> int:
             if refusal:
                 print(f"not starting: {refusal}", file=sys.stderr)
                 if holder:
-                    await bsh.retire(Path(holder["runtime"]), expected=holder)
+                    await bsh.retire_settled(Path(holder["runtime"]), expected=holder)
                 return 2
             from jevdual.coordination import CoordinationError
 
@@ -1803,7 +1813,7 @@ async def _start_browser(args: Any, d: Path) -> int:
                 print(f"not starting: the first navigation was refused: {eff.error_code or eff.summary[:120]}",
                       file=sys.stderr)
                 if holder:
-                    await bsh.retire(Path(holder["runtime"]), expected=holder)
+                    await bsh.retire_settled(Path(holder["runtime"]), expected=holder)
                 return 2
             await asyncio.sleep(2.0)
         state.log({"kind": "start", "task": args.task, "requirements": state.requirements, "mode": "browser"})
@@ -1818,7 +1828,8 @@ async def _start_browser(args: Any, d: Path) -> int:
             print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
     except BaseException:
         if holder:
-            await bsh.retire(Path(holder["runtime"]), expected=holder)
+            with contextlib.suppress(Exception):
+                await bsh.retire_settled(Path(holder["runtime"]), expected=holder)
         raise
     finally:
         await driver.shutdown()
@@ -3169,7 +3180,11 @@ async def _cmd_done_verified(args: Any, state: SessionState) -> int:
         if state.browser_holder:
             from jevdual import browser_session_holder as bsh
 
-            await bsh.retire(bsh.recorded_runtime(state.browser_holder, state.path), expected=state.browser_holder)
+            try:
+                await bsh.retire_settled(bsh.recorded_runtime(state.browser_holder, state.path),
+                                         expected=state.browser_holder)
+            except bsh.HolderStillRunning as exc:
+                print(f"note: {exc}; it exits after its idle timeout", file=sys.stderr)
         print("accepted. session closed.")
         return 0
     state.memory.append(f"step {state.step + 1}: done refused ({v.reason[:80]})")

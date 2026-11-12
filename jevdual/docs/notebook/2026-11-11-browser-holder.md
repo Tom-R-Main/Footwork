@@ -168,3 +168,10 @@ Inferred: retirement waiting on process exit and the later ownership check leave
 Changes: none.
 Next: the round-three review, then merge.
 Refs: docs/notebook/2026-11-11-browser-holder.md#bh16
+
+## BH21 · update · 2026-11-11 22:53
+Observed: the round-three review at 87ca02f found three gaps, each reproduced with doubles: retire returned at once when a holder's record was gone, without waiting on the recorded process; a holder still running after SIGTERM was reported like a completed retirement, and a replacement start went on to bind; a cancellation during a refused start's cleanup left its filmed desktop reservation active.
+Changes: retire waits on the recorded full identity (boot, PID, start) even without a record, and a reused PID is left alone; a holder still running after the SIGTERM grace raises HolderStillRunning, and a replacement start refuses before binding when the replaced holder did not stop; holder cleanup in a start runs to completion before a cancellation is raised, and a cancelled command releases the reservation it created. Each has a test that fails with its fix reverted; the offline suite passes (3505).
+Inferred: the live lane's success path is unchanged from BH19 (the holder answers stop and exits within the grace), so this is not re-run live.
+Next: round-four review, then merge.
+Refs: tests/test_browser_session_holder.py; tests/test_filmed_session.py

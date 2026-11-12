@@ -97,6 +97,18 @@ def ownership_refusal(claim: Mapping[str, Any]) -> BrowserReply | None:
     return None
 
 
+#: how long a holder sent SIGTERM gets to exit before retirement reports it still running
+TERM_GRACE_S = 5.0
+
+
+class HolderStillRunning(RuntimeError):
+    """A holder asked to stop, then signalled, is still running: its DevTools connection may be open."""
+
+    def __init__(self, pid: int) -> None:
+        super().__init__(f"the browser holder (pid {pid}) did not exit")
+        self.pid = pid
+
+
 class HolderUnavailable(RuntimeError):
     """The session's holder cannot be reached or is not the one the session recorded. Nothing was sent."""
 
@@ -649,6 +661,8 @@ async def spawn_owned(*, url: str | None) -> dict[str, Any]:
         if identity is not None:
             cleanup = asyncio.ensure_future(retire(Path(identity["runtime"]), expected=identity))
             await _settle(cleanup)
+            if not cleanup.cancelled():
+                cleanup.exception()  # retrieved: a survivor was signalled; cancellation still wins
         raise
 
 
@@ -661,42 +675,71 @@ async def retire(runtime: Path, *, expected: Mapping[str, Any] | None = None,
                  timeout_s: float = 10.0) -> dict[str, Any] | None:
     """Stop a holder and wait, bounded, until its process has exited.
 
-    With ``expected`` (the identity a session recorded) only that process is stopped; a holder with
-    another identity in the same runtime is left alone. If it does not exit after asking, it is sent
-    SIGTERM, checked against the same identity first. Returns its last status, if it answered."""
+    With ``expected`` (the identity a session recorded) only that process is stopped, and it is
+    waited for even when its record is already gone (it removes the record as it exits). A holder
+    with another identity in the same runtime is left alone. If it does not exit after asking, it is
+    sent SIGTERM, checked against the same full identity first. Returns its last status, if it
+    answered; raises HolderStillRunning if it is still running after that."""
     from jevdual.browser_holder import process_identity
 
+    keys = ("boot", "pid", "start")
     live = holder_live(runtime)
-    if live is None or (expected and any(live.get(k) != expected.get(k) for k in ("boot", "pid", "start"))):
+    target = expected if expected and all(expected.get(k) for k in keys) else live
+    if target is None:
         return None
-    status = None
-    with contextlib.suppress(HolderUnavailable):
-        status = await call(runtime, "stop")
+    pid = int(target["pid"])
+    own = pid == os.getpid()  # a holder in this very process: the offline tests
+    answering = live is not None and all(live.get(k) == target.get(k) for k in keys)
+    if own and not answering:
+        return None  # an in-process holder is gone once its record is
 
     def same() -> bool:
         try:
-            current = process_identity(int(live["pid"]))
+            current = process_identity(pid)
         except Exception:  # noqa: BLE001 - exited
             return False
-        return all(live.get(k) == current[k] for k in ("boot", "pid", "start"))
+        return all(target.get(k) == current[k] for k in keys)
 
     def running() -> bool:
-        if int(live["pid"]) != os.getpid():
-            return same()  # a subprocess holder is gone only once its process has exited
-        # a holder in this very process (the offline tests) removes its record after shutdown
+        if not own:
+            return same()
         current = holder_live(runtime)
         return current is not None and current.get("nonce") == live.get("nonce")
 
+    if not running():
+        return None
+    status = None
+    if answering:
+        with contextlib.suppress(HolderUnavailable):
+            status = await call(runtime, "stop")
     for signalled in (False, True):
-        deadline = time.monotonic() + (timeout_s if not signalled else 5.0)
+        deadline = time.monotonic() + (timeout_s if not signalled else TERM_GRACE_S)
         while time.monotonic() < deadline:
             if not running():
                 return status
             await asyncio.sleep(0.1)
-        if not signalled and same() and int(live["pid"]) != os.getpid():
+        if not signalled and not own and same():
             with contextlib.suppress(ProcessLookupError):
-                os.kill(int(live["pid"]), signal.SIGTERM)
+                os.kill(pid, signal.SIGTERM)
+    if running():
+        raise HolderStillRunning(pid)
     return status
+
+
+async def retire_settled(runtime: Path, *, expected: Mapping[str, Any] | None = None) -> dict[str, Any] | None:
+    """``retire`` that cancellation cannot interrupt: it finishes, then the cancellation is raised."""
+    task = asyncio.ensure_future(retire(runtime, expected=expected))
+    cancelled = False
+    while not task.done():
+        try:
+            await asyncio.shield(task)
+        except asyncio.CancelledError:
+            cancelled = True
+        except Exception:  # noqa: BLE001 - read from the task below
+            break
+    if cancelled:
+        raise asyncio.CancelledError
+    return task.result()
 
 
 async def stop_async(runtime: Path) -> dict[str, Any] | None:

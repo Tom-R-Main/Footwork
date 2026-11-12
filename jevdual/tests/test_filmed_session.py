@@ -327,3 +327,33 @@ def test_a_browser_filmed_take_needs_the_exclusive_desktop(world, fw, filmed, mo
     code, _, err = fw("start", "Film the page", "--browser", "--pointer-motion", "filmed")
     assert code == 2 and "exclusive_desktop" in err, err
     assert Coordinator().status()["reservations"] == []
+
+
+def test_a_cancelled_browser_start_releases_the_reservation_it_created(world, fw, filmed, monkeypatch):
+    """Sol round 3 #3: cancellation after the filmed reservation (here at the first navigation) must
+    not leave the desktop reserved with no session published."""
+    import asyncio
+
+    from jevdual import browser_driver, browser_target
+    from jevdual.coordination import Coordinator
+    from jevdual.native import NativeBridge
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": "app://Calculator"}]))
+
+    async def browser(url, policy):
+        bridge = NativeBridge(world, 77, 40335)
+        bridge.tab_id = "owned-browser-tab"
+        return world, bridge
+
+    async def cancelled(self, url):
+        raise asyncio.CancelledError
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(NativeBridge, "navigate", cancelled, raising=False)
+    with pytest.raises(BaseException) as raised:
+        fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop", "--pointer-motion", "filmed",
+           "--rest", "20,40", "--url", "https://example.test/")
+    assert isinstance(raised.value, (asyncio.CancelledError, KeyboardInterrupt, SystemExit)), raised.value
+    assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
+    assert not (fw.session / "session.json").exists()
