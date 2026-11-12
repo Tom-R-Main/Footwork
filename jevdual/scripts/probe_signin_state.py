@@ -2,8 +2,12 @@
 
 Usage: .venv/bin/python -I scripts/probe_signin_state.py PORT
 """
-import asyncio, json, sys, urllib.request
+import asyncio
+import json
+import sys
+import urllib.request
 from urllib.parse import urlsplit
+
 import websockets
 
 PORT = int(sys.argv[1])
@@ -17,8 +21,13 @@ async def evaluate(ws_url, expression):
             if msg.get("id") == 1:
                 return msg.get("result", {}).get("result", {}).get("value")
 
+def _tabs(port):
+    with urllib.request.urlopen(f"http://127.0.0.1:{port}/json/list", timeout=5) as response:
+        return json.load(response)
+
+
 async def main():
-    tabs = json.load(urllib.request.urlopen(f"http://127.0.0.1:{PORT}/json/list", timeout=5))
+    tabs = await asyncio.to_thread(_tabs, PORT)
     out = []
     for t in tabs:
         if t.get("type") != "page":

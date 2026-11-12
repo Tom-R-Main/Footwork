@@ -5,7 +5,12 @@ printed. Clears the editor afterwards. Creates nothing.
 
 Usage: .venv/bin/python -I scripts/probe_lyrics_paste.py PORT LYRICS_FILE [paste|type]
 """
-import asyncio, json, sys, urllib.request
+import asyncio
+import json
+import sys
+import urllib.request
+from pathlib import Path
+
 import websockets
 
 STATS = r"""
@@ -38,9 +43,14 @@ async def ev(ws, n, expr):
     m = await call(ws, n, "Runtime.evaluate", {"expression": expr, "returnByValue": True, "awaitPromise": True})
     return m.get("result", {}).get("result", {}).get("value", m.get("result", {}).get("exceptionDetails"))
 
+def _tabs(port):
+    with urllib.request.urlopen(f"http://127.0.0.1:{port}/json/list", timeout=5) as response:
+        return json.load(response)
+
+
 async def main(port, path):
-    text = open(path, encoding="utf-8").read()
-    tabs = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/json/list", timeout=5))
+    text = await asyncio.to_thread(Path(path).read_text, encoding="utf-8")
+    tabs = await asyncio.to_thread(_tabs, port)
     tab = next(t for t in tabs if t.get("type") == "page" and "suno.com/create" in (t.get("url") or ""))
     report = {}
     async with websockets.connect(tab["webSocketDebuggerUrl"], max_size=2**22) as ws:
