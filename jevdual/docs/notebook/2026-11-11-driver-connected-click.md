@@ -43,3 +43,18 @@ Inferred: DC4's model and Rust halves held, with the descendant rule narrowed as
 Changes: connected1 (the guard alone, never released) becomes connected2; the probe gains a button that removes itself on pointerdown.
 Next: the live probe in a fresh Desktop window after unlock and the cut 22 render; it resolves DC1 and DC4. Then a fresh Sol review of PR #26.
 Refs: #dc4; results/driver-connected-20261112/dc4; vendor/cua-driver/patches/connected-click.json
+
+## DC6 · update · 2026-11-12 03:58
+Resolves: DC1 = held
+Observed: in Desktop's grant until 09:10 UTC, scripts/probe_document_binding.py ran once against connected2 on port 9466 with a fresh profile, launching at 08:56:34 UTC after the fixed gate read unlocked and 1297 s idle; it took 24 s and its Chrome was closed at 08:56:58 (results/driver-connected-20261112/dc-live). The reload case's late click refused browser_ref_stale (frame navigated). The re-render case's late click refused browser_ref_stale ("the ref's node is no longer in its document"), and the page logged no handler activation for the removed button: the only count_handler events are the two fresh clicks, generation 0 after the reload and generation 1 after the re-render, one each. The vanish button, which removes itself on pointerdown, logged vanish_pointerdown and no vanish_click, and the click reported an unverifiable partial delivery that stopped after pointerdown. Chrome was in front for 1.7 s at launch before the probe restored the prior app; the holder stopped cleanly.
+Inferred: DC1 held (against BH13, where the same late click was dispatched and ran the removed button's handler) and DC4's live half held. Footwork reports dispatched: true on a driver refusal, as it did in BH13; that field's meaning is Footwork's, unchanged here.
+Next: a fresh Sol review of PR #26; then CI and merge. HelpTag has not been live-qualified on the combined build.
+Refs: #dc1; #dc4; results/driver-connected-20261112/dc-live; results/browser-holder-20261111/bh13-summary.json
+
+## DC7 · update · 2026-11-12 03:58
+Resolves: DC4 = held
+Observed: DC4's model and Rust halves are in DC5 and its live half in DC6: nothing reached a detached node in any case, a completed sequence on a connected node was neither refused nor reported partial, and every existing browser test passed. The sequence that held is narrower than DC4's hypothesis: it stops only for the ref's own node and retargets when only the hit-tested descendant leaves (DC5).
+Inferred: held for the cases tested; the retargeting has the model (DC5) but no live case yet.
+Changes: none. Process note: DC4's heading was corrected from 03:31 to 03:25 in a later commit (37489cc, before any test ran), which edited committed text that the notebook keeps append-only; it is recorded here rather than undone.
+Next: a fresh Sol review of PR #26.
+Refs: #dc4; #dc5; #dc6
