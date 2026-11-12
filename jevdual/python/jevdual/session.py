@@ -1758,6 +1758,21 @@ async def _start_browser(args: Any, d: Path) -> int:
             browser_tab=bridge.tab_id or "",
             browser_holder=holder,
         )
+        if getattr(args, "pointer_motion", "off") == "filmed":
+            # B7: one session films the real pointer over the same window its page operations bind
+            refusal = _filmed_setup(state, args)
+            if refusal:
+                print(f"not starting: {refusal}", file=sys.stderr)
+                if holder:
+                    await bsh.stop_async(d)
+                return 2
+            from jevdual.coordination import CoordinationError
+
+            claim = getattr(args, "_coordination_claim", None)
+            if claim is None:
+                raise CoordinationError("filming requires the coordinated command entrypoint")
+            state.coordination_token = claim.registry.reserve(claim, claim.resources)
+            args._created_reservation = state.coordination_token
         print(f"bound footwork's Chrome (pid {bridge.pid}) window {bridge.window_id}, tab {bridge.tab_id}")
         if args.url:
             eff = await bridge.navigate(args.url)

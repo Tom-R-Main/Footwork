@@ -279,3 +279,51 @@ def test_failed_filmed_replacement_start_revokes_the_reservation_it_created(worl
     assert code != 0, (out, err)
     assert (fw.session / "session.json").read_bytes() == before
     assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
+
+
+def test_a_browser_session_films_the_pointer_over_its_own_window(world, fw, filmed, monkeypatch):
+    """B7: one start --browser session binds the page and films the real pointer over the same window,
+    under the same desktop reservation a native filmed take holds."""
+    from jevdual import browser_driver, browser_target
+    from jevdual.coordination import Coordinator
+    from jevdual.native import NativeBridge
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": "app://Calculator"}]))
+
+    async def browser(url, policy):
+        bridge = NativeBridge(world, 77, 40335)
+        bridge.tab_id = "owned-browser-tab"
+        return world, bridge
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    state = _state(fw)
+    assert state["mode"] == "browser" and state["filmed"]["content"] == list(CONTENT)
+    reservation, = Coordinator().status()["reservations"]
+    assert reservation["token"] == state["coordination_token"] and "desktop" in reservation["resources"]
+    before = len(filmed.events)
+    code, _, err = fw("park")
+    assert code == 0, err
+    assert len(filmed.events) > before
+
+
+def test_a_browser_filmed_take_needs_the_exclusive_desktop(world, fw, filmed, monkeypatch):
+    from jevdual import browser_driver, browser_target
+    from jevdual.coordination import Coordinator
+    from jevdual.native import NativeBridge
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": "app://Calculator"}]))
+
+    async def browser(url, policy):
+        bridge = NativeBridge(world, 77, 40335)
+        bridge.tab_id = "owned-browser-tab"
+        return world, bridge
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    code, _, err = fw("start", "Film the page", "--browser", "--pointer-motion", "filmed")
+    assert code == 2 and "exclusive_desktop" in err, err
+    assert Coordinator().status()["reservations"] == []
