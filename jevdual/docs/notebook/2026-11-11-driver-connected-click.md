@@ -13,3 +13,10 @@ Test: in the helptag1 source, a new mock-CDP test for a removed node (red before
 Predicts: Rust: the new test fails before the patch (the click sequence is dispatched) and passes after (browser_ref_stale, no pointer sequence, nothing dispatched); every existing browser test passes. Live: the reload case still refuses browser_ref_stale; the re-render case's late click now refuses browser_ref_stale and the page logs no handler activation for the removed button; both fresh clicks land once.
 Against: the re-render's late click running any handler; a fresh click refused; any existing browser test failing.
 Refs: docs/notebook/2026-11-11-browser-holder.md#bh13; scripts/probe_document_binding.py
+
+## DC2 · update · 2026-11-12 03:08
+Observed: on the helptag1 source, both new mock-CDP tests failed before the patch (the refusal test found no structured refusal because the click was sent; the order test found no isConnected read) and passed after it; all 251 browser tests and all 1234 cua-driver-core library tests pass with it (results/driver-connected-20261112/rust-red.txt, rust-green-core.txt). scripts/cua_source_chain.py rebuilds the new pinned archive (aa237ca7, 6,407,594 bytes) byte for byte from the focus1 archive in Git through the helptag1 and connected1 steps. The vendored driver built from it with Rust 1.97.1 and installs as 0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected1 (runtime.json records the native library's hash); Footwork's offline suite passes against it with no overlay (3509 passed, 52 skipped).
+Inferred: DC1's Rust half held. Its live half has not run: it needs a few seconds of the foreground, which the film work holds tonight.
+Changes: helptag1 moves from an optional overlay into the pinned chain; the overlay build script and its tests are retired in favour of the chain script.
+Next: the live probe (scripts/probe_document_binding.py on an isolated profile, port 9466) in a window Desktop grants; it resolves DC1.
+Refs: results/driver-connected-20261112; vendor/cua-driver/patches/connected-click.json

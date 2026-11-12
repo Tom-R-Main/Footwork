@@ -1,0 +1,30 @@
+test browser::v2_tests::dom_event_click_checks_its_node_is_connected_before_any_event ... FAILED
+test browser::v2_tests::dom_event_click_is_unverifiable_when_readback_disappears ... ok
+test browser::v2_tests::dom_event_click_refuses_while_a_dialog_is_already_open ... ok
+test browser::v2_tests::dom_event_click_returns_when_its_handler_opens_a_dialog ... ok
+test browser::v2_tests::dom_event_click_remains_unverifiable_when_only_focus_changes ... ok
+test browser::v2_tests::dom_event_click_keeps_readback_when_reads_are_slow ... ok
+test browser::v2_tests::dom_event_click_bounds_stalled_readbacks ... ok
+
+failures:
+
+---- browser::v2_tests::dom_event_click_refuses_a_node_removed_from_its_document stdout ----
+
+thread 'browser::v2_tests::dom_event_click_refuses_a_node_removed_from_its_document' (144450027) panicked at crates/cua-driver-core/src/browser/v2_tests.rs:1359:10:
+structured content
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- browser::v2_tests::dom_event_click_checks_its_node_is_connected_before_any_event stdout ----
+
+thread 'browser::v2_tests::dom_event_click_checks_its_node_is_connected_before_any_event' (144450024) panicked at crates/cua-driver-core/src/browser/v2_tests.rs:3375:10:
+the click reads its node's isConnected
+
+
+failures:
+    browser::v2_tests::dom_event_click_checks_its_node_is_connected_before_any_event
+    browser::v2_tests::dom_event_click_refuses_a_node_removed_from_its_document
+
+test result: FAILED. 8 passed; 2 failed; 0 ignored; 0 measured; 1226 filtered out; finished in 1.87s
+
+error: test failed, to rerun pass `-p cua-driver-core --lib`
+EXIT 101

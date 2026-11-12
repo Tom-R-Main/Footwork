@@ -12,10 +12,10 @@ even though it no longer bubbles to the document. A fresh observation and click 
 a control. Waits for an unlocked screen and 10 s of idle before launching. Refuses Footwork's default
 port and the sign-in test's.
 
-Run from ``jevdual/`` with the pinned driver overlay first on ``PYTHONPATH``::
+Run from ``jevdual/`` with the pinned driver installed::
 
     FOOTWORK_CHROME_PROFILE=/abs/fresh/profile FOOTWORK_CHROME_PORT=9466 \\
-    PYTHONPATH=output/foreground-helptag/overlay:python \\
+    PYTHONPATH=python \\
     .venv/bin/python scripts/probe_document_binding.py --out /abs/out/dir
 """
 

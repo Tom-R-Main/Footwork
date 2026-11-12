@@ -10,10 +10,10 @@ Waits for an unlocked screen and at least 10 s without input before launching, b
 brings Chrome forward. Sends no input to any other application. At the end it stops the holder and
 terminates the isolated Chrome it launched.
 
-Run from ``jevdual/`` with the pinned driver overlay first on ``PYTHONPATH``::
+Run from ``jevdual/`` with the pinned driver installed::
 
     FOOTWORK_CHROME_PROFILE=/abs/fresh/profile FOOTWORK_CHROME_PORT=9466 \\
-    PYTHONPATH=output/foreground-helptag/overlay:python \\
+    PYTHONPATH=python \\
     .venv/bin/python scripts/probe_browser_holder.py --arm held --out /abs/out/dir
 
 Refuses to run against Footwork's default profile or port, or the sign-in test's.

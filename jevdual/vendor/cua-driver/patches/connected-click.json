@@ -1,0 +1,20 @@
+{
+  "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
+  "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected1",
+  "base_archive_sha256": "938800555df9485aa4ed800a74ef795d05575efdbdea9c5f4ce6f6dd61b02fda",
+  "patched_archive_sha256": "aa237ca7cb28cc65ae4b740a2e266a1ff77def8d8b46e3852608c02c1ee5beab",
+  "patch_sha256": "5e3fef6e8da5166c5a5eecf485366c4f542d0de14b236b26072bed50123b769e",
+  "files": {
+    "libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs": {
+      "before": "4d04aeb6792616847da3f2223a3669aa81d54aede1901ef4981e5582f5f2ee45",
+      "after": "19f5e341c56b2db2717516e0e52b5a38698b93f4bc0cb114fc9fbfe7a5e18795"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs": {
+      "before": "6bdb6ea1a033f51327a246180c02b567a89de08a48e6dba8ba1de482ac7837d6",
+      "after": "97c32d8b1d386869bd1b822a318fb5839b5591fe082acca4ab1a589041da7c1e"
+    }
+  },
+  "abi": "unchanged six Python binding files; private cua-driver-core browser click guard only",
+  "toolchain": "1.97.1"
+}

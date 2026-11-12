@@ -1,0 +1,157 @@
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
+@@ -1408,6 +1408,36 @@
+                     .to_tool_result()
+                 }
+             };
++            // A backend node the page has removed still resolves to an object,
++            // and the click sequence would run its handlers. Only a node still
++            // in its document is clicked; an unreadable check sends nothing.
++            let connected = tokio::time::timeout(
++                DOM_CLICK_BASELINE_DEADLINE,
++                conn.call(
++                    Some(cdp),
++                    "Runtime.callFunctionOn",
++                    json!({
++                        "objectId": object_id,
++                        "functionDeclaration": DOM_NODE_CONNECTED_CHECK,
++                        "returnByValue": true,
++                    }),
++                ),
++            )
++            .await
++            .ok()
++            .and_then(Result::ok)
++            .and_then(|reply| reply.pointer("/result/value").and_then(Value::as_bool));
++            if connected != Some(true) {
++                return BrowserRefusal::new(
++                    BrowserRefusalCode::BrowserRefStale,
++                    if connected == Some(false) {
++                        "the ref's node is no longer in its document"
++                    } else {
++                        "the ref's node could not be confirmed in its document"
++                    },
++                )
++                .to_tool_result();
++            }
+             // Cursor feedback is best-effort and visual-only. A missing box
+             // must not turn a valid DOM-event action into a refusal.
+             let _ = conn
+@@ -1723,6 +1753,9 @@
+     Some((xs.iter().sum::<f64>() / 4.0, ys.iter().sum::<f64>() / 4.0))
+ }
+ 
++/// Whether the ref's node is still in its document, evaluated ON the node.
++const DOM_NODE_CONNECTED_CHECK: &str = "function() { return this.isConnected === true; }";
++
+ /// Synthetic click for `input_route:"dom_event"`, evaluated ON the ref's node.
+ ///
+ /// `HTMLElement.click()` fires only a bare `click` with no coordinates, so
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
+@@ -113,6 +113,8 @@
+     dom_click_stall_after: Option<usize>,
+     dom_click_generation: u64,
+     dom_click_focused: bool,
++    /// The ref's node resolves but the page has removed it from its document.
++    dom_click_node_detached: bool,
+     dom_click_reads_before_failure: Option<usize>,
+     /// Answer every post-snapshot semantic readback after this delay.
+     dom_click_readback_delay: Option<std::time::Duration>,
+@@ -164,6 +166,7 @@
+             dom_click_stall_after: None,
+             dom_click_generation: 0,
+             dom_click_focused: false,
++            dom_click_node_detached: false,
+             dom_click_reads_before_failure: None,
+             dom_click_readback_delay: None,
+             calls: Vec::new(),
+@@ -853,6 +856,14 @@
+                 reply.delay = st.dom_click_readback_delay;
+                 reply
+             }
++            "Runtime.callFunctionOn"
++                if call.params["functionDeclaration"]
++                    .as_str()
++                    .is_some_and(|function| function.contains("isConnected")) =>
++            {
++                assert_eq!(call.params["returnByValue"], true);
++                MockReply::ok(json!({ "result": { "value": !st.dom_click_node_detached } }))
++            }
+             "Runtime.callFunctionOn" => {
+                 st.dom_click_focused = true;
+                 if st.dom_click_changes_readback {
+@@ -3304,6 +3315,73 @@
+     assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
+     assert!(recorded_calls(&f, "Page.bringToFront").is_empty());
+     assert!(recorded_calls(&f, "Target.activateTarget").is_empty());
++}
++
++#[tokio::test]
++async fn dom_event_click_refuses_a_node_removed_from_its_document() {
++    let f = fixture_with(|state| state.dom_click_node_detached = true).await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = BrowserClickTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target,
++            "tab_id": tab,
++            "ref": main_ref,
++            "input_route": "dom_event",
++            "session": SESSION,
++        }))
++        .await;
++
++    let refused = structured(&result);
++    assert_eq!(refused["refusal"]["code"], "browser_ref_stale", "{refused}");
++    let dispatched_sequence = recorded_calls(&f, "Runtime.callFunctionOn")
++        .iter()
++        .filter_map(|(_, params)| params["functionDeclaration"].as_str().map(str::to_owned))
++        .any(|declaration| declaration.contains("'pointerdown'"));
++    assert!(
++        !dispatched_sequence,
++        "a removed node must receive no events"
++    );
++    let state = f.state.lock().unwrap();
++    assert!(!state.dom_click_focused);
++    assert_eq!(state.dom_click_generation, 0);
++    drop(state);
++    assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
++}
++
++#[tokio::test]
++async fn dom_event_click_checks_its_node_is_connected_before_any_event() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    BrowserClickTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target,
++            "tab_id": tab,
++            "ref": main_ref,
++            "input_route": "dom_event",
++            "session": SESSION,
++        }))
++        .await;
++
++    let declarations: Vec<String> = recorded_calls(&f, "Runtime.callFunctionOn")
++        .iter()
++        .filter_map(|(_, params)| params["functionDeclaration"].as_str().map(str::to_owned))
++        .collect();
++    let checked = declarations
++        .iter()
++        .position(|declaration| declaration.contains("isConnected"))
++        .expect("the click reads its node's isConnected");
++    let clicked = declarations
++        .iter()
++        .position(|declaration| declaration.contains("'pointerdown'"))
++        .expect("a connected node is clicked");
++    assert!(checked < clicked, "{declarations:?}");
++    assert_eq!(f.state.lock().unwrap().dom_click_generation, 1);
+ }
+ 
+ #[tokio::test]

@@ -16,6 +16,6 @@
     }
   },
   "abi": "unchanged six Python binding files; private macOS AX classification only",
-  "default_dependency": "unchanged focus1; explicit project overlay only",
+  "default_dependency": "step 1 of the pinned chain; see connected-click.json",
   "toolchain": "1.97.1"
 }

@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1`. The published 0.46.0 wheel does not contain the required shutdown cleanup and foreground text focus patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected1`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag and connected-node click patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 The six Python files are copied byte-for-byte from the exact release source. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -20,7 +20,7 @@ The six Python files are copied byte-for-byte from the exact release source. The
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2` (6,403,795 bytes).
+`native-source.tar.gz` SHA256: `aa237ca7cb28cc65ae4b740a2e266a1ff77def8d8b46e3852608c02c1ee5beab` (6,407,594 bytes). It is the end of a four-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected1. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -54,15 +54,24 @@ Build the CLI and SDK together with Rust 1.97.1, `--release --locked --jobs 2`, 
 
 The published macOS universal2 wheel used only for ABI comparison has SHA256 `80b1be9b9a6aca20d733b10f221f9e478e862cfbcac4ce413ce5af7c141aa46c`. Its successful import establishes matched published bindings, not the required cleanup guarantee. Final qualification must use the custom wheel and retain its checksum.
 
-## Optional project-local passive HelpTag overlay
+## Passive HelpTag patch (helptag1)
 
-`patches/ordinary-helptag.patch` and its JSON manifest reconstruct a separately
-versioned `cleanup2.focus1.helptag1` candidate on top of the unchanged canonical
-focus1 archive. `scripts/build_cua_helptag_overlay.py` verifies the base/patch/final
-hashes, prepares a temporary package and uses the canonical offline native hook.
-This does not change the default dependency, canonical source archive, six Python
-binding files or historical focus1 overlay. The explicit project overlay carries
-its own native/wheel/runtime hash qualification under the corresponding results.
-Only positively identified exact owned passive AXHelpTags can be excluded from
-ordinary-window ranking; unknown/interactive peers stay ranked and HelpTag targets
-refuse before activation. Activation sequence and success predicates are unchanged.
+`patches/ordinary-helptag.patch` and its JSON manifest apply on top of the focus1 archive and
+produce archive `938800555df9485aa4ed800a74ef795d05575efdbdea9c5f4ce6f6dd61b02fda`. It was first
+qualified as an optional project overlay (`cleanup2.focus1.helptag1`) and is now step three of the
+pinned chain. Only positively identified exact owned passive AXHelpTags can be excluded from
+ordinary-window ranking; unknown/interactive peers stay ranked and HelpTag targets refuse before
+activation. Activation sequence and success predicates are unchanged. Two private macOS Rust files
+change; the six Python binding files do not.
+
+## Connected-node click patch (connected1)
+
+`patches/connected-click.patch` and its JSON manifest apply on top of the helptag1 archive and
+produce the pinned archive. A page-route click (`browser_click` with `input_route:"dom_event"`)
+resolved its ref's backend node and ran the synthetic click sequence on it even when the page had
+removed that node from its document, so a removed button's handlers still ran (Footwork notebook
+BH13). The patch reads the node's `isConnected` on the resolved object, bounded by the existing
+one-second baseline deadline, and refuses `browser_ref_stale` before any event unless it reads true;
+an unreadable check also refuses. A connected node is clicked exactly as before. Two cua-driver-core
+browser files change (the tool and its mock-CDP tests); the generated bindings and dependencies do
+not.

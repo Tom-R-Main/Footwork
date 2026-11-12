@@ -145,8 +145,15 @@ def test_local_native_patch_has_inspectable_hash_bound_provenance():
     foreground = json.loads((vendor / 'patches/foreground-text-focus.json').read_text())
     assert manifest['upstream_commit'] == BUILD.SOURCE_COMMIT
     assert manifest['patched_archive_sha256'] == foreground['base_archive_sha256']
-    assert foreground['patched_archive_sha256'] == BUILD.SOURCE_SHA256
-    assert foreground['version'] == BUILD.VERSION
+    helptag = json.loads((vendor / 'patches/ordinary-helptag.json').read_text())
+    connected = json.loads((vendor / 'patches/connected-click.json').read_text())
+    # the pinned archive is the end of one hash-bound chain: cleanup2, focus1, helptag1, connected1
+    assert foreground['patched_archive_sha256'] == helptag['base_archive_sha256']
+    assert helptag['patched_archive_sha256'] == connected['base_archive_sha256']
+    assert connected['patched_archive_sha256'] == BUILD.SOURCE_SHA256
+    assert foreground['version'] == helptag['base_version']
+    assert helptag['version'] == connected['base_version']
+    assert connected['version'] == BUILD.VERSION
     patch = (vendor / 'patches/session-cleanup-join.patch').read_bytes()
     assert hashlib.sha256(patch).hexdigest() == manifest['patch_sha256']
     assert len(manifest['files']) == 4
@@ -160,3 +167,10 @@ def test_local_native_patch_has_inspectable_hash_bound_provenance():
         for name, hashes in foreground['files'].items():
             assert hashlib.sha256(source.extractfile(name).read()).hexdigest() == hashes['after']
             assert hashes['before'] != hashes['after']
+        for step, record in (('ordinary-helptag', helptag), ('connected-click', connected)):
+            step_patch = (vendor / f'patches/{step}.patch').read_bytes()
+            assert hashlib.sha256(step_patch).hexdigest() == record['patch_sha256']
+            assert len(record['files']) == 2
+            for name, hashes in record['files'].items():
+                assert hashlib.sha256(source.extractfile(name).read()).hexdigest() == hashes['after']
+                assert hashes['before'] != hashes['after']

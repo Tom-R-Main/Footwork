@@ -1,0 +1,2 @@
+fmt-diff
+test result: ok. 1234 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.59s
