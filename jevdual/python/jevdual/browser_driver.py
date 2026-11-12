@@ -599,8 +599,13 @@ class BrowserBridge:
         )
 
 
-async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) -> tuple[Any, BrowserBridge]:
-    """Launch or find footwork's Chrome, build the configured Driver, bind its largest window."""
+async def bind_footwork_chrome(
+    url: str | None = None, *, policy: Any = None, wrap_operations: Any = None
+) -> tuple[Any, BrowserBridge]:
+    """Launch or find footwork's Chrome, build the configured Driver, bind its largest window.
+
+    ``wrap_operations`` receives the driver's browser operations before the first attach and returns
+    the operations the bridge uses (the session holder keeps the first prepare this way)."""
     from jevdual.effectors import require_available
 
     require_available("browser")
@@ -657,7 +662,12 @@ async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) ->
                 raise RuntimeError('owned browser new-window helper exited unsuccessfully')
             await asyncio.sleep(.1)
         w = max(wins.windows, key=lambda w: w.bounds.width * w.bounds.height)
-        bridge = BrowserBridge(driver, pid, w.window_id, policy=policy)
+        operations = None
+        if wrap_operations is not None:
+            from jevdual.effectors import browser_operations
+
+            operations = wrap_operations(browser_operations(driver, session=SESSION_LABEL))
+        bridge = BrowserBridge(driver, pid, w.window_id, policy=policy, operations=operations)
         bridge.launch_identity = {'pid': pid, 'incarnation': incarnation, 'new_process': launch is not None}
         await asyncio.wait_for(bridge.attach(), timeout=max(.001, deadline - time.monotonic()))
         if not identity():
