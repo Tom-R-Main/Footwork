@@ -88,3 +88,12 @@ Inferred: the driver's DOM.focus before insert_text gives the occluded page wind
 Changes: none. Background typing into an empty field stays allowed; its page-visible focus is recorded in the report.
 Next: B2, detection of a second DevTools client.
 Refs: results/browser-holder-20261111/bh9-summary.json
+
+## BH11 · prediction · 2026-11-11 21:36
+Question: does the holder detect a second DevTools client on its browser and refuse to send while it is connected?
+Hypothesis: the holder's driver holds the only established client connection to the browser's port; another process opening a websocket to the browser endpoint appears to lsof as a second client end, so the holder's pre-send check sees it and refuses, and passes again once it disconnects.
+Alternatives: (a) the driver's own connection is not visible as a client end (for example it uses a pipe or a different port), so the holder refuses every send even alone; (b) lsof misses the second client's connection, so the click goes through; (c) the browser refuses or drops the second connection, so there is nothing to detect.
+Test: scripts/probe_browser_holder.py --arm held --second-client, fresh profile, port 9466: after the restore, look and click alone; then a separate process opens a websocket to /json/version's webSocketDebuggerUrl and holds it; look and click; the process exits; look and click again.
+Predicts: the first and third clicks land (the page logs two clicks in all); the second click is refused with browser_second_client naming the second process's PID, nothing dispatched, and no page click; the looks all succeed. Not predicted, recorded: whether the browser comes forward when the second client connects.
+Against: the first or third click refused; the second click landing or refused for another reason.
+Refs: python/jevdual/browser_session_holder.py devtools_clients
