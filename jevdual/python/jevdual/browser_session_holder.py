@@ -120,6 +120,52 @@ def unknown_reply(operation: str, why: str) -> BrowserReply:
 # ---------------------------------------------------------------- holder side
 
 
+def devtools_clients(port: int) -> list[dict[str, Any]] | None:
+    """Processes holding an established TCP connection to the browser's DevTools port, or None when
+    the check cannot run. A client end reads ``local->127.0.0.1:<port>``; the browser's own ends read
+    ``127.0.0.1:<port>->remote`` and are not clients."""
+    import subprocess
+
+    try:
+        proc = subprocess.run(["lsof", "-nP", f"-iTCP@127.0.0.1:{port}", "-sTCP:ESTABLISHED", "-F", "pcn"],
+                              capture_output=True, text=True, timeout=5, check=False)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if proc.returncode not in (0, 1):  # 1: no matching connection
+        return None
+    clients: dict[int, dict[str, Any]] = {}
+    pid, command = None, ""
+    for line in proc.stdout.splitlines():
+        tag, value = line[:1], line[1:]
+        if tag == "p":
+            pid, command = int(value), ""
+        elif tag == "c":
+            command = value
+        elif tag == "n" and pid is not None and "->" in value:
+            remote = value.split("->", 1)[1]
+            if remote.rsplit(":", 1)[-1] == str(port):
+                clients.setdefault(pid, {"pid": pid, "command": command, "connections": 0})["connections"] += 1
+    return list(clients.values())
+
+
+def second_client_refusal(clients: list[dict[str, Any]] | None) -> BrowserReply | None:
+    """A refusal when a process other than this holder is connected to the browser, or when that
+    cannot be checked. Nothing is sent: another client could change the page between this holder's
+    observation and its input, and this holder could not tell."""
+    if clients is not None:
+        foreign = [c for c in clients if c["pid"] != os.getpid()]
+        if not foreign:
+            return None
+        names = ", ".join(f"{c['command']} (pid {c['pid']})" for c in foreign[:4])
+        code, message = "browser_second_client", f"another DevTools client is connected to this browser: {names}"
+    else:
+        code, message = "browser_client_check_unavailable", "could not check for another DevTools client"
+    return BrowserReply(status="refused", text=message, is_error=True, dispatched=False,
+                        refusal=BrowserRefusal(code=code, message=f"{message}; nothing was sent",
+                                               detail={"delivery": "not_sent", "retryable": True,
+                                                       "clients": clients}))
+
+
 class PrepareOnce:
     """Driver operations whose successful ``prepare`` is kept and answered again for the same window.
 
@@ -147,7 +193,11 @@ class PrepareOnce:
 
 
 class Holder:
-    def __init__(self, *, driver: Any, operations: PrepareOnce, identity: dict[str, Any], idle_s: float):
+    def __init__(self, *, driver: Any, operations: PrepareOnce, identity: dict[str, Any], idle_s: float,
+                 clients: Any = None):
+        #: lists the DevTools clients before each sending operation (B2); None skips the check
+        self.clients = clients
+        self.refused_second_client = 0
         self.driver = driver
         self.operations = operations
         self.identity = identity
@@ -170,7 +220,14 @@ class Holder:
             return {"ok": False, "code": "holder_request_invalid"}
         self.last_request = time.monotonic()
         async with self.lock:
-            reply = await getattr(self.operations, method)(**args)
+            refusal = None
+            if method in SENDING and self.clients is not None:
+                refusal = second_client_refusal(await asyncio.to_thread(self.clients))
+            if refusal is not None:
+                self.refused_second_client += 1
+                reply = refusal
+            else:
+                reply = await getattr(self.operations, method)(**args)
         self.served[method] = self.served.get(method, 0) + 1
         self.last_request = time.monotonic()
         return {"ok": True, "reply": reply_to_wire(reply)}
@@ -179,6 +236,7 @@ class Holder:
         return {
             "served": dict(self.served),
             "prepare_repeats_answered": self.operations.repeats,
+            "refused_second_client": self.refused_second_client,
             "idle_s": round(time.monotonic() - self.last_request, 3),
             "chrome_pid": self.identity["chrome_pid"],
             "window_id": self.identity["window_id"],
@@ -233,7 +291,7 @@ async def _watch(holder: Holder, chrome_alive: Any) -> str:
 
 async def serve(
     session_dir: Path, *, driver: Any, operations: PrepareOnce, binding: Mapping[str, Any],
-    chrome_alive: Any, idle_s: float, install_signals: bool = True,
+    chrome_alive: Any, idle_s: float, install_signals: bool = True, clients: Any = None,
 ) -> str:
     """Serve ``operations`` on the session's socket until stopped, idle, or the browser goes away."""
     from jevdual.browser_holder import _write_private, process_identity
@@ -246,7 +304,7 @@ async def serve(
         sock.unlink()  # this session's own path; spawn refuses while a live holder has it
     identity = {"version": 1, **process_identity(os.getpid()), "nonce": secrets.token_hex(32),
                 "socket": str(sock), **binding}
-    holder = Holder(driver=driver, operations=operations, identity=identity, idle_s=idle_s)
+    holder = Holder(driver=driver, operations=operations, identity=identity, idle_s=idle_s, clients=clients)
     server = await asyncio.start_unix_server(holder.serve, path=str(sock), limit=MAX_REQUEST)
     os.chmod(sock, 0o600)
     if install_signals:
@@ -288,8 +346,11 @@ async def run(session_dir: Path, *, url: str | None, idle_s: float) -> int:
         "tab_id": bridge.tab_id, "target_id": bridge.target_id,
         "launch_identity": getattr(bridge, "launch_identity", {}),
     }
-    await serve(session_dir, driver=driver, operations=wrapped[-1], binding=binding, idle_s=idle_s,
-                chrome_alive=lambda: chrome_pid() == pid and _incarnation(pid) == incarnation)
+    from jevdual.browser_driver import PORT
+
+    await serve(session_dir, driver=driver, operations=wrapped[-1], binding={**binding, "port": PORT},
+                idle_s=idle_s, chrome_alive=lambda: chrome_pid() == pid and _incarnation(pid) == incarnation,
+                clients=lambda: devtools_clients(PORT))
     return 0
 
 

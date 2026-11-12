@@ -148,6 +148,45 @@ def _typing(env: dict, out: Path, session: Path, rounds: int, spacing: float, st
     return {"name": _field_value(final["stdout"], "Name"), "note": _field_value(final["stdout"], "Note")}
 
 
+#: BH11's second client: one DevTools websocket on the browser endpoint, held open
+SECOND_CLIENT = """
+import asyncio, json, sys, urllib.request, websockets
+async def main():
+    url = json.load(urllib.request.urlopen(f"http://127.0.0.1:{sys.argv[1]}/json/version"))["webSocketDebuggerUrl"]
+    async with websockets.connect(url, max_size=None):
+        print("connected", flush=True)
+        await asyncio.sleep(float(sys.argv[2]))
+asyncio.run(main())
+"""
+
+
+def _round(env: dict, out: Path, session: Path, name: str, steps: list[dict]) -> None:
+    look = _cli(env, out, f"{name}-look", "look", "--session", str(session))
+    steps.append(look)
+    target = _counter_id(look["stdout"])
+    steps.append(_cli(env, out, f"{name}-click", "do", "click", str(target), "--no-judge", "--session", str(session))
+                 if target is not None else {"name": f"{name}-click", "skipped": "counter not on the observation"})
+
+
+def _second_client_rounds(env: dict, out: Path, session: Path, port: str, steps: list[dict]) -> dict:
+    """BH11: a click before, during and after a second DevTools client holds a connection."""
+    _round(env, out, session, "01-alone", steps)
+    time.sleep(5.0)
+    other = subprocess.Popen([sys.executable, "-c", SECOND_CLIENT, port, "60"], stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, text=True)
+    record = {"second_client_pid": other.pid, "t_spawned": time.time()}
+    record["second_client_line"] = other.stdout.readline().strip()
+    record["t_connected"] = time.time()
+    time.sleep(2.0)
+    _round(env, out, session, "02-second-client", steps)
+    other.terminate()
+    other.wait(timeout=10)
+    record["t_disconnected"] = time.time()
+    time.sleep(3.0)
+    _round(env, out, session, "03-after", steps)
+    return record
+
+
 def _tab(session: Path) -> str | None:
     try:
         return json.loads((session / "session.json").read_text()).get("browser_tab")
@@ -162,6 +201,7 @@ def main() -> None:
     parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--spacing", type=float, default=25.0, help="seconds between rounds")
     parser.add_argument("--typing", action="store_true", help="BH7: append and type instead of clicking")
+    parser.add_argument("--second-client", action="store_true", help="BH11: click with another DevTools client connected")
     args = parser.parse_args()
     out = Path(args.out)
     if not out.is_absolute():
@@ -201,7 +241,9 @@ def main() -> None:
                               "owned_chrome_pid": _owned_pid()}
         if args.typing:
             record["final_values"] = _typing(env, out, session, args.rounds, args.spacing, steps)
-        for i in range(1, 0 if args.typing else args.rounds + 1):
+        if args.second_client:
+            record["second_client"] = _second_client_rounds(env, out, session, port, steps)
+        for i in range(1, 0 if args.typing or args.second_client else args.rounds + 1):
             look = _cli(env, out, f"{i:02d}-look", "look", "--session", str(session))
             look["tab"] = _tab(session)
             steps.append(look)

@@ -69,12 +69,12 @@ class FakeDriver:
         self.shut = True
 
 
-async def _held(session: Path, inner: FakeOperations, *, idle_s: float = 60.0):
+async def _held(session: Path, inner: FakeOperations, *, idle_s: float = 60.0, clients=None):
     driver = FakeDriver()
     task = asyncio.create_task(bsh.serve(
         session, driver=driver, operations=bsh.PrepareOnce(inner),
         binding={"chrome_pid": 42, "window_id": 7, "tab_id": "tab-1", "target_id": "target-1"},
-        chrome_alive=lambda: True, idle_s=idle_s, install_signals=False))
+        chrome_alive=lambda: True, idle_s=idle_s, install_signals=False, clients=clients))
     for _ in range(100):
         if bsh.holder_live(session):
             return task, driver
@@ -255,3 +255,58 @@ async def test_a_new_launch_gets_its_own_window_before_any_recovery_window(monke
         assert opened == []
     else:
         assert len(opened) == 1 and "--new-window" in opened[0]
+
+
+def test_devtools_clients_reads_the_client_ends_of_a_real_connection():
+    """B2: a real loopback connection, read through lsof. The listening side is not a client."""
+    import os
+    import socket
+
+    server = socket.socket()
+    server.bind(("127.0.0.1", 0))
+    server.listen(1)
+    port = server.getsockname()[1]
+    client = socket.create_connection(("127.0.0.1", port))
+    accepted, _ = server.accept()
+    try:
+        clients = bsh.devtools_clients(port)
+        assert clients == [{"pid": os.getpid(), "command": clients[0]["command"], "connections": 1}]
+        assert bsh.second_client_refusal(clients) is None  # this process is the holder here
+    finally:
+        for s in (client, accepted, server):
+            s.close()
+    assert bsh.devtools_clients(port) == []
+
+
+def test_another_client_or_an_unreadable_check_refuses_before_sending():
+    import os
+
+    other = bsh.second_client_refusal([{"pid": os.getpid(), "command": "python", "connections": 1},
+                                       {"pid": 4242, "command": "node", "connections": 2}])
+    assert other.refused and other.dispatched is False and other.refusal.code == "browser_second_client"
+    assert "node (pid 4242)" in other.text and other.refusal.delivery == "not_sent"
+    unknown = bsh.second_client_refusal(None)
+    assert unknown.refusal.code == "browser_client_check_unavailable" and unknown.dispatched is False
+
+
+async def test_the_holder_refuses_sending_operations_while_another_client_is_connected(tmp_path):
+    import os
+
+    connected = [[{"pid": 4242, "command": "node", "connections": 1}]]
+    inner = FakeOperations()
+    task, _ = await _held(tmp_path, inner, clients=lambda: connected[0])
+    try:
+        bridge = BrowserBridge(bsh.HeldDriver(), 42, 7, operations=bsh.RemoteBrowserOperations(tmp_path))
+        await bridge.attach()
+        nm = await bridge.observe()  # observation is not refused
+        eff = await bridge.act(nm, "click", 1)
+        assert eff.effect == "refused" and eff.dispatched is False and eff.error_code == "browser_second_client"
+        assert "click" not in [name for name, _ in inner.calls]
+        connected[0] = [{"pid": os.getpid(), "command": "python", "connections": 1}]
+        nm = await bridge.observe()
+        eff = await bridge.act(nm, "click", 1)
+        assert eff.effect == "confirmed"
+        assert (await bsh.call(tmp_path, "status"))["status"]["refused_second_client"] == 1
+    finally:
+        await bsh.stop_async(tmp_path)
+        await asyncio.wait_for(task, 5)
