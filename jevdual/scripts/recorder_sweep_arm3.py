@@ -290,6 +290,7 @@ def cmd_watch(args: argparse.Namespace, out: Path) -> int:
         cmd_end(args, out)
         _write(handshake / "arm3-failed", {"t": time.time(), "why": f"start exit {code}", "log": str(out / "arm3.jsonl")})
         return code
+    (handshake / "arm3-out").write_text(str(out) + "\n")  # where the in-take step finds this session
     _write(handshake / "arm3-up", {"t": time.time(), "pid": args.pid, "window_id": args.window_id, "log": str(out / "arm3.jsonl")})
     hard = max(until, time.time()) + args.done_grace
     while not _fresh(handshake / "arm3-done", began) and time.time() < hard:
