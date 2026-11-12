@@ -1,0 +1,141 @@
+{
+ "run": "document-binding-1",
+ "owned_chrome_pid": 18002,
+ "steps": [
+  {
+   "dt": 0.16,
+   "step": "reload-trigger",
+   "effect": "unverifiable"
+  },
+  {
+   "dt": 0.84,
+   "step": "reload-observed",
+   "snapshot": "p2"
+  },
+  {
+   "dt": 4.34,
+   "step": "reload-late-click",
+   "effect": "unverifiable",
+   "error_code": null,
+   "dispatched": true,
+   "summary": "refused (browser_ref_stale): the ref's frame navigated or was removed since the snapshot \u2014 re-run get_browser_state to re-snapshot"
+  },
+  {
+   "dt": 5.58,
+   "step": "reload-fresh-click",
+   "effect": "unverifiable",
+   "error_code": null
+  },
+  {
+   "dt": 7.21,
+   "step": "rerender-trigger",
+   "effect": "unverifiable"
+  },
+  {
+   "dt": 7.84,
+   "step": "rerender-observed",
+   "snapshot": "p5"
+  },
+  {
+   "dt": 11.34,
+   "step": "rerender-late-click",
+   "effect": "unverifiable",
+   "error_code": null,
+   "dispatched": true,
+   "summary": "dispatched synthetic DOM click on p5:1 in tab-1240711b-a732-4f72-833a-33a676a9ebbb; bounded semantic target state remained unchanged; application effect is unverifiable. Refresh page state and verify "
+  },
+  {
+   "dt": 12.97,
+   "step": "rerender-fresh-click",
+   "effect": "unverifiable",
+   "error_code": null
+  }
+ ],
+ "page_events_s": [
+  {
+   "dt": -6.72,
+   "type": "loaded",
+   "detail": {}
+  },
+  {
+   "dt": -5.0,
+   "type": "window_blur",
+   "detail": {}
+  },
+  {
+   "dt": 1.88,
+   "type": "visibility",
+   "detail": {
+    "state": "hidden"
+   }
+  },
+  {
+   "dt": 1.88,
+   "type": "loaded",
+   "detail": {}
+  },
+  {
+   "dt": 5.75,
+   "type": "count_handler",
+   "detail": {
+    "button_generation": 0,
+    "attached": true
+   }
+  },
+  {
+   "dt": 8.88,
+   "type": "rerendered",
+   "detail": {
+    "generation": 1
+   }
+  },
+  {
+   "dt": 11.5,
+   "type": "count_handler",
+   "detail": {
+    "button_generation": 0,
+    "attached": false
+   }
+  },
+  {
+   "dt": 13.14,
+   "type": "count_handler",
+   "detail": {
+    "button_generation": 1,
+    "attached": true
+   }
+  }
+ ],
+ "front_pid_changes_s": [
+  {
+   "dt": -7.56,
+   "pid": 24992
+  },
+  {
+   "dt": -6.9,
+   "pid": 18002
+  },
+  {
+   "dt": -5.0,
+   "pid": 24992
+  }
+ ],
+ "sampler": {
+  "t": 1794451501.2856598,
+  "samples": 2412,
+  "largest_gap_s": 0.0446
+ },
+ "holder_status": {
+  "served": {
+   "prepare": 1,
+   "bind": 1,
+   "snapshot": 6,
+   "click": 6
+  },
+  "prepare_repeats_answered": 1,
+  "refused_second_client": 0,
+  "idle_s": 1.009,
+  "chrome_pid": 18002,
+  "window_id": 403367
+ }
+}

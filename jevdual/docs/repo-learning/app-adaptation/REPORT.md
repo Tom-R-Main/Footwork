@@ -407,6 +407,35 @@ reviewed.
 - **A2: the panel is frozen** (AAD9): ten of the owner's own sites, each with a task that sends
   nothing. It runs once step D exists.
 
+- **B1, the persistent holder: background page work holds** (`docs/notebook/2026-11-11-browser-holder.md`,
+  BH3). A `start --browser` session now keeps one driver in a holder process. With the browser in
+  the background, ten later commands (five observations and five page-route clicks, each its own
+  process) all succeeded and the browser never came forward; without the holder the first
+  background observation refused. Two findings on the way: the driver mints a new tab id on every
+  `get_browser_state` call even on one driver, so tab identity comes from Chrome's target id, as
+  the page pin already does; and `start --browser --url` on a new launch opened the page twice
+  because window recovery ran before the launch's window appeared, so every such start refused
+  (fixed, BH4).
+- **Typing through the holder in the background** (BH7 to BH10). Typing into an empty field lands
+  exactly, with the browser never frontmost, but the page receives a window focus event at the
+  moment of input (the driver focuses the node first). A page that watches focus can tell. Append
+  onto a field that holds text was a defect on this route, older than the holder: the driver
+  inserts at the caret focus leaves, the start, and the receipt only caught it after sending. It is
+  now refused before sending; the observation trims values, so the value is not rebuilt from it.
+  Later navigation and coordinate input through the holder remain untested in the background.
+- **B2, a second DevTools client: detected** (BH11). Before each click, type or navigate the holder
+  lists the processes connected to the browser's DevTools port; another process, or a check that
+  cannot run, refuses the action with nothing sent, and observation continues. This detects; it does
+  not exclude. A second client's connection did not bring this Footwork-launched browser forward
+  (one observation).
+- **B3, input bound to the document: half held** (BH13). The driver re-proves each ref's document
+  (loader id) before input, so a click observed before a reload is refused. A same-document
+  re-render is not caught: the page-route click ran the handler of a button the page had already
+  removed. The fix is a pre-send connectedness check in the driver, a driver patch the owner
+  decides on, alongside the HelpTag patch's packaging. Separately, cua-driver 0.46 reports an
+  action refusal only as an effect word with the code in its summary text; Footwork misread it as
+  a sent, unverifiable action, and now reads it as a refusal whose delivery is unknown.
+
 Neither reopening condition for the lane is met: text replacement needs care, coordinate input does
 not need the foreground, and sign-in works in a launched profile.
 

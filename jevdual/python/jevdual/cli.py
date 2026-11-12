@@ -449,7 +449,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--pointer-motion",
         choices=("off", "filmed"),
         default="off",
-        help="filmed (exclusive_desktop, native): the real pointer travels to each target like a person's",
+        help="filmed (exclusive_desktop; native or --browser): the real pointer travels to each target like a person's",
     )
     st.add_argument("--keep-out", help="filmed: X,Y,W,H in viewport CSS px that no pointer path may enter")
     st.add_argument("--rest", help="filmed: X,Y in viewport CSS px where footwork park rests the pointer")

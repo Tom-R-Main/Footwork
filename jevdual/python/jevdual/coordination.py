@@ -153,6 +153,23 @@ class Coordinator:
         return Claim(self, owner, resources, reservation, timeout)
 
 
+def _check_ownership(db, token, owner, reservation, desktop):
+    row = db.execute("SELECT state FROM requests WHERE token=?", (token,)).fetchone()
+    if row is None or row["state"] != "active":
+        raise CoordinationError("ownership revoked; no further input is admitted")
+    if reservation:
+        row = db.execute("SELECT * FROM reservations WHERE token=?", (reservation,)).fetchone()
+        if row is None or row["state"] != "active" or row["owner"] != owner or row["desktop"] != desktop:
+            raise CoordinationError("reservation revoked or belongs to another desktop/session")
+
+
+def check_ownership(*, token, owner, reservation, desktop, registry=None):
+    """A claim's check from another process: the session browser holder re-checks the command's
+    claim immediately before dispatching on its behalf."""
+    with (registry or Coordinator()).db() as db:
+        _check_ownership(db, token, owner, reservation, desktop)
+
+
 class Claim:
     def __init__(self, registry, owner, resources, reservation, timeout):
         self.registry, self.owner, self.resources = registry, owner, sorted(set(resources))
@@ -161,14 +178,7 @@ class Claim:
         self.lock = None
 
     def _check(self, db):
-        row = db.execute("SELECT state FROM requests WHERE token=?", (self.token,)).fetchone()
-        if row is None or row["state"] != "active":
-            raise CoordinationError("ownership revoked; no further input is admitted")
-        if self.reservation:
-            row = db.execute("SELECT * FROM reservations WHERE token=?", (self.reservation,)).fetchone()
-            if (row is None or row["state"] != "active" or row["owner"] != self.owner
-                    or row["desktop"] != self.desktop):
-                raise CoordinationError("reservation revoked or belongs to another desktop/session")
+        _check_ownership(db, self.token, self.owner, self.reservation, self.desktop)
 
     def check(self):
         with self.registry.db() as db:

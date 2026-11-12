@@ -107,6 +107,9 @@ class SessionState:
     #: active tab (status audit 2026-09-26, probe browser_session_rebind_after_active_tab_switch)
     browser_tab: str = ""
     browser_target: dict[str, Any] = field(default_factory=dict)
+    #: browser mode: the holder process that keeps this session's one driver (jevdual.browser_session_holder),
+    #: as its process identity at start; empty when the session builds a driver per command
+    browser_holder: dict[str, Any] = field(default_factory=dict)
     #: names of the secrets typed in this session (``{NAME}``); their values are scrubbed from every
     #: observation before it is rendered, persisted or shown to a model. Names only, never values.
     secret_names: list[str] = field(default_factory=list)
@@ -243,7 +246,7 @@ async def run_command(args: Any) -> int:
                 if result and getattr(args, "_created_reservation", ""):
                     registry.revoke(args._created_reservation)
                 return result
-        except (KeyboardInterrupt, SystemExit):
+        except (KeyboardInterrupt, SystemExit, asyncio.CancelledError):
             if getattr(args, "_created_reservation", ""):
                 registry.revoke(args._created_reservation)
             raise
@@ -1043,6 +1046,22 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
     return "\n".join(lines)
 
 
+def _held_operations(state: SessionState) -> Any:
+    """The session holder's operations when the holder that start recorded is still the live one."""
+    if not state.browser_holder:
+        return None
+    from jevdual import browser_session_holder as bsh
+
+    runtime = bsh.recorded_runtime(state.browser_holder, state.path)
+    live = bsh.holder_live(runtime)
+    if live is None or any(live.get(k) != state.browser_holder.get(k) for k in ("boot", "pid", "start")):
+        state.log({"kind": "browser_holder_unavailable", "recorded": state.browser_holder.get("pid")})
+        print("note: this session's browser holder is gone; this command builds its own driver, which needs "
+              "the browser in front to attach", file=sys.stderr)
+        return None
+    return bsh.RemoteBrowserOperations(runtime)
+
+
 async def bind(state: SessionState):
     if state.authority and state.mode == "browser":
         from jevdual.browser_driver import durable_authority_refusal
@@ -1066,12 +1085,22 @@ async def bind(state: SessionState):
             from jevdual.browser_target import resolve
 
             _, current_url = await resolve(state.pid, expected=state.browser_target)
-        driver = configured_driver(state.pid)
         from jevdual.posture import ExecutionPolicy
 
-        bridge = BrowserBridge(driver, state.pid, state.window_id, policy=ExecutionPolicy(state.posture))  # type: ignore[arg-type]
+        held = _held_operations(state)
+        if held is not None:
+            from jevdual.browser_session_holder import HeldDriver
+
+            driver = HeldDriver()
+            bridge = BrowserBridge(driver, state.pid, state.window_id, policy=ExecutionPolicy(state.posture),  # type: ignore[arg-type]
+                                   operations=held)
+        else:
+            driver = configured_driver(state.pid)
+            bridge = BrowserBridge(driver, state.pid, state.window_id, policy=ExecutionPolicy(state.posture))  # type: ignore[arg-type]
         bridge.target_pin = state.browser_target
         try:
+            # Tab handles are new on every get_browser_state call, even on the holder's one driver
+            # (BH2), so a session rebinds by page whether or not a holder keeps its driver.
             await bridge.attach(expect_url=current_url)
         except BaseException:
             with contextlib.suppress(Exception):
@@ -1373,11 +1402,24 @@ async def cmd_start(args: Any) -> int:
     names = ("session.json", "session.jsonl", "pointer-gestures.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS)
     prior = directory / "session.json"
     durable = bool(getattr(args, "authority", None)) or (prior.exists() and SessionState.load(directory).authority)
+    try:
+        previous_holder = json.loads(prior.read_text()).get("browser_holder") if prior.exists() else None
+    except (OSError, ValueError):
+        previous_holder = None
+    # One driver per browser, and none left behind: the session being replaced keeps its holder's
+    # DevTools connection open, which a replacement's holder would see as a second client and refuse
+    # to send past. So it is retired before the replacement binds. The prior session's files stay
+    # until publication; without its holder its later commands bind a driver of their own, as with
+    # FOOTWORK_BROWSER_HOLDER=0.
+    try:
+        await _retire_holder(previous_holder, directory, required=True)
+    except Exception as exc:  # noqa: BLE001 - a holder that may still be connected blocks the start
+        print(f"not starting: the replaced session's browser holder did not stop: {exc}", file=sys.stderr)
+        return 2
     if durable or not any((directory / name).exists() for name in names):
         return await _start_new(args)
     import shutil
     import tempfile
-
     with tempfile.TemporaryDirectory(prefix=".footwork-start-", dir=directory.parent) as temporary:
         staged = Path(temporary)
         staged_args = copy.copy(args)
@@ -1428,11 +1470,30 @@ async def cmd_start(args: Any) -> int:
                     os.replace(saved, directory / name)
                 else:
                     (directory / name).unlink(missing_ok=True)
+            await _retire_holder(replacement.get("browser_holder"), directory)
             from jevdual.cli import _stopped
 
             return _stopped(staged_args, exc)
     print(f"\nsession: {directory}  (export FOOTWORK_SESSION={directory} to omit --session)")
     return 0
+
+
+async def _retire_holder(record: Any, directory: Path, *, required: bool = False) -> None:
+    """Retire a session's recorded holder. With ``required`` a holder that may still be running
+    raises; otherwise this is best-effort cleanup."""
+    if not record:
+        return  # no holder recorded
+    from jevdual import browser_session_holder as bsh
+
+    if not isinstance(record, dict) or not record.get("pid"):
+        if required:  # a holder was recorded, but which process it is cannot be established
+            raise bsh.HolderRetireUnknown(0, "is recorded without a PID")
+        return
+    try:
+        await bsh.retire_settled(bsh.recorded_runtime(record, directory), expected=record)
+    except Exception:
+        if required:
+            raise
 
 
 async def _start_new(args: Any) -> int:
@@ -1696,7 +1757,27 @@ async def _start_browser(args: Any, d: Path) -> int:
     from jevdual.posture import ExecutionPolicy
 
     posture = getattr(args, "mode", None) or "background_only"
-    driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture))  # type: ignore[arg-type]
+    from jevdual import browser_session_holder as bsh
+
+    holder: dict[str, Any] = {}
+    if bsh.enabled():
+        from jevdual.browser_driver import BrowserBridge
+
+        identity = await bsh.spawn_owned(url=args.url)
+        holder = {k: identity[k] for k in ("boot", "pid", "start", "runtime")}
+        runtime = Path(identity["runtime"])
+        driver = bsh.HeldDriver()
+        bridge = BrowserBridge(driver, identity["chrome_pid"], identity["window_id"],  # type: ignore[arg-type]
+                               policy=ExecutionPolicy(posture), operations=bsh.RemoteBrowserOperations(runtime))
+        try:
+            await bridge.attach()  # the active tab of the window the holder just bound, as without one
+        except BaseException:
+            with contextlib.suppress(Exception):
+                await bsh.retire_settled(runtime, expected=identity)
+            raise
+        print(f"browser holder pid {identity['pid']} keeps this session's driver")
+    else:
+        driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture))  # type: ignore[arg-type]
     try:
         state = SessionState(
             dir=str(d),
@@ -1710,11 +1791,34 @@ async def _start_browser(args: Any, d: Path) -> int:
             mode="browser",
             posture=posture,
             browser_tab=bridge.tab_id or "",
+            browser_holder=holder,
         )
+        if getattr(args, "pointer_motion", "off") == "filmed":
+            # B7: one session films the real pointer over the same window its page operations bind
+            refusal = _filmed_setup(state, args)
+            if refusal:
+                print(f"not starting: {refusal}", file=sys.stderr)
+                if holder:
+                    await bsh.retire_settled(Path(holder["runtime"]), expected=holder)
+                return 2
+            from jevdual.coordination import CoordinationError
+
+            claim = getattr(args, "_coordination_claim", None)
+            if claim is None:
+                raise CoordinationError("filming requires the coordinated command entrypoint")
+            state.coordination_token = claim.registry.reserve(claim, claim.resources)
+            args._created_reservation = state.coordination_token
         print(f"bound footwork's Chrome (pid {bridge.pid}) window {bridge.window_id}, tab {bridge.tab_id}")
         if args.url:
             eff = await bridge.navigate(args.url)
             print(f"navigate {args.url}: {eff.effect} {eff.summary[:80]}")
+            if eff.effect == "refused":
+                # a session must not start bound to whatever page the browser already showed
+                print(f"not starting: the first navigation was refused: {eff.error_code or eff.summary[:120]}",
+                      file=sys.stderr)
+                if holder:
+                    await bsh.retire_settled(Path(holder["runtime"]), expected=holder)
+                return 2
             await asyncio.sleep(2.0)
         state.log({"kind": "start", "task": args.task, "requirements": state.requirements, "mode": "browser"})
         initial = await bridge.observe()
@@ -1726,6 +1830,11 @@ async def _start_browser(args: Any, d: Path) -> int:
         print(render_observation(nm, text_chars=args.text, receipt=None))
         if not getattr(args, "_staged_start", False):
             print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
+    except BaseException:
+        if holder:
+            with contextlib.suppress(Exception):
+                await bsh.retire_settled(Path(holder["runtime"]), expected=holder)
+        raise
     finally:
         await driver.shutdown()
     return 0
@@ -3072,6 +3181,14 @@ async def _cmd_done_verified(args: Any, state: SessionState) -> int:
         state.status = "done"
         state.memory.append(f"step {state.step + 1}: done accepted")
         state.save()
+        if state.browser_holder:
+            from jevdual import browser_session_holder as bsh
+
+            try:
+                await bsh.retire_settled(bsh.recorded_runtime(state.browser_holder, state.path),
+                                         expected=state.browser_holder)
+            except bsh.HolderRetireUnknown as exc:
+                print(f"note: {exc}; it exits after its idle timeout", file=sys.stderr)
         print("accepted. session closed.")
         return 0
     state.memory.append(f"step {state.step + 1}: done refused ({v.reason[:80]})")

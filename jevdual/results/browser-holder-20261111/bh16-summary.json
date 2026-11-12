@@ -1,0 +1,135 @@
+{
+ "prediction": "BH16",
+ "runs": {
+  "held-4": {
+   "steps": [
+    {
+     "name": "00-start",
+     "exit": 0
+    },
+    {
+     "name": "01-look",
+     "exit": 0
+    },
+    {
+     "name": "01-click",
+     "exit": 0
+    },
+    {
+     "name": "02-look",
+     "exit": 0
+    },
+    {
+     "name": "02-click",
+     "exit": 0
+    },
+    {
+     "name": "03-look",
+     "exit": 0
+    },
+    {
+     "name": "03-click",
+     "exit": 0
+    },
+    {
+     "name": "04-look",
+     "exit": 0
+    },
+    {
+     "name": "04-click",
+     "exit": 0
+    },
+    {
+     "name": "05-look",
+     "exit": 0
+    },
+    {
+     "name": "05-click",
+     "exit": 0
+    }
+   ],
+   "page_clicks_after_restore": 5,
+   "page_focus_or_visible_after_restore": 0,
+   "owned_browser_frontmost_after_restore": false,
+   "sampler": {
+    "t": 1794453670.9225228,
+    "samples": 13391,
+    "largest_gap_s": 0.091
+   },
+   "holder_stop": {
+    "ok": true,
+    "status": {
+     "served": {
+      "prepare": 11,
+      "bind": 11,
+      "navigate": 1,
+      "snapshot": 17,
+      "click": 5
+     },
+     "prepare_repeats_answered": 11,
+     "refused_second_client": 0,
+     "idle_s": 0.067,
+     "chrome_pid": 72254,
+     "window_id": 405110
+    }
+   }
+  },
+  "second-client-2": {
+   "steps": [
+    {
+     "name": "00-start",
+     "exit": 0
+    },
+    {
+     "name": "01-alone-look",
+     "exit": 0
+    },
+    {
+     "name": "01-alone-click",
+     "exit": 0
+    },
+    {
+     "name": "02-second-client-look",
+     "exit": 0
+    },
+    {
+     "name": "02-second-client-click",
+     "exit": 0
+    },
+    {
+     "name": "03-after-look",
+     "exit": 0
+    },
+    {
+     "name": "03-after-click",
+     "exit": 0
+    }
+   ],
+   "page_clicks_after_restore": 2,
+   "page_focus_or_visible_after_restore": 0,
+   "owned_browser_frontmost_after_restore": false,
+   "sampler": {
+    "t": 1794453719.620961,
+    "samples": 2972,
+    "largest_gap_s": 0.0456
+   },
+   "holder_stop": {
+    "ok": true,
+    "status": {
+     "served": {
+      "prepare": 7,
+      "bind": 7,
+      "navigate": 1,
+      "snapshot": 11,
+      "click": 3
+     },
+     "prepare_repeats_answered": 7,
+     "refused_second_client": 1,
+     "idle_s": 0.069,
+     "chrome_pid": 3609,
+     "window_id": 405181
+    }
+   }
+  }
+ }
+}

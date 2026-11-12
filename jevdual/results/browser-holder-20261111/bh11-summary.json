@@ -1,0 +1,82 @@
+{
+ "run": "second-client-1",
+ "owned_chrome_pid": 4381,
+ "front_pid_at_start": 24992,
+ "second_client": {
+  "pid": 9219,
+  "connected_s": 7.73,
+  "disconnected_s": 11.65
+ },
+ "commands": [
+  {
+   "name": "00-start",
+   "exit": 0
+  },
+  {
+   "name": "01-alone-look",
+   "exit": 0
+  },
+  {
+   "name": "01-alone-click",
+   "exit": 0
+  },
+  {
+   "name": "02-second-client-look",
+   "exit": 0
+  },
+  {
+   "name": "02-second-client-click",
+   "exit": 0
+  },
+  {
+   "name": "03-after-look",
+   "exit": 0
+  },
+  {
+   "name": "03-after-click",
+   "exit": 0
+  }
+ ],
+ "receipts": {
+  "alone": "confirmed",
+  "with_second_client": "refused (browser_second_client: Python (pid 9219); nothing was sent; page unchanged)",
+  "after": "confirmed"
+ },
+ "page_clicks_after_restore_s": [
+  1.02,
+  15.53
+ ],
+ "front_pid_changes_s": [
+  {
+   "dt": -10.11,
+   "pid": 24992
+  },
+  {
+   "dt": -9.37,
+   "pid": 4381
+  },
+  {
+   "dt": -5.01,
+   "pid": 24992
+  }
+ ],
+ "sampler": {
+  "t": 1794451098.674923,
+  "samples": 2805,
+  "largest_gap_s": 0.0948
+ },
+ "holder_status": {
+  "served": {
+   "prepare": 7,
+   "bind": 7,
+   "navigate": 1,
+   "snapshot": 11,
+   "click": 3
+  },
+  "prepare_repeats_answered": 7,
+  "refused_second_client": 1,
+  "idle_s": 0.078,
+  "chrome_pid": 4381,
+  "window_id": 403192
+ }
+}

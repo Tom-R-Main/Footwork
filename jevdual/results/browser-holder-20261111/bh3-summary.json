@@ -1,0 +1,107 @@
+{
+ "held-3": {
+  "commands": [
+   {
+    "name": "00-start",
+    "exit": 0,
+    "s": 3.39
+   },
+   {
+    "name": "01-look",
+    "exit": 0,
+    "s": 0.34
+   },
+   {
+    "name": "01-click",
+    "exit": 0,
+    "s": 2.06
+   },
+   {
+    "name": "02-look",
+    "exit": 0,
+    "s": 0.34
+   },
+   {
+    "name": "02-click",
+    "exit": 0,
+    "s": 2.07
+   },
+   {
+    "name": "03-look",
+    "exit": 0,
+    "s": 0.33
+   },
+   {
+    "name": "03-click",
+    "exit": 0,
+    "s": 2.06
+   },
+   {
+    "name": "04-look",
+    "exit": 0,
+    "s": 0.34
+   },
+   {
+    "name": "04-click",
+    "exit": 0,
+    "s": 2.1
+   },
+   {
+    "name": "05-look",
+    "exit": 0,
+    "s": 0.34
+   },
+   {
+    "name": "05-click",
+    "exit": 0,
+    "s": 2.07
+   }
+  ],
+  "first_background_refusal": null,
+  "frontmost_changes_after_restore": [],
+  "sampler": {
+   "t": 1794444642.280732,
+   "samples": 28703,
+   "largest_gap_s": 0.0482
+  },
+  "page_clicks": 5,
+  "page_focus_or_visible_after_restore": 0,
+  "holder_status": {
+   "served": {
+    "prepare": 11,
+    "bind": 11,
+    "navigate": 1,
+    "snapshot": 17,
+    "click": 5
+   },
+   "prepare_repeats_answered": 11,
+   "idle_s": 0.075,
+   "chrome_pid": 43738,
+   "window_id": 397820
+  }
+ },
+ "control-2": {
+  "commands": [
+   {
+    "name": "00-start",
+    "exit": 0,
+    "s": 3.31
+   },
+   {
+    "name": "01-look",
+    "exit": 7,
+    "s": 0.28
+   }
+  ],
+  "first_background_refusal": "stopped: RuntimeError: browser_prepare refused: Chrome brings itself to the front to show its \"Allow remote debugging?\" prompt whenever a ne",
+  "frontmost_changes_after_restore": [],
+  "sampler": {
+   "t": 1794444658.548137,
+   "samples": 2230,
+   "largest_gap_s": 0.0311
+  },
+  "page_clicks": 0,
+  "page_focus_or_visible_after_restore": 0,
+  "holder_status": null
+ }
+}

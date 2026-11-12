@@ -41,6 +41,8 @@ PROFILE_DIR = Path(
 )
 PORT = int(os.environ.get("FOOTWORK_CHROME_PORT", "9333"))
 SESSION_LABEL = "footwork"
+#: seconds a new launch gets to put its own window on screen before a recovery window is opened
+RECOVERY_GRACE_S = 5.0
 _CHROME_LAUNCHES: dict[int, subprocess.Popen] = {}
 
 
@@ -542,9 +544,24 @@ class BrowserBridge:
             # browser_type selects the bound tab for about 100 ms in every mode except
             # insert_text with replace=false (page visibility probe by footwork-9c, 2026-09-25): in
             # that window the person's keystrokes can land in the agent's tab. Inserting into an
-            # empty field, or appending, is the only background-safe form; replacing held text is a
-            # foreground step and asks the posture. Keystroke mode is never used.
+            # empty field is the background form; replacing held text is a foreground step and asks
+            # the posture. Keystroke mode is never used.
             holds = (c.value or "") if c.role != "password" else ""
+            if operation == "append" and (holds or c.role == "password"):
+                # Without replace, browser_type focuses the node and inserts at the caret focus
+                # leaves, which was the start of the field (BH7/BH8), so this route cannot append
+                # onto held text. Rebuilding the value from the observation is not safe either: the
+                # observation trims it. Nothing is sent; the caller can type the whole value.
+                self.last = None
+                return BrowserEffect(
+                    operation, id, c.label, "refused", route="cdp", dispatched=False,
+                    error_code="append_unavailable",
+                    summary=f"{c.label!r} "
+                            + ("may hold text this observation cannot read" if c.role == "password"
+                               else "holds text")
+                            + "; this route inserts at the start of held text, so nothing was sent. "
+                              "Type the whole intended value instead (a foreground step).",
+                )
             needs_replace = operation == "type" and bool(holds)
             if needs_replace:
                 refusal = self.policy.permits(
@@ -599,8 +616,13 @@ class BrowserBridge:
         )
 
 
-async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) -> tuple[Any, BrowserBridge]:
-    """Launch or find footwork's Chrome, build the configured Driver, bind its largest window."""
+async def bind_footwork_chrome(
+    url: str | None = None, *, policy: Any = None, wrap_operations: Any = None
+) -> tuple[Any, BrowserBridge]:
+    """Launch or find footwork's Chrome, build the configured Driver, bind its largest window.
+
+    ``wrap_operations`` receives the driver's browser operations before the first attach and returns
+    the operations the bridge uses (the session holder keeps the first prepare this way)."""
     from jevdual.effectors import require_available
 
     require_available("browser")
@@ -623,6 +645,10 @@ async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) ->
                 raise RuntimeError('owned Chrome readiness timed out')
             await asyncio.sleep(.1)
         driver = configured_driver(pid)
+        # A new launch's own window can take a few seconds to reach the screen. Recovering a window
+        # before then opens a second one on the same page, which the unique-page pin then refuses
+        # (BH4). An existing browser without a window is recovered at once.
+        recover_after = time.monotonic() + (RECOVERY_GRACE_S if launch is not None else 0.0)
         while True:
             if not identity():
                 raise RuntimeError('owned Chrome identity changed during window binding')
@@ -635,6 +661,9 @@ async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) ->
                 if any(w.pid != pid for w in wins.windows):
                     raise RuntimeError('window discovery returned an unrelated browser process')
                 break
+            if helper is None and time.monotonic() < recover_after:
+                await asyncio.sleep(.1)
+                continue
             if helper is None:
                 if sys.platform == 'linux':
                     args = _chrome_args(url or 'about:blank', new_window=True)
@@ -657,7 +686,12 @@ async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) ->
                 raise RuntimeError('owned browser new-window helper exited unsuccessfully')
             await asyncio.sleep(.1)
         w = max(wins.windows, key=lambda w: w.bounds.width * w.bounds.height)
-        bridge = BrowserBridge(driver, pid, w.window_id, policy=policy)
+        operations = None
+        if wrap_operations is not None:
+            from jevdual.effectors import browser_operations
+
+            operations = wrap_operations(browser_operations(driver, session=SESSION_LABEL))
+        bridge = BrowserBridge(driver, pid, w.window_id, policy=policy, operations=operations)
         bridge.launch_identity = {'pid': pid, 'incarnation': incarnation, 'new_process': launch is not None}
         await asyncio.wait_for(bridge.attach(), timeout=max(.001, deadline - time.monotonic()))
         if not identity():

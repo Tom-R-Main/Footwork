@@ -1,0 +1,23 @@
+[
+ {
+  "launch": 1,
+  "bind_s": 1.67,
+  "helper_runs": 0,
+  "pages_on_url": 1,
+  "pages": 1
+ },
+ {
+  "launch": 2,
+  "bind_s": 1.69,
+  "helper_runs": 0,
+  "pages_on_url": 1,
+  "pages": 1
+ },
+ {
+  "launch": 3,
+  "bind_s": 1.56,
+  "helper_runs": 0,
+  "pages_on_url": 1,
+  "pages": 1
+ }
+]

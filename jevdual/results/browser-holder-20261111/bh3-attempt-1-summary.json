@@ -1,0 +1,12 @@
+{
+ "held-2": {
+  "start_exit": 7,
+  "start_error": "stopped: coordination_refused: initial browser page requires one unique exact URL in the owned browser",
+  "background_commands_run": 0
+ },
+ "control-1": {
+  "start_exit": 7,
+  "start_error": "stopped: coordination_refused: initial browser page requires one unique exact URL in the owned browser",
+  "background_commands_run": 0
+ }
+}

@@ -55,3 +55,12 @@ def _isolated_coordination_registry(monkeypatch, tmp_path):
         original(self, path if path is not None else tmp_path / "coordination.sqlite")
 
     monkeypatch.setattr(Coordinator, "__init__", initialize)
+
+
+@pytest.fixture(autouse=True)
+def _no_browser_holder_process(monkeypatch):
+    """Offline browser doubles live in the test process; a holder subprocess would bypass them and
+    launch the real driver. tests/test_browser_session_holder.py runs the holder's loop in-process."""
+    if os.environ.get("FOOTWORK_LIVE") == "1":
+        return
+    monkeypatch.setenv("FOOTWORK_BROWSER_HOLDER", "0")

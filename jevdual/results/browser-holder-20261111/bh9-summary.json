@@ -1,0 +1,127 @@
+{
+ "run": "typing-2",
+ "front_pid_at_start": 1904,
+ "owned_chrome_pid": 79343,
+ "final_values": {
+  "name": "held text",
+  "note": "first note"
+ },
+ "commands": [
+  {
+   "name": "00-start",
+   "exit": 0
+  },
+  {
+   "name": "01-look",
+   "exit": 0
+  },
+  {
+   "name": "01-append",
+   "exit": 0
+  },
+  {
+   "name": "02-look",
+   "exit": 0
+  },
+  {
+   "name": "02-append",
+   "exit": 0
+  },
+  {
+   "name": "03-look",
+   "exit": 0
+  },
+  {
+   "name": "03-append",
+   "exit": 0
+  },
+  {
+   "name": "type-empty-look",
+   "exit": 0
+  },
+  {
+   "name": "type-empty",
+   "exit": 0
+  },
+  {
+   "name": "type-held-look",
+   "exit": 0
+  },
+  {
+   "name": "type-held",
+   "exit": 0
+  },
+  {
+   "name": "final-look",
+   "exit": 0
+  }
+ ],
+ "page_events_after_restore_s": [
+  {
+   "dt": -8.84,
+   "type": "visibility",
+   "detail": {
+    "state": "hidden"
+   }
+  },
+  {
+   "dt": -5.02,
+   "type": "window_blur",
+   "detail": {}
+  },
+  {
+   "dt": 66.88,
+   "type": "window_focus",
+   "detail": {}
+  },
+  {
+   "dt": 66.88,
+   "type": "input",
+   "detail": {
+    "id": "note",
+    "value": "first note"
+   }
+  }
+ ],
+ "front_pid_changes_s": [
+  {
+   "dt": -10.46,
+   "pid": 1904
+  },
+  {
+   "dt": -9.56,
+   "pid": 79343
+  },
+  {
+   "dt": -5.01,
+   "pid": 1904
+  },
+  {
+   "dt": 23.46,
+   "pid": 24992
+  }
+ ],
+ "sampler": {
+  "t": 1794450823.127282,
+  "samples": 8435,
+  "largest_gap_s": 0.1443
+ },
+ "receipts": {
+  "append": "refused (append_unavailable), not sent",
+  "type_empty": "confirmed ('Note' now holds 'first note')",
+  "type_held": "refused (requires_foreground), not sent"
+ },
+ "holder_status": {
+  "served": {
+   "prepare": 12,
+   "bind": 12,
+   "navigate": 1,
+   "snapshot": 18,
+   "type_text": 1
+  },
+  "prepare_repeats_answered": 12,
+  "idle_s": 0.084,
+  "chrome_pid": 79343,
+  "window_id": 402684
+ }
+}
