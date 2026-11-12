@@ -1,0 +1,4 @@
+   Building cua-driver @ file://jevdual/vendor/cua-driver
+      Built jevdual @ file://jevdual
+      Built cua-driver @ file://jevdual/vendor/cua-driver
+exit 0 start 01:49:11 end 02:13:56

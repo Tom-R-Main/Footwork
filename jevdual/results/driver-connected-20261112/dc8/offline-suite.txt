@@ -1,0 +1,2 @@
+3513 passed, 52 skipped, 61 deselected in 176.13s (0:02:56)
+normal priority; under taskpolicy -b nice -n 19 two full runs gave 1 failed, 3512 passed: tests/test_pointer_records.py::test_real_clock_brackets_recorded_dispatch_and_planned_anchor (IndexError, no posted samples), which fails 10 of 15 times alone at background priority and 0 of 40 at normal; its code is unchanged by this PR

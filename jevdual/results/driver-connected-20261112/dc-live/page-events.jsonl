@@ -1,0 +1,8 @@
+{"t": 1794473795.4148002, "type": "loaded", "detail": {}, "received": 1794473795.4159849}
+{"t": 1794473797.0379, "type": "window_blur", "detail": {}, "received": 1794473797.0417018}
+{"t": 1794473803.8815, "type": "visibility", "detail": {"state": "hidden"}, "received": 1794473803.8830562}
+{"t": 1794473803.8835998, "type": "loaded", "detail": {}, "received": 1794473803.885505}
+{"t": 1794473807.7977998, "type": "count_handler", "detail": {"button_generation": 0, "attached": true}, "received": 1794473807.7991009}
+{"t": 1794473810.9367998, "type": "rerendered", "detail": {"generation": 1}, "received": 1794473810.938276}
+{"t": 1794473814.8570998, "type": "count_handler", "detail": {"button_generation": 1, "attached": true}, "received": 1794473814.858428}
+{"t": 1794473816.5157998, "type": "vanish_pointerdown", "detail": {"attached": false}, "received": 1794473816.517411}

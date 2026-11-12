@@ -1,0 +1,7 @@
+{
+ "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected2",
+ "package": ".venv/lib/python3.12/site-packages/cua_driver",
+ "native": {
+  "libcua_driver_sdk.dylib": "0d75310eef5e437978455aa01a6b859b1c9e0715c5424749151ffb924c0e7603"
+ }
+}

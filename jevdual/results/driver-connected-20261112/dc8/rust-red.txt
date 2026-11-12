@@ -1,0 +1,24 @@
+start free_kib=25555916 floor_kib=16777216 09:12:11
+test browser::v2_tests::dom_event_click_refuses_a_node_removed_from_its_document ... ok
+test browser::v2_tests::dom_event_click_refuses_when_its_node_leaves_before_the_first_event ... ok
+test browser::v2_tests::dom_event_click_remains_unverifiable_when_semantic_readback_is_unavailable ... ok
+test browser::v2_tests::dom_event_click_reports_a_sequence_its_node_left_partway ... FAILED
+test browser::v2_tests::dom_event_click_sequence_checks_its_node_before_every_event_and_reports_by_value ... FAILED
+test browser::v2_tests::dom_event_click_checks_its_node_is_connected_before_any_event ... ok
+test browser::v2_tests::dom_event_click_without_a_dialog_reports_none ... ok
+test browser::v2_tests::dom_event_click_that_throws_is_unverifiable_even_when_its_target_changed ... FAILED
+test browser::v2_tests::dom_event_click_without_a_well_formed_receipt_is_unverifiable ... FAILED
+test browser::v2_tests::dom_event_click_refuses_while_a_dialog_is_already_open ... ok
+test browser::v2_tests::dom_event_click_is_unverifiable_when_readback_disappears ... ok
+test browser::v2_tests::dom_event_click_returns_when_its_handler_opens_a_dialog ... ok
+test browser::v2_tests::dom_event_click_remains_unverifiable_when_only_focus_changes ... ok
+test browser::v2_tests::dom_event_click_keeps_readback_when_reads_are_slow ... ok
+test browser::v2_tests::dom_event_click_bounds_stalled_readbacks ... ok
+thread 'browser::v2_tests::dom_event_click_reports_a_sequence_its_node_left_partway' (146620079) panicked at crates/cua-driver-core/src/browser/v2_tests.rs:3494:5:
+thread 'browser::v2_tests::dom_event_click_sequence_checks_its_node_before_every_event_and_reports_by_value' (146620081) panicked at crates/cua-driver-core/src/browser/v2_tests.rs:3557:5:
+thread 'browser::v2_tests::dom_event_click_that_throws_is_unverifiable_even_when_its_target_changed' (146620095) panicked at crates/cua-driver-core/src/browser/v2_tests.rs:3589:5:
+dispatched synthetic DOM click on p13:0 in tab-…; bounded semantic readback confirmed a target-state change
+thread 'browser::v2_tests::dom_event_click_without_a_well_formed_receipt_is_unverifiable' (146620097) panicked at crates/cua-driver-core/src/browser/v2_tests.rs:3589:5:
+dispatched synthetic DOM click on p15:0 in tab-…; bounded semantic readback confirmed a target-state change
+test result: FAILED. 11 passed; 4 failed; 0 ignored; 0 measured; 1226 filtered out; finished in 1.91s
+exit 101 min_free_kib=25379304 end_free_kib=25338236 09:13:06

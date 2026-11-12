@@ -10,10 +10,10 @@ Waits for an unlocked screen and at least 10 s without input before launching, b
 brings Chrome forward. Sends no input to any other application. At the end it stops the holder and
 terminates the isolated Chrome it launched.
 
-Run from ``jevdual/`` with the pinned driver overlay first on ``PYTHONPATH``::
+Run from ``jevdual/`` with the pinned driver installed::
 
     FOOTWORK_CHROME_PROFILE=/abs/fresh/profile FOOTWORK_CHROME_PORT=9466 \\
-    PYTHONPATH=output/foreground-helptag/overlay:python \\
+    PYTHONPATH=python \\
     .venv/bin/python scripts/probe_browser_holder.py --arm held --out /abs/out/dir
 
 Refuses to run against Footwork's default profile or port, or the sign-in test's.
@@ -25,6 +25,7 @@ import argparse
 import asyncio
 import json
 import os
+import plistlib
 import re
 import signal
 import subprocess
@@ -84,9 +85,20 @@ def _idle_s() -> float:
     return int(match.group(1)) / 1e9 if match else 0.0
 
 
+def _console_locked(ioreg_plist: bytes) -> bool:
+    """Whether ``ioreg -n Root -d1 -a`` shows the console session locked. Anything this cannot read
+    as an unlocked console session counts as locked: the gate guards someone else's screen."""
+    try:
+        users = plistlib.loads(ioreg_plist).get("IOConsoleUsers")
+    except Exception:  # noqa: BLE001 - unreadable output is not evidence of an unlocked screen
+        return True
+    console = [user for user in users or [] if isinstance(user, dict) and user.get("kCGSSessionOnConsoleKey")]
+    return not console or any(user.get("CGSSessionScreenIsLocked", False) is not False for user in console)
+
+
 def _locked() -> bool:
-    out = subprocess.run(["ioreg", "-n", "Root", "-d1", "-a"], capture_output=True, text=True, check=False).stdout
-    return "<key>CGSSessionScreenIsLocked</key>\n\t<true/>" in out
+    out = subprocess.run(["ioreg", "-n", "Root", "-d1", "-a"], capture_output=True, check=False).stdout
+    return _console_locked(out)
 
 
 def _wait_idle(minimum: float = 10.0, limit_s: float = 3600.0) -> dict:

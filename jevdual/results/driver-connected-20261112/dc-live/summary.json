@@ -1,0 +1,132 @@
+{
+ "run": "document-binding-connected2",
+ "driver": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected2",
+ "port": "9466",
+ "gate": {
+  "polls": 1,
+  "idle_s": 1296.7,
+  "waited_s": 0.0
+ },
+ "front_restored": true,
+ "holder_stop_ok": true,
+ "steps_dt_from_first": [
+  {
+   "step": "reload-trigger",
+   "t": 0.0,
+   "effect": "unverifiable"
+  },
+  {
+   "step": "reload-observed",
+   "t": 0.66,
+   "snapshot": "p2"
+  },
+  {
+   "step": "reload-late-click",
+   "t": 4.16,
+   "effect": "refused",
+   "error_code": "browser_ref_stale",
+   "dispatched": true,
+   "summary": "the ref's frame navigated or was removed since the snapshot \u2014 re-run get_browser_state to re-snapshot"
+  },
+  {
+   "step": "reload-fresh-click",
+   "t": 5.41,
+   "effect": "unverifiable",
+   "error_code": null
+  },
+  {
+   "step": "rerender-trigger",
+   "t": 7.08,
+   "effect": "unverifiable"
+  },
+  {
+   "step": "rerender-observed",
+   "t": 7.73,
+   "snapshot": "p5"
+  },
+  {
+   "step": "rerender-late-click",
+   "t": 11.23,
+   "effect": "refused",
+   "error_code": "browser_ref_stale",
+   "dispatched": true,
+   "summary": "the ref's node is no longer in its document"
+  },
+  {
+   "step": "rerender-fresh-click",
+   "t": 12.48,
+   "effect": "unverifiable",
+   "error_code": null
+  },
+  {
+   "step": "vanish-click",
+   "t": 14.15,
+   "effect": "unverifiable",
+   "error_code": null,
+   "dispatched": true,
+   "summary": "sent part of a synthetic DOM click on p7:3 in tab-\u2026: the ref's node left its document after pointerdown, so the rest of the sequence was not sent; application effect"
+  }
+ ],
+ "page_handler_events": [
+  {
+   "t": 1794473795.4148002,
+   "type": "loaded",
+   "detail": {},
+   "received": 1794473795.4159849
+  },
+  {
+   "t": 1794473797.0379,
+   "type": "window_blur",
+   "detail": {},
+   "received": 1794473797.0417018
+  },
+  {
+   "t": 1794473803.8815,
+   "type": "visibility",
+   "detail": {
+    "state": "hidden"
+   },
+   "received": 1794473803.8830562
+  },
+  {
+   "t": 1794473803.8835998,
+   "type": "loaded",
+   "detail": {},
+   "received": 1794473803.885505
+  },
+  {
+   "t": 1794473807.7977998,
+   "type": "count_handler",
+   "detail": {
+    "button_generation": 0,
+    "attached": true
+   },
+   "received": 1794473807.7991009
+  },
+  {
+   "t": 1794473810.9367998,
+   "type": "rerendered",
+   "detail": {
+    "generation": 1
+   },
+   "received": 1794473810.938276
+  },
+  {
+   "t": 1794473814.8570998,
+   "type": "count_handler",
+   "detail": {
+    "button_generation": 1,
+    "attached": true
+   },
+   "received": 1794473814.858428
+  },
+  {
+   "t": 1794473816.5157998,
+   "type": "vanish_pointerdown",
+   "detail": {
+    "attached": false
+   },
+   "received": 1794473816.517411
+  }
+ ]
+}

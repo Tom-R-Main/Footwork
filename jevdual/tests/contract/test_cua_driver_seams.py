@@ -17,8 +17,7 @@ import pytest
 
 cd = pytest.importorskip("cua_driver")
 
-PINNED_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1"
-QUALIFIED_PROJECT_OVERLAY_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1"
+PINNED_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4"
 
 
 def _params(cls) -> set[str]:
@@ -34,7 +33,7 @@ def _members(e: type[enum.Enum]) -> set[str]:
 
 def test_cua_driver_version_is_pinned():
     # every native module: the effect vocabulary and refusal codes below are this version's
-    assert importlib.metadata.version("cua-driver") in {PINNED_VERSION, QUALIFIED_PROJECT_OVERLAY_VERSION}
+    assert importlib.metadata.version("cua-driver") == PINNED_VERSION
 
 
 # --------------------------------------------------------------------------- names imported

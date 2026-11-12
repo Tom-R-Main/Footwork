@@ -1,0 +1,210 @@
+{
+ "old": {
+  "connected": {
+   "result": true,
+   "delivered": [
+    "button:pointerover",
+    "button:pointerenter",
+    "button:mouseover",
+    "button:mouseenter",
+    "button:pointermove",
+    "button:mousemove",
+    "button:pointerdown",
+    "button:mousedown",
+    "button:focus",
+    "button:pointerup",
+    "button:mouseup",
+    "button:click"
+   ],
+   "afterDetach": 0
+  },
+  "detached_before_call": {
+   "result": true,
+   "delivered": [
+    "button:pointerover(detached)",
+    "button:pointerenter(detached)",
+    "button:mouseover(detached)",
+    "button:mouseenter(detached)",
+    "button:pointermove(detached)",
+    "button:mousemove(detached)",
+    "button:pointerdown(detached)",
+    "button:mousedown(detached)",
+    "button:focus(detached)",
+    "button:pointerup(detached)",
+    "button:mouseup(detached)",
+    "button:click(detached)"
+   ],
+   "afterDetach": 12
+  },
+  "detached_on_pointerover": {
+   "result": true,
+   "delivered": [
+    "button:pointerover",
+    "button:pointerenter(detached)",
+    "button:mouseover(detached)",
+    "button:mouseenter(detached)",
+    "button:pointermove(detached)",
+    "button:mousemove(detached)",
+    "button:pointerdown(detached)",
+    "button:mousedown(detached)",
+    "button:focus(detached)",
+    "button:pointerup(detached)",
+    "button:mouseup(detached)",
+    "button:click(detached)"
+   ],
+   "afterDetach": 11
+  },
+  "icon_replaced_on_pointerdown": {
+   "result": true,
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "icon:mousedown(detached)",
+    "button:focus",
+    "icon:pointerup(detached)",
+    "icon:mouseup(detached)",
+    "icon:click(detached)"
+   ],
+   "afterDetach": 4
+  },
+  "button_removed_on_pointerdown_via_icon": {
+   "result": true,
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "icon:mousedown(detached)",
+    "button:focus(detached)",
+    "icon:pointerup(detached)",
+    "icon:mouseup(detached)",
+    "icon:click(detached)"
+   ],
+   "afterDetach": 5
+  }
+ },
+ "new": {
+  "connected": {
+   "result": {
+    "sent": [
+     "pointerover",
+     "pointerenter",
+     "mouseover",
+     "mouseenter",
+     "pointermove",
+     "mousemove",
+     "pointerdown",
+     "mousedown",
+     "pointerup",
+     "mouseup",
+     "click"
+    ],
+    "stopped": null,
+    "retargeted": false
+   },
+   "delivered": [
+    "button:pointerover",
+    "button:pointerenter",
+    "button:mouseover",
+    "button:mouseenter",
+    "button:pointermove",
+    "button:mousemove",
+    "button:pointerdown",
+    "button:mousedown",
+    "button:focus",
+    "button:pointerup",
+    "button:mouseup",
+    "button:click"
+   ],
+   "afterDetach": 0
+  },
+  "detached_before_call": {
+   "result": {
+    "sent": [],
+    "stopped": "detached"
+   },
+   "delivered": [],
+   "afterDetach": 0
+  },
+  "detached_on_pointerover": {
+   "result": {
+    "sent": [
+     "pointerover"
+    ],
+    "stopped": "detached",
+    "retargeted": false
+   },
+   "delivered": [
+    "button:pointerover"
+   ],
+   "afterDetach": 0
+  },
+  "icon_replaced_on_pointerdown": {
+   "result": {
+    "sent": [
+     "pointerover",
+     "pointerenter",
+     "mouseover",
+     "mouseenter",
+     "pointermove",
+     "mousemove",
+     "pointerdown",
+     "mousedown",
+     "pointerup",
+     "mouseup",
+     "click"
+    ],
+    "stopped": null,
+    "retargeted": true
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown",
+    "button:mousedown",
+    "button:focus",
+    "button:pointerup",
+    "button:mouseup",
+    "button:click"
+   ],
+   "afterDetach": 0
+  },
+  "button_removed_on_pointerdown_via_icon": {
+   "result": {
+    "sent": [
+     "pointerover",
+     "pointerenter",
+     "mouseover",
+     "mouseenter",
+     "pointermove",
+     "mousemove",
+     "pointerdown"
+    ],
+    "stopped": "detached",
+    "retargeted": false
+   },
+   "delivered": [
+    "icon:pointerover",
+    "icon:pointerenter",
+    "icon:mouseover",
+    "icon:mouseenter",
+    "icon:pointermove",
+    "icon:mousemove",
+    "icon:pointerdown"
+   ],
+   "afterDetach": 0
+  }
+ }
+}

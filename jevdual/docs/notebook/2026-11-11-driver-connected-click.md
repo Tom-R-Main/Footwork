@@ -1,0 +1,126 @@
+# Driver release: connected-node click with HelpTag
+
+Option 1 from the BH15 decision (docs/notebook/2026-11-11-browser-holder.md#bh15): one driver release
+that carries the HelpTag exclusion (today an optional overlay, cleanup2.focus1.helptag1) and a new
+patch that refuses a page-route click on a node no longer in its document, landing before the panel
+or DemoGeek migration. Branch claude/driver-isconnected-20261111 from main 6e8bb5e. Not upstreamed.
+
+## DC1 · prediction · 2026-11-11 23:55
+Question: does a liveness read before the synthetic click close the detached-node gap that BH13 found, without changing a click on a live node?
+Hypothesis: browser_click's dom_event branch (cua-driver-core browser/tools.rs) resolves the ref's backend node with DOM.resolveNode, which still yields an object for a node the page has removed, then runs DOM_EVENT_CLICK_SEQUENCE on it. Reading this.isConnected on that object first, and refusing browser_ref_stale unless it is true, stops every event for a removed node; a live node reads true and proceeds as before.
+Alternatives: (a) the liveness read changes the mock's or a real page's click accounting, so existing dom_event tests or live receipts change; (b) a removed node that is reattached elsewhere reads connected, so a moved node is still clicked (accepted: it is in the document); (c) the read cannot run while a dialog blocks the page, so a click that should proceed now refuses.
+Test: in the helptag1 source, a new mock-CDP test for a removed node (red before the patch, green after); the existing dom_event tests unchanged; then the rebuilt driver through scripts/probe_document_binding.py on an isolated profile, port 9466.
+Predicts: Rust: the new test fails before the patch (the click sequence is dispatched) and passes after (browser_ref_stale, no pointer sequence, nothing dispatched); every existing browser test passes. Live: the reload case still refuses browser_ref_stale; the re-render case's late click now refuses browser_ref_stale and the page logs no handler activation for the removed button; both fresh clicks land once.
+Against: the re-render's late click running any handler; a fresh click refused; any existing browser test failing.
+Refs: docs/notebook/2026-11-11-browser-holder.md#bh13; scripts/probe_document_binding.py
+
+## DC2 · update · 2026-11-12 03:08
+Observed: on the helptag1 source, both new mock-CDP tests failed before the patch (the refusal test found no structured refusal because the click was sent; the order test found no isConnected read) and passed after it; all 251 browser tests and all 1234 cua-driver-core library tests pass with it (results/driver-connected-20261112/rust-red.txt, rust-green-core.txt). scripts/cua_source_chain.py rebuilds the new pinned archive (aa237ca7, 6,407,594 bytes) byte for byte from the focus1 archive in Git through the helptag1 and connected1 steps. The vendored driver built from it with Rust 1.97.1 and installs as 0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected1 (runtime.json records the native library's hash); Footwork's offline suite passes against it with no overlay (3509 passed, 52 skipped).
+Inferred: DC1's Rust half held. Its live half has not run: it needs a few seconds of the foreground, which the film work holds tonight.
+Changes: helptag1 moves from an optional overlay into the pinned chain; the overlay build script and its tests are retired in favour of the chain script.
+Next: the live probe (scripts/probe_document_binding.py on an isolated profile, port 9466) in a window Desktop grants; it resolves DC1.
+Refs: results/driver-connected-20261112; vendor/cua-driver/patches/connected-click.json
+
+## DC3 · update · 2026-11-12 03:14
+Observed: Desktop granted one probe run until 08:00 EST. At 08:11:47 UTC, scripts/probe_document_binding.py started on port 9466 with the screen locked: its gate (_locked in scripts/probe_browser_holder.py) matched ioreg's plist text at one tab of indentation, ioreg nests the key three tabs deep, so it read locked as unlocked (gate: one poll, idle 5734 s). The scratch Chrome loaded the fixture, then browser_prepare refused a background attachment (its "Allow remote debugging?" limitation) and the holder never became ready; Chrome exited within about a second with no click, no front-app change and nothing on screen (results/driver-connected-20261112/probe-locked-run). The window was released to the film session at once.
+Inferred: the run is no evidence for or against DC1; the probe never reached a step. The background refusal is plausibly the lock (the macOS attach guard needs the browser window on another Space than the user's active one, which a locked session may not report), but that is unproven; an unlocked rerun will show it.
+Changes: the gate now parses ioreg's output as a plist and fails closed, counting only the console session and treating unreadable or sessionless output as locked (tests/test_probe_lock_gate.py, including the nesting the old check missed).
+Next: rerun the probe in a fresh Desktop window, after unlock and the cut 22 render; it still resolves DC1.
+Refs: #dc1; results/driver-connected-20261112/probe-locked-run; scripts/probe_browser_holder.py
+
+## DC4 · prediction · 2026-11-12 03:25
+Question: does a connection check inside the click sequence itself close the windows that the pre-dispatch guard leaves open?
+Hypothesis: Sol's review of PR #26 found two (synthetic DOM-stub evidence, not live): the guard runs before awaited scroll, box, visualization and baseline calls, so a page can remove the node before DOM_EVENT_CLICK_SEQUENCE runs; and a handler can remove the node during the sequence (on pointerover, say) while every later event, the focus and the click still go to the detached target. JavaScript runs to completion, so a check inside the sequence cannot be overtaken by the page: checking that the ref's node and the hit-tested target are both connected before every event and before the focus, stopping at the first failure and returning the events sent, closes both. Rust then refuses browser_ref_stale when none were sent, reports an unverifiable partial delivery naming where it stopped when some were, and is unchanged when the sequence completes. Stopping matches real input, which sends no click to a node that left the document between press and release. The pre-dispatch guard stays, so a node already removed costs no scroll or cursor feedback.
+Alternatives: (a) returnByValue on the sequence changes how a dialog-interrupted click resolves; (b) a hit-tested descendant replaced while the ref's node stays (a re-rendered icon inside a button) now stops a click a real user's would complete; (c) the per-event check perturbs pages that read event order or timing.
+Test: run the old and new sequence JavaScript under Node against DOM stubs that detach the node before the call and on pointerover (old: every event reaches the detached target; new: none, and pointerover only); mock-CDP tests in cua-driver-core for a sequence that reports detachment before any event and one partway; the existing browser tests, including the dialog ones; then a live case added to scripts/probe_document_binding.py where the counter button removes itself on pointerdown, run with the existing cases on port 9466 in a fresh Desktop window.
+Predicts: Node: the new sequence sends nothing to a node detached before the call and stops after pointerover for one detached on pointerover; the old one sends every event in both. Rust: the new mock tests fail before the change and pass after; every existing browser test passes. Live: in the remove-on-press case the page logs no click handler activation on the removed button and the result reports a partial, unverifiable delivery; the reload and re-render cases refuse browser_ref_stale; both fresh clicks land once.
+Against: any event after a detachment reaching the detached target; a completed sequence on a connected node reported as partial or refused; any existing browser test failing, especially a dialog one.
+Refs: #dc1; #dc3; https://github.com/Tom-R-Main/Footwork/pull/26
+
+## DC5 · update · 2026-11-12 03:55
+Observed: under Node with DOM stubs (a model, not a browser; results/driver-connected-20261112/dc4/node-model.json), the old sequence sent every event to a node detached before the call (12 of 12) and 11 of 12 after a pointerover detachment; the new one sent none and only pointerover. The model also showed alternative (b) real: checking the hit-tested descendant as well stopped a click whose inner icon was replaced on pointerdown, where a browser would finish on the surviving button. So the sequence now stops only when the ref's own node leaves its document and moves the remaining events to that node when only the descendant left; with that, the icon case completes on the button with nothing sent to the detached icon, and a button removed on pointerdown stops after pointerdown. On the old tools.rs the three new mock-CDP tests fail and the other ten dom_event click tests pass (rust-red.txt); with the change all 1237 cua-driver-core library tests pass (rust-green.txt), the dialog ones included. scripts/cua_source_chain.py reproduces the new archive (38b04cec, 6,409,344 bytes) from the focus1 archive; it builds and installs as connected2 (dc4/runtime.json), and the offline suite passes against it (3513 passed, 52 skipped). The builds kept above Cloud's 15 GiB free-space floor (least 24.8 GiB).
+Inferred: DC4's model and Rust halves held, with the descendant rule narrowed as above; its live half has not run.
+Changes: connected1 (the guard alone, never released) becomes connected2; the probe gains a button that removes itself on pointerdown.
+Next: the live probe in a fresh Desktop window after unlock and the cut 22 render; it resolves DC1 and DC4. Then a fresh Sol review of PR #26.
+Refs: #dc4; results/driver-connected-20261112/dc4; vendor/cua-driver/patches/connected-click.json
+
+## DC6 · update · 2026-11-12 03:58
+Resolves: DC1 = held
+Observed: in Desktop's grant until 09:10 UTC, scripts/probe_document_binding.py ran once against connected2 on port 9466 with a fresh profile, launching at 08:56:34 UTC after the fixed gate read unlocked and 1297 s idle; it took 24 s and its Chrome was closed at 08:56:58 (results/driver-connected-20261112/dc-live). The reload case's late click refused browser_ref_stale (frame navigated). The re-render case's late click refused browser_ref_stale ("the ref's node is no longer in its document"), and the page logged no handler activation for the removed button: the only count_handler events are the two fresh clicks, generation 0 after the reload and generation 1 after the re-render, one each. The vanish button, which removes itself on pointerdown, logged vanish_pointerdown and no vanish_click, and the click reported an unverifiable partial delivery that stopped after pointerdown. Chrome was in front for 1.7 s at launch before the probe restored the prior app; the holder stopped cleanly.
+Inferred: DC1 held (against BH13, where the same late click was dispatched and ran the removed button's handler) and DC4's live half held. Footwork reports dispatched: true on a driver refusal, as it did in BH13; that field's meaning is Footwork's, unchanged here.
+Next: a fresh Sol review of PR #26; then CI and merge. HelpTag has not been live-qualified on the combined build.
+Refs: #dc1; #dc4; results/driver-connected-20261112/dc-live; results/browser-holder-20261111/bh13-summary.json
+
+## DC7 · update · 2026-11-12 03:58
+Resolves: DC4 = held
+Observed: DC4's model and Rust halves are in DC5 and its live half in DC6: nothing reached a detached node in any case, a completed sequence on a connected node was neither refused nor reported partial, and every existing browser test passed. The sequence that held is narrower than DC4's hypothesis: it stops only for the ref's own node and retargets when only the hit-tested descendant leaves (DC5).
+Inferred: held for the cases tested; the retargeting has the model (DC5) but no live case yet.
+Changes: none. Process note: DC4's heading was corrected from 03:31 to 03:25 in a later commit (37489cc, before any test ran), which edited committed text that the notebook keeps append-only; it is recorded here rather than undone.
+Next: a fresh Sol review of PR #26.
+Refs: #dc4; #dc5; #dc6
+
+## DC8 · prediction · 2026-11-12 04:07
+Question: does a click sequence that counts in private primitives, revalidates its target's containment and reports completion explicitly close the four gaps Sol's second review found in connected2?
+Hypothesis: Sol's round-2 review of 135a412 (offline models, not live) found: (1) the focus candidate is chosen before live() retargets, so focus() can go to a detached focusable icon; (2) live() checks only that the hit-tested target is connected, so a descendant moved out of the ref into another button keeps receiving events and can activate it; (3) an exception that interrupts the sequence reaches Rust as a reply with exceptionDetails, which falls through to semantic readback and can be reported Confirmed; (4) the receipt is built with the page-replaceable Array.prototype.push, so a no-op push makes seven delivered events read as none and the click refuses as if nothing were sent. Counting delivered events and the last event type in local primitives, retargeting to the ref whenever the target is disconnected or no longer inside it, resolving and rechecking the focus candidate after live(), and returning an explicit complete flag fixes (1), (2) and (4) in the page. In Rust, taking the completed path only for a well-formed receipt (complete true and an integer count), refusing only for a well-formed detached receipt with count 0, and reporting any other reply (exceptionDetails, missing or malformed value) as an interrupted, unverifiable click fixes (3) and keeps (4) from ever reading as zero delivery.
+Alternatives: (a) a page that replaces Node.prototype.contains or the isConnected getter can still steer the checks (accepted: such a page controls its own DOM); (b) treating a missing value as interrupted changes a path an existing test relies on, such as a dialog that opens and closes during the call; (c) the stricter receipt makes the mock's default reply look malformed, so existing confirmed-click tests fail until the mock returns a real receipt.
+Test: the Node DOM-stub model extended with Sol's four cases (focusable icon removed on mousedown, icon moved into another button on pointerdown, a dispatch wrapper that throws before click, a no-op Array.prototype.push), run on the connected2 and the new sequence; mock-CDP tests for exceptionDetails, a malformed receipt, a count-only partial and a detached receipt with count 0; all browser and cua-driver-core library tests.
+Predicts: Node: on connected2, the four cases show focus on the detached icon, events and click on the moved icon, an aborted sequence, and an empty receipt after seven events; on the new sequence, focus goes to the connected button, remaining events go to the ref after the move, the throwing case returns no completion receipt, and the no-op push case reports count 7 and stopped detached when the ref leaves, or completes with count 11. Rust: the new tests fail on connected2 and pass after; every existing browser test passes with the mock returning real receipts.
+Against: an event or the focus reaching a detached or moved-out node in the new model; any interrupted or malformed reply reported Confirmed or as zero delivery; any existing browser test failing apart from the mock receipt change.
+Refs: #dc4; #dc7; https://github.com/Tom-R-Main/Footwork/pull/26
+
+## DC9 · prediction · 2026-11-12 04:22
+Question: does real Chrome return the connected3 sequence's completion receipt in the shape the strict Rust classifier accepts?
+Hypothesis: Runtime.callFunctionOn with returnByValue serializes the sequence's plain object literal as JSON, so complete, stopped (null on completion), count and last arrive as a boolean, a null, an integer and a string, and a click on a connected node takes the completed path exactly as it did on connected2.
+Alternatives: (a) Chrome reports count as a float (11.0) that Value::as_u64 rejects, or drops the null stopped, so every completed click reads as interrupted; (b) a page-side difference from the mock makes the detached receipt malformed, so the vanish case reads as interrupted instead of partial.
+Test: scripts/probe_document_binding.py once on the installed connected3, port 9466, a fresh profile, in a fresh Desktop window.
+Predicts: the same outcomes as DC6 on connected2: both late clicks refuse browser_ref_stale, the page logs no handler activation for the removed counter button, both fresh clicks land once and are not reported as interrupted, and the vanish click reports a partial delivery stopped after pointerdown with no vanish_click.
+Against: any fresh click reported as interrupted ("did not report completing"), the vanish click reported as interrupted or refused, or any handler activation on a removed button.
+Refs: #dc6; #dc8; results/driver-connected-20261112/dc8
+
+## DC10 · update · 2026-11-12 04:24
+Resolves: DC9 = inconclusive
+Observed: in Desktop's grant until 09:37 UTC the probe ran once on connected3 (port 9466, fresh profile), launching at 09:22:51 after the gate read unlocked and 2874 s idle; 24 s, Chrome closed at 09:23:15, prior app restored (results/driver-connected-20261112/dc9-live). Both late clicks refused browser_ref_stale, the page logged no handler activation for the removed counter button, both fresh clicks landed once, and the vanish click reported a partial delivery stopped after pointerdown with no vanish_click. The fresh clicks' result texts were not recorded: the probe kept only their effect, which is unverifiable for both a completed and an interrupted click.
+Inferred: Chrome returns count as an integer (the vanish case's detached receipt parsed with count 7), but whether a completed receipt's null stopped arrives as the classifier expects is unobserved, so DC9's main criterion is undecided.
+Changes: the probe now records the result text of every click.
+Next: DC11, the same run with the texts recorded, in a fresh window.
+Refs: #dc9; results/driver-connected-20261112/dc9-live; scripts/probe_document_binding.py
+
+## DC11 · prediction · 2026-11-12 04:24
+Revises: DC9
+Hypothesis: as DC9: real Chrome returns connected3's completion receipt in the shape the strict classifier accepts, so a click on a connected node takes the completed path.
+Test: scripts/probe_document_binding.py, now recording every click's result text, once on the installed connected3, port 9466, a fresh profile, in a fresh Desktop window.
+Predicts: both fresh clicks' texts begin "dispatched synthetic DOM click" and none contains "did not report completing"; both late clicks refuse browser_ref_stale with no handler activation on the removed counter button; the vanish click reports a partial delivery stopped after pointerdown with no vanish_click.
+Against: any click text containing "did not report completing"; the vanish click refused or interrupted; any handler activation on a removed button.
+Refs: #dc9; #dc10
+
+## DC12 · update · 2026-11-12 04:26
+Resolves: DC11 = held
+Observed: in Desktop's grant until 09:39 UTC the probe at 27a5c4f ran once on connected3 (port 9466, fresh profile), launching at 09:25:13 after the gate read unlocked and 3016 s idle; 24 s, Chrome closed at 09:25:37, prior app restored (results/driver-connected-20261112/dc11-live). All four clicks on connected nodes (both triggers and both fresh clicks) report "dispatched synthetic DOM click … bounded semantic target state remained unchanged", the completed path, and no click text contains "did not report completing". Both late clicks refused browser_ref_stale, the page logged no handler activation for the removed counter button, both fresh clicks landed once, and the vanish click reported a partial delivery stopped after pointerdown with no vanish_click.
+Inferred: real Chrome returns the completion receipt in the shape the classifier accepts; DC8's change keeps connected clicks on the completed path.
+Next: a fresh Sol review of PR #26 on connected3.
+Refs: #dc11; results/driver-connected-20261112/dc11-live
+
+## DC13 · update · 2026-11-12 04:42
+Resolves: DC8 = held
+Observed: in the Node DOM-stub model (results/driver-connected-20261112/dc8/node-model.json, after removing two harness artifacts: the stubs' own event log and listener registration used Array.prototype.push, and the moved-icon count included events from before the move), connected2 focused a detached focusable icon, sent four more events including the click to an icon moved into another button (which took focus), aborted on a throwing dispatch wrapper, and reported an empty receipt after seven events with a no-op push; the new sequence focused the connected button, sent nothing to the moved icon, left no receipt when the wrapper threw, and reported count 7 stopped after pointerdown (or 11 completed) with the no-op push. On connected2's tools.rs four browser tests fail, the two new ones and the two whose receipt assertions changed, and the exception test fails because the click is reported "bounded semantic readback confirmed a target-state change" (rust-red.txt); with the change all 1239 cua-driver-core library tests pass (rust-green.txt). scripts/cua_source_chain.py reproduces the new archive (4e012c8c, 6,410,990 bytes); it installs as connected3 (dc8/runtime.json); the offline suite passes at normal priority (3513 passed, 52 skipped). At background priority one timing test fails, as recorded in dc8/offline-suite.txt; it uses a fake poster and its code is unchanged here. Real Chrome accepted the receipt (DC12).
+Inferred: Sol's four round-2 findings are closed for the cases modelled and tested; a page that replaces Node.prototype.contains or the isConnected getter can still steer the checks (DC8 alternative (a), accepted).
+Changes: connected2 becomes connected3 (never released either).
+Next: a fresh Sol review of PR #26.
+Refs: #dc8; #dc12; results/driver-connected-20261112/dc8
+
+## DC14 · prediction · 2026-11-12 04:50
+Question: does deciding a DOM click from the call helper's own outcome and one dialog snapshot close the dialog-close race Sol's third review found in connected3?
+Hypothesis: Sol's round-3 review of 4c25148 (static trace, not reproduced) found that connected3 turned the helper's dialog outcome into Ok({}) and then read the dialog state twice: if a handler's dialog interrupted the sequence and closed between the first read (which skipped receipt validation because a dialog was open) and the second (which saw none), the click went to semantic readback without a receipt and could read Confirmed. Deciding in one pure function, where the helper's Err(dialog) stays a dialog outcome whatever happens after, a reply is checked against one snapshot, and readback is reachable only from a completed receipt, removes that path.
+Alternatives: (a) reporting a dialog that has already closed as blocking sends the caller to browser_dialog for nothing (accepted: browser_dialog already answers a vanished dialog); (b) moving the branches changes the text or records an existing dialog, error or readback test depends on.
+Test: unit tests of the decision function in cua-driver-core browser/tools.rs: a helper dialog outcome with no dialog left, a completed receipt with and without a dialog, interrupted and malformed replies, and a call error; then all cua-driver-core library tests. connected3 has no decision seam to test, so there is no red run; the race's absence before the change rests on Sol's trace.
+Predicts: the helper's dialog outcome is a dialog outcome even when the snapshot finds none; only a completed receipt with no dialog reaches readback; the other replies are interrupted and the error fails; every existing browser test passes unchanged, the dialog ones included.
+Against: any path from a reply without a completed receipt to readback; any existing browser test failing.
+Refs: #dc8; #dc13; https://github.com/Tom-R-Main/Footwork/pull/26
+
+## DC15 · update · 2026-11-12 05:04
+Resolves: DC14 = held
+Observed: the browser click now decides in dom_click_next from the call helper's outcome and one dialog snapshot. Its unit tests pass: a helper dialog outcome stays a dialog outcome when the snapshot finds none; a completed receipt reaches readback only with no dialog; an empty reply, a bare true and exceptionDetails are interrupted; a call error fails. All 1241 cua-driver-core library tests pass with no warnings, the dialog tests unchanged (results/driver-connected-20261112/dc14/rust-green.txt). There was no red run, as DC14 said. scripts/cua_source_chain.py reproduces the new archive (6f673125, 6,411,905 bytes); it installs as connected4 (dc14/runtime.json); the offline suite passes at normal priority (3513 passed, 52 skipped).
+Inferred: the race Sol traced has no path left to readback; the absence of the race before the change is Sol's static trace, not an observation.
+Changes: connected3 becomes connected4 (never released).
+Next: a fresh Sol review of PR #26.
+Refs: #dc14; results/driver-connected-20261112/dc14

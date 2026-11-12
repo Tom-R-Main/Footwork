@@ -15,10 +15,10 @@ Launching Chrome takes the foreground, so after binding the probe re-activates t
 was frontmost when it started and waits before the first step. It sends no input to any other
 application.
 
-Run from ``jevdual/`` with the pinned driver overlay first on ``PYTHONPATH``::
+Run from ``jevdual/`` with the pinned driver installed::
 
     FOOTWORK_CHROME_PROFILE=/abs/fresh/profile FOOTWORK_CHROME_PORT=9444 \
-    PYTHONPATH=output/foreground-helptag/overlay:python \
+    PYTHONPATH=python \
     .venv/bin/python scripts/probe_page_effects.py --out /abs/out/dir
 
 Refuses to run against Footwork's default profile or port.
