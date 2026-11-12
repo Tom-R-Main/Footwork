@@ -129,3 +129,12 @@ Inferred: the fix belongs in the driver: before the click call, read the node's 
 Changes: none to the driver. A driver patch changes the shipped pin and its provenance chain, and the HelpTag patch is already waiting on a packaging change, so the owner decides whether to carry both in one driver release. Until then Footwork's do observes immediately before each click, which keeps the window to milliseconds.
 Next: owner decision on the driver patch; B7 (one session binding the filmed pointer and the page) for DemoGeek.
 Refs: results/browser-holder-20261111/bh13-summary.json
+
+## BH16 · prediction · 2026-11-11 22:18
+Question: after the review fixes (runtime directories, claim fencing, positive client-scan evidence, owned startup), does the holder still serve background commands and detect a second client live?
+Hypothesis: the driver keeps its DevTools websocket open for its lifetime, so lsof always shows the holder's own client connection and the positive-evidence rule passes when no one else is connected; the claim the command carries is active while it runs, so the holder's re-check passes; the holder's runtime lives outside the session directory and is retired by its PID identity at the end.
+Alternatives: (a) the driver's connection is not always visible (it reconnects lazily or uses another transport), so every send now refuses browser_client_check_unavailable; (b) the claim re-check refuses a live command (a field mismatch, a reservation the holder cannot see).
+Test: scripts/probe_browser_holder.py --arm held (five rounds of look and click, 25 s apart) and then --arm held --second-client, each on a fresh isolated profile on port 9466, browser restored to the background by PID.
+Predicts: held: all ten commands exit 0 and the page logs five clicks, the frontmost PID never the owned browser's after the restore; second-client: the first and third clicks land, the second is refused browser_second_client naming the second process; in both runs the holder's process has exited by the end and its runtime record is gone.
+Against: any click refused browser_client_check_unavailable or ownership_revoked; the second-client click landing; a holder process still running after the probe.
+Refs: docs/notebook/2026-11-11-browser-holder.md#bh3; docs/notebook/2026-11-11-browser-holder.md#bh11
