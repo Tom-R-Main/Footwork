@@ -7,10 +7,13 @@ import time
 from pathlib import Path
 from typing import Any
 
+#: macOS raw uptime (the mach_absolute_time epoch); hosts without it record their raw monotonic clock
+CLOCK = "CLOCK_UPTIME_RAW" if hasattr(time, "CLOCK_UPTIME_RAW") else "CLOCK_MONOTONIC_RAW"
+
 
 def uptime_raw_ns() -> int:
-    """macOS uptime in nanoseconds, with the mach_absolute_time epoch (no process offset)."""
-    return time.clock_gettime_ns(time.CLOCK_UPTIME_RAW)
+    """Raw uptime in nanoseconds on the clock named by ``CLOCK`` (no process offset)."""
+    return time.clock_gettime_ns(getattr(time, CLOCK))
 
 
 def display_geometry() -> list[dict[str, Any]]:
@@ -39,7 +42,7 @@ class GestureTrace:
         self.errors: list[dict[str, Any]] = []
         started_ns = uptime_raw_ns()
         self.record: dict[str, Any] = {
-            'schema': 'pointer_gesture/1', 'clock': 'CLOCK_UPTIME_RAW',
+            'schema': 'pointer_gesture/1', 'clock': CLOCK,
             'timestamp_unit': 'ns', 'kind': kind, 'label': label,
             'start': list(start), 'requested_target': list(target) if target is not None else None,
             'recording_started_ns': started_ns, 't0_ns': None, 'playback_started_ns': None,
