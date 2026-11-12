@@ -16,7 +16,9 @@ turn, one move about every 2.5 s for ``--seconds``, as the glide arm does, and s
 refusal. ``end`` yields the session's desktop reservation and records whether any Footwork process is
 left. ``watch`` is the file handshake: it waits for ``arm3-request``, reads ``target.json``, runs
 ``start`` and writes ``arm3-up`` (or ``arm3-failed``), then waits for ``arm3-done``, runs ``end`` and
-writes ``arm3-down``. It starts nothing after its end time, and always ends a session it started.
+writes ``arm3-down``. With ``--go-file`` it does nothing until that file is written after the watch began;
+the file holds the grant's end time. It serves one request, starts no session at or after the end
+time, and ends a session it started when the runner says so or at the end time, whichever is first.
 Exit codes: 0 done; 3 the installed release differs; 4 Footwork refused; 5 the screen stayed locked
 or busy; 6 the watch ran out of time; 2 a usage error.
 """
@@ -145,6 +147,11 @@ def cmd_start(args: argparse.Namespace, out: Path) -> int:
         _log(out, {**record, "outcome": "screen_locked_or_busy"})
         print("the screen stayed locked or in use; nothing started", file=sys.stderr)
         return 5
+    deadline = getattr(args, "deadline", None)
+    if deadline is not None and time.time() >= deadline:
+        _log(out, {**record, "outcome": "grant_expired"})
+        print("the grant's end time has passed; nothing started", file=sys.stderr)
+        return 6
     window = ["--window-id", str(args.window_id)] if args.window_id else ["--window", args.window]
     started = _run([args.footwork, "start", TASK, "--app", args.app, "--pid", str(args.pid), *window,
                     "--mode", "exclusive_desktop", "--pointer-motion", "filmed", "--rest", args.rest,
@@ -254,7 +261,28 @@ def _fresh(path: Path, since: float) -> bool:
         return False
 
 
+def _grant(go_file: Path, began: float) -> tuple[float | None, dict]:
+    """The end time a go file grants, with what was read. Only a file written after this watch began
+    counts (an earlier one belongs to another sweep), and only an end time within three hours of it."""
+    try:
+        written = go_file.stat().st_mtime
+        text = go_file.read_text().strip()
+    except OSError:
+        return None, {}
+    seen = {"go_file_written": written, "go_file_text": text[:20]}
+    if written < began:
+        return None, {**seen, "ignored": "written before this watch began"}
+    try:
+        until = _clock(text, written)
+    except ValueError:
+        return None, {**seen, "ignored": "not HH:MM"}
+    if not 0 < until - written <= 3 * 3600:
+        return None, {**seen, "ignored": "end time is not within three hours after the go"}
+    return until, seen
+
+
 def cmd_watch(args: argparse.Namespace, out: Path) -> int:
+    """One sweep's arm 3, once: wait for the go and the runner's request, start, wait, end."""
     handshake = Path(args.handshake)
     began = time.time()
     out.mkdir(parents=True, exist_ok=True)
@@ -262,43 +290,53 @@ def cmd_watch(args: argparse.Namespace, out: Path) -> int:
     def note(event: str, **more: object) -> None:
         _write(out / f"watch-{event}.json", {"t": time.time(), **more})
 
-    note("began", pid_of_watch=os.getpid(), until=args.until, go_file=args.go_file)
+    go_file = Path(args.go_file) if args.go_file else None
+    note("began", pid_of_watch=os.getpid(), until=args.until, go_file=args.go_file,
+         stale_go_file=bool(go_file and go_file.exists()))
     until = _clock(args.until, began) if args.until else None
-    while True:  # wait for the go (when it comes by file) and the runner's request
-        if until is None and args.go_file and Path(args.go_file).exists():
-            try:
-                until = _clock(Path(args.go_file).read_text(), began)
-            except (OSError, ValueError):
-                until = None
+    granted_at, grant = began, {}
+    while True:  # wait for the go (when it comes by file) and then the runner's request
+        if until is None and go_file is not None:
+            until, grant = _grant(go_file, began)
+            if until is not None:
+                granted_at = grant["go_file_written"]
+                note("granted", until=until, **grant)
         if until is not None and time.time() >= until:
-            note("expired", waiting_for="arm3-request")
+            note("expired", waiting_for="arm3-request", **grant)
             return 6
-        if until is not None and _fresh(handshake / "arm3-request", began):
+        if until is not None and _fresh(handshake / "arm3-request", granted_at):
             break
         if time.time() - began > args.max_wait:
-            note("expired", waiting_for="go" if until is None else "arm3-request")
+            note("expired", waiting_for="go" if until is None else "arm3-request", **grant)
             return 6
         time.sleep(0.5)
+    note("consumed", until=until, **grant)  # this watch serves this one request and no other
     try:
-        target = json.loads((handshake / "target.json").read_text())
+        target_file = handshake / "target.json"
+        if target_file.stat().st_mtime < granted_at - 2:
+            raise ValueError("it is older than the go, so it describes another run's window")
+        target = json.loads(target_file.read_text())
         args.pid, args.window_id, args.window, args.app = int(target["pid"]), int(target["window_id"]), None, target["app"]
+        os.kill(args.pid, 0)  # the process the target names is running
     except (OSError, ValueError, KeyError, TypeError) as exc:
-        _write(handshake / "arm3-failed", {"t": time.time(), "why": f"target.json unreadable: {type(exc).__name__}"})
+        _write(handshake / "arm3-failed", {"t": time.time(), "why": f"target.json: {type(exc).__name__}: {exc}"[:200]})
         return 2
+    args.deadline = until
     code = cmd_start(args, out)
     if code != 0:
         cmd_end(args, out)
         _write(handshake / "arm3-failed", {"t": time.time(), "why": f"start exit {code}", "log": str(out / "arm3.jsonl")})
         return code
     (handshake / "arm3-out").write_text(str(out) + "\n")  # where the in-take step finds this session
-    _write(handshake / "arm3-up", {"t": time.time(), "pid": args.pid, "window_id": args.window_id, "log": str(out / "arm3.jsonl")})
-    hard = max(until, time.time()) + args.done_grace
-    while not _fresh(handshake / "arm3-done", began) and time.time() < hard:
+    _write(handshake / "arm3-up", {"t": time.time(), "pid": args.pid, "window_id": args.window_id,
+                                   "until": until, "log": str(out / "arm3.jsonl")})
+    # the session ends when the runner says the arm is over, and at the grant's end time at the latest
+    while not _fresh(handshake / "arm3-done", granted_at) and time.time() < until:
         time.sleep(0.5)
-    timed_out = not _fresh(handshake / "arm3-done", began)
+    at_expiry = not _fresh(handshake / "arm3-done", granted_at)
     code = cmd_end(args, out)
-    _write(handshake / "arm3-down", {"t": time.time(), "clean": code == 0, "timed_out": timed_out})
-    return 6 if timed_out else code
+    _write(handshake / "arm3-down", {"t": time.time(), "clean": code == 0, "ended_at_expiry": at_expiry})
+    return 6 if at_expiry else code
 
 
 def main() -> int:
@@ -332,7 +370,6 @@ def main() -> int:
     go.add_argument("--until", help="HH:MM on this machine's clock: start no session at or after it")
     go.add_argument("--go-file", help="act only once this file exists; it holds the HH:MM end time")
     wt.add_argument("--max-wait", type=float, default=4 * 3600.0, help="give up waiting after this many seconds")
-    wt.add_argument("--done-grace", type=float, default=900.0, help="seconds past the end time to wait for arm3-done")
     args = parser.parse_args()
     out = Path(args.out)
     if not out.is_absolute():
