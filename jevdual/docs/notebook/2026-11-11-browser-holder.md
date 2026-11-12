@@ -46,3 +46,11 @@ Inferred: before this fix, start --browser --url on a newly launched browser wou
 Changes: b32d81d. Correction to this file's headings, which ran ahead of the clock: BH1 was committed at 19:29 (heading 19:31), BH2 and BH3 at 19:42 (headings 19:44 and 19:46), BH4 at 19:46 (heading 19:58). Each prediction was still committed before its test.
 Next: rerun BH3 unchanged.
 Refs: results/browser-holder-20261111/launch-duplicates.json; results/browser-holder-20261111/bh3-attempt-1-summary.json
+
+## BH6 · update · 2026-11-11 19:51
+Resolves: BH3 = held
+Observed: held arm (fresh profile, port 9466): start and all ten background commands exited 0; the page logged five clicks on the counter; after the restore the frontmost-application sampler (28703 samples, largest gap 48 ms) recorded no change, and the page logged no focus or visible event after it went hidden. The holder answered all 11 later prepare calls from its first and served 11 binds, 17 snapshots and 5 clicks through one driver. Control arm (fresh profile, no holder): start passed with the browser in front; the first background look refused with browser_prepare's background limitation and nothing was sent; the browser did not come forward (results/browser-holder-20261111/bh3-summary.json).
+Inferred: the per-command driver is what made background page work impossible on this lane, and one held driver removes it for observation and page-route clicks. Typing, navigation after start and coordinate input were not exercised in the background; a 48 ms sampler gap cannot exclude a shorter activation.
+Changes: none beyond BH5.
+Next: B2 (refuse or detect a second DevTools client) and B3 (input bound to the document generation); typing through the holder in the background; DemoGeek's take primitives (rectangles, waits, per-character insertText, file inputs, window bounds) for step D.
+Refs: results/browser-holder-20261111/bh3-summary.json; scripts/probe_browser_holder.py

@@ -407,6 +407,17 @@ reviewed.
 - **A2: the panel is frozen** (AAD9): ten of the owner's own sites, each with a task that sends
   nothing. It runs once step D exists.
 
+- **B1, the persistent holder: background page work holds** (`docs/notebook/2026-11-11-browser-holder.md`,
+  BH3). A `start --browser` session now keeps one driver in a holder process. With the browser in
+  the background, ten later commands (five observations and five page-route clicks, each its own
+  process) all succeeded and the browser never came forward; without the holder the first
+  background observation refused. Two findings on the way: the driver mints a new tab id on every
+  `get_browser_state` call even on one driver, so tab identity comes from Chrome's target id, as
+  the page pin already does; and `start --browser --url` on a new launch opened the page twice
+  because window recovery ran before the launch's window appeared, so every such start refused
+  (fixed, BH4). Typing, later navigation and coordinate input through the holder are untested in
+  the background.
+
 Neither reopening condition for the lane is met: text replacement needs care, coordinate input does
 not need the foreground, and sign-in works in a launched profile.
 
