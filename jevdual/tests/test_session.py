@@ -328,8 +328,9 @@ def test_click_receipts_are_untouched_and_missing_fields_are_unverifiable(tmp_pa
 
 def test_browser_replace_typing_asks_the_posture_and_never_keystrokes():
     """footwork-9c's tab probe (2026-09-25): browser_type selects the bound tab for ~100 ms in every
-    mode but insert_text with replace=false. Inserting into an empty field or appending stays
-    background; replacing held text is a foreground step and a background_only bridge refuses it."""
+    mode but insert_text with replace=false. Inserting into an empty field stays background; replacing
+    held text is a foreground step and a background_only bridge refuses it. Appending onto held text
+    is refused before sending (BH8): this route inserts at the start of held text."""
     import asyncio
     import json
 
@@ -362,11 +363,11 @@ def test_browser_replace_typing_asks_the_posture_and_never_keystrokes():
     nm = menu("Old")
     b.last = nm
     eff = asyncio.run(b.act(nm, "append", 1, " more"))
-    assert calls[-1][1]["replace"] is False
+    assert eff.effect == "refused" and eff.error_code == "append_unavailable" and eff.dispatched is False
     b.last = nm
     eff = asyncio.run(b.act(nm, "type", 1, "New"))
     assert eff.effect == "refused" and eff.error_code == "requires_foreground" and eff.dispatched is False
-    assert "100 ms" in eff.summary and len(calls) == 2  # nothing reached the browser
+    assert "100 ms" in eff.summary and len(calls) == 1  # neither reached the browser
     b2 = BrowserBridge(Driver(), 1, 2, policy=ExecutionPolicy("exclusive_desktop"))
     b2.target_id, b2.tab_id = "bt", "tab"
     b2.last = nm

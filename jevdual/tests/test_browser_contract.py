@@ -227,6 +227,28 @@ def test_a_refusal_keeps_its_code_and_message_and_stays_dispatched():
     )
 
 
+def test_a_0_46_action_refusal_is_read_as_a_refusal_with_its_code_and_unknown_delivery():
+    """BH14: cua-driver 0.46 projects an action tool's refusal as an ActionResult whose effect is
+    "refused", with the code only in the summary and no status or refusal object (tool.rs
+    publish_action_result and its browser-refusal test). It said nothing about delivery."""
+    projected = {
+        "effect": "refused", "route": "dom", "escalation": {"target": "page", "reason": "stale"},
+        "summary": "refused (browser_ref_stale): the ref's frame navigated or was removed since the snapshot",
+    }
+
+    async def run():
+        b = _bridge(Wire({"browser_click": projected}))
+        await b.attach()
+        nm = await b.observe()
+        return await b.act(nm, "click", 1)
+
+    eff = asyncio.run(run())
+    assert eff.effect == "refused" and eff.error_code == "browser_ref_stale"
+    assert eff.summary.startswith("the ref's frame navigated")
+    assert eff.dispatched is True  # unknown delivery is never reported as not sent
+    assert eff.delivery is None
+
+
 def test_an_acknowledged_click_with_unknown_delivery_is_never_reported_as_not_sent():
     async def run():
         b = _bridge(Wire({"browser_click": UNKNOWN_DELIVERY}))
@@ -525,8 +547,9 @@ def test_a_reply_without_a_typed_effect_is_never_reported_as_confirmed():
 
 
 def test_a_non_error_reply_that_says_refused_is_not_proof_that_nothing_was_sent():
+    # read as a refusal since BH14, still never as not sent: the projection carries no delivery word
     eff = _click_with(_published("refused"))
-    assert eff.effect == "unverifiable" and eff.dispatched is True
+    assert eff.effect == "refused" and eff.dispatched is True
 
 
 def test_malformed_evidence_and_escalation_are_dropped_not_trusted():

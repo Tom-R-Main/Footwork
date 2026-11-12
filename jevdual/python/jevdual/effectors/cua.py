@@ -12,6 +12,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
 from collections.abc import Callable, Mapping
 from types import MappingProxyType
 from typing import Any
@@ -115,6 +116,9 @@ def _frozen(value: Any) -> Mapping[str, Any] | None:
     return MappingProxyType(value) if isinstance(value, dict) else None
 
 
+_REFUSAL_SUMMARY = re.compile(r"refused \(([a-z0-9_]+)\):\s*(.*)", re.DOTALL)
+
+
 def browser_reply(result: Any) -> BrowserReply:
     """Translate one browser ``ToolResult``. Every structured field is kept in ``payload``.
 
@@ -141,6 +145,16 @@ def browser_reply(result: Any) -> BrowserReply:
             message=str(raw_refusal.get("message") or ""),
             detail=_frozen(raw_refusal.get("detail")),
         )
+    if refusal is None and payload.get("effect") == "refused" and status is None:
+        # cua-driver 0.46 projects an action tool's refusal as an ActionResult: effect "refused",
+        # the code only in its summary ("refused (<code>): <message>"), no status, no refusal object
+        # and so no delivery word (tool.rs publish_action_result; BH14). Whether input was sent is
+        # therefore unknown here: the refusal carries no detail and dispatched stays None.
+        summary = str(payload.get("summary") or text)
+        match = _REFUSAL_SUMMARY.match(summary.strip())
+        status = "refused"
+        refusal = BrowserRefusal(code=match.group(1) if match else None,
+                                 message=(match.group(2) if match else summary)[:2000])
     hint = payload.get("hint")
     next_call = payload.get("next_call")
     if next_call is None and refusal is not None and refusal.detail is not None:
