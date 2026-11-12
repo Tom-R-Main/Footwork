@@ -415,8 +415,14 @@ reviewed.
   `get_browser_state` call even on one driver, so tab identity comes from Chrome's target id, as
   the page pin already does; and `start --browser --url` on a new launch opened the page twice
   because window recovery ran before the launch's window appeared, so every such start refused
-  (fixed, BH4). Typing, later navigation and coordinate input through the holder are untested in
-  the background.
+  (fixed, BH4).
+- **Typing through the holder in the background** (BH7 to BH10). Typing into an empty field lands
+  exactly, with the browser never frontmost, but the page receives a window focus event at the
+  moment of input (the driver focuses the node first). A page that watches focus can tell. Append
+  onto a field that holds text was a defect on this route, older than the holder: the driver
+  inserts at the caret focus leaves, the start, and the receipt only caught it after sending. It is
+  now refused before sending; the observation trims values, so the value is not rebuilt from it.
+  Later navigation and coordinate input through the holder remain untested in the background.
 
 Neither reopening condition for the lane is met: text replacement needs care, coordinate input does
 not need the foreground, and sign-in works in a launched profile.

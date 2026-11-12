@@ -80,3 +80,11 @@ Test: scripts/probe_browser_holder.py --arm held --typing --rounds 3 --spacing 2
 Predicts: the three appends onto Name are refused with append_unavailable and nothing dispatched; the type into the empty Note lands "first note"; the type into Note holding text is refused with requires_foreground; final values Name "held text" and Note "first note"; the page logs exactly one input event after the restore (the Note text) and no focus or visible event; the frontmost PID is never the owned Chrome's after the restore.
 Against: a page focus or visible event after the restore, or the owned Chrome's PID frontmost after the restore; any input event for a refused command; either final value differing.
 Refs: docs/notebook/2026-11-11-browser-holder.md#bh8
+
+## BH10 · update · 2026-11-11 21:34
+Resolves: BH9 = failed
+Observed: all three appends onto Name were refused with append_unavailable and nothing sent; the type into the empty Note landed and its receipt confirmed "first note"; the type into Note holding text was refused with requires_foreground; final values Name "held text", Note "first note"; the holder served one type_text in all. The frontmost PID was never the owned Chrome's after the restore (one change, to another application, 23 s in). The page stayed hidden, but it logged a window focus event at the same instant as the Note input (66.88 s after the restore), and that input was the only one (results/browser-holder-20261111/bh9-summary.json). The sampler's largest gap was 144 ms.
+Inferred: the driver's DOM.focus before insert_text gives the occluded page window focus without activating the application, so BH7's focus event was the driver too. The person's keystrokes still go to the frontmost application, so this is not the tab-selection keystroke risk the posture gate guards, but a page that watches focus sees one. The refusals and the empty-field value hold.
+Changes: none. Background typing into an empty field stays allowed; its page-visible focus is recorded in the report.
+Next: B2, detection of a second DevTools client.
+Refs: results/browser-holder-20261111/bh9-summary.json
