@@ -114,3 +114,11 @@ Test: scripts/probe_document_binding.py, fresh profile, port 9466, holder spawne
 Predicts: reload: the late click is refused browser_ref_stale with nothing dispatched and no handler activation; the fresh click activates once. Re-render: the late click is not refused and activates the detached generation-0 handler (attached false); the fresh click activates the generation-1 button once.
 Against: the reload's late click activating any handler; or the re-render's late click refused, or activating an attached button.
 Refs: scripts/probe_document_binding.py
+
+## BH14 · update · 2026-11-11 21:46
+Resolves: BH13 = held
+Observed: reload: the late click's driver summary reads "refused (browser_ref_stale): the ref's frame navigated or was removed since the snapshot", and no handler ran; the fresh click ran the new document's button once. Re-render: the late click was sent ("dispatched synthetic DOM click … bounded semantic target state remained unchanged; application effect is unverifiable") and ran the detached generation-0 button's handler with attached false; the fresh click ran the generation-1 button once. The browser never came forward (results/browser-holder-20261111/bh13-summary.json). Unpredicted: Footwork recorded the reload's driver refusal as effect unverifiable, dispatched true, no error code.
+Inferred: (1) document binding holds across reloads through the driver's loader_id check; a same-document node replacement is not caught, so a page-route click can run a handler on a node no longer in the page. Footwork's do observes immediately before acting, which narrows that window to milliseconds but does not close it. (2) Since cua-driver 0.46 an action tool's refusal reaches Footwork as an ActionResult with effect "refused", the code only in its summary text and no status or refusal object (cua-driver-core tool.rs publish_action_result and its browser-refusal test); Footwork's reader treats that effect as unverifiable. That predates the holder and the A4 change, which carried only confirmed, partial and suspected_noop.
+Changes: none yet.
+Next: read effect "refused" as a refusal with the summary's code and delivery unknown; then decide between a driver patch that refuses a page-route click on a disconnected node and a Footwork-side check.
+Refs: results/browser-holder-20261111/bh13-summary.json
