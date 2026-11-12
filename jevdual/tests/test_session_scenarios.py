@@ -2457,6 +2457,8 @@ def _foreground_styles_fixture(
     monkeypatch.setattr(ax, "focused_window_id", lambda pid: 40335)
     monkeypatch.setattr(ax, "resolve", lambda *a: "styles")
     monkeypatch.setattr(ax, "value", lambda el: row["value"])
+    # the web text reader reads both; a real AX read fails off macOS, which drops the exact value
+    monkeypatch.setattr(ax, "placeholder", lambda el: None)
     monkeypatch.setattr(ax, "selected_range", lambda el: selection[0], raising=False)
 
     async def call(name, encoded):
