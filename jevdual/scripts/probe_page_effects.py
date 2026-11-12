@@ -73,7 +73,7 @@ def _serve(out: Path) -> tuple[http.server.ThreadingHTTPServer, int]:
         def log_message(self, *_: object) -> None:
             pass
 
-        def do_GET(self) -> None:  # noqa: N802
+        def do_GET(self) -> None:
             body = FIXTURE.encode()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -81,7 +81,7 @@ def _serve(out: Path) -> tuple[http.server.ThreadingHTTPServer, int]:
             self.end_headers()
             self.wfile.write(body)
 
-        def do_POST(self) -> None:  # noqa: N802
+        def do_POST(self) -> None:
             raw = self.rfile.read(min(int(self.headers.get("Content-Length") or 0), 4096))
             try:
                 record = json.loads(raw)
@@ -100,9 +100,9 @@ def _serve(out: Path) -> tuple[http.server.ThreadingHTTPServer, int]:
 
 def _front() -> str:
     try:
-        asn = subprocess.run(["lsappinfo", "front"], capture_output=True, text=True, timeout=2).stdout.strip()
+        asn = subprocess.run(["lsappinfo", "front"], capture_output=True, text=True, timeout=2, check=False).stdout.strip()
         name = subprocess.run(
-            ["lsappinfo", "info", "-only", "name", asn], capture_output=True, text=True, timeout=2
+            ["lsappinfo", "info", "-only", "name", asn], capture_output=True, text=True, timeout=2, check=False
         ).stdout.strip()
         return name.split("=", 1)[-1].strip('"') or asn
     except (OSError, subprocess.SubprocessError):
@@ -111,7 +111,7 @@ def _front() -> str:
 
 def _front_asn() -> str:
     try:
-        return subprocess.run(["lsappinfo", "front"], capture_output=True, text=True, timeout=2).stdout.strip()
+        return subprocess.run(["lsappinfo", "front"], capture_output=True, text=True, timeout=2, check=False).stdout.strip()
     except (OSError, subprocess.SubprocessError):
         return "unreadable"
 
@@ -176,8 +176,8 @@ async def _run(out: Path) -> None:
         await asyncio.sleep(1.0)
         t = time.time()
         if _front() != front_at_start and front_at_start != "unreadable":
-            subprocess.run(["osascript", "-e", f'tell application "{front_at_start}" to activate'],
-                           capture_output=True, timeout=10, check=False)
+            await asyncio.to_thread(subprocess.run, ["osascript", "-e", f'tell application "{front_at_start}" to activate'],
+                                    capture_output=True, timeout=10, check=False)
         await asyncio.sleep(2.0)
         record("background_restored", t, front_at_start=front_at_start, front_before_steps=_front())
 
@@ -218,7 +218,7 @@ async def _run(out: Path) -> None:
         if centre is None:
             raise SystemExit("the fixture never reported its layout")
         t = time.time()
-        out_reply = await bridge.operations._call(  # noqa: SLF001 - the bounded surface has no coordinate click
+        out_reply = await bridge.operations._call(
             "browser_click",
             {"target_id": bridge.target_id, "tab_id": bridge.tab_id, "x": centre[0], "y": centre[1],
              "input_route": "trusted"},

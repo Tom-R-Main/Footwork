@@ -1,5 +1,9 @@
 """AAD8: read Suno Create's lyrics editor without input; return lengths, LF counts and hashes only."""
-import asyncio, json, sys, urllib.request
+import asyncio
+import json
+import sys
+import urllib.request
+
 import websockets
 
 EXPR = r"""(async () => {
@@ -19,8 +23,13 @@ EXPR = r"""(async () => {
   return {url: location.pathname, candidates: out};
 })()"""
 
+def _tabs(port):
+    with urllib.request.urlopen(f"http://127.0.0.1:{port}/json/list", timeout=5) as response:
+        return json.load(response)
+
+
 async def main(port):
-    tabs = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/json/list", timeout=5))
+    tabs = await asyncio.to_thread(_tabs, port)
     tab = next(t for t in tabs if t.get("type") == "page" and "suno.com/create" in (t.get("url") or ""))
     async with websockets.connect(tab["webSocketDebuggerUrl"], max_size=2**22) as ws:
         await ws.send(json.dumps({"id": 1, "method": "Runtime.evaluate",
