@@ -136,10 +136,18 @@ def _incarnation(pid: int) -> float:
     return psutil.Process(pid).create_time()
 
 
+#: Chrome builds the accessibility tree of a page, and shows the page's web area in its window, only when
+#: it has been launched to or a client it accepts has asked. A filmed take maps every page position
+#: from that web area's origin, and four of five live starts on a Chrome launched without this switch
+#: found none in eight seconds, the request refused each time (FP87). It is one of the launch's
+#: arguments and not one of those a running browser is recognised by (``chrome_pid``).
+ACCESSIBILITY_SWITCH = "--force-renderer-accessibility"
+
+
 def _chrome_args(url: str | None = None, *, new_window: bool = False) -> list[str]:
     args = [chrome_executable(), f"--user-data-dir={PROFILE_DIR}", f"--remote-debugging-port={PORT}",
             "--remote-debugging-address=127.0.0.1", "--no-first-run", "--no-default-browser-check",
-            "--window-size=1200,900"]
+            ACCESSIBILITY_SWITCH, "--window-size=1200,900"]
     if new_window:
         args.append('--new-window')
     if url:
