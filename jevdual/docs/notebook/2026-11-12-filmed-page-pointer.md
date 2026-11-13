@@ -86,7 +86,7 @@ Changes: Footwork: browser_scene_change and Filmed.held (filmed.py), ax.web_area
 Next: FP11 registers the live test for this head; Sol's third review first.
 Refs: #fp9; results/filmed-page-pointer-20261112/scene-clip-red-green.json; vendor/cua-driver/patches/ref-locate.patch; tests/test_filmed_page_pointer.py; tests/test_probe_filmed_page_pointer.py
 
-## FP11 · prediction · 2026-11-12 20:41
+## FP11 · prediction · 2026-11-12 20:40
 Revises: FP6
 Question: as FP6, on the head that checks the scene, container clipping and the landing point (FP10).
 Hypothesis: as FP6, and the checks added since hold on a real Chrome window in front: it reports AXMain, its web area's AXURL is the page's address, the window and web-area frames do not move between commands, the fixture's buttons are inside no clipping ancestor, and the point the pointer is sent to hit-tests as the button once the pointer is on it.
