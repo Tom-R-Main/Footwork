@@ -37,10 +37,12 @@ def mark(chrome):
     for child in root.children(recursive=True):
         try: identities[str(child.pid)]=child.create_time()
         except psutil.NoSuchProcess: pass
-    with (directory/'startup-boundary.json').open('w') as stream:
+    # written whole and then named: the supervisor reads the marker as soon as it exists
+    with (directory/'startup-boundary.json.writing').open('w') as stream:
         json.dump({'phase':phase,'pid':chrome.pid,'start':chrome.incarnation,'captured':identities},stream)
         stream.flush()
         os.fsync(stream.fileno())
+    os.replace(directory/'startup-boundary.json.writing',directory/'startup-boundary.json')
 
 original_launch=broker.launch.launch
 def launch(*args,**kwargs):

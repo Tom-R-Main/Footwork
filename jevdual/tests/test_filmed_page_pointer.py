@@ -985,7 +985,8 @@ def test_a_changed_scene_is_named(monkeypatch, changed, why):
 def test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks(monkeypatch, answers, accepted, written):
     """FP72: Chromium builds the accessibility tree of its page only after a client opts in. The write
     is to the application of the given pid and to nothing else, and it says which attribute took."""
-    import ApplicationServices
+    import sys
+
     from jevdual import ax
 
     writes: list = []
@@ -994,8 +995,9 @@ def test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks(monk
         writes.append((element, name, value))
         return answers[len(writes) - 1]
 
-    monkeypatch.setattr(ApplicationServices, "AXUIElementCreateApplication", lambda pid: ("application", pid))
-    monkeypatch.setattr(ApplicationServices, "AXUIElementSetAttributeValue", write)
+    # a stand-in for the framework, which only macOS has: the test makes no real request
+    monkeypatch.setitem(sys.modules, "ApplicationServices", SimpleNamespace(
+        AXUIElementCreateApplication=lambda pid: ("application", pid), AXUIElementSetAttributeValue=write))
     if accepted:
         assert ax.show_web_content(77) == accepted
     else:
