@@ -1,0 +1,9 @@
+E       AttributeError: module 'jevdual.session' has no attribute 'START_LAUNCH_PAGE'
+
+tests/test_start_single_navigation.py:140: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_start_single_navigation.py::test_a_start_with_a_url_gives_it_to_the_browser_once[False]
+FAILED tests/test_start_single_navigation.py::test_a_start_with_a_url_gives_it_to_the_browser_once[True]
+FAILED tests/test_start_single_navigation.py::test_the_blank_page_reaches_the_holders_own_launch_and_a_bind_with_a_url_still_launches_on_it
+FAILED tests/test_start_single_navigation.py::test_the_script_that_counts_requests_is_importable_and_launches_nothing_on_import
+4 failed, 2 passed in 0.41s

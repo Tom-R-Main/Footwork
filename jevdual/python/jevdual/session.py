@@ -1829,6 +1829,11 @@ async def _start_new(args: Any) -> int:
     return 0
 
 
+#: what a browser launched by a start that has a URL opens on, before the start navigates to it. Not no
+#: argument: Chrome then opens its new-tab page, which is a page with requests of its own
+START_LAUNCH_PAGE = "about:blank"
+
+
 async def _start_browser(args: Any, d: Path) -> int:
     """A session on footwork's own Chrome through the Driver's browser mode (jevdual.browser_driver)."""
     from jevdual.browser_driver import bind_footwork_chrome
@@ -1840,11 +1845,15 @@ async def _start_browser(args: Any, d: Path) -> int:
     # a filmed take reads the page's web area from the window, which a Chrome shows when launched to
     # (FP88); only that start's launch differs, and only by the one switch
     filmed = getattr(args, "pointer_motion", "off") == "filmed"
+    # the start's URL reaches the browser once, by the navigation below, which happens on every path and
+    # whose effect this start can refuse on. A browser this start has to launch (or open a window for)
+    # opens on a blank page: given the URL as well, it loaded the page and the navigation loaded it again
+    launch_url = START_LAUNCH_PAGE if args.url else None
     holder: dict[str, Any] = {}
     if bsh.enabled():
         from jevdual.browser_driver import BrowserBridge
 
-        identity = await bsh.spawn_owned(url=args.url, page_accessibility=filmed)
+        identity = await bsh.spawn_owned(url=launch_url, page_accessibility=filmed)
         holder = {k: identity[k] for k in ("boot", "pid", "start", "runtime")}
         runtime = Path(identity["runtime"])
         driver = bsh.HeldDriver()
@@ -1864,7 +1873,7 @@ async def _start_browser(args: Any, d: Path) -> int:
             raise
         launch = dict(identity.get("launch_identity") or {})
     else:
-        driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture),  # type: ignore[arg-type]
+        driver, bridge = await bind_footwork_chrome(launch_url, policy=ExecutionPolicy(posture),  # type: ignore[arg-type]
                                                     page_accessibility=filmed)
         launch = dict(getattr(bridge, "launch_identity", None) or {})
     try:
