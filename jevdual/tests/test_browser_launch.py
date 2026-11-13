@@ -126,7 +126,7 @@ def recovery(monkeypatch):
 
     driver, helper = Driver(), Process()
     monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
-    monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, None))
+    monkeypatch.setattr(browser, '_begin_chrome', lambda *_, **__: (42, None))
     monkeypatch.setattr(browser, '_incarnation', lambda pid: 1.0)
     monkeypatch.setattr(browser, '_recovery_flags', lambda pid, incarnation: [])
     monkeypatch.setattr(browser, 'chrome_pid', lambda: 42)
@@ -158,7 +158,7 @@ async def test_cancelled_bind_reaps_only_new_owned_processes(monkeypatch, recove
     monkeypatch.setattr(recovery.driver, 'list_windows', blocked)
     if new:
         recovery.helper.pid = 42
-        monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, recovery.helper))
+        monkeypatch.setattr(browser, '_begin_chrome', lambda *_, **__: (42, recovery.helper))
     task = asyncio.create_task(browser.bind_footwork_chrome())
     await began.wait()
     task.cancel()
@@ -237,7 +237,7 @@ async def test_cancelled_recovery_helper_is_reaped_but_persistent_root_survives(
 
 def test_early_browser_exit_has_no_discovered_process_cleanup_authority(monkeypatch, recovery):
     recovery.helper.status = 1
-    monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (99, recovery.helper))
+    monkeypatch.setattr(browser, '_begin_chrome', lambda *_, **__: (99, recovery.helper))
     monkeypatch.setattr(browser, 'chrome_pid', lambda: None)
     with pytest.raises(RuntimeError, match='exited'):
         browser.launch_chrome(settle_s=0)
@@ -312,7 +312,7 @@ async def test_recovery_sequences_helper_custody_before_actual_unique_root_disco
         return helper
 
     monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
-    monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, None))
+    monkeypatch.setattr(browser, '_begin_chrome', lambda *_, **__: (42, None))
     monkeypatch.setattr(browser, '_incarnation', lambda pid: 2.0 if case == 'replaced-root' and helper.status == 0 else 1.0)
     monkeypatch.setattr(browser, '_recovery_flags', lambda *_: [])
     monkeypatch.setattr(browser, 'chrome_executable', lambda: '/qualified/chromium')

@@ -620,7 +620,7 @@ def test_linux_browser_start_recovers_window_in_exact_owned_profile(world, fw, m
     opened, running = [], [False]
     monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
     monkeypatch.setattr(browser, 'launch_chrome', lambda *_: 42)
-    monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, None))
+    monkeypatch.setattr(browser, '_begin_chrome', lambda *_, **__: (42, None))
     monkeypatch.setattr(browser, 'chrome_pid', lambda: 42)
     monkeypatch.setattr(browser, 'chrome_executable', lambda: '/qualified/chromium')
     monkeypatch.setattr(browser, '_incarnation', lambda pid: 1.0, raising=False)
@@ -4075,7 +4075,7 @@ def test_browser_replacement_start_retains_real_directory_tab_and_screenshots(wo
             Path(inp.screenshot_out_file).write_bytes(b'new screenshot')
         return await original(inp)
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         bridge = NativeBridge(world, 77, 40335)
         bridge.tab_id = 'owned-browser-tab'
         return world, bridge

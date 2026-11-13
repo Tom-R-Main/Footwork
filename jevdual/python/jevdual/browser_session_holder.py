@@ -437,7 +437,7 @@ async def serve(
     return reason
 
 
-async def run(runtime: Path, *, url: str | None, idle_s: float) -> int:
+async def run(runtime: Path, *, url: str | None, idle_s: float, page_accessibility: bool = False) -> int:
     from jevdual.browser_driver import _incarnation, bind_footwork_chrome, chrome_pid
 
     wrapped: list[PrepareOnce] = []
@@ -446,7 +446,7 @@ async def run(runtime: Path, *, url: str | None, idle_s: float) -> int:
         wrapped.append(PrepareOnce(inner))
         return wrapped[-1]
 
-    driver, bridge = await bind_footwork_chrome(url, wrap_operations=wrap)
+    driver, bridge = await bind_footwork_chrome(url, wrap_operations=wrap, page_accessibility=page_accessibility)
     pid = bridge.pid
     incarnation = _incarnation(pid)
     binding = {
@@ -467,8 +467,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--runtime", required=True, help="this holder's private runtime directory")
     parser.add_argument("--url")
     parser.add_argument("--idle", type=float, default=float(os.environ.get("FOOTWORK_BROWSER_HOLDER_IDLE_S", DEFAULT_IDLE_S)))
+    parser.add_argument("--page-accessibility", action="store_true",
+                        help="launch the browser with page accessibility forced (a filmed start)")
     args = parser.parse_args(argv)
-    return asyncio.run(run(Path(args.runtime), url=args.url, idle_s=args.idle))
+    return asyncio.run(run(Path(args.runtime), url=args.url, idle_s=args.idle,
+                           page_accessibility=args.page_accessibility))
 
 
 # ---------------------------------------------------------------- client side
@@ -648,11 +651,12 @@ def holder_live(runtime: Path) -> dict[str, Any] | None:
         return None
 
 
-def spawn(*, url: str | None) -> dict[str, Any]:
+def spawn(*, url: str | None, page_accessibility: bool = False) -> dict[str, Any]:
     """Start a holder in a new runtime directory and wait until it has bound the browser.
 
     Returns its identity record, which names its runtime. Raises when it does not become ready, after
-    terminating the process it started."""
+    terminating the process it started. ``page_accessibility`` is passed to the holder's launch of the
+    browser (a filmed start); without it the holder's command is as it was."""
     import subprocess
 
     runtime = new_runtime()
@@ -661,6 +665,8 @@ def spawn(*, url: str | None) -> dict[str, Any]:
                "--runtime", str(runtime)]
     if url:
         command += ["--url", url]
+    if page_accessibility:
+        command += ["--page-accessibility"]
     log = (runtime / LOG_FILE).open("ab")
     process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=log, stderr=log,
                                start_new_session=True, env=os.environ.copy())
@@ -694,10 +700,10 @@ async def _settle(task: asyncio.Future[Any]) -> None:
             break
 
 
-async def spawn_owned(*, url: str | None) -> dict[str, Any]:
+async def spawn_owned(*, url: str | None, page_accessibility: bool = False) -> dict[str, Any]:
     """``spawn`` that a cancelled caller cannot abandon: on cancellation, however repeated, it
     waits for the spawn to finish and for the holder it produced to be retired, then re-raises."""
-    task = asyncio.ensure_future(asyncio.to_thread(spawn, url=url))
+    task = asyncio.ensure_future(asyncio.to_thread(spawn, url=url, page_accessibility=page_accessibility))
     try:
         return await asyncio.shield(task)
     except asyncio.CancelledError:

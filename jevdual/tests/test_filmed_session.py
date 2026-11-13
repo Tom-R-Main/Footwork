@@ -282,6 +282,36 @@ def test_failed_filmed_replacement_start_revokes_the_reservation_it_created(worl
     assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
 
 
+@pytest.mark.parametrize("holder", [False, True])
+@pytest.mark.parametrize("motion", ["filmed", "off"])
+async def test_only_a_filmed_browser_start_asks_for_a_launch_with_page_accessibility(monkeypatch, tmp_path, motion, holder):
+    """FP90: the switch that makes a Chrome show its page's web area is asked for by the start that
+    films, on whichever path launches the browser, and by no other start."""
+    from types import SimpleNamespace
+
+    from jevdual import browser_driver, session
+    from jevdual import browser_session_holder as bsh
+
+    asked: list[tuple[str, object]] = []
+
+    async def spawn_owned(*, url, page_accessibility=False):
+        asked.append(("holder", page_accessibility))
+        raise RuntimeError("far enough")
+
+    async def bind(url, *, policy=None, wrap_operations=None, page_accessibility=False):
+        asked.append(("direct", page_accessibility))
+        raise RuntimeError("far enough")
+
+    monkeypatch.setattr(bsh, "enabled", lambda: holder)
+    monkeypatch.setattr(bsh, "spawn_owned", spawn_owned)
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", bind)
+    args = SimpleNamespace(mode=None, url="http://127.0.0.1:1/", task="t", require="", authorize="",
+                           answer=None, pointer_motion=motion, text=0)
+    with pytest.raises(RuntimeError, match="far enough"):
+        await session._start_browser(args, tmp_path)
+    assert asked == [("holder" if holder else "direct", motion == "filmed")]
+
+
 def test_a_browser_session_films_the_pointer_over_its_own_window(world, fw, filmed, monkeypatch):
     """B7: one start --browser session binds the page and films the real pointer over the same window,
     under the same desktop reservation a native filmed take holds."""
@@ -292,7 +322,7 @@ def test_a_browser_session_films_the_pointer_over_its_own_window(world, fw, film
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": "app://Calculator"}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         bridge = NativeBridge(world, 77, 40335)
         bridge.tab_id = "owned-browser-tab"
         return world, bridge
@@ -319,7 +349,7 @@ def test_a_browser_filmed_take_needs_the_exclusive_desktop(world, fw, filmed, mo
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": "app://Calculator"}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         bridge = NativeBridge(world, 77, 40335)
         bridge.tab_id = "owned-browser-tab"
         return world, bridge
@@ -342,7 +372,7 @@ def test_a_cancelled_browser_start_releases_the_reservation_it_created(world, fw
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": "app://Calculator"}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         bridge = NativeBridge(world, 77, 40335)
         bridge.tab_id = "owned-browser-tab"
         return world, bridge
@@ -384,7 +414,7 @@ def test_a_filmed_browser_click_travels_to_the_page_target_before_the_page_click
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         wire = Wire(log)
         return wire, BrowserBridge(wire, 77, 40335, policy=policy)
 
@@ -415,7 +445,7 @@ def test_a_filmed_browser_click_on_a_covered_target_sends_nothing_and_moves_noth
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         wire = Wire(log)
         return wire, BrowserBridge(wire, 77, 40335, policy=policy)
 
@@ -451,7 +481,7 @@ def test_a_filmed_browser_click_in_a_changed_scene_sends_nothing_and_moves_nothi
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         wire = Wire(log)
         return wire, BrowserBridge(wire, 77, 40335, policy=policy)
 
@@ -478,7 +508,7 @@ def _filmed_page(monkeypatch, fw, log, **wire):
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         first = Wire(log)
         return first, BrowserBridge(first, 77, 40335, policy=policy)
 
@@ -560,7 +590,7 @@ def test_a_filmed_browser_take_needs_a_web_area(world, fw, filmed, monkeypatch):
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         wire = Wire([])
         return wire, BrowserBridge(wire, 77, 40335, policy=policy)
 
@@ -590,7 +620,7 @@ def _a_browser_start_reading(monkeypatch, readings, *, wait=0.5, refuses=0, ask_
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         wire = Wire([])
         return wire, BrowserBridge(wire, 77, 40335, policy=policy)
 

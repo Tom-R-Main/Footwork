@@ -1837,11 +1837,14 @@ async def _start_browser(args: Any, d: Path) -> int:
     posture = getattr(args, "mode", None) or "background_only"
     from jevdual import browser_session_holder as bsh
 
+    # a filmed take reads the page's web area from the window, which a Chrome shows when launched to
+    # (FP88); only that start's launch differs, and only by the one switch
+    filmed = getattr(args, "pointer_motion", "off") == "filmed"
     holder: dict[str, Any] = {}
     if bsh.enabled():
         from jevdual.browser_driver import BrowserBridge
 
-        identity = await bsh.spawn_owned(url=args.url)
+        identity = await bsh.spawn_owned(url=args.url, page_accessibility=filmed)
         holder = {k: identity[k] for k in ("boot", "pid", "start", "runtime")}
         runtime = Path(identity["runtime"])
         driver = bsh.HeldDriver()
@@ -1856,7 +1859,8 @@ async def _start_browser(args: Any, d: Path) -> int:
         launch = dict(identity.get("launch_identity") or {})
         print(f"browser holder pid {identity['pid']} keeps this session's driver")
     else:
-        driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture))  # type: ignore[arg-type]
+        driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture),  # type: ignore[arg-type]
+                                                    page_accessibility=filmed)
         launch = dict(getattr(bridge, "launch_identity", None) or {})
     try:
         state = SessionState(
@@ -1879,7 +1883,7 @@ async def _start_browser(args: Any, d: Path) -> int:
             # here whether the browser is this start's own
             print(f"footwork's Chrome pid {launch.get('pid')} started {launch.get('incarnation')!r}: "
                   + ("launched by this start" if launch.get("new_process") else "already running"))
-        if getattr(args, "pointer_motion", "off") == "filmed":
+        if filmed:
             # B7: one session films the real pointer over the same window its page operations bind
             refusal = _filmed_setup(state, args)
             if refusal:

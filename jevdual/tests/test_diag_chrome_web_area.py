@@ -16,14 +16,84 @@ import diag_chrome_web_area as diag
 from jevdual import browser_driver
 
 
-def test_footworks_own_launch_of_chrome_forces_page_accessibility():
-    """FP87: four of five live filmed starts on a Chrome launched without the switch found no web area
-    in eight seconds, and the request to show one was refused each time."""
+def test_only_a_launch_asked_to_force_page_accessibility_carries_the_switch():
+    """FP90: the switch is for a filmed start's launch. A launch not asked for it is argument for
+    argument what it was before the switch existed, and one asked for it differs by that one argument."""
     url = "http://127.0.0.1:1/"
-    for args in (browser_driver._chrome_args(url), browser_driver._chrome_args(new_window=True)):
-        assert args.count("--force-renderer-accessibility") == 1 == args.count(browser_driver.ACCESSIBILITY_SWITCH)
-    with_url = browser_driver._chrome_args(url)
-    assert with_url[-1] == url and with_url.index(browser_driver.ACCESSIBILITY_SWITCH) < with_url.index(url)
+    switch = browser_driver.ACCESSIBILITY_SWITCH
+    assert switch == "--force-renderer-accessibility"
+    before = [browser_driver.chrome_executable(), f"--user-data-dir={browser_driver.PROFILE_DIR}",
+              f"--remote-debugging-port={browser_driver.PORT}", "--remote-debugging-address=127.0.0.1",
+              "--no-first-run", "--no-default-browser-check", "--window-size=1200,900"]
+    assert browser_driver._chrome_args(url) == [*before, url]
+    assert browser_driver._chrome_args(url, new_window=True) == [*before, "--new-window", url]
+    assert browser_driver._chrome_args() == before
+    for kw in ({}, {"new_window": True}):
+        plain = browser_driver._chrome_args(url, **kw)
+        forced = browser_driver._chrome_args(url, page_accessibility=True, **kw)
+        assert switch not in plain and forced.count(switch) == 1
+        assert [arg for arg in forced if arg != switch] == plain
+        assert forced[-1] == url and forced.index(switch) < forced.index(url)
+
+
+@pytest.mark.parametrize("asked", [False, True])
+def test_the_launch_of_chrome_passes_the_switch_only_when_asked(monkeypatch, tmp_path, asked):
+    """FP90: what reaches the process is what the caller chose; the default is no switch."""
+    from jevdual import coordination
+
+    launched: list[list[str]] = []
+
+    def popen(args, **_):
+        launched.append(list(args))
+        return SimpleNamespace(pid=4243, poll=lambda: None)
+
+    monkeypatch.setattr(browser_driver, "chrome_pid", lambda: None)
+    monkeypatch.setattr(browser_driver, "PROFILE_DIR", tmp_path / "profile")
+    monkeypatch.setattr(coordination, "checkpoint", lambda: None)
+    monkeypatch.setattr(browser_driver.subprocess, "Popen", popen)
+    monkeypatch.setattr(browser_driver, "_CHROME_LAUNCHES", {})
+    url = "http://127.0.0.1:1/"
+    pid, process = browser_driver._begin_chrome(url, page_accessibility=True) if asked else browser_driver._begin_chrome(url)
+    assert pid == 4243 and process is not None
+    assert launched == [browser_driver._chrome_args(url, page_accessibility=asked)]
+    assert (browser_driver.ACCESSIBILITY_SWITCH in launched[0]) is asked
+
+
+@pytest.mark.parametrize("asked", [False, True])
+def test_the_holder_carries_the_choice_to_its_own_launch(monkeypatch, tmp_path, asked):
+    """FP90: a session's browser is usually launched by its holder, a separate process, so the choice
+    crosses a command line: spawn adds one argument, the holder's entry reads it, its bind receives it."""
+    import subprocess
+
+    from jevdual import browser_session_holder as bsh
+
+    commands: list[list[str]] = []
+
+    def popen(command, **_):
+        commands.append(list(command))
+        return SimpleNamespace(pid=4244, poll=lambda: 1, terminate=lambda: None, wait=lambda **_: 1)
+
+    runtime = tmp_path / "runtime"
+    runtime.mkdir()
+    monkeypatch.setattr(bsh, "new_runtime", lambda: runtime)
+    monkeypatch.setattr(subprocess, "Popen", popen)
+    with pytest.raises(bsh.HolderUnavailable):
+        bsh.spawn(url="http://127.0.0.1:1/", page_accessibility=True) if asked else bsh.spawn(url="http://127.0.0.1:1/")
+    command, = commands
+    tail = command[command.index("jevdual.browser_session_holder") + 1:]
+    assert tail == ["--runtime", str(runtime), "--url", "http://127.0.0.1:1/", *(["--page-accessibility"] if asked else [])]
+
+    bound: list[dict] = []
+
+    async def bind(url, **kw):
+        bound.append({"url": url, **kw})
+        raise RuntimeError("far enough")
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", bind)
+    with pytest.raises(RuntimeError, match="far enough"):
+        bsh.main(tail)
+    said, = bound
+    assert said["url"] == "http://127.0.0.1:1/" and said["page_accessibility"] is asked
 
 
 def test_a_browser_already_running_without_the_switch_is_still_footworks(monkeypatch):

@@ -253,7 +253,7 @@ async def test_a_new_launch_gets_its_own_window_before_any_recovery_window(monke
     first_list = [None]
     process = SimpleNamespace(poll=lambda: None, wait=lambda **_: 0, pid=42)
     monkeypatch.setattr(browser, "sys", SimpleNamespace(platform="darwin"))
-    monkeypatch.setattr(browser, "_begin_chrome", lambda url: (42, process if new_launch else None))
+    monkeypatch.setattr(browser, "_begin_chrome", lambda url, **_: (42, process if new_launch else None))
     monkeypatch.setattr(browser, "chrome_pid", lambda: 42)
     monkeypatch.setattr(browser, "_incarnation", lambda pid: 1.0)
     monkeypatch.setattr(browser, "_stop_launch", lambda p: None)
@@ -451,7 +451,7 @@ async def test_a_cancelled_start_retires_the_holder_its_spawn_produced(monkeypat
     identity = {"pid": 4242, "boot": "b", "start": "1.0", "runtime": "/nonexistent/runtime"}
     retired = []
 
-    def slow_spawn(*, url):
+    def slow_spawn(*, url, page_accessibility=False):
         gate.wait(5)
         return identity
 
@@ -594,7 +594,7 @@ async def test_a_refused_first_navigation_refuses_the_start(tmp_path, monkeypatc
 
     driver = FakeDriver()
 
-    async def bind(url, *, policy=None, wrap_operations=None):
+    async def bind(url, *, policy=None, wrap_operations=None, page_accessibility=False):
         return driver, Bridge()
 
     monkeypatch.setattr(browser_driver, "bind_footwork_chrome", bind)
@@ -689,7 +689,7 @@ async def test_spawn_cleanup_survives_repeated_cancellation(monkeypatch):
     identity = {"pid": 4242, "boot": "b", "start": "1.0", "runtime": "/nonexistent/runtime"}
     entered, finished = asyncio.Event(), []
 
-    def slow_spawn(*, url):
+    def slow_spawn(*, url, page_accessibility=False):
         gate.wait(5)
         return identity
 

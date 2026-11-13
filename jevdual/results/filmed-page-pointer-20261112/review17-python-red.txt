@@ -1,0 +1,22 @@
+        monkeypatch.setattr(bsh, "spawn_owned", spawn_owned)
+        monkeypatch.setattr(browser_driver, "bind_footwork_chrome", bind)
+        args = SimpleNamespace(mode=None, url="http://127.0.0.1:1/", task="t", require="", authorize="",
+                               answer=None, pointer_motion=motion, text=0)
+        with pytest.raises(RuntimeError, match="far enough"):
+            await session._start_browser(args, tmp_path)
+>       assert asked == [("holder" if holder else "direct", motion == "filmed")]
+E       AssertionError: assert [('holder', False)] == [('holder', True)]
+E         
+E         At index 0 diff: ('holder', False) != ('holder', True)
+E         Use -v to get more diff
+
+tests/test_filmed_session.py:312: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_diag_chrome_web_area.py::test_only_a_launch_asked_to_force_page_accessibility_carries_the_switch
+FAILED tests/test_diag_chrome_web_area.py::test_the_launch_of_chrome_passes_the_switch_only_when_asked[False]
+FAILED tests/test_diag_chrome_web_area.py::test_the_launch_of_chrome_passes_the_switch_only_when_asked[True]
+FAILED tests/test_diag_chrome_web_area.py::test_the_holder_carries_the_choice_to_its_own_launch[False]
+FAILED tests/test_diag_chrome_web_area.py::test_the_holder_carries_the_choice_to_its_own_launch[True]
+FAILED tests/test_filmed_session.py::test_only_a_filmed_browser_start_asks_for_a_launch_with_page_accessibility[filmed-False]
+FAILED tests/test_filmed_session.py::test_only_a_filmed_browser_start_asks_for_a_launch_with_page_accessibility[filmed-True]
+7 failed, 4 passed, 37 deselected in 2.16s
