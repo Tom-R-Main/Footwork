@@ -182,3 +182,12 @@ Test: FP19's, and: a field that is the active element of a document without focu
 Predicts: as FP19.
 Against: as FP19.
 Refs: #fp19; #fp20
+
+## FP22 · prediction · 2026-11-13 00:41
+Question: before a live window is spent on FP20, does Chrome itself behave as FP19's first point assumes, and does the page function decide the fixture's cases on Chrome's own computed styles? Thomas allowed a headless Chrome for this (no window, a temporary profile, a port it picks, ended by the script).
+Hypothesis: an isolated world made with Page.createIsolatedWorld shares the page's DOM and none of its script objects: a node resolved into it reads the browser's elementFromPoint, getBoundingClientRect and isConnected although the page replaced them on its own prototypes; the same frame and name give the same world again. Run there on the probe's fixture, the pinned page function reports Alpha located and hit, Covered and Forged covered, Clipped clipped, Turned transformed, Edge and Gamma outside the viewport, and Note unfocused until the page's script focuses it.
+Alternatives: the isolated world sees the page's replaced prototypes (then FP19's first fix does nothing and the hit test must be made by CDP alone); Chrome gives a computed style in a form the function's transform or overflow test does not expect; headless Chrome differs from a windowed one in what a document's focus is, which this run cannot settle (the live probe does).
+Test: scripts/probe_locate_world_headless.py once, with the locate5 archive pinned: it repeats the driver's CDP calls for each control of the fixture and makes the same read on the page's own object.
+Predicts: every check of its verdict holds: one world per frame and name; in the page's world Forged reads as hit and in the isolated world as covered; after the page replaces getBoundingClientRect and isConnected the page's world reports the lies and the isolated world the real rectangle and true; Clipped is clipped with its centre hit; Turned is transformed; the field is the active element after focus and has moved 40 px exactly when its document has focus. The frontmost application is the same before, during and after, and the profile is removed.
+Against: any check false; the function throwing in either world; the frontmost application changing; a Chrome or a profile left behind.
+Refs: #fp19; #fp20; scripts/probe_locate_world_headless.py
