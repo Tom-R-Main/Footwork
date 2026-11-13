@@ -15,6 +15,7 @@ import pytest
 pytest.importorskip("cua_driver")
 
 import itertools
+import json
 
 from tests.test_session_scenarios import _id, _mac_selectors, _state, fw, world  # noqa: F401
 
@@ -550,7 +551,7 @@ def test_a_filmed_click_with_nothing_to_say_prints_no_note(world, fw, filmed, mo
 def test_a_filmed_browser_take_needs_a_web_area(world, fw, filmed, monkeypatch):
     """FP9: a page position maps to the screen from the web area's origin, so a browser take whose window
     shows no web area does not start (a native take still films from the window's frame)."""
-    from jevdual import ax, browser_driver, browser_target
+    from jevdual import ax, browser_driver, browser_target, session
     from jevdual.browser_driver import BrowserBridge
     from jevdual.coordination import Coordinator
 
@@ -565,8 +566,132 @@ def test_a_filmed_browser_take_needs_a_web_area(world, fw, filmed, monkeypatch):
 
     monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
     monkeypatch.setattr(ax, "web_area_frame", lambda el: None)
+    monkeypatch.setattr(ax, "show_web_content", lambda pid: "AXManualAccessibility", raising=False)
+    monkeypatch.setattr(ax, "outline", lambda win: "'New Tab': level 1: AXGroup, AXToolbar", raising=False)
+    monkeypatch.setattr(session, "WEB_AREA_WAIT_S", 0.05, raising=False)
+    monkeypatch.setattr(session, "WEB_AREA_POLL_S", 0.01, raising=False)
     code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
                       "--pointer-motion", "filmed", "--rest", "20,40")
-    assert code == 2 and "no web area" in err, err
+    assert code == 2 and "no web area to film (asked with AXManualAccessibility, waited 0." in err, err
+    assert "the window shows 'New Tab': level 1: AXGroup, AXToolbar)" in err  # what one run needs to tell why
+    assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
+    assert not (fw.session / "session.json").exists()
+
+
+def _a_browser_start_reading(monkeypatch, readings, *, wait=0.5, refuses=False):
+    """A filmed browser start whose window gives ``readings`` of its web area in turn, the last for ever;
+    returns the readings taken, with the request to show web content where it fell among them."""
+    from jevdual import ax, browser_driver, browser_target, session
+    from jevdual.browser_driver import BrowserBridge
+
+    from tests.test_filmed_page_pointer import URL, Wire
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy):
+        wire = Wire([])
+        return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+
+    taken: list = []
+
+    def reading(el):
+        read = sum(1 for entry in taken if not isinstance(entry, tuple))
+        taken.append(readings[min(read, len(readings) - 1)])
+        return taken[-1]
+
+    def ask(pid):
+        taken.append(("asked", pid))
+        if refuses:
+            raise ax.AXError("web_content_refused", "AXManualAccessibility did not acknowledge the write (-25204)")
+        return "AXManualAccessibility"
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(ax, "web_area_frame", reading)
+    monkeypatch.setattr(ax, "show_web_content", ask, raising=False)
+    monkeypatch.setattr(ax, "outline", lambda win: "'Fixture': level 1: AXGroup", raising=False)
+    monkeypatch.setattr(session, "WEB_AREA_WAIT_S", wait, raising=False)
+    monkeypatch.setattr(session, "WEB_AREA_POLL_S", 0.01, raising=False)
+    return taken
+
+
+def test_a_filmed_browser_start_asks_a_browser_that_shows_no_web_area_and_waits_for_it(world, fw, filmed, monkeypatch):
+    """FP69, FP72: the first live start read the window of a Chrome it had launched a second before,
+    found no web area and refused. Chromium builds the accessibility tree of its page only after a
+    client opts in, which the Driver does for a native session and nothing did for this one. So start
+    asks, once, and reads again for a bounded time."""
+    from jevdual import ax
+
+    shown = ax.Frame(*CONTENT)
+    taken = _a_browser_start_reading(monkeypatch, [None, None, None, shown])
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    # asked once, straight after the first reading, of the browser it is bound to; then read until it
+    # shows, and once more to see it keep its frame
+    assert taken == [None, ("asked", 77), None, None, shown, shown]
+    assert "; web area shown after 0." in out and ", asked with AXManualAccessibility" in out
+    assert json.loads((fw.session / "session.json").read_text())["filmed"]["content"] == list(CONTENT)
+
+
+def test_a_browser_that_shows_its_web_area_already_is_not_asked(world, fw, filmed, monkeypatch):
+    """FP72: the request is a write to the application; one that shows its web area needs none."""
+    from jevdual import ax
+
+    shown = ax.Frame(*CONTENT)
+    taken = _a_browser_start_reading(monkeypatch, [shown])
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0 and taken == [shown, shown], (out, err, taken)
+    assert "; web area shown after 0." in out and "asked with" not in out
+
+
+def test_a_browser_that_refuses_the_request_does_not_start_and_says_so(world, fw, filmed, monkeypatch):
+    from jevdual.coordination import Coordinator
+
+    taken = _a_browser_start_reading(monkeypatch, [None], refuses=True)
+    code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                      "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 2 and taken == [None, ("asked", 77)], (err, taken)
+    assert "the browser was asked to show it: AXManualAccessibility did not acknowledge the write (-25204)" in err
+    assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
+    assert not (fw.session / "session.json").exists()
+
+
+def test_a_native_take_reads_its_window_once_and_asks_nothing(world, fw, filmed, monkeypatch):
+    """FP72: the wait and the request are a browser session's; a native take is as it was."""
+    from jevdual import ax
+
+    taken: list = []
+    monkeypatch.setattr(ax, "web_area_frame", lambda el: taken.append("read"))
+    monkeypatch.setattr(ax, "show_web_content", lambda pid: taken.append("asked"), raising=False)
+    _start(fw)
+    assert taken == ["read"]
+
+
+def test_a_web_area_still_moving_is_read_until_two_readings_agree(world, fw, filmed, monkeypatch):
+    """FP70: the origin is recorded once and every page position is mapped from it, so a frame read
+    while the window is still laying itself out is not the one recorded."""
+    from jevdual import ax
+
+    x, y, w, h = CONTENT
+    early, settled = ax.Frame(x, y - 40, w, h + 40), ax.Frame(*CONTENT)
+    taken = _a_browser_start_reading(monkeypatch, [None, early, settled])
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0 and taken == [None, ("asked", 77), early, settled, settled], (out, err, taken)
+    assert json.loads((fw.session / "session.json").read_text())["filmed"]["content"] == list(CONTENT)
+
+
+def test_a_web_area_that_never_keeps_one_frame_does_not_start(world, fw, filmed, monkeypatch):
+    from jevdual import ax
+    from jevdual.coordination import Coordinator
+
+    x, y, w, h = CONTENT
+    moving = [ax.Frame(x, y + n, w, h) for n in range(400)]
+    _a_browser_start_reading(monkeypatch, moving, wait=0.05)
+    code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                      "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 2 and "did not keep one frame (waited 0." in err and "the window shows 'Fixture'" in err, err
     assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
     assert not (fw.session / "session.json").exists()

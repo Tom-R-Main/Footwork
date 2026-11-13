@@ -216,6 +216,50 @@ def web_area_frame(win: Any, *, depth: int = 12) -> Frame | None:
     return found[0] if found else None
 
 
+_ATTRIBUTE_UNSUPPORTED = -25205  # kAXErrorAttributeUnsupported
+
+
+def show_web_content(pid: int) -> str:
+    """Tell a Chromium application that an assistive client is present, and return the attribute it
+    accepted. Chromium keeps the accessibility tree of its web content off until a client opts in, and
+    builds it asynchronously afterwards; a window read before that shows no AXWebArea. The Driver makes
+    the same opt-in whenever it reads a native Chromium window: AXManualAccessibility, which has no
+    screen-reader side effects, and AXEnhancedUserInterface only where the first is unsupported."""
+    from ApplicationServices import AXUIElementCreateApplication, AXUIElementSetAttributeValue
+
+    checkpoint()
+    app = AXUIElementCreateApplication(pid)
+    error = AXUIElementSetAttributeValue(app, "AXManualAccessibility", True)
+    if not error:
+        return "AXManualAccessibility"
+    if error != _ATTRIBUTE_UNSUPPORTED:
+        raise AXError("web_content_refused", f"AXManualAccessibility did not acknowledge the write ({error})")
+    error = AXUIElementSetAttributeValue(app, "AXEnhancedUserInterface", True)
+    if error:
+        raise AXError("web_content_refused", f"AXEnhancedUserInterface did not acknowledge the write ({error})")
+    return "AXEnhancedUserInterface"
+
+
+def outline(win: Any, *, depth: int = 4, limit: int = 200) -> str:
+    """What ``win`` shows, for a refusal to say: its title and the roles under it by level, counted."""
+    levels: list[dict[str, int]] = []
+    row, seen = [win], 0
+    for _ in range(depth):
+        row = [child for el in row for child in (_attr(el, "AXChildren") or [])][: limit - seen]
+        if not row:
+            break
+        seen += len(row)
+        counts: dict[str, int] = {}
+        for el in row:
+            role = str(_attr(el, "AXRole") or "?")
+            counts[role] = counts.get(role, 0) + 1
+        levels.append(counts)
+    said = "; ".join(
+        f"level {n}: " + ", ".join(f"{role} x{count}" if count > 1 else role for role, count in sorted(counts.items()))
+        for n, counts in enumerate(levels, 1))
+    return f"{str(_attr(win, 'AXTitle') or '')!r}: {said or 'no children'}"
+
+
 def web_area_at(x: float, y: float) -> tuple[int | None, bool]:
     """What a system-wide hit test finds at a screen point: the CGWindowID of the window the element
     there belongs to (None when it has none or cannot be read), and whether that element is inside a

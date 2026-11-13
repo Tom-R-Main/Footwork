@@ -1262,6 +1262,51 @@ def finish_observation(
 # ---- commands --------------------------------------------------------------------------------
 
 
+#: how long a filmed browser start waits for the window to show its web area, and how often it reads.
+#: Chromium builds the accessibility tree of its page only after a client opts in, and then
+#: asynchronously (FP69, FP72); the Driver, which opts in for a native session, allows it four seconds.
+WEB_AREA_WAIT_S = 8.0
+WEB_AREA_POLL_S = 0.1
+
+
+def _web_area_when_shown(pid: int, window_id: int) -> tuple[Any, str, str | None]:
+    """The frame of the browser window's web area, how it was got (for start to print), and why not.
+
+    A browser nothing has read through the accessibility interface shows no web area: when the first
+    reading finds none, the browser is asked once to show its web content (``ax.show_web_content``) and
+    read again for up to ``WEB_AREA_WAIT_S``. A browser that shows one already is not written to. The
+    frame is recorded once and every page position is mapped from it, so it is taken only when two
+    readings ``WEB_AREA_POLL_S`` apart agree, and one reading of a window still settling is not. The
+    window is found again for each reading: the browser rebuilds what it shows when it is asked."""
+    from jevdual import ax
+
+    began = time.monotonic()
+    last = ax.web_area_frame(ax.window_element(pid, window_id))
+    seen, asked = last is not None, None
+    if last is None:
+        try:
+            asked = ax.show_web_content(pid)
+        except ax.AXError as exc:
+            return None, "", f"the browser window shows no web area to film, and the browser was asked to show it: {exc}"
+    how = f"asked with {asked}" if asked else ""
+    while True:
+        time.sleep(WEB_AREA_POLL_S)
+        win = ax.window_element(pid, window_id)
+        found = ax.web_area_frame(win)
+        waited = time.monotonic() - began
+        if found is not None and found == last:
+            return found, f"web area shown after {waited:.1f} s" + (f", {how}" if how else ""), None
+        seen, last = seen or found is not None, found
+        if waited >= WEB_AREA_WAIT_S:
+            why = ("the browser window's web area did not keep one frame" if seen
+                   else "the browser window shows no web area to film")
+            try:
+                shows = ax.outline(win)
+            except Exception as exc:  # noqa: BLE001  (saying what the window shows helps; failing to is not the refusal)
+                shows = f"nothing readable ({type(exc).__name__})"
+            return None, "", f"{why} ({how + ', ' if how else ''}waited {waited:.1f} s; the window shows {shows})"
+
+
 def _filmed_setup(state: SessionState, args: Any) -> str | None:
     """Record a filmed take's geometry at start: the scene window, its web content origin, and the keep-out
     and rest position converted from viewport CSS px to screen points."""
@@ -1282,16 +1327,21 @@ def _filmed_setup(state: SessionState, args: Any) -> str | None:
     try:
         win = ax.window_element(state.pid, state.window_id)
         window = ax.frame_of(win)
-        web = ax.web_area_frame(win)
         keep = pair(getattr(args, "keep_out", None), 4, "--keep-out")
         rest = pair(getattr(args, "rest", None), 2, "--rest")
+        if window is None:
+            return "the scene window has no frame"
+        shown = ""
+        if state.mode == "browser":
+            # a page position maps to a screen point from the web area's origin; the window's frame is no
+            # substitute, and a browser no native session has read does not show its web area until asked
+            web, shown, refusal = _web_area_when_shown(state.pid, state.window_id)
+            if refusal:
+                return refusal
+        else:
+            web = ax.web_area_frame(win)
     except (ax.AXError, ValueError) as exc:
         return str(exc)
-    if window is None:
-        return "the scene window has no frame"
-    if web is None and state.mode == "browser":
-        # a page position maps to a screen point from the web area's origin; the window's frame is no substitute
-        return "the browser window shows no web area to film"
     content = web or window
     origin = (content.x, content.y)
     filmed = Filmed(
@@ -1310,6 +1360,7 @@ def _filmed_setup(state: SessionState, args: Any) -> str | None:
     print(
         f"filmed take: content {content.w:.0f}x{content.h:.0f} at {content.x:.0f},{content.y:.0f}; "
         f"keep-out {filmed.keep_out}; rest {filmed.rest}"
+        + (f"; {shown}" if shown else "")
     )
     return None
 

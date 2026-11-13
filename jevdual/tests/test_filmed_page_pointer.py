@@ -911,6 +911,53 @@ def test_a_changed_scene_is_named(monkeypatch, changed, why):
     assert reason and why in reason, reason
 
 
+@pytest.mark.parametrize(("answers", "accepted", "written"), [
+    ([0], "AXManualAccessibility", ["AXManualAccessibility"]),
+    # only an application without the first attribute is asked with the second
+    ([-25205, 0], "AXEnhancedUserInterface", ["AXManualAccessibility", "AXEnhancedUserInterface"]),
+    ([-25204], None, ["AXManualAccessibility"]),  # busy or refusing: not asked the other way
+    ([-25205, -25205], None, ["AXManualAccessibility", "AXEnhancedUserInterface"]),
+])
+def test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks(monkeypatch, answers, accepted, written):
+    """FP72: Chromium builds the accessibility tree of its page only after a client opts in. The write
+    is to the application of the given pid and to nothing else, and it says which attribute took."""
+    import ApplicationServices
+    from jevdual import ax
+
+    writes: list = []
+
+    def write(element, name, value):
+        writes.append((element, name, value))
+        return answers[len(writes) - 1]
+
+    monkeypatch.setattr(ApplicationServices, "AXUIElementCreateApplication", lambda pid: ("application", pid))
+    monkeypatch.setattr(ApplicationServices, "AXUIElementSetAttributeValue", write)
+    if accepted:
+        assert ax.show_web_content(77) == accepted
+    else:
+        with pytest.raises(ax.AXError, match=rf"{written[-1]} did not acknowledge the write \({answers[-1]}\)"):
+            ax.show_web_content(77)
+    assert writes == [(("application", 77), name, True) for name in written]
+
+
+def test_a_window_without_a_web_area_can_say_what_it_does_show(monkeypatch):
+    """FP72: a refusal names the roles under the window by level, so one run tells a page whose tree
+    was never built from one that is deeper than the search or in another window."""
+    from jevdual import ax
+
+    tree = {
+        "window": {"AXRole": "AXWindow", "AXTitle": "New Tab", "AXChildren": ["toolbar", "group", "other"]},
+        "toolbar": {"AXRole": "AXToolbar"},
+        "group": {"AXRole": "AXGroup", "AXChildren": ["nameless"]},
+        "other": {"AXRole": "AXGroup"},
+        "nameless": {},
+    }
+    monkeypatch.setattr(ax, "_attr", lambda el, name: tree[el].get(name))
+    assert ax.outline("window") == "'New Tab': level 1: AXGroup x2, AXToolbar; level 2: ?"
+    assert ax.outline("toolbar") == "'': no children"
+    assert ax.outline("window", limit=2) == "'New Tab': level 1: AXGroup, AXToolbar"
+
+
 def test_the_web_area_is_read_with_its_address(monkeypatch):
     from jevdual import ax
 

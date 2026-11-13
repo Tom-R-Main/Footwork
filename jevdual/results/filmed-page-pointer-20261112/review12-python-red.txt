@@ -1,0 +1,335 @@
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+..............................FFFFF..................................... [ 30%]
+........................................................................ [ 41%]
+........................................................................ [ 51%]
+..............................................FFFF.FF................... [ 61%]
+........................................................................ [ 72%]
+........................................................................ [ 82%]
+........................................................................ [ 92%]
+..................................................                       [100%]
+=================================== FAILURES ===================================
+_ test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks[answers0-AXManualAccessibility-written0] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107d08e00>
+answers = [0], accepted = 'AXManualAccessibility'
+written = ['AXManualAccessibility']
+
+    @pytest.mark.parametrize(("answers", "accepted", "written"), [
+        ([0], "AXManualAccessibility", ["AXManualAccessibility"]),
+        # only an application without the first attribute is asked with the second
+        ([-25205, 0], "AXEnhancedUserInterface", ["AXManualAccessibility", "AXEnhancedUserInterface"]),
+        ([-25204], None, ["AXManualAccessibility"]),  # busy or refusing: not asked the other way
+        ([-25205, -25205], None, ["AXManualAccessibility", "AXEnhancedUserInterface"]),
+    ])
+    def test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks(monkeypatch, answers, accepted, written):
+        """FP72: Chromium builds the accessibility tree of its page only after a client opts in. The write
+        is to the application of the given pid and to nothing else, and it says which attribute took."""
+        import ApplicationServices
+        from jevdual import ax
+    
+        writes: list = []
+    
+        def write(element, name, value):
+            writes.append((element, name, value))
+            return answers[len(writes) - 1]
+    
+        monkeypatch.setattr(ApplicationServices, "AXUIElementCreateApplication", lambda pid: ("application", pid))
+        monkeypatch.setattr(ApplicationServices, "AXUIElementSetAttributeValue", write)
+        if accepted:
+>           assert ax.show_web_content(77) == accepted
+                   ^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'jevdual.ax' has no attribute 'show_web_content'
+
+tests/test_filmed_page_pointer.py:936: AttributeError
+_ test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks[answers1-AXEnhancedUserInterface-written1] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107d099a0>
+answers = [-25205, 0], accepted = 'AXEnhancedUserInterface'
+written = ['AXManualAccessibility', 'AXEnhancedUserInterface']
+
+    @pytest.mark.parametrize(("answers", "accepted", "written"), [
+        ([0], "AXManualAccessibility", ["AXManualAccessibility"]),
+        # only an application without the first attribute is asked with the second
+        ([-25205, 0], "AXEnhancedUserInterface", ["AXManualAccessibility", "AXEnhancedUserInterface"]),
+        ([-25204], None, ["AXManualAccessibility"]),  # busy or refusing: not asked the other way
+        ([-25205, -25205], None, ["AXManualAccessibility", "AXEnhancedUserInterface"]),
+    ])
+    def test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks(monkeypatch, answers, accepted, written):
+        """FP72: Chromium builds the accessibility tree of its page only after a client opts in. The write
+        is to the application of the given pid and to nothing else, and it says which attribute took."""
+        import ApplicationServices
+        from jevdual import ax
+    
+        writes: list = []
+    
+        def write(element, name, value):
+            writes.append((element, name, value))
+            return answers[len(writes) - 1]
+    
+        monkeypatch.setattr(ApplicationServices, "AXUIElementCreateApplication", lambda pid: ("application", pid))
+        monkeypatch.setattr(ApplicationServices, "AXUIElementSetAttributeValue", write)
+        if accepted:
+>           assert ax.show_web_content(77) == accepted
+                   ^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'jevdual.ax' has no attribute 'show_web_content'
+
+tests/test_filmed_page_pointer.py:936: AttributeError
+_ test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks[answers2-None-written2] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107c499d0>
+answers = [-25204], accepted = None, written = ['AXManualAccessibility']
+
+    @pytest.mark.parametrize(("answers", "accepted", "written"), [
+        ([0], "AXManualAccessibility", ["AXManualAccessibility"]),
+        # only an application without the first attribute is asked with the second
+        ([-25205, 0], "AXEnhancedUserInterface", ["AXManualAccessibility", "AXEnhancedUserInterface"]),
+        ([-25204], None, ["AXManualAccessibility"]),  # busy or refusing: not asked the other way
+        ([-25205, -25205], None, ["AXManualAccessibility", "AXEnhancedUserInterface"]),
+    ])
+    def test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks(monkeypatch, answers, accepted, written):
+        """FP72: Chromium builds the accessibility tree of its page only after a client opts in. The write
+        is to the application of the given pid and to nothing else, and it says which attribute took."""
+        import ApplicationServices
+        from jevdual import ax
+    
+        writes: list = []
+    
+        def write(element, name, value):
+            writes.append((element, name, value))
+            return answers[len(writes) - 1]
+    
+        monkeypatch.setattr(ApplicationServices, "AXUIElementCreateApplication", lambda pid: ("application", pid))
+        monkeypatch.setattr(ApplicationServices, "AXUIElementSetAttributeValue", write)
+        if accepted:
+            assert ax.show_web_content(77) == accepted
+        else:
+            with pytest.raises(ax.AXError, match=rf"{written[-1]} did not acknowledge the write \({answers[-1]}\)"):
+>               ax.show_web_content(77)
+                ^^^^^^^^^^^^^^^^^^^
+E               AttributeError: module 'jevdual.ax' has no attribute 'show_web_content'
+
+tests/test_filmed_page_pointer.py:939: AttributeError
+_ test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks[answers3-None-written3] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107c032f0>
+answers = [-25205, -25205], accepted = None
+written = ['AXManualAccessibility', 'AXEnhancedUserInterface']
+
+    @pytest.mark.parametrize(("answers", "accepted", "written"), [
+        ([0], "AXManualAccessibility", ["AXManualAccessibility"]),
+        # only an application without the first attribute is asked with the second
+        ([-25205, 0], "AXEnhancedUserInterface", ["AXManualAccessibility", "AXEnhancedUserInterface"]),
+        ([-25204], None, ["AXManualAccessibility"]),  # busy or refusing: not asked the other way
+        ([-25205, -25205], None, ["AXManualAccessibility", "AXEnhancedUserInterface"]),
+    ])
+    def test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks(monkeypatch, answers, accepted, written):
+        """FP72: Chromium builds the accessibility tree of its page only after a client opts in. The write
+        is to the application of the given pid and to nothing else, and it says which attribute took."""
+        import ApplicationServices
+        from jevdual import ax
+    
+        writes: list = []
+    
+        def write(element, name, value):
+            writes.append((element, name, value))
+            return answers[len(writes) - 1]
+    
+        monkeypatch.setattr(ApplicationServices, "AXUIElementCreateApplication", lambda pid: ("application", pid))
+        monkeypatch.setattr(ApplicationServices, "AXUIElementSetAttributeValue", write)
+        if accepted:
+            assert ax.show_web_content(77) == accepted
+        else:
+            with pytest.raises(ax.AXError, match=rf"{written[-1]} did not acknowledge the write \({answers[-1]}\)"):
+>               ax.show_web_content(77)
+                ^^^^^^^^^^^^^^^^^^^
+E               AttributeError: module 'jevdual.ax' has no attribute 'show_web_content'
+
+tests/test_filmed_page_pointer.py:939: AttributeError
+__________ test_a_window_without_a_web_area_can_say_what_it_does_show __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107c03920>
+
+    def test_a_window_without_a_web_area_can_say_what_it_does_show(monkeypatch):
+        """FP72: a refusal names the roles under the window by level, so one run tells a page whose tree
+        was never built from one that is deeper than the search or in another window."""
+        from jevdual import ax
+    
+        tree = {
+            "window": {"AXRole": "AXWindow", "AXTitle": "New Tab", "AXChildren": ["toolbar", "group", "other"]},
+            "toolbar": {"AXRole": "AXToolbar"},
+            "group": {"AXRole": "AXGroup", "AXChildren": ["nameless"]},
+            "other": {"AXRole": "AXGroup"},
+            "nameless": {},
+        }
+        monkeypatch.setattr(ax, "_attr", lambda el, name: tree[el].get(name))
+>       assert ax.outline("window") == "'New Tab': level 1: AXGroup x2, AXToolbar; level 2: ?"
+               ^^^^^^^^^^
+E       AttributeError: module 'jevdual.ax' has no attribute 'outline'
+
+tests/test_filmed_page_pointer.py:956: AttributeError
+_________________ test_a_filmed_browser_take_needs_a_web_area __________________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x114b3eac0>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x114dc44a0>
+
+    def test_a_filmed_browser_take_needs_a_web_area(world, fw, filmed, monkeypatch):
+        """FP9: a page position maps to the screen from the web area's origin, so a browser take whose window
+        shows no web area does not start (a native take still films from the window's frame)."""
+        from jevdual import ax, browser_driver, browser_target, session
+        from jevdual.browser_driver import BrowserBridge
+        from jevdual.coordination import Coordinator
+    
+        from tests.test_filmed_page_pointer import URL, Wire
+    
+        monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+            {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+    
+        async def browser(url, policy):
+            wire = Wire([])
+            return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+    
+        monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+        monkeypatch.setattr(ax, "web_area_frame", lambda el: None)
+        monkeypatch.setattr(ax, "show_web_content", lambda pid: "AXManualAccessibility", raising=False)
+        monkeypatch.setattr(ax, "outline", lambda win: "'New Tab': level 1: AXGroup, AXToolbar", raising=False)
+        monkeypatch.setattr(session, "WEB_AREA_WAIT_S", 0.05, raising=False)
+        monkeypatch.setattr(session, "WEB_AREA_POLL_S", 0.01, raising=False)
+        code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                          "--pointer-motion", "filmed", "--rest", "20,40")
+>       assert code == 2 and "no web area to film (asked with AXManualAccessibility, waited 0." in err, err
+E       AssertionError: not starting: the browser window shows no web area to film
+E         
+E       assert (2 == 2 and 'no web area to film (asked with AXManualAccessibility, waited 0.' in 'not starting: the browser window shows no web area to film\n')
+
+tests/test_filmed_session.py:575: AssertionError
+_ test_a_filmed_browser_start_asks_a_browser_that_shows_no_web_area_and_waits_for_it _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x114b3eb60>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x114dc71d0>
+
+    def test_a_filmed_browser_start_asks_a_browser_that_shows_no_web_area_and_waits_for_it(world, fw, filmed, monkeypatch):
+        """FP69, FP72: the first live start read the window of a Chrome it had launched a second before,
+        found no web area and refused. Chromium builds the accessibility tree of its page only after a
+        client opts in, which the Driver does for a native session and nothing did for this one. So start
+        asks, once, and reads again for a bounded time."""
+        from jevdual import ax
+    
+        shown = ax.Frame(*CONTENT)
+        taken = _a_browser_start_reading(monkeypatch, [None, None, None, shown])
+        code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                            "--pointer-motion", "filmed", "--rest", "20,40")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'not starting: the browser window shows no web area to film
+E         ')
+E       assert 2 == 0
+
+tests/test_filmed_session.py:629: AssertionError
+_________ test_a_browser_that_shows_its_web_area_already_is_not_asked __________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x114d24f40>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x114dca870>
+
+    def test_a_browser_that_shows_its_web_area_already_is_not_asked(world, fw, filmed, monkeypatch):
+        """FP72: the request is a write to the application; one that shows its web area needs none."""
+        from jevdual import ax
+    
+        shown = ax.Frame(*CONTENT)
+        taken = _a_browser_start_reading(monkeypatch, [shown])
+        code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                            "--pointer-motion", "filmed", "--rest", "20,40")
+>       assert code == 0 and taken == [shown, shown], (out, err, taken)
+E       AssertionError: ("filmed take: content 300x450 at 420,330; keep-out None; rest (440.0, 370.0)
+E         bound footwork's Chrome (pid 77) window...st-1084/test_a_browser_that_shows_its_0/session to omit --session)
+E         ", '', [Frame(x=420.0, y=330.0, w=300.0, h=450.0)])
+E       assert (0 == 0 and [Frame(x=420....0.0, h=450.0)] == [Frame(x=420....0.0, h=450.0)]
+E         
+E         Right contains one more item: Frame(x=420.0, y=330.0, w=300.0, h=450.0)
+E         Use -v to get more diff)
+
+tests/test_filmed_session.py:645: AssertionError
+______ test_a_browser_that_refuses_the_request_does_not_start_and_says_so ______
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x114d262a0>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x114df7fb0>
+
+    def test_a_browser_that_refuses_the_request_does_not_start_and_says_so(world, fw, filmed, monkeypatch):
+        from jevdual.coordination import Coordinator
+    
+        taken = _a_browser_start_reading(monkeypatch, [None], refuses=True)
+        code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                          "--pointer-motion", "filmed", "--rest", "20,40")
+>       assert code == 2 and taken == [None, ("asked", 77)], (err, taken)
+E       AssertionError: ('not starting: the browser window shows no web area to film
+E         ', [None])
+E       assert (2 == 2 and [None] == [None, ('asked', 77)]
+E         
+E         Right contains one more item: ('asked', 77)
+E         Use -v to get more diff)
+
+tests/test_filmed_session.py:655: AssertionError
+________ test_a_web_area_still_moving_is_read_until_two_readings_agree _________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x114d25a80>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x114d5b410>
+
+    def test_a_web_area_still_moving_is_read_until_two_readings_agree(world, fw, filmed, monkeypatch):
+        """FP70: the origin is recorded once and every page position is mapped from it, so a frame read
+        while the window is still laying itself out is not the one recorded."""
+        from jevdual import ax
+    
+        x, y, w, h = CONTENT
+        early, settled = ax.Frame(x, y - 40, w, h + 40), ax.Frame(*CONTENT)
+        taken = _a_browser_start_reading(monkeypatch, [None, early, settled])
+        code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                            "--pointer-motion", "filmed", "--rest", "20,40")
+>       assert code == 0 and taken == [None, ("asked", 77), early, settled, settled], (out, err, taken)
+E       AssertionError: ('', 'not starting: the browser window shows no web area to film
+E         ', [None])
+E       assert (2 == 0)
+
+tests/test_filmed_session.py:682: AssertionError
+__________ test_a_web_area_that_never_keeps_one_frame_does_not_start ___________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x114d24400>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x114b81c70>
+
+    def test_a_web_area_that_never_keeps_one_frame_does_not_start(world, fw, filmed, monkeypatch):
+        from jevdual import ax
+        from jevdual.coordination import Coordinator
+    
+        x, y, w, h = CONTENT
+        moving = [ax.Frame(x, y + n, w, h) for n in range(400)]
+        _a_browser_start_reading(monkeypatch, moving, wait=0.05)
+        code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                          "--pointer-motion", "filmed", "--rest", "20,40")
+>       assert code == 2 and "did not keep one frame (waited 0." in err and "the window shows 'Fixture'" in err, err
+E       AssertionError: 
+E       assert (0 == 2)
+
+tests/test_filmed_session.py:695: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_filmed_page_pointer.py::test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks[answers0-AXManualAccessibility-written0]
+FAILED tests/test_filmed_page_pointer.py::test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks[answers1-AXEnhancedUserInterface-written1]
+FAILED tests/test_filmed_page_pointer.py::test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks[answers2-None-written2]
+FAILED tests/test_filmed_page_pointer.py::test_a_browser_is_asked_to_show_its_web_content_the_way_the_driver_asks[answers3-None-written3]
+FAILED tests/test_filmed_page_pointer.py::test_a_window_without_a_web_area_can_say_what_it_does_show
+FAILED tests/test_filmed_session.py::test_a_filmed_browser_take_needs_a_web_area
+FAILED tests/test_filmed_session.py::test_a_filmed_browser_start_asks_a_browser_that_shows_no_web_area_and_waits_for_it
+FAILED tests/test_filmed_session.py::test_a_browser_that_shows_its_web_area_already_is_not_asked
+FAILED tests/test_filmed_session.py::test_a_browser_that_refuses_the_request_does_not_start_and_says_so
+FAILED tests/test_filmed_session.py::test_a_web_area_still_moving_is_read_until_two_readings_agree
+FAILED tests/test_filmed_session.py::test_a_web_area_that_never_keeps_one_frame_does_not_start
+11 failed, 687 passed in 22.93s
