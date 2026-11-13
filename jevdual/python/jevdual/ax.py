@@ -192,16 +192,106 @@ def resolve(pid: int, window_id: int, role: str, frame: Frame | None) -> Any:
     return hits[0]
 
 
-def web_area_frame(win: Any, *, depth: int = 12) -> Frame | None:
-    """The frame of the first AXWebArea under ``win`` (a browser's content area), or None."""
+def web_area(win: Any, *, depth: int = 12) -> tuple[Frame | None, str | None] | None:
+    """The first AXWebArea under ``win`` (a browser's content area) as ``(frame, address)``, or None.
+
+    The address is the area's AXURL as text, whatever its scheme, or None when it reports none."""
     stack = [(win, 0)]
     while stack:
         el, d = stack.pop()
         if _attr(el, "AXRole") == "AXWebArea":
-            return frame_of(el)
+            raw = _attr(el, "AXURL")
+            if not isinstance(raw, str):
+                absolute = getattr(raw, "absoluteString", None)
+                raw = absolute() if callable(absolute) else None
+            return frame_of(el), (str(raw) if raw else None)
         if d < depth:
             stack.extend((c, d + 1) for c in reversed(_attr(el, "AXChildren") or []))
     return None
+
+
+def web_area_frame(win: Any, *, depth: int = 12) -> Frame | None:
+    """The frame of the first AXWebArea under ``win`` (a browser's content area), or None."""
+    found = web_area(win, depth=depth)
+    return found[0] if found else None
+
+
+_ATTRIBUTE_UNSUPPORTED = -25205  # kAXErrorAttributeUnsupported
+
+
+def show_web_content(pid: int) -> str:
+    """Tell a Chromium application that an assistive client is present, and return the attribute it
+    accepted. Chromium keeps the accessibility tree of its web content off until a client opts in, and
+    builds it asynchronously afterwards; a window read before that shows no AXWebArea. The Driver makes
+    the same opt-in whenever it reads a native Chromium window: AXManualAccessibility, which has no
+    screen-reader side effects, and AXEnhancedUserInterface only where the first is unsupported."""
+    from ApplicationServices import AXUIElementCreateApplication, AXUIElementSetAttributeValue
+
+    checkpoint()
+    app = AXUIElementCreateApplication(pid)
+    error = AXUIElementSetAttributeValue(app, "AXManualAccessibility", True)
+    if not error:
+        return "AXManualAccessibility"
+    if error != _ATTRIBUTE_UNSUPPORTED:
+        raise AXError("web_content_refused", f"AXManualAccessibility did not acknowledge the write ({error})")
+    error = AXUIElementSetAttributeValue(app, "AXEnhancedUserInterface", True)
+    if error:
+        raise AXError("web_content_refused", f"AXEnhancedUserInterface did not acknowledge the write ({error})")
+    return "AXEnhancedUserInterface"
+
+
+def outline(win: Any, *, depth: int = 4, limit: int = 200) -> str:
+    """What ``win`` shows, for a refusal to say: its title and the roles under it by level, counted."""
+    levels: list[dict[str, int]] = []
+    row, seen = [win], 0
+    for _ in range(depth):
+        row = [child for el in row for child in (_attr(el, "AXChildren") or [])][: limit - seen]
+        if not row:
+            break
+        seen += len(row)
+        counts: dict[str, int] = {}
+        for el in row:
+            role = str(_attr(el, "AXRole") or "?")
+            counts[role] = counts.get(role, 0) + 1
+        levels.append(counts)
+    said = "; ".join(
+        f"level {n}: " + ", ".join(f"{role} x{count}" if count > 1 else role for role, count in sorted(counts.items()))
+        for n, counts in enumerate(levels, 1))
+    return f"{str(_attr(win, 'AXTitle') or '')!r}: {said or 'no children'}"
+
+
+def web_area_at(x: float, y: float) -> tuple[int | None, bool]:
+    """What a system-wide hit test finds at a screen point: the CGWindowID of the window the element
+    there belongs to (None when it has none or cannot be read), and whether that element is inside a
+    web area of that window. A native surface over a page (a browser's permission bubble, another
+    application's floating window) is not inside the page's web area."""
+    import objc
+    from ApplicationServices import AXUIElementCopyElementAtPosition, AXUIElementCreateSystemWide
+
+    err, node = AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), x, y, None)
+    if err != 0 or node is None:
+        return None, False
+    in_web = False
+    for _ in range(64):
+        role = _attr(node, "AXRole")
+        if role == "AXWebArea":
+            in_web = True
+        elif role in ("AXWindow", "AXSheet"):
+            number = ctypes.c_uint32(0)
+            found = _hi()(objc.pyobjc_id(node), ctypes.byref(number)) == 0
+            return (number.value if found else None), in_web
+        elif role == "AXApplication":
+            break
+        node = _attr(node, "AXParent")
+        if node is None:
+            break
+    return None, in_web
+
+
+def is_main(win: Any) -> bool | None:
+    """Whether ``win`` is its application's main window (AXMain), or None when it does not say."""
+    value = _attr(win, "AXMain")
+    return None if value is None else bool(value)
 
 
 def labelled(win: Any, label: str, *, limit: int = 6000) -> list[tuple[str, str, Frame]]:

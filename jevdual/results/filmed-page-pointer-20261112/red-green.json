@@ -1,0 +1,30 @@
+{
+  "prediction": "FP1",
+  "driver": {
+    "base": "connected4 source (6f673125...); red tree = connected4 + the new v2 test only",
+    "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
+    "red": {
+      "log": "rust-red.txt",
+      "test": "browser::v2_tests::semantic_snapshot_reports_a_viewport_rect_only_for_main_frame_refs_in_view",
+      "outcome": "failed: every ref carries rect (ref p1:0 has no rect key)"
+    },
+    "green": {
+      "tree": "rects1 (patches/snapshot-rects.patch)",
+      "summary": [
+        "test result: ok. 1243 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 31.75s"
+      ],
+      "warnings": 0
+    }
+  },
+  "footwork": {
+    "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py",
+    "red": {
+      "tree": "main c7cac4f python/ with the new test file",
+      "log": "python-red.txt",
+      "outcome": "11 failed, 1 passed (the unfilmed control)"
+    },
+    "green": {
+      "outcome": "12 passed"
+    }
+  }
+}

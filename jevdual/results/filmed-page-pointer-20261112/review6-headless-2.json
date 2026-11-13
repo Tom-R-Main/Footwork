@@ -1,0 +1,1628 @@
+{
+ "front_pid_before": 24992,
+ "started": 1794555013.8945558,
+ "chrome_pid": 40679,
+ "front_pid_during": 24992,
+ "found": {
+  "function_sha256": "257296f77177ce87628b89244d3106ad4f8d452075d341ab8c51fbf8d97fd30d",
+  "controls": {
+   "alpha": {
+    "page_world": {
+     "rect": [
+      40,
+      60,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      40,
+      60,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     40,
+     60,
+     180,
+     60,
+     180,
+     104,
+     40,
+     104
+    ]
+   },
+   "beta": {
+    "page_world": {
+     "rect": [
+      620,
+      330,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      620,
+      330,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     620,
+     330,
+     760,
+     330,
+     760,
+     374,
+     620,
+     374
+    ]
+   },
+   "covered": {
+    "page_world": {
+     "rect": [
+      40,
+      200,
+      140,
+      44
+     ],
+     "hit": "other",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      40,
+      200,
+      140,
+      44
+     ],
+     "hit": "other",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     40,
+     200,
+     180,
+     200,
+     180,
+     244,
+     40,
+     244
+    ]
+   },
+   "forged": {
+    "page_world": {
+     "rect": [
+      620,
+      60,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      620,
+      60,
+      140,
+      44
+     ],
+     "hit": "other",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     620,
+     60,
+     760,
+     60,
+     760,
+     104,
+     620,
+     104
+    ]
+   },
+   "edge": {
+    "page_world": {
+     "rect": [
+      480,
+      791,
+      140,
+      44
+     ],
+     "hit": "none",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      480,
+      791,
+      140,
+      44
+     ],
+     "hit": "none",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     480,
+     791,
+     620,
+     791,
+     620,
+     835,
+     480,
+     835
+    ]
+   },
+   "clipped": {
+    "page_world": {
+     "rect": [
+      60,
+      330,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": true,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      60,
+      330,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": true,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     60,
+     330,
+     200,
+     330,
+     200,
+     374,
+     60,
+     374
+    ]
+   },
+   "turned": {
+    "page_world": {
+     "rect": [
+      317.6194152832031,
+      303.47198486328125,
+      144.76116943359375,
+      63.0560302734375
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": true,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      317.6194152832031,
+      303.47198486328125,
+      144.76116943359375,
+      63.0560302734375
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": true,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     323.7430419921875,
+     303.47198486328125,
+     462.3805847167969,
+     322.9562072753906,
+     456.2569580078125,
+     366.52801513671875,
+     317.6194152832031,
+     347.0437927246094
+    ]
+   },
+   "note": {
+    "page_world": {
+     "rect": [
+      620,
+      130,
+      140,
+      30
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      620,
+      130,
+      140,
+      30
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     620,
+     130,
+     760,
+     130,
+     760,
+     160,
+     620,
+     160
+    ]
+   },
+   "gamma": {
+    "page_world": {
+     "rect": [
+      240,
+      1900,
+      140,
+      44
+     ],
+     "hit": "none",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      240,
+      1900,
+      140,
+      44
+     ],
+     "hit": "none",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     240,
+     1900,
+     380,
+     1900,
+     380,
+     1944,
+     240,
+     1944
+    ]
+   }
+  },
+  "browser": "Chrome/157.0.8103.52",
+  "world": {
+   "first": 2,
+   "again": 2
+  },
+  "note_after_focus": {
+   "page_world": {
+    "rect": [
+     620,
+     170,
+     140,
+     30
+    ],
+    "hit": "target",
+    "inner": [
+     1200,
+     813
+    ],
+    "clipped": false,
+    "transformed": false,
+    "visibility": "visible",
+    "focus": [
+     true,
+     true
+    ],
+    "point": null
+   },
+   "isolated_world": {
+    "rect": [
+     620,
+     170,
+     140,
+     30
+    ],
+    "hit": "target",
+    "inner": [
+     1200,
+     813
+    ],
+    "clipped": false,
+    "transformed": false,
+    "visibility": "visible",
+    "focus": [
+     true,
+     true
+    ],
+    "point": null
+   }
+  },
+  "alpha_after_rect_replaced": {
+   "page_world": {
+    "rect": [
+     0,
+     0,
+     10,
+     10
+    ],
+    "hit": "other",
+    "inner": [
+     1200,
+     813
+    ],
+    "clipped": false,
+    "transformed": false,
+    "visibility": "visible",
+    "focus": [
+     false,
+     true
+    ],
+    "point": null
+   },
+   "isolated_world": {
+    "rect": [
+     40,
+     60,
+     140,
+     44
+    ],
+    "hit": "target",
+    "inner": [
+     1200,
+     813
+    ],
+    "clipped": false,
+    "transformed": false,
+    "visibility": "visible",
+    "focus": [
+     false,
+     true
+    ],
+    "point": null
+   }
+  },
+  "is_connected": {
+   "page_world": "forged",
+   "isolated_world": true
+  },
+  "delivery": {
+   "click_sha256": "864889985e9fecfc11107030d6555454a3ec9fc3e1465eeb9be87fccb7266482",
+   "insert_sha256": "f4d79c9c352153d536f984a7864c814d75396aac7b24029e24fe601aac506629",
+   "loaded": {
+    "rect_calls": 0,
+    "hit_calls": 0,
+    "dispatch_calls": 0,
+    "command_calls": 0,
+    "events": [],
+    "mover_top": "60px",
+    "shy_top": "160px",
+    "field": "",
+    "other": "",
+    "active": "",
+    "page_focused": true
+   },
+   "mover_rect_isolated": [
+    40,
+    60,
+    140,
+    44
+   ],
+   "click": {
+    "receipt": {
+     "complete": true,
+     "stopped": null,
+     "count": 11,
+     "last": "click",
+     "retargeted": false
+    },
+    "after": {
+     "rect_calls": 0,
+     "hit_calls": 0,
+     "dispatch_calls": 0,
+     "command_calls": 0,
+     "events": [
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      }
+     ],
+     "mover_top": "60px",
+     "shy_top": "160px",
+     "field": "",
+     "other": "",
+     "active": "mover",
+     "page_focused": true
+    },
+    "mover_rect_isolated": [
+     40,
+     60,
+     140,
+     44
+    ]
+   },
+   "click_after_move": {
+    "receipt": {
+     "complete": false,
+     "stopped": "not_under_pointer",
+     "count": 0,
+     "last": "",
+     "retargeted": false
+    },
+    "after": {
+     "rect_calls": 0,
+     "hit_calls": 0,
+     "dispatch_calls": 0,
+     "command_calls": 0,
+     "events": [
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      }
+     ],
+     "mover_top": "360px",
+     "shy_top": "160px",
+     "field": "",
+     "other": "",
+     "active": "mover",
+     "page_focused": true
+    }
+   },
+   "shy_click": {
+    "receipt": {
+     "complete": false,
+     "stopped": "left_pointer",
+     "count": 6,
+     "last": "mousemove",
+     "retargeted": false
+    },
+    "after": {
+     "rect_calls": 0,
+     "hit_calls": 0,
+     "dispatch_calls": 0,
+     "command_calls": 0,
+     "events": [
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerover",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "160px",
+       "data": null
+      }
+     ],
+     "mover_top": "360px",
+     "shy_top": "460px",
+     "field": "",
+     "other": "",
+     "active": "mover",
+     "page_focused": true
+    }
+   },
+   "insert_off_point": {
+    "receipt": {
+     "inserted": false,
+     "why": "not_under_pointer"
+    },
+    "after": {
+     "rect_calls": 0,
+     "hit_calls": 0,
+     "dispatch_calls": 0,
+     "command_calls": 0,
+     "events": [
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerover",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "160px",
+       "data": null
+      }
+     ],
+     "mover_top": "60px",
+     "shy_top": "160px",
+     "field": "",
+     "other": "",
+     "active": "field",
+     "page_focused": true
+    }
+   },
+   "insert_unfocused": {
+    "receipt": {
+     "inserted": false,
+     "why": "not_focused"
+    },
+    "after": {
+     "rect_calls": 0,
+     "hit_calls": 0,
+     "dispatch_calls": 0,
+     "command_calls": 0,
+     "events": [
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerover",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "160px",
+       "data": null
+      }
+     ],
+     "mover_top": "60px",
+     "shy_top": "160px",
+     "field": "",
+     "other": "",
+     "active": "field",
+     "page_focused": true
+    }
+   },
+   "insert": {
+    "receipt": {
+     "inserted": true,
+     "why": null
+    },
+    "after": {
+     "rect_calls": 0,
+     "hit_calls": 0,
+     "dispatch_calls": 0,
+     "command_calls": 0,
+     "events": [
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerover",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "160px",
+       "data": null
+      },
+      {
+       "type": "input",
+       "target": "field",
+       "trusted": true,
+       "x": null,
+       "y": null,
+       "top": "60px",
+       "data": "footwork"
+      }
+     ],
+     "mover_top": "60px",
+     "shy_top": "160px",
+     "field": "footwork",
+     "other": "",
+     "active": "field",
+     "page_focused": true
+    }
+   },
+   "page_world_click": {
+    "before": {
+     "rect_calls": 0,
+     "hit_calls": 0,
+     "dispatch_calls": 0,
+     "command_calls": 0,
+     "events": [
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerover",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "160px",
+       "data": null
+      },
+      {
+       "type": "input",
+       "target": "field",
+       "trusted": true,
+       "x": null,
+       "y": null,
+       "top": "60px",
+       "data": "footwork"
+      }
+     ],
+     "mover_top": "60px",
+     "shy_top": "160px",
+     "field": "footwork",
+     "other": "",
+     "active": "field",
+     "page_focused": true
+    },
+    "receipt": {
+     "complete": true,
+     "stopped": null,
+     "count": 11,
+     "last": "click",
+     "retargeted": false
+    },
+    "after": {
+     "rect_calls": 1,
+     "hit_calls": 1,
+     "dispatch_calls": 11,
+     "command_calls": 0,
+     "events": [
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerover",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "160px",
+       "data": null
+      },
+      {
+       "type": "input",
+       "target": "field",
+       "trusted": true,
+       "x": null,
+       "y": null,
+       "top": "60px",
+       "data": "footwork"
+      },
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      }
+     ],
+     "mover_top": "360px",
+     "shy_top": "160px",
+     "field": "footwork",
+     "other": "",
+     "active": "mover",
+     "page_focused": true
+    }
+   },
+   "page_world_shy_click": {
+    "before": {
+     "rect_calls": 1,
+     "hit_calls": 1,
+     "dispatch_calls": 11,
+     "command_calls": 0,
+     "events": [
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerover",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "160px",
+       "data": null
+      },
+      {
+       "type": "input",
+       "target": "field",
+       "trusted": true,
+       "x": null,
+       "y": null,
+       "top": "60px",
+       "data": "footwork"
+      },
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      }
+     ],
+     "mover_top": "360px",
+     "shy_top": "160px",
+     "field": "footwork",
+     "other": "",
+     "active": "mover",
+     "page_focused": true
+    },
+    "receipt": {
+     "complete": true,
+     "stopped": null,
+     "count": 11,
+     "last": "click",
+     "retargeted": false
+    },
+    "after": {
+     "rect_calls": 2,
+     "hit_calls": 2,
+     "dispatch_calls": 22,
+     "command_calls": 0,
+     "events": [
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 82,
+       "top": "60px",
+       "data": null
+      },
+      {
+       "type": "pointerover",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "160px",
+       "data": null
+      },
+      {
+       "type": "input",
+       "target": "field",
+       "trusted": true,
+       "x": null,
+       "y": null,
+       "top": "60px",
+       "data": "footwork"
+      },
+      {
+       "type": "pointerover",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "mover",
+       "trusted": false,
+       "x": 110,
+       "y": 382,
+       "top": "360px",
+       "data": null
+      },
+      {
+       "type": "pointerover",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "160px",
+       "data": null
+      },
+      {
+       "type": "pointerdown",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "460px",
+       "data": null
+      },
+      {
+       "type": "mousedown",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "460px",
+       "data": null
+      },
+      {
+       "type": "mouseup",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "460px",
+       "data": null
+      },
+      {
+       "type": "click",
+       "target": "shy",
+       "trusted": false,
+       "x": 110,
+       "y": 182,
+       "top": "460px",
+       "data": null
+      }
+     ],
+     "mover_top": "360px",
+     "shy_top": "460px",
+     "field": "footwork",
+     "other": "",
+     "active": "shy",
+     "page_focused": true
+    }
+   }
+  }
+ },
+ "verdict": {
+  "checks": {
+   "one world per frame and name": true,
+   "alpha is located and hit in both worlds": true,
+   "alpha is not clipped, turned or focused": true,
+   "covered is other in both worlds": true,
+   "the page's world says forged is hit": true,
+   "the isolated world says forged is covered": true,
+   "edge reaches below the viewport": true,
+   "clipped is reported clipped with its centre hit": true,
+   "turned is reported transformed": true,
+   "gamma is below the viewport": true,
+   "note is not focused before": true,
+   "note is the active element after focus": true,
+   "note moved 40 px exactly when its document has focus": true,
+   "the page's world reports the replaced rectangle": true,
+   "the isolated world reports the real rectangle": true,
+   "the isolated world reads the real isConnected": true
+  },
+  "held": true
+ },
+ "delivery_verdict": {
+  "checks": {
+   "the page's wrappers were in place and unused at load": true,
+   "the filmed click completed": true,
+   "it ran the page's click listener once, on the button": true,
+   "its press and click carried the point": true,
+   "the button did not move": true,
+   "no method the page replaced was called by the click": true,
+   "after the move the click sent nothing": true,
+   "the click on the button that moves when hovered stopped before the press": true,
+   "it reached the page as hover events only, and the button had moved": true,
+   "the field had focus for the inserts": true,
+   "the insert with the point off the field left it empty": true,
+   "the insert into the field without focus left it empty": true,
+   "the insert put the text in": true,
+   "with one input event on the field": true,
+   "no method the page replaced was called by the inserts": true,
+   "control: the page-world click called the page's wrapper": true,
+   "control: and was delivered to the button 300 px from where it was": true,
+   "control: without the check the button that moved when hovered is pressed and clicked": true
+  },
+  "held": true,
+  "page_focused": true,
+  "input_events": [
+   [
+    "input",
+    true,
+    "footwork"
+   ]
+  ]
+ },
+ "chrome_exit": 0,
+ "profile_removed": true,
+ "front_pid_after": 24992
+}

@@ -1,0 +1,24 @@
+{
+  "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
+  "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
+  "base_archive_sha256": "6f673125f9bece9777ef01c42575a93911153c37a19780f02cd40ef68d2fb94a",
+  "patched_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
+  "patch_sha256": "89cec25f6e8a21eea0698d7dfda631b0df1f9e55f7c46c62e181b3f47865b0c0",
+  "files": {
+    "libs/cua-driver/rust/crates/cua-driver-core/src/browser/cdp_ws.rs": {
+      "before": "181304de78c5d0907786d5a0d65e5012d6e4aeef2654446117b6dbac90b2ffd3",
+      "after": "9cf9ab81247dcd11b75bfda18e798ddfaa20423acb9852fd8066afe170d5d6ce"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs": {
+      "before": "0296798424f2fc9197d35849936dbc91fc5dff71d59a322ef3c20b7433409ce4",
+      "after": "6bf712ad28a18688d5a639c4b74b87317d64da475abc735fb21e5b843c42f411"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs": {
+      "before": "cf2f59d4f53de9f3c65d20c0c2c66221fed95ead0d1b4d8a42b9f71621f8b4c6",
+      "after": "df7fcb7e49f6f579d0b895e8f9a8feebdf5efdd15d4888cd067d86f9f48909f5"
+    }
+  },
+  "abi": "unchanged six Python binding files; get_browser_state gains a read-only locate_ref mode with an optional locate_point, read in an isolated world; browser_click and browser_type gain an optional filmed_point that checks and delivers in one isolated-world turn; a click that carries a filmed_point is admitted on a semantic ref that declares typing",
+  "toolchain": "1.97.1"
+}

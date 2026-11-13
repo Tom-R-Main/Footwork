@@ -1,0 +1,32 @@
+{
+ "tree": "the click sequence pinned at 47bf4bb (locate7)",
+ "cells": 437,
+ "cells_that_differ_from_the_rule": 183,
+ "events_sent_to_an_element_not_under_the_pointer": {
+  "pointerenter": 28,
+  "mouseover": 56,
+  "mouseenter": 84,
+  "pointermove": 112,
+  "mousemove": 140,
+  "focus()": 12,
+  "click": 4
+ },
+ "cells_with_such_an_event_from_the_press_on": [
+  "icon covered at 8",
+  "icon cursor_image at 8",
+  "icon cursor_none at 8",
+  "icon moved at 8",
+  "icon nothing_there at 8",
+  "icon onto_control at 10",
+  "icon pointer_lock at 8",
+  "icon sibling at 10",
+  "icon/cancelled onto_control at 8",
+  "icon/cancelled sibling at 8",
+  "target covered at 8",
+  "target cursor_image at 8",
+  "target cursor_none at 8",
+  "target moved at 8",
+  "target nothing_there at 8",
+  "target pointer_lock at 8"
+ ]
+}

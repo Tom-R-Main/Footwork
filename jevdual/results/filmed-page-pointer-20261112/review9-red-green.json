@@ -1,0 +1,81 @@
+{
+ "predictions": {
+  "FP53": "held",
+  "FP55": "held",
+  "FP56": "held"
+ },
+ "open": [
+  "FP54 (the live probe, revising FP46; needs a granted screen window)"
+ ],
+ "coverage": {
+  "document": "review9-invariant-matrix.md",
+  "invariant": "everything a filmed click does to the page (it dispatches events and it gives focus) goes to an element that is under the pointer in the same turn, immediately before, and is the ref's node or inside it (vendor/cua-driver/PROVENANCE.md, Filmed delivery)",
+  "sequence": "tests/test_filmed_click_invariant.py: 1178 cells = boundary x disturbance x start x press x where the nearest focusable element of the pressed one is (the control, the pressed element, a container of the control, nowhere). Per cell: the receipt and events equal the oracle's; the stand-in page, judging the focus by the same whole check as an event, saw nothing go to an element not under the pointer or not in the node; the unfilmed sequence sent what the source with the step's patch reversed sends.",
+  "calls": "the same file reads the text of every page function a filmed action runs (the click sequence, the insert, the locate read, the connected check, the click's readback) and requires every method call in it to be named as one that reads or one that acts, each acting call made once in the statement that checks its receiver, with no property assignment and no computed call; and requires those five to be every function text the driver defines apart from four the filmed routes do not reach.",
+  "reporting": "tests/test_filmed_outcome_reporting.py: the 27 rows of the eighth round, and one completed click with something to say (its press gave no focus), from the driver's text to the command's 'filmed take:' line.",
+  "page_log": "tests/test_probe_filmed_page_pointer.py: each record's time is an interval from its own post and the records around it; an action record must be placed within 20 ms and lie wholly inside one step; the samples must hold over the whole interval; the log must be whole through a fence the page made because the probe asked for it after the last step's interval closed."
+ },
+ "footwork": {
+  "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_probe_filmed_page_pointer.py tests/test_filmed_session.py tests/test_locate_page_function.py tests/test_filmed_delivery_functions.py tests/test_browser_session_holder.py tests/test_filmed_click_invariant.py tests/test_filmed_outcome_reporting.py",
+  "red": [
+   {
+    "tree": "the click sequence pinned at 4fadb53 (locate8) under tests/test_filmed_click_invariant.py",
+    "log": "review9-matrix-red.txt",
+    "summary": "review9-matrix-red-summary.json",
+    "outcome": "5 of 14 tests fail. In 100 of the 247 cells with a container focusable the focus was given to the container: every such cell in which the press is sent and the sequence reaches the focus. 320 cells differ from the rule: those 100, and 220 whose completed receipt lacks the new field and nothing else. The call audit fails on the click sequence (the focus is not in the statement that checks its receiver). The nine that pass: the matrix's shape, the unfilmed comparison, where a stopped click stops, that every outcome is reached, the audit of the four functions this change does not touch, and the list of functions."
+   },
+   {
+    "tree": "4fadb53 (python/, scripts/ and the pinned locate8 archive) with four test files of this change copied in",
+    "log": "review9-python-red.txt",
+    "outcome": "50 failed, 606 passed. Of 19 tests added, 14 fail: the focus test and the click sequence's call audit; the completed click that says its press gave no focus; and 11 of the probe (a record across a step's start and its end, an action record answered late and one never answered, a record placed by one made at the same page time, the samples over the whole interval, a fence asked for too early, a number missing before the fence, no fence, a suffix lost before the fence, a fence made unasked). 5 pass before by design: the audits of the insert, the locate read, the connected check and the readback, which this change does not touch, and the list of functions. Of the existing tests 36 fail, changed with the rule."
+   }
+  ],
+  "changed_with_the_rule": [
+   "tests/test_filmed_click_invariant.py (3): the oracle and the cells carry where the focusable element is, and a completed filmed receipt says unfocused",
+   "tests/test_filmed_delivery_functions.py (11): a completed filmed receipt carries unfocused: false",
+   "tests/test_filmed_outcome_reporting.py (1): the completed outcome carries one field, which has its note",
+   "tests/test_probe_filmed_page_pointer.py (21): the verdict's log names ambiguous records and the fence, where it named a record after the last step; composed runs carry the fence and the time it was asked for"
+  ],
+  "replaced": [
+   "test_the_dispatch_function_is_the_only_place_an_event_is_sent, by the call audit",
+   "the composed run with no record after the last step, by the three runs without a usable fence"
+  ],
+  "green": {
+   "focused": "656 passed (720 with the pin, chain and seam tests)",
+   "offline_suite": "PYTHONPATH=python .venv/bin/python -m pytest -q -m \"not browser\" -p no:cacheprovider --ignore=tests/live: 4106 passed, 52 skipped, 61 deselected",
+   "lint": ".venv/bin/ruff check python scripts tests: clean"
+  }
+ },
+ "driver": {
+  "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
+  "red": {
+   "tree": "the updated v2_tests.rs against the tools.rs that 4fadb53 pinned",
+   "log": "review9-rust-red.txt",
+   "outcome": "2 failed, 1272 passed: the text of a completed click that gave no focus, and the statement that checks the element it focuses. The receipt's own test is inside tools.rs and cannot be run against the older file."
+  },
+  "green": "1274 passed, 2 ignored",
+  "archive": {
+   "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate9",
+   "sha256": "ff12d6a7ac5cc4056e6d7a3f689fbb89e9f7fbceb9ec750186155b609ef19817",
+   "bytes": 6430273,
+   "chain": "scripts/cua_source_chain.py rebuilds it byte for byte from the focus1 base",
+   "installed": "the venv's cua-driver is this version"
+  }
+ },
+ "headless": {
+  "command": "PYTHONPATH=python .venv/bin/python scripts/probe_locate_world_headless.py --out <fresh dir>",
+  "runs": [
+   {
+    "log": "review9-headless-focus.json",
+    "prediction": "FP55",
+    "outcome": "16 and 33 held as first run. A control that is not focusable inside a row with a tabindex: the filmed click sent it the whole sequence, the active element stayed the field it was, and the receipt said unfocused; without a point the same click focused the row. A node holding a button, with the point on the button: the button was focused."
+   },
+   {
+    "log": "review9-headless-selection.json",
+    "prediction": "FP56",
+    "outcome": "16 and 36 held as first run. With the selection put in another editable region Chrome made that region the active element and the insert on the first was refused not_focused; with it in text that cannot be edited the command inserted nothing (command_refused). Neither region changed."
+   }
+  ],
+  "each_run": "Chrome 157 headless, temporary profile; Chrome exited 0, the profile was removed, the frontmost application did not change"
+ }
+}

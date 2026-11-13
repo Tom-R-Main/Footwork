@@ -1,0 +1,618 @@
+{
+ "front_pid_before": 9555,
+ "started": 1794551786.663855,
+ "chrome_pid": 12932,
+ "front_pid_during": 9555,
+ "found": {
+  "function_sha256": "257296f77177ce87628b89244d3106ad4f8d452075d341ab8c51fbf8d97fd30d",
+  "controls": {
+   "alpha": {
+    "page_world": {
+     "rect": [
+      40,
+      60,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      40,
+      60,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     40,
+     60,
+     180,
+     60,
+     180,
+     104,
+     40,
+     104
+    ]
+   },
+   "beta": {
+    "page_world": {
+     "rect": [
+      620,
+      330,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      620,
+      330,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     620,
+     330,
+     760,
+     330,
+     760,
+     374,
+     620,
+     374
+    ]
+   },
+   "covered": {
+    "page_world": {
+     "rect": [
+      40,
+      200,
+      140,
+      44
+     ],
+     "hit": "other",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      40,
+      200,
+      140,
+      44
+     ],
+     "hit": "other",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     40,
+     200,
+     180,
+     200,
+     180,
+     244,
+     40,
+     244
+    ]
+   },
+   "forged": {
+    "page_world": {
+     "rect": [
+      620,
+      60,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      620,
+      60,
+      140,
+      44
+     ],
+     "hit": "other",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     620,
+     60,
+     760,
+     60,
+     760,
+     104,
+     620,
+     104
+    ]
+   },
+   "edge": {
+    "page_world": {
+     "rect": [
+      480,
+      791,
+      140,
+      44
+     ],
+     "hit": "none",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      480,
+      791,
+      140,
+      44
+     ],
+     "hit": "none",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     480,
+     791,
+     620,
+     791,
+     620,
+     835,
+     480,
+     835
+    ]
+   },
+   "clipped": {
+    "page_world": {
+     "rect": [
+      60,
+      330,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": true,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      60,
+      330,
+      140,
+      44
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": true,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     60,
+     330,
+     200,
+     330,
+     200,
+     374,
+     60,
+     374
+    ]
+   },
+   "turned": {
+    "page_world": {
+     "rect": [
+      317.6194152832031,
+      303.47198486328125,
+      144.76116943359375,
+      63.0560302734375
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": true,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      317.6194152832031,
+      303.47198486328125,
+      144.76116943359375,
+      63.0560302734375
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": true,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     323.7430419921875,
+     303.47198486328125,
+     462.3805847167969,
+     322.9562072753906,
+     456.2569580078125,
+     366.52801513671875,
+     317.6194152832031,
+     347.0437927246094
+    ]
+   },
+   "note": {
+    "page_world": {
+     "rect": [
+      620,
+      130,
+      140,
+      30
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      620,
+      130,
+      140,
+      30
+     ],
+     "hit": "target",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     620,
+     130,
+     760,
+     130,
+     760,
+     160,
+     620,
+     160
+    ]
+   },
+   "gamma": {
+    "page_world": {
+     "rect": [
+      240,
+      1900,
+      140,
+      44
+     ],
+     "hit": "none",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "isolated_world": {
+     "rect": [
+      240,
+      1900,
+      140,
+      44
+     ],
+     "hit": "none",
+     "inner": [
+      1200,
+      813
+     ],
+     "clipped": false,
+     "transformed": false,
+     "visibility": "visible",
+     "focus": [
+      false,
+      true
+     ],
+     "point": null
+    },
+    "border_quad": [
+     240,
+     1900,
+     380,
+     1900,
+     380,
+     1944,
+     240,
+     1944
+    ]
+   }
+  },
+  "browser": "Chrome/157.0.8103.52",
+  "world": {
+   "first": 2,
+   "again": 2
+  },
+  "note_after_focus": {
+   "page_world": {
+    "rect": [
+     620,
+     170,
+     140,
+     30
+    ],
+    "hit": "target",
+    "inner": [
+     1200,
+     813
+    ],
+    "clipped": false,
+    "transformed": false,
+    "visibility": "visible",
+    "focus": [
+     true,
+     true
+    ],
+    "point": null
+   },
+   "isolated_world": {
+    "rect": [
+     620,
+     170,
+     140,
+     30
+    ],
+    "hit": "target",
+    "inner": [
+     1200,
+     813
+    ],
+    "clipped": false,
+    "transformed": false,
+    "visibility": "visible",
+    "focus": [
+     true,
+     true
+    ],
+    "point": null
+   }
+  },
+  "alpha_after_rect_replaced": {
+   "page_world": {
+    "rect": [
+     0,
+     0,
+     10,
+     10
+    ],
+    "hit": "other",
+    "inner": [
+     1200,
+     813
+    ],
+    "clipped": false,
+    "transformed": false,
+    "visibility": "visible",
+    "focus": [
+     false,
+     true
+    ],
+    "point": null
+   },
+   "isolated_world": {
+    "rect": [
+     40,
+     60,
+     140,
+     44
+    ],
+    "hit": "target",
+    "inner": [
+     1200,
+     813
+    ],
+    "clipped": false,
+    "transformed": false,
+    "visibility": "visible",
+    "focus": [
+     false,
+     true
+    ],
+    "point": null
+   }
+  },
+  "is_connected": {
+   "page_world": "forged",
+   "isolated_world": true
+  }
+ },
+ "verdict": {
+  "checks": {
+   "one world per frame and name": true,
+   "alpha is located and hit in both worlds": true,
+   "alpha is not clipped, turned or focused": true,
+   "covered is other in both worlds": true,
+   "the page's world says forged is hit": true,
+   "the isolated world says forged is covered": true,
+   "edge reaches below the viewport": true,
+   "clipped is reported clipped with its centre hit": true,
+   "turned is reported transformed": true,
+   "gamma is below the viewport": true,
+   "note is not focused before": true,
+   "note is the active element after focus": true,
+   "note moved 40 px exactly when its document has focus": true,
+   "the page's world reports the replaced rectangle": true,
+   "the isolated world reports the real rectangle": true,
+   "the isolated world reads the real isConnected": true
+  },
+  "held": true
+ },
+ "chrome_exit": 0,
+ "profile_removed": true,
+ "front_pid_after": 9555
+}

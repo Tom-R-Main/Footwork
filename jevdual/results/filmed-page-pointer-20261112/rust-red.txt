@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 36.13s
+
+running 1 test
+test browser::v2_tests::semantic_snapshot_reports_a_viewport_rect_only_for_main_frame_refs_in_view ... FAILED
+
+failures:
+
+---- browser::v2_tests::semantic_snapshot_reports_a_viewport_rect_only_for_main_frame_refs_in_view stdout ----
+
+thread 'browser::v2_tests::semantic_snapshot_reports_a_viewport_rect_only_for_main_frame_refs_in_view' (148920413) panicked at crates/cua-driver-core/src/browser/v2_tests.rs:2205:32:
+every ref carries rect: {"actions":["type","pointer"],"frame":"oopif","name":"Embedded input","ref":"p1:0","role":"textbox","states":{"editable":"plaintext"},"value":null,"visibility":"in_viewport"}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    browser::v2_tests::semantic_snapshot_reports_a_viewport_rect_only_for_main_frame_refs_in_view
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1243 filtered out; finished in 0.12s
+
+error: test failed, to rerun pass `-p cua-driver-core --lib`
+exit 101 min_free_kib=19879652 end_free_kib=19878652 16:33:19

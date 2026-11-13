@@ -1,0 +1,59 @@
+{
+ "summary": {
+  "first_seen_s": {
+   "bare": null,
+   "bare_asked": null,
+   "forced": 0.41
+  },
+  "forced_shows_a_web_area": true,
+  "bare_shows_none": true,
+  "every_browser_closed": true
+ },
+ "front": [
+  74505,
+  74505
+ ],
+ "asks": {
+  "bare_asked": [
+   {
+    "t": 0.0,
+    "answers": [
+     {
+      "attribute": "AXManualAccessibility",
+      "settable_error": -25204,
+      "settable": false,
+      "set_error": -25204
+     },
+     {
+      "attribute": "AXEnhancedUserInterface",
+      "settable_error": -25204,
+      "settable": false,
+      "set_error": -25204
+     }
+    ]
+   },
+   {
+    "t": 1.08,
+    "answers": [
+     {
+      "attribute": "AXManualAccessibility",
+      "settable_error": -25205,
+      "settable": false,
+      "set_error": -25205
+     },
+     {
+      "attribute": "AXEnhancedUserInterface",
+      "settable_error": 0,
+      "settable": true,
+      "set_error": -25208
+     }
+    ]
+   }
+  ]
+ },
+ "windows": {
+  "bare": "'Footwork web area diagnostic - Google Chrome': level 1: AXButton x3, AXGroup; level 2: AXGroup x2; level 3: AXGroup x2; level 4: AXGroup; level 5: AXGroup x4; level 6: AXButton, AXGroup x5, AXToolbar; level 7: AXButton x4, AXGroup x3, AXPopUpButton x2, AXTabGroup; level 8: AXGroup, AXPopUpButton, AXRadioButton, AXTextField",
+  "bare_asked": "'Footwork web area diagnostic - Google Chrome': level 1: AXButton x3, AXGroup; level 2: AXGroup x2; level 3: AXGroup x2; level 4: AXGroup; level 5: AXGroup x4; level 6: AXButton, AXGroup x5, AXToolbar; level 7: AXButton x4, AXGroup x3, AXPopUpButton x2, AXTabGroup; level 8: AXGroup, AXPopUpButton, AXRadioButton, AXTextField",
+  "forced": "'Footwork web area diagnostic - Google Chrome': level 1: AXButton x3, AXGroup; level 2: AXGroup x2; level 3: AXGroup; level 4: AXGroup; level 5: AXGroup x4; level 6: AXButton, AXGroup x5, AXToolbar; level 7: AXButton x4, AXGroup x3, AXPopUpButton x2, AXScrollArea, AXTabGroup; level 8: AXGroup, AXPopUpButton, AXRadioButton, AXTextField, AXWebArea"
+ }
+}

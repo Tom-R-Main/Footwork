@@ -1,0 +1,24 @@
+{
+ "a_sampler_that_stalled_for_80_ms_across_the_click": {
+  "run_held": true,
+  "alpha_held": true
+ },
+ "a_click_the_page_saw_no_release_of": {
+  "run_held": true,
+  "alpha_held": true
+ },
+ "a_click_whose_events_came_in_another_order": {
+  "run_held": true,
+  "alpha_held": true
+ },
+ "a_press_sent_while_the_pointer_was_still_travelling": {
+  "run_held": true,
+  "alpha_held": true
+ },
+ "page_events_logged": [
+  "pointerdown",
+  "mousedown",
+  "mouseup",
+  "click"
+ ]
+}

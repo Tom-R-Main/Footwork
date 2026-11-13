@@ -1,0 +1,75 @@
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+..................................................................FFF... [ 30%]
+........................................................................ [ 41%]
+........................................................................ [ 51%]
+........................................................................ [ 61%]
+........................................................................ [ 71%]
+........................................................................ [ 82%]
+........................................................................ [ 92%]
+.....................................................                    [100%]
+=================================== FAILURES ===================================
+_ test_a_document_the_launch_opened_before_the_one_the_steps_ran_in_does_not_fail_the_run _
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-<user>/pytest-1089/test_a_document_the_launch_ope0')
+
+    def test_a_document_the_launch_opened_before_the_one_the_steps_ran_in_does_not_fail_the_run(tmp_path):
+        """FP73, FP74: a start that launches the browser opens the page and then navigates to it. Two records
+        of loading and numbers that begin again failed a correct run; each record now names its document and
+        the one that loaded last is the one read."""
+        verdict = probe.analyze(_run(tmp_path, page=_an_earlier_document()))
+        log = verdict["page_log"]
+>       assert verdict["held"] is True and log["held"] is True and verdict["clock"]["held"] is True
+E       assert (False is True)
+
+tests/test_probe_filmed_page_pointer.py:597: AssertionError
+_ test_another_document_still_posting_or_acted_on_or_loaded_under_the_steps_fails_the_run _
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-<user>/pytest-1089/test_another_document_still_po0')
+
+    def test_another_document_still_posting_or_acted_on_or_loaded_under_the_steps_fails_the_run(tmp_path):
+        """FP74: an earlier document may have loaded and idled. One whose record arrives once the steps have
+        begun, or that something was done to, or a page that loads again after the steps, is not that."""
+        def says(verdict, which):
+            log = verdict["page_log"]
+            assert verdict["held"] is False and log["held"] is False and log["one_document_under_the_steps"] is False
+            assert [name for name, value in log["other_documents"].items() if value is False] == which
+    
+        late = probe.analyze(_run(tmp_path / "late", page=_an_earlier_document(beat_received=1000.2)))
+>       says(late, ["all_received_before_the_first_step"])
+
+tests/test_probe_filmed_page_pointer.py:616: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+verdict = {'steps': [{'label': 'Alpha', 'op': 'click', 'expect': 'clicked', 'exit': 0, ...}, {'label': 'Beta', 'op': 'trusted', ...lling': True, 'clock': {'low_s': 0.897, 'high_s': 0.003, 'width_s': -0.894, 'offset_s': 0.44999999999998863, ...}, ...}
+which = ['all_received_before_the_first_step']
+
+    def says(verdict, which):
+        log = verdict["page_log"]
+>       assert verdict["held"] is False and log["held"] is False and log["one_document_under_the_steps"] is False
+                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'one_document_under_the_steps'
+
+tests/test_probe_filmed_page_pointer.py:612: KeyError
+______ test_a_record_that_names_no_document_is_read_as_the_documents_own _______
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-<user>/pytest-1089/test_a_record_that_names_no_do0')
+
+    def test_a_record_that_names_no_document_is_read_as_the_documents_own(tmp_path):
+        """FP74: a record without a name is judged with the document under test and not set aside with
+        another's, so leaving the name off cannot take a record out of the account."""
+        def unnamed(rows):
+            for row in rows[1:]:
+                del row["doc"]
+    
+        verdict = probe.analyze(_run(tmp_path, page=unnamed))
+>       assert verdict["held"] is True and verdict["page_log"]["other_documents"]["records"] == 0
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'other_documents'
+
+tests/test_probe_filmed_page_pointer.py:637: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_document_the_launch_opened_before_the_one_the_steps_ran_in_does_not_fail_the_run
+FAILED tests/test_probe_filmed_page_pointer.py::test_another_document_still_posting_or_acted_on_or_loaded_under_the_steps_fails_the_run
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_that_names_no_document_is_read_as_the_documents_own
+3 failed, 698 passed in 28.85s

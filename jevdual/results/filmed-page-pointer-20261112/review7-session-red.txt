@@ -1,0 +1,7 @@
+# FP38: the working tree with python/jevdual/session.py as it was at 720550d (unchanged since 287da1f)
+# PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider -rA tests/test_filmed_session.py
+FAILED tests/test_filmed_session.py::test_a_click_that_stopped_after_its_press_is_said_by_the_command
+FAILED tests/test_filmed_session.py::test_a_scene_found_changed_when_the_click_returned_is_said_by_the_command
+PASSED tests/test_filmed_session.py::test_a_click_refused_after_its_own_hover_events_is_said_by_the_command
+PASSED tests/test_filmed_session.py::test_a_filmed_click_with_nothing_to_say_prints_no_note
+2 failed, 25 passed in 1.73s

@@ -15,17 +15,18 @@ SPEC = importlib.util.spec_from_file_location("cua_source_chain", ROOT / "script
 CHAIN = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(CHAIN)
 VENDOR = ROOT / "vendor/cua-driver"
+LAST = CHAIN.STEPS[-1]
 
 
 def _patched_vendor(tmp_path: Path, record_change: dict) -> Path:
-    """A vendor copy whose connected-click manifest differs, for the refusal tests."""
+    """A vendor copy whose last step's manifest differs, for the refusal tests."""
     vendor = tmp_path / "vendor"
     (vendor / "patches").mkdir(parents=True)
     shutil.copy2(VENDOR / "build_support.py", vendor / "build_support.py")
     for step in CHAIN.STEPS:
         for suffix in (".json", ".patch"):
             shutil.copy2(VENDOR / f"patches/{step}{suffix}", vendor / f"patches/{step}{suffix}")
-    path = vendor / "patches/connected-click.json"
+    path = vendor / f"patches/{LAST}.json"
     path.write_text(json.dumps({**json.loads(path.read_text()), **record_change}))
     return vendor
 
@@ -49,17 +50,17 @@ def test_the_last_step_does_not_reapply_to_the_pinned_archive():
 
 def test_a_step_refuses_a_base_or_patch_with_another_hash(tmp_path):
     record = CHAIN.manifests()[-1]
-    patch = VENDOR / "patches/connected-click.patch"
+    patch = VENDOR / f"patches/{LAST}.patch"
     with pytest.raises(ValueError, match="base archive checksum mismatch"):
         CHAIN.apply_step(b"not the base", patch, record)
-    altered = tmp_path / "connected-click.patch"
+    altered = tmp_path / f"{LAST}.patch"
     altered.write_bytes(patch.read_bytes() + b"\n")
     with pytest.raises(ValueError, match="patch checksum mismatch"):
         CHAIN.apply_step(b"", altered, {**record, "base_archive_sha256": hashlib.sha256(b"").hexdigest()})
 
 
 def test_a_step_whose_result_differs_from_its_record_is_refused(tmp_path):
-    """Rebuild the helptag1 base from the pinned archive by reversing the last step, then check that
+    """Rebuild the last step's base from the pinned archive by reversing the last step, then check that
     a manifest recording another result refuses the rebuilt archive."""
     import subprocess
     import tarfile
@@ -69,7 +70,7 @@ def test_a_step_whose_result_differs_from_its_record_is_refused(tmp_path):
     source = tmp_path / "source"
     support.extract_source(VENDOR / "native-source.tar.gz", source)
     subprocess.run(["patch", "--batch", "--reverse", "--silent", "-p1", "-i",
-                    str(VENDOR / "patches/connected-click.patch")], cwd=source, check=True)
+                    str(VENDOR / f"patches/{LAST}.patch")], cwd=source, check=True)
     for name, hashes in record["files"].items():
         assert hashlib.sha256((source / name).read_bytes()).hexdigest() == hashes["before"]
     import gzip
@@ -93,7 +94,7 @@ def test_a_step_whose_result_differs_from_its_record_is_refused(tmp_path):
             bundle.addfile(info, io.BytesIO(content))
     base = memory.getvalue()
     assert hashlib.sha256(base).hexdigest() == record["base_archive_sha256"]
-    rebuilt = CHAIN.apply_step(base, VENDOR / "patches/connected-click.patch", record)
+    rebuilt = CHAIN.apply_step(base, VENDOR / f"patches/{LAST}.patch", record)
     assert rebuilt == (VENDOR / "native-source.tar.gz").read_bytes()
     vendor = _patched_vendor(tmp_path, {"patched_archive_sha256": "0" * 64})
     with pytest.raises(ValueError, match="patched archive checksum mismatch"):

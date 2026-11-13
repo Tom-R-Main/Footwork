@@ -1,0 +1,139 @@
+............FFFFF.........................                               [100%]
+=================================== FAILURES ===================================
+_ test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[moved-on-pointerover] _
+
+on = {'event': 'pointerover', 'then': {'rect': [60, 630, 140, 44]}}
+left_after = 'mousemove'
+
+    @pytest.mark.parametrize(("on", "left_after"), [
+        ({"event": "pointerover", "then": MOVED}, "mousemove"),
+        ({"event": "mousemove", "then": MOVED}, "mousemove"),
+        ({"event": "mouseenter", "then": {"hit": "other"}}, "mousemove"),
+        ({"event": "pointermove", "then": {"hit": "none"}}, "mousemove"),
+    ], ids=["moved-on-pointerover", "moved-on-mousemove", "covered-on-mouseenter", "gone-from-under-on-pointermove"])
+    def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on, left_after):
+        """FP30: page listeners run on the six hover and move events; the point is checked again in the
+        same turn as the press. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, "on": on}, {"on": on})
+>       assert filmed["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 6, "last": left_after,
+                                     "retargeted": False}
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...usemove', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'last': 'click'} != {'last': 'mousemove'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}
+E         {'count': 11} != {'count': 6}
+E         {'complete': True} != {'complete': False}
+E         Use -v to get more diff
+
+tests/test_filmed_delivery_functions.py:169: AssertionError
+_ test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[moved-on-mousemove] _
+
+on = {'event': 'mousemove', 'then': {'rect': [60, 630, 140, 44]}}
+left_after = 'mousemove'
+
+    @pytest.mark.parametrize(("on", "left_after"), [
+        ({"event": "pointerover", "then": MOVED}, "mousemove"),
+        ({"event": "mousemove", "then": MOVED}, "mousemove"),
+        ({"event": "mouseenter", "then": {"hit": "other"}}, "mousemove"),
+        ({"event": "pointermove", "then": {"hit": "none"}}, "mousemove"),
+    ], ids=["moved-on-pointerover", "moved-on-mousemove", "covered-on-mouseenter", "gone-from-under-on-pointermove"])
+    def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on, left_after):
+        """FP30: page listeners run on the six hover and move events; the point is checked again in the
+        same turn as the press. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, "on": on}, {"on": on})
+>       assert filmed["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 6, "last": left_after,
+                                     "retargeted": False}
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...usemove', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'last': 'click'} != {'last': 'mousemove'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}
+E         {'count': 11} != {'count': 6}
+E         {'complete': True} != {'complete': False}
+E         Use -v to get more diff
+
+tests/test_filmed_delivery_functions.py:169: AssertionError
+_ test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[covered-on-mouseenter] _
+
+on = {'event': 'mouseenter', 'then': {'hit': 'other'}}, left_after = 'mousemove'
+
+    @pytest.mark.parametrize(("on", "left_after"), [
+        ({"event": "pointerover", "then": MOVED}, "mousemove"),
+        ({"event": "mousemove", "then": MOVED}, "mousemove"),
+        ({"event": "mouseenter", "then": {"hit": "other"}}, "mousemove"),
+        ({"event": "pointermove", "then": {"hit": "none"}}, "mousemove"),
+    ], ids=["moved-on-pointerover", "moved-on-mousemove", "covered-on-mouseenter", "gone-from-under-on-pointermove"])
+    def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on, left_after):
+        """FP30: page listeners run on the six hover and move events; the point is checked again in the
+        same turn as the press. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, "on": on}, {"on": on})
+>       assert filmed["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 6, "last": left_after,
+                                     "retargeted": False}
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...usemove', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'last': 'click'} != {'last': 'mousemove'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}
+E         {'count': 11} != {'count': 6}
+E         {'complete': True} != {'complete': False}
+E         Use -v to get more diff
+
+tests/test_filmed_delivery_functions.py:169: AssertionError
+_ test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[gone-from-under-on-pointermove] _
+
+on = {'event': 'pointermove', 'then': {'hit': 'none'}}, left_after = 'mousemove'
+
+    @pytest.mark.parametrize(("on", "left_after"), [
+        ({"event": "pointerover", "then": MOVED}, "mousemove"),
+        ({"event": "mousemove", "then": MOVED}, "mousemove"),
+        ({"event": "mouseenter", "then": {"hit": "other"}}, "mousemove"),
+        ({"event": "pointermove", "then": {"hit": "none"}}, "mousemove"),
+    ], ids=["moved-on-pointerover", "moved-on-mousemove", "covered-on-mouseenter", "gone-from-under-on-pointermove"])
+    def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on, left_after):
+        """FP30: page listeners run on the six hover and move events; the point is checked again in the
+        same turn as the press. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, "on": on}, {"on": on})
+>       assert filmed["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 6, "last": left_after,
+                                     "retargeted": False}
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...usemove', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'last': 'click'} != {'last': 'mousemove'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}
+E         {'count': 11} != {'count': 6}
+E         {'complete': True} != {'complete': False}
+E         Use -v to get more diff
+
+tests/test_filmed_delivery_functions.py:169: AssertionError
+_ test_a_control_removed_while_hovered_is_reported_detached_and_one_moved_by_the_press_is_still_released _
+
+    def test_a_control_removed_while_hovered_is_reported_detached_and_one_moved_by_the_press_is_still_released():
+        """FP30: removal keeps its own receipt, and from the press on the sequence follows the control, as
+        the press of a real pointer already has (a field that moves when the press focuses it)."""
+        removed, pressed, released = _click(
+            {"args": POINT, "on": {"event": "mouseover", "then": {"connected": False}}},
+            {"args": POINT, "on": {"event": "pointerdown", "then": MOVED}},
+            {"args": POINT, "on": {"event": "mouseup", "then": {"hit": "other"}}})
+        assert removed["receipt"] == {"complete": False, "stopped": "detached", "count": 3, "last": "mouseover",
+                                      "retargeted": False}
+        assert "pointerdown" not in [e["type"] for e in removed["sent"]]
+        for run in (pressed, released):
+            assert run["receipt"]["complete"] is True and [e["type"] for e in run["sent"]] == SEQUENCE
+        # and the check before the press is what stops the first case of the test above, not the removal
+        (hovered,) = _click({"args": POINT, "on": {"event": "pointerover", "then": MOVED}})
+>       assert hovered["receipt"]["stopped"] == "left_pointer"
+E       AssertionError: assert None == 'left_pointer'
+
+tests/test_filmed_delivery_functions.py:189: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[moved-on-pointerover]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[moved-on-mousemove]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[covered-on-mouseenter]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[gone-from-under-on-pointermove]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_removed_while_hovered_is_reported_detached_and_one_moved_by_the_press_is_still_released
+5 failed, 37 passed in 1.35s

@@ -1,0 +1,68 @@
+{
+ "predictions": [
+  "FP35",
+  "FP36",
+  "FP38"
+ ],
+ "open": [
+  "FP37 (the live probe; needs a granted screen window)"
+ ],
+ "footwork": {
+  "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_probe_filmed_page_pointer.py tests/test_filmed_session.py tests/test_locate_page_function.py tests/test_filmed_delivery_functions.py tests/test_browser_session_holder.py",
+  "red": [
+   {
+    "tree": "287da1f (python/, scripts/ and the pinned locate6 archive) with the four test files of this change copied in: tests/test_filmed_page_pointer.py, tests/test_filmed_session.py (log: review7-python-red.txt), tests/test_filmed_delivery_functions.py, tests/test_locate_page_function.py (log: review7-node-red.txt)",
+    "outcome": "113 failed, 238 passed (76 and 37). Of the 81 tests that are new, 64 fail and 17 pass: 12 named guards and 5 existing cases whose parametrize number moved. Of the 270 that existed, 49 fail: 26 changed with the rule (below) and 23 say nothing about behaviour, because the scene reader's test helper passes the new delivered keyword, which the old reader does not take (test_a_changed_scene_is_named x21, test_the_recorded_scene_holds_while_nothing_changed, and one more through the same helper)."
+   },
+   {
+    "tree": "the working tree with python/jevdual/session.py as it was (FP38)",
+    "log": "review7-session-red.txt",
+    "outcome": "2 failed, 25 passed in tests/test_filmed_session.py: the stopped click and the scene found changed are not said by the command. The refusal before the press passes there because its words reach the output through the bridge's wording, which is what changed for it; that test is among the 64 that fail on 287da1f. The fourth is a guard."
+   },
+   {
+    "tree": "287da1f's probe and its own composed run, with four of the seventh review's cases applied",
+    "log": "review7-probe-red.json",
+    "outcome": "the old verdict holds on all four: a sampler that stalled for 80 ms across the click, a click the page saw no release of, a click whose events came in another order, and a press sent while the pointer was still travelling. It did not log pointerup at all. The new verdict fails each (tests/test_probe_filmed_page_pointer.py::test_each_departure_fails_its_own_step_for_its_own_reason). The new probe test file cannot be run against the old probe as a whole: it composes runs from names the old probe does not have."
+   }
+  ],
+  "passing_before_by_design": [
+   "test_a_keyword_cursor_shows_the_pointer x8 (an ordinary cursor never stopped a click)",
+   "test_a_control_removed_while_hovered_or_pressed_is_reported_detached (the detached receipt is unchanged; the test was split from one whose other half asserted the rule the seventh review overturned)",
+   "test_a_stopped_click_outside_a_filmed_take_and_an_ordinary_click_keep_the_drivers_words",
+   "test_a_click_refused_before_its_press_outside_a_filmed_take_keeps_the_drivers_words",
+   "test_a_filmed_click_with_nothing_to_say_prints_no_note"
+  ],
+  "changed_with_the_rule": [
+   "test_a_control_removed_while_hovered_is_reported_detached_and_one_moved_by_the_press_is_still_released: removed. It required a control moved by its own press to be released and clicked where it went, which is the seventh review's second finding; test_a_control_that_leaves_the_point_once_pressed_is_not_clicked and the tests beside it replace it.",
+   "test_the_frames_only_reading_looks_at_where_the_window_and_its_page_are_and_nothing_else: replaced by the reading after delivery, which also asks what is under the pointer.",
+   "step sequences in tests/test_filmed_page_pointer.py now end with the reading after delivery at the pointer (13 cases in 10 tests, one of which fails first on the helper's keyword); receipts in tests/test_filmed_delivery_functions.py carry hidden (12 cases); the locate expectations carry cursor and a four-part point (2 tests).",
+   "tests/test_probe_filmed_page_pointer.py: the composed run has eighteen steps and logs every event with its rectangle and number; the test that a field which did not move on focus still holds is removed with the focus style."
+  ],
+  "green": {
+   "focused": "545 passed (609 with the pin, chain and seam tests)",
+   "offline_suite": "PYTHONPATH=python .venv/bin/python -m pytest -q -m \"not browser\" -p no:cacheprovider --ignore=tests/live: 3995 passed, 52 skipped, 61 deselected",
+   "lint": ".venv/bin/ruff check python scripts tests: clean"
+  }
+ },
+ "driver": {
+  "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
+  "red": {
+   "tree": "the new v2_tests.rs and the tests inside tools.rs against the tools.rs that 287da1f pinned",
+   "log": "review7-rust-red.txt",
+   "outcome": "9 failed, 1264 passed"
+  },
+  "green": "1273 passed, 2 ignored",
+  "archive": {
+   "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate7",
+   "sha256": "bb3600a3030eb952deda44d490b36ac798b685549dff1ad86de75d1d5b7107d7",
+   "bytes": 6428414,
+   "chain": "scripts/cua_source_chain.py rebuilds it byte for byte from the focus1 base",
+   "installed": "the venv's cua-driver is this version; the binary and the library carry left_pointer, pointer_hidden, filmed_delivery and pointerLockElement"
+  }
+ },
+ "headless": {
+  "command": "PYTHONPATH=python .venv/bin/python scripts/probe_locate_world_headless.py --out <fresh dir>",
+  "log": "review7-headless.json",
+  "outcome": "one run, Chrome 157 headless on a temporary profile: FP22's 16 checks and 26 delivery checks held (FP27's and FP30's again, and FP36's). Chrome exited 0, the profile was removed, the frontmost application did not change."
+ }
+}

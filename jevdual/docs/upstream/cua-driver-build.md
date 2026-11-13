@@ -4,7 +4,7 @@ Footwork uses the exact CUA 0.46.0 release snapshot
 `5486b6246e4c807c0d793216e52df283671d9362`, including its native implementation.
 The release still lacks Footwork’s required session-cleanup drain. Footwork carries
 that four-file patch forward and identifies the complete build as
-`cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4` so the released native binary cannot
+`cua-driver==0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10` so the released native binary cannot
 silently satisfy this dependency.
 
 The focus1 patch additionally requires verified addressed-field focus before foreground text
@@ -17,7 +17,15 @@ ranking; it was an optional project overlay and is now part of the pinned build.
 patch makes a page-route (`input_route:"dom_event"`) click read the ref's node `isConnected` before
 any event and refuse `browser_ref_stale` when the page has removed it, and checks the node again
 inside the click sequence before every event, stopping if the page or a handler removes it
-partway. Only a well-formed completion receipt counts as a completed click. Both are private Rust changes
+partway. Only a well-formed completion receipt counts as a completed click. The locate10 patch gives
+`get_browser_state` a read-only `locate_ref` mode that reports where one current ref's element is in
+the viewport, what is at its centre and at a point the caller names, whether a clipping ancestor
+hides part of it, whether its document is showing and whether it has focus, read in an isolated
+world that the page's own script cannot reach, so a filmed pointer can travel to the target
+it is about to act on and confirm it landed there. It also gives `browser_click` and
+`browser_type` an optional `filmed_point`: the page-route click, or the insertion, then checks
+in that isolated world that the point is on the ref's element and acts in the same turn of
+script, scrolling and focusing nothing first. All three are private Rust changes
 that keep the six Python binding files and the SDK ABI. `scripts/cua_source_chain.py` rebuilds the
 pinned archive from the focus1 archive in Git history and checks every step's hashes.
 

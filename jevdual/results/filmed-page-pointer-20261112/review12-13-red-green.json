@@ -1,0 +1,29 @@
+{
+ "predictions": {},
+ "open": [
+  "FP72 (start asks the browser to show its web area and waits; live part)",
+  "FP74 (two documents on a fresh launch; live part)",
+  "FP67 (the live probe)"
+ ],
+ "live_run_1": "fp67-run1/: one granted run on 8a48f1c; start refused in 1.8 s with 'the browser window shows no web area to film'; no step ran; Chrome closed by the probe",
+ "driver": "unchanged: the pinned archive is locate9 as pushed at 1ba3a94 (ff12d6a7ac5cc4056e6d7a3f689fbb89e9f7fbceb9ec750186155b609ef19817)",
+ "what_changed": {
+  "python/jevdual/session.py": "a filmed browser start that finds no web area on its first reading asks the browser once to show its web content, then reads again for up to 8 s and takes the frame two readings agree on; it prints what it did, and a refusal says what the window shows",
+  "python/jevdual/ax.py": "show_web_content (AXManualAccessibility, AXEnhancedUserInterface only where unsupported, as the driver does for native sessions); outline",
+  "scripts/probe_filmed_page_pointer.py": "every record names its document; the analysis reads the document that loaded last and requires any other to have only loaded and idled before the first step",
+  "collected": "one new field, doc, on each record the page posts; nothing else that a run collects changed"
+ },
+ "footwork": {
+  "red": [
+   {"tree": "d9cbe76 with tests/test_filmed_session.py and tests/test_filmed_page_pointer.py of the start change copied in", "log": "review12-python-red.txt", "outcome": "11 failed, 687 passed"},
+   {"tree": "3603330 with tests/test_probe_filmed_page_pointer.py of the probe change copied in", "log": "review13-python-red.txt", "outcome": "3 failed, 698 passed; the first because a correct run with an earlier document was judged not held, the other two on verdict keys the old probe does not have"}
+  ],
+  "green": {
+   "focused": "701 passed (765 with the pin, chain and seam tests)",
+   "offline_suite": "4151 passed, 52 skipped, 61 deselected",
+   "lint": ".venv/bin/ruff check python scripts tests: clean"
+  },
+  "headless": "fp74-headless-two-loads.txt: the changed fixture loaded twice in headless Chrome 157 (no window, temporary profile): two documents, each named on every record and numbered from one"
+ },
+ "not_shown": "anything about a real window: that Chrome accepts the request and shows its web area within the wait, and that a real start loads the page twice, are both for the next granted run"
+}

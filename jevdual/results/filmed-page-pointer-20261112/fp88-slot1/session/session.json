@@ -1,0 +1,666 @@
+{
+ "dir": "<scratch>/fp88-slot1/out/session",
+ "app": "Google Chrome (footwork)",
+ "pid": 71494,
+ "window_id": 500218,
+ "task": "probe the filmed page pointer",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 18,
+ "status": "open",
+ "memory": [
+  "step 1: click(Alpha) -> suspected_noop",
+  "step 2: click(Beta) -> refused",
+  "step 3: click(Beta) -> suspected_noop",
+  "step 4: click(Covered) -> refused",
+  "step 5: click(Forged) -> refused",
+  "step 6: click(Edge) -> refused",
+  "step 7: click(Clipped) -> refused",
+  "step 8: click(Turned) -> refused",
+  "step 9: click(Hidden) -> refused",
+  "step 10: click(Shy) -> unverifiable",
+  "step 11: click(Dodge) -> unverifiable",
+  "step 12: type(Note) text='footwork' -> refused",
+  "step 13: click(Note) -> suspected_noop",
+  "step 14: type(Note) text='footwork' -> confirmed",
+  "step 15: type(Note) text='footwork' -> refused",
+  "step 16: click(Gamma) -> refused",
+  "step 17: click(Jump down) -> suspected_noop",
+  "step 18: click(Gamma) -> suspected_noop"
+ ],
+ "last_url": "http://127.0.0.1:62247/",
+ "last_title": "Footwork filmed page pointer fixture",
+ "last_page_text": "footwork",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "Gamma",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 3,
+   "label": "Beta",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 4,
+   "label": "Shy",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 5,
+   "label": "Dodge",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 6,
+   "label": "generic",
+   "role": "generic",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 7,
+   "label": "Clipped",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 8,
+   "label": "Turned",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 11,
+   "label": "generic",
+   "role": "generic",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 12,
+   "label": "footwork",
+   "role": "statictext",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 13,
+   "label": "Alpha",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 14,
+   "label": "Covered",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 15,
+   "label": "Jump down",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 16,
+   "label": "Forged",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 17,
+   "label": "Hidden",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 18,
+   "label": "Note",
+   "role": "textbox",
+   "operations": [
+    "type"
+   ],
+   "value": "footwork",
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  },
+  {
+   "id": 19,
+   "label": "Edge",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "expanded": null,
+   "pressed": null,
+   "section": null,
+   "placeholder": null,
+   "value_truncated": null,
+   "href_qualified": null,
+   "native_dom_id": null,
+   "native_document_url": null,
+   "native_control_qualified": null,
+   "native_control_opaque": null,
+   "numeric": null
+  }
+ ],
+ "last_native_ambiguous": [],
+ "last_native_text_scope_signature": "",
+ "last_snapshot": "p56",
+ "pending": null,
+ "mode": "browser",
+ "native_menu_cap": 160,
+ "posture": "exclusive_desktop",
+ "browser_tab": "tab-0347809a-0f27-4197-9371-5fddbfb843f7",
+ "browser_target": {
+  "pid": 71494,
+  "incarnation": 1794581747.289839,
+  "port": 9466,
+  "profile": "<scratch>/fp88-slot1/profile",
+  "target": "57EEBED97A6F6BC0A0F29AC5F7C7D1B5"
+ },
+ "browser_holder": {
+  "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+  "pid": 71468,
+  "start": "1794581747.167422",
+  "runtime": "<tmp>/fw-bh-501/7e0d01b9d2e34efd"
+ },
+ "browser_launch": {
+  "pid": 71494,
+  "incarnation": 1794581747.289839,
+  "new_process": true
+ },
+ "secret_names": [],
+ "visual_generation": "c709c6e3805a44cd8d75396cd2a45d96",
+ "last_visual_check": null,
+ "authority": "",
+ "session_id": "",
+ "native_binding": {},
+ "native_scope": {},
+ "finder_scope": {},
+ "ticket_scope": {},
+ "filmed": {
+  "window": [
+   22.0,
+   55.0,
+   1200.0,
+   900.0
+  ],
+  "content": [
+   22.0,
+   142.0,
+   1200.0,
+   813.0
+  ],
+  "keep_out": null,
+  "rest": null,
+  "margin_pt": 4.0,
+  "arcs": [
+   0.18,
+   0.1,
+   0.05,
+   0.0
+  ],
+  "timing": "DELIBERATE",
+  "dwell_s": 0.18,
+  "type_delay_ms": 65,
+  "continuity_pt": 2.0,
+  "take_ended": null,
+  "last_pointer": [
+   332.0,
+   564.0
+  ],
+  "gestures": [
+   {
+    "kind": "park",
+    "label": "waypoint",
+    "from": [
+     332.0,
+     564.0
+    ],
+    "to": [
+     542.0,
+     342.0
+    ],
+    "samples": 81,
+    "duration_s": 0.8535468665120793,
+    "posted": 80,
+    "max_gap_ms": 16.5,
+    "stall_gap_ms": null,
+    "max_post_ms": 10.6,
+    "max_ack_ms": 5.8,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Alpha",
+    "from": [
+     542.0,
+     342.0
+    ],
+    "to": [
+     132.0,
+     224.0
+    ],
+    "samples": 88,
+    "duration_s": 0.9077053280943275,
+    "posted": 87,
+    "max_gap_ms": 16.6,
+    "stall_gap_ms": null,
+    "max_post_ms": 9.6,
+    "max_ack_ms": 6.9,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Beta",
+    "from": [
+     132.0,
+     224.0
+    ],
+    "to": [
+     712.0,
+     494.0
+    ],
+    "samples": 97,
+    "duration_s": 0.9747481015609104,
+    "posted": 96,
+    "max_gap_ms": 28.2,
+    "stall_gap_ms": null,
+    "max_post_ms": 9.3,
+    "max_ack_ms": 18.8,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Shy",
+    "from": [
+     712.0,
+     494.0
+    ],
+    "to": [
+     132.0,
+     294.0
+    ],
+    "samples": 96,
+    "duration_s": 0.9677622121559386,
+    "posted": 95,
+    "max_gap_ms": 17.3,
+    "stall_gap_ms": null,
+    "max_post_ms": 9.4,
+    "max_ack_ms": 7.8,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Dodge",
+    "from": [
+     132.0,
+     294.0
+    ],
+    "to": [
+     392.0,
+     364.0
+    ],
+    "samples": 78,
+    "duration_s": 0.8333278403949402,
+    "posted": 77,
+    "max_gap_ms": 18.7,
+    "stall_gap_ms": null,
+    "max_post_ms": 9.5,
+    "max_ack_ms": 6.9,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Note",
+    "from": [
+     392.0,
+     364.0
+    ],
+    "to": [
+     712.0,
+     287.0
+    ],
+    "samples": 83,
+    "duration_s": 0.8654929889979237,
+    "posted": 82,
+    "max_gap_ms": 16.4,
+    "stall_gap_ms": null,
+    "max_post_ms": 9.6,
+    "max_ack_ms": 6.7,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Note",
+    "from": [
+     712.0,
+     287.0
+    ],
+    "to": [
+     712.0,
+     287.0
+    ],
+    "samples": 0,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Jump down",
+    "from": [
+     712.0,
+     287.0
+    ],
+    "to": [
+     392.0,
+     224.0
+    ],
+    "samples": 83,
+    "duration_s": 0.8640203577743952,
+    "posted": 82,
+    "max_gap_ms": 23.3,
+    "stall_gap_ms": null,
+    "max_post_ms": 9.3,
+    "max_ack_ms": 6.9,
+    "outcome": "arrived"
+   },
+   {
+    "kind": "approach",
+    "label": "Gamma",
+    "from": [
+     392.0,
+     224.0
+    ],
+    "to": [
+     332.0,
+     564.0
+    ],
+    "samples": 84,
+    "duration_s": 0.8732206482583142,
+    "posted": 83,
+    "max_gap_ms": 17.6,
+    "stall_gap_ms": null,
+    "max_post_ms": 9.4,
+    "max_ack_ms": 7.0,
+    "outcome": "arrived"
+   }
+  ],
+  "trace_path": "<scratch>/fp88-slot1/out/session/pointer-gestures.jsonl"
+ },
+ "coordination_token": "3a4449f152994d769c2f91cdea137e42"
+}

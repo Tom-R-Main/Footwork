@@ -1,0 +1,11 @@
+load 1 exit 0 dom bytes 8477
+load 2 exit 0 dom bytes 8477
+{'n': 1, 'doc': 'mwf1596y-llou459x888', 'type': 'loaded', 'detail': ['browser_says_at_forged', 'clock_step_s', 'dpr', 'page_says_at_forged', 'viewport']}
+{'n': 2, 'doc': 'mwf1596y-llou459x888', 'type': 'beat', 'detail': ['acks']}
+{'n': 3, 'doc': 'mwf1596y-llou459x888', 'type': 'beat', 'detail': ['acks']}
+{'n': 4, 'doc': 'mwf1596y-llou459x888', 'type': 'beat', 'detail': ['acks']}
+{'n': 1, 'doc': 'mwf159m8-6cmmhgbupjy', 'type': 'loaded', 'detail': ['browser_says_at_forged', 'clock_step_s', 'dpr', 'page_says_at_forged', 'viewport']}
+{'n': 2, 'doc': 'mwf159m8-6cmmhgbupjy', 'type': 'beat', 'detail': ['acks']}
+{'n': 3, 'doc': 'mwf159m8-6cmmhgbupjy', 'type': 'beat', 'detail': ['acks']}
+{'n': 4, 'doc': 'mwf159m8-6cmmhgbupjy', 'type': 'beat', 'detail': ['acks']}
+documents 2 all named True each numbered from one True

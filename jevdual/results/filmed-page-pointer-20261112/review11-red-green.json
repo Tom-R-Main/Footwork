@@ -1,0 +1,33 @@
+{
+ "predictions": {},
+ "open": [
+  "FP67 (the live probe, revising FP62; needs a granted screen window)"
+ ],
+ "driver": "unchanged: the pinned archive is locate9 as pushed at 1ba3a94 (ff12d6a7ac5cc4056e6d7a3f689fbb89e9f7fbceb9ec750186155b609ef19817)",
+ "what_changed": {
+  "scripts/probe_filmed_page_pointer.py": [
+   "the time from a record to its answer is the difference of two readings of the page's clock, so it is taken as the reported difference plus two grains, and a tenth of a percent longer for any difference between the two clocks' rates",
+   "the pointer's last trusted event is bounded below by the record that carries it as well as by records clearly earlier than it",
+   "the page's measured clock step is described as a diagnostic of resolution: a step coarser than the grain fails the run, a fine one is not taken to validate the grain",
+   "the text says what the code judges of an action outside every step: where it was made, whichever side of the fence its record arrived"
+  ],
+  "tests/test_filmed_click_invariant.py": [
+   "the audit's check for assignments also matches a member written with a bracket, an increment, a compound or logical assignment and a delete; six more lines that act without the check each make it fail, the reviewer's among them (seventeen in all)"
+  ],
+  "vendor/cua-driver/PROVENANCE.md": "the audit's reach said as it is: assignments to a member written with a dot or a bracket, increments and deletes of one, and the call forms that hide a name; a member reached some other way is not seen"
+ },
+ "footwork": {
+  "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_probe_filmed_page_pointer.py tests/test_filmed_session.py tests/test_locate_page_function.py tests/test_filmed_delivery_functions.py tests/test_browser_session_holder.py tests/test_filmed_click_invariant.py tests/test_filmed_outcome_reporting.py",
+  "red": {
+   "tree": "20a1ab3 with tests/test_probe_filmed_page_pointer.py and tests/test_filmed_click_invariant.py of this change copied in",
+   "log": "review11-python-red.txt",
+   "outcome": "10 failed, 677 passed. The three new probe tests fail: the reviewer's case as a unit of the timer (a record read late and its answer read early), the same as a whole run (an action made before its step placed inside it), and a pointer whose last move no post precedes within the step. 7 existing tests fail, changed with the width two grains give. The six new lines the audit must fail on pass before by design: the audit is in the test file, which is copied in, and the driver is not changed. That the old audit passed the reviewer's line is the review's own observation and is not rerun here."
+  },
+  "green": {
+   "focused": "687 passed (751 with the pin, chain and seam tests)",
+   "offline_suite": "PYTHONPATH=python .venv/bin/python -m pytest -q -m \"not browser\" -p no:cacheprovider --ignore=tests/live: 4137 passed, 52 skipped, 61 deselected",
+   "lint": ".venv/bin/ruff check python scripts tests: clean"
+  }
+ },
+ "not_run": "the live probe; no headless run was needed, since no function sent to the page changed; no review of this change has been made"
+}

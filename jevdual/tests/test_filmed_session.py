@@ -15,6 +15,8 @@ import pytest
 pytest.importorskip("cua_driver")
 
 import itertools
+import json
+import re
 
 from tests.test_session_scenarios import _id, _mac_selectors, _state, fw, world  # noqa: F401
 
@@ -281,6 +283,77 @@ def test_failed_filmed_replacement_start_revokes_the_reservation_it_created(worl
     assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
 
 
+@pytest.mark.parametrize("holder", [False, True])
+@pytest.mark.parametrize("motion", ["filmed", "off"])
+async def test_only_a_filmed_browser_start_asks_for_a_launch_with_page_accessibility(monkeypatch, tmp_path, motion, holder):
+    """FP90: the switch that makes a Chrome show its page's web area is asked for by the start that
+    films, on whichever path launches the browser, and by no other start."""
+    from types import SimpleNamespace
+
+    from jevdual import browser_driver, session
+    from jevdual import browser_session_holder as bsh
+
+    asked: list[tuple[str, object]] = []
+
+    async def spawn_owned(*, url, page_accessibility=False):
+        asked.append(("holder", page_accessibility))
+        raise RuntimeError("far enough")
+
+    async def bind(url, *, policy=None, wrap_operations=None, page_accessibility=False):
+        asked.append(("direct", page_accessibility))
+        raise RuntimeError("far enough")
+
+    monkeypatch.setattr(bsh, "enabled", lambda: holder)
+    monkeypatch.setattr(bsh, "spawn_owned", spawn_owned)
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", bind)
+    args = SimpleNamespace(mode=None, url="http://127.0.0.1:1/", task="t", require="", authorize="",
+                           answer=None, pointer_motion=motion, text=0)
+    with pytest.raises(RuntimeError, match="far enough"):
+        await session._start_browser(args, tmp_path)
+    assert asked == [("holder" if holder else "direct", motion == "filmed")]
+
+
+@pytest.mark.parametrize("retires", [True, False])
+async def test_a_start_names_its_holder_before_the_attach_can_fail_and_says_when_it_was_not_retired(
+        monkeypatch, tmp_path, capsys, retires):
+    """Sol review 12 (2): the holder is started before the attach, and the line that names it was
+    printed after. An attach that failed left a caller no way to know which holder was this start's,
+    and a retirement that then failed was silent. The attach's failure is still what is raised."""
+    from types import SimpleNamespace
+
+    from jevdual import browser_driver, session
+    from jevdual import browser_session_holder as bsh
+
+    did: list[str] = []
+    identity = {"boot": "b", "pid": 4321, "start": "1.5", "runtime": str(tmp_path / "runtime"),
+                "chrome_pid": 77, "window_id": 40335, "launch_identity": {}}
+
+    async def spawn_owned(*, url, page_accessibility=False):
+        return identity
+
+    async def attach(self, **_):
+        did.append("attach after: " + capsys.readouterr().out.strip())
+        raise RuntimeError("no tab to attach")
+
+    async def retire_settled(runtime, *, expected):
+        did.append("retire")
+        if not retires:
+            raise bsh.HolderUnavailable("the holder did not exit")
+
+    monkeypatch.setattr(bsh, "enabled", lambda: True)
+    monkeypatch.setattr(bsh, "spawn_owned", spawn_owned)
+    monkeypatch.setattr(bsh, "retire_settled", retire_settled)
+    monkeypatch.setattr(browser_driver.BrowserBridge, "attach", attach)
+    args = SimpleNamespace(mode=None, url="http://127.0.0.1:1/", task="t", require="", authorize="",
+                           answer=None, pointer_motion="filmed", text=0)
+    with pytest.raises(RuntimeError, match="no tab to attach"):
+        await session._start_browser(args, tmp_path)
+    assert did == ["attach after: browser holder pid 4321 keeps this session's driver", "retire"]
+    said = capsys.readouterr().err
+    assert ("browser holder pid 4321 was not retired after the failed attach: HolderUnavailable" in said) is not retires
+    assert not (tmp_path / "session.json").exists()
+
+
 def test_a_browser_session_films_the_pointer_over_its_own_window(world, fw, filmed, monkeypatch):
     """B7: one start --browser session binds the page and films the real pointer over the same window,
     under the same desktop reservation a native filmed take holds."""
@@ -291,7 +364,7 @@ def test_a_browser_session_films_the_pointer_over_its_own_window(world, fw, film
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": "app://Calculator"}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         bridge = NativeBridge(world, 77, 40335)
         bridge.tab_id = "owned-browser-tab"
         return world, bridge
@@ -318,7 +391,7 @@ def test_a_browser_filmed_take_needs_the_exclusive_desktop(world, fw, filmed, mo
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": "app://Calculator"}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         bridge = NativeBridge(world, 77, 40335)
         bridge.tab_id = "owned-browser-tab"
         return world, bridge
@@ -341,7 +414,7 @@ def test_a_cancelled_browser_start_releases_the_reservation_it_created(world, fw
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": "app://Calculator"}]))
 
-    async def browser(url, policy):
+    async def browser(url, policy, page_accessibility=False):
         bridge = NativeBridge(world, 77, 40335)
         bridge.tab_id = "owned-browser-tab"
         return world, bridge
@@ -355,5 +428,383 @@ def test_a_cancelled_browser_start_releases_the_reservation_it_created(world, fw
         fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop", "--pointer-motion", "filmed",
            "--rest", "20,40", "--url", "https://example.test/")
     assert isinstance(raised.value, (asyncio.CancelledError, KeyboardInterrupt, SystemExit)), raised.value
+    assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
+    assert not (fw.session / "session.json").exists()
+
+
+def _browser_scene(monkeypatch, *, front=77, url=None, area=CONTENT, over=(40335, True)):
+    """What the accessibility interface and the window server say about the filmed browser window."""
+    from jevdual import ax, posture
+
+    from tests.test_filmed_page_pointer import URL
+
+    monkeypatch.setattr(posture, "frontmost_pid", lambda: front)
+    monkeypatch.setattr(ax, "is_main", lambda el: True)
+    monkeypatch.setattr(ax, "web_area", lambda el: (ax.Frame(*area), url or URL))
+    monkeypatch.setattr(ax, "web_area_at", lambda x, y: over)
+
+
+def test_a_filmed_browser_click_travels_to_the_page_target_before_the_page_click(world, fw, filmed, monkeypatch):
+    """FP1: in a filmed start --browser session, do click moves the real pointer to the target's centre on
+    screen (the content origin plus the ref's viewport rectangle) before the driver's page click."""
+    from jevdual import browser_driver, browser_target
+    from jevdual.browser_driver import BrowserBridge
+
+    from tests.test_filmed_page_pointer import URL, Wire
+
+    log: list = []
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy, page_accessibility=False):
+        wire = Wire(log)
+        return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: Wire(log))
+    _browser_scene(monkeypatch)
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    assert _state(fw)["filmed"]["content"] == list(CONTENT)
+    code, _, err = fw("do", "click", str(_id(out, "Go")), "--no-judge")
+    assert code == 0, err
+    go = (CONTENT[0] + 40.0 + 80.0 / 2, CONTENT[1] + 100.0 + 30.0 / 2)  # ref rect (40, 100, 80, 30)
+    assert _moves(filmed.events)[-1] == go
+    assert log[-1] == ("browser_click", "snap-1:1")
+    assert _state(fw)["filmed"]["last_pointer"] == list(go)
+
+
+def test_a_filmed_browser_click_on_a_covered_target_sends_nothing_and_moves_nothing(world, fw, filmed, monkeypatch):
+    """FP4: when another element is at the target's centre, do click reports target_unlocated; the pointer
+    stays where it was and the page receives no click."""
+    from jevdual import browser_driver, browser_target
+    from jevdual.browser_driver import BrowserBridge
+
+    from tests.test_filmed_page_pointer import URL, Wire, at
+
+    log: list = []
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy, page_accessibility=False):
+        wire = Wire(log)
+        return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: Wire(log, [at(hit="other")]))
+    _browser_scene(monkeypatch)
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    before = len(filmed.events)
+    code, out, err = fw("do", "click", str(_id(out, "Go")), "--no-judge")
+    assert "target_unlocated" in out + err and "another element is at its centre" in out + err, (code, out, err)
+    assert len(filmed.events) == before
+    assert [entry[0] for entry in log if entry[0] != "locate"] == []
+
+
+@pytest.mark.parametrize(("scene", "why"), [
+    ({"front": 501}, "not the frontmost application"),
+    ({"url": "https://example.invalid/another-tab"}, "not the session's page"),
+    ({"area": (420.0, 370.0, 300.0, 410.0)}, "the page area is 300x410"),
+])
+def test_a_filmed_browser_click_in_a_changed_scene_sends_nothing_and_moves_nothing(
+        world, fw, filmed, monkeypatch, scene, why):
+    """FP9: the window on screen must still be the scene the take recorded (the browser in front, its web
+    area where it was, showing the session's page) before the pointer moves; otherwise do click reports
+    scene_changed and neither the pointer nor the page is touched."""
+    from jevdual import browser_driver, browser_target
+    from jevdual.browser_driver import BrowserBridge
+
+    from tests.test_filmed_page_pointer import URL, Wire
+
+    log: list = []
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy, page_accessibility=False):
+        wire = Wire(log)
+        return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: Wire(log))
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    _browser_scene(monkeypatch, **scene)
+    before = len(filmed.events)
+    code, out, err = fw("do", "click", str(_id(out, "Go")), "--no-judge")
+    assert "scene_changed" in out + err and why in out + err, (code, out, err)
+    assert len(filmed.events) == before
+    assert log == []
+
+
+def _filmed_page(monkeypatch, fw, log, **wire):
+    """A filmed browser session on the page fixture, whose driver answers a click with ``wire``."""
+    from jevdual import browser_driver, browser_target
+    from jevdual.browser_driver import BrowserBridge
+
+    from tests.test_filmed_page_pointer import URL, Wire
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy, page_accessibility=False):
+        first = Wire(log)
+        return first, BrowserBridge(first, 77, 40335, policy=policy)
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: Wire(log, **wire))
+    _browser_scene(monkeypatch)
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    fw.started = out
+    return str(_id(out, "Go"))
+
+
+def _did(fw) -> dict:
+    """The session log's record of the last do."""
+    import json
+
+    rows = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines() if line.strip()]
+    return [row for row in rows if row.get("kind") == "do"][-1]
+
+
+def test_a_click_that_stopped_after_its_press_is_said_by_the_command(world, fw, filmed, monkeypatch):
+    """FP38: the bridge's sentence and mark for a click whose press went and whose click event did not
+    reach the person, and the receipt does not call the outcome known."""
+    from tests.test_filmed_page_pointer import STOPPED
+
+    text = STOPPED.format(why="the ref's node left the filmed point", last="mousedown", count=8)
+    go = _filmed_page(monkeypatch, fw, [], action={"effect": "unverifiable", "summary": text}, action_text=text)
+    code, out, err = fw("do", "click", go, "--no-judge")
+    said = ("driver says unverifiable (click_stopped_after_press: the click stopped after mousedown and no click "
+            "event was sent: the ref's node left the filmed point. The press was sent;")
+    assert said in out, (code, out, err)
+    assert "input outcome unknown after error: click_stopped_after_press" in out and "not sent" not in out
+    assert _did(fw)["error"].startswith("click_stopped_after_press: the click stopped after mousedown")
+
+
+def test_a_click_refused_after_its_own_hover_events_is_said_by_the_command(world, fw, filmed, monkeypatch):
+    from tests.test_filmed_page_pointer import UNPRESSED
+
+    text = UNPRESSED.format(why="the ref's node left the filmed point", last="mousemove")
+    go = _filmed_page(monkeypatch, fw, [], action={"effect": "refused", "summary": text}, action_text=text)
+    code, out, err = fw("do", "click", go, "--no-judge")
+    assert "driver says unverifiable (input outcome unknown: browser_action_unavailable the pointer moved; " in out
+    assert "the click was then refused: no press or click was sent" in out, (code, out, err)
+
+
+def test_a_scene_found_changed_when_the_click_returned_is_said_by_the_command(world, fw, filmed, monkeypatch):
+    """FP38: the click went and the page's change decides its receipt; that the film may not show the
+    pointer on it is said on a line of its own and kept in the log."""
+    from jevdual import ax
+
+    log: list = []
+    go = _filmed_page(monkeypatch, fw, log)
+    monkeypatch.setattr(ax, "web_area_at", lambda x, y: (
+        (501, False) if any(entry[0] == "browser_click" for entry in log) else (40335, True)))
+    code, out, err = fw("do", "click", go, "--no-judge")
+    assert code == 0, (out, err)
+    note = "scene_changed_during_delivery: the click was delivered, but when it returned the pointer at "
+    assert f"filmed take: {note}" in out and "input outcome unknown" not in out, out
+    assert _did(fw)["filmed_note"].startswith(note) and _did(fw)["error"] is None
+
+
+def test_a_filmed_click_with_nothing_to_say_prints_no_note(world, fw, filmed, monkeypatch):
+    go = _filmed_page(monkeypatch, fw, [])
+    code, out, err = fw("do", "click", go, "--no-judge")
+    assert code == 0 and "filmed take:" not in out and "filmed_note" not in _did(fw), (out, err)
+    assert _did(fw)["error"] is None
+
+
+def test_a_filmed_browser_take_needs_a_web_area(world, fw, filmed, monkeypatch):
+    """FP9: a page position maps to the screen from the web area's origin, so a browser take whose window
+    shows no web area does not start (a native take still films from the window's frame)."""
+    from jevdual import ax, browser_driver, browser_target, session
+    from jevdual.browser_driver import BrowserBridge
+    from jevdual.coordination import Coordinator
+
+    from tests.test_filmed_page_pointer import URL, Wire
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy, page_accessibility=False):
+        wire = Wire([])
+        return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(ax, "web_area_frame", lambda el: None)
+    monkeypatch.setattr(ax, "show_web_content", lambda pid: "AXManualAccessibility", raising=False)
+    monkeypatch.setattr(ax, "outline", lambda win: "'New Tab': level 1: AXGroup, AXToolbar", raising=False)
+    monkeypatch.setattr(session, "WEB_AREA_WAIT_S", 0.05, raising=False)
+    monkeypatch.setattr(session, "WEB_AREA_POLL_S", 0.01, raising=False)
+    code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                      "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 2 and "no web area to film (asked: AXManualAccessibility accepted at 0.0 s, waited 0." in err, err
+    assert "the window shows 'New Tab': level 1: AXGroup, AXToolbar)" in err  # what one run needs to tell why
+    assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
+    assert not (fw.session / "session.json").exists()
+
+
+def _a_browser_start_reading(monkeypatch, readings, *, wait=0.5, refuses=0, ask_every=60.0):
+    """A filmed browser start whose window gives ``readings`` of its web area in turn, the last for ever;
+    returns the readings taken, with each request to show web content where it fell among them. The
+    browser refuses the first ``refuses`` requests (all of them when True), as the fourth live run's did."""
+    from jevdual import ax, browser_driver, browser_target, session
+    from jevdual.browser_driver import BrowserBridge
+
+    from tests.test_filmed_page_pointer import URL, Wire
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy, page_accessibility=False):
+        wire = Wire([])
+        return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+
+    taken: list = []
+
+    def reading(el):
+        read = sum(1 for entry in taken if not isinstance(entry, tuple))
+        taken.append(readings[min(read, len(readings) - 1)])
+        return taken[-1]
+
+    def ask(pid):
+        taken.append(("asked", pid))
+        if refuses is True or sum(1 for entry in taken if isinstance(entry, tuple)) <= refuses:
+            raise ax.AXError("web_content_refused", "AXEnhancedUserInterface did not acknowledge the write (-25208)")
+        return "AXManualAccessibility"
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(ax, "web_area_frame", reading)
+    monkeypatch.setattr(ax, "show_web_content", ask, raising=False)
+    monkeypatch.setattr(ax, "outline", lambda win: "'Fixture': level 1: AXGroup", raising=False)
+    monkeypatch.setattr(session, "WEB_AREA_WAIT_S", wait, raising=False)
+    monkeypatch.setattr(session, "WEB_AREA_POLL_S", 0.01, raising=False)
+    monkeypatch.setattr(session, "WEB_AREA_ASK_S", ask_every, raising=False)
+    return taken
+
+
+def test_a_filmed_browser_start_asks_a_browser_that_shows_no_web_area_and_waits_for_it(world, fw, filmed, monkeypatch):
+    """FP69, FP72: the first live start read the window of a Chrome it had launched a second before,
+    found no web area and refused. Chromium builds the accessibility tree of its page only after a
+    client opts in, which the Driver does for a native session and nothing did for this one. So start
+    asks, once, and reads again for a bounded time."""
+    from jevdual import ax
+
+    shown = ax.Frame(*CONTENT)
+    taken = _a_browser_start_reading(monkeypatch, [None, None, None, shown])
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    # asked once, straight after the first reading, of the browser it is bound to; then read until it
+    # shows, and once more to see it keep its frame
+    assert taken == [None, ("asked", 77), None, None, shown, shown]
+    assert "; web area shown after 0." in out and ", asked: AXManualAccessibility accepted at 0.0 s" in out
+    assert json.loads((fw.session / "session.json").read_text())["filmed"]["content"] == list(CONTENT)
+
+
+def test_a_browser_that_shows_its_web_area_already_is_not_asked(world, fw, filmed, monkeypatch):
+    """FP72: the request is a write to the application; one that shows its web area needs none."""
+    from jevdual import ax
+
+    shown = ax.Frame(*CONTENT)
+    taken = _a_browser_start_reading(monkeypatch, [shown])
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0 and taken == [shown, shown], (out, err, taken)
+    assert "; web area shown after 0." in out and "asked with" not in out
+
+
+def test_a_request_the_browser_refuses_does_not_end_the_start(world, fw, filmed, monkeypatch):
+    """FP84, FP85: the fourth live start found no web area, asked, was answered "not implemented" a
+    second after the launch, and refused at once. The web area has appeared with no request made
+    (the second run), so a refused request decides nothing: the reading goes on, and start says
+    what the request answered."""
+    from jevdual import ax
+
+    shown = ax.Frame(*CONTENT)
+    taken = _a_browser_start_reading(monkeypatch, [None, None, None, shown], refuses=True)
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    assert taken == [None, ("asked", 77), None, None, shown, shown]
+    # the times are real elapsed times, a few polls of a hundredth of a second: not always 0.0
+    assert re.search(r"; web area shown after 0\.\d s, asked: AXEnhancedUserInterface did not acknowledge the write "
+                     r"\(-25208\) at 0\.\d s", out), out
+    assert json.loads((fw.session / "session.json").read_text())["filmed"]["content"] == list(CONTENT)
+
+
+def test_the_request_is_made_again_while_no_web_area_is_shown_until_one_is_accepted(world, fw, filmed, monkeypatch):
+    """FP85 (a): if the browser accepts the request only some time after its launch, a later one in the
+    same wait is accepted. Requests stop once one is, and the readings go on."""
+    from jevdual import ax
+
+    shown = ax.Frame(*CONTENT)
+    taken = _a_browser_start_reading(monkeypatch, [None] * 12 + [shown], refuses=2, ask_every=0.03, wait=2.0)
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    asks = [n for n, entry in enumerate(taken) if isinstance(entry, tuple)]
+    assert len(asks) == 3 and asks[0] == 1, taken  # two refused, the third accepted, then no more
+    assert taken[-2:] == [shown, shown] and taken.count(None) == 12
+    assert out.count("did not acknowledge the write (-25208)") == 2 and "AXManualAccessibility accepted at 0." in out
+    assert "asked 3 times: " in out
+
+
+def test_a_browser_that_never_shows_a_web_area_does_not_start_and_says_what_each_request_answered(
+        world, fw, filmed, monkeypatch):
+    from jevdual.coordination import Coordinator
+
+    taken = _a_browser_start_reading(monkeypatch, [None], refuses=True, ask_every=0.02, wait=0.1)
+    code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                      "--pointer-motion", "filmed", "--rest", "20,40")
+    asks = sum(1 for entry in taken if isinstance(entry, tuple))
+    assert code == 2 and asks >= 3 and not any(entry for entry in taken if not isinstance(entry, tuple)), (err, taken)
+    assert f"no web area to film (asked {asks} times: AXEnhancedUserInterface did not acknowledge the write (-25208) at 0.0 s; " in err
+    assert err.count("(-25208)") == asks and "waited 0.1 s; the window shows 'Fixture': level 1: AXGroup)" in err
+    assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
+    assert not (fw.session / "session.json").exists()
+
+
+def test_a_native_take_reads_its_window_once_and_asks_nothing(world, fw, filmed, monkeypatch):
+    """FP72: the wait and the request are a browser session's; a native take is as it was."""
+    from jevdual import ax
+
+    taken: list = []
+    monkeypatch.setattr(ax, "web_area_frame", lambda el: taken.append("read"))
+    monkeypatch.setattr(ax, "show_web_content", lambda pid: taken.append("asked"), raising=False)
+    _start(fw)
+    assert taken == ["read"]
+
+
+def test_a_web_area_still_moving_is_read_until_two_readings_agree(world, fw, filmed, monkeypatch):
+    """FP70: the origin is recorded once and every page position is mapped from it, so a frame read
+    while the window is still laying itself out is not the one recorded."""
+    from jevdual import ax
+
+    x, y, w, h = CONTENT
+    early, settled = ax.Frame(x, y - 40, w, h + 40), ax.Frame(*CONTENT)
+    taken = _a_browser_start_reading(monkeypatch, [None, early, settled])
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0 and taken == [None, ("asked", 77), early, settled, settled], (out, err, taken)
+    assert json.loads((fw.session / "session.json").read_text())["filmed"]["content"] == list(CONTENT)
+
+
+def test_a_web_area_that_never_keeps_one_frame_does_not_start(world, fw, filmed, monkeypatch):
+    from jevdual import ax
+    from jevdual.coordination import Coordinator
+
+    x, y, w, h = CONTENT
+    moving = [ax.Frame(x, y + n, w, h) for n in range(400)]
+    _a_browser_start_reading(monkeypatch, moving, wait=0.05)
+    code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                      "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 2 and "did not keep one frame (waited 0." in err and "the window shows 'Fixture'" in err, err
     assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
     assert not (fw.session / "session.json").exists()

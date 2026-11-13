@@ -10,7 +10,7 @@ mtime). Every hash is checked before anything is written. Standard library only.
 
 ``--base`` is any archive the chain starts from or passes through: the focus1 archive from Git
 history (``git show 6e8bb5e:jevdual/vendor/cua-driver/native-source.tar.gz``) rebuilds the
-vendored archive through both steps.
+vendored archive through every step.
 """
 from __future__ import annotations
 
@@ -26,8 +26,8 @@ import tempfile
 from pathlib import Path
 
 VENDOR = Path(__file__).resolve().parents[1] / "vendor/cua-driver"
-#: Applied in order on top of the cleanup2.focus1 archive.
-STEPS = ("ordinary-helptag", "connected-click")
+#: Applied in order on top of the cleanup2.focus1 archive; the last one produces the pinned archive.
+STEPS = ("ordinary-helptag", "connected-click", "ref-locate")
 
 
 def sha(data: bytes) -> str:

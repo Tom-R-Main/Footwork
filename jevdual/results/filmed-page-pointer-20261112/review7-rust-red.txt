@@ -1,0 +1,15 @@
+# new v2_tests.rs and the tests inside tools.rs against the tools.rs that 287da1f pinned (locate6), FP35
+test browser::tools::tests::locate_value_reports_clipping_visibility_and_the_asked_point ... FAILED
+test browser::tools::tests::locate_value_reports_no_point_for_a_malformed_one ... FAILED
+test browser::v2_tests::filmed_click_under_a_hidden_pointer_says_so_at_each_stage ... FAILED
+test browser::v2_tests::filmed_click_whose_node_left_its_point_after_the_press_is_a_partial_click_without_a_click_event ... FAILED
+test browser::v2_tests::filmed_click_whose_node_left_its_point_before_the_press_says_no_press_was_sent ... FAILED
+test browser::v2_tests::filmed_insert_reports_each_refusal_of_its_function ... FAILED
+test browser::v2_tests::locate_ref_reports_the_isolated_reading_when_the_pages_world_disagrees ... FAILED
+test browser::v2_tests::locate_ref_reports_where_the_element_is_and_changes_nothing ... FAILED
+test browser::v2_tests::locate_ref_with_a_point_asks_the_page_what_is_at_that_point ... FAILED
+test result: FAILED. 1264 passed; 9 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.54s
+exit 101
+
+# against the locate7 sources
+test result: ok. 1273 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.55s

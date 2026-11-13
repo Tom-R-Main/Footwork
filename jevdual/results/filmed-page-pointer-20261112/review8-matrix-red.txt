@@ -1,0 +1,105 @@
+.FF.FFFF                                                                 [100%]
+=================================== FAILURES ===================================
+____________________ test_every_cell_is_what_the_rule_gives ____________________
+
+matrix = [{'start': 'target', 'cancel': False, 'at': 0, 'name': 'moved', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'n...lse, 'at': 0, 'name': 'onto_control', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'name': 'removed', ...}, ...]
+
+    def test_every_cell_is_what_the_rule_gives(matrix):
+        """(1): the receipt and the events of the pinned function against the oracle's."""
+        wrong = []
+        for cell in matrix:
+            receipt, sent = oracle(cell["start"], cell["at"], cell["then"], cell["cancel"])
+            if cell["filmed"]["receipt"] != receipt or _pairs(cell["filmed"]) != sent:
+                wrong.append((cell["id"], cell["filmed"]["receipt"], receipt, _pairs(cell["filmed"])[6:], sent[6:]))
+>       assert not wrong, f"{len(wrong)} of {len(matrix)} cells differ; first: {wrong[0]}"
+E       AssertionError: 183 of 437 cells differ; first: ('target moved at 1', {'complete': False, 'stopped': 'left_pointer', 'count': 6, 'last': 'mousemove', 'retargeted': False, 'hidden': False}, {'complete': False, 'count': 1, 'last': 'pointerover', 'retargeted': False, 'stopped': 'left_pointer', 'hidden': False}, [], [])
+E       assert not [('target moved at 1', {'complete': False, 'stopped': 'left_pointer', 'count': 6, 'last': 'mousemove', ...}, {'complet...st': 'mousemove', ...}, {'complete': False, 'count': 1, 'last': 'pointerover', 'retargeted': False, ...}, [], []), ...]
+
+tests/test_filmed_click_invariant.py:291: AssertionError
+_ test_no_event_and_no_focus_goes_to_an_element_that_is_not_under_the_pointer __
+
+matrix = [{'start': 'target', 'cancel': False, 'at': 0, 'name': 'moved', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'n...lse, 'at': 0, 'name': 'onto_control', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'name': 'removed', ...}, ...]
+
+    def test_no_event_and_no_focus_goes_to_an_element_that_is_not_under_the_pointer(matrix):
+        """(2): the invariant itself, by the stand-in page's own state and not the oracle's."""
+        off = [(cell["id"], e["type"], e["to"]) for cell in matrix for e in cell["filmed"]["sent"] if e["under"] is not True]
+>       assert not off, f"{len(off)} events off the pointer; first: {off[0]}"
+E       AssertionError: 436 events off the pointer; first: ('target moved at 1', 'pointerenter', 'target')
+E       assert not [('target moved at 1', 'pointerenter', 'target'), ('target moved at 1', 'mouseover', 'target'), ('target moved at 1', ...move', 'target'), ('target moved at 1', 'mousemove', 'target'), ('target covered at 1', 'pointerenter', 'target'), ...]
+
+tests/test_filmed_click_invariant.py:297: AssertionError
+__________ test_a_stopped_click_stops_exactly_where_the_page_changed ___________
+
+matrix = [{'start': 'target', 'cancel': False, 'at': 0, 'name': 'moved', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'n...lse, 'at': 0, 'name': 'onto_control', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'name': 'removed', ...}, ...]
+
+    def test_a_stopped_click_stops_exactly_where_the_page_changed(matrix):
+        """A click that stops for the pointer sends nothing after the listener that took the control from
+        it: the count in its receipt is the boundary the disturbance was applied at."""
+        for cell in matrix:
+            receipt = cell["filmed"]["receipt"]
+            if receipt["stopped"] in ("left_pointer", "detached") and cell["at"] != "focus":
+>               assert receipt["count"] == cell["at"], cell["id"]
+E               AssertionError: target moved at 1
+E               assert 6 == 1
+
+tests/test_filmed_click_invariant.py:318: AssertionError
+___________ test_the_matrix_reaches_every_outcome_at_every_boundary ____________
+
+matrix = [{'start': 'target', 'cancel': False, 'at': 0, 'name': 'moved', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'n...lse, 'at': 0, 'name': 'onto_control', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'name': 'removed', ...}, ...]
+
+    def test_the_matrix_reaches_every_outcome_at_every_boundary(matrix):
+        """The matrix is not passing because its cells are all alike."""
+        seen = Counter((cell["filmed"]["receipt"]["stopped"], cell["filmed"]["receipt"]["last"]) for cell in matrix)
+        events = [*HOVER, "pointerdown", "mousedown", "pointerup", "mouseup"]
+>       assert {last for stopped, last in seen if stopped == "left_pointer"} == set(events)
+E       AssertionError: assert {'mousedown',..., 'pointerup'} == {'mousedown',...terdown', ...}
+E         
+E         Extra items in the right set:
+E         'pointermove'
+E         'mouseenter'
+E         'mouseover'
+E         'pointerenter'
+E         'pointerover'
+E         Use -v to get more diff
+
+tests/test_filmed_click_invariant.py:329: AssertionError
+_______________________ test_the_cells_the_reviews_found _______________________
+
+matrix = [{'start': 'target', 'cancel': False, 'at': 0, 'name': 'moved', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'n...lse, 'at': 0, 'name': 'onto_control', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'name': 'removed', ...}, ...]
+
+    def test_the_cells_the_reviews_found(matrix):
+        """Each review's counterexample is a cell; these pin them by name so that the matrix cannot lose one
+        by a change to how it is built."""
+        # round 6: a control that moves when hovered is not pressed (now after the first event, not the sixth)
+        shy = _cell(matrix, "target", "moved", 1)
+>       assert (shy["filmed"]["receipt"]["stopped"], shy["filmed"]["receipt"]["count"]) == ("left_pointer", 1)
+E       AssertionError: assert ('left_pointer', 6) == ('left_pointer', 1)
+E         
+E         At index 1 diff: 6 != 1
+E         Use -v to get more diff
+
+tests/test_filmed_click_invariant.py:345: AssertionError
+________ test_the_dispatch_function_is_the_only_place_an_event_is_sent _________
+
+sources = {'pinned': "function(px, py) { const el = this; let count = 0, last = '', retargeted = false; if (!el.isConnected) ret...ched', count, last, retargeted }; throw error; } return { complete: true, stopped: null, count, last, retargeted }; }"}
+
+    def test_the_dispatch_function_is_the_only_place_an_event_is_sent(sources):
+        """The check cannot be bypassed by a dispatch written somewhere else in the sequence."""
+        pinned = sources["pinned"]
+        assert pinned.count(".dispatchEvent(") == 1
+        send = "const send = (type, event) => { if (filmed) under(target); else live(); const kept = target.dispatchEvent(event);"
+>       assert send in pinned
+E       assert 'const send = (type, event) => { if (filmed) under(target); else live(); const kept = target.dispatchEvent(event);' in "function(px, py) { const el = this; let count = 0, last = '', retargeted = false; if (!el.isConnected) return { compl...ached', count, last, retargeted }; throw error; } return { complete: true, stopped: null, count, last, retargeted }; }"
+
+tests/test_filmed_click_invariant.py:388: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_filmed_click_invariant.py::test_the_matrix_covers_every_boundary_and_every_disturbance
+PASSED tests/test_filmed_click_invariant.py::test_without_a_point_every_cell_sends_what_it_sent_before_the_step
+FAILED tests/test_filmed_click_invariant.py::test_every_cell_is_what_the_rule_gives
+FAILED tests/test_filmed_click_invariant.py::test_no_event_and_no_focus_goes_to_an_element_that_is_not_under_the_pointer
+FAILED tests/test_filmed_click_invariant.py::test_a_stopped_click_stops_exactly_where_the_page_changed
+FAILED tests/test_filmed_click_invariant.py::test_the_matrix_reaches_every_outcome_at_every_boundary
+FAILED tests/test_filmed_click_invariant.py::test_the_cells_the_reviews_found
+FAILED tests/test_filmed_click_invariant.py::test_the_dispatch_function_is_the_only_place_an_event_is_sent
+6 failed, 2 passed in 0.49s

@@ -58,8 +58,15 @@ OPERATIONS: dict[str, frozenset[str]] = {
     "bind": frozenset({"pid", "window_id"}),
     "snapshot": frozenset({"target_id", "tab_id"}),
     "click": frozenset({"target_id", "tab_id", "ref", "input_route"}),
+    "locate": frozenset({"target_id", "tab_id", "ref", "point"}),
     "type_text": frozenset({"target_id", "tab_id", "ref", "text", "replace"}),
     "navigate": frozenset({"target_id", "tab_id", "url"}),
+}
+#: fields a request may carry beyond its operation's own. A request without them is the request an
+#: older holder already serves; one with them is rejected by a holder started before they existed.
+OPTIONAL: dict[str, frozenset[str]] = {
+    "click": frozenset({"filmed_point"}),
+    "type_text": frozenset({"filmed_point"}),
 }
 #: operations that may have reached the page; a lost response to one of these is unknown, not unsent
 SENDING = frozenset({"click", "type_text", "navigate"})
@@ -300,7 +307,8 @@ class Holder:
             if method == "stop":
                 self.stopping.set()
             return {"ok": True, "status": self.status()}
-        if method not in OPERATIONS or not isinstance(args, dict) or set(args) != OPERATIONS[method]:
+        if method not in OPERATIONS or not isinstance(args, dict) or not (
+                OPERATIONS[method] <= set(args) <= OPERATIONS[method] | OPTIONAL.get(method, frozenset())):
             return {"ok": False, "code": "holder_request_invalid"}
         self.last_request = time.monotonic()
         async with self.lock:
@@ -429,7 +437,7 @@ async def serve(
     return reason
 
 
-async def run(runtime: Path, *, url: str | None, idle_s: float) -> int:
+async def run(runtime: Path, *, url: str | None, idle_s: float, page_accessibility: bool = False) -> int:
     from jevdual.browser_driver import _incarnation, bind_footwork_chrome, chrome_pid
 
     wrapped: list[PrepareOnce] = []
@@ -438,7 +446,7 @@ async def run(runtime: Path, *, url: str | None, idle_s: float) -> int:
         wrapped.append(PrepareOnce(inner))
         return wrapped[-1]
 
-    driver, bridge = await bind_footwork_chrome(url, wrap_operations=wrap)
+    driver, bridge = await bind_footwork_chrome(url, wrap_operations=wrap, page_accessibility=page_accessibility)
     pid = bridge.pid
     incarnation = _incarnation(pid)
     binding = {
@@ -459,8 +467,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--runtime", required=True, help="this holder's private runtime directory")
     parser.add_argument("--url")
     parser.add_argument("--idle", type=float, default=float(os.environ.get("FOOTWORK_BROWSER_HOLDER_IDLE_S", DEFAULT_IDLE_S)))
+    parser.add_argument("--page-accessibility", action="store_true",
+                        help="launch the browser with page accessibility forced (a filmed start)")
     args = parser.parse_args(argv)
-    return asyncio.run(run(Path(args.runtime), url=args.url, idle_s=args.idle))
+    return asyncio.run(run(Path(args.runtime), url=args.url, idle_s=args.idle,
+                           page_accessibility=args.page_accessibility))
 
 
 # ---------------------------------------------------------------- client side
@@ -580,11 +591,43 @@ class RemoteBrowserOperations:
     async def snapshot(self, *, target_id: str, tab_id: str | None) -> BrowserReply:
         return await self._op("snapshot", target_id=target_id, tab_id=tab_id)
 
-    async def click(self, *, target_id: str, tab_id: str | None, ref: str, input_route: str) -> BrowserReply:
-        return await self._op("click", target_id=target_id, tab_id=tab_id, ref=ref, input_route=input_route)
+    @staticmethod
+    def _older_holder(reply: BrowserReply, what: str) -> BrowserReply:
+        """A holder checks a request's exact fields; one started by an older build does not know a
+        field added since. Say so, and that nothing was sent."""
+        if reply.refusal is None or reply.refusal.code != "holder_request_invalid":
+            return reply
+        message = (f"this session's browser holder does not serve this {what} request (an older build "
+                   "started it); start a new session")
+        return BrowserReply(status="refused", text=message, is_error=True, dispatched=False,
+                            refusal=BrowserRefusal(code="holder_request_invalid", message=message,
+                                                   detail={"delivery": "not_sent", "retryable": False}))
 
-    async def type_text(self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool) -> BrowserReply:
-        return await self._op("type_text", target_id=target_id, tab_id=tab_id, ref=ref, text=text, replace=replace)
+    @staticmethod
+    def _filmed(filmed_point: Any) -> dict[str, Any]:
+        """The optional field, only when there is a point: an unfilmed request stays the one every
+        holder serves."""
+        return {} if filmed_point is None else {"filmed_point": [float(filmed_point[0]), float(filmed_point[1])]}
+
+    async def click(
+        self, *, target_id: str, tab_id: str | None, ref: str, input_route: str, filmed_point: Any = None
+    ) -> BrowserReply:
+        reply = await self._op("click", target_id=target_id, tab_id=tab_id, ref=ref, input_route=input_route,
+                               **self._filmed(filmed_point))
+        return reply if filmed_point is None else self._older_holder(reply, "filmed click")
+
+    async def locate(self, *, target_id: str, tab_id: str | None, ref: str, point: Any = None) -> BrowserReply:
+        reply = await self._op("locate", target_id=target_id, tab_id=tab_id, ref=ref,
+                               point=None if point is None else [float(point[0]), float(point[1])])
+        # an older holder knows no locate, or one without a point
+        return self._older_holder(reply, "locate")
+
+    async def type_text(
+        self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool, filmed_point: Any = None
+    ) -> BrowserReply:
+        reply = await self._op("type_text", target_id=target_id, tab_id=tab_id, ref=ref, text=text, replace=replace,
+                               **self._filmed(filmed_point))
+        return reply if filmed_point is None else self._older_holder(reply, "filmed type")
 
     async def navigate(self, *, target_id: str, tab_id: str | None, url: str) -> BrowserReply:
         return await self._op("navigate", target_id=target_id, tab_id=tab_id, url=url)
@@ -608,11 +651,12 @@ def holder_live(runtime: Path) -> dict[str, Any] | None:
         return None
 
 
-def spawn(*, url: str | None) -> dict[str, Any]:
+def spawn(*, url: str | None, page_accessibility: bool = False) -> dict[str, Any]:
     """Start a holder in a new runtime directory and wait until it has bound the browser.
 
     Returns its identity record, which names its runtime. Raises when it does not become ready, after
-    terminating the process it started."""
+    terminating the process it started. ``page_accessibility`` is passed to the holder's launch of the
+    browser (a filmed start); without it the holder's command is as it was."""
     import subprocess
 
     runtime = new_runtime()
@@ -621,6 +665,8 @@ def spawn(*, url: str | None) -> dict[str, Any]:
                "--runtime", str(runtime)]
     if url:
         command += ["--url", url]
+    if page_accessibility:
+        command += ["--page-accessibility"]
     log = (runtime / LOG_FILE).open("ab")
     process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=log, stderr=log,
                                start_new_session=True, env=os.environ.copy())
@@ -654,10 +700,10 @@ async def _settle(task: asyncio.Future[Any]) -> None:
             break
 
 
-async def spawn_owned(*, url: str | None) -> dict[str, Any]:
+async def spawn_owned(*, url: str | None, page_accessibility: bool = False) -> dict[str, Any]:
     """``spawn`` that a cancelled caller cannot abandon: on cancellation, however repeated, it
     waits for the spawn to finish and for the holder it produced to be retired, then re-raises."""
-    task = asyncio.ensure_future(asyncio.to_thread(spawn, url=url))
+    task = asyncio.ensure_future(asyncio.to_thread(spawn, url=url, page_accessibility=page_accessibility))
     try:
         return await asyncio.shield(task)
     except asyncio.CancelledError:

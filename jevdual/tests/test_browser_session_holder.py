@@ -172,6 +172,31 @@ async def test_a_request_without_the_holders_nonce_is_refused_before_any_driver_
         await asyncio.wait_for(task, 5)
 
 
+CLICK = {"target_id": "t", "tab_id": "t", "ref": "r", "input_route": "dom_event"}
+TYPE = {"target_id": "t", "tab_id": "t", "ref": "r", "text": "Ada", "replace": False}
+
+
+async def test_a_click_and_a_type_may_carry_the_filmed_point_and_nothing_else_may(tmp_path):
+    """FP26: the point is the one field a request may add; it reaches the driver's operation as sent."""
+    inner = FakeOperations()
+    task, _ = await _held(tmp_path, inner)
+    try:
+        assert (await bsh.call(tmp_path, "click", {**CLICK, "filmed_point": [80.0, 115.5]}))["ok"] is True
+        assert (await bsh.call(tmp_path, "type_text", {**TYPE, "filmed_point": [110.0, 212.0]}))["ok"] is True
+        assert (await bsh.call(tmp_path, "click", dict(CLICK)))["ok"] is True
+        assert inner.calls == [("click", {**CLICK, "filmed_point": [80.0, 115.5]}),
+                               ("type_text", {**TYPE, "filmed_point": [110.0, 212.0]}), ("click", CLICK)]
+        for method, args in (("navigate", {"target_id": "t", "tab_id": "t", "url": "u", "filmed_point": [1.0, 2.0]}),
+                             ("snapshot", {"target_id": "t", "tab_id": "t", "filmed_point": [1.0, 2.0]}),
+                             ("click", {**CLICK, "filmed_point": [1.0, 2.0], "extra": 1}),
+                             ("click", {"target_id": "t", "tab_id": "t", "ref": "r", "filmed_point": [1.0, 2.0]})):
+            assert (await bsh.call(tmp_path, method, args)) == {"ok": False, "code": "holder_request_invalid"}
+        assert len(inner.calls) == 3
+    finally:
+        await bsh.stop_async(tmp_path)
+        await asyncio.wait_for(task, 5)
+
+
 @pytest.mark.parametrize("args", [{}, {"target_id": "t", "tab_id": "t", "ref": "r"},
                                   {"target_id": "t", "tab_id": "t", "ref": "r", "input_route": "x", "extra": 1}])
 async def test_an_operation_with_other_arguments_is_refused(tmp_path, args):
@@ -228,7 +253,7 @@ async def test_a_new_launch_gets_its_own_window_before_any_recovery_window(monke
     first_list = [None]
     process = SimpleNamespace(poll=lambda: None, wait=lambda **_: 0, pid=42)
     monkeypatch.setattr(browser, "sys", SimpleNamespace(platform="darwin"))
-    monkeypatch.setattr(browser, "_begin_chrome", lambda url: (42, process if new_launch else None))
+    monkeypatch.setattr(browser, "_begin_chrome", lambda url, **_: (42, process if new_launch else None))
     monkeypatch.setattr(browser, "chrome_pid", lambda: 42)
     monkeypatch.setattr(browser, "_incarnation", lambda pid: 1.0)
     monkeypatch.setattr(browser, "_stop_launch", lambda p: None)
@@ -426,7 +451,7 @@ async def test_a_cancelled_start_retires_the_holder_its_spawn_produced(monkeypat
     identity = {"pid": 4242, "boot": "b", "start": "1.0", "runtime": "/nonexistent/runtime"}
     retired = []
 
-    def slow_spawn(*, url):
+    def slow_spawn(*, url, page_accessibility=False):
         gate.wait(5)
         return identity
 
@@ -569,7 +594,7 @@ async def test_a_refused_first_navigation_refuses_the_start(tmp_path, monkeypatc
 
     driver = FakeDriver()
 
-    async def bind(url, *, policy=None, wrap_operations=None):
+    async def bind(url, *, policy=None, wrap_operations=None, page_accessibility=False):
         return driver, Bridge()
 
     monkeypatch.setattr(browser_driver, "bind_footwork_chrome", bind)
@@ -664,7 +689,7 @@ async def test_spawn_cleanup_survives_repeated_cancellation(monkeypatch):
     identity = {"pid": 4242, "boot": "b", "start": "1.0", "runtime": "/nonexistent/runtime"}
     entered, finished = asyncio.Event(), []
 
-    def slow_spawn(*, url):
+    def slow_spawn(*, url, page_accessibility=False):
         gate.wait(5)
         return identity
 

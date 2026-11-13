@@ -1,0 +1,22 @@
+   Compiling cua-driver-core v0.46.0 (<driver-build>/source-build/libs/cua-driver/rust/crates/cua-driver-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.14s
+     Running unittests src/lib.rs (<driver-build>/target/debug/deps/cua_driver_core-9dac3861bc719b5b)
+
+running 1 test
+test browser::v2_tests::a_filmed_click_is_admitted_on_a_text_field_and_no_other_click_is ... FAILED
+
+failures:
+
+---- browser::v2_tests::a_filmed_click_is_admitted_on_a_text_field_and_no_other_click_is stdout ----
+
+thread 'browser::v2_tests::a_filmed_click_is_admitted_on_a_text_field_and_no_other_click_is' (157573033) panicked at crates/cua-driver-core/src/browser/v2_tests.rs:3582:5:
+refused (browser_action_unavailable): semantic ref p1:1 does not declare the click action
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    browser::v2_tests::a_filmed_click_is_admitted_on_a_text_field_and_no_other_click_is
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1276 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `-p cua-driver-core --lib`

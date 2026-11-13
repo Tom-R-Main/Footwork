@@ -318,7 +318,7 @@ def test_the_session_reports_an_unknown_delivery_refusal_as_unverifiable(tmp_pat
     monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
         {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
     wire = Wire({"browser_click": UNKNOWN_DELIVERY})
-    monkeypatch.setattr(browser_driver, "_begin_chrome", lambda *_: (42, None))
+    monkeypatch.setattr(browser_driver, "_begin_chrome", lambda *_, **__: (42, None))
     monkeypatch.setattr(browser_driver, "chrome_pid", lambda: 42)
     monkeypatch.setattr(browser_driver, "_incarnation", lambda pid: 1.0)
     monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: wire)

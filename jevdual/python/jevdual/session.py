@@ -110,6 +110,9 @@ class SessionState:
     #: browser mode: the holder process that keeps this session's one driver (jevdual.browser_session_holder),
     #: as its process identity at start; empty when the session builds a driver per command
     browser_holder: dict[str, Any] = field(default_factory=dict)
+    #: browser mode: the Chrome this session's start bound, as ``{pid, incarnation, new_process}``;
+    #: ``new_process`` is true only when that start launched it (a found browser belongs to whoever did)
+    browser_launch: dict[str, Any] = field(default_factory=dict)
     #: names of the secrets typed in this session (``{NAME}``); their values are scrubbed from every
     #: observation before it is rendered, persisted or shown to a model. Names only, never values.
     secret_names: list[str] = field(default_factory=list)
@@ -1107,6 +1110,7 @@ async def bind(state: SessionState):
                 await driver.shutdown()
             raise
         state.browser_tab = bridge.tab_id or ""
+        _attach_filmed(state, bridge)
         return driver, bridge
     from jevdual.effectors import desktop_effector
 
@@ -1138,12 +1142,23 @@ async def bind(state: SessionState):
 
 def _filmed(state: SessionState, bridge: Any) -> Any:
     bridge.menu_budget = MenuBudget(native_menu_cap=state.native_menu_cap)
+    _attach_filmed(state, bridge)
+    return bridge
+
+
+def _attach_filmed(state: SessionState, bridge: Any) -> None:
+    """Give a native or page bridge the session's filmed pointer, when the take films one."""
     if state.filmed:
         from jevdual.filmed import Filmed
 
         bridge.filmed = Filmed.from_record(state.filmed)
         bridge.filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
-    return bridge
+        if state.mode == "browser":
+            import functools
+
+            from jevdual.filmed import browser_scene_change
+
+            bridge.scene = functools.partial(browser_scene_change, state.pid, state.window_id)
 
 
 def _native_bridge(
@@ -1247,6 +1262,60 @@ def finish_observation(
 # ---- commands --------------------------------------------------------------------------------
 
 
+#: how long a filmed browser start waits for the window to show its web area, how often it reads, and
+#: how often it asks the browser to show its web content while none is shown. For about a second after
+#: a launch the window of a Chrome may show no web area, and may not accept the request either (FP69,
+#: FP84); the Driver, which makes the same request for a native session, allows the page's tree four seconds.
+WEB_AREA_WAIT_S = 8.0
+WEB_AREA_POLL_S = 0.1
+WEB_AREA_ASK_S = 1.0
+
+
+def _web_area_when_shown(pid: int, window_id: int) -> tuple[Any, str, str | None]:
+    """The frame of the browser window's web area, how it was got (for start to print), and why not.
+
+    The window is read for up to ``WEB_AREA_WAIT_S``, whatever else happens. While a reading finds no
+    web area the browser is asked to show its web content (``ax.show_web_content``), again every
+    ``WEB_AREA_ASK_S`` until one request is accepted; a request the browser does not accept is recorded
+    with its answer and decides nothing, because the web area has appeared with no request made and
+    has been absent when a request was refused. A browser that shows one already is not written to.
+    The frame is recorded once and every page position is mapped from it, so it is taken only when two
+    readings ``WEB_AREA_POLL_S`` apart agree. The window is found again for each reading."""
+    from jevdual import ax
+
+    began = time.monotonic()
+    asked: list[str] = []  # each request's answer, in order: the attribute accepted, or the error
+    accepted, last_ask, last, seen = False, -math.inf, None, False
+
+    def how() -> str:
+        return f"asked {len(asked)} times: {'; '.join(asked)}" if len(asked) > 1 else (
+            f"asked: {asked[0]}" if asked else "")
+
+    while True:
+        win = ax.window_element(pid, window_id)
+        found = ax.web_area_frame(win)
+        waited = time.monotonic() - began
+        if found is not None and found == last:
+            return found, f"web area shown after {waited:.1f} s" + (f", {how()}" if asked else ""), None
+        seen, last = seen or found is not None, found
+        if waited >= WEB_AREA_WAIT_S:
+            why = ("the browser window's web area did not keep one frame" if seen
+                   else "the browser window shows no web area to film")
+            try:
+                shows = ax.outline(win)
+            except Exception as exc:  # noqa: BLE001  (saying what the window shows helps; failing to is not the refusal)
+                shows = f"nothing readable ({type(exc).__name__})"
+            return None, "", f"{why} ({how() + ', ' if asked else ''}waited {waited:.1f} s; the window shows {shows})"
+        if found is None and not accepted and waited - last_ask >= WEB_AREA_ASK_S:
+            last_ask = waited
+            try:
+                asked.append(f"{ax.show_web_content(pid)} accepted at {waited:.1f} s")
+                accepted = True
+            except ax.AXError as exc:
+                asked.append(f"{exc} at {waited:.1f} s")
+        time.sleep(WEB_AREA_POLL_S)
+
+
 def _filmed_setup(state: SessionState, args: Any) -> str | None:
     """Record a filmed take's geometry at start: the scene window, its web content origin, and the keep-out
     and rest position converted from viewport CSS px to screen points."""
@@ -1267,13 +1336,21 @@ def _filmed_setup(state: SessionState, args: Any) -> str | None:
     try:
         win = ax.window_element(state.pid, state.window_id)
         window = ax.frame_of(win)
-        web = ax.web_area_frame(win)
         keep = pair(getattr(args, "keep_out", None), 4, "--keep-out")
         rest = pair(getattr(args, "rest", None), 2, "--rest")
+        if window is None:
+            return "the scene window has no frame"
+        shown = ""
+        if state.mode == "browser":
+            # a page position maps to a screen point from the web area's origin; the window's frame is no
+            # substitute, and a browser no native session has read does not show its web area until asked
+            web, shown, refusal = _web_area_when_shown(state.pid, state.window_id)
+            if refusal:
+                return refusal
+        else:
+            web = ax.web_area_frame(win)
     except (ax.AXError, ValueError) as exc:
         return str(exc)
-    if window is None:
-        return "the scene window has no frame"
     content = web or window
     origin = (content.x, content.y)
     filmed = Filmed(
@@ -1292,6 +1369,7 @@ def _filmed_setup(state: SessionState, args: Any) -> str | None:
     print(
         f"filmed take: content {content.w:.0f}x{content.h:.0f} at {content.x:.0f},{content.y:.0f}; "
         f"keep-out {filmed.keep_out}; rest {filmed.rest}"
+        + (f"; {shown}" if shown else "")
     )
     return None
 
@@ -1759,25 +1837,36 @@ async def _start_browser(args: Any, d: Path) -> int:
     posture = getattr(args, "mode", None) or "background_only"
     from jevdual import browser_session_holder as bsh
 
+    # a filmed take reads the page's web area from the window, which a Chrome shows when launched to
+    # (FP88); only that start's launch differs, and only by the one switch
+    filmed = getattr(args, "pointer_motion", "off") == "filmed"
     holder: dict[str, Any] = {}
     if bsh.enabled():
         from jevdual.browser_driver import BrowserBridge
 
-        identity = await bsh.spawn_owned(url=args.url)
+        identity = await bsh.spawn_owned(url=args.url, page_accessibility=filmed)
         holder = {k: identity[k] for k in ("boot", "pid", "start", "runtime")}
         runtime = Path(identity["runtime"])
         driver = bsh.HeldDriver()
         bridge = BrowserBridge(driver, identity["chrome_pid"], identity["window_id"],  # type: ignore[arg-type]
                                policy=ExecutionPolicy(posture), operations=bsh.RemoteBrowserOperations(runtime))
+        # said before the attach can fail: a caller that cleans up after a failed start learns here which
+        # holder is this start's
+        print(f"browser holder pid {identity['pid']} keeps this session's driver", flush=True)
         try:
             await bridge.attach()  # the active tab of the window the holder just bound, as without one
         except BaseException:
-            with contextlib.suppress(Exception):
+            try:
                 await bsh.retire_settled(runtime, expected=identity)
+            except Exception as exc:  # noqa: BLE001 - the attach's failure is the one raised; this one is said
+                print(f"browser holder pid {identity['pid']} was not retired after the failed attach: "
+                      f"{type(exc).__name__}: {exc}", file=sys.stderr)
             raise
-        print(f"browser holder pid {identity['pid']} keeps this session's driver")
+        launch = dict(identity.get("launch_identity") or {})
     else:
-        driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture))  # type: ignore[arg-type]
+        driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture),  # type: ignore[arg-type]
+                                                    page_accessibility=filmed)
+        launch = dict(getattr(bridge, "launch_identity", None) or {})
     try:
         state = SessionState(
             dir=str(d),
@@ -1792,8 +1881,14 @@ async def _start_browser(args: Any, d: Path) -> int:
             posture=posture,
             browser_tab=bridge.tab_id or "",
             browser_holder=holder,
+            browser_launch=launch,
         )
-        if getattr(args, "pointer_motion", "off") == "filmed":
+        if launch:
+            # said before anything below can refuse: a caller that cleans up after a failed start learns
+            # here whether the browser is this start's own
+            print(f"footwork's Chrome pid {launch.get('pid')} started {launch.get('incarnation')!r}: "
+                  + ("launched by this start" if launch.get("new_process") else "already running"))
+        if filmed:
             # B7: one session films the real pointer over the same window its page operations bind
             refusal = _filmed_setup(state, args)
             if refusal:
@@ -2689,6 +2784,7 @@ async def cmd_do(args: Any) -> int:
         ended_at = None
         bridge_returned = False
         error = None
+        filmed_note = None
         eff = None
         dispatched = None  # a missing acknowledgement cannot establish no-send
         try:
@@ -2728,7 +2824,8 @@ async def cmd_do(args: Any) -> int:
             driver_effect = eff.effect
             dispatched = getattr(eff, "dispatched", True)
             if not getattr(eff, "dispatched", True):
-                # the posture refused it: nothing reached any window
+                # the action itself was not dispatched. A filmed approach may already have moved the
+                # pointer before it refused; its summary says so.
                 driver_effect = "not sent"
                 error = f"{eff.error_code}: {eff.summary[:140]}"
             elif eff.effect == "refused":
@@ -2736,6 +2833,19 @@ async def cmd_do(args: Any) -> int:
                 error = f"input outcome unknown: {eff.error_code or ''} {eff.summary[:100]}".strip()
             elif eff.error_code:
                 error = f"{eff.error_code}: {eff.summary[:140]}"
+            elif getattr(bridge, "filmed", None) is not None:
+                # what a filmed take found about a page action that went: the session says it, because
+                # the effect word alone ("unverifiable", or whatever the page's change shows) does not
+                from jevdual.filmed import PAGE_MARKS
+
+                marks = [mark for mark in getattr(eff, "evidence", ()) if mark in PAGE_MARKS]
+                if any(mark.startswith("click_") for mark in marks):
+                    # the click did not complete: some of its events went and no click event is known
+                    # to have; what the page did with them is unknown
+                    driver_effect = "unverifiable"
+                    error = f"{', '.join(marks)}: {eff.summary[:400]}"
+                elif marks:
+                    filmed_note = f"{', '.join(marks)}: {eff.summary[:400]}"
         except (NativeBridgeError, RuntimeError) as exc:
             dispatched = getattr(exc, "dispatched", None)
             driver_effect = "not dispatched" if dispatched is False else "unverifiable"
@@ -2758,6 +2868,7 @@ async def cmd_do(args: Any) -> int:
             "driver_effect": driver_effect,
             "dispatched": dispatched,
             "error": error,
+            **({"filmed_note": filmed_note} if filmed_note else {}),
             "exec_ms": exec_ms,
             "op": op,
             "target_id": target.id if target is not None else None,
@@ -2847,6 +2958,9 @@ async def cmd_do(args: Any) -> int:
         print(
             f"dispatched {line}: driver says {driver_effect}{(' (' + error + ')') if error else ''} in {exec_ms / 1000:.1f}s"
         )
+        if filmed_note:
+            # the action went; the film may not show the pointer on it
+            print(f"filmed take: {filmed_note}")
         await asyncio.sleep(args.settle)
         baseline = state.last_snapshot
         try:

@@ -1,0 +1,4 @@
+{
+ "held": false,
+ "unreadable": "FileNotFoundError: [Errno 2] No such file or directory: '<scratch>/fp67-live/out/session/session.json'"
+}

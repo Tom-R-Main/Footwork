@@ -1,0 +1,16 @@
+
+tests/test_filmed_session.py:350: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_probe_filmed_page_pointer.py::test_an_interrupt_during_cleanup_does_not_skip_the_rest_and_is_raised_after_the_records
+FAILED tests/test_probe_filmed_page_pointer.py::test_the_run_keeps_what_the_analysis_reads_of_the_gestures_and_it_gives_the_same_verdict
+FAILED tests/test_probe_filmed_page_pointer.py::test_the_registry_readings_kept_with_the_evidence_name_only_this_runs_session
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_holder_that_nothing_names_is_read_from_every_running_holder_and_never_assumed_gone[running0-True]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_holder_that_nothing_names_is_read_from_every_running_holder_and_never_assumed_gone[running1-True]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_holder_that_nothing_names_is_read_from_every_running_holder_and_never_assumed_gone[running2-False]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_holder_that_nothing_names_is_read_from_every_running_holder_and_never_assumed_gone[running3-None]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_holder_that_nothing_names_is_read_from_every_running_holder_and_never_assumed_gone[running4-None]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_holder_that_nothing_names_is_read_from_every_running_holder_and_never_assumed_gone[running5-False]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_holder_process_without_a_runtime_in_its_command_is_not_attributed
+FAILED tests/test_filmed_session.py::test_a_start_names_its_holder_before_the_attach_can_fail_and_says_when_it_was_not_retired[True]
+FAILED tests/test_filmed_session.py::test_a_start_names_its_holder_before_the_attach_can_fail_and_says_when_it_was_not_retired[False]
+12 failed, 272 passed in 11.71s

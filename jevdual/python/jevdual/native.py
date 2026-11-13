@@ -95,10 +95,13 @@ _LABEL_CAP = 80
 _VALUE_CAP = 120
 FOREGROUND_WEB_TEXT_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1"
 FOREGROUND_HELPTAG_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1"
-#: the pinned release: focus1 and helptag1, plus a connected-node check before a page-route click
+#: focus1 and helptag1, plus a connected-node check before a page-route click
 FOREGROUND_CONNECTED_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4"
+#: the pinned release: connected4, plus a read-only locate of one page ref (get_browser_state locate_ref,
+#: with clipping, document visibility and an optional point to hit-test)
+FOREGROUND_LOCATE_CUA_VERSION = FOREGROUND_CONNECTED_CUA_VERSION + ".locate10"
 FOREGROUND_WEB_TEXT_CUA_VERSIONS = frozenset({FOREGROUND_WEB_TEXT_CUA_VERSION, FOREGROUND_HELPTAG_CUA_VERSION,
-                                             FOREGROUND_CONNECTED_CUA_VERSION})
+                                             FOREGROUND_CONNECTED_CUA_VERSION, FOREGROUND_LOCATE_CUA_VERSION})
 _INVISIBLE = re.compile("[" + "\u200e\u200f\u202a-\u202e\u2066-\u2069" + "]")
 _WS = re.compile(r"\s+")
 #: ``AXStaticText = "..."`` optionally followed by ``[actions=[...]]`` or other bracketed attributes

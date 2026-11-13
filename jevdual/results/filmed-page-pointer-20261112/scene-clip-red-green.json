@@ -1,0 +1,37 @@
+{
+  "prediction": "FP9",
+  "driver": {
+    "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
+    "red": {
+      "tree": "locate1 tools.rs with the locate2 mock-CDP tests (filter: locate_ref)",
+      "log": "scene-clip-rust-red.txt",
+      "outcome": "5 failed (the four new tests and the revised reports test), 4 passed (the unchanged locate1 tests)"
+    },
+    "green": {
+      "tree": "locate2 (patches/ref-locate.patch)",
+      "summary": [
+        "test result: ok. 1256 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.55s"
+      ],
+      "warnings": 0,
+      "note": "the same count before and after rustfmt reflowed the two files (16.57s on the formatted sources)"
+    }
+  },
+  "footwork": {
+    "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_probe_filmed_page_pointer.py tests/test_filmed_session.py",
+    "red": {
+      "tree": "ad779dd python/ and scripts/ with the new tests",
+      "log": "scene-clip-python-red.txt",
+      "outcome": "59 failed, 27 errors, 40 passed",
+      "passed_before_the_change": "16 located_rect cases kept from FP4, 17 session tests that predate this package's browser clicks or do not reach a page action, and 7 probe-analysis cases the earlier analysis already rejected (FP7 composed them by hand)"
+    },
+    "green": {
+      "outcome": "126 passed (the three files); offline suite 3622 passed, 52 skipped, both before the pins moved (installed locate1) and after (installed locate2, built from the pinned archive)"
+    }
+  },
+  "chain": {
+    "command": "scripts/cua_source_chain.py --base <focus1 archive from 6e8bb5e>",
+    "outcome": "byte-identical to vendor/cua-driver/native-source.tar.gz",
+    "sha256": "f9d8ab2e848a0a94b77d5548fc5b90c3a1399f7a669b493df25da1162e67d901",
+    "bytes": 6417335
+  }
+}

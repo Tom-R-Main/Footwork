@@ -1,0 +1,13 @@
+# the updated v2_tests.rs against the tools.rs that 47bf4bb pinned (locate7), FP44
+test browser::v2_tests::dom_event_click_sequence_checks_its_node_before_every_event_and_reports_by_value ... FAILED
+test browser::v2_tests::filmed_click_is_refused_before_anything_runs_where_it_cannot_be_isolated ... FAILED
+test browser::v2_tests::filmed_click_off_its_point_sends_nothing_and_says_so ... FAILED
+test browser::v2_tests::filmed_click_under_a_hidden_pointer_says_so_at_each_stage ... FAILED
+test browser::v2_tests::filmed_click_whose_node_left_its_point_before_the_press_says_no_press_was_sent ... FAILED
+test browser::v2_tests::filmed_insert_is_refused_before_anything_runs_where_it_cannot_be_made ... FAILED
+test browser::v2_tests::filmed_insert_reports_each_refusal_of_its_function ... FAILED
+test result: FAILED. 1266 passed; 7 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.55s
+exit 101
+
+# against the locate8 sources
+test result: ok. 1273 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.55s

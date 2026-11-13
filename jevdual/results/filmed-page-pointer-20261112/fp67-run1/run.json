@@ -1,0 +1,32 @@
+{
+ "gate": {
+  "polls": 1,
+  "idle_s": 82.3,
+  "waited_s": 0.0
+ },
+ "front_pid_at_start": 74505,
+ "fixture": "http://127.0.0.1:56196/",
+ "steps": [
+  {
+   "name": "00-start",
+   "t_start": 1794576707.5748138,
+   "t_end": 1794576709.407166,
+   "exit": 2,
+   "stdout": "",
+   "stderr": "not starting: the browser window shows no web area to film\n"
+  }
+ ],
+ "pointer_sampler": {
+  "samples": 295,
+  "largest_gap_s": 0.0185
+ },
+ "finished": 1794576709.407207,
+ "cleanup_errors": [],
+ "chrome_launch": {
+  "pid": 38130,
+  "incarnation": 1794576707.834457
+ },
+ "chrome_pid": 38130,
+ "chrome_closed": true,
+ "front_pid_at_end": 74505
+}

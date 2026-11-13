@@ -1,0 +1,2746 @@
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/cdp_ws.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/cdp_ws.rs
+@@ -60,6 +60,7 @@
+     "Input.insertText",
+     "Page.bringToFront",
+     "Page.captureScreenshot",
++    "Page.createIsolatedWorld",
+     "Page.enable",
+     "Page.getFrameTree",
+     "Page.getLayoutMetrics",
+@@ -1234,7 +1235,15 @@
+         conn.call(None, "Target.getTargets", json!({}))
+             .await
+             .expect("reviewed method remains available");
+-        assert_eq!(&*seen.lock().unwrap(), &["Target.getTargets"]);
++        // the locate reads in an isolated world; the name list is searched as
++        // sorted, so a misplaced entry would be refused here
++        conn.call(None, "Page.createIsolatedWorld", json!({}))
++            .await
++            .expect("the locate's world can be made on a personal profile");
++        assert_eq!(
++            &*seen.lock().unwrap(),
++            &["Target.getTargets", "Page.createIsolatedWorld"]
++        );
+     }
+ 
+     #[tokio::test]
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
+@@ -33,7 +33,7 @@
+ use super::pointer::BrowserPointerTool;
+ use super::refusal::{BrowserRefusal, BrowserRefusalCode};
+ use super::session_schema as schema_session;
+-use super::store::BrowserActionKind;
++use super::store::{BrowserActionKind, FrameKind};
+ use super::types::BindingQuality;
+ 
+ /// Register the complete browser surface against one shared engine. Platform
+@@ -195,15 +195,53 @@
+         .expect("DOM click action record must satisfy the stable contract")
+ }
+ 
++/// Added to a completed filmed click's text when its press gave no focus.
++const DOM_CLICK_UNFOCUSED_NOTE: &str = ". The press moved no focus: the element a press would \
++     focus holds the ref's node and is not part of it. Click that element to focus it";
++
+ /// What a DOM click sequence's reply says about its delivery. Only a
+ /// well-formed receipt counts: an exception, a missing value or any other
+ /// shape is an interrupted click, never a completed or an undelivered one.
+ #[derive(Debug, PartialEq)]
+ enum DomClickReceipt {
+-    Completed,
+-    Detached { count: u64, last: String },
++    /// `unfocused`: a filmed click completed without giving the focus a press
++    /// would give, because the element it would go to is outside the node.
++    Completed {
++        unfocused: bool,
++    },
++    Detached {
++        count: u64,
++        last: String,
++    },
++    /// A filmed click found its point off the node, or the pointer hidden
++    /// there (`hidden`), and sent nothing.
++    Misplaced {
++        hidden: bool,
++    },
++    /// A filmed click stopped because its point was no longer on the node, or
++    /// the pointer no longer shown there (`hidden`), before the event that
++    /// would have followed `last`. `pressed` says whether the press had been
++    /// sent: without it only hover and move events were.
++    Left {
++        count: u64,
++        last: String,
++        hidden: bool,
++        pressed: bool,
++    },
+     Interrupted(&'static str),
+ }
++
++/// The events a click sequence sends before its press, and from the press
++/// to the release: the only values a `left_pointer` receipt may name last.
++const DOM_CLICK_HOVER_EVENTS: [&str; 6] = [
++    "pointerover",
++    "pointerenter",
++    "mouseover",
++    "mouseenter",
++    "pointermove",
++    "mousemove",
++];
++const DOM_CLICK_PRESS_EVENTS: [&str; 4] = ["pointerdown", "mousedown", "pointerup", "mouseup"];
+ 
+ fn dom_click_receipt(reply: &Value) -> DomClickReceipt {
+     if reply.get("exceptionDetails").is_some() {
+@@ -213,12 +251,40 @@
+         return DomClickReceipt::Interrupted("no completion receipt");
+     };
+     let count = value.get("count").and_then(Value::as_u64);
++    let hidden = value.get("hidden").and_then(Value::as_bool) == Some(true);
+     match (
+         value.get("complete").and_then(Value::as_bool),
+         value.get("stopped"),
+         count,
+     ) {
+-        (Some(true), Some(Value::Null), Some(_)) => DomClickReceipt::Completed,
++        (Some(true), Some(Value::Null), Some(_)) => DomClickReceipt::Completed {
++            unfocused: value.get("unfocused").and_then(Value::as_bool) == Some(true),
++        },
++        (Some(false), Some(Value::String(stopped)), Some(0)) if stopped == "not_under_pointer" => {
++            DomClickReceipt::Misplaced { hidden }
++        }
++        (Some(false), Some(Value::String(stopped)), Some(count))
++            if stopped == "left_pointer" && count > 0 =>
++        {
++            // The sequence checks before each event from the press on, so it
++            // names the event it sent last: a hover or move event when the
++            // press was never sent, a press or release event when it was.
++            match value.get("last").and_then(Value::as_str) {
++                Some(last) if DOM_CLICK_HOVER_EVENTS.contains(&last) => DomClickReceipt::Left {
++                    count,
++                    last: last.to_owned(),
++                    hidden,
++                    pressed: false,
++                },
++                Some(last) if DOM_CLICK_PRESS_EVENTS.contains(&last) => DomClickReceipt::Left {
++                    count,
++                    last: last.to_owned(),
++                    hidden,
++                    pressed: true,
++                },
++                _ => DomClickReceipt::Interrupted("a malformed receipt"),
++            }
++        }
+         (Some(false), Some(Value::String(stopped)), Some(count)) if stopped == "detached" => {
+             match value.get("last").and_then(Value::as_str) {
+                 Some(last) if count == 0 || !last.is_empty() => DomClickReceipt::Detached {
+@@ -235,12 +301,29 @@
+ /// What a DOM click does after its sequence call returns.
+ #[derive(Debug, PartialEq)]
+ enum DomClickNext {
+-    /// The sequence completed: read the target back.
+-    Readback,
++    /// The sequence completed: read the target back. `unfocused` as in the
++    /// receipt.
++    Readback {
++        unfocused: bool,
++    },
+     /// A page dialog interrupted the sequence or is blocking the page.
+     Dialog(super::cdp_ws::CdpDialogState),
+     /// The ref's node left its document before the first event.
+     Refuse,
++    /// A filmed click's point was not on the ref's node, or the pointer was
++    /// hidden there; no event was sent.
++    Misplaced {
++        hidden: bool,
++    },
++    /// A filmed click stopped when its point was no longer on the ref's node
++    /// (or the pointer no longer shown): before the press, with only hover
++    /// and move events sent, or after it, with no click event sent.
++    Left {
++        count: u64,
++        last: String,
++        hidden: bool,
++        pressed: bool,
++    },
+     Partial {
+         count: u64,
+         last: String,
+@@ -266,14 +349,26 @@
+         return DomClickNext::Dialog(open);
+     }
+     match dom_click_receipt(&reply) {
+-        DomClickReceipt::Completed => DomClickNext::Readback,
++        DomClickReceipt::Completed { unfocused } => DomClickNext::Readback { unfocused },
+         DomClickReceipt::Detached { count: 0, .. } => DomClickNext::Refuse,
++        DomClickReceipt::Misplaced { hidden } => DomClickNext::Misplaced { hidden },
++        DomClickReceipt::Left {
++            count,
++            last,
++            hidden,
++            pressed,
++        } => DomClickNext::Left {
++            count,
++            last,
++            hidden,
++            pressed,
++        },
+         DomClickReceipt::Detached { count, last } => DomClickNext::Partial { count, last },
+         DomClickReceipt::Interrupted(reason) => DomClickNext::Interrupted(reason),
+     }
+ }
+ 
+-fn dom_click_stopped_action_record(count: u64, last: &str) -> ActionExecutionRecord {
++fn dom_click_stopped_action_record(count: u64, last: &str, why: &str) -> ActionExecutionRecord {
+     ActionExecutionRecord::builder(
+         ActionEffect::Unverifiable,
+         ActionTransport::BrowserCdpRuntimeFunction,
+@@ -283,13 +378,12 @@
+     .evidence(ActionEvidence {
+         kind: EvidenceKind::EventReceipt,
+         detail: format!(
+-            "the click sequence stopped after {last} because the ref's node left its document; \
+-             {count} events sent"
++            "the click sequence stopped after {last} because {why}; {count} events sent"
+         ),
+     })
+     .escalation(ActionEscalation {
+         kind: EscalationKind::RefreshPageState,
+-        detail: Some("the ref's node left its document during the click".to_owned()),
++        detail: Some(format!("{why} during the click")),
+     })
+     .build()
+     .expect("DOM click action record must satisfy the stable contract")
+@@ -549,7 +643,12 @@
+                 semantic_v2 joins accessibility, DOM, layout, and viewport state; \
+                 ranks visible content before retained/offscreen state; and returns a \
+                 semantic outline, typed action refs, content refs, scoped reads, and \
+-                opaque continuation. Never performs setup: a browser that is not \
++                opaque continuation. Mode 3 (locate): pass target_id + tab_id + \
++                locate_ref to read where one current ref's element is in the viewport, \
++                what is at its centre, whether a clipping ancestor hides part of it \
++                and whether its document is showing; with locate_point, also what is \
++                at that point. It scrolls nothing and mints no snapshot. \
++                Never performs setup: a browser that is not \
+                 attached yet refuses with browser_consent_required or \
+                 browser_requires_setup, and detail.next_call names the browser_prepare call \
+                 that attaches it. Use this route for any web page in Chrome, Edge or Brave; \
+@@ -580,6 +679,29 @@
+                         "type": "string",
+                         "description": "Opaque continuation minted by an earlier semantic_v2 response."
+                     },
++                    "locate_ref": {
++                        "type": "string",
++                        "description": "A current ref. Returns only `locate`: the element's \
++                            rectangle and centre in viewport CSS px, whether the element at \
++                            that centre is the target or inside it, the border-box centre \
++                            from DOM.getBoxModel, the viewport's size, zoom and pinch \
++                            scale, `clipped` (an ancestor that clips or scrolls its overflow \
++                            hides part of the rectangle), `visibility_state` (the \
++                            document's), `focused` (the element is its root's active \
++                            element) and `page_focused` (its document has focus). The page \
++                            is read in an isolated world (`world`), out of reach of the \
++                            page's own script. Read-only: nothing is scrolled, focused or \
++                            dispatched, and no snapshot is taken. Unavailable for a ref in a \
++                            child frame, or when no isolated world can be made."
++                    },
++                    "locate_point": {
++                        "type": "object",
++                        "properties": { "x": { "type": "number" }, "y": { "type": "number" } },
++                        "required": ["x", "y"],
++                        "description": "With locate_ref: a point in viewport CSS px. `locate.point` \
++                            then says whether the element at that point is the ref's element, \
++                            inside it, another element or none."
++                    },
+                     "include_screenshot": {
+                         "type": "boolean",
+                         "default": false,
+@@ -646,6 +768,35 @@
+                     .to_tool_result()
+                 }
+             };
++            if let Some(locate_ref) = args.opt_str("locate_ref") {
++                let locate_point = match point_arg(&args, "locate_point") {
++                    Ok(point) => point,
++                    Err(error) => return error,
++                };
++                return match locate_browser_ref(
++                    &self.engine,
++                    &session,
++                    &target_id,
++                    &tab_id,
++                    &locate_ref,
++                    locate_point,
++                )
++                .await
++                {
++                    Ok(locate) => ToolResult::text(format!(
++                        "located {locate_ref} in {tab_id}; nothing was scrolled or dispatched"
++                    ))
++                    .with_structured(json!({
++                        "status": "ok",
++                        "mode": "locate",
++                        "target_id": target_id,
++                        "tab_id": tab_id,
++                        "ref": locate_ref,
++                        "locate": locate,
++                    })),
++                    Err(refusal) => refusal.to_tool_result(),
++                };
++            }
+             let snapshot_format = args
+                 .opt_str("snapshot_format")
+                 .unwrap_or_else(|| "dom_refs_v1".into());
+@@ -1303,6 +1454,23 @@
+                             control activated; refresh page state and verify the \
+                             expected postcondition."
+                     },
++                    "filmed_point": {
++                        "type": "object",
++                        "description": "Where a filmed pointer is, in viewport CSS px. With \
++                            input_route=dom_event and a ref in the tab's own frame: the \
++                            click is checked and sent in one turn of script in an \
++                            isolated world. It is sent only if this point is inside the \
++                            ref's rectangle and hit-tests as the ref or something inside \
++                            it; its events carry this point; nothing is scrolled first \
++                            and no cursor is drawn. A ref that declares typing (a text \
++                            field) is accepted with this point, so that the press can \
++                            give it focus; without it such a ref is refused.",
++                        "properties": {
++                            "x": { "type": "number" },
++                            "y": { "type": "number" }
++                        },
++                        "required": ["x", "y"]
++                    },
+                 },
+                 "required": ["target_id", "tab_id"],
+                 "additionalProperties": true
+@@ -1376,6 +1544,13 @@
+         if route == "dom_event" && ext_ref.is_none() {
+             return ToolResult::error("input_route=dom_event requires a ref");
+         }
++        let filmed_point = match point_arg(&args, "filmed_point") {
++            Ok(point) => point,
++            Err(error) => return error,
++        };
++        if filmed_point.is_some() && route != "dom_event" {
++            return ToolResult::error("filmed_point requires input_route=dom_event and a ref");
++        }
+         let foreground = match parse_delivery_mode(&args) {
+             Ok(f) => f,
+             Err(e) => return ToolResult::error(e),
+@@ -1457,7 +1632,14 @@
+                     Ok(entry) => entry,
+                     Err(refusal) => return refusal.to_tool_result(),
+                 };
+-                if entry.semantic && !entry.actions.contains(&BrowserActionKind::Click) {
++                // A filmed click is also the press that gives a text field its
++                // focus: a filmed insert focuses nothing, so a filmed take can
++                // type only into a field its pointer has pressed. A ref that
++                // declares typing is admitted for a click that carries a filmed
++                // point, and for no other click.
++                let declared = entry.actions.contains(&BrowserActionKind::Click)
++                    || (filmed_point.is_some() && entry.actions.contains(&BrowserActionKind::Type));
++                if entry.semantic && !declared {
+                     return BrowserRefusal::new(
+                         BrowserRefusalCode::BrowserActionUnavailable,
+                         format!("semantic ref {r} does not declare the click action"),
+@@ -1494,14 +1676,29 @@
+         // dom_event route: explicit opt-in only.
+         if route == "dom_event" {
+             let backend = backend_node_id.expect("checked above");
+-            let resolved = match conn
+-                .call(
+-                    Some(cdp),
+-                    "DOM.resolveNode",
+-                    json!({ "backendNodeId": backend }),
+-                )
+-                .await
+-            {
++            // A filmed click runs wholly in the isolated world: the page's own
++            // script world can replace what the sequence calls, and such a
++            // replacement could move the node after the pointer was verified
++            // on it. Nothing is read in the page's world instead.
++            let mut resolve = json!({ "backendNodeId": backend });
++            if filmed_point.is_some() {
++                if frame_kind != Some(FrameKind::Main.as_str()) {
++                    return BrowserRefusal::new(
++                        BrowserRefusalCode::BrowserActionUnavailable,
++                        "no event was sent: filmed_point is for a ref in the tab's own frame",
++                    )
++                    .to_tool_result();
++                }
++                let Some(world) = isolated_world(conn, cdp).await else {
++                    return BrowserRefusal::new(
++                        BrowserRefusalCode::BrowserActionUnavailable,
++                        "no event was sent: no isolated world could be made for the filmed click",
++                    )
++                    .to_tool_result();
++                };
++                resolve["executionContextId"] = json!(world);
++            }
++            let resolved = match conn.call(Some(cdp), "DOM.resolveNode", resolve).await {
+                 Ok(v) => v,
+                 Err(_) => {
+                     return BrowserRefusal::new(
+@@ -1556,52 +1753,58 @@
+                 .to_tool_result();
+             }
+             // Cursor feedback is best-effort and visual-only. A missing box
+-            // must not turn a valid DOM-event action into a refusal.
+-            let _ = conn
+-                .call(
+-                    Some(cdp),
+-                    "DOM.scrollIntoViewIfNeeded",
+-                    json!({ "backendNodeId": backend }),
+-                )
+-                .await;
+-            if let Ok(box_model) = conn
+-                .call(
+-                    Some(cdp),
+-                    "DOM.getBoxModel",
+-                    json!({ "backendNodeId": backend }),
+-                )
+-                .await
+-            {
+-                if let Some((x, y)) = quad_center(&box_model) {
+-                    self.engine
+-                        .visualize_browser_action(
+-                            &session,
+-                            &validated,
+-                            cdp,
+-                            x,
+-                            y,
+-                            BrowserVisualActionKind::Click,
+-                        )
+-                        .await;
++            // must not turn a valid DOM-event action into a refusal. A filmed
++            // click has neither: a scroll would move the node from under the
++            // pointer, and the pointer on screen is the cursor.
++            if filmed_point.is_none() {
++                let _ = conn
++                    .call(
++                        Some(cdp),
++                        "DOM.scrollIntoViewIfNeeded",
++                        json!({ "backendNodeId": backend }),
++                    )
++                    .await;
++                if let Ok(box_model) = conn
++                    .call(
++                        Some(cdp),
++                        "DOM.getBoxModel",
++                        json!({ "backendNodeId": backend }),
++                    )
++                    .await
++                {
++                    if let Some((x, y)) = quad_center(&box_model) {
++                        self.engine
++                            .visualize_browser_action(
++                                &session,
++                                &validated,
++                                cdp,
++                                x,
++                                y,
++                                BrowserVisualActionKind::Click,
++                            )
++                            .await;
++                    }
+                 }
+             }
+             let before =
+                 read_dom_click_state(conn, cdp, &object_id, DOM_CLICK_BASELINE_DEADLINE).await;
+-            let click = conn.call(
+-                Some(cdp),
+-                "Runtime.callFunctionOn",
+-                json!({
+-                    "objectId": object_id,
+-                    "functionDeclaration": DOM_EVENT_CLICK_SEQUENCE,
+-                    "returnByValue": true,
+-                }),
+-            );
++            // Without a filmed point the request is the one this route has always sent:
++            // the sequence takes no arguments and acts at the node's centre.
++            let mut sequence = json!({
++                "objectId": object_id,
++                "functionDeclaration": DOM_EVENT_CLICK_SEQUENCE,
++                "returnByValue": true,
++            });
++            if let Some((x, y)) = filmed_point {
++                sequence["arguments"] = json!([{ "value": x }, { "value": y }]);
++            }
++            let click = conn.call(Some(cdp), "Runtime.callFunctionOn", sequence);
+             let ext = ext_ref.as_deref().unwrap_or("?");
+             let outcome = call_until_dialog(conn, cdp_target_id, click).await;
+             return match dom_click_next(outcome, || conn.dialog_state(cdp_target_id)) {
+-                DomClickNext::Readback => {
++                DomClickNext::Readback { unfocused } => {
+                     let observation = observe_dom_click(conn, cdp, &object_id, before).await;
+-                    let text = match observation.effect {
++                    let mut text = match observation.effect {
+                         ActionEffect::Confirmed => format!(
+                             "dispatched synthetic DOM click on {ext} in {tab_id}; bounded semantic \
+                              readback confirmed a target-state change"
+@@ -1617,6 +1820,9 @@
+                              page state and verify the expected postcondition"
+                         ),
+                     };
++                    if unfocused {
++                        text.push_str(DOM_CLICK_UNFOCUSED_NOTE);
++                    }
+                     let action_record = dom_click_action_record(&observation);
+                     ToolResult::text(text).with_action_record(action_record)
+                 }
+@@ -1648,6 +1854,54 @@
+                     "the ref's node left its document before the click's first event",
+                 )
+                 .to_tool_result(),
++                DomClickNext::Misplaced { hidden } => BrowserRefusal::new(
++                    BrowserRefusalCode::BrowserActionUnavailable,
++                    if hidden {
++                        "no event was sent: the page hides or replaces the pointer over the \
++                         ref's node (a pointer lock or its cursor style)"
++                    } else {
++                        "no event was sent: the ref's node is not under the filmed point"
++                    },
++                )
++                .to_tool_result(),
++                DomClickNext::Left {
++                    count,
++                    last,
++                    hidden,
++                    pressed,
++                } => {
++                    let why = if hidden {
++                        "the page hid or replaced the pointer over the ref's node"
++                    } else {
++                        "the ref's node left the filmed point"
++                    };
++                    if pressed {
++                        // The press went; the release or the click did not.
++                        let text = format!(
++                            "sent part of a synthetic DOM click on {ext} in {tab_id}: {why} after \
++                             {last}, so the rest of the sequence was not sent and no click event \
++                             was; {count} events were sent and application effect is \
++                             unverifiable. Refresh page state and verify the expected \
++                             postcondition"
++                        );
++                        ToolResult::text(text)
++                            .with_action_record(dom_click_stopped_action_record(count, &last, why))
++                    } else {
++                        BrowserRefusal::new(
++                            BrowserRefusalCode::BrowserActionUnavailable,
++                            format!(
++                                "no press or click was sent: {why} after {last} ({count} hover \
++                                 and move events were sent)"
++                            ),
++                        )
++                        .with_detail(json!({
++                            "events_sent": count,
++                            "last_event": last,
++                            "pressed": false,
++                        }))
++                        .to_tool_result()
++                    }
++                }
+                 DomClickNext::Partial { count, last } => {
+                     let text = format!(
+                         "sent part of a synthetic DOM click on {ext} in {tab_id}: the ref's node \
+@@ -1655,8 +1909,11 @@
+                          sent; application effect is unverifiable. Refresh page state and \
+                          verify the expected postcondition"
+                     );
+-                    ToolResult::text(text)
+-                        .with_action_record(dom_click_stopped_action_record(count, &last))
++                    ToolResult::text(text).with_action_record(dom_click_stopped_action_record(
++                        count,
++                        &last,
++                        "the ref's node left its document",
++                    ))
+                 }
+                 DomClickNext::Interrupted(reason) => {
+                     let text = format!(
+@@ -1878,9 +2135,385 @@
+     })
+ }
+ 
++/// A `{x, y}` argument of finite numbers, `None` when absent.
++fn point_arg(args: &Value, field: &str) -> Result<Option<(f64, f64)>, ToolResult> {
++    match args.get(field) {
++        None | Some(Value::Null) => Ok(None),
++        Some(point) => {
++            let read = |axis: &str| {
++                point
++                    .get(axis)
++                    .and_then(Value::as_f64)
++                    .filter(|n| n.is_finite())
++            };
++            match (read("x"), read("y")) {
++                (Some(x), Some(y)) => Ok(Some((x, y))),
++                _ => Err(ToolResult::error(format!(
++                    "Field {field} has wrong type: expected an object with finite numbers x and y"
++                ))),
++            }
++        }
++    }
++}
++
++/// The execution context of the isolated world ([`LOCATE_WORLD`]) in the
++/// session's main frame, or `None` when the frame or the world could not be
++/// had. The world shares the page's DOM and none of its script objects.
++async fn isolated_world(conn: &CdpConnection, cdp: &str) -> Option<i64> {
++    let frame_tree = conn
++        .call(Some(cdp), "Page.getFrameTree", json!({}))
++        .await
++        .ok()?;
++    let frame = frame_tree.pointer("/frameTree/frame/id")?.as_str()?;
++    conn.call(
++        Some(cdp),
++        "Page.createIsolatedWorld",
++        json!({ "frameId": frame, "worldName": LOCATE_WORLD }),
++    )
++    .await
++    .ok()?
++    .get("executionContextId")?
++    .as_i64()
++}
++
++/// Where one current ref's element is, for `get_browser_state`'s locate
++/// mode. It proves the binding and the ref's document as a click does and
++/// refuses a stale or removed node the same way, then only reads: the
++/// node's rectangle and the hit test at its centre (script on the node,
++/// the click sequence's own geometry), whether a clipping ancestor hides
++/// part of it, its document's visibility state, whether it has focus, the
++/// hit test at `point` when one is given, the border-box centre from
++/// `DOM.getBoxModel`, and the viewport's zoom and scale. Nothing is
++/// scrolled, focused or dispatched.
++///
++/// The script runs in an isolated world of the tab's main frame
++/// ([`LOCATE_WORLD`]), with the node resolved into that world. The world
++/// shares the page's DOM and none of its script objects, so what the read
++/// calls (`elementFromPoint`, `getBoundingClientRect`, `getComputedStyle`,
++/// `contains`, `isConnected`, `visibilityState`, `hasFocus`) is the
++/// browser's own whatever the page's script replaced. Without such a world
++/// there is no position to report.
++async fn locate_browser_ref(
++    engine: &Arc<BrowserEngine>,
++    session: &str,
++    target_id: &str,
++    tab_id: &str,
++    ext_ref: &str,
++    point: Option<(f64, f64)>,
++) -> Result<Value, BrowserRefusal> {
++    let validated = engine
++        .revalidate_for_mutation(session, target_id, Some(tab_id))
++        .await?;
++    // A page-owned dialog blocks the renderer; every read below would wait
++    // out its timeout.
++    if let Some(open) = validated
++        .conn
++        .dialog_state(validated.tab.cdp_target_id.as_str())
++    {
++        return Err(BrowserRefusal::new(
++            BrowserRefusalCode::BrowserActionUnavailable,
++            format!(
++                "a {} dialog is open on the exact tab; the page cannot be read until it is resolved",
++                open.kind
++            ),
++        )
++        .with_detail(json!({ "dialog": dialog_block(&open) })));
++    }
++    let entry = engine
++        .store
++        .resolve_ref(session, target_id, tab_id, ext_ref)?;
++    if entry.frame.kind != FrameKind::Main {
++        // The node's rectangle is relative to its own frame's viewport, not
++        // the tab's.
++        return Ok(json!({ "available": false, "reason": "child_frame" }));
++    }
++    let cdp_session = engine
++        .frame_session_for_mutation(session, target_id, tab_id, &validated, &entry.frame)
++        .await?;
++    let conn = &validated.conn;
++    let cdp = cdp_session.as_str();
++    let backend = entry.backend_node_id;
++    let stale = |message: &str| BrowserRefusal::new(BrowserRefusalCode::BrowserRefStale, message);
++    let Some(world) = isolated_world(conn, cdp).await else {
++        // Read in the page's own world, a position would be the page's word.
++        return Ok(json!({ "available": false, "reason": "world_unavailable" }));
++    };
++    let resolved = conn
++        .call(
++            Some(cdp),
++            "DOM.resolveNode",
++            json!({ "backendNodeId": backend, "executionContextId": world }),
++        )
++        .await
++        .map_err(|_| stale("the ref's node no longer resolves in the live page"))?;
++    let object_id = resolved
++        .get("object")
++        .and_then(|o| o.get("objectId"))
++        .and_then(Value::as_str)
++        .ok_or_else(|| stale("the ref's node has no live object in the page"))?
++        .to_owned();
++    let on_node = |declaration: &'static str, arguments: Value| {
++        let call = conn.call(
++            Some(cdp),
++            "Runtime.callFunctionOn",
++            json!({
++                "objectId": object_id,
++                "functionDeclaration": declaration,
++                "arguments": arguments,
++                "returnByValue": true,
++            }),
++        );
++        async move {
++            tokio::time::timeout(DOM_CLICK_BASELINE_DEADLINE, call)
++                .await
++                .ok()
++                .and_then(Result::ok)
++        }
++    };
++    let connected = on_node(DOM_NODE_CONNECTED_CHECK, json!([]))
++        .await
++        .and_then(|reply| reply.pointer("/result/value").and_then(Value::as_bool));
++    if connected != Some(true) {
++        return Err(stale(if connected == Some(false) {
++            "the ref's node is no longer in its document"
++        } else {
++            "the ref's node could not be confirmed in its document"
++        }));
++    }
++    let asked = match point {
++        Some((x, y)) => json!([{ "value": x }, { "value": y }]),
++        None => json!([]),
++    };
++    let located = on_node(DOM_NODE_LOCATE, asked).await;
++    let box_center = conn
++        .call(
++            Some(cdp),
++            "DOM.getBoxModel",
++            json!({ "backendNodeId": backend }),
++        )
++        .await
++        .ok()
++        .as_ref()
++        .and_then(border_center);
++    let metrics = conn
++        .call(Some(cdp), "Page.getLayoutMetrics", json!({}))
++        .await
++        .ok();
++    Ok(dom_locate_value(
++        located.as_ref(),
++        box_center,
++        metrics.as_ref(),
++    ))
++}
++
+ /// Center of the content quad from a `DOM.getBoxModel` result.
+ fn quad_center(box_model: &Value) -> Option<(f64, f64)> {
+-    let quad = box_model.get("model")?.get("content")?.as_array()?;
++    quad_center_of(box_model, "content")
++}
++
++/// Center of the border quad (the box `getBoundingClientRect` describes), or
++/// of the content quad when the model has no border quad.
++fn border_center(box_model: &Value) -> Option<(f64, f64)> {
++    quad_center_of(box_model, "border").or_else(|| quad_center_of(box_model, "content"))
++}
++
++/// Name of the isolated world [`locate_browser_ref`] reads in and a filmed
++/// click or insert runs in. Chromium keeps one world per frame and name, so
++/// repeated calls on a document share it.
++const LOCATE_WORLD: &str = "cua-driver-locate";
++
++/// Where the ref's node is, evaluated ON the node with the click sequence's
++/// own geometry: its bounding rectangle in viewport CSS px and what
++/// `elementFromPoint` finds at its centre, and at (`px`, `py`) when both are
++/// numbers.
++///
++/// `focus` is whether the node is the active element of its root (its
++/// document or shadow root) and whether its document has focus: when both
++/// hold, focusing the node again changes nothing in the page.
++///
++/// `clipped` is whether an ancestor that clips or scrolls its overflow
++/// leaves part of the rectangle outside its padding box: such a node is
++/// what `DOM.scrollIntoViewIfNeeded` and `focus()` scroll. The walk follows
++/// the flat tree (an assigned slot, then the parent, then a shadow host). A
++/// slot in a closed shadow tree is not visible to script in any world, so a
++/// clipping ancestor inside a closed tree, between a slotted node and the
++/// tree's host, is not seen: a known limit. The root element is skipped: its overflow applies to the viewport, which the
++/// rectangle and `inner` already describe. `body` is skipped only when its
++/// overflow propagates to the viewport too, that is when the root's overflow
++/// is `visible` and neither element has containment; otherwise it is a
++/// scroller like any other. Every other ancestor is tested whether or not
++/// it is the node's containing block, so a fixed or absolutely positioned
++/// node outside a clipping ancestor's box reads as clipped: the error is on
++/// the side of saying so. An ancestor's padding box is scaled by the ratio of
++/// its bounding rectangle to its layout size, which is exact only for
++/// translation and scaling by positive factors: `transformed` is true when
++/// the node or any ancestor is rotated (a half turn included), skewed,
++/// reflected (a negative axis in `transform` or `scale`), transformed in 3D
++/// or placed on a motion path, and the caller then reports no position at
++/// all.
++const DOM_NODE_LOCATE: &str = "function(px, py) { \
++    const node = this; \
++    const doc = node.ownerDocument, view = doc.defaultView; \
++    const r = node.getBoundingClientRect(); \
++    const x = r.left + r.width / 2, y = r.top + r.height / 2; \
++    const root = node.getRootNode(); \
++    const probe = (qx, qy) => { \
++        const at = ('elementFromPoint' in root) ? root.elementFromPoint(qx, qy) : null; \
++        return !at ? 'none' : (at === node ? 'target' : (node.contains(at) ? 'descendant' : 'other')); \
++    }; \
++    const cursor = (qx, qy) => { \
++        const at = ('elementFromPoint' in root) ? root.elementFromPoint(qx, qy) : null; \
++        if (!(at && node.contains(at))) return null; \
++        return doc.pointerLockElement ? 'none' : view.getComputedStyle(at).cursor; \
++    }; \
++    const up = (el) => el.assignedSlot || el.parentElement || (el.getRootNode().host || null); \
++    const shows = (style) => style.overflowX === 'visible' && style.overflowY === 'visible'; \
++    const free = (style) => (style.contain || 'none') === 'none' \
++        && (style.containerType || 'normal') === 'normal' \
++        && (style.contentVisibility || 'visible') === 'visible'; \
++    const turned = (style) => { \
++        if ((style.rotate || 'none') !== 'none') return true; \
++        if ((style.offsetPath || 'none') !== 'none') return true; \
++        const scale = style.scale || 'none'; \
++        if (scale !== 'none' && scale.split(' ').some((part) => !(Number(part) > 0))) return true; \
++        const t = style.transform || 'none'; \
++        if (t === 'none') return false; \
++        if (!t.startsWith('matrix(')) return true; \
++        const m = t.slice(7, -1).split(',').map(Number); \
++        return !(m[0] > 0 && m[3] > 0 && Math.abs(m[1]) < 1e-6 && Math.abs(m[2]) < 1e-6); \
++    }; \
++    const rootStyle = view.getComputedStyle(doc.documentElement); \
++    const bodyIsViewport = !!doc.body && shows(rootStyle) && free(rootStyle) \
++        && free(view.getComputedStyle(doc.body)); \
++    let clipped = false, transformed = turned(view.getComputedStyle(node)); \
++    for (let el = up(node); el; el = up(el)) { \
++        const style = view.getComputedStyle(el); \
++        if (turned(style)) transformed = true; \
++        if (clipped || el === doc.documentElement) continue; \
++        if (el === doc.body && bodyIsViewport) continue; \
++        if (shows(style)) continue; \
++        const b = el.getBoundingClientRect(); \
++        let left = b.left, top = b.top, width = b.width, height = b.height; \
++        if (typeof el.offsetWidth === 'number' && el.offsetWidth > 0 && el.offsetHeight > 0) { \
++            const sx = b.width / el.offsetWidth, sy = b.height / el.offsetHeight; \
++            left += el.clientLeft * sx; top += el.clientTop * sy; \
++            width = el.clientWidth * sx; height = el.clientHeight * sy; \
++        } \
++        clipped = r.left < left - 0.5 || r.top < top - 0.5 \
++            || r.right > left + width + 0.5 || r.bottom > top + height + 0.5; \
++    } \
++    const point = (typeof px === 'number' && typeof py === 'number') \
++        ? [px, py, probe(px, py), cursor(px, py)] : null; \
++    const active = ('activeElement' in root) ? root.activeElement === node : false; \
++    return { rect: [r.left, r.top, r.width, r.height], hit: probe(x, y), cursor: cursor(x, y), \
++        inner: [view.innerWidth, view.innerHeight], clipped, transformed, \
++        visibility: doc.visibilityState, focus: [active, doc.hasFocus() === true], point }; \
++}";
++
++/// The `locate` block of `get_browser_state`'s locate mode from the locate
++/// script's reply, the box model's centre and the layout metrics. Anything
++/// but a well-formed reply with a positive-area rectangle is unavailable,
++/// and so is a node the script found under a rotation, skew or 3D transform;
++/// the box-model centre, the viewport's zoom and scale, `clipped`,
++/// `visibility_state`, `focused`, `page_focused` and `point` are `null` when
++/// they could not be read or were not asked for, for the caller to refuse
++/// on. `world` says the reply was read in an isolated world: this is called
++/// with no other.
++fn dom_locate_value(
++    located: Option<&Value>,
++    box_center: Option<(f64, f64)>,
++    metrics: Option<&Value>,
++) -> Value {
++    let unavailable = |reason: &str| json!({ "available": false, "reason": reason });
++    let Some(reply) = located else {
++        return unavailable("unreadable");
++    };
++    if reply.get("exceptionDetails").is_some() {
++        return unavailable("unreadable");
++    }
++    let Some(value) = reply.pointer("/result/value") else {
++        return unavailable("unreadable");
++    };
++    let numbers = |field: &str, len: usize| -> Option<Vec<f64>> {
++        let items = value.get(field)?.as_array()?;
++        let numbers: Vec<f64> = items
++            .iter()
++            .filter_map(Value::as_f64)
++            .filter(|n| n.is_finite())
++            .collect();
++        (items.len() == len && numbers.len() == len).then_some(numbers)
++    };
++    let Some(rect) = numbers("rect", 4) else {
++        return unavailable("unreadable");
++    };
++    let hit = match value.get("hit").and_then(Value::as_str) {
++        Some(hit @ ("target" | "descendant" | "other" | "none")) => hit,
++        _ => return unavailable("unreadable"),
++    };
++    if rect[2] <= 0.0 || rect[3] <= 0.0 {
++        return unavailable("no_box");
++    }
++    if value.get("transformed").and_then(Value::as_bool) == Some(true) {
++        // the clip test's geometry holds only for translation and scaling
++        return unavailable("transformed");
++    }
++    let inner = numbers("inner", 2);
++    let point = value
++        .get("point")
++        .and_then(Value::as_array)
++        .filter(|point| point.len() == 4)
++        .and_then(|point| {
++            let x = point[0].as_f64().filter(|n| n.is_finite())?;
++            let y = point[1].as_f64().filter(|n| n.is_finite())?;
++            match point[2].as_str()? {
++                hit @ ("target" | "descendant" | "other" | "none") => {
++                    Some(json!({ "x": x, "y": y, "hit": hit, "cursor": point[3].as_str() }))
++                }
++                _ => None,
++            }
++        });
++    let focus = value
++        .get("focus")
++        .and_then(Value::as_array)
++        .filter(|focus| focus.len() == 2);
++    let viewport = metrics.and_then(|m| m.get("cssVisualViewport"));
++    let factor = |field: &str| {
++        viewport
++            .and_then(|v| v.get(field))
++            .and_then(Value::as_f64)
++            .filter(|n| n.is_finite())
++    };
++    json!({
++        "available": true,
++        "rect": { "x": rect[0], "y": rect[1], "width": rect[2], "height": rect[3] },
++        "center": { "x": rect[0] + rect[2] / 2.0, "y": rect[1] + rect[3] / 2.0 },
++        "hit": hit,
++        // The computed `cursor` of what is at the centre when that is the node
++        // or inside it (`none` under a pointer lock), else null: whether a
++        // pointer put there would show is the caller's rule.
++        "cursor": value.get("cursor").and_then(Value::as_str),
++        "box_center": box_center.map(|(x, y)| json!({ "x": x, "y": y })),
++        "viewport": {
++            "width": inner.as_ref().map(|i| i[0]),
++            "height": inner.as_ref().map(|i| i[1]),
++            "zoom": factor("zoom"),
++            "scale": factor("scale"),
++        },
++        "clipped": value.get("clipped").and_then(Value::as_bool),
++        "visibility_state": value.get("visibility").and_then(Value::as_str),
++        "focused": focus.and_then(|focus| focus[0].as_bool()),
++        "page_focused": focus.and_then(|focus| focus[1].as_bool()),
++        "world": "isolated",
++        // This driver checks a filmed pointer's position inside a click's or an
++        // insert's own delivery (`filmed_point`). A caller that relies on that
++        // reads it here: an older driver accepts the argument and ignores it.
++        "filmed_delivery": true,
++        "point": point,
++    })
++}
++
++fn quad_center_of(box_model: &Value, quad: &str) -> Option<(f64, f64)> {
++    let quad = box_model.get("model")?.get(quad)?.as_array()?;
+     if quad.len() < 8 {
+         return None;
+     }
+@@ -1918,30 +2551,109 @@
+ /// target is also rechecked to still be inside the ref's node, so a descendant
+ /// a handler moves elsewhere gets no further events, and the focus candidate is
+ /// chosen after that check. It returns `{ complete, stopped, count, last,
+-/// retargeted }`, counted in local primitives rather than page-replaceable
++/// retargeted }` (and `unfocused` when filmed and complete), counted in local primitives rather than page-replaceable
+ /// built-ins: whether it completed, `"detached"` when it stopped early, how
+ /// many events it dispatched and the last one's type, and whether it moved to
+ /// the ref's node. An exception that interrupts it leaves no such receipt.
+-const DOM_EVENT_CLICK_SEQUENCE: &str = "function() { \
++///
++/// With a filmed point (`px`, `py`, both numbers) the caller runs it on the
++/// node resolved into the isolated world, where every method it calls is the
++/// browser's own, and it acts at that point instead of the centre under one
++/// invariant: everything it does to the page goes to an element that is
++/// under the pointer in the same turn of script, immediately before. It does
++/// two things to the page: it dispatches events and it gives focus. "Under the pointer" (`aim`, `under`) means the ref's node is in
++/// its document, the point lies inside the node's rectangle, the hit test at
++/// the point finds something inside the node, the pointer shows there (no
++/// pointer lock, and a computed `cursor` on the hit element that is a single
++/// keyword other than `none`; an image cannot be shown to be visible), and
++/// the receiving element is that hit or holds it and is the node or inside
++/// it. The check is made in `send`, the one place an event is dispatched,
++/// and on the element about to be focused, directly before its `focus()`;
++/// JavaScript runs to completion, so the page cannot act between a check and
++/// what follows it. What the browser or the page then does of its own accord
++/// (a label passing the click to its control, a form submitting, a listener
++/// focusing something else) is the page's, and is not checked here.
++///
++/// Which element receives each event follows what one pointer gives:
++///
++/// | events                                   | receiver                        |
++/// |------------------------------------------|---------------------------------|
++/// | the six hover and move events            | the hit when the sequence began |
++/// | `pointerdown`, then `mousedown`          | a fresh hit at the press        |
++/// | the focus                                | the nearest focusable element holding the pressed one, when it is inside the node |
++/// | `pointerup`, then `mouseup`              | a fresh hit at the release      |
++/// | `click`                                  | the nearest ancestor holding the `pointerdown` and `pointerup` targets |
++///
++/// A pair is never split: `mousedown` goes to the `pointerdown` target or is
++/// not sent. The focus goes where a press gives it only when that element is
++/// the node or inside it. For a control inside a focusable container the
++/// element a press would focus is the container, which the ref does not
++/// name: no focus is given, the sequence goes on, and the completed receipt
++/// says `unfocused: true`. A press where nothing focusable holds the pressed
++/// element gives no focus either, and unlike a pointer it does not take the
++/// focus from where it was; a shadow host that passes focus on focuses what
++/// the browser chooses. When the pressed element has left the ref's node by
++/// the time of the click (an icon re-rendered by its own `mouseup`
++/// listener), no ancestor of it is in the node, and the click goes to the
++/// node itself, under the same check; a browser would send it to the nearest
++/// surviving ancestor of the pressed element, which can be deeper than the
++/// node. Before anything is sent a failed check returns `stopped:
++/// "not_under_pointer"`; after that it returns `stopped: "left_pointer"`
++/// naming the last event sent, and `hidden` says the failure was the pointer
++/// not showing. So a control that leaves the pointer is not pressed, or is
++/// pressed and not released, or released and not clicked, and the receipt
++/// says which. This is stricter than a real pointer, whose release would
++/// still go somewhere and whose click follows its release without another
++/// hit test; a stopped sequence leaves the page with the events it names
++/// and no more. The node leaving its document is reported as `"detached"`,
++/// as without a point. `retargeted` stays false: that field says the
++/// sequence without a point moved its remaining events to the ref's node when
++/// their target left, which a filmed sequence does not do; its receivers are
++/// the ones in the table.
++const DOM_EVENT_CLICK_SEQUENCE: &str = "function(px, py) { \
+     const el = this; \
+-    let count = 0, last = '', retargeted = false; \
++    let count = 0, last = '', retargeted = false, hidden = false, unfocused = false; \
+     if (!el.isConnected) return { complete: false, stopped: 'detached', count, last, retargeted }; \
+     const doc = el.ownerDocument; \
+     const view = doc.defaultView; \
+     const r = el.getBoundingClientRect(); \
+-    const x = r.left + r.width / 2, y = r.top + r.height / 2; \
++    const filmed = typeof px === 'number' && typeof py === 'number'; \
++    const x = filmed ? px : r.left + r.width / 2, y = filmed ? py : r.top + r.height / 2; \
+     const root = el.getRootNode(); \
+     const hit = ('elementFromPoint' in root) ? root.elementFromPoint(x, y) : null; \
+     let target = (hit && el.contains(hit)) ? hit : el; \
++    const aim = () => { \
++        const q = el.getBoundingClientRect(); \
++        const h = ('elementFromPoint' in root) ? root.elementFromPoint(x, y) : null; \
++        if (!(x >= q.left && x <= q.right && y >= q.top && y <= q.bottom && h && el.contains(h))) return null; \
++        const c = doc.pointerLockElement ? 'none' : view.getComputedStyle(h).cursor; \
++        if (!(typeof c === 'string' && /^[a-z-]+$/.test(c) && c !== 'none')) { hidden = true; return null; } \
++        return h; \
++    }; \
++    const left = (stopped) => ({ complete: false, stopped, count, last, retargeted, hidden }); \
++    if (filmed) { \
++        const first = aim(); \
++        if (!first) return left('not_under_pointer'); \
++        target = first; \
++    } \
+     const sx = x + (view.screenX || 0), sy = y + (view.screenY || 0); \
+     const base = { bubbles: true, cancelable: true, composed: true, view, \
+         clientX: x, clientY: y, screenX: sx, screenY: sy, button: 0 }; \
+-    const DETACHED = {}; \
++    const DETACHED = {}, LEFT = {}; \
+     const live = () => { \
+         if (!el.isConnected) throw DETACHED; \
+         if (target !== el && !(target.isConnected && el.contains(target))) { target = el; retargeted = true; } \
+     }; \
+-    const send = (type, event) => { live(); const kept = target.dispatchEvent(event); count += 1; last = type; return kept; }; \
++    const under = (receiver) => { \
++        if (!el.isConnected) throw DETACHED; \
++        const h = aim(); \
++        if (!(h && el.contains(receiver) && receiver.contains(h))) throw LEFT; \
++        return h; \
++    }; \
++    const send = (type, event) => { \
++        if (filmed) under(target); else live(); \
++        const kept = target.dispatchEvent(event); count += 1; last = type; return kept; \
++    }; \
+     const P = (type, buttons, extra) => send(type, new view.PointerEvent(type, \
+         { ...base, buttons, pointerId: 1, pointerType: 'mouse', isPrimary: true, \
+           width: 1, height: 1, pressure: buttons ? 0.5 : 0, ...extra })); \
+@@ -1951,19 +2663,33 @@
+         P('pointerover', 0); P('pointerenter', 0, { bubbles: false, cancelable: false }); \
+         M('mouseover', 0); M('mouseenter', 0, { bubbles: false, cancelable: false }); \
+         P('pointermove', 0); M('mousemove', 0); \
++        if (filmed) target = under(el); \
+         const compat = P('pointerdown', 1); \
++        const down = target; \
+         if (compat && M('mousedown', 1, { detail: 1 })) { \
+-            live(); \
++            if (filmed) under(target); else live(); \
+             const focusable = target.closest('a[href],button,input,select,textarea,summary,[tabindex],[contenteditable=\"\"],[contenteditable=\"true\"]'); \
+-            if (focusable && focusable.isConnected && typeof focusable.focus === 'function') focusable.focus({ preventScroll: true }); \
++            if (focusable && focusable.isConnected && typeof focusable.focus === 'function') { \
++                if (filmed && !el.contains(focusable)) unfocused = true; \
++                else { if (filmed) under(focusable); focusable.focus({ preventScroll: true }); } \
++            } \
+         } \
++        if (filmed) target = under(el); \
+         P('pointerup', 0); \
++        const up = target; \
+         if (compat) M('mouseup', 0, { detail: 1 }); \
++        if (filmed) { \
++            let both = down; \
++            while (both && !both.contains(up)) both = both.parentElement; \
++            target = (both && el.contains(both)) ? both : el; \
++        } \
+         M('click', 0, { detail: 1 }); \
+     } catch (error) { \
+         if (error === DETACHED) return { complete: false, stopped: 'detached', count, last, retargeted }; \
++        if (error === LEFT) return left('left_pointer'); \
+         throw error; \
+     } \
++    if (filmed) return { complete: true, stopped: null, count, last, retargeted, unfocused }; \
+     return { complete: true, stopped: null, count, last, retargeted }; \
+ }";
+ 
+@@ -1985,6 +2711,42 @@
+         .includes((this.type || 'text').toLowerCase()); \
+ }";
+ 
++/// The filmed insert, evaluated ON the ref's node resolved into the isolated
++/// world, where every method it calls is the browser's own. In one turn of
++/// script it requires the node to be in its document, the active element of
++/// its root, editable by the same rule as [`EDITABLE_AND_FOCUSED_CHECK`], and
++/// under (`px`, `py`): the point inside its rectangle and hit-testing as the
++/// node or something inside it, with the pointer shown there by the click
++/// sequence's rule (no pointer lock, a keyword cursor other than `none`). It
++/// then inserts `text` at the caret with the
++/// document's `insertText` command. Nothing the page does can come between
++/// the checks and the insertion. Chrome fires a trusted `input` event for the
++/// command and no `beforeinput` (Footwork notebook FP27, Chrome 157), so a
++/// page that takes its text from `beforeinput` does not see this insertion as
++/// it sees typing. It returns `{ inserted, why }`: `why` names the first
++/// check that failed, with nothing inserted, or `command_refused` when the
++/// command reported no insertion.
++const DOM_FILMED_INSERT: &str = "function(px, py, text) { \
++    const el = this; \
++    if (el.isConnected !== true) return { inserted: false, why: 'detached' }; \
++    const doc = el.ownerDocument, root = el.getRootNode(); \
++    if (!(('activeElement' in root) && root.activeElement === el)) return { inserted: false, why: 'not_focused' }; \
++    const kind = (el.type || 'text').toLowerCase(); \
++    const editable = el.isContentEditable === true \
++        || (el.tagName === 'TEXTAREA' && !el.disabled && !el.readOnly) \
++        || (el.tagName === 'INPUT' && !el.disabled && !el.readOnly \
++            && !['button','checkbox','color','file','hidden','image','radio','range','reset','submit'].includes(kind)); \
++    if (!editable) return { inserted: false, why: 'not_editable' }; \
++    const r = el.getBoundingClientRect(); \
++    const hit = ('elementFromPoint' in root) ? root.elementFromPoint(px, py) : null; \
++    if (!(px >= r.left && px <= r.right && py >= r.top && py <= r.bottom && hit && el.contains(hit))) \
++        return { inserted: false, why: 'not_under_pointer' }; \
++    const c = doc.pointerLockElement ? 'none' : doc.defaultView.getComputedStyle(hit).cursor; \
++    if (!(typeof c === 'string' && /^[a-z-]+$/.test(c) && c !== 'none')) return { inserted: false, why: 'pointer_hidden' }; \
++    const done = doc.execCommand('insertText', false, text) === true; \
++    return { inserted: done, why: done ? null : 'command_refused' }; \
++}";
++
+ const FOCUS_EMULATION_READY_CHECK: &str = "function() { \
+     const root = this.getRootNode(); \
+     const active = ('activeElement' in root) ? root.activeElement : null; \
+@@ -2170,6 +2932,20 @@
+                             through the selection, so beforeinput/input still fire and \
+                             framework state stays consistent."
+                     },
++                    "filmed_point": {
++                        "type": "object",
++                        "description": "Where a filmed pointer is, in viewport CSS px. With \
++                            mode=insert_text and replace=false, for a ref in the tab's \
++                            own frame: one turn of script in an isolated world checks \
++                            that the ref is the focused editable element under this \
++                            point and inserts the text. Nothing is focused, scrolled or \
++                            selected first and no cursor is drawn.",
++                        "properties": {
++                            "x": { "type": "number" },
++                            "y": { "type": "number" }
++                        },
++                        "required": ["x", "y"]
++                    },
+                 },
+                 "required": ["target_id", "tab_id", "ref", "text"],
+                 "additionalProperties": true
+@@ -2233,6 +3009,13 @@
+             ));
+         }
+         let replace = args.opt_bool("replace").unwrap_or(false);
++        let filmed_point = match point_arg(&args, "filmed_point") {
++            Ok(point) => point,
++            Err(error) => return error,
++        };
++        if filmed_point.is_some() && (mode != "insert_text" || replace) {
++            return ToolResult::error("filmed_point requires mode=insert_text and replace=false");
++        }
+ 
+         let _mutation = match self
+             .engine
+@@ -2283,6 +3066,135 @@
+         let conn = &validated.conn;
+         let cdp = cdp_session.as_str();
+ 
++        if let Some((x, y)) = filmed_point {
++            // One turn of script in the isolated world checks the node and
++            // inserts. Nothing is focused, scrolled, selected or drawn first,
++            // and no page-world method runs before the insertion.
++            let not_sent = |code: BrowserRefusalCode, message: &str| {
++                BrowserRefusal::new(code, format!("nothing was inserted: {message}"))
++                    .to_tool_result()
++            };
++            if entry.frame.kind != FrameKind::Main {
++                return not_sent(
++                    BrowserRefusalCode::BrowserActionUnavailable,
++                    "filmed_point is for a ref in the tab's own frame",
++                );
++            }
++            let Some(world) = isolated_world(conn, cdp).await else {
++                return not_sent(
++                    BrowserRefusalCode::BrowserActionUnavailable,
++                    "no isolated world could be made for the filmed insert",
++                );
++            };
++            let object_id = match conn
++                .call(
++                    Some(cdp),
++                    "DOM.resolveNode",
++                    json!({ "backendNodeId": entry.backend_node_id, "executionContextId": world }),
++                )
++                .await
++                .ok()
++                .and_then(|resolved| {
++                    resolved
++                        .pointer("/object/objectId")
++                        .and_then(Value::as_str)
++                        .map(str::to_owned)
++                }) {
++                Some(object) => object,
++                None => {
++                    return not_sent(
++                        BrowserRefusalCode::BrowserRefStale,
++                        "the ref's node no longer resolves in the live page",
++                    )
++                }
++            };
++            let requested_chars = text.chars().count();
++            let insert = conn.call(
++                Some(cdp),
++                "Runtime.callFunctionOn",
++                json!({
++                    "objectId": object_id,
++                    "functionDeclaration": DOM_FILMED_INSERT,
++                    "arguments": [{ "value": x }, { "value": y }, { "value": text }],
++                    "returnByValue": true,
++                }),
++            );
++            let cdp_target_id = validated.tab.cdp_target_id.as_str();
++            let unknown = |why: String| {
++                BrowserRefusal::new(
++                    BrowserRefusalCode::BrowserInputIncomplete,
++                    format!("what reached the page is unknown: the filmed insert did not report completing ({why})"),
++                )
++                .with_detail(json!({
++                    "requested_chars": requested_chars,
++                    "delivery": "unknown",
++                    "retryable": false,
++                }))
++                .to_tool_result()
++            };
++            let reply = match call_until_dialog(conn, cdp_target_id, insert).await {
++                Err(open) => {
++                    return unknown(format!(
++                    "a {} dialog opened during it; resolve it with browser_dialog (dialog_id {})",
++                    open.kind,
++                    dialog_capability_id(open.generation)
++                ))
++                }
++                Ok(Err(error)) => return unknown(error.to_string()),
++                Ok(Ok(reply)) => reply,
++            };
++            if reply.get("exceptionDetails").is_some() {
++                return unknown("it threw".to_owned());
++            }
++            let receipt = reply.pointer("/result/value");
++            let why = receipt.and_then(|r| r.get("why")).and_then(Value::as_str);
++            return match (
++                receipt
++                    .and_then(|r| r.get("inserted"))
++                    .and_then(Value::as_bool),
++                why,
++            ) {
++                (Some(true), _) => {
++                    ToolResult::text(format!("typed {requested_chars} char(s) into {tab_id}"))
++                        .with_structured(json!({
++                            "status": "ok",
++                            "target_id": target_id,
++                            "tab_id": tab_id,
++                            "ref": ext_ref,
++                            "frame": entry.frame.kind.as_str(),
++                            "mode": mode,
++                            "chars": requested_chars,
++                            "requested_chars": requested_chars,
++                            "delivered_chars": requested_chars,
++                            "replace": false,
++                            "replaced_chars": 0,
++                            "filmed": true,
++                        }))
++                }
++                (Some(false), Some("detached")) => not_sent(
++                    BrowserRefusalCode::BrowserRefStale,
++                    "the ref's node is no longer in its document",
++                ),
++                (Some(false), Some("not_focused" | "not_editable")) => not_sent(
++                    BrowserRefusalCode::BrowserInputTrustUnavailable,
++                    "the requested ref is not a focused editable element",
++                ),
++                (Some(false), Some("not_under_pointer")) => not_sent(
++                    BrowserRefusalCode::BrowserActionUnavailable,
++                    "the ref's node is not under the filmed point",
++                ),
++                (Some(false), Some("pointer_hidden")) => not_sent(
++                    BrowserRefusalCode::BrowserActionUnavailable,
++                    "the page hides or replaces the pointer over the ref's node (a pointer lock \
++                     or its cursor style)",
++                ),
++                (Some(false), Some("command_refused")) => {
++                    unknown("the page's document did not accept the insertion".to_owned())
++                }
++                _ => unknown("a malformed receipt".to_owned()),
++            };
++        }
++
+         if let Err(_e) = conn
+             .call(
+                 Some(cdp),
+@@ -3380,7 +4292,164 @@
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++
++    fn located(value: Value) -> Value {
++        json!({ "result": { "value": value } })
++    }
++
++    #[test]
++    fn locate_value_reports_the_rectangle_its_centre_and_the_viewport() {
++        let reply = located(
++            json!({ "rect": [10.0, 20.0, 100.0, 40.0], "hit": "descendant", "inner": [800.0, 600.0] }),
++        );
++        let metrics = json!({ "cssVisualViewport": { "zoom": 1.25, "scale": 2.0 } });
++        let value = dom_locate_value(Some(&reply), Some((60.0, 40.0)), Some(&metrics));
++        assert_eq!(value["available"], true);
++        assert_eq!(value["center"], json!({ "x": 60.0, "y": 40.0 }));
++        assert_eq!(value["hit"], "descendant");
++        assert_eq!(value["box_center"], json!({ "x": 60.0, "y": 40.0 }));
++        assert_eq!(
++            value["viewport"],
++            json!({ "width": 800.0, "height": 600.0, "zoom": 1.25, "scale": 2.0 })
++        );
++    }
++
++    #[test]
++    fn locate_value_leaves_unread_checks_null_for_the_caller_to_refuse_on() {
++        let reply = located(
++            json!({ "rect": [0.0, 0.0, 1.0, 1.0], "hit": "target", "inner": [800.0, 600.0] }),
++        );
++        let value = dom_locate_value(Some(&reply), None, None);
++        assert_eq!(value["available"], true);
++        assert!(value["box_center"].is_null());
++        assert!(value["viewport"]["zoom"].is_null() && value["viewport"]["scale"].is_null());
++        assert!(value["clipped"].is_null() && value["visibility_state"].is_null());
++        assert!(value["point"].is_null());
++    }
+ 
++    #[test]
++    fn locate_value_reports_clipping_visibility_and_the_asked_point() {
++        let reply = located(json!({
++            "rect": [10.0, 20.0, 100.0, 40.0], "hit": "target", "inner": [800.0, 600.0],
++            "clipped": true, "visibility": "hidden", "point": [60.5, 40.0, "other", null],
++            "cursor": "none",
++        }));
++        let value = dom_locate_value(Some(&reply), None, None);
++        assert_eq!(value["available"], true);
++        assert_eq!(value["clipped"], true);
++        assert_eq!(value["visibility_state"], "hidden");
++        assert_eq!(value["cursor"], "none");
++        assert_eq!(
++            value["point"],
++            json!({ "x": 60.5, "y": 40.0, "hit": "other", "cursor": null })
++        );
++        // a cursor is reported as the page function read it, or as null: the rule is the caller's
++        for (cursor, reported) in [
++            (
++                json!("url(\"x.png\") 4 4, auto"),
++                json!("url(\"x.png\") 4 4, auto"),
++            ),
++            (json!(7), Value::Null),
++        ] {
++            let reply = located(json!({
++                "rect": [10.0, 20.0, 100.0, 40.0], "hit": "target", "inner": [800.0, 600.0],
++                "clipped": false, "visibility": "visible", "cursor": cursor,
++                "point": [60.5, 40.0, "target", cursor],
++            }));
++            let value = dom_locate_value(Some(&reply), None, None);
++            assert_eq!(value["cursor"], reported);
++            assert_eq!(value["point"]["cursor"], reported);
++        }
++        // a reply without a cursor says null, which a caller refuses on
++        let reply = located(json!({
++            "rect": [10.0, 20.0, 100.0, 40.0], "hit": "target", "inner": [800.0, 600.0],
++            "clipped": false, "visibility": "visible", "point": null,
++        }));
++        assert_eq!(
++            dom_locate_value(Some(&reply), None, None).get("cursor"),
++            Some(&Value::Null)
++        );
++    }
++
++    #[test]
++    fn locate_value_is_unavailable_under_a_rotation_or_skew() {
++        let turned = located(json!({
++            "rect": [10.0, 20.0, 100.0, 40.0], "hit": "target", "inner": [800.0, 600.0],
++            "clipped": false, "transformed": true, "visibility": "visible", "point": null,
++        }));
++        assert_eq!(
++            dom_locate_value(Some(&turned), Some((60.0, 40.0)), None),
++            json!({ "available": false, "reason": "transformed" })
++        );
++        let level = located(json!({
++            "rect": [10.0, 20.0, 100.0, 40.0], "hit": "target", "inner": [800.0, 600.0],
++            "clipped": false, "transformed": false, "visibility": "visible", "point": null,
++        }));
++        assert_eq!(
++            dom_locate_value(Some(&level), None, None)["available"],
++            true
++        );
++    }
++
++    #[test]
++    fn locate_value_reports_no_point_for_a_malformed_one() {
++        for point in [
++            json!([60.0, 40.0]),
++            json!([60.0, 40.0, "target"]),
++            json!([60.0, 40.0, "nearby", "pointer"]),
++            json!(["a", 40.0, "target", "pointer"]),
++            json!([60.0, 40.0, "target", "pointer", 1]),
++            json!({ "x": 60.0, "y": 40.0, "hit": "target" }),
++        ] {
++            let reply = located(json!({
++                "rect": [10.0, 20.0, 100.0, 40.0], "hit": "target", "inner": [800.0, 600.0],
++                "clipped": "no", "visibility": 1, "point": point,
++            }));
++            let value = dom_locate_value(Some(&reply), None, None);
++            assert_eq!(value["available"], true, "{reply}");
++            assert!(value["point"].is_null(), "{reply}");
++            assert!(value["clipped"].is_null() && value["visibility_state"].is_null());
++        }
++    }
++
++    #[test]
++    fn locate_value_is_unavailable_for_anything_but_a_well_formed_reply() {
++        let unreadable = json!({ "available": false, "reason": "unreadable" });
++        assert_eq!(dom_locate_value(None, None, None), unreadable);
++        for reply in [
++            json!({ "exceptionDetails": { "text": "boom" }, "result": { "value": { "rect": [0, 0, 1, 1], "hit": "target" } } }),
++            json!({ "result": {} }),
++            located(json!({ "rect": [0.0, 0.0, 1.0], "hit": "target" })),
++            located(json!({ "rect": [0.0, "a", 1.0, 1.0], "hit": "target" })),
++            located(json!({ "rect": [0.0, 0.0, 1.0, 1.0], "hit": "nearby" })),
++            located(json!({ "rect": [0.0, 0.0, 1.0, 1.0] })),
++        ] {
++            assert_eq!(
++                dom_locate_value(Some(&reply), None, None),
++                unreadable,
++                "{reply}"
++            );
++        }
++        let empty = located(json!({ "rect": [5.0, 5.0, 0.0, 10.0], "hit": "none" }));
++        assert_eq!(
++            dom_locate_value(Some(&empty), None, None),
++            json!({ "available": false, "reason": "no_box" })
++        );
++    }
++
++    #[test]
++    fn border_center_prefers_the_border_quad() {
++        let model = json!({ "model": {
++            "content": [10.0, 10.0, 20.0, 10.0, 20.0, 20.0, 10.0, 20.0],
++            "border": [0.0, 0.0, 40.0, 0.0, 40.0, 20.0, 0.0, 20.0],
++        } });
++        assert_eq!(border_center(&model), Some((20.0, 10.0)));
++        assert_eq!(quad_center(&model), Some((15.0, 15.0)));
++        let content_only =
++            json!({ "model": { "content": [10.0, 10.0, 20.0, 10.0, 20.0, 20.0, 10.0, 20.0] } });
++        assert_eq!(border_center(&content_only), Some((15.0, 15.0)));
++    }
++
+     fn dialog(generation: u64) -> super::super::cdp_ws::CdpDialogState {
+         super::super::cdp_ws::CdpDialogState {
+             generation,
+@@ -3405,8 +4474,23 @@
+         } } });
+         assert_eq!(
+             dom_click_next(Ok(Ok(completed.clone())), || None),
+-            DomClickNext::Readback
++            DomClickNext::Readback { unfocused: false }
+         );
++        // a filmed click says when its press gave no focus; only `true` counts
++        for (unfocused, expected) in [
++            (json!(true), true),
++            (json!(false), false),
++            (json!("yes"), false),
++        ] {
++            let mut receipt = completed.clone();
++            receipt["result"]["value"]["unfocused"] = unfocused;
++            assert_eq!(
++                dom_click_next(Ok(Ok(receipt)), || None),
++                DomClickNext::Readback {
++                    unfocused: expected
++                }
++            );
++        }
+         assert_eq!(
+             dom_click_next(Ok(Ok(completed)), || Some(dialog(4))),
+             DomClickNext::Dialog(dialog(4))
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
+@@ -115,6 +115,13 @@
+     dom_click_focused: bool,
+     /// The ref's node resolves but the page has removed it from its document.
+     dom_click_node_detached: bool,
++    /// What the locate script reports; the default is the main button, hit.
++    dom_locate_reply: Option<Value>,
++    dom_locate_point_hit: &'static str,
++    /// `Page.createIsolatedWorld` fails, as on an endpoint without it.
++    isolated_world_unavailable: bool,
++    /// What the filmed insert function replies; the default is an insertion.
++    filmed_insert_reply: Option<Value>,
+     /// The click sequence finds the ref's node detached after sending these
+     /// events, and stops.
+     dom_click_sequence_stops_after: Option<Vec<&'static str>>,
+@@ -173,6 +180,10 @@
+             dom_click_generation: 0,
+             dom_click_focused: false,
+             dom_click_node_detached: false,
++            dom_locate_reply: None,
++            dom_locate_point_hit: "target",
++            isolated_world_unavailable: false,
++            filmed_insert_reply: None,
+             dom_click_sequence_stops_after: None,
+             dom_click_sequence_reply: None,
+             dom_click_reads_before_failure: None,
+@@ -685,7 +696,9 @@
+                     "pageX": 0.0,
+                     "pageY": 0.0,
+                     "clientWidth": st.viewport_css_width,
+-                    "clientHeight": st.viewport_css_height
++                    "clientHeight": st.viewport_css_height,
++                    "scale": 1.0,
++                    "zoom": 1.0
+                 }
+             })),
+             "Runtime.evaluate"
+@@ -821,12 +834,32 @@
+             | "Emulation.setFocusEmulationEnabled"
+             | "Input.dispatchMouseEvent"
+             | "Input.insertText" => MockReply::ok(json!({})),
+-            "DOM.resolveNode" => MockReply::ok(json!({
+-                "object": { "objectId": format!("obj-{}", call.params["backendNodeId"]) }
++            "Page.createIsolatedWorld" if st.isolated_world_unavailable => {
++                MockReply::err(-32601, "'Page.createIsolatedWorld' wasn't found")
++            }
++            "Page.createIsolatedWorld" => {
++                MockReply::ok(json!({ "executionContextId": ISOLATED_CONTEXT }))
++            }
++            // an object belongs to the world it was resolved into
++            "DOM.resolveNode" => MockReply::ok(json!({
++                "object": { "objectId": match call.params["executionContextId"].as_i64() {
++                    Some(context) => format!("iso{context}-obj-{}", call.params["backendNodeId"]),
++                    None => format!("obj-{}", call.params["backendNodeId"]),
++                } }
+             })),
+             "Runtime.callFunctionOn"
+                 if call.params["functionDeclaration"]
+                     .as_str()
++                    .is_some_and(|declaration| declaration.contains("execCommand")) =>
++            {
++                assert_eq!(call.params["returnByValue"], true);
++                MockReply::ok(st.filmed_insert_reply.clone().unwrap_or_else(
++                    || json!({ "result": { "value": { "inserted": true, "why": null } } }),
++                ))
++            }
++            "Runtime.callFunctionOn"
++                if call.params["functionDeclaration"]
++                    .as_str()
+                     .is_some_and(|declaration| declaration.contains("HTMLSelectElement")) =>
+             {
+                 MockReply::ok(json!({ "result": { "value": st.select_outcome.clone() } }))
+@@ -868,6 +901,57 @@
+                 if call.params["functionDeclaration"]
+                     .as_str()
+                     .is_some_and(|function| {
++                        function.contains("'descendant'") && !function.contains("'pointerdown'")
++                    }) =>
++            {
++                assert_eq!(call.params["returnByValue"], true);
++                // The page's own world answers as a page that replaced the
++                // methods the function calls: the target is hit, wherever
++                // asked. Only an object of the isolated world gets the
++                // reading the test configured.
++                let isolated = call.params["objectId"]
++                    .as_str()
++                    .is_some_and(|object| object.starts_with(&format!("iso{ISOLATED_CONTEXT}-")));
++                // as the page function does: a point is answered only when both numbers arrive
++                let point = call.params["arguments"]
++                    .as_array()
++                    .filter(|arguments| arguments.len() == 2)
++                    .map(|arguments| {
++                        json!([
++                            arguments[0]["value"],
++                            arguments[1]["value"],
++                            if isolated {
++                                st.dom_locate_point_hit
++                            } else {
++                                "target"
++                            },
++                            // the cursor of what is there, when that is the node
++                            if isolated && st.dom_locate_point_hit != "target" {
++                                Value::Null
++                            } else {
++                                json!("pointer")
++                            }
++                        ])
++                    });
++                let configured = st.dom_locate_reply.clone().filter(|_| isolated);
++                MockReply::ok(configured.unwrap_or_else(|| {
++                    json!({ "result": { "value": {
++                        "rect": [100.0, 100.0, 20.0, 10.0],
++                        "hit": "target",
++                        "cursor": "pointer",
++                        "inner": [800.0, 600.0],
++                        "clipped": false,
++                        "transformed": false,
++                        "visibility": "visible",
++                        "focus": [false, true],
++                        "point": point,
++                    } } })
++                }))
++            }
++            "Runtime.callFunctionOn"
++                if call.params["functionDeclaration"]
++                    .as_str()
++                    .is_some_and(|function| {
+                         function.contains("isConnected") && !function.contains("'pointerdown'")
+                     }) =>
+             {
+@@ -3404,10 +3488,1084 @@
+     assert!(!state.dom_click_focused);
+     assert_eq!(state.dom_click_generation, 0);
+     drop(state);
++    assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
++}
++
++/// The execution context the mock gives the locate's isolated world.
++const ISOLATED_CONTEXT: i64 = 77;
++
++/// Every page function run since `from`, as (object id, declaration, arguments).
++fn functions_since(f: &Fixture, from: usize) -> Vec<(String, String, Value)> {
++    recorded_calls(f, "Runtime.callFunctionOn")[from..]
++        .iter()
++        .map(|(_, params)| {
++            (
++                params["objectId"].as_str().unwrap_or_default().to_owned(),
++                params["functionDeclaration"]
++                    .as_str()
++                    .unwrap_or_default()
++                    .to_owned(),
++                params["arguments"].clone(),
++            )
++        })
++        .collect()
++}
++
++async fn filmed_click(f: &Fixture, target: &str, tab: &str, r: &str, more: Value) -> ToolResult {
++    let mut args = json!({
++        "target_id": target, "tab_id": tab, "ref": r, "input_route": "dom_event",
++        "filmed_point": { "x": 104.5, "y": 105.0 }, "session": SESSION,
++    });
++    for (key, value) in more.as_object().cloned().unwrap_or_default() {
++        args[key] = value;
++    }
++    BrowserClickTool::new(f.engine.clone()).invoke(args).await
++}
++
++#[tokio::test]
++async fn a_filmed_click_is_admitted_on_a_text_field_and_no_other_click_is() {
++    // A filmed insert focuses nothing, so a filmed take can type only into a
++    // field its pointer has pressed; the click tool refused every ref that does
++    // not declare click, and a text field declares type. Only the filmed click
++    // is admitted: unfilmed, and on a ref that declares neither, as before.
++    let f = fixture_with(|st| st.semantic_large_page = true).await;
++    let (target, tab) = bind(&f).await;
++    let snap = semantic_snapshot(&f, &target, &tab).await;
++    let named = |list: &str, name: &str| {
++        snap[list]
++            .as_array()
++            .unwrap()
++            .iter()
++            .find(|entry| entry["name"] == name)
++            .and_then(|entry| entry["ref"].as_str())
++            .unwrap()
++            .to_string()
++    };
++    let field = named("refs", "Reply body");
++    let content = named("content_refs", "Visible message");
++    let functions_before = recorded_calls(&f, "Runtime.callFunctionOn").len();
++
++    let unfilmed = BrowserClickTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target, "tab_id": tab, "session": SESSION,
++            "ref": field, "input_route": "dom_event"
++        }))
++        .await;
++    assert_eq!(
++        structured(&unfilmed)["refusal"]["code"],
++        "browser_action_unavailable"
++    );
++    assert!(
++        result_text(&unfilmed).contains("does not declare the click action"),
++        "{}",
++        result_text(&unfilmed)
++    );
++
++    let neither = filmed_click(&f, &target, &tab, &content, json!({})).await;
++    assert_eq!(
++        structured(&neither)["refusal"]["code"],
++        "browser_action_unavailable"
++    );
++    assert!(
++        result_text(&neither).contains("does not declare the click action"),
++        "{}",
++        result_text(&neither)
++    );
++    assert_eq!(
++        recorded_calls(&f, "Runtime.callFunctionOn").len(),
++        functions_before,
++        "neither refusal ran anything in the page"
++    );
++
++    let filmed = filmed_click(&f, &target, &tab, &field, json!({})).await;
++    assert_ne!(filmed.is_error, Some(true), "{}", result_text(&filmed));
++    assert!(
++        result_text(&filmed).starts_with("dispatched synthetic DOM click"),
++        "{}",
++        result_text(&filmed)
++    );
++    assert!(filmed.action_record.is_some(), "the click was dispatched");
++}
++
++#[tokio::test]
++async fn filmed_click_runs_wholly_in_the_isolated_world_and_scrolls_nothing() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    let functions_before = recorded_calls(&f, "Runtime.callFunctionOn").len();
++    let resolved_before = recorded_calls(&f, "DOM.resolveNode").len();
++
++    let result = filmed_click(&f, &target, &tab, &main_ref, json!({})).await;
++
++    assert_ne!(result.is_error, Some(true), "{}", result_text(&result));
++    assert!(result_text(&result).contains("dispatched synthetic DOM click"));
++    assert_eq!(
++        recorded_calls(&f, "Page.createIsolatedWorld")[0].1,
++        json!({ "frameId": "F_MAIN", "worldName": "cua-driver-locate" })
++    );
++    let resolved = &recorded_calls(&f, "DOM.resolveNode")[resolved_before..];
++    assert_eq!(resolved.len(), 1, "{resolved:?}");
++    assert_eq!(resolved[0].1["executionContextId"], ISOLATED_CONTEXT);
++    let functions = functions_since(&f, functions_before);
++    assert!(
++        functions.len() >= 3,
++        "the connected check, the baseline and the sequence: {functions:?}"
++    );
++    assert!(
++        functions
++            .iter()
++            .all(|(object, _, _)| object.starts_with("iso77-obj-")),
++        "nothing runs on a page-world object, before the click or after: {functions:?}"
++    );
++    let sequence: Vec<_> = functions
++        .iter()
++        .filter(|(_, declaration, _)| declaration.contains("'pointerdown'"))
++        .collect();
++    assert_eq!(sequence.len(), 1);
++    assert_eq!(
++        sequence[0].2,
++        json!([{ "value": 104.5 }, { "value": 105.0 }]),
++        "the sequence is given the pointer's position"
++    );
++    assert!(sequence[0].1.contains("'not_under_pointer'"));
++    assert!(
++        recorded_calls(&f, "DOM.scrollIntoViewIfNeeded").is_empty(),
++        "a scroll would move the node from under the pointer"
++    );
++    assert!(
++        recorded_calls(&f, "DOM.getBoxModel").is_empty(),
++        "no cursor is drawn"
++    );
++    assert!(recorded_calls(&f, "DOM.focus").is_empty());
+     assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
+ }
+ 
+ #[tokio::test]
++async fn an_unfilmed_dom_click_is_sent_as_before() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    let functions_before = recorded_calls(&f, "Runtime.callFunctionOn").len();
++
++    let result = BrowserClickTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target, "tab_id": tab, "ref": main_ref,
++            "input_route": "dom_event", "session": SESSION,
++        }))
++        .await;
++
++    assert_ne!(result.is_error, Some(true), "{}", result_text(&result));
++    assert!(recorded_calls(&f, "Page.createIsolatedWorld").is_empty());
++    assert_eq!(recorded_calls(&f, "DOM.scrollIntoViewIfNeeded").len(), 1);
++    let functions = functions_since(&f, functions_before);
++    assert!(functions
++        .iter()
++        .all(|(object, _, _)| object.starts_with("obj-")));
++    let sequence = functions
++        .iter()
++        .find(|(_, declaration, _)| declaration.contains("'pointerdown'"))
++        .expect("the click sequence ran");
++    assert_eq!(
++        sequence.2,
++        Value::Null,
++        "no point and no arguments: the request this route has always sent"
++    );
++}
++
++#[tokio::test]
++async fn filmed_click_off_its_point_sends_nothing_and_says_so() {
++    let f = fixture_with(|state| {
++        state.dom_click_sequence_reply = Some(json!({ "result": { "value": {
++            "complete": false, "stopped": "not_under_pointer",
++            "count": 0, "last": "", "retargeted": false,
++        } } }));
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = filmed_click(&f, &target, &tab, &main_ref, json!({})).await;
++
++    let refused = structured(&result);
++    assert_eq!(
++        refused["refusal"]["code"], "browser_action_unavailable",
++        "{refused}"
++    );
++    let text = result_text(&result);
++    assert!(
++        refused["refusal"]["message"]
++            == "no event was sent: the ref's node is not under the filmed point",
++        "{text}"
++    );
++    assert!(result.action_record.is_none(), "nothing was dispatched");
++}
++
++#[tokio::test]
++async fn filmed_click_that_gave_no_focus_says_so_and_one_that_did_does_not() {
++    let note = "The press moved no focus: the element a press would focus holds the ref's node \
++                and is not part of it. Click that element to focus it";
++    for (unfocused, said) in [(true, true), (false, false)] {
++        let f = fixture_with(move |state| {
++            state.dom_click_sequence_reply = Some(json!({ "result": { "value": {
++                "complete": true, "stopped": null, "count": 11, "last": "click",
++                "retargeted": false, "unfocused": unfocused,
++            } } }));
++        })
++        .await;
++        let (target, tab) = bind(&f).await;
++        let snap = snapshot(&f, &target, &tab).await;
++        let main_ref = ref_of(&snap, "main", "main-btn");
++
++        let result = filmed_click(&f, &target, &tab, &main_ref, json!({})).await;
++
++        assert_ne!(result.is_error, Some(true), "{}", result_text(&result));
++        let text = result_text(&result);
++        assert!(text.starts_with("dispatched synthetic DOM click"), "{text}");
++        assert_eq!(text.ends_with(note), said, "{text}");
++        assert_eq!(text.contains("moved no focus"), said, "{text}");
++        assert!(result.action_record.is_some(), "the click was dispatched");
++    }
++}
++
++#[tokio::test]
++async fn a_not_under_pointer_receipt_that_counts_events_is_not_a_clean_refusal() {
++    // only a receipt that says nothing was sent may be reported as nothing sent
++    let (f, result) = dom_event_click_with_sequence_reply(json!({ "result": { "value": {
++        "complete": false, "stopped": "not_under_pointer",
++        "count": 3, "last": "mouseover", "retargeted": false,
++    } } }))
++    .await;
++    assert_interrupted_click(&f, &result, "a malformed receipt");
++}
++
++#[tokio::test]
++async fn filmed_click_whose_node_left_its_point_before_the_press_says_no_press_was_sent() {
++    let f = fixture_with(|state| {
++        state.dom_click_sequence_reply = Some(json!({ "result": { "value": {
++            "complete": false, "stopped": "left_pointer",
++            "count": 6, "last": "mousemove", "retargeted": false,
++        } } }));
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = filmed_click(&f, &target, &tab, &main_ref, json!({})).await;
++
++    let refused = structured(&result);
++    assert_eq!(
++        refused["refusal"]["code"], "browser_action_unavailable",
++        "{refused}"
++    );
++    let text = result_text(&result);
++    // what was sent comes first: a caller that keeps only the start of a
++    // refusal keeps that
++    assert_eq!(
++        refused["refusal"]["message"],
++        "no press or click was sent: the ref's node left the filmed point after mousemove \
++         (6 hover and move events were sent)",
++        "{text}"
++    );
++    assert_eq!(
++        refused["refusal"]["detail"],
++        json!({ "events_sent": 6, "last_event": "mousemove", "pressed": false })
++    );
++
++    // the check before the press runs only after hover events were sent: a
++    // receipt that counts none, or names no event the sequence sends before
++    // a check, is not a clean one
++    for (count, last) in [
++        (0, ""),
++        (0, "mousemove"),
++        (6, ""),
++        (11, "click"),
++        (3, "keydown"),
++    ] {
++        let (f, result) = dom_event_click_with_sequence_reply(json!({ "result": { "value": {
++            "complete": false, "stopped": "left_pointer",
++            "count": count, "last": last, "retargeted": false,
++        } } }))
++        .await;
++        assert_interrupted_click(&f, &result, "a malformed receipt");
++    }
++}
++
++#[tokio::test]
++async fn filmed_click_whose_node_left_its_point_after_the_press_is_a_partial_click_without_a_click_event(
++) {
++    for (count, last) in [
++        (7, "pointerdown"),
++        (8, "mousedown"),
++        (9, "pointerup"),
++        (10, "mouseup"),
++    ] {
++        let f = fixture_with(move |state| {
++            state.dom_click_sequence_reply = Some(json!({ "result": { "value": {
++                "complete": false, "stopped": "left_pointer",
++                "count": count, "last": last, "retargeted": false, "hidden": false,
++            } } }));
++        })
++        .await;
++        let (target, tab) = bind(&f).await;
++        let snap = snapshot(&f, &target, &tab).await;
++        let main_ref = ref_of(&snap, "main", "main-btn");
++
++        let result = filmed_click(&f, &target, &tab, &main_ref, json!({})).await;
++
++        let text = result_text(&result);
++        assert!(
++            text.starts_with("sent part of a synthetic DOM click"),
++            "{text}"
++        );
++        assert!(
++            text.contains(&format!(
++                "the ref's node left the filmed point after {last}, so the rest of the sequence \
++                 was not sent and no click event was; {count} events were sent"
++            )),
++            "{text}"
++        );
++        assert!(!text.contains("confirmed"), "{text}");
++        let record = result
++            .action_record
++            .as_ref()
++            .expect("a stopped click's record");
++        assert_eq!(
++            record.effect,
++            crate::action_record::ActionEffect::Unverifiable
++        );
++        assert!(
++            record.evidence[0].detail.contains(&format!(
++                "stopped after {last} because the ref's node left the filmed point"
++            )),
++            "{record:?}"
++        );
++        assert!(
++            result
++                .structured_content
++                .as_ref()
++                .map_or(true, |structured| structured["refusal"].is_null()),
++            "a press that went is not a refusal"
++        );
++    }
++}
++
++#[tokio::test]
++async fn filmed_click_under_a_hidden_pointer_says_so_at_each_stage() {
++    // (receipt, is a refusal, what the text must say)
++    for (stopped, count, last, refused, says) in [
++        (
++            "not_under_pointer",
++            0,
++            "",
++            true,
++            "no event was sent: the page hides or replaces the pointer over the ref's node (a \
++             pointer lock or its cursor style)",
++        ),
++        (
++            "left_pointer",
++            6,
++            "mousemove",
++            true,
++            "no press or click was sent: the page hid or replaced the pointer over the ref's node \
++             after mousemove (6 hover and move events were sent)",
++        ),
++        (
++            // the first hover event's own listener hid it
++            "left_pointer",
++            1,
++            "pointerover",
++            true,
++            "no press or click was sent: the page hid or replaced the pointer over the ref's node \
++             after pointerover (1 hover and move events were sent)",
++        ),
++        (
++            "left_pointer",
++            8,
++            "mousedown",
++            false,
++            "the page hid or replaced the pointer over the ref's node after mousedown, so the rest \
++             of the sequence was not sent and no click event was; 8 events were sent",
++        ),
++    ] {
++        let f = fixture_with(move |state| {
++            state.dom_click_sequence_reply = Some(json!({ "result": { "value": {
++                "complete": false, "stopped": stopped,
++                "count": count, "last": last, "retargeted": false, "hidden": true,
++            } } }));
++        })
++        .await;
++        let (target, tab) = bind(&f).await;
++        let snap = snapshot(&f, &target, &tab).await;
++        let main_ref = ref_of(&snap, "main", "main-btn");
++
++        let result = filmed_click(&f, &target, &tab, &main_ref, json!({})).await;
++
++        let text = result_text(&result);
++        assert!(text.contains(says), "{text}");
++        let is_refusal = result
++            .structured_content
++            .as_ref()
++            .is_some_and(|structured| structured["refusal"]["code"] == "browser_action_unavailable");
++        assert_eq!(is_refusal, refused, "{text}");
++    }
++}
++
++#[tokio::test]
++async fn filmed_click_is_refused_before_anything_runs_where_it_cannot_be_isolated() {
++    // no world
++    let f = fixture_with(|state| state.isolated_world_unavailable = true).await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    let functions_before = recorded_calls(&f, "Runtime.callFunctionOn").len();
++    let result = filmed_click(&f, &target, &tab, &main_ref, json!({})).await;
++    assert_eq!(
++        structured(&result)["refusal"]["code"],
++        "browser_action_unavailable"
++    );
++    assert_eq!(
++        structured(&result)["refusal"]["message"],
++        "no event was sent: no isolated world could be made for the filmed click"
++    );
++    assert!(functions_since(&f, functions_before).is_empty());
++
++    // a child frame: the point is in the tab's viewport, the node is not
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let oopif_ref = ref_of(&snap, "oopif", "ad-input");
++    let functions_before = recorded_calls(&f, "Runtime.callFunctionOn").len();
++    let result = filmed_click(&f, &target, &tab, &oopif_ref, json!({})).await;
++    assert_eq!(
++        structured(&result)["refusal"]["code"],
++        "browser_action_unavailable"
++    );
++    assert!(result_text(&result)
++        .contains("no event was sent: filmed_point is for a ref in the tab's own frame"));
++    assert!(functions_since(&f, functions_before).is_empty());
++
++    // the trusted route presses at another point, and a malformed point is no point
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    for more in [
++        json!({ "input_route": "trusted" }),
++        json!({ "filmed_point": { "x": 1.0 } }),
++        json!({ "filmed_point": "here" }),
++    ] {
++        let result = filmed_click(&f, &target, &tab, &main_ref, more.clone()).await;
++        assert_eq!(result.is_error, Some(true), "{more}");
++        assert!(result_text(&result).contains("filmed_point"), "{more}");
++    }
++    assert!(functions_since(&f, functions_before).is_empty());
++    assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
++}
++
++async fn filmed_type(f: &Fixture, target: &str, tab: &str, r: &str, more: Value) -> ToolResult {
++    let mut args = json!({
++        "target_id": target, "tab_id": tab, "ref": r, "text": "hi",
++        "filmed_point": { "x": 104.5, "y": 105.0 }, "session": SESSION,
++    });
++    for (key, value) in more.as_object().cloned().unwrap_or_default() {
++        args[key] = value;
++    }
++    BrowserTypeTool::new(f.engine.clone()).invoke(args).await
++}
++
++#[tokio::test]
++async fn filmed_insert_is_one_function_in_the_isolated_world() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let input = ref_of(&snap, "main", "Shadow Input");
++    let functions_before = recorded_calls(&f, "Runtime.callFunctionOn").len();
++
++    let result = filmed_type(&f, &target, &tab, &input, json!({})).await;
++
++    let s = structured(&result);
++    assert_eq!(s["status"], "ok", "{s}");
++    assert_eq!(s["filmed"], true, "{s}");
++    assert_eq!(s["delivered_chars"], 2, "{s}");
++    assert_eq!(s["replace"], false, "{s}");
++    let functions = functions_since(&f, functions_before);
++    assert_eq!(functions.len(), 1, "{functions:?}");
++    assert!(functions[0].0.starts_with("iso77-obj-"), "{functions:?}");
++    assert!(functions[0].1.contains("execCommand('insertText'"));
++    assert_eq!(
++        functions[0].2,
++        json!([{ "value": 104.5 }, { "value": 105.0 }, { "value": "hi" }])
++    );
++    for method in [
++        "DOM.focus",
++        "DOM.scrollIntoViewIfNeeded",
++        "DOM.getBoxModel",
++        "Input.insertText",
++        "Input.dispatchKeyEvent",
++        "Emulation.setFocusEmulationEnabled",
++    ] {
++        assert!(
++            recorded_calls(&f, method).is_empty(),
++            "a filmed insert calls no {method}"
++        );
++    }
++}
++
++#[tokio::test]
++async fn filmed_insert_reports_each_refusal_of_its_function() {
++    for (why, code, says) in [
++        (
++            "detached",
++            "browser_ref_stale",
++            "nothing was inserted: the ref's node is no longer in its document",
++        ),
++        (
++            "not_focused",
++            "browser_input_trust_unavailable",
++            "nothing was inserted: the requested ref is not a focused editable element",
++        ),
++        (
++            "not_editable",
++            "browser_input_trust_unavailable",
++            "nothing was inserted: the requested ref is not a focused editable element",
++        ),
++        (
++            "not_under_pointer",
++            "browser_action_unavailable",
++            "nothing was inserted: the ref's node is not under the filmed point",
++        ),
++        (
++            "pointer_hidden",
++            "browser_action_unavailable",
++            "nothing was inserted: the page hides or replaces the pointer over the ref's node (a pointer lock or its cursor style)",
++        ),
++        (
++            "command_refused",
++            "browser_input_incomplete",
++            "what reached the page is unknown: the filmed insert did not report completing (the page's document did not accept the insertion)",
++        ),
++        (
++            "something_else",
++            "browser_input_incomplete",
++            "what reached the page is unknown: the filmed insert did not report completing (a malformed receipt)",
++        ),
++    ] {
++        let reply = json!({ "result": { "value": { "inserted": false, "why": why } } });
++        let f = fixture_with(move |state| state.filmed_insert_reply = Some(reply)).await;
++        let (target, tab) = bind(&f).await;
++        let snap = snapshot(&f, &target, &tab).await;
++        let input = ref_of(&snap, "main", "Shadow Input");
++        let result = filmed_type(&f, &target, &tab, &input, json!({})).await;
++        let refused = structured(&result);
++        assert_eq!(refused["refusal"]["code"], code, "{why}: {refused}");
++        // the whole message, which begins with what was sent
++        assert_eq!(refused["refusal"]["message"], says, "{why}");
++        assert!(recorded_calls(&f, "Input.insertText").is_empty(), "{why}");
++    }
++    // a reply that is not a receipt at all is not an insertion either
++    for reply in [
++        json!({ "exceptionDetails": { "text": "Uncaught" } }),
++        json!({ "result": {} }),
++        json!({ "result": { "value": { "inserted": "yes" } } }),
++    ] {
++        let shown = reply.clone();
++        let f = fixture_with(move |state| state.filmed_insert_reply = Some(reply)).await;
++        let (target, tab) = bind(&f).await;
++        let snap = snapshot(&f, &target, &tab).await;
++        let input = ref_of(&snap, "main", "Shadow Input");
++        let result = filmed_type(&f, &target, &tab, &input, json!({})).await;
++        assert_eq!(
++            structured(&result)["refusal"]["code"],
++            "browser_input_incomplete",
++            "{shown}"
++        );
++    }
++}
++
++#[tokio::test]
++async fn filmed_insert_is_refused_before_anything_runs_where_it_cannot_be_made() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let input = ref_of(&snap, "main", "Shadow Input");
++    let functions_before = recorded_calls(&f, "Runtime.callFunctionOn").len();
++    // replacing selects first, and keystrokes focus first: neither is one turn of script
++    for more in [
++        json!({ "replace": true }),
++        json!({ "mode": "keystrokes" }),
++        json!({ "filmed_point": { "y": 2.0 } }),
++    ] {
++        let result = filmed_type(&f, &target, &tab, &input, more.clone()).await;
++        assert_eq!(result.is_error, Some(true), "{more}");
++        assert!(result_text(&result).contains("filmed_point"), "{more}");
++    }
++    let oopif_ref = ref_of(&snap, "oopif", "ad-input");
++    let result = filmed_type(&f, &target, &tab, &oopif_ref, json!({})).await;
++    assert_eq!(
++        structured(&result)["refusal"]["code"],
++        "browser_action_unavailable"
++    );
++    assert!(functions_since(&f, functions_before).is_empty());
++    assert!(recorded_calls(&f, "DOM.focus").is_empty());
++
++    let f = fixture_with(|state| state.isolated_world_unavailable = true).await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let input = ref_of(&snap, "main", "Shadow Input");
++    let functions_before = recorded_calls(&f, "Runtime.callFunctionOn").len();
++    let result = filmed_type(&f, &target, &tab, &input, json!({})).await;
++    assert_eq!(
++        structured(&result)["refusal"]["code"],
++        "browser_action_unavailable"
++    );
++    assert_eq!(
++        structured(&result)["refusal"]["message"],
++        "nothing was inserted: no isolated world could be made for the filmed insert"
++    );
++    assert!(functions_since(&f, functions_before).is_empty());
++    assert!(recorded_calls(&f, "Input.insertText").is_empty());
++}
++
++async fn locate(f: &Fixture, target: &str, tab: &str, r: &str) -> ToolResult {
++    GetBrowserStateTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target,
++            "tab_id": tab,
++            "locate_ref": r,
++            "session": SESSION,
++        }))
++        .await
++}
++
++fn sent_any_event(f: &Fixture) -> bool {
++    recorded_calls(f, "Runtime.callFunctionOn")
++        .iter()
++        .filter_map(|(_, params)| params["functionDeclaration"].as_str().map(str::to_owned))
++        .any(|declaration| declaration.contains("'pointerdown'"))
++        || !recorded_calls(f, "Input.dispatchMouseEvent").is_empty()
++}
++
++fn locate_reads(f: &Fixture) -> usize {
++    recorded_calls(f, "Runtime.callFunctionOn")
++        .iter()
++        .filter(|(_, params)| {
++            params["functionDeclaration"]
++                .as_str()
++                .is_some_and(|declaration| declaration.contains("'descendant'"))
++        })
++        .count()
++}
++
++#[tokio::test]
++async fn locate_ref_reports_where_the_element_is_and_changes_nothing() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    let snapshots_before = recorded_calls(&f, "DOMSnapshot.captureSnapshot").len()
++        + recorded_calls(&f, "DOM.getDocument").len();
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    let reply = structured(&result);
++    assert_eq!(reply["status"], "ok", "{reply}");
++    assert_eq!(reply["mode"], "locate", "{reply}");
++    assert_eq!(reply["ref"], main_ref.as_str(), "{reply}");
++    let found = &reply["locate"];
++    assert_eq!(found["available"], true, "{reply}");
++    assert_eq!(
++        found["rect"],
++        json!({ "x": 100.0, "y": 100.0, "width": 20.0, "height": 10.0 })
++    );
++    assert_eq!(found["center"], json!({ "x": 110.0, "y": 105.0 }));
++    assert_eq!(found["hit"], "target");
++    // the mock's box model for this node has the same centre, read without page script
++    assert_eq!(found["box_center"], json!({ "x": 110.0, "y": 105.0 }));
++    assert_eq!(
++        found["viewport"],
++        json!({ "width": 800.0, "height": 600.0, "zoom": 1.0, "scale": 1.0 })
++    );
++    assert_eq!(found["clipped"], false, "{reply}");
++    assert_eq!(found["visibility_state"], "visible", "{reply}");
++    assert_eq!(found["focused"], false, "{reply}");
++    assert_eq!(found["page_focused"], true, "{reply}");
++    assert_eq!(found["world"], "isolated", "{reply}");
++    assert_eq!(found["filmed_delivery"], true, "{reply}");
++    assert_eq!(found["cursor"], "pointer", "{reply}");
++    assert!(
++        found["point"].is_null(),
++        "no point was asked about: {reply}"
++    );
++    assert!(!sent_any_event(&f), "a locate sends no event");
++    assert!(recorded_calls(&f, "DOM.scrollIntoViewIfNeeded").is_empty());
++    assert!(recorded_calls(&f, "DOM.focus").is_empty());
++    assert_eq!(
++        recorded_calls(&f, "DOMSnapshot.captureSnapshot").len()
++            + recorded_calls(&f, "DOM.getDocument").len(),
++        snapshots_before,
++        "a locate takes no snapshot"
++    );
++    {
++        let state = f.state.lock().unwrap();
++        assert!(!state.dom_click_focused);
++        assert_eq!(state.dom_click_generation, 0);
++    }
++    // the ref it located is still current: the click it precedes goes through
++    let clicked = BrowserClickTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target, "tab_id": tab, "ref": main_ref,
++            "input_route": "dom_event", "session": SESSION,
++        }))
++        .await;
++    assert_ne!(clicked.is_error, Some(true), "{}", result_text(&clicked));
++    assert!(sent_any_event(&f));
++}
++
++#[tokio::test]
++async fn locate_ref_passes_on_what_is_at_the_centre() {
++    let f = fixture_with(|state| {
++        state.dom_locate_reply = Some(json!({ "result": { "value": {
++            "rect": [100.0, 100.0, 20.0, 10.0], "hit": "other", "inner": [800.0, 600.0],
++        } } }))
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    assert_eq!(structured(&result)["locate"]["hit"], "other");
++    assert!(!sent_any_event(&f));
++}
++
++#[tokio::test]
++async fn locate_ref_passes_on_clipping_and_a_hidden_document() {
++    let f = fixture_with(|state| {
++        state.dom_locate_reply = Some(json!({ "result": { "value": {
++            "rect": [100.0, 100.0, 20.0, 10.0], "hit": "target", "inner": [800.0, 600.0],
++            "clipped": true, "visibility": "hidden", "point": null,
++        } } }))
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    let found = &structured(&result)["locate"];
++    assert_eq!(found["available"], true);
++    assert_eq!(found["clipped"], true);
++    assert_eq!(found["visibility_state"], "hidden");
++    assert!(!sent_any_event(&f));
++}
++
++async fn locate_at(f: &Fixture, target: &str, tab: &str, r: &str, point: Value) -> ToolResult {
++    GetBrowserStateTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target,
++            "tab_id": tab,
++            "locate_ref": r,
++            "locate_point": point,
++            "session": SESSION,
++        }))
++        .await
++}
++
++fn locate_arguments(f: &Fixture) -> Vec<Value> {
++    recorded_calls(f, "Runtime.callFunctionOn")
++        .iter()
++        .filter(|(_, params)| {
++            params["functionDeclaration"]
++                .as_str()
++                .is_some_and(|declaration| declaration.contains("'descendant'"))
++        })
++        .map(|(_, params)| params["arguments"].clone())
++        .collect()
++}
++
++#[tokio::test]
++async fn locate_ref_with_a_point_asks_the_page_what_is_at_that_point() {
++    let f = fixture_with(|state| state.dom_locate_point_hit = "other").await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate_at(
++        &f,
++        &target,
++        &tab,
++        &main_ref,
++        json!({ "x": 104.5, "y": 105.0 }),
++    )
++    .await;
++
++    let reply = structured(&result);
++    assert_eq!(reply["status"], "ok", "{reply}");
++    assert_eq!(
++        reply["locate"]["point"],
++        json!({ "x": 104.5, "y": 105.0, "hit": "other", "cursor": null }),
++        "{reply}"
++    );
++    assert_eq!(
++        reply["locate"]["hit"], "target",
++        "the centre is reported as before: {reply}"
++    );
++    assert_eq!(
++        locate_arguments(&f),
++        vec![json!([{ "value": 104.5 }, { "value": 105.0 }])]
++    );
++    assert!(!sent_any_event(&f), "a locate sends no event");
++    assert!(recorded_calls(&f, "DOM.scrollIntoViewIfNeeded").is_empty());
++}
++
++#[tokio::test]
++async fn locate_ref_without_a_point_passes_the_page_function_no_arguments() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    assert!(structured(&result)["locate"]["point"].is_null());
++    assert_eq!(locate_arguments(&f), vec![json!([])]);
++}
++
++#[tokio::test]
++async fn locate_ref_refuses_a_malformed_point_before_reading_the_page() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    for point in [
++        json!({ "x": 104.5 }),
++        json!({ "x": "a", "y": 1.0 }),
++        json!([104.5, 105.0]),
++    ] {
++        let result = locate_at(&f, &target, &tab, &main_ref, point.clone()).await;
++        assert_eq!(result.is_error, Some(true), "{point}");
++        assert!(result_text(&result).contains("locate_point"), "{point}");
++    }
++    assert_eq!(locate_reads(&f), 0, "a refused locate reads nothing");
++}
++
++#[tokio::test]
++async fn locate_ref_reports_no_position_for_a_rotated_node() {
++    let f = fixture_with(|state| {
++        state.dom_locate_reply = Some(json!({ "result": { "value": {
++            "rect": [100.0, 100.0, 20.0, 10.0], "hit": "target", "inner": [800.0, 600.0],
++            "clipped": false, "transformed": true, "visibility": "visible", "point": null,
++        } } }))
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    assert_eq!(
++        structured(&result)["locate"],
++        json!({ "available": false, "reason": "transformed" })
++    );
++    assert!(!sent_any_event(&f));
++}
++
++/// The object ids of the page functions a locate ran, in order.
++fn located_objects(f: &Fixture) -> Vec<String> {
++    recorded_calls(f, "Runtime.callFunctionOn")
++        .iter()
++        .filter_map(|(_, params)| params["objectId"].as_str().map(str::to_owned))
++        .collect()
++}
++
++#[tokio::test]
++async fn locate_ref_reads_in_an_isolated_world_of_the_main_frame() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    let functions_before = located_objects(&f).len();
++    let resolved_before = recorded_calls(&f, "DOM.resolveNode").len();
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    assert_eq!(structured(&result)["locate"]["world"], "isolated");
++    let worlds = recorded_calls(&f, "Page.createIsolatedWorld");
++    assert_eq!(worlds.len(), 1, "{worlds:?}");
++    assert_eq!(
++        worlds[0].1,
++        json!({ "frameId": "F_MAIN", "worldName": "cua-driver-locate" }),
++        "the tab's main frame, by name, with no universal access"
++    );
++    let resolved = &recorded_calls(&f, "DOM.resolveNode")[resolved_before..];
++    assert_eq!(resolved.len(), 1, "{resolved:?}");
++    assert_eq!(resolved[0].1["executionContextId"], ISOLATED_CONTEXT);
++    let functions = &located_objects(&f)[functions_before..];
++    assert_eq!(
++        functions.len(),
++        2,
++        "the connected check and the locate: {functions:?}"
++    );
++    assert!(
++        functions
++            .iter()
++            .all(|object| object.starts_with("iso77-obj-")),
++        "both run on the isolated world's object: {functions:?}"
++    );
++}
++
++#[tokio::test]
++async fn locate_ref_reports_the_isolated_reading_when_the_pages_world_disagrees() {
++    // The mock's page world says the target is hit at its centre and at any
++    // point, as a page that replaced `elementFromPoint` would; the isolated
++    // world sees the overlay.
++    let f = fixture_with(|state| {
++        state.dom_locate_point_hit = "other";
++        state.dom_locate_reply = Some(json!({ "result": { "value": {
++            "rect": [100.0, 100.0, 20.0, 10.0],
++            "hit": "other",
++            "inner": [800.0, 600.0],
++            "clipped": false,
++            "transformed": false,
++            "visibility": "visible",
++            "focus": [true, true],
++            "point": [104.5, 105.0, "other", null],
++        } } }));
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate_at(
++        &f,
++        &target,
++        &tab,
++        &main_ref,
++        json!({ "x": 104.5, "y": 105.0 }),
++    )
++    .await;
++
++    let found = &structured(&result)["locate"];
++    assert_eq!(found["hit"], "other", "{found}");
++    assert_eq!(found["point"]["hit"], "other", "{found}");
++    // nothing of the node is at the centre or the point, so there is no cursor to report
++    assert_eq!(found.get("cursor"), Some(&Value::Null), "{found}");
++    assert_eq!(found["point"].get("cursor"), Some(&Value::Null), "{found}");
++    assert_eq!(found["focused"], true, "{found}");
++    assert_eq!(found["page_focused"], true, "{found}");
++}
++
++#[tokio::test]
++async fn locate_ref_reports_no_position_without_an_isolated_world() {
++    let f = fixture_with(|state| state.isolated_world_unavailable = true).await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    let functions_before = located_objects(&f).len();
++    let resolved_before = recorded_calls(&f, "DOM.resolveNode").len();
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    let reply = structured(&result);
++    assert_eq!(reply["status"], "ok", "{reply}");
++    assert_eq!(
++        reply["locate"],
++        json!({ "available": false, "reason": "world_unavailable" }),
++        "{reply}"
++    );
++    assert_eq!(
++        located_objects(&f).len(),
++        functions_before,
++        "nothing is read in the page's own world instead"
++    );
++    assert_eq!(recorded_calls(&f, "DOM.resolveNode").len(), resolved_before);
++}
++
++#[tokio::test]
++async fn locate_ref_passes_on_focus_it_could_not_read_as_null() {
++    let f = fixture_with(|state| {
++        state.dom_locate_reply = Some(json!({ "result": { "value": {
++            "rect": [100.0, 100.0, 20.0, 10.0],
++            "hit": "target",
++            "inner": [800.0, 600.0],
++            "clipped": false,
++            "transformed": false,
++            "visibility": "visible",
++            "focus": ["yes"],
++            "point": null,
++        } } }));
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    let found = &structured(&result)["locate"];
++    assert_eq!(found["available"], true, "{found}");
++    // present and null: the caller can tell an unread focus from a driver
++    // that reports none
++    assert_eq!(found.get("focused"), Some(&Value::Null), "{found}");
++    assert_eq!(found.get("page_focused"), Some(&Value::Null), "{found}");
++}
++
++#[tokio::test]
++async fn locate_ref_refuses_a_removed_node_as_a_click_does() {
++    let f = fixture_with(|state| state.dom_click_node_detached = true).await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    assert_eq!(structured(&result)["refusal"]["code"], "browser_ref_stale");
++    assert_eq!(locate_reads(&f), 0, "a removed node is not measured");
++}
++
++#[tokio::test]
++async fn locate_ref_refuses_a_ref_that_is_not_current() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    snapshot(&f, &target, &tab).await;
++
++    let result = locate(&f, &target, &tab, "p99:0").await;
++
++    assert_eq!(
++        structured(&result)["refusal"]["code"],
++        "browser_ref_stale",
++        "{}",
++        result_text(&result)
++    );
++    assert_eq!(locate_reads(&f), 0);
++}
++
++#[tokio::test]
++async fn locate_ref_is_unavailable_in_a_child_frame_without_touching_it() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let oopif_ref = ref_of(&snap, "oopif", "ad-input");
++
++    let result = locate(&f, &target, &tab, &oopif_ref).await;
++
++    let reply = structured(&result);
++    assert_eq!(
++        reply["locate"],
++        json!({ "available": false, "reason": "child_frame" }),
++        "{reply}"
++    );
++    assert_eq!(locate_reads(&f), 0);
++    assert!(!sent_any_event(&f));
++}
++
++#[tokio::test]
+ async fn dom_event_click_checks_its_node_is_connected_before_any_event() {
+     let f = fixture().await;
+     let (target, tab) = bind(&f).await;
+@@ -3560,9 +4718,24 @@
+     );
+     assert!(!declaration.contains(".push("), "{declaration}");
+     assert!(
+-        declaration.contains("const send = (type, event) => { live();"),
++        // the one place an event is dispatched makes the check in the same
++        // statement run: the node's own for an unfilmed click, under the
++        // pointer for a filmed one
++        declaration.contains(
++            "const send = (type, event) => { if (filmed) under(target); else live(); \
++             const kept = target.dispatchEvent(event); count += 1; last = type; return kept; };"
++        ) && declaration.matches(".dispatchEvent(").count() == 1,
+         "{declaration}"
+     );
++    assert!(
++        // and the one place focus is given checks the element it is given to,
++        // which a filmed click focuses only inside the ref's node
++        declaration.contains(
++            "if (filmed && !el.contains(focusable)) unfocused = true; \
++             else { if (filmed) under(focusable); focusable.focus({ preventScroll: true }); }"
++        ) && declaration.matches(".focus(").count() == 1,
++        "{declaration}"
++    );
+     assert!(result_text(&result).contains("dispatched synthetic DOM click"));
+     assert_eq!(f.state.lock().unwrap().dom_click_generation, 1);
+ }
