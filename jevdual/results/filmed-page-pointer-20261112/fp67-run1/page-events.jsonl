@@ -1,0 +1,2 @@
+{"t": 1794576708.8729, "n": 1, "type": "loaded", "detail": {"dpr": 2, "viewport": [1200, 813], "clock_step_s": 9.999990463256836e-05, "page_says_at_forged": "Forged", "browser_says_at_forged": "lid2"}, "received": 1794576708.87614}
+{"t": 1794576709.3477998, "n": 2, "type": "beat", "detail": {"acks": [[1, 1794576708.8782997]]}, "received": 1794576709.348704}
