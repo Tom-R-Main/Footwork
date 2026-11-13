@@ -110,7 +110,9 @@ class BrowserOperations(Protocol):
 
     async def click(self, *, target_id: str, tab_id: str | None, ref: str, input_route: str) -> BrowserReply: ...
 
-    async def locate(self, *, target_id: str, tab_id: str | None, ref: str) -> BrowserReply: ...
+    async def locate(
+        self, *, target_id: str, tab_id: str | None, ref: str, point: Any = None
+    ) -> BrowserReply: ...
 
     async def type_text(
         self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool

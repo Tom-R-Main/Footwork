@@ -110,6 +110,9 @@ class SessionState:
     #: browser mode: the holder process that keeps this session's one driver (jevdual.browser_session_holder),
     #: as its process identity at start; empty when the session builds a driver per command
     browser_holder: dict[str, Any] = field(default_factory=dict)
+    #: browser mode: the Chrome this session's start bound, as ``{pid, incarnation, new_process}``;
+    #: ``new_process`` is true only when that start launched it (a found browser belongs to whoever did)
+    browser_launch: dict[str, Any] = field(default_factory=dict)
     #: names of the secrets typed in this session (``{NAME}``); their values are scrubbed from every
     #: observation before it is rendered, persisted or shown to a model. Names only, never values.
     secret_names: list[str] = field(default_factory=list)
@@ -1150,6 +1153,12 @@ def _attach_filmed(state: SessionState, bridge: Any) -> None:
 
         bridge.filmed = Filmed.from_record(state.filmed)
         bridge.filmed.trace_path = str(state.path / "pointer-gestures.jsonl")
+        if state.mode == "browser":
+            import functools
+
+            from jevdual.filmed import browser_scene_change
+
+            bridge.scene = functools.partial(browser_scene_change, state.pid, state.window_id)
 
 
 def _native_bridge(
@@ -1280,6 +1289,9 @@ def _filmed_setup(state: SessionState, args: Any) -> str | None:
         return str(exc)
     if window is None:
         return "the scene window has no frame"
+    if web is None and state.mode == "browser":
+        # a page position maps to a screen point from the web area's origin; the window's frame is no substitute
+        return "the browser window shows no web area to film"
     content = web or window
     origin = (content.x, content.y)
     filmed = Filmed(
@@ -1781,9 +1793,11 @@ async def _start_browser(args: Any, d: Path) -> int:
             with contextlib.suppress(Exception):
                 await bsh.retire_settled(runtime, expected=identity)
             raise
+        launch = dict(identity.get("launch_identity") or {})
         print(f"browser holder pid {identity['pid']} keeps this session's driver")
     else:
         driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture))  # type: ignore[arg-type]
+        launch = dict(getattr(bridge, "launch_identity", None) or {})
     try:
         state = SessionState(
             dir=str(d),
@@ -1798,7 +1812,13 @@ async def _start_browser(args: Any, d: Path) -> int:
             posture=posture,
             browser_tab=bridge.tab_id or "",
             browser_holder=holder,
+            browser_launch=launch,
         )
+        if launch:
+            # said before anything below can refuse: a caller that cleans up after a failed start learns
+            # here whether the browser is this start's own
+            print(f"footwork's Chrome pid {launch.get('pid')} started {launch.get('incarnation')!r}: "
+                  + ("launched by this start" if launch.get("new_process") else "already running"))
         if getattr(args, "pointer_motion", "off") == "filmed":
             # B7: one session films the real pointer over the same window its page operations bind
             refusal = _filmed_setup(state, args)

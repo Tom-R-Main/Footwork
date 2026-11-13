@@ -259,22 +259,25 @@ class WebMenu:
         return self.refs.get(id)
 
 
-#: how far (CSS px) a filmed target's centre may sit from where it was before the approach, and
-#: from the centre the driver read without page script
+#: how far (CSS px) the centre ``DOM.getBoxModel`` reports may sit from the centre page script reports
 LOCATE_TOLERANCE_PX = 2.0
+#: how far (CSS px) a filmed target's centre may move while the pointer travels to it
+DRIFT_TOLERANCE_PX = 0.5
 Rect = tuple[float, float, float, float]
 
 
-def located_rect(locate: Any) -> tuple[Rect | None, str]:
+def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple[Rect | None, str]:
     """A target's rectangle in viewport CSS px from the driver's ``locate`` block, when a filmed pointer
     can be put on it: ``(rect, "")``, or ``(None, why)``.
 
-    It must be in the tab's own frame; at 100% page zoom and pinch scale 1, the only case in which
-    viewport CSS px are screen points from the content origin; wholly inside the viewport, because the
+    It must be in the tab's own frame, in a document the browser is showing; at 100% page zoom and
+    pinch scale 1, the only case in which viewport CSS px are screen points from the content origin;
+    wholly inside the viewport and inside every ancestor that clips or scrolls its overflow, because the
     page click scrolls a partly hidden target after the pointer has arrived; hit at its centre (itself
-    or something inside it); and where ``DOM.getBoxModel`` also puts it."""
+    or something inside it); and where ``DOM.getBoxModel`` also puts it. With ``point`` (where the
+    pointer was sent), that point must lie inside the rectangle and hit the target too."""
     if not isinstance(locate, dict):
-        return None, "the driver reported no position (it needs cua-driver locate1)"
+        return None, "the driver reported no position (it needs cua-driver locate2)"
     if locate.get("available") is not True:
         return None, f"the driver could not locate it ({locate.get('reason') or 'no reason given'})"
 
@@ -298,15 +301,36 @@ def located_rect(locate: Any) -> tuple[Rect | None, str]:
         return None, "the driver did not report the viewport's size, zoom and scale"
     if abs(view[2] - 1.0) > 1e-3 or abs(view[3] - 1.0) > 1e-3:
         return None, f"the page is at zoom {view[2]:g} and pinch scale {view[3]:g}; a filmed pointer needs both at 1"
+    shown = locate.get("visibility_state")
+    if shown != "visible":
+        if shown is None:
+            return None, "the driver did not say whether the page is showing (it needs cua-driver locate2)"
+        return None, f"the page is not showing (its document is {str(shown)[:20]!r}); its tab is not the one on screen"
     x, y, w, h = rect
     if x < -0.5 or y < -0.5 or x + w > view[0] + 0.5 or y + h > view[1] + 0.5:
         return None, "it is not wholly in view; the page click would scroll it after the pointer arrived"
+    clipped = locate.get("clipped")
+    if clipped is not False:
+        if clipped is not True:
+            return None, "the driver did not say whether a container clips it (it needs cua-driver locate2)"
+        return None, ("a scrolling or clipping container hides part of it; the page click would scroll it "
+                      "after the pointer arrived")
     hit = locate.get("hit")
     if hit not in ("target", "descendant"):
         return None, ("another element is at its centre" if hit == "other" else "nothing is at its centre")
     centre = (x + w / 2, y + h / 2)
     if box is None or math.dist(box, centre) > LOCATE_TOLERANCE_PX:
         return None, "its position could not be confirmed without page script"
+    if point is not None:
+        at = numbers(locate.get("point"), ("x", "y"))
+        if at is None or math.dist(at, point) > 0.01:
+            return None, "the driver did not report what is where the pointer landed"
+        if not (x <= point[0] <= x + w and y <= point[1] <= y + h):
+            return None, f"the pointer landed at {point[0]:.1f},{point[1]:.1f}, outside it"
+        under = locate["point"].get("hit")
+        if under not in ("target", "descendant"):
+            return None, ("another element is under the pointer" if under == "other"
+                          else "nothing of the page is under the pointer")
     return rect, ""  # type: ignore[return-value]
 
 
@@ -476,6 +500,10 @@ class BrowserBridge:
         #: filmed pointer mode (``jevdual.filmed``, B7): the real pointer travels onto each page target
         #: before the page action; set by the session from its filmed record
         self.filmed: Any = None
+        #: with ``filmed``: ``scene(filmed, url)`` says why the take's recorded scene no longer holds, or
+        #: None (``jevdual.filmed.browser_scene_change`` bound to this window, set by the session). A
+        #: filmed bridge without one refuses every page action.
+        self.scene: Any = None
 
     async def attach(self, *, tab_id: str | None = None, expect_url: str | None = None) -> dict[str, Any]:
         """Bind the window's browser target. With ``expect_url`` (the page a session last observed) the
@@ -591,7 +619,7 @@ class BrowserBridge:
             # successes); the DOM route did all of them. DOM is the default; the receipt proves the
             # outcome either way, and --route trusted is there for controls that ignore synthetic clicks.
             input_route = route or "dom_event"
-            if (refused := await self._filmed_approach(operation, id, c, ref)) is not None:
+            if (refused := await self._filmed_approach(operation, id, c, ref, nm.menu.url)) is not None:
                 return refused
             out = await self.operations.click(**base, input_route=input_route)
             eff = self._effect(out, operation, id, c.label)
@@ -637,7 +665,7 @@ class BrowserBridge:
                         error_code=refusal.code,
                         dispatched=False,
                     )
-            if (refused := await self._filmed_approach(operation, id, c, ref)) is not None:
+            if (refused := await self._filmed_approach(operation, id, c, ref, nm.menu.url)) is not None:
                 return refused
             out = await self.operations.type_text(**base, text=text or "", replace=needs_replace)
         else:
@@ -653,18 +681,38 @@ class BrowserBridge:
         self.last = None
         return self._effect(out, operation, id, c.label)
 
-    async def _locate(self, ref: str) -> tuple[Rect | None, str]:
-        reply = await self.operations.locate(target_id=self.target_id, tab_id=self.tab_id, ref=ref)
+    async def _locate(self, ref: str, point: tuple[float, float] | None = None) -> tuple[Rect | None, str]:
+        try:
+            reply = await self.operations.locate(target_id=self.target_id, tab_id=self.tab_id, ref=ref, point=point)
+        except Exception as exc:  # noqa: BLE001 - any failed read is a refusal: the caller withholds the action
+            return None, f"the locate call failed ({type(exc).__name__}: {str(exc)[:100]})"
         if reply.refused:
             return None, _refusal_message(reply)[:160]
-        return located_rect(reply.payload.get("locate"))
+        return located_rect(reply.payload.get("locate"), point)
 
-    async def _filmed_approach(self, operation: str, id: int, c: Candidate, ref: str) -> BrowserEffect | None:
+    async def _scene(self, url: str | None) -> None:
+        """Refuse ``scene_changed`` unless the window on screen is still the take's recorded scene."""
+        from jevdual.filmed import FilmedRefusal
+
+        if self.scene is None:
+            raise FilmedRefusal("scene_changed", "this session has no way to check the filmed window")
+        try:
+            why = await asyncio.to_thread(self.scene, self.filmed, url)
+        except Exception as exc:  # noqa: BLE001 - a scene that cannot be read is not a scene that holds
+            why = f"the filmed window could not be read ({type(exc).__name__}: {str(exc)[:100]})"
+        if why:
+            raise FilmedRefusal("scene_changed", why)
+
+    async def _filmed_approach(
+        self, operation: str, id: int, c: Candidate, ref: str, url: str | None
+    ) -> BrowserEffect | None:
         """In a filmed take, put the real pointer on the target before the page action.
 
-        The driver reads where the element is now (``located_rect``), the pointer travels there, and
-        the driver reads it again: the action goes ahead only if the element is still under the
-        pointer. Any refusal withholds the page action; when the pointer had already moved, the
+        The scene is checked (``_scene``), the driver reads where the element is now
+        (``located_rect``), the pointer travels there, and the driver reads it again, asked about the
+        point the pointer was sent to: the action goes ahead only if that point is on the element, the
+        element has not moved, the scene still holds and the pointer is still where the approach left
+        it. Any refusal withholds the page action; when the approach had posted pointer events, the
         refusal says so instead of claiming nothing happened."""
         if self.filmed is None:
             return None
@@ -673,21 +721,24 @@ class BrowserBridge:
         gestures = len(self.filmed.gestures)
         try:
             self.filmed.check()
+            await self._scene(url)
             rect, why = await self._locate(ref)
             if rect is None:
                 raise FilmedRefusal("target_unlocated", f"{c.label!r}: {why}")
+            centre = (rect[0] + rect[2] / 2, rect[1] + rect[3] / 2)
             x, y = self.filmed.viewport(rect[0], rect[1])
             await self.filmed.approach((x, y, rect[2], rect[3]), c.label)
-            again, why = await self._locate(ref)
+            again, why = await self._locate(ref, centre)
             if again is None:
-                raise FilmedRefusal("target_moved", f"{c.label!r} could not be found under the pointer: {why}")
-            drift = math.dist((again[0] + again[2] / 2, again[1] + again[3] / 2),
-                              (rect[0] + rect[2] / 2, rect[1] + rect[3] / 2))
-            if drift > LOCATE_TOLERANCE_PX:
-                raise FilmedRefusal("target_moved", f"{c.label!r} moved {drift:.0f} px while the pointer travelled")
+                raise FilmedRefusal("target_moved", f"{c.label!r} could not be confirmed under the pointer: {why}")
+            drift = math.dist((again[0] + again[2] / 2, again[1] + again[3] / 2), centre)
+            if drift > DRIFT_TOLERANCE_PX:
+                raise FilmedRefusal("target_moved", f"{c.label!r} moved {drift:.1f} px while the pointer travelled")
+            await self._scene(url)
+            await self.filmed.held()
         except FilmedRefusal as refusal:
             self.last = None
-            moved = any(g.get("posted") or g.get("samples") for g in self.filmed.gestures[gestures:])
+            moved = any(g.get("posted") for g in self.filmed.gestures[gestures:])
             lead = f"the pointer moved but the {operation} was not sent: " if moved else ""
             return BrowserEffect(operation, id, c.label, "refused", route="desktop", dispatched=False,
                                  error_code=refusal.code, summary=(lead + refusal.reason)[:300],

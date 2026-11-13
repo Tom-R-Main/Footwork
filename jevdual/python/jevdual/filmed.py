@@ -118,12 +118,7 @@ class Filmed:
 
     # ---- moving
 
-    def _move(self, end: Point, kind: str, label: str) -> dict[str, Any]:
-        from jevdual import drag
-
-        self.check()
-        poster, clock = drag.QuartzPoster(), drag.MonotonicClock()
-        here = poster.location()
+    def _continuity(self, here: Point) -> None:
         if self.last_pointer is not None and math.dist(here, self.last_pointer) > self.continuity_pt:
             self.end_take("pointer_moved_idle")
             raise FilmedRefusal(
@@ -131,6 +126,24 @@ class Filmed:
                 f"the pointer is at {here[0]:.1f},{here[1]:.1f}, not where the last gesture left it "
                 f"({self.last_pointer[0]:.1f},{self.last_pointer[1]:.1f}): someone moved it; the take ended",
             )
+
+    def _hold(self) -> None:
+        from jevdual import drag
+
+        self.check()
+        self._continuity(drag.QuartzPoster().location())
+
+    async def held(self) -> None:
+        """Refuse, ending the take, unless the pointer is still where the last gesture left it."""
+        await owned_thread(self._hold)
+
+    def _move(self, end: Point, kind: str, label: str) -> dict[str, Any]:
+        from jevdual import drag
+
+        self.check()
+        poster, clock = drag.QuartzPoster(), drag.MonotonicClock()
+        here = poster.location()
+        self._continuity(here)
         record: dict[str, Any] = {"kind": kind, "label": label, "from": here, "to": end}
         if math.dist(here, end) >= 1.0:
             plan = self.admit(here, end)
@@ -249,3 +262,49 @@ class Filmed:
         finally:
             trace.record['call_returned_ns'] = uptime_raw_ns()
             trace.finish(poster, outcome)
+
+
+#: how far (points) a browser take's window or web area may sit from where the take recorded it
+SCENE_TOLERANCE_PT = 0.5
+
+
+def browser_scene_change(pid: int, window_id: int, filmed: Filmed, url: str | None) -> str | None:
+    """Why a browser take's recorded scene no longer holds, or None when it does.
+
+    A page position maps to a screen point only while the scene is the one the take recorded: the
+    browser is the frontmost application, the scene window is its main window and where it was, the
+    window's web area is where it was, and that web area shows the session's page (compared without
+    the fragment). Read through the accessibility interface; nothing is changed."""
+    from jevdual import ax, posture
+
+    front = posture.frontmost_pid()
+    if front != pid:
+        return f"the browser (pid {pid}) is not the frontmost application (pid {front} is)"
+    try:
+        win = ax.window_element(pid, window_id)
+        window, main, area = ax.frame_of(win), ax.is_main(win), ax.web_area(win)
+    except ax.AXError as exc:
+        return f"the scene window could not be read ({exc})"
+
+    def off(frame: Any, recorded: Rect) -> bool:
+        return any(abs(a - b) > SCENE_TOLERANCE_PT
+                   for a, b in zip((frame.x, frame.y, frame.w, frame.h), recorded, strict=True))
+
+    def spot(frame: Any) -> str:
+        return f"{frame.w:.0f}x{frame.h:.0f} at {frame.x:.1f},{frame.y:.1f}"
+
+    def recorded(rect: Rect) -> str:
+        return f"{rect[2]:.0f}x{rect[3]:.0f} at {rect[0]:.1f},{rect[1]:.1f}"
+
+    if main is not True:
+        return "the scene window is not the browser's main window"
+    if window is None or off(window, filmed.window):
+        return (f"the scene window is {spot(window) if window else 'without a frame'}; "
+                f"the take recorded {recorded(filmed.window)}")
+    if area is None or area[0] is None:
+        return "the scene window shows no web area"
+    if off(area[0], filmed.content):
+        return f"the page area is {spot(area[0])}; the take recorded {recorded(filmed.content)}"
+    if not url or not area[1] or area[1].split("#", 1)[0] != url.split("#", 1)[0]:
+        return f"the window shows {(area[1] or 'no address')[:120]!r}, not the session's page {(url or '')[:120]!r}"
+    return None

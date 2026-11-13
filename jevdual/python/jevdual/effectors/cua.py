@@ -211,10 +211,16 @@ class CuaBrowserOperations:
             "browser_click", {"target_id": target_id, "tab_id": tab_id, "ref": ref, "input_route": input_route}
         )
 
-    async def locate(self, *, target_id: str, tab_id: str | None, ref: str) -> BrowserReply:
+    async def locate(
+        self, *, target_id: str, tab_id: str | None, ref: str, point: Any = None
+    ) -> BrowserReply:
         """Where one current ref's element is in the viewport (get_browser_state's locate mode,
-        cua-driver locate1). Read-only: nothing is scrolled, focused or dispatched."""
-        return await self._call("get_browser_state", {"target_id": target_id, "tab_id": tab_id, "locate_ref": ref})
+        cua-driver locate2). Read-only: nothing is scrolled, focused or dispatched. ``point`` (x, y in
+        viewport CSS px) also asks what is at that point."""
+        args: dict[str, Any] = {"target_id": target_id, "tab_id": tab_id, "locate_ref": ref}
+        if point is not None:
+            args["locate_point"] = {"x": float(point[0]), "y": float(point[1])}
+        return await self._call("get_browser_state", args)
 
     async def type_text(
         self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool

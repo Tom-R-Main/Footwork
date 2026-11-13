@@ -11,16 +11,21 @@ owned local fixture in a Chrome that Footwork launches on a fresh profile and it
 5. Jump down, in view: clicked; its handler scrolls Gamma into view;
 6. Gamma again: clicked, with the pointer on it first, on the scrolled page.
 
-The fixture logs every trusted ``mouseover``, and inside each click handler the last trusted pointer
-event before it (move or over), the button's client rectangle, the scroll offset and the device pixel
-ratio. The session's pointer-gestures.jsonl records where each approach ended in screen points, and the
-probe counts its lines after every step. ``analyze`` reads each step against its own evidence: events
-are matched to a step by time, and gestures by their order.
+Before the clicks it parks the pointer on an empty part of the page, so no step starts on its target by
+accident.
 
-Waits for an unlocked screen and 10 s of idle before launching. Needs a profile directory that does not
-exist yet, a port that is not Footwork's default or the sign-in test's and has no listener, an output
-directory that does not exist yet, and no Chrome already matching that profile and port. It closes only
-the Chrome its own start launched, restores the frontmost application, and records whether Chrome closed.
+The fixture logs every trusted ``mouseover``, and inside each click handler the last trusted pointer
+event before it (move or over) with its client coordinates, the button's client rectangle, the scroll
+offset and the device pixel ratio. The session's pointer-gestures.jsonl records where each approach
+ended in screen points, and the probe counts its lines after every step. ``analyze`` reads each step
+against its own evidence: events are matched to a step by time, and gestures by their order. The
+verdict needs a device pixel ratio of 2, the case in which page and screen units could differ.
+
+Waits for an unlocked screen and 10 s of idle, then checks again, immediately before launching, that
+the profile directory does not exist, the port is not Footwork's default or the sign-in test's and has
+no listener, and no Chrome matches that profile and port. It signals only the Chrome the session says
+its own start launched (process ID and start time both matching), restores the frontmost application,
+and records whether Chrome closed; a Chrome it cannot prove is its own is left running and reported.
 
 Run from ``jevdual/`` with the pinned driver installed::
 
@@ -53,6 +58,9 @@ PROTECTED_PORTS = frozenset({9333, 9555})
 #: (label, "clicked" | "refused") in order; Gamma is refused until Jump down has scrolled it into view
 STEPS = (("Alpha", "clicked"), ("Beta", "clicked"), ("Covered", "refused"), ("Edge", "refused"),
          ("Gamma", "refused"), ("Jump down", "clicked"), ("Gamma", "clicked"))
+
+#: viewport CSS px with no button, overlay or fixed element near it
+EMPTY_SPOT = (520, 200)
 
 FIXTURE = """<!doctype html>
 <meta charset="utf-8">
@@ -113,12 +121,16 @@ def _inside(point, rect) -> bool:
 
 
 def analyze(out: Path) -> dict:
-    """Each step's verdict from its own evidence. A clicked step holds when its command succeeded, the
-    page ran that button's click handler during the step, the last trusted pointer event before the
-    handler was on that button and happened during the step, and the step's one new gesture is an
-    approach to that button that arrived inside the button's rectangle as the page reported it at click
-    time. A refused step holds when the command reported ``target_unlocated``, no handler for that
-    button ran during the step, and the step added no gesture."""
+    """Each step's verdict from its own evidence.
+
+    A clicked step holds when its command succeeded; the only click handler the page ran during the
+    step was that button's, once; the last trusted pointer event before the handler was on that button,
+    at client coordinates inside the button's rectangle; and the step's one new gesture is an approach
+    to that button that arrived inside the rectangle as the page reported it at click time. That
+    pointer event must have happened during the step, unless the approach posted nothing because the
+    pointer was already there. A refused step holds when the command reported ``target_unlocated``, the
+    page ran no click handler of any button during the step, and the step added no gesture. The whole
+    run holds only at a device pixel ratio of 2."""
     try:
         run = json.loads((out / "run.json").read_text())
         content = json.loads((out / "session/session.json").read_text())["filmed"]["content"]
@@ -131,23 +143,28 @@ def analyze(out: Path) -> dict:
     for step in clicks:
         label, expect = step["label"], step["expect"]
         window = (step["t_start"], step["t_end"] + 1.0)
-        mine = [e["detail"] | {"t": e["t"]} for e in handlers
-                if e["detail"].get("button") == label and window[0] <= e["t"] <= window[1]]
+        during = [e["detail"] | {"t": e["t"]} for e in handlers if window[0] <= e["t"] <= window[1]]
+        mine = [h for h in during if h.get("button") == label]
         new = gestures[seen:step.get("gestures_after", seen)]
         seen = step.get("gestures_after", seen)
         v: dict = {"label": label, "expect": expect, "exit": step.get("exit"), "handlers": len(mine),
+                   "other_handlers": sorted({str(h.get("button")) for h in during if h.get("button") != label}),
                    "new_gestures": [(g.get("kind"), g.get("label"), g.get("outcome")) for g in new]}
         if expect == "refused":
             v["said_unlocated"] = "target_unlocated" in (step.get("stdout", "") + step.get("stderr", ""))
-            v["held"] = bool(v["said_unlocated"] and not mine and not new)
+            v["held"] = bool(v["said_unlocated"] and not during and not new)
         else:
-            handler = mine[0] if len(mine) == 1 else None
+            handler = mine[0] if len(during) == 1 and len(mine) == 1 else None
             arrived = (len(new) == 1 and new[0].get("kind") == "approach" and new[0].get("label") == label
                        and new[0].get("outcome") == "arrived" and new[0].get("final_location"))
             if handler is not None:
                 pointer = handler.get("last_trusted_pointer") or {}
                 v["pointer_target"] = pointer.get("target")
                 v["pointer_during_step"] = bool(pointer.get("t") and window[0] <= pointer["t"] <= handler["t"])
+                try:
+                    v["pointer_inside"] = _inside((float(pointer["x"]), float(pointer["y"])), handler["rect"])
+                except (KeyError, TypeError, ValueError):
+                    v["pointer_inside"] = False
                 v["click_trusted"], v["scroll"], v["dpr"] = handler.get("trusted"), handler.get("scroll"), handler.get("dpr")
                 v["pinch"] = handler.get("pinch")
             if handler is not None and arrived:
@@ -155,16 +172,20 @@ def analyze(out: Path) -> dict:
                 v["button_screen_rect"] = (content[0] + x, content[1] + y, w, h)
                 v["gesture_end"] = new[0]["final_location"]
                 v["end_inside"] = _inside(new[0]["final_location"], v["button_screen_rect"])
+                # an approach that posted nothing started on its target: the page saw no new pointer event
+                v["already_there"] = new[0].get("posted_samples") == []
             v["held"] = bool(step.get("exit") == 0 and handler is not None and arrived
-                             and v.get("pointer_target") == label and v.get("pointer_during_step")
+                             and v.get("pointer_target") == label and v.get("pointer_inside")
+                             and (v.get("pointer_during_step") or v.get("already_there"))
                              and v.get("end_inside"))
         verdicts.append(v)
     last = verdicts[-1] if verdicts else {}
     scrolled = bool(last.get("label") == "Gamma" and (last.get("scroll") or [0, 0])[1] > 0)
     complete = [(v["label"], v["expect"]) for v in verdicts] == list(STEPS)
+    ratios = sorted({v["dpr"] for v in verdicts if v.get("dpr") is not None})
     return {"steps": verdicts, "complete": complete, "gamma_clicked_after_scrolling": scrolled,
-            "device_pixel_ratio": next((v.get("dpr") for v in verdicts if v.get("dpr")), None),
-            "held": complete and scrolled and all(v["held"] for v in verdicts)}
+            "device_pixel_ratios": ratios, "scale_factor_tested": ratios == [2],
+            "held": complete and scrolled and ratios == [2] and all(v["held"] for v in verdicts)}
 
 
 def _port_open(port: int) -> bool:
@@ -173,11 +194,12 @@ def _port_open(port: int) -> bool:
         return probe.connect_ex(("127.0.0.1", port)) == 0
 
 
-def preflight(out: Path, profile: str | None, port: str | None) -> str | None:
-    """Why this run may not start, or None. Nothing here launches or signals anything."""
+def preflight(out: Path, profile: str | None, port: str | None, *, again: bool = False) -> str | None:
+    """Why this run may not start, or None. Nothing here launches or signals anything. ``again`` is the
+    second reading, immediately before the launch, when ``out`` is this run's own directory."""
     from jevdual.browser_driver import chrome_pid
 
-    if not out.is_absolute() or out.exists():
+    if not out.is_absolute() or (out.exists() and not again):
         return "--out must be an absolute path that does not exist yet"
     if not profile or not Path(profile).is_absolute() or Path(profile).exists():
         return "FOOTWORK_CHROME_PROFILE must be an absolute path that does not exist yet"
@@ -190,23 +212,66 @@ def preflight(out: Path, profile: str | None, port: str | None) -> str | None:
     return None
 
 
-def _close_owned_chrome(record: dict) -> None:
-    """SIGTERM the Chrome this run's start launched (none matched before it) and record whether it went."""
+def _launched_chrome(session: Path, start_stdout: str) -> dict | None:
+    """The Chrome this run's start says it launched, as ``{pid, incarnation}``, or None.
+
+    From the session's record when the start finished; from the line the start prints as soon as it has
+    bound the browser when it did not. A browser the start found already running is not this run's."""
+    try:
+        launch = json.loads((session / "session.json").read_text()).get("browser_launch") or {}
+    except (OSError, ValueError):
+        launch = {}
+    if not launch:
+        said = re.search(r"footwork's Chrome pid (\d+) started ([0-9.]+): (launched by this start|already running)",
+                         start_stdout)
+        if said:
+            launch = {"pid": int(said.group(1)), "incarnation": float(said.group(2)),
+                      "new_process": said.group(3) == "launched by this start"}
+    if launch.get("new_process") is not True:
+        return None
+    try:
+        return {"pid": int(launch["pid"]), "incarnation": float(launch["incarnation"])}
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def _close_owned_chrome(record: dict, launch: dict | None) -> None:
+    """SIGTERM the Chrome this run's start launched, and only that process: the one matching the fresh
+    profile and port must have the recorded process ID and start time. Records whether it went, or why
+    nothing was signalled."""
+    import psutil
     from jevdual.browser_driver import chrome_pid
 
-    pid = chrome_pid()
+    record["chrome_launch"] = launch
+    try:
+        pid = chrome_pid()
+    except RuntimeError as exc:  # more than one Chrome matches: none of them is provably this run's
+        record["chrome_closed"], record["chrome_not_signalled"] = False, str(exc)
+        return
     record["chrome_pid"] = pid
-    closed = True
-    if pid:
-        os.kill(pid, signal.SIGTERM)
-        closed = False
-        for _ in range(50):
-            try:
-                os.kill(pid, 0)
-            except ProcessLookupError:
+    if pid is None:
+        record["chrome_closed"] = True
+        return
+    try:
+        started = psutil.Process(pid).create_time()
+    except psutil.Error:
+        started = None
+    if launch is None or pid != launch["pid"] or started != launch["incarnation"]:
+        record["chrome_closed"] = False
+        record["chrome_not_signalled"] = ("the session did not record launching it" if launch is None
+                                          else "it is not the process the session launched")
+        return
+    os.kill(pid, signal.SIGTERM)
+    closed = False
+    for _ in range(50):
+        try:
+            if psutil.Process(pid).create_time() != started:
                 closed = True
                 break
-            time.sleep(0.2)
+        except psutil.Error:
+            closed = True
+            break
+        time.sleep(0.2)
     record["chrome_closed"] = closed
 
 
@@ -239,13 +304,31 @@ def main() -> None:
     stop = threading.Event()
     sampler = threading.Thread(target=_sample_front, args=(out, stop), daemon=True)
     sampler.start()
-    launched = False
+    start_stdout = ""
     try:
-        launched = True  # from here a Chrome matching this fresh profile and port is this run's own
+        # the idle gate can wait a long time: read the launch conditions again, right before the launch
+        refusal = preflight(out, os.environ.get("FOOTWORK_CHROME_PROFILE"), os.environ.get("FOOTWORK_CHROME_PORT"),
+                            again=True)
+        if refusal:
+            record["not_started"] = refusal
+            raise SystemExit(f"not starting: {refusal}")
         steps.append(_cli(env, out, "00-start", "start", "probe the filmed page pointer", "--browser", "--url", url,
                           "--mode", "exclusive_desktop", "--pointer-motion", "filmed", "--session", str(session)))
+        start_stdout = steps[-1]["stdout"]
         if steps[-1]["exit"] == 0:
             time.sleep(2.0)
+            # a filmed page action needs the browser in front (scene_changed otherwise); arranging the
+            # scene is the operator's part, so the probe does it and records whether it had to
+            chrome = json.loads((session / "session.json").read_text()).get("pid")
+            record["chrome_front_after_start"] = _front_pid() == chrome
+            if chrome and not record["chrome_front_after_start"]:
+                _activate_pid(chrome)
+                time.sleep(1.0)
+                record["chrome_front_after_activation"] = _front_pid() == chrome
+            # off every button, so no step starts with the pointer already on its target
+            steps.append(_cli(env, out, "00-park", "park", str(EMPTY_SPOT[0]), str(EMPTY_SPOT[1]),
+                              "--session", str(session)))
+            time.sleep(0.5)
             record["gestures_at_start"] = _gestures(session)
             for i, (label, expect) in enumerate(STEPS, start=1):
                 look = _cli(env, out, f"{i:02d}-look", "look", "--session", str(session))
@@ -269,8 +352,7 @@ def main() -> None:
             pass
         if holder:
             record["holder_stop"] = asyncio.run(bsh.retire(bsh.recorded_runtime(holder, session), expected=holder))
-        if launched:
-            _close_owned_chrome(record)
+        _close_owned_chrome(record, _launched_chrome(session, start_stdout))
         if record["front_pid_at_start"] and _front_pid() != record["front_pid_at_start"]:
             _activate_pid(record["front_pid_at_start"])
         record["front_pid_at_end"] = _front_pid()
@@ -283,7 +365,8 @@ def main() -> None:
         (out / "run.json").write_text(json.dumps(record, indent=1, default=str))
         verdict = analyze(out)
         (out / "verdict.json").write_text(json.dumps(verdict, indent=1))
-        print(json.dumps({"chrome_closed": record.get("chrome_closed"), **verdict}, indent=1))
+        print(json.dumps({"chrome_closed": record.get("chrome_closed"),
+                          "chrome_not_signalled": record.get("chrome_not_signalled"), **verdict}, indent=1))
 
 
 if __name__ == "__main__":

@@ -359,6 +359,17 @@ def test_a_cancelled_browser_start_releases_the_reservation_it_created(world, fw
     assert not (fw.session / "session.json").exists()
 
 
+def _browser_scene(monkeypatch, *, front=77, url=None, area=CONTENT):
+    """What the accessibility interface and the window server say about the filmed browser window."""
+    from jevdual import ax, posture
+
+    from tests.test_filmed_page_pointer import URL
+
+    monkeypatch.setattr(posture, "frontmost_pid", lambda: front)
+    monkeypatch.setattr(ax, "is_main", lambda el: True)
+    monkeypatch.setattr(ax, "web_area", lambda el: (ax.Frame(*area), url or URL))
+
+
 def test_a_filmed_browser_click_travels_to_the_page_target_before_the_page_click(world, fw, filmed, monkeypatch):
     """FP1: in a filmed start --browser session, do click moves the real pointer to the target's centre on
     screen (the content origin plus the ref's viewport rectangle) before the driver's page click."""
@@ -377,6 +388,7 @@ def test_a_filmed_browser_click_travels_to_the_page_target_before_the_page_click
 
     monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
     monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: Wire(log))
+    _browser_scene(monkeypatch)
     code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
                         "--pointer-motion", "filmed", "--rest", "20,40")
     assert code == 0, (out, err)
@@ -407,6 +419,7 @@ def test_a_filmed_browser_click_on_a_covered_target_sends_nothing_and_moves_noth
 
     monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
     monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: Wire(log, [at(hit="other")]))
+    _browser_scene(monkeypatch)
     code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
                         "--pointer-motion", "filmed", "--rest", "20,40")
     assert code == 0, (out, err)
@@ -415,3 +428,64 @@ def test_a_filmed_browser_click_on_a_covered_target_sends_nothing_and_moves_noth
     assert "target_unlocated" in out + err and "another element is at its centre" in out + err, (code, out, err)
     assert len(filmed.events) == before
     assert [entry[0] for entry in log if entry[0] != "locate"] == []
+
+
+@pytest.mark.parametrize(("scene", "why"), [
+    ({"front": 501}, "not the frontmost application"),
+    ({"url": "https://example.invalid/another-tab"}, "not the session's page"),
+    ({"area": (420.0, 370.0, 300.0, 410.0)}, "the page area is 300x410"),
+])
+def test_a_filmed_browser_click_in_a_changed_scene_sends_nothing_and_moves_nothing(
+        world, fw, filmed, monkeypatch, scene, why):
+    """FP9: the window on screen must still be the scene the take recorded (the browser in front, its web
+    area where it was, showing the session's page) before the pointer moves; otherwise do click reports
+    scene_changed and neither the pointer nor the page is touched."""
+    from jevdual import browser_driver, browser_target
+    from jevdual.browser_driver import BrowserBridge
+
+    from tests.test_filmed_page_pointer import URL, Wire
+
+    log: list = []
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy):
+        wire = Wire(log)
+        return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: Wire(log))
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    _browser_scene(monkeypatch, **scene)
+    before = len(filmed.events)
+    code, out, err = fw("do", "click", str(_id(out, "Go")), "--no-judge")
+    assert "scene_changed" in out + err and why in out + err, (code, out, err)
+    assert len(filmed.events) == before
+    assert log == []
+
+
+def test_a_filmed_browser_take_needs_a_web_area(world, fw, filmed, monkeypatch):
+    """FP9: a page position maps to the screen from the web area's origin, so a browser take whose window
+    shows no web area does not start (a native take still films from the window's frame)."""
+    from jevdual import ax, browser_driver, browser_target
+    from jevdual.browser_driver import BrowserBridge
+    from jevdual.coordination import Coordinator
+
+    from tests.test_filmed_page_pointer import URL, Wire
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy):
+        wire = Wire([])
+        return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(ax, "web_area_frame", lambda el: None)
+    code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                      "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 2 and "no web area" in err, err
+    assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
+    assert not (fw.session / "session.json").exists()

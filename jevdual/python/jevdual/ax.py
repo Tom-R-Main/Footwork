@@ -192,16 +192,34 @@ def resolve(pid: int, window_id: int, role: str, frame: Frame | None) -> Any:
     return hits[0]
 
 
-def web_area_frame(win: Any, *, depth: int = 12) -> Frame | None:
-    """The frame of the first AXWebArea under ``win`` (a browser's content area), or None."""
+def web_area(win: Any, *, depth: int = 12) -> tuple[Frame | None, str | None] | None:
+    """The first AXWebArea under ``win`` (a browser's content area) as ``(frame, address)``, or None.
+
+    The address is the area's AXURL as text, whatever its scheme, or None when it reports none."""
     stack = [(win, 0)]
     while stack:
         el, d = stack.pop()
         if _attr(el, "AXRole") == "AXWebArea":
-            return frame_of(el)
+            raw = _attr(el, "AXURL")
+            if not isinstance(raw, str):
+                absolute = getattr(raw, "absoluteString", None)
+                raw = absolute() if callable(absolute) else None
+            return frame_of(el), (str(raw) if raw else None)
         if d < depth:
             stack.extend((c, d + 1) for c in reversed(_attr(el, "AXChildren") or []))
     return None
+
+
+def web_area_frame(win: Any, *, depth: int = 12) -> Frame | None:
+    """The frame of the first AXWebArea under ``win`` (a browser's content area), or None."""
+    found = web_area(win, depth=depth)
+    return found[0] if found else None
+
+
+def is_main(win: Any) -> bool | None:
+    """Whether ``win`` is its application's main window (AXMain), or None when it does not say."""
+    value = _attr(win, "AXMain")
+    return None if value is None else bool(value)
 
 
 def labelled(win: Any, label: str, *, limit: int = 6000) -> list[tuple[str, str, Frame]]:
