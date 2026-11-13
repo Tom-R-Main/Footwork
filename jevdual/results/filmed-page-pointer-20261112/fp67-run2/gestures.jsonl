@@ -1,0 +1,8 @@
+{"kind": "park", "label": "waypoint", "outcome": "arrived", "final_location": [542.0, 342.0], "posted_samples": 93}
+{"kind": "approach", "label": "Alpha", "outcome": "arrived", "final_location": [132.0, 224.0], "posted_samples": 87}
+{"kind": "approach", "label": "Beta", "outcome": "arrived", "final_location": [712.0, 494.0], "posted_samples": 96}
+{"kind": "approach", "label": "Shy", "outcome": "arrived", "final_location": [132.0, 294.0], "posted_samples": 95}
+{"kind": "approach", "label": "Dodge", "outcome": "arrived", "final_location": [392.0, 364.0], "posted_samples": 77}
+{"kind": "approach", "label": "Note", "outcome": "arrived", "final_location": [712.0, 287.0], "posted_samples": 82}
+{"kind": "approach", "label": "Jump down", "outcome": "arrived", "final_location": [392.0, 224.0], "posted_samples": 82}
+{"kind": "approach", "label": "Gamma", "outcome": "arrived", "final_location": [332.0, 564.0], "posted_samples": 83}

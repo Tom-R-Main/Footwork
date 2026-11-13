@@ -1,0 +1,57 @@
+{
+ "00-registry-at-start": {
+  "this_session": [],
+  "held_by_others": 0
+ },
+ "zz-registry-after-release": {
+  "this_session": [
+   {
+    "token": "3a4449f152994d769c2f91cdea137e42",
+    "owner": "this run's session",
+    "desktop": "console",
+    "resources": [
+     "app/google%20chrome",
+     "desktop"
+    ],
+    "state": "revoked",
+    "kind": "reservation"
+   }
+  ],
+  "held_by_others": 0
+ },
+ "zz-registry-before-release": {
+  "this_session": [
+   {
+    "token": "3a4449f152994d769c2f91cdea137e42",
+    "owner": "this run's session",
+    "desktop": "console",
+    "resources": [
+     "app/google%20chrome",
+     "desktop"
+    ],
+    "state": "active",
+    "kind": "reservation"
+   }
+  ],
+  "held_by_others": 0
+ },
+ "zz-registry-final": {
+  "this_session": [
+   {
+    "token": "3a4449f152994d769c2f91cdea137e42",
+    "owner": "this run's session",
+    "desktop": "console",
+    "resources": [
+     "app/google%20chrome",
+     "desktop"
+    ],
+    "state": "revoked",
+    "kind": "reservation"
+   }
+  ],
+  "held_by_others": 0
+ },
+ "zz-release-0": {
+  "said": "revoked; active input retains ownership until readback and cleanup finish"
+ }
+}

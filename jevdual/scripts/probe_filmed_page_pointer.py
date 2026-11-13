@@ -73,7 +73,8 @@ Three things make that reading sound, and the run does not hold without them (FP
   A record of something done to the page must be placed within 20 ms this way, and everything read
   against it uses the whole interval: the samples must hold from 250 ms before its earliest moment to
   250 ms after its latest. As a check on the run, the difference between the clocks is also bounded
-  from all the posts together (``_clock``); bounds that cross mean a clock was changed;
+  from all the posts together (``_clock``); bounds that cross mean the two did not keep one difference
+  (a clock was set, or their rates differ over a long run), and the run does not hold;
 - every press, release, insertion, click handler, input and move the page recorded, at any time in the
   run, must lie, by its whole interval, inside the interval of exactly one tried step, where it is
   judged. A record between two steps is not ignored, and one whose interval reaches across the start or
@@ -457,7 +458,7 @@ def _clock(received: list[dict]) -> dict:
                 "posts": len(highs), "answers": len(lows)}
     low, high = max(lows) - PAGE_CLOCK_GRAIN_S, min(highs) + PAGE_CLOCK_GRAIN_S
     width = high - low
-    why = ("the bounds cross: a clock changed during the run" if width < -1e-6
+    why = ("the bounds cross: the clocks did not keep one difference through the run" if width < -1e-6
            else f"the bounds are {width * 1000:.1f} ms apart" if width > MAX_CLOCK_WIDTH_S else None)
     return {"low_s": round(low, 4), "high_s": round(high, 4), "width_s": round(width, 4),
             "offset_s": (low + high) / 2, "posts": len(highs), "answers": len(lows),
@@ -632,7 +633,7 @@ def analyze(out: Path) -> dict:
     moved = [e for e in events if e.get("type") == "moved"]
     seen_by_page = [e for e in events if e.get("type") == "page_event"]
     samples = _samples(out / "pointer-samples.jsonl")
-    gestures = _jsonl(out / "session/pointer-gestures.jsonl")
+    gestures = _step_gestures(out)
     tried = [s for s in run.get("steps", []) if s.get("expect")]
     verdicts, seen = [], run.get("gestures_at_start", 0)
 
@@ -728,7 +729,7 @@ def analyze(out: Path) -> dict:
             v["gesture_end"] = new[0]["final_location"]
             v["end_inside"] = _inside(new[0]["final_location"], v["control_screen_rect"])
             # an approach that posted nothing started on its target: the page saw no new pointer event
-            v["already_there"] = new[0].get("posted_samples") == []
+            v["already_there"] = new[0].get("posted_samples") in ([], 0)
         brackets = [*judged, *([v["moved"]] if "moved" in v else [])]
         v["samples_around_delivery"] = min((b.get("samples", 0) for b in brackets), default=0)
         v["samples_off_control"] = sum(b.get("off_control", 0) for b in brackets)
@@ -933,6 +934,50 @@ def _gestures(session: Path) -> int:
     return len(_jsonl(session / "pointer-gestures.jsonl"))
 
 
+#: what the analysis reads of a gesture. The session's own trace also holds each planned and posted
+#: position and is a private artifact that is not kept with the evidence; this much of it is
+GESTURE_FIELDS = ("kind", "label", "outcome", "final_location")
+GESTURES_KEPT = "gestures.jsonl"
+
+
+def _reduced_gestures(rows: list[dict]) -> list[dict]:
+    """Each gesture as the analysis reads it: the four fields, and how many positions it posted in
+    place of the positions (none is what an approach that began on its target posts)."""
+    return [{**{name: row.get(name) for name in GESTURE_FIELDS},
+             "posted_samples": len(row["posted_samples"]) if isinstance(row.get("posted_samples"), list) else None}
+            for row in rows]
+
+
+def _step_gestures(out: Path) -> list[dict]:
+    """The session's gesture trace where the run's folder has it, and otherwise the reduced copy the
+    run wrote beside its records. The two give the same verdict."""
+    trace = out / "session/pointer-gestures.jsonl"
+    return _jsonl(trace) if trace.exists() else _jsonl(out / GESTURES_KEPT)
+
+
+def _registry_readings(out: Path, session: Path) -> dict:
+    """Every reading of the registry this run kept, reduced to what is this run's to publish: the rows
+    its own session directory owns, and of everything else only how many were held. The whole answers
+    stay in the run's private folder."""
+    def own(row: dict) -> bool:
+        return os.path.realpath(str(row.get("owner"))) == os.path.realpath(str(session))
+
+    readings: dict = {}
+    for path in sorted(out.glob("*registry*.stdout")):
+        try:
+            status = json.loads(path.read_text())
+            mine = [dict(row, kind=kind, owner="this run's session")
+                    for kind, key in (("reservation", "reservations"), ("request", "requests"))
+                    for row in status.get(key, []) if own(row)]
+            readings[path.stem] = {"this_session": mine,
+                                   "held_by_others": len(_held(status)) - len(_held(status, session))}
+        except (OSError, ValueError, AttributeError, TypeError) as exc:
+            readings[path.stem] = {"unreadable": type(exc).__name__}
+    for path in sorted(out.glob("zz-release-*.stdout")):
+        readings[path.stem] = {"said": path.read_text(errors="replace").strip()[:300]}
+    return readings
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("--out", required=True)
@@ -1104,16 +1149,53 @@ def _gone(pid: object, started: object = None) -> bool:
         return False
 
 
+def _holder_processes() -> list[tuple[int, Path | None]]:
+    """Every browser holder this user is running: its pid, and the runtime directory its command names."""
+    import psutil
+
+    found = []
+    for process in psutil.process_iter(["pid", "cmdline", "uids"]):
+        argv = process.info.get("cmdline") or []
+        owner = process.info.get("uids")
+        if "jevdual.browser_session_holder" not in argv or owner is None or owner.real != os.getuid():
+            continue
+        runtime = argv[argv.index("--runtime") + 1] if "--runtime" in argv[:-1] else None
+        found.append((process.info["pid"], Path(runtime) if runtime else None))
+    return found
+
+
+def _no_holder_on(port: str) -> bool | None:
+    """Whether no holder is running for the browser on ``port``, read from every running holder's own
+    record. False when one is; True only when every holder running says it holds a browser on another
+    port; None when one is running whose record cannot be read or names no port, since that one may be
+    this run's."""
+    from jevdual import browser_session_holder as bsh
+
+    if not port.isdigit():
+        return None
+    unknown = False
+    for _pid, runtime in _holder_processes():
+        identity = bsh.holder_live(runtime) if runtime is not None else None
+        bound = identity.get("port") if identity else None
+        if bound is None:
+            unknown = True
+        elif str(bound) == port:
+            return False
+    return None if unknown else True
+
+
 def _closures(record: dict, env: dict, out: Path, session: Path, start_stdout: str) -> dict:
     """What is closed, each thing read for itself after the cleanup and none inferred from another:
     the registry holds nothing of this run's session; the browser this run launched is gone (or it
     launched none and none matches its profile and port); nothing listens on its port; its holder is
-    gone. ``None`` is a reading that could not be made; only ``True`` counts."""
+    gone. ``None`` is a reading that could not be made; only ``True`` counts. A holder that nothing
+    names is not taken as never started: every running holder is read (``_no_holder_on``)."""
     from jevdual.browser_driver import chrome_pid
 
     def reading(read) -> bool | None:
         try:
-            return bool(read())
+            said = read()
+            return None if said is None else bool(said)
         except Exception:  # noqa: BLE001 - a closure that cannot be read is not a closure
             return None
 
@@ -1121,17 +1203,25 @@ def _closures(record: dict, env: dict, out: Path, session: Path, start_stdout: s
         launch = _launched_chrome(session, start_stdout)
         return _gone(launch["pid"], launch["incarnation"]) if launch else chrome_pid() is None
 
-    def holder() -> bool:
+    port = env.get("FOOTWORK_CHROME_PORT", "")
+
+    def holder() -> bool | None:
         try:
             recorded = json.loads((session / "session.json").read_text()).get("browser_holder") or {}
         except (OSError, ValueError):
             recorded = {}
         if recorded:
+            record["holder_read_from"] = "the session's record"
             return _gone(recorded.get("pid"), recorded.get("start"))
         named = re.search(r"browser holder pid (\d+) keeps this session's driver", start_stdout)
-        return _gone(int(named.group(1))) if named else True
+        if named:
+            record["holder_read_from"] = "what start printed"
+            return _gone(int(named.group(1)))
+        # nothing names a holder. That is not a reading that none was started: start begins one before
+        # it can say so. Read every holder process this user runs instead
+        record["holder_read_from"] = "every running holder's own record"
+        return _no_holder_on(port)
 
-    port = env.get("FOOTWORK_CHROME_PORT", "")
     return {"registry": reading(lambda: not _held(_registry(env, out, "zz-registry-final"), session)),
             "browser": reading(browser),
             "port": reading(lambda: port.isdigit() and not _port_open(int(port))),
@@ -1175,11 +1265,16 @@ def _finish(record: dict, out: Path, session: Path, start_stdout: str, stop, sam
     record["finished"] = time.time()
     errors: list[str] = record.setdefault("cleanup_errors", [])
 
+    interrupts: list[BaseException] = []
+
     def attempt(name: str, step, *args) -> None:
         try:
             step(*args)
-        except Exception as exc:  # noqa: BLE001 - one failed cleanup step must not skip the others
+        except BaseException as exc:  # noqa: BLE001 - one failed cleanup step must not skip the others
+            # an interrupt too: the rest of the cleanup runs and the records are written, then it is raised
             errors.append(f"{name}: {type(exc).__name__}: {str(exc)[:200]}")
+            if not isinstance(exc, Exception):
+                interrupts.append(exc)
 
     def stop_helpers() -> None:
         stop.set()
@@ -1193,6 +1288,11 @@ def _finish(record: dict, out: Path, session: Path, start_stdout: str, stop, sam
     attempt("helpers", stop_helpers)
     record["closed"] = {"registry": None, "browser": None, "port": None, "holder": None}
     attempt("closures", lambda: record.update(closed=_closures(record, env, out, session, start_stdout)))
+    # what the analysis and a reader need of the two private inputs, kept beside the run's records
+    attempt("gestures kept", lambda: (out / GESTURES_KEPT).write_text(
+        "".join(json.dumps(row) + "\n" for row in _reduced_gestures(_jsonl(session / "pointer-gestures.jsonl")))))
+    attempt("registry readings kept", lambda: (out / "registry-readings.json").write_text(
+        json.dumps(_registry_readings(out, session), indent=1)))
     for step in record.get("steps", []):
         # a tried step's first words say what the driver did, and its last what was refused; the whole
         # output is in the step's own file
@@ -1206,6 +1306,8 @@ def _finish(record: dict, out: Path, session: Path, start_stdout: str, stop, sam
                       "chrome_closed": record.get("chrome_closed"),
                       "chrome_not_signalled": record.get("chrome_not_signalled"),
                       "cleanup_errors": errors, **verdict}, indent=1))
+    if interrupts:
+        raise interrupts[0]
     return verdict
 
 

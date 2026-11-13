@@ -312,6 +312,47 @@ async def test_only_a_filmed_browser_start_asks_for_a_launch_with_page_accessibi
     assert asked == [("holder" if holder else "direct", motion == "filmed")]
 
 
+@pytest.mark.parametrize("retires", [True, False])
+async def test_a_start_names_its_holder_before_the_attach_can_fail_and_says_when_it_was_not_retired(
+        monkeypatch, tmp_path, capsys, retires):
+    """Sol review 12 (2): the holder is started before the attach, and the line that names it was
+    printed after. An attach that failed left a caller no way to know which holder was this start's,
+    and a retirement that then failed was silent. The attach's failure is still what is raised."""
+    from types import SimpleNamespace
+
+    from jevdual import browser_driver, session
+    from jevdual import browser_session_holder as bsh
+
+    did: list[str] = []
+    identity = {"boot": "b", "pid": 4321, "start": "1.5", "runtime": str(tmp_path / "runtime"),
+                "chrome_pid": 77, "window_id": 40335, "launch_identity": {}}
+
+    async def spawn_owned(*, url, page_accessibility=False):
+        return identity
+
+    async def attach(self, **_):
+        did.append("attach after: " + capsys.readouterr().out.strip())
+        raise RuntimeError("no tab to attach")
+
+    async def retire_settled(runtime, *, expected):
+        did.append("retire")
+        if not retires:
+            raise bsh.HolderUnavailable("the holder did not exit")
+
+    monkeypatch.setattr(bsh, "enabled", lambda: True)
+    monkeypatch.setattr(bsh, "spawn_owned", spawn_owned)
+    monkeypatch.setattr(bsh, "retire_settled", retire_settled)
+    monkeypatch.setattr(browser_driver.BrowserBridge, "attach", attach)
+    args = SimpleNamespace(mode=None, url="http://127.0.0.1:1/", task="t", require="", authorize="",
+                           answer=None, pointer_motion="filmed", text=0)
+    with pytest.raises(RuntimeError, match="no tab to attach"):
+        await session._start_browser(args, tmp_path)
+    assert did == ["attach after: browser holder pid 4321 keeps this session's driver", "retire"]
+    said = capsys.readouterr().err
+    assert ("browser holder pid 4321 was not retired after the failed attach: HolderUnavailable" in said) is not retires
+    assert not (tmp_path / "session.json").exists()
+
+
 def test_a_browser_session_films_the_pointer_over_its_own_window(world, fw, filmed, monkeypatch):
     """B7: one start --browser session binds the page and films the real pointer over the same window,
     under the same desktop reservation a native filmed take holds."""

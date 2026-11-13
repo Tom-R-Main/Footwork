@@ -1850,14 +1850,19 @@ async def _start_browser(args: Any, d: Path) -> int:
         driver = bsh.HeldDriver()
         bridge = BrowserBridge(driver, identity["chrome_pid"], identity["window_id"],  # type: ignore[arg-type]
                                policy=ExecutionPolicy(posture), operations=bsh.RemoteBrowserOperations(runtime))
+        # said before the attach can fail: a caller that cleans up after a failed start learns here which
+        # holder is this start's
+        print(f"browser holder pid {identity['pid']} keeps this session's driver", flush=True)
         try:
             await bridge.attach()  # the active tab of the window the holder just bound, as without one
         except BaseException:
-            with contextlib.suppress(Exception):
+            try:
                 await bsh.retire_settled(runtime, expected=identity)
+            except Exception as exc:  # noqa: BLE001 - the attach's failure is the one raised; this one is said
+                print(f"browser holder pid {identity['pid']} was not retired after the failed attach: "
+                      f"{type(exc).__name__}: {exc}", file=sys.stderr)
             raise
         launch = dict(identity.get("launch_identity") or {})
-        print(f"browser holder pid {identity['pid']} keeps this session's driver")
     else:
         driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture),  # type: ignore[arg-type]
                                                     page_accessibility=filmed)

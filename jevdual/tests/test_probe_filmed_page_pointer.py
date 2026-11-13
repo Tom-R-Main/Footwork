@@ -1535,6 +1535,144 @@ def test_a_cleanup_step_that_raises_does_not_skip_the_others(tmp_path, monkeypat
     assert json.loads((out / "verdict.json").read_text())["held"] is False
 
 
+def _helpers(did):
+    return type("Helper", (), {"join": lambda self, timeout=None: did.append("sampler"),
+                               "shutdown": lambda self: did.append("server")})()
+
+
+def test_an_interrupt_during_cleanup_does_not_skip_the_rest_and_is_raised_after_the_records(tmp_path, monkeypatch):
+    """Sol review 12 (E): Ctrl-C while the holder was being retired escaped the cleanup, so the browser
+    stayed open and no record was written. Every later step now runs, the records are written with the
+    interrupt among the cleanup errors, and then it is raised."""
+    out = _run(tmp_path)
+    record = json.loads((out / "run.json").read_text())
+    (out / "run.json").unlink()
+    did: list = []
+
+    def retire(record, session):
+        did.append("holder")
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(probe, "_release_session", lambda record, env, out, session: did.append("session"))
+    monkeypatch.setattr(probe, "_closures", lambda record, env, out, session, said: did.append("closures") or dict(CLOSED))
+    monkeypatch.setattr(probe, "_retire_holder", retire)
+    monkeypatch.setattr(probe, "_close_owned_chrome", lambda record, launch: did.append("chrome"))
+    monkeypatch.setattr(probe, "_restore_front", lambda record: did.append("front"))
+    with pytest.raises(KeyboardInterrupt):
+        probe._finish(record, out, out / "session", "", probe.threading.Event(), _helpers(did), _helpers(did))
+    assert did == ["session", "holder", "chrome", "front", "sampler", "server", "closures"]
+    written = json.loads((out / "run.json").read_text())
+    assert written["cleanup_errors"] == ["holder: KeyboardInterrupt: "]
+    assert json.loads((out / "verdict.json").read_text())["held"] is False
+
+
+def test_the_run_keeps_what_the_analysis_reads_of_the_gestures_and_it_gives_the_same_verdict(tmp_path, monkeypatch):
+    """Sol review 12 (1): the session's gesture trace is a private artifact that is not kept with the
+    evidence, and without it the kept folder recomputed to a different verdict. The run now writes,
+    beside its records, the five things the analysis reads of each gesture; a folder with that file
+    and no trace gives the verdict the trace gave, here with one approach that began on its target and
+    posted nothing."""
+    def already_there(steps, handlers, gestures):
+        handlers[0]["detail"]["last_trusted_pointer"]["t"] = 900.0
+        gestures[0]["posted_samples"] = []
+
+    out = _run(tmp_path, already_there)
+    record = json.loads((out / "run.json").read_text())
+    trace = out / "session/pointer-gestures.jsonl"
+    full = [json.loads(line) for line in trace.read_text().splitlines()]
+    for name in ("_release_session", "_retire_holder", "_restore_front"):
+        monkeypatch.setattr(probe, name, lambda *args: None)
+    monkeypatch.setattr(probe, "_close_owned_chrome", lambda record, launch: record.update(chrome_closed=True))
+    monkeypatch.setattr(probe, "_closures", lambda record, env, out, session, said: dict(CLOSED))
+    with_trace = probe._finish(record, out, out / "session", "", probe.threading.Event(), _helpers([]), _helpers([]))
+    assert with_trace["held"] is True and with_trace["steps"][0]["already_there"] is True
+    assert [v.get("already_there") for v in with_trace["steps"]].count(False) >= 1
+    kept = [json.loads(line) for line in (out / probe.GESTURES_KEPT).read_text().splitlines()]
+    assert len(kept) == len(full) and all(set(row) == {*probe.GESTURE_FIELDS, "posted_samples"} for row in kept)
+    assert [row["posted_samples"] for row in kept] == [len(row["posted_samples"]) for row in full]
+    assert not any("planned_samples" in row or isinstance(row["posted_samples"], list) for row in kept)
+    trace.unlink()
+    assert probe.analyze(out) == with_trace
+    # with neither, the steps that reach a control have no gesture and do not hold
+    (out / probe.GESTURES_KEPT).unlink()
+    assert probe.analyze(out)["held"] is False
+
+
+def test_the_registry_readings_kept_with_the_evidence_name_only_this_runs_session(tmp_path):
+    """Sol review 12 (1): the registry's whole answers name other tracks' sessions and stay private.
+    What is kept says, for each reading, the rows this run's session owns and how many others held."""
+    out, session = tmp_path / "out", tmp_path / "out/session"
+    session.mkdir(parents=True)
+    other = {"token": "other-token", "owner": "/somewhere/else/film", "desktop": "console",
+             "resources": ["desktop"], "state": "active"}
+    before = {"requests": [dict(other, token="other-request", state="waiting")],
+              "reservations": [_reserved(session), other, dict(other, token="old", state="revoked")]}
+    after = {"requests": [], "reservations": [_reserved(session, state="revoked"), other]}
+    (out / "zz-registry-before-release.stdout").write_text(json.dumps(before))
+    (out / "zz-registry-after-release.stdout").write_text(json.dumps(after))
+    (out / "00-registry-at-start.stdout").write_text("not json")
+    (out / "zz-release-0.stdout").write_text("revoked; active input retains ownership\n")
+    kept = probe._registry_readings(out, session)
+    assert kept["zz-registry-before-release"] == {
+        "this_session": [{"token": "194718ca", "owner": "this run's session", "desktop": "console",
+                          "resources": ["app/google%20chrome", "desktop"], "state": "active", "kind": "reservation"}],
+        "held_by_others": 2}
+    assert kept["zz-registry-after-release"]["this_session"][0]["state"] == "revoked"
+    assert kept["zz-registry-after-release"]["held_by_others"] == 1
+    assert kept["00-registry-at-start"] == {"unreadable": "JSONDecodeError"}
+    assert kept["zz-release-0"] == {"said": "revoked; active input retains ownership"}
+    assert "other-token" not in json.dumps(kept) and "/somewhere/else" not in json.dumps(kept) and str(tmp_path) not in json.dumps(kept)
+
+
+@pytest.mark.parametrize(("running", "said"), [
+    ([], True),
+    ([{"port": 9333}], True),
+    ([{"port": 9333}, {"port": 9466}], False),
+    ([{"port": 9333}, None], None),            # one whose record cannot be read may be this run's
+    ([{"chrome_pid": 5}], None),               # a record that names no port
+    ([None, {"port": 9466}], False),
+])
+def test_a_holder_that_nothing_names_is_read_from_every_running_holder_and_never_assumed_gone(tmp_path, monkeypatch, running, said):
+    """Sol review 12 (2): with no holder named by the session's record or by what start printed, the
+    holder's closure was reported true with nothing read. Start begins its holder before it can name
+    it, so nothing named is not none started. Every running holder's own record is read: closed only
+    when each one says it holds a browser on another port."""
+    from jevdual import browser_session_holder as bsh
+
+    session = tmp_path / "out/session"
+    session.mkdir(parents=True)
+    records = {tmp_path / f"runtime-{n}": identity for n, identity in enumerate(running)}
+    monkeypatch.setattr(probe, "_holder_processes", lambda: [(900 + n, runtime) for n, runtime in enumerate(records)])
+    monkeypatch.setattr(bsh, "holder_live", lambda runtime: records[runtime])
+    monkeypatch.setattr(probe, "_cli", Registry())
+    monkeypatch.setattr(probe, "_launched_chrome", lambda session, said: None)
+    monkeypatch.setattr("jevdual.browser_driver.chrome_pid", lambda: None)
+    monkeypatch.setattr(probe, "_port_open", lambda port: False)
+    record: dict = {}
+    closed = probe._closures(record, {"FOOTWORK_CHROME_PORT": "9466"}, tmp_path / "out", session, "")
+    assert closed == CLOSED | {"holder": said} and record["holder_read_from"] == "every running holder's own record"
+    # a port that is not a number is no reading either
+    assert probe._no_holder_on("") is None
+
+
+def test_a_holder_process_without_a_runtime_in_its_command_is_not_attributed(monkeypatch):
+    import os
+
+    import psutil
+
+    def process(pid, argv, uid=None):
+        return type("P", (), {"info": {"pid": pid, "cmdline": argv, "uids": type("U", (), {"real": os.getuid() if uid is None else uid})()}})()
+
+    holder = ["python", "-m", "jevdual.browser_session_holder"]
+    monkeypatch.setattr(psutil, "process_iter", lambda attrs: [
+        process(1, [*holder, "--runtime", "/r/one", "--url", "x"]), process(2, [*holder, "--runtime"]),
+        process(3, ["python", "other"]), process(4, [*holder, "--runtime", "/r/theirs"], uid=os.getuid() + 1),
+        process(5, None)])
+    assert probe._holder_processes() == [(1, Path("/r/one")), (2, None)]
+    monkeypatch.setattr("jevdual.browser_session_holder.holder_live", lambda runtime: {"port": 9333})
+    assert probe._no_holder_on("9466") is None  # pid 2 cannot be read
+
+
 class Registry:
     """Footwork's coordination registry as the probe's commands see it: ``control status`` prints it,
     ``control yield TOKEN`` and ``control cancel TOKEN`` revoke that entry unless ``stuck`` or ``refuses``.
