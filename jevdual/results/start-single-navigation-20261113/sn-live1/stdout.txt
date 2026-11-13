@@ -1,0 +1,20 @@
+{
+ "closed": {
+  "registry": true,
+  "browser": true,
+  "port": true,
+  "holder": true
+ },
+ "session_reservation": {
+  "released": true,
+  "named_by_session": null,
+  "held": [],
+  "yields": [],
+  "still_held": []
+ },
+ "chrome_closed": true,
+ "chrome_not_signalled": null,
+ "cleanup_errors": [],
+ "held": false,
+ "unreadable": "FileNotFoundError: [Errno 2] No such file or directory: '<scratch>/sn-live1/out/session/session.json'"
+}

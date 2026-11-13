@@ -1,0 +1,46 @@
+{
+ "gate": {
+  "polls": 1,
+  "idle_s": 266.4,
+  "waited_s": 0.0
+ },
+ "front_pid_at_start": 74505,
+ "fixture": "http://127.0.0.1:62290/",
+ "steps": [
+  {
+   "name": "00-start",
+   "t_start": 1794608957.3691761,
+   "t_end": 1794608966.9355001,
+   "exit": 2,
+   "stdout": "",
+   "stderr": "t 1.1 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 2.2 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 3.2 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 4.3 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 5.4 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 6.5 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 7.5 s, waited 8.1 s; the window shows 'about:blank - Google Chrome': level 1: AXButton x3, AXGroup; level 2: AXGroup x2; level 3: AXGroup x2; level 4: AXGroup)\n"
+  }
+ ],
+ "pointer_sampler": {
+  "samples": 1523,
+  "largest_gap_s": 0.0191
+ },
+ "finished": 1794608966.9355211,
+ "cleanup_errors": [],
+ "session_reservation": {
+  "released": true,
+  "named_by_session": null,
+  "held": [],
+  "yields": [],
+  "still_held": []
+ },
+ "chrome_launch": {
+  "pid": 53042,
+  "incarnation": 1794608957.601495
+ },
+ "chrome_pid": 53042,
+ "chrome_closed": true,
+ "front_pid_at_end": 74505,
+ "closed": {
+  "registry": true,
+  "browser": true,
+  "port": true,
+  "holder": true
+ },
+ "holder_read_from": "what start printed"
+}

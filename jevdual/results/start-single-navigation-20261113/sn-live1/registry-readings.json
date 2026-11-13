@@ -1,0 +1,18 @@
+{
+ "00-registry-at-start": {
+  "this_session": [],
+  "held_by_others": 0
+ },
+ "zz-registry-after-release": {
+  "this_session": [],
+  "held_by_others": 0
+ },
+ "zz-registry-before-release": {
+  "this_session": [],
+  "held_by_others": 0
+ },
+ "zz-registry-final": {
+  "this_session": [],
+  "held_by_others": 0
+ }
+}

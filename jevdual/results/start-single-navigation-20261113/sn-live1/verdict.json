@@ -1,0 +1,4 @@
+{
+ "held": false,
+ "unreadable": "FileNotFoundError: [Errno 2] No such file or directory: '<scratch>/sn-live1/out/session/session.json'"
+}
