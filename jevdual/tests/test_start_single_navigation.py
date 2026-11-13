@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -17,12 +18,13 @@ from jevdual.browser_driver import BrowserEffect
 URL = "http://127.0.0.1:1/order?token=single-use"
 
 
-def _args(url, *, reserve=None):
+def _args(url, *, reserve=None, **filmed_options):
     """A start's arguments; filmed, under a claim whose registry reserves through ``reserve``, when given."""
     args = SimpleNamespace(mode=None, url=url, task="t", require="", authorize="", answer=None,
                            pointer_motion="off", text=0)
     if reserve is not None:
         args.mode, args.pointer_motion = "exclusive_desktop", "filmed"
+        vars(args).update(filmed_options)
         args._coordination_claim = SimpleNamespace(resources=["desktop"], registry=SimpleNamespace(reserve=reserve))
     return args
 
@@ -32,14 +34,19 @@ def _a_start(monkeypatch, tmp_path, *, holder: bool, refused: bool = True):
     its launch opens (``("launch", url)``) and each navigation (``("navigate", url)``). The navigation is
     refused, which ends the start there; with no URL, or a navigation that is not ``refused``, the first
     observation ends it. A filmed start's reading of the window is stood in for too and listed as
-    ``("window read", None)``; its wait after the navigation is not slept."""
-    handed: list[tuple[str, object]] = []
+    ``("window read", None)``; a wait is listed as ``("wait", seconds)`` and not slept. ``handed.retired``
+    counts the holders the start retired."""
+
+    class Handed(list):
+        retired = 0
+
+    handed = Handed()
 
     def filmed_setup(state, args):
         handed.append(("window read", None))  # and refuses nothing
 
     async def no_wait(seconds):
-        pass
+        handed.append(("wait", seconds))
 
     monkeypatch.setattr(session, "_filmed_setup", filmed_setup)
     monkeypatch.setattr(session.asyncio, "sleep", no_wait)
@@ -53,6 +60,8 @@ def _a_start(monkeypatch, tmp_path, *, holder: bool, refused: bool = True):
 
         async def navigate(self, url):
             handed.append(("navigate", url))
+            if refused is None:
+                raise asyncio.CancelledError
             if not refused:
                 return BrowserEffect("navigate", -1, url, "confirmed", summary="loaded")
             return BrowserEffect("navigate", -1, url, "refused", summary="ends the start here",
@@ -81,7 +90,7 @@ def _a_start(monkeypatch, tmp_path, *, holder: bool, refused: bool = True):
         raise RuntimeError("far enough")
 
     async def retire_settled(runtime, *, expected):
-        return None
+        handed.retired += 1
 
     monkeypatch.setattr(bsh, "enabled", lambda: holder)
     monkeypatch.setattr(bsh, "spawn_owned", spawn_owned)
@@ -129,7 +138,9 @@ async def test_a_filmed_start_reads_the_window_after_its_navigation_and_reserves
 
     with pytest.raises(RuntimeError, match="far enough"):  # the first observation, after all of it
         await session._start_browser(_args(URL, reserve=reserve), tmp_path)
-    assert handed == [("launch", "about:blank"), ("navigate", URL), ("window read", None), ("reserve", None)]
+    # the wait is the two seconds a start gives its page to load, and the window is read after them
+    assert handed == [("launch", "about:blank"), ("navigate", URL), ("wait", 2.0), ("window read", None),
+                      ("reserve", None)]
 
 
 @pytest.mark.parametrize("holder", [False, True])
@@ -140,7 +151,41 @@ async def test_a_filmed_start_whose_navigation_is_refused_reads_no_window_and_re
     args = _args(URL, reserve=lambda claim, resources: reserved.append(resources) or "token")
     assert await session._start_browser(args, tmp_path) == 2
     assert handed == [("launch", "about:blank"), ("navigate", URL)] and reserved == []
-    assert not getattr(args, "_created_reservation", "")
+    assert not getattr(args, "_created_reservation", "") and handed.retired == (1 if holder else 0)
+
+
+@pytest.mark.parametrize("holder", [False, True])
+async def test_a_filmed_start_cancelled_at_its_navigation_reserves_nothing_and_retires_its_holder(monkeypatch, tmp_path, holder):
+    """SN8: the cancellation the older test made at the navigation, which no longer follows the reservation."""
+    handed = _a_start(monkeypatch, tmp_path, holder=holder, refused=None)
+    reserved: list = []
+    args = _args(URL, reserve=lambda claim, resources: reserved.append(resources) or "token")
+    with pytest.raises(asyncio.CancelledError):
+        await session._start_browser(args, tmp_path)
+    assert handed == [("launch", "about:blank"), ("navigate", URL)] and reserved == []
+    assert handed.retired == (1 if holder else 0) and not (tmp_path / "session.json").exists()
+
+
+@pytest.mark.parametrize("holder", [False, True])
+@pytest.mark.parametrize(("options", "says"), [
+    ({"mode": "background_only"}, "it needs --mode exclusive_desktop"),
+    ({"rest": "20"}, "--rest needs 2 numbers, got '20'"),
+    ({"keep_out": "0,0,100"}, "--keep-out needs 4 numbers, got '0,0,100'"),
+    ({"rest": "20,40", "keep_out": "0,0,100,100"}, "the rest position is inside the keep-out"),
+])
+async def test_a_filmed_start_its_own_options_refuse_hands_the_browser_nothing(monkeypatch, tmp_path, capsys, holder,
+                                                                              options, says):
+    """SN8: with the navigation ahead of the filmed setup, a filmed start that its own options refuse
+    navigated first and was refused after, replacing the page of a browser that was already running. What
+    can be refused from the arguments alone is refused before a browser is launched, bound or navigated."""
+    handed = _a_start(monkeypatch, tmp_path, holder=holder, refused=False)
+    reserved: list = []
+    args = _args(URL, reserve=lambda claim, resources: reserved.append(resources) or "token", **options)
+    assert await session._start_browser(args, tmp_path) == 2
+    assert handed == [] and reserved == [] and handed.retired == 0
+    said = capsys.readouterr().err
+    assert said.startswith("not starting: ") and says in said, said
+    assert not (tmp_path / "session.json").exists()
 
 
 async def test_a_filmed_start_with_no_url_reads_the_window_the_launch_opened(monkeypatch, tmp_path):

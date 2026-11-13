@@ -1344,14 +1344,14 @@ def _web_area_when_shown(pid: int, window_id: int) -> tuple[Any, str, str | None
         time.sleep(WEB_AREA_POLL_S)
 
 
-def _filmed_setup(state: SessionState, args: Any) -> str | None:
-    """Record a filmed take's geometry at start: the scene window, its web content origin, and the keep-out
-    and rest position converted from viewport CSS px to screen points."""
-    from jevdual import ax
-    from jevdual.filmed import Filmed
+def _filmed_options(posture: str, args: Any) -> tuple[tuple[float, ...] | None, tuple[float, ...] | None]:
+    """A filmed take's keep-out and rest position as given, in viewport CSS px, or ValueError saying why
+    the take cannot start. Everything a filmed start refuses that the arguments alone decide, so it can be
+    refused before anything is launched, navigated or read (SN8)."""
+    from jevdual.filmed import _inside
 
-    if state.posture != "exclusive_desktop":
-        return "--pointer-motion filmed moves the real pointer; it needs --mode exclusive_desktop"
+    if posture != "exclusive_desktop":
+        raise ValueError("--pointer-motion filmed moves the real pointer; it needs --mode exclusive_desktop")
 
     def pair(raw: str | None, n: int, name: str) -> tuple[float, ...] | None:
         if raw is None:
@@ -1361,11 +1361,26 @@ def _filmed_setup(state: SessionState, args: Any) -> str | None:
             raise ValueError(f"{name} needs {n} numbers, got {raw!r}")
         return tuple(parts)
 
+    keep = pair(getattr(args, "keep_out", None), 4, "--keep-out")
+    rest = pair(getattr(args, "rest", None), 2, "--rest")
+    if rest is not None and keep is not None and _inside(rest, keep):  # both shift by one origin later
+        raise ValueError("the rest position is inside the keep-out")
+    return keep, rest
+
+
+def _filmed_setup(state: SessionState, args: Any) -> str | None:
+    """Record a filmed take's geometry at start: the scene window, its web content origin, and the keep-out
+    and rest position converted from viewport CSS px to screen points."""
+    from jevdual import ax
+    from jevdual.filmed import Filmed
+
+    try:
+        keep, rest = _filmed_options(state.posture, args)
+    except ValueError as exc:
+        return str(exc)
     try:
         win = ax.window_element(state.pid, state.window_id)
         window = ax.frame_of(win)
-        keep = pair(getattr(args, "keep_out", None), 4, "--keep-out")
-        rest = pair(getattr(args, "rest", None), 2, "--rest")
         if window is None:
             return "the scene window has no frame"
         shown = ""
@@ -1877,6 +1892,15 @@ async def _start_browser(args: Any, d: Path) -> int:
     # whose effect this start can refuse on. A browser this start has to launch (or open a window for)
     # opens on a blank page: given the URL as well, it loaded the page and the navigation loaded it again
     launch_url = START_LAUNCH_PAGE if args.url else None
+    if filmed:
+        # what a filmed take's own options refuse is refused here, before a browser is launched, bound or
+        # navigated: the window is read after the navigation (SN4), and a start that cannot begin should
+        # not have replaced the page of a browser that was already running (SN8)
+        try:
+            _filmed_options(posture, args)
+        except ValueError as exc:
+            print(f"not starting: {exc}", file=sys.stderr)
+            return 2
     holder: dict[str, Any] = {}
     if bsh.enabled():
         from jevdual.browser_driver import BrowserBridge

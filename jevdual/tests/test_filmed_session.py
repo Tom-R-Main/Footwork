@@ -306,8 +306,9 @@ async def test_only_a_filmed_browser_start_asks_for_a_launch_with_page_accessibi
     monkeypatch.setattr(bsh, "enabled", lambda: holder)
     monkeypatch.setattr(bsh, "spawn_owned", spawn_owned)
     monkeypatch.setattr(browser_driver, "bind_footwork_chrome", bind)
-    args = SimpleNamespace(mode=None, url="http://127.0.0.1:1/", task="t", require="", authorize="",
-                           answer=None, pointer_motion=motion, text=0)
+    # a filmed start is given the posture it needs: without it the start is refused before any launch (SN9)
+    args = SimpleNamespace(mode="exclusive_desktop" if motion == "filmed" else None, url="http://127.0.0.1:1/",
+                           task="t", require="", authorize="", answer=None, pointer_motion=motion, text=0)
     with pytest.raises(RuntimeError, match="far enough"):
         await session._start_browser(args, tmp_path)
     assert asked == [("holder" if holder else "direct", motion == "filmed")]
@@ -344,7 +345,7 @@ async def test_a_start_names_its_holder_before_the_attach_can_fail_and_says_when
     monkeypatch.setattr(bsh, "spawn_owned", spawn_owned)
     monkeypatch.setattr(bsh, "retire_settled", retire_settled)
     monkeypatch.setattr(browser_driver.BrowserBridge, "attach", attach)
-    args = SimpleNamespace(mode=None, url="http://127.0.0.1:1/", task="t", require="", authorize="",
+    args = SimpleNamespace(mode="exclusive_desktop", url="http://127.0.0.1:1/", task="t", require="", authorize="",
                            answer=None, pointer_motion="filmed", text=0)
     with pytest.raises(RuntimeError, match="no tab to attach"):
         await session._start_browser(args, tmp_path)
