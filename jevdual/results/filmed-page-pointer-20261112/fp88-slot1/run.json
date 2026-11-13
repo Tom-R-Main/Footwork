@@ -1,0 +1,452 @@
+{
+ "gate": {
+  "polls": 1,
+  "idle_s": 2487.2,
+  "waited_s": 0.0
+ },
+ "front_pid_at_start": 74505,
+ "fixture": "http://127.0.0.1:62247/",
+ "steps": [
+  {
+   "name": "00-start",
+   "t_start": 1794581747.056743,
+   "t_end": 1794581750.7689579,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "00-park",
+   "t_start": 1794581752.7836092,
+   "t_end": 1794581754.057746,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "01-look",
+   "t_start": 1794581754.563797,
+   "t_end": 1794581754.920922,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "01-click",
+   "t_start": 1794581754.921265,
+   "t_end": 1794581758.560896,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Alpha): driver says unverifiable in 2.1s\nreceipt: Receipt for click(Alpha): suspected no-op (no change: same URL /, no elements added, removed or changed, text unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Alpha'\n  [   2] button     'Covered'\n  [   3] button     'Jump down'\n  [   4] button     'Hidden'\n  [   5] button     'Shy'\n  [   6] button     'Dodge'\n  [   7] generic    'generic'\n  [   8] button     'Clipped'\n  [   9] button     'Turned'\n  [  14] button     'Beta'\n  [  15] button     'Forged'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Alpha",
+   "op": "click",
+   "expect": "clicked",
+   "gestures_after": 2
+  },
+  {
+   "name": "02-look",
+   "t_start": 1794581759.563246,
+   "t_end": 1794581759.916383,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "02-trusted",
+   "t_start": 1794581759.9166331,
+   "t_end": 1794581761.508815,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Beta): driver says not sent (route_unfilmed: 'Beta': a filmed click goes by the DOM route. The trusted route presses at the centre of the content box, which is not the point the pointer) in 0.0s\nreceipt: Receipt for click(Beta): refused (not applied: route_unfilmed: 'Beta': a filmed click goes by the DOM route. The trusted route presses at the centre of the content box; page unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Alpha'\n  [   2] button     'Covered'\n  [   3] button     'Jump down'\n  [   4] button     'Hidden'\n  [   5] button     'Shy'\n  [   6] button     'Dodge'\n  [   7] generic    'generic'\n  [   8] button     'Clipped'\n  [   9] button     'Turned'\n  [  14] button     'Beta'\n  [  15] button     'Forged'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Beta",
+   "op": "trusted",
+   "expect": "route_unfilmed",
+   "gestures_after": 2
+  },
+  {
+   "name": "03-look",
+   "t_start": 1794581762.5143218,
+   "t_end": 1794581762.869164,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "03-click",
+   "t_start": 1794581762.869199,
+   "t_end": 1794581766.580916,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Beta): driver says unverifiable in 2.2s\nreceipt: Receipt for click(Beta): suspected no-op (no change: same URL /, no elements added, removed or changed, text unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Beta'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] button     'Shy'\n  [   7] button     'Dodge'\n  [   8] generic    'generic'\n  [   9] button     'Clipped'\n  [  10] button     'Turned'\n  [  15] button     'Forged'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Beta",
+   "op": "click",
+   "expect": "clicked",
+   "gestures_after": 3
+  },
+  {
+   "name": "04-look",
+   "t_start": 1794581767.586603,
+   "t_end": 1794581767.952929,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "04-click",
+   "t_start": 1794581767.9530911,
+   "t_end": 1794581769.746291,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Covered): driver says not sent (target_unlocated: 'Covered': another element is at its centre) in 0.3s\nreceipt: Receipt for click(Covered): refused (not applied: target_unlocated: 'Covered': another element is at its centre; page unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Beta'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] button     'Shy'\n  [   7] button     'Dodge'\n  [   8] generic    'generic'\n  [   9] button     'Clipped'\n  [  10] button     'Turned'\n  [  15] button     'Forged'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Covered",
+   "op": "click",
+   "expect": "target_unlocated",
+   "gestures_after": 3
+  },
+  {
+   "name": "05-look",
+   "t_start": 1794581770.751999,
+   "t_end": 1794581771.105809,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "05-click",
+   "t_start": 1794581771.105972,
+   "t_end": 1794581772.8832178,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Forged): driver says not sent (target_unlocated: 'Forged': another element is at its centre) in 0.3s\nreceipt: Receipt for click(Forged): refused (not applied: target_unlocated: 'Forged': another element is at its centre; page unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Beta'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] button     'Shy'\n  [   7] button     'Dodge'\n  [   8] generic    'generic'\n  [   9] button     'Clipped'\n  [  10] button     'Turned'\n  [  15] button     'Forged'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Forged",
+   "op": "click",
+   "expect": "target_unlocated",
+   "gestures_after": 3
+  },
+  {
+   "name": "06-look",
+   "t_start": 1794581773.884282,
+   "t_end": 1794581774.243575,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "06-click",
+   "t_start": 1794581774.2437131,
+   "t_end": 1794581776.0419788,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Edge): driver says not sent (target_unlocated: 'Edge': it is not wholly in view; a filmed take acts only on a target the film shows whole) in 0.3s\nreceipt: Receipt for click(Edge): refused (not applied: target_unlocated: 'Edge': it is not wholly in view; a filmed take acts only on a target the film shows whole; page unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Beta'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] button     'Shy'\n  [   7] button     'Dodge'\n  [   8] generic    'generic'\n  [   9] button     'Clipped'\n  [  10] button     'Turned'\n  [  15] button     'Forged'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Edge",
+   "op": "click",
+   "expect": "target_unlocated",
+   "gestures_after": 3
+  },
+  {
+   "name": "07-look",
+   "t_start": 1794581777.044873,
+   "t_end": 1794581777.4228458,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "07-click",
+   "t_start": 1794581777.423011,
+   "t_end": 1794581779.2248352,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Clipped): driver says not sent (target_unlocated: 'Clipped': a scrolling or clipping container hides part of it; a filmed take acts only on a target the film shows whole) in 0.3s\nreceipt: Receipt for click(Clipped): refused (not applied: target_unlocated: 'Clipped': a scrolling or clipping container hides part of it; a filmed take acts only on a target the; page unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Beta'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] button     'Shy'\n  [   7] button     'Dodge'\n  [   8] generic    'generic'\n  [   9] button     'Clipped'\n  [  10] button     'Turned'\n  [  15] button     'Forged'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Clipped",
+   "op": "click",
+   "expect": "target_unlocated",
+   "gestures_after": 3
+  },
+  {
+   "name": "08-look",
+   "t_start": 1794581780.231301,
+   "t_end": 1794581780.6036868,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "08-click",
+   "t_start": 1794581780.60403,
+   "t_end": 1794581782.390715,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Turned): driver says not sent (target_unlocated: 'Turned': the driver could not locate it (transformed)) in 0.3s\nreceipt: Receipt for click(Turned): refused (not applied: target_unlocated: 'Turned': the driver could not locate it (transformed); page unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Beta'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] button     'Shy'\n  [   7] button     'Dodge'\n  [   8] generic    'generic'\n  [   9] button     'Clipped'\n  [  10] button     'Turned'\n  [  15] button     'Forged'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Turned",
+   "op": "click",
+   "expect": "target_unlocated",
+   "gestures_after": 3
+  },
+  {
+   "name": "09-look",
+   "t_start": 1794581783.397312,
+   "t_end": 1794581783.7725341,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "09-click",
+   "t_start": 1794581783.7727869,
+   "t_end": 1794581785.552937,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Hidden): driver says not sent (target_unlocated: 'Hidden': the page hides or replaces the pointer over it (cursor: none); a filmed take needs the system pointer showing) in 0.3s\nreceipt: Receipt for click(Hidden): refused (not applied: target_unlocated: 'Hidden': the page hides or replaces the pointer over it (cursor: none); a filmed take needs the syste; page unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Beta'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] button     'Shy'\n  [   7] button     'Dodge'\n  [   8] generic    'generic'\n  [   9] button     'Clipped'\n  [  10] button     'Turned'\n  [  15] button     'Forged'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Hidden",
+   "op": "click",
+   "expect": "target_unlocated",
+   "gestures_after": 3
+  },
+  {
+   "name": "10-look",
+   "t_start": 1794581786.556035,
+   "t_end": 1794581786.9403892,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "10-click",
+   "t_start": 1794581786.940546,
+   "t_end": 1794581790.239049,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Shy): driver says unverifiable (input outcome unknown: browser_action_unavailable the pointer moved; the click was then refused: no press or click was sent: the ref's node left the f) in 1.8s\nreceipt: Receipt for click(Shy): unverifiable (input outcome unknown after error: input outcome unknown: browser_action_unavailable the pointer moved; the click was then refused: no press or click was sent: the ref's node left the f).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Beta'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] button     'Dodge'\n  [   7] generic    'generic'\n  [   8] button     'Clipped'\n  [   9] button     'Turned'\n  [  14] button     'Forged'\n  [  15] button     'Shy'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Shy",
+   "op": "click",
+   "expect": "unpressed",
+   "gestures_after": 4
+  },
+  {
+   "name": "11-look",
+   "t_start": 1794581791.245624,
+   "t_end": 1794581791.6008792,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "11-click",
+   "t_start": 1794581791.601032,
+   "t_end": 1794581794.738341,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Dodge): driver says unverifiable (click_stopped_after_press: the click stopped after mousedown and no click event was sent: the ref's node left the filmed point. The press was sent; what it did is unverifiable, so observe before acting again.) in 1.6s\nreceipt: Receipt for click(Dodge): unverifiable (input outcome unknown after error: click_stopped_after_press: the click stopped after mousedown and no click event was sent: the ref's node left the filmed point. The press was sent; what it did is unverifiable, so observe before acting again.).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Beta'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] generic    'generic'\n  [   7] button     'Clipped'\n  [   8] button     'Turned'\n  [  13] button     'Forged'\n  [  14] button     'Shy'\n  [  15] button     'Dodge'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Dodge",
+   "op": "click",
+   "expect": "pressed",
+   "gestures_after": 5
+  },
+  {
+   "name": "12-look",
+   "t_start": 1794581795.7430432,
+   "t_end": 1794581796.1013172,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "12-type",
+   "t_start": 1794581796.10159,
+   "t_end": 1794581797.890205,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched type(Note) text='footwork': driver says not sent (target_unfocused: 'Note': it does not have focus; click it first, then type) in 0.3s\nreceipt: Receipt for type(Note) text='footwork': refused (not applied: target_unfocused: 'Note': it does not have focus; click it first, then type).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] button     'Beta'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] generic    'generic'\n  [   7] button     'Clipped'\n  [   8] button     'Turned'\n  [  13] button     'Forged'\n  [  14] button     'Shy'\n  [  15] button     'Dodge'\n  [  16] textbox    'Note'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Note",
+   "op": "type",
+   "expect": "target_unfocused",
+   "gestures_after": 5
+  },
+  {
+   "name": "13-look",
+   "t_start": 1794581798.896961,
+   "t_end": 1794581799.255262,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "13-click",
+   "t_start": 1794581799.255295,
+   "t_end": 1794581802.866297,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Note): driver says unverifiable in 2.1s\nreceipt: Receipt for click(Note): suspected no-op (no change: same URL /, no elements added, removed or changed, text unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n15 elements:\n  [   1] textbox    'Note'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] generic    'generic'\n  [   7] button     'Clipped'\n  [   8] button     'Turned'\n  [  13] button     'Beta'\n  [  14] button     'Forged'\n  [  15] button     'Shy'\n  [  16] button     'Dodge'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] button     'Gamma'\npage text (0 chars):\n\n",
+   "stderr": "",
+   "label": "Note",
+   "op": "click",
+   "expect": "clicked",
+   "gestures_after": 6
+  },
+  {
+   "name": "14-look",
+   "t_start": 1794581803.8730922,
+   "t_end": 1794581804.23138,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "14-type",
+   "t_start": 1794581804.231463,
+   "t_end": 1794581806.336936,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched type(Note) text='footwork': driver says unverifiable in 0.6s\nreceipt: Receipt for type(Note) text='footwork': confirmed ('Note' now holds 'footwork').\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n16 elements:\n  [   1] textbox    'Note' = 'footwork'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] generic    'generic'\n  [   7] button     'Clipped'\n  [   8] button     'Turned'\n  [  13] button     'Beta'\n  [  14] button     'Forged'\n  [  15] button     'Shy'\n  [  16] button     'Dodge'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] statictext 'footwork'\n  [  21] button     'Gamma'\npage text (8 chars):\nfootwork\n",
+   "stderr": "",
+   "label": "Note",
+   "op": "type",
+   "expect": "typed",
+   "gestures_after": 7
+  },
+  {
+   "name": "15-look",
+   "t_start": 1794581807.33828,
+   "t_end": 1794581807.728898,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "15-type",
+   "t_start": 1794581807.7290628,
+   "t_end": 1794581809.282141,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched type(Note) text='footwork': driver says not sent (replace_unfilmed: 'Note' holds text, and replacing it selects that text first, after the pointer was verified; a filmed take types only into an empty field) in 0.0s\nreceipt: Receipt for type(Note) text='footwork': refused (not applied: replace_unfilmed: 'Note' holds text, and replacing it selects that text first, after the pointer was verified; a filmed ).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n16 elements:\n  [   1] textbox    'Note' = 'footwork'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] generic    'generic'\n  [   7] button     'Clipped'\n  [   8] button     'Turned'\n  [  13] button     'Beta'\n  [  14] button     'Forged'\n  [  15] button     'Shy'\n  [  16] button     'Dodge'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] statictext 'footwork'\n  [  21] button     'Gamma'\npage text (8 chars):\nfootwork\n",
+   "stderr": "",
+   "label": "Note",
+   "op": "type",
+   "expect": "replace_unfilmed",
+   "gestures_after": 7
+  },
+  {
+   "name": "16-look",
+   "t_start": 1794581810.288358,
+   "t_end": 1794581810.654305,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "16-click",
+   "t_start": 1794581810.654458,
+   "t_end": 1794581812.4346292,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Gamma): driver says not sent (target_unlocated: 'Gamma': it is not wholly in view; a filmed take acts only on a target the film shows whole) in 0.3s\nreceipt: Receipt for click(Gamma): refused (not applied: target_unlocated: 'Gamma': it is not wholly in view; a filmed take acts only on a target the film shows whole; page unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n16 elements:\n  [   1] textbox    'Note' = 'footwork'\n  [   2] button     'Alpha'\n  [   3] button     'Covered'\n  [   4] button     'Jump down'\n  [   5] button     'Hidden'\n  [   6] generic    'generic'\n  [   7] button     'Clipped'\n  [   8] button     'Turned'\n  [  13] button     'Beta'\n  [  14] button     'Forged'\n  [  15] button     'Shy'\n  [  16] button     'Dodge'\n  [  17] button     'Edge'\n  [  19] generic    'generic'\n  [  20] statictext 'footwork'\n  [  21] button     'Gamma'\npage text (8 chars):\nfootwork\n",
+   "stderr": "",
+   "label": "Gamma",
+   "op": "click",
+   "expect": "target_unlocated",
+   "gestures_after": 7
+  },
+  {
+   "name": "17-look",
+   "t_start": 1794581813.439989,
+   "t_end": 1794581813.818671,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "17-click",
+   "t_start": 1794581813.8188102,
+   "t_end": 1794581817.429086,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Jump down): driver says unverifiable in 2.1s\nreceipt: Receipt for click(Jump down): suspected no-op (no change: same URL /, no elements added, removed or changed, text unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n16 elements:\n  [   1] button     'Jump down'\n  [   3] button     'Beta'\n  [   4] button     'Shy'\n  [   5] button     'Dodge'\n  [   6] generic    'generic'\n  [   7] button     'Clipped'\n  [   8] button     'Turned'\n  [  11] generic    'generic'\n  [  12] statictext 'footwork'\n  [  13] button     'Alpha'\n  [  14] button     'Covered'\n  [  15] button     'Gamma'\n  [  16] button     'Forged'\n  [  17] button     'Hidden'\n  [  18] textbox    'Note' = 'footwork'\n  [  19] button     'Edge'\npage text (8 chars):\nfootwork\n",
+   "stderr": "",
+   "label": "Jump down",
+   "op": "click",
+   "expect": "clicked",
+   "gestures_after": 8
+  },
+  {
+   "name": "18-look",
+   "t_start": 1794581818.4345531,
+   "t_end": 1794581818.7932448,
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "name": "18-click",
+   "t_start": 1794581818.793333,
+   "t_end": 1794581822.419876,
+   "exit": 0,
+   "stdout": "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched click(Gamma): driver says unverifiable in 2.1s\nreceipt: Receipt for click(Gamma): suspected no-op (no change: same URL /, no elements added, removed or changed, text unchanged).\nGoogle Chrome (footwork): 'Footwork filmed page pointer fixture'\n16 elements:\n  [   1] button     'Gamma'\n  [   3] button     'Beta'\n  [   4] button     'Shy'\n  [   5] button     'Dodge'\n  [   6] generic    'generic'\n  [   7] button     'Clipped'\n  [   8] button     'Turned'\n  [  11] generic    'generic'\n  [  12] statictext 'footwork'\n  [  13] button     'Alpha'\n  [  14] button     'Covered'\n  [  15] button     'Jump down'\n  [  16] button     'Forged'\n  [  17] button     'Hidden'\n  [  18] textbox    'Note' = 'footwork'\n  [  19] button     'Edge'\npage text (8 chars):\nfootwork\n",
+   "stderr": "",
+   "label": "Gamma",
+   "op": "click",
+   "expect": "clicked",
+   "gestures_after": 9
+  }
+ ],
+ "pointer_sampler": {
+  "samples": 12053,
+  "largest_gap_s": 0.0208
+ },
+ "chrome_front_after_start": true,
+ "gestures_at_start": 1,
+ "fence_asked": 1794581823.478584,
+ "fence_received": true,
+ "finished": 1794581823.586041,
+ "cleanup_errors": [],
+ "session_reservation": {
+  "released": true,
+  "named_by_session": "3a4449f152994d769c2f91cdea137e42",
+  "held": [
+   {
+    "kind": "reservation",
+    "token": "3a4449f152994d769c2f91cdea137e42",
+    "resources": [
+     "app/google%20chrome",
+     "desktop"
+    ]
+   }
+  ],
+  "yields": [
+   {
+    "token": "3a4449f152994d769c2f91cdea137e42",
+    "exit": 0,
+    "stdout": "revoked; active input retains ownership until readback and cleanup finish\n",
+    "stderr": ""
+   }
+  ],
+  "still_held": []
+ },
+ "holder_stop": {
+  "ok": true,
+  "status": {
+   "served": {
+    "prepare": 37,
+    "bind": 37,
+    "navigate": 1,
+    "snapshot": 56,
+    "locate": 24,
+    "click": 7,
+    "type_text": 1
+   },
+   "prepare_repeats_answered": 37,
+   "refused_second_client": 0,
+   "idle_s": 1.483,
+   "chrome_pid": 71494,
+   "window_id": 500218
+  }
+ },
+ "chrome_launch": {
+  "pid": 71494,
+  "incarnation": 1794581747.289839
+ },
+ "chrome_pid": 71494,
+ "chrome_closed": true,
+ "front_pid_at_end": 74505,
+ "closed": {
+  "registry": true,
+  "browser": true,
+  "port": true,
+  "holder": true
+ }
+}

@@ -1,0 +1,881 @@
+{
+ "gate": {
+  "polls": 1,
+  "idle_s": 2466.5,
+  "waited_s": 0.0
+ },
+ "front_pid_at_start": 74505,
+ "launches": {
+  "bare": {
+   "switches": [],
+   "asked": false,
+   "readings": [
+    {
+     "t": 0.0,
+     "windows": 0
+    },
+    {
+     "t": 0.32,
+     "windows": 0
+    },
+    {
+     "t": 0.52,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 0.74,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 0.96,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.17,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.39,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.59,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.8,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.01,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.22,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.44,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.65,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.86,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.08,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.29,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.5,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.71,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.92,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.14,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.35,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.56,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.77,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.98,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.2,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.42,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.63,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.84,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    }
+   ],
+   "asks": [],
+   "pid": 69136,
+   "window_at_the_end": "'Footwork web area diagnostic - Google Chrome': level 1: AXButton x3, AXGroup; level 2: AXGroup x2; level 3: AXGroup x2; level 4: AXGroup; level 5: AXGroup x4; level 6: AXButton, AXGroup x5, AXToolbar; level 7: AXButton x4, AXGroup x3, AXPopUpButton x2, AXTabGroup; level 8: AXGroup, AXPopUpButton, AXRadioButton, AXTextField",
+   "closed": true,
+   "profile_removed": true,
+   "first_seen_s": null
+  },
+  "bare_asked": {
+   "switches": [],
+   "asked": true,
+   "readings": [
+    {
+     "t": 0.0,
+     "windows": 0
+    },
+    {
+     "t": 0.2,
+     "windows": 0
+    },
+    {
+     "t": 0.41,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 0.64,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 0.86,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.08,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.29,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.51,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.72,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.94,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.16,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.37,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.59,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.8,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.02,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.23,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.43,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.65,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.86,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.08,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.3,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.5,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.72,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.93,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.14,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.36,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.56,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.77,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.98,
+     "windows": 1,
+     "web_area": null,
+     "address": null,
+     "title": "Footwork web area diagnostic - Google Chrome"
+    }
+   ],
+   "asks": [
+    {
+     "t": 0.0,
+     "answers": [
+      {
+       "attribute": "AXManualAccessibility",
+       "settable_error": -25204,
+       "settable": false,
+       "set_error": -25204
+      },
+      {
+       "attribute": "AXEnhancedUserInterface",
+       "settable_error": -25204,
+       "settable": false,
+       "set_error": -25204
+      }
+     ]
+    },
+    {
+     "t": 1.08,
+     "answers": [
+      {
+       "attribute": "AXManualAccessibility",
+       "settable_error": -25205,
+       "settable": false,
+       "set_error": -25205
+      },
+      {
+       "attribute": "AXEnhancedUserInterface",
+       "settable_error": 0,
+       "settable": true,
+       "set_error": -25208
+      }
+     ]
+    },
+    {
+     "t": 2.16,
+     "answers": [
+      {
+       "attribute": "AXManualAccessibility",
+       "settable_error": -25205,
+       "settable": false,
+       "set_error": -25205
+      },
+      {
+       "attribute": "AXEnhancedUserInterface",
+       "settable_error": 0,
+       "settable": true,
+       "set_error": -25208
+      }
+     ]
+    },
+    {
+     "t": 3.23,
+     "answers": [
+      {
+       "attribute": "AXManualAccessibility",
+       "settable_error": -25205,
+       "settable": false,
+       "set_error": -25205
+      },
+      {
+       "attribute": "AXEnhancedUserInterface",
+       "settable_error": 0,
+       "settable": true,
+       "set_error": -25208
+      }
+     ]
+    },
+    {
+     "t": 4.3,
+     "answers": [
+      {
+       "attribute": "AXManualAccessibility",
+       "settable_error": -25205,
+       "settable": false,
+       "set_error": -25205
+      },
+      {
+       "attribute": "AXEnhancedUserInterface",
+       "settable_error": 0,
+       "settable": true,
+       "set_error": -25208
+      }
+     ]
+    },
+    {
+     "t": 5.36,
+     "answers": [
+      {
+       "attribute": "AXManualAccessibility",
+       "settable_error": -25205,
+       "settable": false,
+       "set_error": -25205
+      },
+      {
+       "attribute": "AXEnhancedUserInterface",
+       "settable_error": 0,
+       "settable": true,
+       "set_error": -25208
+      }
+     ]
+    }
+   ],
+   "pid": 69896,
+   "window_at_the_end": "'Footwork web area diagnostic - Google Chrome': level 1: AXButton x3, AXGroup; level 2: AXGroup x2; level 3: AXGroup x2; level 4: AXGroup; level 5: AXGroup x4; level 6: AXButton, AXGroup x5, AXToolbar; level 7: AXButton x4, AXGroup x3, AXPopUpButton x2, AXTabGroup; level 8: AXGroup, AXPopUpButton, AXRadioButton, AXTextField",
+   "closed": true,
+   "profile_removed": true,
+   "first_seen_s": null
+  },
+  "forced": {
+   "switches": [
+    "--force-renderer-accessibility"
+   ],
+   "asked": false,
+   "readings": [
+    {
+     "t": 0.0,
+     "windows": 0
+    },
+    {
+     "t": 0.2,
+     "windows": 0
+    },
+    {
+     "t": 0.41,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 0.64,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 0.85,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.06,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.27,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.49,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.7,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 1.91,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.12,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.34,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.55,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.77,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 2.98,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.19,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.41,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.62,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 3.84,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.05,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.26,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.48,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.68,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 4.89,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.11,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.32,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.53,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.75,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    },
+    {
+     "t": 5.96,
+     "windows": 1,
+     "web_area": [
+      22.0,
+      142.0,
+      1200.0,
+      813.0
+     ],
+     "address": "data:text/html,%3Ctitle%3EFootwork%20web%20area%20diagnostic%3C/title%3E%3Cbutto",
+     "title": "Footwork web area diagnostic - Google Chrome"
+    }
+   ],
+   "asks": [],
+   "pid": 70642,
+   "window_at_the_end": "'Footwork web area diagnostic - Google Chrome': level 1: AXButton x3, AXGroup; level 2: AXGroup x2; level 3: AXGroup; level 4: AXGroup; level 5: AXGroup x4; level 6: AXButton, AXGroup x5, AXToolbar; level 7: AXButton x4, AXGroup x3, AXPopUpButton x2, AXScrollArea, AXTabGroup; level 8: AXGroup, AXPopUpButton, AXRadioButton, AXTextField, AXWebArea",
+   "closed": true,
+   "profile_removed": true,
+   "first_seen_s": 0.41
+  }
+ },
+ "front_pid_at_end": 74505,
+ "summary": {
+  "first_seen_s": {
+   "bare": null,
+   "bare_asked": null,
+   "forced": 0.41
+  },
+  "forced_shows_a_web_area": true,
+  "bare_shows_none": true,
+  "every_browser_closed": true
+ }
+}
