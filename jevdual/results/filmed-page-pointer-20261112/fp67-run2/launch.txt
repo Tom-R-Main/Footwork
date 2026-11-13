@@ -1,0 +1,2 @@
+start 09:01:46 head 3491d5631a3864233573a28bb786282341fc0b36 dirty=0 driver 0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate9
+exit=0 end 09:03:03

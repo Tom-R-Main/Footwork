@@ -1,0 +1,206 @@
+{"t": 1794578507.579, "n": 1, "doc": "mwf1pijv-j0rkq18dq1", "type": "loaded", "detail": {"dpr": 2, "viewport": [1200, 813], "clock_step_s": 9.999990463256836e-05, "page_says_at_forged": "Forged", "browser_says_at_forged": "lid2"}, "received": 1794578507.580991}
+{"t": 1794578508.0661001, "n": 2, "doc": "mwf1pijv-j0rkq18dq1", "type": "beat", "detail": {"acks": [[1, 1794578507.5988]]}, "received": 1794578508.067468}
+{"t": 1794578508.3268, "n": 1, "doc": "mwf1pj4x-8aolseh2nhd", "type": "loaded", "detail": {"dpr": 2, "viewport": [1200, 813], "clock_step_s": 9.999990463256836e-05, "page_says_at_forged": "Forged", "browser_says_at_forged": "lid2"}, "received": 1794578508.327539}
+{"t": 1794578508.8232, "n": 2, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[1, 1794578508.3281999]]}, "received": 1794578508.824345}
+{"t": 1794578509.3222, "n": 3, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[2, 1794578508.8256]]}, "received": 1794578509.323137}
+{"t": 1794578509.8234, "n": 4, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[3, 1794578509.3245]]}, "received": 1794578509.824584}
+{"t": 1794578510.3234, "n": 5, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[4, 1794578509.8251998]]}, "received": 1794578510.3244932}
+{"t": 1794578510.8233001, "n": 6, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[5, 1794578510.3262]]}, "received": 1794578510.824233}
+{"t": 1794578511.3221, "n": 7, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[6, 1794578510.8248]]}, "received": 1794578511.323453}
+{"t": 1794578511.8242, "n": 8, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[7, 1794578511.324]]}, "received": 1794578511.826068}
+{"t": 1794578512.3221, "n": 9, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[8, 1794578511.8268]]}, "received": 1794578512.32335}
+{"t": 1794578512.8234, "n": 10, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[9, 1794578512.3239]]}, "received": 1794578512.824304}
+{"t": 1794578513.1664, "n": 11, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578513.1664, "type": "mouseover", "target": "DIV", "x": 931, "y": 2}, "received": 1794578513.167895}
+{"t": 1794578513.3223, "n": 12, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[10, 1794578512.8246999], [11, 1794578513.1683998]]}, "received": 1794578513.323203}
+{"t": 1794578513.3478, "n": 13, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578513.3478, "type": "mouseover", "target": "Forged", "x": 755, "y": 61}, "received": 1794578513.3489978}
+{"t": 1794578513.3948, "n": 14, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578513.3948, "type": "mouseover", "target": "lid2", "x": 703, "y": 84}, "received": 1794578513.3958988}
+{"t": 1794578513.4307, "n": 15, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578513.4306, "type": "mouseover", "target": "Forged", "x": 673, "y": 99}, "received": 1794578513.431604}
+{"t": 1794578513.4480999, "n": 16, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578513.4480999, "type": "mouseover", "target": "DIV", "x": 655, "y": 109}, "received": 1794578513.449057}
+{"t": 1794578513.8225, "n": 17, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[12, 1794578513.3235998], [13, 1794578513.3493998], [14, 1794578513.3963], [15, 1794578513.4320998], [16, 1794578513.4506]]}, "received": 1794578513.823348}
+{"t": 1794578514.3221, "n": 18, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[17, 1794578513.8238]]}, "received": 1794578514.3230562}
+{"t": 1794578514.823, "n": 19, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[18, 1794578514.3235998]]}, "received": 1794578514.824012}
+{"t": 1794578515.3226, "n": 20, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[19, 1794578514.8245]]}, "received": 1794578515.324194}
+{"t": 1794578515.8218, "n": 21, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[20, 1794578515.3246999]]}, "received": 1794578515.823076}
+{"t": 1794578515.8695998, "n": 22, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578515.8695998, "type": "mouseover", "target": "Hidden", "x": 439, "y": 157}, "received": 1794578515.8714502}
+{"t": 1794578515.9863, "n": 23, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578515.9863, "type": "mouseover", "target": "DIV", "x": 353, "y": 123}, "received": 1794578515.9872289}
+{"t": 1794578516.2031999, "n": 24, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578516.2031999, "type": "mouseover", "target": "Alpha", "x": 174, "y": 84}, "received": 1794578516.204716}
+{"t": 1794578516.3219, "n": 25, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[21, 1794578515.8235998], [22, 1794578515.872], [23, 1794578515.9888], [24, 1794578516.2053]]}, "received": 1794578516.3231628}
+{"t": 1794578516.8228002, "n": 26, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[25, 1794578516.3235998]]}, "received": 1794578516.823829}
+{"t": 1794578516.9720998, "n": 28, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Alpha", "x": 110, "y": 82, "rect": [40, 60, 140, 44]}, "received": 1794578516.97453}
+{"t": 1794578516.9719, "n": 27, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Alpha", "x": 110, "y": 82, "rect": [40, 60, 140, 44]}, "received": 1794578516.973033}
+{"t": 1794578516.9733999, "n": 29, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "pointerup", "trusted": false, "target": "Alpha", "x": 110, "y": 82, "rect": [40, 60, 140, 44]}, "received": 1794578516.974976}
+{"t": 1794578516.9735, "n": 30, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "mouseup", "trusted": false, "target": "Alpha", "x": 110, "y": 82, "rect": [40, 60, 140, 44]}, "received": 1794578516.9756742}
+{"t": 1794578516.9736, "n": 31, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "click", "trusted": false, "target": "Alpha", "x": 110, "y": 82, "rect": [40, 60, 140, 44]}, "received": 1794578516.9760058}
+{"t": 1794578516.9742, "n": 32, "doc": "mwf1pj4x-8aolseh2nhd", "type": "click_handler", "detail": {"button": "Alpha", "trusted": false, "last_trusted_pointer": {"t": 1794578516.4861999, "type": "mousemove", "target": "Alpha", "x": 110, "y": 82}, "rect": [40, 60, 140, 44], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": true, "pinch": 1}, "received": 1794578516.976193}
+{"t": 1794578517.3222, "n": 33, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[26, 1794578516.8242], [28, 1794578516.9757], [27, 1794578516.9758], [29, 1794578516.9758], [30, 1794578516.9763], [31, 1794578516.9765], [32, 1794578516.9766]]}, "received": 1794578517.32404}
+{"t": 1794578517.8225, "n": 34, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[33, 1794578517.3246999]]}, "received": 1794578517.823646}
+{"t": 1794578518.3223, "n": 35, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[34, 1794578517.8240998]]}, "received": 1794578518.323322}
+{"t": 1794578518.8228998, "n": 36, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[35, 1794578518.3237]]}, "received": 1794578518.825525}
+{"t": 1794578519.3228002, "n": 37, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[36, 1794578518.8260999]]}, "received": 1794578519.3238559}
+{"t": 1794578519.8226, "n": 38, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[37, 1794578519.3242]]}, "received": 1794578519.823741}
+{"t": 1794578520.3221, "n": 39, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[38, 1794578519.8258]]}, "received": 1794578520.323057}
+{"t": 1794578520.822, "n": 40, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[39, 1794578520.3234]]}, "received": 1794578520.823085}
+{"t": 1794578521.3226, "n": 41, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[40, 1794578520.8235]]}, "received": 1794578521.3236961}
+{"t": 1794578521.8225, "n": 42, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[41, 1794578521.3240998]]}, "received": 1794578521.823572}
+{"t": 1794578522.3232, "n": 43, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[42, 1794578521.824]]}, "received": 1794578522.324472}
+{"t": 1794578522.823, "n": 44, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[43, 1794578522.3248]]}, "received": 1794578522.824398}
+{"t": 1794578523.3222, "n": 45, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[44, 1794578522.8249]]}, "received": 1794578523.323267}
+{"t": 1794578523.8219, "n": 46, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[45, 1794578523.3237]]}, "received": 1794578523.823061}
+{"t": 1794578523.8863, "n": 47, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578523.8862, "type": "mouseover", "target": "DIV", "x": 190, "y": 98}, "received": 1794578523.887258}
+{"t": 1794578524.0195, "n": 48, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578524.0195, "type": "mouseover", "target": "Hidden", "x": 315, "y": 137}, "received": 1794578524.020881}
+{"t": 1794578524.1028001, "n": 49, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578524.1028001, "type": "mouseover", "target": "DIV", "x": 406, "y": 174}, "received": 1794578524.104363}
+{"t": 1794578524.3216, "n": 50, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[46, 1794578523.8244], [47, 1794578523.8876998], [48, 1794578524.0214], [49, 1794578524.1049]]}, "received": 1794578524.322619}
+{"t": 1794578524.4029, "n": 51, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578524.4029, "type": "mouseover", "target": "Beta", "x": 668, "y": 333}, "received": 1794578524.405151}
+{"t": 1794578524.8216, "n": 52, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[50, 1794578524.323], [51, 1794578524.4059]]}, "received": 1794578524.8226292}
+{"t": 1794578525.0622, "n": 53, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Beta", "x": 690, "y": 352, "rect": [620, 330, 140, 44]}, "received": 1794578525.063415}
+{"t": 1794578525.0623999, "n": 54, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Beta", "x": 690, "y": 352, "rect": [620, 330, 140, 44]}, "received": 1794578525.064799}
+{"t": 1794578525.0637, "n": 55, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "pointerup", "trusted": false, "target": "Beta", "x": 690, "y": 352, "rect": [620, 330, 140, 44]}, "received": 1794578525.065127}
+{"t": 1794578525.0638, "n": 56, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "mouseup", "trusted": false, "target": "Beta", "x": 690, "y": 352, "rect": [620, 330, 140, 44]}, "received": 1794578525.065805}
+{"t": 1794578525.0638, "n": 57, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "click", "trusted": false, "target": "Beta", "x": 690, "y": 352, "rect": [620, 330, 140, 44]}, "received": 1794578525.0660439}
+{"t": 1794578525.0639, "n": 58, "doc": "mwf1pj4x-8aolseh2nhd", "type": "click_handler", "detail": {"button": "Beta", "trusted": false, "last_trusted_pointer": {"t": 1794578524.6028998, "type": "mousemove", "target": "Beta", "x": 690, "y": 352}, "rect": [620, 330, 140, 44], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": true, "pinch": 1}, "received": 1794578525.066276}
+{"t": 1794578525.3228998, "n": 59, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[52, 1794578524.823], [53, 1794578525.0656], [54, 1794578525.0657], [55, 1794578525.0662], [56, 1794578525.0663998], [57, 1794578525.0665], [58, 1794578525.0665998]]}, "received": 1794578525.324244}
+{"t": 1794578525.8230999, "n": 60, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[59, 1794578525.3248]]}, "received": 1794578525.8241549}
+{"t": 1794578526.3228998, "n": 61, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[60, 1794578525.8245]]}, "received": 1794578526.324286}
+{"t": 1794578526.8230999, "n": 62, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[61, 1794578526.3245997]]}, "received": 1794578526.824269}
+{"t": 1794578527.3227, "n": 63, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[62, 1794578526.8246999]]}, "received": 1794578527.323719}
+{"t": 1794578527.8223, "n": 64, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[63, 1794578527.3240998]]}, "received": 1794578527.824118}
+{"t": 1794578528.3230999, "n": 65, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[64, 1794578527.8245997]]}, "received": 1794578528.3241222}
+{"t": 1794578528.8223, "n": 66, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[65, 1794578528.3253999]]}, "received": 1794578528.8234072}
+{"t": 1794578529.3222, "n": 67, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[66, 1794578528.8237]]}, "received": 1794578529.323387}
+{"t": 1794578529.8223, "n": 68, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[67, 1794578529.3237]]}, "received": 1794578529.823659}
+{"t": 1794578530.3222, "n": 69, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[68, 1794578529.824]]}, "received": 1794578530.3241239}
+{"t": 1794578530.8225, "n": 70, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[69, 1794578530.3245]]}, "received": 1794578530.824098}
+{"t": 1794578531.3230999, "n": 71, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[70, 1794578530.8245]]}, "received": 1794578531.32453}
+{"t": 1794578531.8223, "n": 72, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[71, 1794578531.325]]}, "received": 1794578531.823346}
+{"t": 1794578532.3223, "n": 73, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[72, 1794578531.8235998]]}, "received": 1794578532.3238459}
+{"t": 1794578532.8225, "n": 74, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[73, 1794578532.3242]]}, "received": 1794578532.8239481}
+{"t": 1794578533.3222, "n": 75, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[74, 1794578532.8243]]}, "received": 1794578533.323276}
+{"t": 1794578533.8228002, "n": 76, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[75, 1794578533.3235998]]}, "received": 1794578533.824085}
+{"t": 1794578534.323, "n": 77, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[76, 1794578533.8244]]}, "received": 1794578534.325396}
+{"t": 1794578534.8225, "n": 78, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[77, 1794578534.3260999]]}, "received": 1794578534.823909}
+{"t": 1794578535.3225, "n": 79, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[78, 1794578534.8243]]}, "received": 1794578535.32377}
+{"t": 1794578535.8223, "n": 80, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[79, 1794578535.3240998]]}, "received": 1794578535.823806}
+{"t": 1794578536.322, "n": 81, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[80, 1794578535.824]]}, "received": 1794578536.3236659}
+{"t": 1794578536.8222, "n": 82, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[81, 1794578536.3240998]]}, "received": 1794578536.823564}
+{"t": 1794578537.3222, "n": 83, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[82, 1794578536.8238]]}, "received": 1794578537.323224}
+{"t": 1794578537.8228998, "n": 84, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[83, 1794578537.3235]]}, "received": 1794578537.824075}
+{"t": 1794578538.3225, "n": 85, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[84, 1794578537.8251]]}, "received": 1794578538.323717}
+{"t": 1794578538.8216999, "n": 86, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[85, 1794578538.324]]}, "received": 1794578538.82324}
+{"t": 1794578539.323, "n": 87, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[86, 1794578538.8237]]}, "received": 1794578539.324183}
+{"t": 1794578539.8223999, "n": 88, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[87, 1794578539.3251]]}, "received": 1794578539.8236659}
+{"t": 1794578540.323, "n": 89, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[88, 1794578539.8239]]}, "received": 1794578540.3241851}
+{"t": 1794578540.8230999, "n": 90, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[89, 1794578540.3244]]}, "received": 1794578540.8241348}
+{"t": 1794578541.3223, "n": 91, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[90, 1794578540.8244]]}, "received": 1794578541.323723}
+{"t": 1794578541.8222, "n": 92, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[91, 1794578541.324]]}, "received": 1794578541.8238919}
+{"t": 1794578542.3222, "n": 93, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[92, 1794578541.8243]]}, "received": 1794578542.3232908}
+{"t": 1794578542.8227, "n": 94, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[93, 1794578542.3235]]}, "received": 1794578542.824414}
+{"t": 1794578543.323, "n": 95, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[94, 1794578542.8248]]}, "received": 1794578543.32415}
+{"t": 1794578543.8228998, "n": 96, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[95, 1794578543.3243]]}, "received": 1794578543.824055}
+{"t": 1794578544.3222, "n": 97, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[96, 1794578543.8242]]}, "received": 1794578544.32345}
+{"t": 1794578544.8228998, "n": 98, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[97, 1794578544.3237]]}, "received": 1794578544.824113}
+{"t": 1794578545.3223, "n": 99, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[98, 1794578544.8251]]}, "received": 1794578545.323691}
+{"t": 1794578545.8219, "n": 100, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[99, 1794578545.324]]}, "received": 1794578545.823261}
+{"t": 1794578546.3227, "n": 101, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[100, 1794578545.8235]]}, "received": 1794578546.32395}
+{"t": 1794578546.8221, "n": 102, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[101, 1794578546.3240998]]}, "received": 1794578546.8234282}
+{"t": 1794578547.3223999, "n": 103, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[102, 1794578546.8238]]}, "received": 1794578547.3240519}
+{"t": 1794578547.7529, "n": 104, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578547.7529, "type": "mouseover", "target": "DIV", "x": 650, "y": 326}, "received": 1794578547.754082}
+{"t": 1794578547.8219, "n": 105, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[103, 1794578547.3243], [104, 1794578547.7543]]}, "received": 1794578547.823018}
+{"t": 1794578548.0196, "n": 106, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578548.0196, "type": "mouseover", "target": "Dodge", "x": 417, "y": 216}, "received": 1794578548.0209122}
+{"t": 1794578548.0695, "n": 107, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578548.0695, "type": "mouseover", "target": "DIV", "x": 359, "y": 196}, "received": 1794578548.070883}
+{"t": 1794578548.2529, "n": 108, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578548.2529, "type": "mouseover", "target": "Shy", "x": 176, "y": 157}, "received": 1794578548.254132}
+{"t": 1794578548.3219, "n": 109, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[105, 1794578547.8233001], [106, 1794578548.0210998], [107, 1794578548.0710998], [108, 1794578548.2543]]}, "received": 1794578548.323082}
+{"t": 1794578548.8218, "n": 110, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[109, 1794578548.3232]]}, "received": 1794578548.823101}
+{"t": 1794578548.9750998, "n": 111, "doc": "mwf1pj4x-8aolseh2nhd", "type": "moved", "detail": {"control": "Shy", "by": "pointerover", "trusted": false, "last_trusted_pointer": {"t": 1794578548.5196, "type": "mousemove", "target": "Shy", "x": 110, "y": 152}, "rect": [40, 130, 140, 44], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": true, "pinch": 1}, "received": 1794578548.976643}
+{"t": 1794578548.9755998, "n": 112, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578548.9755, "type": "mouseover", "target": "DIV", "x": 110, "y": 152}, "received": 1794578548.976943}
+{"t": 1794578549.322, "n": 113, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[110, 1794578548.8233001], [111, 1794578548.9772], [112, 1794578548.9772]]}, "received": 1794578549.323591}
+{"t": 1794578549.8222, "n": 114, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[113, 1794578549.3239]]}, "received": 1794578549.8233778}
+{"t": 1794578550.3225, "n": 115, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[114, 1794578549.8235]]}, "received": 1794578550.323869}
+{"t": 1794578550.8223999, "n": 116, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[115, 1794578550.325]]}, "received": 1794578550.8236501}
+{"t": 1794578551.3223, "n": 117, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[116, 1794578550.8239]]}, "received": 1794578551.323939}
+{"t": 1794578551.8228002, "n": 118, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[117, 1794578551.3242]]}, "received": 1794578551.824866}
+{"t": 1794578552.3218, "n": 119, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[118, 1794578551.8251998]]}, "received": 1794578552.323112}
+{"t": 1794578552.7862, "n": 120, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578552.7862, "type": "mouseover", "target": "Dodge", "x": 329, "y": 200}, "received": 1794578552.7886112}
+{"t": 1794578552.8219, "n": 121, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[119, 1794578552.3233001], [120, 1794578552.789]]}, "received": 1794578552.823178}
+{"t": 1794578553.3213, "n": 122, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[121, 1794578552.8234]]}, "received": 1794578553.323096}
+{"t": 1794578553.4935, "n": 124, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Dodge", "x": 370, "y": 222, "rect": [300, 200, 140, 44]}, "received": 1794578553.495091}
+{"t": 1794578553.4933, "n": 123, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Dodge", "x": 370, "y": 222, "rect": [300, 200, 140, 44]}, "received": 1794578553.4949372}
+{"t": 1794578553.4937, "n": 125, "doc": "mwf1pj4x-8aolseh2nhd", "type": "moved", "detail": {"control": "Dodge", "by": "mousedown", "trusted": false, "last_trusted_pointer": {"t": 1794578553.0362, "type": "mousemove", "target": "Dodge", "x": 370, "y": 222}, "rect": [300, 200, 140, 44], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": true, "pinch": 1}, "received": 1794578553.495252}
+{"t": 1794578553.494, "n": 126, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578553.494, "type": "mouseover", "target": "DIV", "x": 370, "y": 222}, "received": 1794578553.495529}
+{"t": 1794578553.8223, "n": 127, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[122, 1794578553.3234], [123, 1794578553.4955], [124, 1794578553.4955997], [125, 1794578553.496], [126, 1794578553.4961]]}, "received": 1794578553.823912}
+{"t": 1794578554.3221, "n": 128, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[127, 1794578553.8298998]]}, "received": 1794578554.323576}
+{"t": 1794578554.8225, "n": 129, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[128, 1794578554.3237]]}, "received": 1794578554.823959}
+{"t": 1794578555.3222, "n": 130, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[129, 1794578554.8242]]}, "received": 1794578555.323549}
+{"t": 1794578555.8223999, "n": 131, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[130, 1794578555.3238]]}, "received": 1794578555.824049}
+{"t": 1794578556.3222, "n": 132, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[131, 1794578555.8243]]}, "received": 1794578556.323584}
+{"t": 1794578556.8227, "n": 133, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[132, 1794578556.3237]]}, "received": 1794578556.8243861}
+{"t": 1794578557.3222, "n": 134, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[133, 1794578556.8246999]]}, "received": 1794578557.323453}
+{"t": 1794578557.8230999, "n": 135, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[134, 1794578557.3235998]]}, "received": 1794578557.8245409}
+{"t": 1794578558.3228998, "n": 136, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[135, 1794578557.8245997]]}, "received": 1794578558.324199}
+{"t": 1794578558.8226, "n": 137, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[136, 1794578558.3243]]}, "received": 1794578558.8241742}
+{"t": 1794578559.3223999, "n": 138, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[137, 1794578558.8244]]}, "received": 1794578559.323783}
+{"t": 1794578559.8222, "n": 139, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[138, 1794578559.324]]}, "received": 1794578559.824194}
+{"t": 1794578560.3219, "n": 140, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[139, 1794578559.8244]]}, "received": 1794578560.323184}
+{"t": 1794578560.4362, "n": 141, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578560.4362, "type": "mouseover", "target": "Note", "x": 631, "y": 145}, "received": 1794578560.438853}
+{"t": 1794578560.8218, "n": 142, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[140, 1794578560.3233001], [141, 1794578560.4393]]}, "received": 1794578560.823686}
+{"t": 1794578561.3223, "n": 143, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[142, 1794578560.8239]]}, "received": 1794578561.3236349}
+{"t": 1794578561.8230999, "n": 144, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[143, 1794578561.3237]]}, "received": 1794578561.824627}
+{"t": 1794578562.3223999, "n": 145, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[144, 1794578561.8246999]]}, "received": 1794578562.323863}
+{"t": 1794578562.8222, "n": 146, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[145, 1794578562.324]]}, "received": 1794578562.8237472}
+{"t": 1794578563.3222, "n": 147, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[146, 1794578562.824]]}, "received": 1794578563.323672}
+{"t": 1794578563.8225, "n": 148, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[147, 1794578563.3238]]}, "received": 1794578563.82369}
+{"t": 1794578564.3222, "n": 149, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[148, 1794578563.8238]]}, "received": 1794578564.3234482}
+{"t": 1794578564.8225, "n": 150, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[149, 1794578564.3235]]}, "received": 1794578564.824665}
+{"t": 1794578565.3232, "n": 151, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[150, 1794578564.8249]]}, "received": 1794578565.324563}
+{"t": 1794578565.8223999, "n": 152, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[151, 1794578565.3246999]]}, "received": 1794578565.8237472}
+{"t": 1794578566.3232, "n": 153, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[152, 1794578565.8239]]}, "received": 1794578566.324609}
+{"t": 1794578566.8219, "n": 154, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[153, 1794578566.3255]]}, "received": 1794578566.82335}
+{"t": 1794578567.3223999, "n": 155, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[154, 1794578566.8234]]}, "received": 1794578567.323947}
+{"t": 1794578567.8223999, "n": 156, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[155, 1794578567.324]]}, "received": 1794578567.823895}
+{"t": 1794578568.3222, "n": 157, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[156, 1794578567.824]]}, "received": 1794578568.323858}
+{"t": 1794578568.8230999, "n": 158, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[157, 1794578568.3239]]}, "received": 1794578568.824617}
+{"t": 1794578569.3228998, "n": 159, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[158, 1794578568.8246999]]}, "received": 1794578569.324319}
+{"t": 1794578569.8227, "n": 160, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[159, 1794578569.3244]]}, "received": 1794578569.824197}
+{"t": 1794578570.3226, "n": 161, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[160, 1794578569.8242]]}, "received": 1794578570.3241541}
+{"t": 1794578570.8223, "n": 162, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[161, 1794578570.3243]]}, "received": 1794578570.8246698}
+{"t": 1794578571.3232, "n": 163, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[162, 1794578570.8249]]}, "received": 1794578571.3246121}
+{"t": 1794578571.8228002, "n": 164, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[163, 1794578571.3246999]]}, "received": 1794578571.824453}
+{"t": 1794578572.3223999, "n": 165, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[164, 1794578571.8246999]]}, "received": 1794578572.323806}
+{"t": 1794578572.8222, "n": 166, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[165, 1794578572.3238]]}, "received": 1794578572.823752}
+{"t": 1794578573.3223, "n": 167, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[166, 1794578572.8238]]}, "received": 1794578573.324388}
+{"t": 1794578573.8228002, "n": 168, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[167, 1794578573.3245997]]}, "received": 1794578573.824197}
+{"t": 1794578574.0697, "n": 169, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578574.0697, "type": "mouseover", "target": "DIV", "x": 648, "y": 126}, "received": 1794578574.071253}
+{"t": 1794578574.3219, "n": 170, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[168, 1794578573.8242], [169, 1794578574.0725]]}, "received": 1794578574.3234649}
+{"t": 1794578574.4195998, "n": 171, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578574.4195998, "type": "mouseover", "target": "Jump down", "x": 427, "y": 80}, "received": 1794578574.4222689}
+{"t": 1794578574.8221, "n": 172, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[170, 1794578574.3235998], [171, 1794578574.4228]]}, "received": 1794578574.823652}
+{"t": 1794578575.1441998, "n": 173, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Jump down", "x": 370, "y": 82, "rect": [300, 60, 140, 44]}, "received": 1794578575.1457589}
+{"t": 1794578575.1444, "n": 174, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Jump down", "x": 370, "y": 82, "rect": [300, 60, 140, 44]}, "received": 1794578575.1459572}
+{"t": 1794578575.1446, "n": 175, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "pointerup", "trusted": false, "target": "Jump down", "x": 370, "y": 82, "rect": [300, 60, 140, 44]}, "received": 1794578575.146482}
+{"t": 1794578575.1446, "n": 176, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "mouseup", "trusted": false, "target": "Jump down", "x": 370, "y": 82, "rect": [300, 60, 140, 44]}, "received": 1794578575.1479151}
+{"t": 1794578575.1447, "n": 178, "doc": "mwf1pj4x-8aolseh2nhd", "type": "click_handler", "detail": {"button": "Jump down", "trusted": false, "last_trusted_pointer": {"t": 1794578574.7028, "type": "mousemove", "target": "Jump down", "x": 370, "y": 82}, "rect": [300, 60, 140, 44], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": true, "pinch": 1}, "received": 1794578575.148809}
+{"t": 1794578575.1447, "n": 177, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "click", "trusted": false, "target": "Jump down", "x": 370, "y": 82, "rect": [300, 60, 140, 44]}, "received": 1794578575.148521}
+{"t": 1794578575.1478999, "n": 180, "doc": "mwf1pj4x-8aolseh2nhd", "type": "scrolled", "detail": {"y": 1500}, "received": 1794578575.149444}
+{"t": 1794578575.1478, "n": 179, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578575.1478, "type": "mouseover", "target": "DIV", "x": 370, "y": 82}, "received": 1794578575.149173}
+{"t": 1794578575.3223999, "n": 181, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[172, 1794578574.8237], [173, 1794578575.1483], [174, 1794578575.1483], [175, 1794578575.1483998], [177, 1794578575.1493], [180, 1794578575.1495], [176, 1794578575.1495998], [178, 1794578575.1497], [179, 1794578575.1497]]}, "received": 1794578575.324814}
+{"t": 1794578575.8218, "n": 182, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[181, 1794578575.325]]}, "received": 1794578575.8233228}
+{"t": 1794578576.3225, "n": 183, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[182, 1794578575.8233001]]}, "received": 1794578576.324091}
+{"t": 1794578576.8218, "n": 184, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[183, 1794578576.3240998]]}, "received": 1794578576.8233669}
+{"t": 1794578577.3222, "n": 185, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[184, 1794578576.8234]]}, "received": 1794578577.323903}
+{"t": 1794578577.8223, "n": 186, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[185, 1794578577.3239]]}, "received": 1794578577.824048}
+{"t": 1794578578.3222, "n": 187, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[186, 1794578577.824]]}, "received": 1794578578.324018}
+{"t": 1794578578.823, "n": 188, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[187, 1794578578.3240998]]}, "received": 1794578578.825354}
+{"t": 1794578579.3216999, "n": 189, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[188, 1794578578.8255]]}, "received": 1794578579.323981}
+{"t": 1794578579.4861999, "n": 190, "doc": "mwf1pj4x-8aolseh2nhd", "type": "trusted_mouseover", "detail": {"t": 1794578579.4861999, "type": "mouseover", "target": "Gamma", "x": 308, "y": 406}, "received": 1794578579.487757}
+{"t": 1794578579.8219, "n": 191, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[189, 1794578579.3240998], [190, 1794578579.4878001]]}, "received": 1794578579.823416}
+{"t": 1794578580.1239, "n": 192, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Gamma", "x": 310, "y": 422, "rect": [240, 400, 140, 44]}, "received": 1794578580.1253178}
+{"t": 1794578580.1241, "n": 193, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Gamma", "x": 310, "y": 422, "rect": [240, 400, 140, 44]}, "received": 1794578580.12549}
+{"t": 1794578580.1243, "n": 194, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "pointerup", "trusted": false, "target": "Gamma", "x": 310, "y": 422, "rect": [240, 400, 140, 44]}, "received": 1794578580.1256058}
+{"t": 1794578580.1243, "n": 195, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "mouseup", "trusted": false, "target": "Gamma", "x": 310, "y": 422, "rect": [240, 400, 140, 44]}, "received": 1794578580.125973}
+{"t": 1794578580.1243, "n": 196, "doc": "mwf1pj4x-8aolseh2nhd", "type": "page_event", "detail": {"event": "click", "trusted": false, "target": "Gamma", "x": 310, "y": 422, "rect": [240, 400, 140, 44]}, "received": 1794578580.126144}
+{"t": 1794578580.1245, "n": 197, "doc": "mwf1pj4x-8aolseh2nhd", "type": "click_handler", "detail": {"button": "Gamma", "trusted": false, "last_trusted_pointer": {"t": 1794578579.6695, "type": "mousemove", "target": "Gamma", "x": 310, "y": 422}, "rect": [240, 400, 140, 44], "scroll": [0, 1500], "dpr": 2, "viewport": [1200, 813], "page_focused": true, "pinch": 1}, "received": 1794578580.126315}
+{"t": 1794578580.3222, "n": 198, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[191, 1794578579.8234], [193, 1794578580.1255], [192, 1794578580.1255999], [194, 1794578580.1260998], [195, 1794578580.1263], [197, 1794578580.1264], [196, 1794578580.1274]]}, "received": 1794578580.3236742}
+{"t": 1794578580.8232, "n": 199, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[198, 1794578580.3245997]]}, "received": 1794578580.824783}
+{"t": 1794578581.3228002, "n": 200, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[199, 1794578580.8255]]}, "received": 1794578581.324663}
+{"t": 1794578581.8228998, "n": 201, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[200, 1794578581.3246999]]}, "received": 1794578581.8244412}
+{"t": 1794578582.3225, "n": 202, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[201, 1794578581.8251998]]}, "received": 1794578582.3245661}
+{"t": 1794578582.8226, "n": 203, "doc": "mwf1pj4x-8aolseh2nhd", "type": "beat", "detail": {"acks": [[202, 1794578582.3245997]]}, "received": 1794578582.824238}
+{"t": 1794578582.8243, "n": 204, "doc": "mwf1pj4x-8aolseh2nhd", "type": "fence", "detail": {"asked_in_answer_to": 203}, "received": 1794578582.825296}
