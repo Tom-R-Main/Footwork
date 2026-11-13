@@ -320,6 +320,11 @@ async def deliver(cdp: Cdp, url: str) -> dict:
         before = await regions()
         out["editable"][name] = {"before": before, "receipt": await read(cdp, insert, eda, *EDA_CENTRE, INSERTED),
                                  "after": await regions()}
+    # 3d (FP79): the press is how a filmed take gives a text field its focus. The field that has none,
+    # clicked at its centre; then the insert that was refused for want of focus (3) goes into it.
+    before = await state()
+    out["field_click"] = {"before": before, "receipt": await read(cdp, click, other, *OTHER_CENTRE), "after": await state()}
+    out["field_click_insert"] = {"receipt": await read(cdp, insert, other, *OTHER_CENTRE, INSERTED), "after": await state()}
     # 4: the control. Without a point, on the page's own object, as the driver clicked before the filmed delivery:
     # the page's wrapper answers the sequence's rectangle read and moves the button under it.
     out["page_world_click"] = {"before": await state(), "receipt": await read(cdp, click, mover_page),
@@ -485,6 +490,16 @@ def delivery_verdict(found: dict) -> dict:
         "with the selection in text that cannot be edited, the command inserts nothing and says so": (
             editable["selection_in_plain_text"]["receipt"] == {"inserted": False, "why": "command_refused"}
             and unchanged("selection_in_plain_text")),
+        # FP79: a text field is pressed like any control, the press gives it the focus, and it can be typed into
+        "a text field without focus is clicked and the press gives it the focus": (
+            found["field_click"]["receipt"] == {**done, "unfocused": False}
+            and during("field_click") == [(kind, "other") for kind in WHOLE]
+            and found["field_click"]["before"]["active"] != "other" and found["field_click"]["after"]["active"] == "other"
+            and found["field_click"]["after"]["other"] == ""),
+        "and the filmed insert then puts the text in it": (
+            found["field_click_insert"]["receipt"] == {"inserted": True, "why": None}
+            and found["field_click_insert"]["after"]["other"] == INSERTED
+            and found["field_click_insert"]["after"]["field"] == found["field_click"]["after"]["field"]),
         "control: without a point the container is focused": (
             control_seen("inrow") == [(kind, "inrow") for kind in WHOLE]
             and found["page_world_inrow_click"]["before"]["active"] != "row"

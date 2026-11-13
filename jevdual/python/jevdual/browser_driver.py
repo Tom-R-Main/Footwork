@@ -279,7 +279,7 @@ def pointer_shown(cursor: Any) -> bool:
 
 def _hidden(cursor: Any, where: str) -> str:
     if cursor is None:
-        return f"the driver did not say what the pointer looks like {where} (it needs cua-driver locate9)"
+        return f"the driver did not say what the pointer looks like {where} (it needs cua-driver locate10)"
     return (f"the page hides or replaces the pointer {where} (cursor: {str(cursor)[:40]}); "
             "a filmed take needs the system pointer showing")
 
@@ -300,15 +300,15 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     ``DOM.getBoxModel`` also puts it. With ``point`` (where the pointer was sent), that point must lie
     inside the rectangle and hit the target too, with the pointer showing there."""
     if not isinstance(locate, dict):
-        return None, "the driver reported no position (it needs cua-driver locate9)"
+        return None, "the driver reported no position (it needs cua-driver locate10)"
     if locate.get("available") is not True:
         return None, f"the driver could not locate it ({locate.get('reason') or 'no reason given'})"
     if locate.get("world") != "isolated":
         return None, ("the driver did not read the page out of reach of the page's own script "
-                      "(it needs cua-driver locate9)")
+                      "(it needs cua-driver locate10)")
     if locate.get("filmed_delivery") is not True:
         return None, ("the driver does not say it checks the pointer's position when it delivers "
-                      "(it needs cua-driver locate9)")
+                      "(it needs cua-driver locate10)")
 
     def numbers(value: Any, keys: tuple[str, ...]) -> tuple[float, ...] | None:
         if not isinstance(value, dict):
@@ -333,7 +333,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     shown = locate.get("visibility_state")
     if shown != "visible":
         if shown is None:
-            return None, "the driver did not say whether the page is showing (it needs cua-driver locate9)"
+            return None, "the driver did not say whether the page is showing (it needs cua-driver locate10)"
         return None, f"the page is not showing (its document is {str(shown)[:20]!r}); its tab is not the one on screen"
     x, y, w, h = rect
     if x < -0.5 or y < -0.5 or x + w > view[0] + 0.5 or y + h > view[1] + 0.5:
@@ -341,7 +341,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     clipped = locate.get("clipped")
     if clipped is not False:
         if clipped is not True:
-            return None, "the driver did not say whether a container clips it (it needs cua-driver locate9)"
+            return None, "the driver did not say whether a container clips it (it needs cua-driver locate10)"
         return None, ("a scrolling or clipping container hides part of it; a filmed take acts only on a "
                       "target the film shows whole")
     hit = locate.get("hit")
@@ -374,7 +374,7 @@ def unfocused(locate: Any) -> str | None:
     field without focus is refused here, before the pointer moves. A filmed click on it gives it
     focus."""
     if not isinstance(locate, dict) or not isinstance(locate.get("focused"), bool):
-        return "the driver did not say whether it has focus (it needs cua-driver locate9)"
+        return "the driver did not say whether it has focus (it needs cua-driver locate10)"
     if not locate["focused"]:
         return "it does not have focus; click it first, then type"
     return None
@@ -744,7 +744,7 @@ class BrowserBridge:
         return {"filmed_point": (at[0] - origin[0], at[1] - origin[1])}
 
     #: Every reply the driver gives for a page click that is neither a completed click nor a refusal
-    #: (cua-driver locate9, tools.rs ``DomClickNext``), by the start of its text: a sequence that
+    #: (cua-driver locate10, tools.rs ``DomClickNext``), by the start of its text: a sequence that
     #: stopped part way, one that did not report completing, and one a dialog interrupted or followed.
     _PARTIAL_CLICK = re.compile(
         r"^sent part of a synthetic DOM click .*?: (the ref's node left the filmed point|"

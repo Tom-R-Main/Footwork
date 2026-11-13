@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate9`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 The six Python files are copied byte-for-byte from the exact release source. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -20,7 +20,7 @@ The six Python files are copied byte-for-byte from the exact release source. The
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `ff12d6a7ac5cc4056e6d7a3f689fbb89e9f7fbceb9ec750186155b609ef19817` (6,430,273 bytes). It is the end of a five-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate8. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
+`native-source.tar.gz` SHA256: `5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9` (6,431,079 bytes). It is the end of a five-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -89,7 +89,7 @@ before. Two cua-driver-core browser files change (the tool and its mock-CDP test
 bindings and dependencies do not. connected1 (the guard alone), connected2 (without the receipt
 and containment checks) and connected3 (without the single dialog snapshot) were never released.
 
-## Ref locate patch (locate9)
+## Ref locate patch (locate10)
 
 `patches/ref-locate.patch` and its JSON manifest apply on top of the connected4 archive and produce
 the pinned archive. `get_browser_state` gains a third mode: with `target_id`, `tab_id` and
@@ -141,9 +141,10 @@ type still prepared and ran in the page's world after them), locate6 (which chec
 before the press only, followed the node wherever it went afterwards, and had no rule for a
 pointer the page hides), locate7 (which checked before each event from the press on in five
 separate places, sent the click to a target it had not checked, and could split a pointer event
-from its mouse event) and locate8 (which checked every event in one place and gave the focus in
-another, to an element it had not checked and that could lie outside the ref's node) were
-withdrawn before release.
+from its mouse event), locate8 (which checked every event in one place and gave the focus in
+another, to an element it had not checked and that could lie outside the ref's node) and locate9
+(whose click tool refused a text field, so that a filmed take could never focus one and never
+type) were withdrawn before release.
 
 ### Filmed delivery (`filmed_point`)
 
@@ -157,8 +158,13 @@ pointer is), for a ref in the tab's main frame.
 
 `browser_click` with `input_route: "dom_event"` and `filmed_point` resolves the node into the
 isolated world and runs its baseline read, its event sequence and its readback on that object.
-It calls no `DOM.scrollIntoViewIfNeeded` and draws no cursor. The sequence acts at the point
-instead of the centre, under one invariant:
+It calls no `DOM.scrollIntoViewIfNeeded` and draws no cursor. The click tool refuses a semantic
+ref that does not declare the click action, and a text field declares typing and not click. A
+click that carries a `filmed_point` is admitted on a ref that declares typing as well: a filmed
+insert focuses nothing, so the press is the only way a filmed take gives a field its focus (the
+first run against a real window found the field could not be clicked at all). A click without a
+`filmed_point` on such a ref, and a filmed click on a ref that declares neither, are refused as
+before. The sequence acts at the point instead of the centre, under one invariant:
 
 > Everything the sequence does to the page goes to an element that is under the pointer in the
 > same turn of script, immediately before.

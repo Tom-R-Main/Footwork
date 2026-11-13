@@ -1,0 +1,24 @@
+{
+ "predictions": {"FP72": "failed", "FP74": "held", "FP67": "failed"},
+ "open": ["FP79 (a filmed click on a text field; live part)"],
+ "live_run_2": "fp67-run2/: 3491d56, locate9; start succeeded, all 18 steps ran; 15 as predicted; the click on the text field was refused by the driver's guard and the two steps after it followed from that",
+ "driver": {
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
+  "archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
+  "bytes": 6431079,
+  "change": "browser_click admits a click that carries a filmed_point on a semantic ref that declares typing; nothing after the guard changed",
+  "red": "review14-rust-red.txt: the new test fails on the locate9 source at the filmed click on the field, with the live run's words",
+  "green": "review14-rust-green.txt: 1275 passed, 2 ignored (1274 before)",
+  "chain": "rebuilt from the focus1 base through scripts/cua_source_chain.py to the pinned checksum"
+ },
+ "footwork": {
+  "red": "none of its own: no Footwork module changed but the pinned version's name; the stand-in's guard and the new composed tests are in the test file",
+  "green": {
+   "focused": "709 passed (773 with the pin, chain and seam tests)",
+   "offline_suite": "4159 passed, 52 skipped, 61 deselected",
+   "lint": ".venv/bin/ruff check python scripts tests: clean"
+  },
+  "headless": "review14-headless.json: 54 checks hold in headless Chrome 157; the filmed click on a text field without focus sends all its events, gives it the focus, and the filmed insert then types into it"
+ },
+ "not_shown": "the click tool and the sequence together on a real page, and what the tool's readback says of a click whose only effect is a focus: the next live run"
+}

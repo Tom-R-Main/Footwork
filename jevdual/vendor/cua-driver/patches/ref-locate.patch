@@ -36,7 +36,7 @@
  use super::types::BindingQuality;
  
  /// Register the complete browser surface against one shared engine. Platform
-@@ -195,16 +195,54 @@
+@@ -195,15 +195,53 @@
          .expect("DOM click action record must satisfy the stable contract")
  }
  
@@ -77,7 +77,7 @@
 +    },
      Interrupted(&'static str),
  }
- 
++
 +/// The events a click sequence sends before its press, and from the press
 +/// to the release: the only values a `left_pointer` receipt may name last.
 +const DOM_CLICK_HOVER_EVENTS: [&str; 6] = [
@@ -89,10 +89,9 @@
 +    "mousemove",
 +];
 +const DOM_CLICK_PRESS_EVENTS: [&str; 4] = ["pointerdown", "mousedown", "pointerup", "mouseup"];
-+
+ 
  fn dom_click_receipt(reply: &Value) -> DomClickReceipt {
      if reply.get("exceptionDetails").is_some() {
-         return DomClickReceipt::Interrupted("the sequence threw");
 @@ -213,12 +251,40 @@
          return DomClickReceipt::Interrupted("no completion receipt");
      };
@@ -292,11 +291,10 @@
              let snapshot_format = args
                  .opt_str("snapshot_format")
                  .unwrap_or_else(|| "dom_refs_v1".into());
-@@ -1302,6 +1453,21 @@
-                             when explicitly requested. Dispatch does not prove the \
+@@ -1303,6 +1454,23 @@
                              control activated; refresh page state and verify the \
                              expected postcondition."
-+                    },
+                     },
 +                    "filmed_point": {
 +                        "type": "object",
 +                        "description": "Where a filmed pointer is, in viewport CSS px. With \
@@ -305,30 +303,49 @@
 +                            isolated world. It is sent only if this point is inside the \
 +                            ref's rectangle and hit-tests as the ref or something inside \
 +                            it; its events carry this point; nothing is scrolled first \
-+                            and no cursor is drawn.",
++                            and no cursor is drawn. A ref that declares typing (a text \
++                            field) is accepted with this point, so that the press can \
++                            give it focus; without it such a ref is refused.",
 +                        "properties": {
 +                            "x": { "type": "number" },
 +                            "y": { "type": "number" }
 +                        },
 +                        "required": ["x", "y"]
-                     },
++                    },
                  },
                  "required": ["target_id", "tab_id"],
-@@ -1375,6 +1541,13 @@
-         }
+                 "additionalProperties": true
+@@ -1376,6 +1544,13 @@
          if route == "dom_event" && ext_ref.is_none() {
              return ToolResult::error("input_route=dom_event requires a ref");
-+        }
+         }
 +        let filmed_point = match point_arg(&args, "filmed_point") {
 +            Ok(point) => point,
 +            Err(error) => return error,
 +        };
 +        if filmed_point.is_some() && route != "dom_event" {
 +            return ToolResult::error("filmed_point requires input_route=dom_event and a ref");
-         }
++        }
          let foreground = match parse_delivery_mode(&args) {
              Ok(f) => f,
-@@ -1494,14 +1667,29 @@
+             Err(e) => return ToolResult::error(e),
+@@ -1457,7 +1632,14 @@
+                     Ok(entry) => entry,
+                     Err(refusal) => return refusal.to_tool_result(),
+                 };
+-                if entry.semantic && !entry.actions.contains(&BrowserActionKind::Click) {
++                // A filmed click is also the press that gives a text field its
++                // focus: a filmed insert focuses nothing, so a filmed take can
++                // type only into a field its pointer has pressed. A ref that
++                // declares typing is admitted for a click that carries a filmed
++                // point, and for no other click.
++                let declared = entry.actions.contains(&BrowserActionKind::Click)
++                    || (filmed_point.is_some() && entry.actions.contains(&BrowserActionKind::Type));
++                if entry.semantic && !declared {
+                     return BrowserRefusal::new(
+                         BrowserRefusalCode::BrowserActionUnavailable,
+                         format!("semantic ref {r} does not declare the click action"),
+@@ -1494,14 +1676,29 @@
          // dom_event route: explicit opt-in only.
          if route == "dom_event" {
              let backend = backend_node_id.expect("checked above");
@@ -366,7 +383,7 @@
                  Ok(v) => v,
                  Err(_) => {
                      return BrowserRefusal::new(
-@@ -1556,52 +1744,58 @@
+@@ -1556,52 +1753,58 @@
                  .to_tool_result();
              }
              // Cursor feedback is best-effort and visual-only. A missing box
@@ -463,7 +480,7 @@
                          ActionEffect::Confirmed => format!(
                              "dispatched synthetic DOM click on {ext} in {tab_id}; bounded semantic \
                               readback confirmed a target-state change"
-@@ -1617,6 +1811,9 @@
+@@ -1617,6 +1820,9 @@
                               page state and verify the expected postcondition"
                          ),
                      };
@@ -473,7 +490,7 @@
                      let action_record = dom_click_action_record(&observation);
                      ToolResult::text(text).with_action_record(action_record)
                  }
-@@ -1648,6 +1845,54 @@
+@@ -1648,6 +1854,54 @@
                      "the ref's node left its document before the click's first event",
                  )
                  .to_tool_result(),
@@ -528,7 +545,7 @@
                  DomClickNext::Partial { count, last } => {
                      let text = format!(
                          "sent part of a synthetic DOM click on {ext} in {tab_id}: the ref's node \
-@@ -1655,8 +1900,11 @@
+@@ -1655,8 +1909,11 @@
                           sent; application effect is unverifiable. Refresh page state and \
                           verify the expected postcondition"
                      );
@@ -542,12 +559,10 @@
                  }
                  DomClickNext::Interrupted(reason) => {
                      let text = format!(
-@@ -1876,11 +2124,387 @@
-         "dialog_id": dialog_capability_id(dialog.generation),
-         "resolvable": !dialog.detached,
+@@ -1878,9 +2135,385 @@
      })
-+}
-+
+ }
+ 
 +/// A `{x, y}` argument of finite numbers, `None` when absent.
 +fn point_arg(args: &Value, field: &str) -> Result<Option<(f64, f64)>, ToolResult> {
 +    match args.get(field) {
@@ -717,8 +732,8 @@
 +        box_center,
 +        metrics.as_ref(),
 +    ))
- }
- 
++}
++
  /// Center of the content quad from a `DOM.getBoxModel` result.
  fn quad_center(box_model: &Value) -> Option<(f64, f64)> {
 -    let quad = box_model.get("model")?.get("content")?.as_array()?;
@@ -931,7 +946,7 @@
      if quad.len() < 8 {
          return None;
      }
-@@ -1918,30 +2542,109 @@
+@@ -1918,30 +2551,109 @@
  /// target is also rechecked to still be inside the ref's node, so a descendant
  /// a handler moves elsewhere gets no further events, and the focus candidate is
  /// chosen after that check. It returns `{ complete, stopped, count, last,
@@ -1047,7 +1062,7 @@
      const P = (type, buttons, extra) => send(type, new view.PointerEvent(type, \
          { ...base, buttons, pointerId: 1, pointerType: 'mouse', isPrimary: true, \
            width: 1, height: 1, pressure: buttons ? 0.5 : 0, ...extra })); \
-@@ -1951,19 +2654,33 @@
+@@ -1951,19 +2663,33 @@
          P('pointerover', 0); P('pointerenter', 0, { bubbles: false, cancelable: false }); \
          M('mouseover', 0); M('mouseenter', 0, { bubbles: false, cancelable: false }); \
          P('pointermove', 0); M('mousemove', 0); \
@@ -1083,7 +1098,7 @@
      return { complete: true, stopped: null, count, last, retargeted }; \
  }";
  
-@@ -1985,6 +2702,42 @@
+@@ -1985,6 +2711,42 @@
          .includes((this.type || 'text').toLowerCase()); \
  }";
  
@@ -1126,11 +1141,10 @@
  const FOCUS_EMULATION_READY_CHECK: &str = "function() { \
      const root = this.getRootNode(); \
      const active = ('activeElement' in root) ? root.activeElement : null; \
-@@ -2169,6 +2922,20 @@
-                             with an empty text this clears the field. Replacement goes \
+@@ -2170,6 +2932,20 @@
                              through the selection, so beforeinput/input still fire and \
                              framework state stays consistent."
-+                    },
+                     },
 +                    "filmed_point": {
 +                        "type": "object",
 +                        "description": "Where a filmed pointer is, in viewport CSS px. With \
@@ -1144,10 +1158,11 @@
 +                            "y": { "type": "number" }
 +                        },
 +                        "required": ["x", "y"]
-                     },
++                    },
                  },
                  "required": ["target_id", "tab_id", "ref", "text"],
-@@ -2233,6 +3000,13 @@
+                 "additionalProperties": true
+@@ -2233,6 +3009,13 @@
              ));
          }
          let replace = args.opt_bool("replace").unwrap_or(false);
@@ -1161,11 +1176,10 @@
  
          let _mutation = match self
              .engine
-@@ -2282,6 +3056,135 @@
-         };
+@@ -2283,6 +3066,135 @@
          let conn = &validated.conn;
          let cdp = cdp_session.as_str();
-+
+ 
 +        if let Some((x, y)) = filmed_point {
 +            // One turn of script in the isolated world checks the node and
 +            // inserts. Nothing is focused, scrolled, selected or drawn first,
@@ -1294,10 +1308,11 @@
 +                _ => unknown("a malformed receipt".to_owned()),
 +            };
 +        }
- 
++
          if let Err(_e) = conn
              .call(
-@@ -3380,7 +4283,164 @@
+                 Some(cdp),
+@@ -3380,7 +4292,164 @@
  #[cfg(test)]
  mod tests {
      use super::*;
@@ -1322,7 +1337,7 @@
 +            json!({ "width": 800.0, "height": 600.0, "zoom": 1.25, "scale": 2.0 })
 +        );
 +    }
- 
++
 +    #[test]
 +    fn locate_value_leaves_unread_checks_null_for_the_caller_to_refuse_on() {
 +        let reply = located(
@@ -1335,7 +1350,7 @@
 +        assert!(value["clipped"].is_null() && value["visibility_state"].is_null());
 +        assert!(value["point"].is_null());
 +    }
-+
+ 
 +    #[test]
 +    fn locate_value_reports_clipping_visibility_and_the_asked_point() {
 +        let reply = located(json!({
@@ -1462,7 +1477,7 @@
      fn dialog(generation: u64) -> super::super::cdp_ws::CdpDialogState {
          super::super::cdp_ws::CdpDialogState {
              generation,
-@@ -3405,8 +4465,23 @@
+@@ -3405,8 +4474,23 @@
          } } });
          assert_eq!(
              dom_click_next(Ok(Ok(completed.clone())), || None),
@@ -1529,6 +1544,8 @@
              | "Emulation.setFocusEmulationEnabled"
              | "Input.dispatchMouseEvent"
              | "Input.insertText" => MockReply::ok(json!({})),
+-            "DOM.resolveNode" => MockReply::ok(json!({
+-                "object": { "objectId": format!("obj-{}", call.params["backendNodeId"]) }
 +            "Page.createIsolatedWorld" if st.isolated_world_unavailable => {
 +                MockReply::err(-32601, "'Page.createIsolatedWorld' wasn't found")
 +            }
@@ -1536,8 +1553,7 @@
 +                MockReply::ok(json!({ "executionContextId": ISOLATED_CONTEXT }))
 +            }
 +            // an object belongs to the world it was resolved into
-             "DOM.resolveNode" => MockReply::ok(json!({
--                "object": { "objectId": format!("obj-{}", call.params["backendNodeId"]) }
++            "DOM.resolveNode" => MockReply::ok(json!({
 +                "object": { "objectId": match call.params["executionContextId"].as_i64() {
 +                    Some(context) => format!("iso{context}-obj-{}", call.params["backendNodeId"]),
 +                    None => format!("obj-{}", call.params["backendNodeId"]),
@@ -1617,7 +1633,7 @@
                          function.contains("isConnected") && !function.contains("'pointerdown'")
                      }) =>
              {
-@@ -3404,10 +3488,1019 @@
+@@ -3404,10 +3488,1084 @@
      assert!(!state.dom_click_focused);
      assert_eq!(state.dom_click_generation, 0);
      drop(state);
@@ -1653,6 +1669,71 @@
 +        args[key] = value;
 +    }
 +    BrowserClickTool::new(f.engine.clone()).invoke(args).await
++}
++
++#[tokio::test]
++async fn a_filmed_click_is_admitted_on_a_text_field_and_no_other_click_is() {
++    // A filmed insert focuses nothing, so a filmed take can type only into a
++    // field its pointer has pressed; the click tool refused every ref that does
++    // not declare click, and a text field declares type. Only the filmed click
++    // is admitted: unfilmed, and on a ref that declares neither, as before.
++    let f = fixture_with(|st| st.semantic_large_page = true).await;
++    let (target, tab) = bind(&f).await;
++    let snap = semantic_snapshot(&f, &target, &tab).await;
++    let named = |list: &str, name: &str| {
++        snap[list]
++            .as_array()
++            .unwrap()
++            .iter()
++            .find(|entry| entry["name"] == name)
++            .and_then(|entry| entry["ref"].as_str())
++            .unwrap()
++            .to_string()
++    };
++    let field = named("refs", "Reply body");
++    let content = named("content_refs", "Visible message");
++    let functions_before = recorded_calls(&f, "Runtime.callFunctionOn").len();
++
++    let unfilmed = BrowserClickTool::new(f.engine.clone())
++        .invoke(json!({
++            "target_id": target, "tab_id": tab, "session": SESSION,
++            "ref": field, "input_route": "dom_event"
++        }))
++        .await;
++    assert_eq!(
++        structured(&unfilmed)["refusal"]["code"],
++        "browser_action_unavailable"
++    );
++    assert!(
++        result_text(&unfilmed).contains("does not declare the click action"),
++        "{}",
++        result_text(&unfilmed)
++    );
++
++    let neither = filmed_click(&f, &target, &tab, &content, json!({})).await;
++    assert_eq!(
++        structured(&neither)["refusal"]["code"],
++        "browser_action_unavailable"
++    );
++    assert!(
++        result_text(&neither).contains("does not declare the click action"),
++        "{}",
++        result_text(&neither)
++    );
++    assert_eq!(
++        recorded_calls(&f, "Runtime.callFunctionOn").len(),
++        functions_before,
++        "neither refusal ran anything in the page"
++    );
++
++    let filmed = filmed_click(&f, &target, &tab, &field, json!({})).await;
++    assert_ne!(filmed.is_error, Some(true), "{}", result_text(&filmed));
++    assert!(
++        result_text(&filmed).starts_with("dispatched synthetic DOM click"),
++        "{}",
++        result_text(&filmed)
++    );
++    assert!(filmed.action_record.is_some(), "the click was dispatched");
 +}
 +
 +#[tokio::test]
@@ -1707,9 +1788,9 @@
 +    );
 +    assert!(recorded_calls(&f, "DOM.focus").is_empty());
      assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
-+}
-+
-+#[tokio::test]
+ }
+ 
+ #[tokio::test]
 +async fn an_unfilmed_dom_click_is_sent_as_before() {
 +    let f = fixture().await;
 +    let (target, tab) = bind(&f).await;
@@ -2387,9 +2468,9 @@
 +    );
 +    assert!(!sent_any_event(&f), "a locate sends no event");
 +    assert!(recorded_calls(&f, "DOM.scrollIntoViewIfNeeded").is_empty());
- }
- 
- #[tokio::test]
++}
++
++#[tokio::test]
 +async fn locate_ref_without_a_point_passes_the_page_function_no_arguments() {
 +    let f = fixture().await;
 +    let (target, tab) = bind(&f).await;
@@ -2637,7 +2718,7 @@
  async fn dom_event_click_checks_its_node_is_connected_before_any_event() {
      let f = fixture().await;
      let (target, tab) = bind(&f).await;
-@@ -3560,7 +4653,22 @@
+@@ -3560,9 +4718,24 @@
      );
      assert!(!declaration.contains(".push("), "{declaration}");
      assert!(
@@ -2649,8 +2730,8 @@
 +            "const send = (type, event) => { if (filmed) under(target); else live(); \
 +             const kept = target.dispatchEvent(event); count += 1; last = type; return kept; };"
 +        ) && declaration.matches(".dispatchEvent(").count() == 1,
-+        "{declaration}"
-+    );
+         "{declaration}"
+     );
 +    assert!(
 +        // and the one place focus is given checks the element it is given to,
 +        // which a filmed click focuses only inside the ref's node
@@ -2658,6 +2739,8 @@
 +            "if (filmed && !el.contains(focusable)) unfocused = true; \
 +             else { if (filmed) under(focusable); focusable.focus({ preventScroll: true }); }"
 +        ) && declaration.matches(".focus(").count() == 1,
-         "{declaration}"
-     );
++        "{declaration}"
++    );
      assert!(result_text(&result).contains("dispatched synthetic DOM click"));
+     assert_eq!(f.state.lock().unwrap().dom_click_generation, 1);
+ }

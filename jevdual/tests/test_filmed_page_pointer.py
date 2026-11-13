@@ -84,10 +84,26 @@ def under(point=GO_CENTRE, hit="target", cursor="pointer"):
 REFUSED = {"status": "refused", "refusal": {"code": "browser_ref_stale", "message": "the ref's node is gone"}}
 
 
+def undeclared(name, args):
+    """The action the driver's own guard refuses this call for, or None (cua-driver locate10, tools.rs).
+    A click needs a ref that declares click, and a type one that declares type; a click that carries a
+    filmed point is admitted on a ref that declares type as well, since that press is how a filmed take
+    gives a text field its focus. The first run against a real window found the driver refusing a click
+    this stand-in had always accepted (FP78), so the stand-in has the guard."""
+    actions = next((ref["actions"] for ref in SNAPSHOT["refs"] if ref["ref"] == args.get("ref")), None)
+    if actions is None:
+        return None
+    if name == "browser_click" and "click" not in actions and not ("type" in actions and args.get("filmed_point")):
+        return "click"
+    if name == "browser_type" and "type" not in actions:
+        return "type"
+    return None
+
+
 class Wire:
     """``locates`` is consumed one reply per locate call: a locate block, a whole refusal reply, or an
     exception to raise. A locate asked about a point is answered that the target is there, unless the
-    block says otherwise."""
+    block says otherwise. A click or a type the driver's guard would refuse is refused (``undeclared``)."""
 
     def __init__(self, log: list, locates: list | None = None, action: dict | None = None,
                  action_text: str | None = None, action_error: bool = False) -> None:
@@ -120,6 +136,11 @@ class Wire:
             reply = {"status": "ok", "target_id": args.get("target_id"), "tab_id": args.get("tab_id")}
             if self.action is not None and name in ("browser_click", "browser_type"):
                 reply = self.action
+            if kind := undeclared(name, args):
+                message = f"semantic ref {args['ref']} does not declare the {kind} action"
+                reply = {"status": "refused", "refusal": {"code": "browser_action_unavailable", "message": message}}
+                return SimpleNamespace(structured_json=json.dumps(reply), is_error=False,
+                                       text=f"refused (browser_action_unavailable): {message}")
         text = self.action_text if self.action_text and name in ("browser_click", "browser_type") else "done"
         failed = self.action_error and name in ("browser_click", "browser_type")
         return SimpleNamespace(structured_json=json.dumps(reply), text=text, is_error=failed)
@@ -220,6 +241,49 @@ def test_a_filmed_type_travels_to_the_focused_field_before_typing(take, operatio
     eff = _act(take, operation, "Name", "Ada", locates=[focused(), focused()])
     assert eff.dispatched is not False
     assert take == NAME_STEPS
+
+
+def test_a_filmed_click_presses_a_text_field_so_that_a_filmed_type_can_follow(take):
+    """FP78, FP79: a filmed type focuses nothing, so a take types only into a field its pointer has
+    pressed. Against a real window the driver refused that press: a text field declares typing and not
+    click. The click carries the filmed point, which is what the driver now admits it for."""
+    eff = _act(take, "click", "Name", locates=[at(NAME), at(NAME)])
+    assert eff.dispatched is not False and eff.effect != "refused", eff
+    assert take == [("browser_click", "snap-1:2") if step[0] == "browser_type" else step for step in NAME_STEPS]
+    (sent,) = take.sent
+    assert sent["ref"] == "snap-1:2" and sent["input_route"] == "dom_event"
+    assert sent["filmed_point"] == {"x": NAME_CENTRE[0], "y": NAME_CENTRE[1]}
+
+
+@pytest.mark.parametrize(("name", "args", "refused"), [
+    ("browser_click", {"ref": "snap-1:1"}, None),
+    ("browser_click", {"ref": "snap-1:2"}, "click"),  # a text field, with no filmed point
+    ("browser_click", {"ref": "snap-1:2", "filmed_point": {"x": 1.0, "y": 2.0}}, None),
+    ("browser_type", {"ref": "snap-1:2"}, None),
+    ("browser_type", {"ref": "snap-1:1"}, "type"),  # a button
+    ("browser_type", {"ref": "snap-1:1", "filmed_point": {"x": 1.0, "y": 2.0}}, "type"),
+])
+def test_the_stand_in_refuses_what_the_drivers_guard_refuses(name, args, refused):
+    """FP78: the stand-in accepted any click on any ref, and the composed tests could not see what the
+    first real run found. It now answers as the driver's guard does (the driver's own test:
+    a_filmed_click_is_admitted_on_a_text_field_and_no_other_click_is)."""
+    assert undeclared(name, args) == refused
+    reply = asyncio.run(Wire([]).call_tool(name, json.dumps(args)))
+    said = json.loads(reply.structured_json)
+    if refused:
+        assert said["refusal"]["code"] == "browser_action_unavailable"
+        assert reply.text == (f"refused (browser_action_unavailable): semantic ref {args['ref']} "
+                              f"does not declare the {refused} action")
+    else:
+        assert said["status"] == "ok"
+
+
+def test_a_click_on_a_text_field_outside_a_filmed_take_is_still_the_drivers_to_refuse(take):
+    """FP79: only the filmed click is admitted. An unfilmed session types into a field without
+    pressing it, and its click on one is refused by the driver as it always was."""
+    eff = _act(take, "click", "Name", filmed=False)
+    assert "does not declare the click action" in eff.summary, eff
+    assert eff.effect in ("refused", "unverifiable") and "filmed_point" not in take.sent[0]
 
 
 def test_an_empty_field_that_is_active_in_a_page_without_the_keyboard_is_typed_into(take):

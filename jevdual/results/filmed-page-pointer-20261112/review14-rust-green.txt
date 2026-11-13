@@ -1,0 +1,8 @@
+test script_tool::tests::dropping_the_request_cancels_the_script ... ok
+test perception_client::tests::timeout_crash_oversized_frame_and_cancellation_are_distinct ... ok
+test tool::runtime_isolation_tests::rejected_typed_resource_does_not_refresh_manifest_idle_lease ... ok
+test browser::prepare::tests::timed_out_consent_drains_before_pending_claim_is_dropped ... ok
+test browser::prepare::tests::started_consent_settles_success_refusal_and_timeout_for_both_claim_results ... ok
+
+test result: ok. 1275 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.52s
+
