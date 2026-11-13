@@ -9,7 +9,8 @@ does not list cases: it builds every cell of
     boundary     before the first event, after each event the sequence sends, and after the focus
   x disturbance  what a page listener does there (``DISTURBANCES``)
   x start        the pointer is on the control itself, or on a child of it
-  x press        ordinary, or a ``pointerdown`` the page cancels (no mouse events follow)
+  x press        ordinary, a ``pointerdown`` the page cancels (no mouse events follow), or a
+                 ``mousedown`` it cancels (no focus follows)
   x focusable    where the nearest focusable element of what is pressed is (``FOCUSABLE``)
 
 and makes three assertions in each, on the click sequence taken from the pinned driver archive and run
@@ -71,6 +72,8 @@ DISTURBANCES = {
     "pointer_lock": {"lock": True},
 }
 STARTS = ("target", "icon")
+#: the event whose default the page prevents, if any
+PRESSES = (None, "pointerdown", "mousedown")
 #: where the nearest focusable element of the pressed one is: the pressed element itself, the control
 #: (the ref's node), a container of the control that the ref does not name, or nowhere
 FOCUSABLE = ("node", "self", "outside", "none")
@@ -121,7 +124,7 @@ const run = (source, spec) => {
         sent.push({ type: event.type, to: name, under: spec.filmed ? underPointer(el) : null,
                     at: [event.clientX, event.clientY] });
         if (spec.at === dispatched) change();
-        return !(spec.cancel && event.type === 'pointerdown');
+        return event.type !== spec.cancel;
       },
       // the nearest focusable element of this one, wherever this cell puts it
       closest: () => ({ node, self: el, outside: outer, none: null })[spec.focusable],
@@ -194,8 +197,10 @@ class _Detached(Exception):
     pass
 
 
-def oracle(start: str, at, then: dict, cancel: bool, focusable: str = "node") -> tuple[dict, list[tuple[str, str]]]:
-    """The receipt and the (event, receiver) list of a filmed click on the stand-in page."""
+def oracle(start: str, at, then: dict, cancel: str | None, focusable: str = "node") -> tuple[dict, list[tuple[str, str]]]:
+    """The receipt and the (event, receiver) list of a filmed click on the stand-in page. ``cancel``
+    names the event whose default the page prevents: ``pointerdown`` (no mouse events follow, and so no
+    focus), ``mousedown`` (no focus follows), or neither."""
     page = {"rect": RECT, "hit": start, "connected": True, "cursor": "pointer", "lock": False, "gone": []}
     sent: list[tuple[str, str]] = []
     told = {"count": 0, "last": "", "hidden": False, "unfocused": False}
@@ -244,8 +249,9 @@ def oracle(start: str, at, then: dict, cancel: bool, focusable: str = "node") ->
             send(event, first)  # one hit test for the six, as one move of a pointer gives
         down = under("target")  # a fresh hit at the press
         send("pointerdown", down)
-        if not cancel:
+        if cancel != "pointerdown":
             send("mousedown", down)  # the pair is not split
+        if cancel is None:
             under(down)
             # the focus goes where a press gives it only when that is the node or inside it, and under
             # the same check; a container of the node gets nothing, and the receipt says so
@@ -259,7 +265,7 @@ def oracle(start: str, at, then: dict, cancel: bool, focusable: str = "node") ->
                     page.update(then)
         up = under("target")  # a fresh hit at the release
         send("pointerup", up)
-        if not cancel:
+        if cancel != "pointerdown":
             send("mouseup", up)
         # the nearest ancestor holding both; the control itself when the pressed child has left it
         send("click", down if down == up and holds("target", down) else "target")
@@ -273,13 +279,15 @@ def oracle(start: str, at, then: dict, cancel: bool, focusable: str = "node") ->
 
 def _cells() -> list[dict]:
     cells = []
-    for start, cancel in itertools.product(STARTS, (False, True)):
-        events = 9 if cancel else 11
+    for start, cancel in itertools.product(STARTS, PRESSES):
+        events = 9 if cancel == "pointerdown" else 11
         boundaries = [*range(events + 1), *([] if cancel else ["focus"])]
         for at, (name, then) in itertools.product(boundaries, DISTURBANCES.items()):
             if name == "child_removed" and start != "icon":
                 continue  # there is no receiving child to remove
-            for focusable in (("node",) if cancel else FOCUSABLE):  # a cancelled press gives no focus
+            # without mouse events there is nothing about the focus to vary; with a mousedown the page
+            # cancels there is: no focus is given wherever the focusable element is
+            for focusable in (("node",) if cancel == "pointerdown" else FOCUSABLE):
                 cells.append({"start": start, "cancel": cancel, "at": at, "name": name, "then": then, "point": POINT,
                               "focusable": focusable})
     return cells
@@ -296,7 +304,8 @@ def matrix(sources) -> list[dict]:
     runs = json.loads(done.stdout)
     for i, cell in enumerate(cells):
         cell["filmed"], cell["unfilmed"], cell["before"] = runs[3 * i:3 * i + 3]
-        cell["id"] = (f"{cell['start']}{'/cancelled' if cell['cancel'] else ''} {cell['name']} at {cell['at']}"
+        cell["id"] = (f"{cell['start']}{'/' + cell['cancel'] + ' cancelled' if cell['cancel'] else ''} "
+                      f"{cell['name']} at {cell['at']}"
                       + (f", focusable {cell['focusable']}" if cell["focusable"] != "node" else ""))
     return cells
 
@@ -307,11 +316,15 @@ def _pairs(run: dict) -> list[tuple[str, str]]:
 
 def test_the_matrix_covers_every_boundary_and_every_disturbance(matrix):
     pressed, cancelled = 2 * 13 * len(DISTURBANCES) - 13, 2 * 10 * len(DISTURBANCES) - 10  # child_removed needs a child
-    assert len(matrix) == len(FOCUSABLE) * pressed + cancelled == 1178
+    unfocusing = 2 * 12 * len(DISTURBANCES) - 12  # a cancelled mousedown: eleven events and no focus boundary
+    assert len(matrix) == len(FOCUSABLE) * (pressed + unfocusing) + cancelled == 2090
+    assert Counter(cell["cancel"] for cell in matrix) == {None: 4 * pressed, "pointerdown": cancelled,
+                                                          "mousedown": 4 * unfocusing}
     assert {cell["at"] for cell in matrix} == {*range(12), "focus"}
     assert {cell["name"] for cell in matrix} == set(DISTURBANCES)
-    assert Counter(cell["focusable"] for cell in matrix) == {"node": pressed + cancelled, "self": pressed,
-                                                             "outside": pressed, "none": pressed}
+    assert Counter(cell["focusable"] for cell in matrix) == {
+        "node": pressed + unfocusing + cancelled, "self": pressed + unfocusing, "outside": pressed + unfocusing,
+        "none": pressed + unfocusing}
 
 
 def test_every_cell_is_what_the_rule_gives(matrix):
@@ -340,6 +353,16 @@ def test_the_focus_goes_only_to_an_element_of_the_node(matrix):
     focused = [(cell, e) for cell in matrix for e in cell["filmed"]["sent"] if e["type"] == "focus()"]
     assert focused and all(e["to"] in inside and e["under"] is True for _, e in focused)
     assert {cell["focusable"] for cell, _ in focused} == {"node", "self"}
+    # Sol round 10: a press whose mousedown the page cancels gives no focus, as one whose pointerdown it
+    # cancels gives none, wherever the focusable element is; and neither says it withheld one, because
+    # a pointer would have given none either
+    assert {cell["cancel"] for cell, _ in focused} == {None}
+    unfocusing = [cell for cell in matrix if cell["cancel"] == "mousedown"]
+    assert {cell["focusable"] for cell in unfocusing} == set(FOCUSABLE)
+    whole = [cell for cell in unfocusing if cell["filmed"]["receipt"]["complete"]]
+    assert whole and all(len(cell["filmed"]["sent"]) == 11 and cell["filmed"]["receipt"]["unfocused"] is False
+                         for cell in whole)
+    assert all("mousedown" in [e["type"] for e in cell["filmed"]["sent"]] for cell in whole)
     # which element: the control, or the element that was pressed, as the cell says
     assert all(e["to"] == "target" for cell, e in focused if cell["focusable"] == "node")
     for cell, e in ((c, e) for c, e in focused if c["focusable"] == "self"):
@@ -353,8 +376,10 @@ def test_the_focus_goes_only_to_an_element_of_the_node(matrix):
         else:
             assert "unfocused" not in receipt, cell["id"]
     # and without a point the same cells do focus the container: the difference is the point's
-    outside = [cell for cell in matrix if cell["focusable"] == "outside"]
+    outside = [cell for cell in matrix if cell["focusable"] == "outside" and cell["cancel"] is None]
     assert sum(("focus()", "outer") in _pairs(cell["unfilmed"]) for cell in outside) > len(outside) // 2
+    # (and gives none where the page cancelled the mousedown, as before the step)
+    assert not any(e["type"] == "focus()" for cell in matrix if cell["cancel"] for e in cell["unfilmed"]["sent"])
     assert not any("unfocused" in cell["unfilmed"]["receipt"] for cell in matrix)
 
 
@@ -392,7 +417,7 @@ def test_the_matrix_reaches_every_outcome_at_every_boundary(matrix):
     assert hidden[True] and hidden[False]
 
 
-def _cell(matrix, start, name, at, cancel=False, focusable="node") -> dict:
+def _cell(matrix, start, name, at, cancel=None, focusable="node") -> dict:
     return next(c for c in matrix if (c["start"], c["name"], c["at"], c["cancel"], c["focusable"])
                 == (start, name, at, cancel, focusable))
 
@@ -476,8 +501,66 @@ FUNCTIONS = [("pinned", CLICK_READS, CLICK_ACTS), ("DOM_FILMED_INSERT", INSERT_R
              ("DOM_CLICK_READBACK", READBACK_READS, {})]
 
 
+#: names of methods and functions that act on a page or run other code. However one is reached (called,
+#: called through a parenthesised or quoted member, taken as a value and called later), its name has
+#: to be in the text, so each function may contain each name only as many times as it is accounted for
+#: in ``NAMED``; any other occurrence fails.
+ACTING = frozenset({
+    "dispatchEvent", "focus", "blur", "click", "select", "submit", "reset", "requestSubmit", "remove",
+    "removeChild", "appendChild", "append", "prepend", "insertBefore", "replaceChild", "replaceWith",
+    "replaceChildren", "insertAdjacentHTML", "insertAdjacentElement", "insertAdjacentText", "setAttribute",
+    "removeAttribute", "toggleAttribute", "scrollIntoView", "scrollIntoViewIfNeeded", "scrollTo", "scrollBy",
+    "scroll", "setSelectionRange", "setRangeText", "execCommand", "showModal", "showPicker", "show", "close",
+    "open", "write", "writeln", "assign", "reload", "pushState", "replaceState", "postMessage", "setProperty",
+    "removeProperty", "defineProperty", "defineProperties", "setPrototypeOf", "call", "apply", "bind",
+    "Reflect", "eval", "Function", "setTimeout", "setInterval", "requestAnimationFrame", "queueMicrotask",
+    "fetch", "XMLHttpRequest", "sendBeacon", "attachShadow", "adoptNode", "importNode", "cloneNode",
+    "createElement", "createRange", "getSelection", "removeAllRanges", "addRange", "collapse", "extend",
+    "selectNodeContents", "deleteContents", "insertNode", "normalize", "requestPointerLock", "exitPointerLock",
+    "requestFullscreen", "setPointerCapture", "releasePointerCapture", "animate", "play", "pause", "load",
+    "innerHTML", "outerHTML",
+})
+#: every occurrence of an acting name in each function's text, and what it is
+NAMED = {
+    "pinned": {"dispatchEvent": 1,  # the one dispatch
+               "focus": 2,  # ``typeof focusable.focus === 'function'`` and the one focus
+               "click": 1,  # the event's type, a string
+               "select": 1},  # in the selector of focusable elements, a string
+    "DOM_FILMED_INSERT": {"execCommand": 1,  # the one insertion
+                          "reset": 1, "submit": 1},  # input types that are not editable, strings
+    "DOM_NODE_LOCATE": {"focus": 1},  # the key of the block's own report of the document's focus
+    "DOM_NODE_CONNECTED_CHECK": {},
+    "DOM_CLICK_READBACK": {},
+}
+
+
 def _calls(text: str) -> Counter:
     return Counter(re.findall(r"\.\s*([A-Za-z_$][\w$]*)\s*\(", text))
+
+
+def _audit(text: str, reads: set, acts: dict, named: dict) -> list[str]:
+    """What is wrong with a function's text, if anything. It is a check of the text and not a parser:
+    it finds a method call written as one, any occurrence at all of the name of a method that acts, a
+    property assignment, and the call forms that hide a name (a computed member, a parenthesised
+    callee, an optional call, a template). It does not follow values."""
+    wrong = []
+    calls = _calls(text)
+    if set(calls) != reads | set(acts):
+        wrong.append(f"calls not classified: {sorted(set(calls) ^ (reads | set(acts)))}")
+    for method, statement in acts.items():
+        if calls[method] != 1 or statement not in text:
+            wrong.append(f"{method} is not made once in the statement that checks its receiver")
+    names = Counter(re.findall(r"[A-Za-z_$][\w$]*", text))
+    for name in sorted(ACTING):
+        if names[name] != named.get(name, 0):
+            wrong.append(f"{name} occurs {names[name]} times, accounted for {named.get(name, 0)}")
+    if re.search(r"\.\s*[A-Za-z_$][\w$]*\s*(?:[-+*/|&]?=)(?![=>])", text):
+        wrong.append("a property is assigned")
+    for form, what in ((r"\]\s*\(", "a computed member is called"), (r"\)\s*\(", "a parenthesised callee is called"),
+                       (r"\?\.\s*\(", "an optional call"), (r"`", "a template")):
+        if re.search(form, text):
+            wrong.append(what)
+    return wrong
 
 
 @pytest.mark.parametrize(("name", "reads", "acts"), FUNCTIONS, ids=[name for name, _, _ in FUNCTIONS])
@@ -485,14 +568,10 @@ def test_every_call_the_functions_make_is_a_read_or_a_checked_act(sources, name,
     """Sol round 9: the events were checked in the one function that sends them and the focus was a
     second path beside it. This reads the function instead of trusting a list of what it does: every
     method call in its text is one named above, each acting call is made once, in the statement that
-    checks its receiver, and nothing is done to the page by assignment or by a computed call."""
+    checks its receiver, the name of a method that acts occurs nowhere else, and nothing is done to
+    the page by assignment or by a call form that hides what is called."""
     text = sources[name]
-    calls = _calls(text)
-    assert set(calls) == reads | set(acts), sorted(set(calls) ^ (reads | set(acts)))
-    for method, statement in acts.items():
-        assert calls[method] == 1 and statement in text, method
-    assert not re.search(r"\.\s*[A-Za-z_$][\w$]*\s*(?:[-+*/|&]?=)(?![=>])", text), "a property is assigned"
-    assert "](" not in text and "eval" not in text and "Function(" not in text
+    assert _audit(text, reads, acts, NAMED[name]) == []
     # the insert makes all its checks before its one act
     if name == "DOM_FILMED_INSERT":
         act = text.index("doc.execCommand(")
@@ -500,17 +579,47 @@ def test_every_call_the_functions_make_is_a_read_or_a_checked_act(sources, name,
         assert len(refusals) == 5 and all(at < act for at in refusals)
 
 
+@pytest.mark.parametrize("added", [
+    "(el.parentElement.focus)();",  # Sol round 10: a parenthesised member passes a count of ``.focus(``
+    "el.parentElement['focus'] ();",  # Sol round 10: a quoted name, and a space before the call
+    "el.parentElement?.focus?.();",
+    "const give = el.parentElement.focus; give.call(el.parentElement);",
+    "Reflect.apply(el.focus, el.parentElement, []);",
+    "el.parentElement.blur();",
+    "el.parentElement.click();",
+    "el.parentElement.dispatchEvent(new view.MouseEvent('click', base));",
+    "el.parentElement[`fo${'cus'}`]();",
+    "el.parentElement.tabIndex = 0;",
+    "view.setTimeout(() => {}, 0);",
+])
+def test_the_audit_fails_on_an_act_added_any_of_these_ways(sources, added):
+    """The audit is only worth what it catches. Each line here does something to the page from inside
+    the click sequence without the check; the pinned text passes and the text with the line fails."""
+    text = sources["pinned"]
+    assert _audit(text, CLICK_READS, CLICK_ACTS, NAMED["pinned"]) == []
+    at = text.index("const DETACHED = {}, LEFT = {};")
+    assert _audit(text[:at] + added + " " + text[at:], CLICK_READS, CLICK_ACTS, NAMED["pinned"]) != []
+
+
 def test_these_are_the_functions_a_filmed_action_runs(sources):
-    """The audit above is of five functions by name. A filmed click or insert that ran a sixth would run
-    it unaudited, so the driver's source is read for every function text it defines, and each is
-    either audited here or named as one a filmed action does not reach (the driver's own test holds a
-    filmed click to the isolated world and to no scroll, focus or input call; a filmed type with
-    replacement or keystrokes is refused before anything runs)."""
+    """The audit above is of five functions by name. This reads tools.rs for every function text it
+    declares and requires each to be audited here or named as one the filmed routes do not pass, and
+    every function the file passes to the page to be one of those constants (or the one variable that
+    carries the locate read and the connected check).
+
+    What this does not establish: that nothing else in the driver sends script to the page during a
+    filmed action. Other modules do send script (the binding's and the snapshot's probes, dialog
+    handling, the cursor overlay, downloads), and whether a filmed click reaches them is the driver's
+    own mock-CDP test's subject (``filmed_click_runs_wholly_in_the_isolated_world_and_scrolls_nothing``
+    holds every function call of a filmed click to isolated-world objects), not this test's."""
     defined = set(re.findall(r'const (\w+): &str = r?#?"function', sources["rust"]))
     audited = {"DOM_EVENT_CLICK_SEQUENCE" if name == "pinned" else name for name, _, _ in FUNCTIONS}
     unfilmed_only = {"EDITABLE_AND_FOCUSED_CHECK", "FOCUS_EMULATION_READY_CHECK", "SELECT_ALL_IN_ELEMENT",
                      "SELECT_NATIVE_OPTION"}
     assert defined == audited | unfilmed_only, sorted(defined ^ (audited | unfilmed_only))
+    passed = set(re.findall(r'"functionDeclaration":\s*(\w+)', sources["rust"]))
+    assert passed == (defined - {"DOM_NODE_LOCATE"}) | {"declaration"}, sorted(passed)
+    assert "Runtime.evaluate" not in sources["rust"]
     rust = sources["rust"]
     # the filmed insert returns from its own branch before the unfilmed route's focus, selection and
     # focus emulation; and filmed_point is refused with any mode that would need them

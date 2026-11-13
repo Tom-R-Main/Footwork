@@ -1,0 +1,39 @@
+{
+ "predictions": {
+  "FP63": "held"
+ },
+ "open": [
+  "FP62 (the live probe, revising FP54; needs a granted screen window)"
+ ],
+ "driver": "unchanged: the pinned archive is locate9 as pushed at 1ba3a94 (ff12d6a7ac5cc4056e6d7a3f689fbb89e9f7fbceb9ec750186155b609ef19817)",
+ "what_changed": {
+  "scripts/probe_filmed_page_pointer.py": [
+   "the timer orders posted records by the page's numbers and never by timestamps; a record is bounded below by records numbered up to it and above by records numbered from it",
+   "a page time is taken to be within a grain of 1 ms of the true reading: the time from a record to its answer is the reported difference plus the grain; the common bounds are loosened a grain each side",
+   "the page measures the step of its own clock at load and reports it; the run does not hold unless it is within the grain",
+   "an unposted pointer event is bounded below only by records whose timestamps are more than two grains earlier",
+   "the fence is the cutoff for numbering: whole from one through the fence, each once; a number missing after it is reported; an action record received after it still fails the run"
+  ],
+  "tests/test_filmed_click_invariant.py": [
+   "the press has a third value, a mousedown the page cancels: 2090 cells",
+   "the call audit is a function that also counts every occurrence of the name of a method that acts and refuses computed, parenthesised and optional calls and templates; eleven lines that act without the check, among them the tenth review's two, each make it fail",
+   "the list of functions also requires every function the file passes to the page to be one of the declared constants, and says what it does not establish"
+  ],
+  "vendor/cua-driver/PROVENANCE.md": "the audit described as a check of the text; the two selection arrangements that were run named as those two"
+ },
+ "footwork": {
+  "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_probe_filmed_page_pointer.py tests/test_filmed_session.py tests/test_locate_page_function.py tests/test_filmed_delivery_functions.py tests/test_browser_session_holder.py tests/test_filmed_click_invariant.py tests/test_filmed_outcome_reporting.py",
+  "red": {
+   "tree": "1ba3a94 with tests/test_probe_filmed_page_pointer.py and tests/test_filmed_click_invariant.py of this change copied in",
+   "log": "review10-python-red.txt",
+   "outcome": "14 failed, 664 passed. Of 22 tests added, 7 fail: the reviewer's two records with one timestamp; an answer that reads a grain early; an action record without a number; a clock step coarser than the grain, absent or zero (3); common bounds that cross by less than the grain. The test of a record bounded by one with the same timestamp is replaced by one that distinguishes which was numbered first, and fails. 15 pass before by design: the eleven lines the audit must fail on (the audit is new and the driver is not changed), the action after the fence (it failed the run before too), and the three cases that hold. 6 existing tests fail, changed with the grain or the cutoff. All cells with a cancelled mousedown pass before: the pinned sequence was already right, as the review said and FP63 predicted."
+  },
+  "green": {
+   "focused": "678 passed (742 with the pin, chain and seam tests)",
+   "offline_suite": "PYTHONPATH=python .venv/bin/python -m pytest -q -m \"not browser\" -p no:cacheprovider --ignore=tests/live: 4128 passed, 52 skipped, 61 deselected",
+   "lint": ".venv/bin/ruff check python scripts tests: clean"
+  }
+ },
+ "matrix": "review10-invariant-matrix.md (2090 cells; with a cancelled mousedown no cell gives a focus or says unfocused)",
+ "not_run": "the live probe; no headless run was needed, since no function sent to the page changed"
+}

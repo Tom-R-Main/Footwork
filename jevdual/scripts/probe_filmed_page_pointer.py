@@ -59,8 +59,12 @@ Three things make that reading sound, and the run does not hold without them (FP
 - the page's clock and the probe's are two clocks, so a page record has no exact time in the probe's.
   It has an interval. The probe received the record at a time of its own, R, so the record was made
   before R; and the page reports, by its own clock, how long after making the record it had the answer,
-  d, so the record was made after R - d. Records made earlier by the page's clock bound it below too,
-  and later ones above (``_timer``). Nothing here assumes the two clocks keep a constant difference.
+  d, so the record was made after R - d. The page's clock is coarsened by the browser, so d is taken a
+  grain (1 ms) longer than reported, and the page measures and reports the step of its clock, which
+  must be within the grain. Records the page numbered earlier bound a record below too, and ones it
+  numbered later above (``_timer``): by their numbers, which are an order with no ties, and never by
+  comparing timestamps, since two records with one timestamp were not made at one moment. Nothing here
+  assumes the two clocks keep a constant difference.
   A record of something done to the page must be placed within 20 ms this way, and everything read
   against it uses the whole interval: the samples must hold from 250 ms before its earliest moment to
   250 ms after its latest. As a check on the run, the difference between the clocks is also bounded
@@ -75,8 +79,11 @@ Three things make that reading sound, and the run does not hold without them (FP
   probe's server answers the page's next post with a request for a fence; the page makes its fence
   record only on reading that answer, so the fence was made after the interval closed whatever the
   clocks say, and every record the page made before it has a lower number. The probe waits for the
-  fence before it closes Chrome. The run is accounted for through the fence; what the page did after
-  it, if anything, is outside the measurement and the verdict claims nothing about it.
+  fence before it closes Chrome. The run is accounted for through the fence, and the fence is the
+  cutoff for what must be whole: a number missing after it is reported and does not fail the run, and
+  the verdict claims nothing about what the page did then. One thing is stricter than the cutoff
+  requires: a record of something done to the page that arrives after the fence still fails the run,
+  because nothing should be acting on the page by then.
 
 What the samples cannot show: where the pointer was between two of them. They are about 5 ms apart and
 at most 50; an excursion off a control and back inside one gap is not excluded by this probe.
@@ -178,6 +185,10 @@ SAMPLE_EVERY_S = 0.005
 #: the two bounds on the difference between the probe's clock and the page's must agree this closely
 #: for a page time to be read against the pointer samples (FP46)
 MAX_CLOCK_WIDTH_S = 0.02
+#: how far a time the page reports is taken to be from the true reading of its clock. Chrome coarsens
+#: performance.now() to 0.1 ms (0.005 ms in an isolated context); the page measures the step of its
+#: own clock when it loads and the run does not hold unless that is within this.
+PAGE_CLOCK_GRAIN_S = 0.001
 #: how long the probe waits for the page's fence record once it has asked for it
 FENCE_WAIT_S = 6.0
 #: the page's records of something done to it; each must fall in one tried step's interval
@@ -294,9 +305,21 @@ document.getElementById('note').addEventListener('input', (e) => {
     rect: box(b), ...state()});
 });
 window.addEventListener('scroll', () => post('scrolled', {y: window.scrollY}), {passive: true});
+// the smallest step this page's clock takes, in seconds: the times above are no finer than this
+const clockStep = () => {
+  let least = Infinity;
+  for (let i = 0; i < 50; i++) {
+    const from = performance.now();
+    let to = from;
+    while (to === from) to = performance.now();
+    least = Math.min(least, to - from);
+  }
+  return least / 1000;
+};
 window.addEventListener('load', () => {
   const r = forged.getBoundingClientRect();
   post('loaded', {dpr: window.devicePixelRatio, viewport: [window.innerWidth, window.innerHeight],
+    clock_step_s: clockStep(),
     page_says_at_forged: label(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)),
     browser_says_at_forged: label(nativeHit.call(document, r.left + r.width / 2, r.top + r.height / 2))});
 });
@@ -384,9 +407,11 @@ def _clock(received: list[dict]) -> dict:
     ``t + offset <= received <= r + offset``, so every record bounds the offset above by
     ``received - t`` and every answered one bounds it below by ``received - r``. The page reports its
     answers in its ``beat`` records. ``held`` needs both bounds, not crossed (crossed bounds mean one of
-    the clocks was changed during the run), and within ``MAX_CLOCK_WIDTH_S`` of each other. This is a
-    check on the run and assumes one constant difference; no record's time is taken from it
-    (``_timer``). ``offset_s`` is the midpoint, for the reader."""
+    the clocks was changed during the run), and within ``MAX_CLOCK_WIDTH_S`` of each other. Each
+    bound is loosened by ``PAGE_CLOCK_GRAIN_S``, since the page's times are that imprecise, so bounds
+    do not cross for that reason alone. This is a check on the run and assumes one constant
+    difference; no record's time is taken from it (``_timer``). ``offset_s`` is the midpoint, for the
+    reader."""
     made = {e["n"]: e for e in received if isinstance(e.get("n"), int)}
     highs, lows = [], []
     for e in received:
@@ -404,7 +429,7 @@ def _clock(received: list[dict]) -> dict:
     if not highs or not lows:
         return {"held": False, "why": "the page's posts do not bound the clocks on both sides",
                 "posts": len(highs), "answers": len(lows)}
-    low, high = max(lows), min(highs)
+    low, high = max(lows) - PAGE_CLOCK_GRAIN_S, min(highs) + PAGE_CLOCK_GRAIN_S
     width = high - low
     why = ("the bounds cross: a clock changed during the run" if width < -1e-6
            else f"the bounds are {width * 1000:.1f} ms apart" if width > MAX_CLOCK_WIDTH_S else None)
@@ -414,17 +439,28 @@ def _clock(received: list[dict]) -> dict:
 
 
 def _timer(received: list[dict]):
-    """``bounds(page_t)``: the earliest and the latest probe time at which something that happened at
-    page time ``page_t`` can have happened, from the page's posts alone.
+    """``placed(record)`` and ``after(page_t)``: when, in the probe's clock, a page record was made, and
+    the earliest that something at a page time can have happened, from the page's posts alone.
 
-    A record made at page time ``t`` was received at probe time ``R``, so it was made before ``R``.
-    If the page had its answer at page time ``r``, then ``r - t`` of page time passed between making
-    it and a moment after the probe received it, so it was made after ``R - (r - t)``. The page's
-    clock does not run backwards (one load, ``performance.now``), so anything at ``page_t`` is no
-    earlier than every record made at or before ``page_t`` and no later than every record made at or
-    after it. That gives the bounds, with no difference between the two clocks assumed constant: only
-    that both run at the same rate over the few milliseconds a post takes to be answered. Either bound
-    is infinite when no record gives it."""
+    A record made at page time ``t`` was received at probe time ``R``, so it was made before ``R``. If
+    the page had its answer at page time ``r``, then at most ``r - t`` of page time passed between
+    making it and a moment after the probe received it, so it was made after ``R - (r - t)``. The
+    page's times are coarse, each within ``PAGE_CLOCK_GRAIN_S`` of the true reading, so that elapsed
+    time is taken a grain longer than reported.
+
+    The page numbers its records in the order it makes them, and that order has no ties. So a record
+    is no earlier than any record numbered before it, and no later than any numbered after it:
+    ``placed`` takes the latest lower bound among the records up to its number and the earliest
+    receipt among those from its number on. Timestamps are not compared for this: two records with
+    one timestamp were made at two moments, and which was first is their numbers. A record without a
+    number has only the receipt of its own post above it and nothing below.
+
+    A page event that was not posted (the last trusted pointer event) has a timestamp and no number.
+    ``after`` bounds it below by the records whose timestamps are earlier than its own by more than
+    two grains, which were therefore made before it.
+
+    No difference between the two clocks is assumed constant: only that both run at the same rate over
+    the few milliseconds a post takes to be answered. A bound is infinite when no record gives it."""
     answered: dict[int, float] = {}
     for e in received:
         answers = (e.get("detail") or {}).get("acks") if e.get("type") == "beat" else None
@@ -434,25 +470,44 @@ def _timer(received: list[dict]):
                 answered.setdefault(int(n), float(at))
             except (TypeError, ValueError):
                 pass
-    rows = []
-    for e in received:
+
+    def own(e) -> tuple[float, float, float] | None:
+        """(page time, earliest, latest) by the record's own post."""
         try:
             t, got = float(e["t"]), float(e["received"])
         except (KeyError, TypeError, ValueError):
-            continue
-        took = answered.get(e.get("n")) if isinstance(e.get("n"), int) else None
-        took = took - t if took is not None else None
-        rows.append((t, got - took if took is not None and took >= 0 else -math.inf, got))
-    rows.sort()
-    times = [row[0] for row in rows]
-    earliest = list(itertools.accumulate((row[1] for row in rows), max))
-    latest = list(itertools.accumulate((row[2] for row in reversed(rows)), min))[::-1]
+            return None
+        n = e.get("n")
+        took = answered[n] - t if isinstance(n, int) and not isinstance(n, bool) and n in answered else None
+        if took is None or took < -PAGE_CLOCK_GRAIN_S:
+            return t, -math.inf, got
+        return t, got - (max(took, 0.0) + PAGE_CLOCK_GRAIN_S), got
 
-    def bounds(page_t: float) -> tuple[float, float]:
-        before, after = bisect.bisect_right(times, page_t), bisect.bisect_left(times, page_t)
-        return (earliest[before - 1] if before else -math.inf, latest[after] if after < len(rows) else math.inf)
+    rows = [(e, bound) for e in received if (bound := own(e)) is not None]
+    numbered = sorted(((e["n"], bound) for e, bound in rows
+                       if isinstance(e.get("n"), int) and not isinstance(e.get("n"), bool)), key=lambda row: row[0])
+    numbers = [n for n, _ in numbered]
+    earliest = list(itertools.accumulate((bound[1] for _, bound in numbered), max))
+    latest = list(itertools.accumulate((bound[2] for _, bound in reversed(numbered)), min))[::-1]
+    by_time = sorted((bound[0], bound[1]) for _, bound in rows)
+    times = [t for t, _ in by_time]
+    earliest_by_time = list(itertools.accumulate((low for _, low in by_time), max))
 
-    return bounds
+    def placed(e) -> tuple[float, float]:
+        bound = own(e)
+        if bound is None:
+            return -math.inf, math.inf
+        n = e.get("n")
+        if not isinstance(n, int) or isinstance(n, bool):
+            return bound[1], bound[2]
+        upto, since = bisect.bisect_right(numbers, n), bisect.bisect_left(numbers, n)
+        return earliest[upto - 1], latest[since]
+
+    def after(page_t: float) -> float:
+        before = bisect.bisect_right(times, page_t - 2 * PAGE_CLOCK_GRAIN_S)
+        return earliest_by_time[before - 1] if before else -math.inf
+
+    return placed, after
 
 
 def _rect(value) -> list[float] | None:
@@ -500,14 +555,20 @@ def analyze(out: Path) -> dict:
     received = _jsonl(out / "page-events.jsonl")
     clock = _clock(received)
     numbers = [e.get("n") for e in received]
-    numbered = (bool(numbers) and all(isinstance(n, int) for n in numbers)
-                and sorted(numbers) == list(range(1, len(numbers) + 1)))
+    whole = [n for n in numbers if isinstance(n, int) and not isinstance(n, bool)]
+    # the fence is the cutoff for what must be whole: every number from one through the fence's (through
+    # the last, when there is no fence), each once, and no record without a number anywhere
+    fence = next((e for e in received if e.get("type") == "fence"), None)
+    through = fence["n"] if fence is not None and isinstance(fence.get("n"), int) else max(whole, default=0)
+    numbered = (bool(numbers) and len(whole) == len(numbers) and len(set(whole)) == len(whole)
+                and set(range(1, through + 1)) <= set(whole))
+    missing_after = sorted(set(range(through + 1, max(whole, default=0) + 1)) - set(whole))
     # each record with the interval of the probe's clock it was made in; "t" is the latest moment
-    bounds = _timer(received)
+    placed, after = _timer(received)
     events = []
     for e in received:
         if isinstance(e.get("t"), (int, float)):
-            earliest, latest = bounds(e["t"])
+            earliest, latest = placed(e)
             events.append(e | {"page_t": e["t"], "t_lo": earliest, "t": latest})
     # in the order the page made them
     events.sort(key=lambda e: (not isinstance(e.get("n"), int), e.get("n") if isinstance(e.get("n"), int) else 0))
@@ -584,11 +645,10 @@ def analyze(out: Path) -> dict:
         if record is not None:
             pointer = record.get("last_trusted_pointer") or {}
             v["pointer_target"] = pointer.get("target")
-            # the pointer event is not a post: it is bounded by the posts made around it, and it came
-            # before the record by the page's own clock
+            # the pointer event is not a post: it is bounded below by the records made clearly before
+            # it. The record carries it, so it came before the record.
             try:
-                v["pointer_during_step"] = bool(window[0] <= bounds(float(pointer["t"]))[0]
-                                                and float(pointer["t"]) <= record["page_t"])
+                v["pointer_during_step"] = bool(window[0] <= after(float(pointer["t"])))
             except (KeyError, TypeError, ValueError):
                 v["pointer_during_step"] = False
             try:
@@ -663,18 +723,25 @@ def analyze(out: Path) -> dict:
                                 f"{MAX_CLOCK_WIDTH_S * 1000:.0f} ms by their own posts")
     widths = [e["t"] - e["t_lo"] for e in actions if math.isfinite(e["t"] - e["t_lo"])]
     clock["widest_action_record_s"] = round(max(widths), 4) if widths else None
+    # the grain the bounds allow for is an assumption about the page's clock, which the page measured
+    step = loaded.get("clock_step_s")
+    clock["page_clock_step_s"] = step
+    if not (isinstance(step, (int, float)) and not isinstance(step, bool) and 0 < step <= PAGE_CLOCK_GRAIN_S):
+        clock["held"] = False
+        clock.setdefault("why", f"the page did not report a step of its clock within the "
+                                f"{PAGE_CLOCK_GRAIN_S * 1000:.0f} ms its times are allowed")
     # nothing the page made is missing: its numbers are whole, from one load, through a fence the page
     # made because the probe asked for it after the last step's interval had closed
     one_load = sum(1 for e in received if e.get("type") == "loaded") == 1
-    fence = next((e for e in received if e.get("type") == "fence"), None)
     asked = run.get("fence_asked")
     fenced = bool(windows and fence is not None and isinstance(fence.get("n"), int)
                   and isinstance(asked, (int, float)) and asked >= windows[-1][1]
                   and isinstance(fence.get("received"), (int, float)) and fence["received"] >= asked
-                  and set(range(1, fence["n"] + 1)) <= {n for n in numbers if isinstance(n, int)})
+                  and set(range(1, fence["n"] + 1)) <= set(whole))
     log = {"records": len(received), "numbered_without_gaps": numbered, "one_load": one_load,
            "fenced_after_the_last_step": fenced,
            "accounted_through": {"record": fence.get("n"), "asked_at": asked} if fenced else None,
+           "missing_after_the_fence": missing_after if fenced else None,
            "step_intervals_apart": apart, "unaccounted": unaccounted, "ambiguous": ambiguous,
            "held": numbered and one_load and fenced and apart and not unaccounted and not ambiguous}
     return {"steps": verdicts, "complete": complete, "gamma_clicked_after_scrolling": scrolled,

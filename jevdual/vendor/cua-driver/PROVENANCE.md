@@ -165,8 +165,11 @@ instead of the centre, under one invariant:
 
 The sequence does two things to the page: it dispatches events, and it gives focus. Each is done
 in one place in the function, directly after the check of the element it is done to. Every other
-call the function makes reads. (Footwork's test lists every method call in the function's text
-and fails on one that is not named as reading or as one of those two.)
+call the function makes reads. Footwork's test holds the function's text to that. It is a check
+of the text and not a parser: it classifies every method call written as one, counts every
+occurrence of the name of a method that acts, and fails on a property assignment and on the call
+forms that hide a name. It covers the function texts this file declares and passes by name; it
+does not show that no other part of the driver sends script to the page.
 
 "Under the pointer" means all of: the ref's node is in its document; the point lies inside the
 node's rectangle; the hit test at the point finds something inside the node; the pointer shows
@@ -228,8 +231,9 @@ clicks something else) is the page's own behaviour and is not checked.
 Every refusal of a filmed call begins with what was sent, because a caller may keep only the
 start of it. Footwork's `tests/test_filmed_click_invariant.py` runs this sequence from the
 archive on a stand-in page through every boundary (before the first event, in each event's
-listener, in the focus) against every disturbance it models and every place the focusable
-element can be (the pressed element, the node, outside the node, nowhere), and checks in each
+listener, in the focus) against every disturbance it models, every place the focusable element
+can be (the pressed element, the node, outside the node, nowhere) and a press the page cancels at
+`pointerdown` or at `mousedown`, and checks in each
 cell that no event and no focus went to an element not under the pointer; `tests/test_filmed_outcome_reporting.py` has
 one row for every outcome above and checks what the caller's command says of it. `filmed_point` with another route, without a ref, for a ref in a child frame, or
 when no isolated world can be made is refused before anything runs.
@@ -262,7 +266,8 @@ a textarea that is the active element, that is in it. For an editable region, a 
 the selection elsewhere; in Chrome a selection put inside another editable region makes that
 region the active element, so the check refuses, and a selection put in text that cannot be
 edited makes the command insert nothing, which is reported as unknown (notebook FP56, Chrome
-157). Within the node the text goes to the caret, wherever in the node that is. Chrome fires a trusted `input` event for that command and no
+157). Those two arrangements are what was run; nested editable regions, a selection across a
+shadow root, and other browsers were not. Within the node the text goes to the caret, wherever in the node that is. Chrome fires a trusted `input` event for that command and no
 `beforeinput` (notebook FP27, Chrome 157), so a page that takes its text from `beforeinput` does
 not see this insertion as it sees typing; the unfilmed `Input.insertText` route is unchanged. It
 calls no `DOM.focus`, no scroll, no selection and no focus emulation, and sends no

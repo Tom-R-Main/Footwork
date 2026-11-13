@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import itertools
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -72,7 +73,9 @@ def _as_the_page_posts(records, *, offset, until, fence):
             beats.append({"t": fence, "n": 10**9, "type": "fence", "detail": {"asked_in_answer_to": 0}})
         beats.append({"t": t, "n": 10**9, "type": "beat", "detail": {"acks": []}})
         t += 0.5
-    rows = sorted([*records, *beats], key=lambda r: r["n"])  # stable: beats after, in time order
+    # the page numbers its records in the order it makes them: by time, and at one time the run's own
+    # records in the order they were made, then the beat
+    rows = sorted([*records, *beats], key=lambda r: (r["t"], r["type"] in ("beat", "fence"), r["n"]))
     for n, row in enumerate(rows, start=1):
         row["n"], row["received"] = n, row["t"] + UP_S
         row["t"] -= offset
@@ -110,7 +113,8 @@ def _run(tmp_path, change=None, record=None, *, offset=0.0, page=None):
     (out / "session").mkdir(parents=True)
     handlers, gestures = Events(), []
     handlers.inputs, handlers.pressed, handlers.moved, handlers.samples = [], [], [], []
-    handlers.loaded = {"dpr": 2, "page_says_at_forged": "Forged", "browser_says_at_forged": "lid2"}
+    handlers.loaded = {"dpr": 2, "page_says_at_forged": "Forged", "browser_says_at_forged": "lid2",
+                       "clock_step_s": 0.0001}
     steps = [{"name": "00-start", "exit": 0, "t_start": 990.0, "t_end": 995.0},
              {"name": "00-park", "exit": 0, "t_start": 996.0, "t_end": 998.0}]
     for i, (label, op, expect) in enumerate(probe.STEPS):
@@ -215,10 +219,12 @@ def test_the_whole_log_is_accounted_for_and_the_clocks_are_related(tmp_path):
     # the run says through where it is accounted for: the fence, asked for after the last interval closed
     fence = next(row for row in probe._jsonl(tmp_path / "out/page-events.jsonl") if row["type"] == "fence")
     assert log["accounted_through"] == {"record": fence["n"], "asked_at": 1174.1} and fence["received"] > 1174.1
-    # every record of something done to the page is placed by its own post: made at most 4 ms before it
-    # was received and answered, so within 4 ms
-    assert "untimed" not in clock and clock["widest_action_record_s"] == 0.004
-    assert clock["held"] and (clock["low_s"], clock["high_s"], clock["width_s"]) == (-0.002, 0.002, 0.004)
+    # every record of something done to the page is placed by its own post: answered 4 ms after it was
+    # made by the page's clock, which is taken a grain coarse, so within 5 ms
+    assert "untimed" not in clock and clock["widest_action_record_s"] == 0.005
+    assert log["missing_after_the_fence"] == [] and clock["page_clock_step_s"] == 0.0001
+    assert "clock_step_s: clockStep()" in probe.FIXTURE and probe.PAGE_CLOCK_GRAIN_S == 0.001
+    assert clock["held"] and (clock["low_s"], clock["high_s"], clock["width_s"]) == (-0.003, 0.003, 0.006)
     assert abs(clock["offset_s"]) < 1e-6 and clock["answers"] == log["records"] - 1
     assert "post('beat', {acks: acks.splice(0, 60)})" in probe.FIXTURE and "acks.push([n, now()])" in probe.FIXTURE
     assert "if (body === 'fence' && !fenced) { fenced = true; post('fence', {asked_in_answer_to: n}); }" in probe.FIXTURE
@@ -244,7 +250,7 @@ def test_a_page_clock_that_differs_from_the_probes_is_converted(tmp_path, offset
 
 
 def _slow_answers(rows):
-    """Every post took 30 ms to be answered: the clocks are bounded, 32 ms apart."""
+    """Every post took 30 ms to be answered: the clocks are bounded, 32 ms apart and a grain each side."""
     rows[-1]["detail"]["acks"] = [[n, r + 0.028] for n, r in rows[-1]["detail"]["acks"]]
 
 
@@ -259,15 +265,21 @@ def _a_record_never_received(rows):
 
 
 def _a_number_twice(rows):
-    rows[5]["n"] = rows[4]["n"]
+    """Two events of one click, made at one page time, with one number."""
+    first = next(i for i, row in enumerate(rows) if row["type"] == "page_event")
+    assert rows[first + 1]["type"] == "page_event" and rows[first + 1]["t"] == rows[first]["t"]
+    rows[first + 1]["n"] = rows[first]["n"]
 
 
 def _a_record_without_a_number(rows):
-    del rows[7]["n"]
+    """A beat, so that nothing done to the page loses its place in the order."""
+    assert rows[1]["type"] == "beat"
+    del rows[1]["n"]
 
 
 def _a_page_loaded_twice(rows):
-    rows.append(dict(rows[0], n=len(rows) + 1))
+    """A second record of loading, made last of all."""
+    rows.append(dict(rows[0], n=len(rows) + 1, t=rows[-1]["t"] + 0.1, received=rows[-1]["received"] + 0.1))
 
 
 def _renumbered(rows, kept):
@@ -298,6 +310,7 @@ def _a_fence_the_page_made_unasked(rows):
     fence = next(row for row in rows if row["type"] == "fence")
     fence["t"] -= 5.0
     fence["received"] -= 5.0
+    _renumbered(rows, sorted(rows, key=lambda row: row["t"]))  # numbered where it was made
 
 
 def _an_unreadable_record(rows):
@@ -305,7 +318,7 @@ def _an_unreadable_record(rows):
 
 
 @pytest.mark.parametrize(("page", "what", "says"), [
-    (_slow_answers, "clock", "32.0 ms apart"),
+    (_slow_answers, "clock", "34.0 ms apart"),
     (_a_clock_set_back_during_the_run, "clock", "the bounds cross"),
     (_a_record_never_received, "page_log", "numbered_without_gaps"),
     (_a_number_twice, "page_log", "numbered_without_gaps"),
@@ -331,6 +344,17 @@ def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(t
         assert verdict["page_log"]["accounted_through"] is None or says != "fenced_after_the_last_step"
 
 
+def test_a_record_of_an_action_without_a_number_has_no_place_in_the_order(tmp_path):
+    """The page's numbers are what orders its records. One without a number is bounded above by its
+    own receipt and below by nothing, so it is untimed as well as leaving the numbering incomplete."""
+    def unnumbered(rows):
+        del next(row for row in rows if row["type"] == "page_event")["n"]
+
+    verdict = probe.analyze(_run(tmp_path, page=unnumbered))
+    assert verdict["held"] is False and verdict["page_log"]["numbered_without_gaps"] is False
+    assert len(verdict["clock"]["untimed"]) == 1 and verdict["clock"]["untimed"][0]["width_s"] is None
+
+
 def test_a_fence_asked_for_before_the_last_step_ended_does_not_hold(tmp_path):
     """The fence shows the log whole up to the moment it was asked for. Asked while the last step's
     interval was still open, it says nothing of the rest of that interval."""
@@ -343,7 +367,8 @@ def test_a_fence_asked_for_before_the_last_step_ended_does_not_hold(tmp_path):
 def test_a_number_missing_before_the_fence_does_not_hold_and_one_lost_after_it_is_outside_the_run(tmp_path):
     """What the fence claims and what it does not. A record the page made before the fence and the
     probe never got leaves a hole below the fence's number. One made after the fence and lost at
-    shutdown leaves the log whole through the fence: the run holds, and says through where."""
+    shutdown leaves the log whole through the fence: the run holds, and says through where. So does
+    one lost after the fence with a later one received (Sol round 10): the hole is reported."""
     def before(rows):
         fence = next(i for i, row in enumerate(rows) if row["type"] == "fence")
         del rows[fence - 3]
@@ -361,6 +386,29 @@ def test_a_number_missing_before_the_fence_does_not_hold_and_one_lost_after_it_i
     lost = probe.analyze(_run(tmp_path / "after", page=after))
     fence = next(row for row in probe._jsonl(tmp_path / "after/out/page-events.jsonl") if row["type"] == "fence")
     assert lost["held"] is True and lost["page_log"]["accounted_through"]["record"] == fence["n"]
+
+    def a_hole_after(rows):
+        fence = next(i for i, row in enumerate(rows) if row["type"] == "fence")
+        assert len(rows) > fence + 2 and rows[fence + 1]["type"] == "beat"
+        del rows[fence + 1]
+
+    holed_after = probe.analyze(_run(tmp_path / "hole", page=a_hole_after))
+    log = holed_after["page_log"]
+    assert holed_after["held"] is True and log["numbered_without_gaps"] is True
+    assert log["missing_after_the_fence"] == [log["accounted_through"]["record"] + 1]
+
+
+def test_an_action_received_after_the_fence_still_fails_the_run(tmp_path):
+    """Stricter than the cutoff requires, and said to be: the run is accounted for through the fence,
+    and nothing should be acting on the page after it."""
+    def stray(steps, handlers, gestures):
+        handlers.moved.append({"t": steps[-1]["t_end"] + 1.6, "n": next(_numbers), "type": "page_event",
+                               "detail": {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5,
+                                          "rect": None}})
+
+    verdict = probe.analyze(_run(tmp_path, stray))
+    assert verdict["held"] is False and len(verdict["page_log"]["unaccounted"]) == 1
+    assert verdict["page_log"]["fenced_after_the_last_step"] is True
 
 
 def _at(seconds_into, label="Beta", expect="clicked", *, late=None, unanswered=False):
@@ -410,13 +458,13 @@ def test_a_record_whose_time_reaches_across_a_steps_boundary_is_ambiguous(tmp_pa
     assert inside["page_log"]["ambiguous"] == [] and inside["page_log"]["held"] is True
 
 
-@pytest.mark.parametrize(("change", "width"), [(_at(2.2, late=0.030), 0.030), (_at(2.2, unanswered=True), 0.204)])
+@pytest.mark.parametrize(("change", "width"), [(_at(2.2, late=0.030), 0.031), (_at(2.2, unanswered=True), 0.205)])
 def test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed(tmp_path, change, width):
     """FP54 (u): the answers to one click's posts came 30 ms after them, or never. The run's common
     bounds still agree, from all the other posts; these six records are not placed by them, because
-    that would assume the two clocks kept one difference. Each is bounded by its own post, 30 ms wide,
-    or, with no answer of its own, below by the last record before it that was answered: the beat
-    200 ms earlier."""
+    that would assume the two clocks kept one difference. Each is bounded by its own post, 30 ms wide
+    and a grain, or, with no answer of its own, below by the last record numbered before it that was
+    answered: the beat 200 ms earlier."""
     verdict = probe.analyze(_run(tmp_path, change, page=_answers))
     clock = verdict["clock"]
     assert verdict["held"] is False and clock["held"] is False and clock["width_s"] <= 0.02
@@ -426,18 +474,88 @@ def test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_
     assert verdict["page_log"]["held"] and all(v["held"] for v in verdict["steps"])
 
 
-def test_a_record_made_at_the_moment_of_one_answered_promptly_is_placed_by_it(tmp_path):
-    """The page's clock does not run backwards, so a record is no earlier than any made at or before
-    its own page time. Here the click's posts were never answered, and a beat made at the same page
-    time was: the click is placed by the beat."""
-    verdict = probe.analyze(_run(tmp_path, _at(2.0, unanswered=True), page=_answers))
-    assert verdict["held"] is True and verdict["clock"]["widest_action_record_s"] == 0.004
+def test_a_record_is_bounded_by_the_ones_numbered_around_it_and_not_by_a_shared_timestamp(tmp_path):
+    """Sol round 10: two records with one timestamp were not made at one moment. Here a click's posts
+    were never answered, and another record carries the same timestamp and was answered at once. Made
+    (numbered) before the click, it bounds the click from below and the click is placed. Made after
+    it, it shows nothing about how early the click was, and the click is untimed."""
+    def beside(numbered):
+        def change(steps, handlers, gestures):
+            _at(2.2, unanswered=True)(steps, handlers, gestures)
+            t = _step(steps, "Beta", "clicked")["t_start"] + 2.2
+            handlers.moved.append({"t": t, "n": numbered, "type": "scrolled", "detail": {"y": 0}})
+        return change
+
+    before = probe.analyze(_run(tmp_path / "before", beside(-1), page=_answers))
+    assert before["held"] is True and before["clock"]["widest_action_record_s"] == 0.005
+    later = probe.analyze(_run(tmp_path / "after", beside(10**8), page=_answers))
+    assert later["held"] is False and [r["on"] for r in later["clock"]["untimed"]] == ["Beta"] * 6
+
+
+def test_two_records_with_one_coarse_timestamp_are_each_placed_around_their_own_true_time():
+    """Sol round 10's case. The page's clock reads in steps of 0.1 ms. A is made at probe time
+    100.00001 and B 80 microseconds later; both read 10.0000, and both answers read 10.0001. Ordered by
+    timestamp, each bounded the other and both were given an interval holding neither's true time.
+    Ordered by number, each interval holds its own."""
+    a = {"t": 10.0000, "n": 1, "type": "page_event", "received": 100.00008}
+    b = {"t": 10.0000, "n": 2, "type": "page_event", "received": 100.00015}
+    beat = {"t": 10.5, "n": 3, "type": "beat", "received": 100.5001, "detail": {"acks": [[1, 10.0001], [2, 10.0001]]}}
+    placed, after = probe._timer([a, b, beat])
+    (a_low, a_high), (b_low, b_high) = placed(a), placed(b)
+    assert a_low <= 100.00001 <= a_high and b_low <= 100.00009 <= b_high
+    # A is not bounded below by B, which was made after it, and B is bounded above by nothing but itself
+    assert a_low == pytest.approx(100.00008 - 0.0001 - probe.PAGE_CLOCK_GRAIN_S) and a_high == 100.00008
+    assert b_low == pytest.approx(100.00015 - 0.0001 - probe.PAGE_CLOCK_GRAIN_S) and b_high == 100.00015
+    # a step that began at 100.00004, between them, does not hold A wholly: A may have come before it
+    assert a_low < 100.00004 < a_high
+    # an event that was not posted, read at the same timestamp, is not bounded by either record: only
+    # by records clearly earlier than two grains before it
+    assert after(10.0000) == -math.inf and after(10.0000 + 2 * probe.PAGE_CLOCK_GRAIN_S) == pytest.approx(b_low)
+
+
+def test_an_answer_time_that_reads_a_grain_early_still_bounds_its_record():
+    """The answer came 0.9 ms after the record by the page's true clock and reads the same coarse
+    time as the record. Taken as reported, the record would be placed after it was made."""
+    record = {"t": 10.000, "n": 1, "type": "page_event", "received": 100.0005}
+    beat = {"t": 10.5, "n": 2, "type": "beat", "received": 100.5, "detail": {"acks": [[1, 10.000]]}}
+    low, high = probe._timer([record, beat])[0](record)
+    true = 100.0005 - 0.0004  # made 0.4 ms before the probe received it
+    assert low <= true <= high and low == pytest.approx(100.0005 - probe.PAGE_CLOCK_GRAIN_S)
+
+
+@pytest.mark.parametrize(("step", "holds"), [(0.0001, True), (0.001, True), (0.0011, False), (None, False), (0, False)])
+def test_the_grain_is_checked_against_the_step_the_page_measured_of_its_own_clock(tmp_path, step, holds):
+    """FP62 (x): the bounds allow the page's times a grain of 1 ms. A page whose clock steps more
+    coarsely than that, or that did not say, cannot be read by them."""
+    def stepping(steps, handlers, gestures):
+        handlers.loaded["clock_step_s"] = step
+
+    verdict = probe.analyze(_run(tmp_path, stepping))
+    assert verdict["held"] is holds and verdict["clock"]["held"] is holds
+    assert holds or "step of its clock" in verdict["clock"]["why"]
+
+
+def _common_bounds_off_by(seconds):
+    def change(rows):
+        for row in rows[len(rows) // 2:]:
+            row["received"] -= seconds
+    return change
+
+
+@pytest.mark.parametrize(("seconds", "holds"), [(0.0055, True), (0.0065, False)])
+def test_common_bounds_cross_only_beyond_the_grain(tmp_path, seconds, holds):
+    """The common bounds are 4 ms apart in a composed run and loosened a grain each side. Receipts
+    5.5 ms early in half the run leave them touching; 6.5 ms cross them: a clock changed."""
+    verdict = probe.analyze(_run(tmp_path, page=_common_bounds_off_by(seconds)))
+    assert verdict["clock"]["held"] is holds
+    assert holds or "the bounds cross" in verdict["clock"]["why"]
 
 
 def test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happened_in(tmp_path):
     """Sol round 9: a sample off the control 251 ms before the latest moment an event can have happened
     is outside the window around that moment and inside the window around the earliest. The answers
-    here came 12 ms after the posts, so the interval is 12 ms wide and the run timed; the sample counts."""
+    here came 12 ms after the posts, so the interval is 13 ms wide with the grain and the run timed; the
+    sample counts."""
     def off(at):
         def change(steps, handlers, gestures):
             _at(2.2, late=0.012)(steps, handlers, gestures)
@@ -445,7 +563,7 @@ def test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happene
         return change
 
     inside = probe.analyze(_run(tmp_path / "in", off(0.255), page=_answers))
-    assert inside["clock"]["held"] and inside["clock"]["widest_action_record_s"] == 0.012
+    assert inside["clock"]["held"] and inside["clock"]["widest_action_record_s"] == 0.013
     assert _of(inside, "Beta", "clicked")["held"] is False and _of(inside, "Beta", "clicked")["samples_off_control"] == 5
     outside = probe.analyze(_run(tmp_path / "out", off(0.265), page=_answers))
     assert _of(outside, "Beta", "clicked")["held"] is True and outside["held"] is True
