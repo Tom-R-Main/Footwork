@@ -241,3 +241,13 @@ Test: FP20's run with the locate6 driver, and: the probe samples the system poin
 Predicts: FP20's.
 Against: FP20's; a pointer sample outside the control around a delivery; any press or input event during a refused step.
 Refs: #fp26; #fp20; scripts/probe_filmed_page_pointer.py
+
+## FP29 · prediction · 2026-11-13 02:23
+Revises: FP28
+Question: as FP28, and: does a filmed take refuse to replace text a field holds, on a real page, where the refusal depends on the observation reporting that text?
+Hypothesis: as FP28. After the filmed type has put its word into Note, the next observation reports Note with that value, so a second type is a replacement and is refused replace_unfilmed before the scene is read or the pointer moves.
+Alternatives: FP28's; (o) the observation does not report the field's value (or reports it late), so the second type is sent as an insertion at the caret and the field holds the word twice; (p) the refusal comes from the posture instead, because the replacement asks for the foreground first.
+Test: FP28's run with one step added straight after the typed step, fifteen in all: type into Note again, expecting replace_unfilmed with the reason that a filmed take types only into an empty field, no input or press seen by the page, and no gesture. Also changed from FP28's text, both stricter: the page's log of presses and insertions includes input as well as beforeinput, because FP27's run showed Chrome fires no beforeinput for the insert command; and a delivered step also needs every press or insertion the page saw during it to be on its own control.
+Predicts: FP28's, and the added step refused as stated with Note still holding the word once.
+Against: FP28's; the second type inserting anything; a refusal with another code.
+Refs: #fp28; #fp26; scripts/probe_filmed_page_pointer.py
