@@ -1,0 +1,41 @@
+{
+  "predictions": ["FP19", "FP21", "FP22"],
+  "footwork": {
+    "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_probe_filmed_page_pointer.py tests/test_filmed_session.py tests/test_locate_page_function.py",
+    "red": {
+      "tree": "f0af821 python/, scripts/ and pinned locate4 archive, with the updated tests",
+      "log": "review5-python-red.txt",
+      "outcome": "77 failed, 202 passed. Failing: every test of a new refusal (a locate not read in an isolated world, a trusted filmed click, a field without focus, focus lost during the approach, a replacement in a page without the keyboard), the focus reader, the three Node cases that read focus, and the probe's tests (its steps, its restoration of the front application, and every composed run, which is built from the new steps)."
+    },
+    "passing_before_by_design": [
+      "test_a_filmed_type_travels_to_the_focused_field_before_typing (a focused field was typed into before too)",
+      "test_an_empty_field_that_is_active_in_a_page_without_the_keyboard_is_typed_into",
+      "test_a_click_does_not_need_its_target_focused",
+      "test_a_filmed_click_by_the_dom_route_named_outright_goes_as_the_default_does",
+      "test_an_unfilmed_session_still_sends_a_trusted_click"
+    ],
+    "green": {"outcome": "279 passed in those four files (343 with the driver pin and chain tests); offline suite 3775 passed, 52 skipped against the installed locate5 build; ruff clean"}
+  },
+  "driver": {
+    "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
+    "red": {
+      "tree": "locate4 tools.rs and the unpatched cdp_ws.rs with the locate5 v2_tests.rs, locate tests only",
+      "log": "review5-rust-red.txt",
+      "outcome": "9 failed, 5 passed of the 14 locate tests: the mock's page world now answers as a page that replaced its hit test, so every test that reads the configured reply fails where the read is not made on the isolated world's object"
+    },
+    "green": {"outcome": "1262 passed, 0 failed, 2 ignored, twice (before and after a comment-only change); no warnings; rustfmt clean on the three changed files"}
+  },
+  "headless": {
+    "command": "PYTHONPATH=python .venv/bin/python scripts/probe_locate_world_headless.py --out <fresh dir>",
+    "log": "review5-headless.json",
+    "browser": "Chrome/157.0.8103.52, headless, temporary profile, port chosen by Chrome",
+    "outcome": "all 16 checks held; frontmost application unchanged before, during and after; Chrome exited 0 and its profile was removed"
+  },
+  "chain": {
+    "command": "scripts/cua_source_chain.py --base <focus1 archive from 6e8bb5e>",
+    "outcome": "byte-identical to vendor/cua-driver/native-source.tar.gz",
+    "sha256": "0d4105b397b5cb86c23e480487324cfb5a8ce0e6e829bbb6bf7b40987047914a",
+    "bytes": 6419688
+  },
+  "installed": "cua-driver 0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate5; the installed binary and SDK library each carry the world name, world_unavailable and the focus read"
+}

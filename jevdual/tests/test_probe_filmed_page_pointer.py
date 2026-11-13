@@ -18,33 +18,54 @@ sys.path.insert(0, str(ROOT / "scripts"))
 probe = pytest.importorskip("probe_filmed_page_pointer")
 
 CONTENT = [100.0, 180.0, 1200.0, 800.0]
-RECTS = {"Alpha": [40, 60, 140, 44], "Beta": [620, 330, 140, 44], "Jump down": [300, 60, 140, 44],
-         "Gamma": [240, 400, 140, 44]}
+#: each delivered step's control rectangle as the page reports it for that step
+RECTS = {("Alpha", "clicked"): [40, 60, 140, 44], ("Beta", "clicked"): [620, 330, 140, 44],
+         ("Note", "clicked"): [620, 130, 140, 30],  # where the field was when the press began
+         ("Note", "typed"): [620, 170, 140, 30],  # where its focus style then put it
+         ("Jump down", "clicked"): [300, 60, 140, 44], ("Gamma", "clicked"): [240, 400, 140, 44]}
+
+
+class Events(list):
+    """The page's click handlers in order, with its ``inputs`` and its ``loaded`` record beside them."""
+
+    inputs: list
+    loaded: dict
+
+
+def _step(steps, label, expect):
+    return next(step for step in steps if (step["label"], step["expect"]) == (label, expect))
 
 
 def _run(tmp_path, change=None, record=None):
     """A composed run in which every step went as predicted, with ``change(steps, handlers, gestures)``
-    applied to the click steps and ``record`` merged into the run record before it is written.
+    applied to the tried steps and ``record`` merged into the run record before it is written.
     Returns the output directory."""
     out = tmp_path / "out"
     (out / "session").mkdir(parents=True)
-    handlers, gestures = [], []
+    handlers, gestures = Events(), []
+    handlers.inputs = []
+    handlers.loaded = {"dpr": 2, "page_says_at_forged": "Forged", "browser_says_at_forged": "lid2"}
     steps = [{"name": "00-start", "exit": 0, "t_start": 990.0, "t_end": 995.0},
              {"name": "00-park", "exit": 0, "t_start": 996.0, "t_end": 998.0}]
-    for i, (label, expect) in enumerate(probe.STEPS):
+    for i, (label, op, expect) in enumerate(probe.STEPS):
         t0 = 1000.0 + 10 * i
-        step = {"name": f"{i + 1:02d}-click", "label": label, "expect": expect, "t_start": t0, "t_end": t0 + 3,
-                "exit": 0 if expect == "clicked" else 4,
-                "stdout": "" if expect == "clicked" else (
-                    "not sent: target_unlocated: 'x': " + (probe.REASONS.get(label) or "not wholly in view"))}
-        if expect == "clicked":
-            x, y, w, h = RECTS[label]
+        delivered = expect in probe.DELIVERED
+        step = {"name": f"{i + 1:02d}-{op}", "label": label, "op": op, "expect": expect, "t_start": t0,
+                "t_end": t0 + 3, "exit": 0 if delivered else 4,
+                "stdout": "" if delivered else f"not sent: {expect}: {label!r}: " + (
+                    probe.REASONS.get(label) or "why it could not be verified")}
+        if delivered:
+            x, y, w, h = RECTS[label, expect]
             centre = [x + w / 2, y + h / 2]
-            handlers.append({"t": t0 + 2, "type": "click_handler", "detail": {
-                "button": label, "trusted": False, "rect": [x, y, w, h], "dpr": 2,
-                "scroll": [0, 1500 if i == len(probe.STEPS) - 1 else 0], "pinch": 1,
-                "last_trusted_pointer": {"t": t0 + 1.5, "type": "mousemove", "target": label,
-                                         "x": centre[0], "y": centre[1]}}})
+            detail = {"trusted": False, "rect": [x, y, w, h], "dpr": 2, "pinch": 1,
+                      "scroll": [0, 1500 if i == len(probe.STEPS) - 1 else 0],
+                      "last_trusted_pointer": {"t": t0 + 1.5, "type": "mousemove", "target": label,
+                                               "x": centre[0], "y": centre[1]}}
+            if expect == "clicked":
+                handlers.append({"t": t0 + 2, "type": "click_handler", "detail": detail | {"button": label}})
+            else:
+                handlers.inputs.append({"t": t0 + 2, "type": "input",
+                                        "detail": detail | {"field": label, "value": probe.TYPED}})
             gestures.append({"kind": "approach", "label": label, "outcome": "arrived",
                              "posted_samples": [{"x": 1, "y": 1}],
                              "final_location": [CONTENT[0] + centre[0], CONTENT[1] + centre[1]]})
@@ -59,7 +80,8 @@ def _run(tmp_path, change=None, record=None):
         steps[index]["exit"] = code
     (out / "run.json").write_text(json.dumps(run))
     (out / "session/session.json").write_text(json.dumps({"filmed": {"content": CONTENT}}))
-    (out / "page-events.jsonl").write_text("".join(json.dumps(h) + "\n" for h in handlers))
+    page = [{"t": 999.0, "type": "loaded", "detail": handlers.loaded}, *handlers, *handlers.inputs]
+    (out / "page-events.jsonl").write_text("".join(json.dumps(event) + "\n" for event in page))
     (out / "session/pointer-gestures.jsonl").write_text("".join(json.dumps(g) + "\n" for g in gestures))
     return out
 
@@ -68,6 +90,42 @@ def test_a_run_that_went_as_predicted_holds(tmp_path):
     verdict = probe.analyze(_run(tmp_path))
     assert verdict["held"] is True and verdict["scale_factor_tested"] is True, verdict
     assert [v["held"] for v in verdict["steps"]] == [True] * len(probe.STEPS)
+    assert verdict["page_forges_its_hit_test"] is True
+    typed = verdict["steps"][10]
+    assert (typed["label"], typed["expect"], typed["value"], typed["inputs"]) == ("Note", "typed", probe.TYPED, 1)
+    assert verdict["note_moved_when_focused"] is True
+
+
+def test_a_field_that_did_not_move_on_focus_still_holds_and_is_recorded(tmp_path):
+    """FP21: in a document without focus the field's focus style does not apply; the text still goes in
+    with the pointer on the field, and the run says the move was not exercised."""
+    def unmoved(steps, handlers, gestures):
+        x, y, w, h = RECTS["Note", "clicked"]
+        handlers.inputs[0]["detail"]["rect"] = [x, y, w, h]
+        handlers.inputs[0]["detail"]["last_trusted_pointer"].update(x=x + w / 2, y=y + h / 2)
+        gestures[3]["final_location"] = [CONTENT[0] + x + w / 2, CONTENT[1] + y + h / 2]
+
+    verdict = probe.analyze(_run(tmp_path, unmoved))
+    assert verdict["held"] is True and verdict["note_moved_when_focused"] is False, verdict
+
+
+def test_the_steps_are_the_ones_the_prediction_names():
+    """FP20: the three cases of the fifth review are each tried, the refusals before their remedies."""
+    order = [(label, op, expect) for label, op, expect in probe.STEPS]
+    assert order.index(("Beta", "trusted", "route_unfilmed")) < order.index(("Beta", "click", "clicked"))
+    assert ("Forged", "click", "target_unlocated") in order and probe.REASONS["Forged"] == probe.REASONS["Covered"]
+    note = [step for step in order if step[0] == "Note"]
+    assert note == [("Note", "type", "target_unfocused"), ("Note", "click", "clicked"), ("Note", "type", "typed")]
+    # nothing between the click that focuses the field and the type that needs the focus
+    assert order.index(note[2]) == order.index(note[1]) + 1
+    # the fixture's page replaces its hit test for Forged and moves the field when it gains focus
+    assert "Document.prototype.elementFromPoint = function" in probe.FIXTURE
+    assert "#note:focus { top: 170px }" in probe.FIXTURE
+
+
+def test_a_look_names_a_control_of_any_role():
+    look = "  [   3] button     'Beta'\n  [  11] textbox    'Note'\n  [  12] button     'Note taker'\n"
+    assert (probe._ref(look, "Beta"), probe._ref(look, "Note"), probe._ref(look, "Gone")) == (3, 11, None)
 
 
 def test_a_pointer_that_was_already_on_its_target_holds(tmp_path):
@@ -80,18 +138,69 @@ def test_a_pointer_that_was_already_on_its_target_holds(tmp_path):
 
 
 def _another_handler_in_a_refused_step(steps, handlers, gestures):
-    handlers.append({"t": steps[2]["t_start"] + 1, "type": "click_handler",
-                     "detail": {"button": "Alpha", "rect": RECTS["Alpha"], "dpr": 2}})
+    handlers.append({"t": _step(steps, "Covered", "target_unlocated")["t_start"] + 1, "type": "click_handler",
+                     "detail": {"button": "Alpha", "rect": RECTS["Alpha", "clicked"], "dpr": 2}})
+
+
+def _the_forged_button_clicked(steps, handlers, gestures):
+    handlers.append({"t": _step(steps, "Forged", "target_unlocated")["t_start"] + 1, "type": "click_handler",
+                     "detail": {"button": "Forged", "rect": [620, 60, 140, 44], "dpr": 2}})
+
+
+def _a_trusted_click_that_was_sent(steps, handlers, gestures):
+    handlers.append({"t": _step(steps, "Beta", "route_unfilmed")["t_start"] + 1, "type": "click_handler",
+                     "detail": {"button": "Beta", "rect": RECTS["Beta", "clicked"], "dpr": 2, "trusted": True}})
+
+
+def _text_inserted_into_the_unfocused_field(steps, handlers, gestures):
+    handlers.inputs.append({"t": _step(steps, "Note", "target_unfocused")["t_start"] + 1, "type": "input",
+                            "detail": {"field": "Note", "value": probe.TYPED}})
 
 
 def _another_handler_in_a_clicked_step(steps, handlers, gestures):
     handlers.append({"t": steps[0]["t_start"] + 1, "type": "click_handler",
-                     "detail": {"button": "Beta", "rect": RECTS["Beta"], "dpr": 2}})
+                     "detail": {"button": "Beta", "rect": RECTS["Beta", "clicked"], "dpr": 2}})
+
+
+def _a_click_handler_in_the_typed_step(steps, handlers, gestures):
+    handlers.append({"t": _step(steps, "Note", "typed")["t_start"] + 1, "type": "click_handler",
+                     "detail": {"button": "Note", "rect": RECTS["Note", "typed"], "dpr": 2}})
+
+
+def _the_field_holding_other_text(steps, handlers, gestures):
+    handlers.inputs[0]["detail"]["value"] = probe.TYPED + probe.TYPED
+
+
+def _two_inputs_in_the_typed_step(steps, handlers, gestures):
+    handlers.inputs.append(json.loads(json.dumps(handlers.inputs[0])))
+
+
+def _typed_with_the_pointer_where_the_field_was(steps, handlers, gestures):
+    """The review's case: the field moved on focus and the text went in with the pointer left behind."""
+    x, y, w, h = RECTS["Note", "clicked"]
+    handlers.inputs[0]["detail"]["last_trusted_pointer"].update(x=x + w / 2, y=y + h / 2)
+    gestures[3]["final_location"] = [CONTENT[0] + x + w / 2, CONTENT[1] + y + h / 2]
+
+
+def _a_page_whose_hit_test_was_not_replaced(steps, handlers, gestures):
+    handlers.loaded["page_says_at_forged"] = "lid2"
+
+
+def _a_page_that_did_not_say_what_its_hit_test_answers(steps, handlers, gestures):
+    del handlers.loaded["page_says_at_forged"]
+
+
+def _a_forged_button_nothing_covers(steps, handlers, gestures):
+    handlers.loaded["browser_says_at_forged"] = "Forged"
 
 
 def _ratio_of_one(steps, handlers, gestures):
     for handler in handlers:
         handler["detail"]["dpr"] = 1
+
+
+def _a_typed_step_at_a_ratio_of_one(steps, handlers, gestures):
+    handlers.inputs[0]["detail"]["dpr"] = 1
 
 
 def _pointer_event_outside_the_button(steps, handlers, gestures):
@@ -114,14 +223,28 @@ def _gesture_ending_off_the_button(steps, handlers, gestures):
     gestures[0]["final_location"] = [CONTENT[0] + 400, CONTENT[1] + 400]
 
 
-def _a_gesture_in_a_refused_step(steps, handlers, gestures):
-    gestures.insert(2, {"kind": "approach", "label": "Covered", "outcome": "arrived", "final_location": [1, 1]})
-    for step in steps[2:]:
-        step["gestures_after"] += 1
+def _a_gesture_in(label, expect):
+    def change(steps, handlers, gestures):
+        refused = _step(steps, label, expect)
+        gestures.insert(refused["gestures_after"],
+                        {"kind": "approach", "label": label, "outcome": "arrived", "final_location": [1, 1]})
+        for step in steps[steps.index(refused):]:
+            step["gestures_after"] += 1
+
+    change.__name__ = f"a_gesture_in_{label}_{expect}"
+    return change
 
 
 def _a_refusal_without_its_code(steps, handlers, gestures):
-    steps[3]["stdout"] = "not sent"
+    _step(steps, "Covered", "target_unlocated")["stdout"] = "not sent"
+
+
+def _a_trusted_click_refused_for_another_reason(steps, handlers, gestures):
+    _step(steps, "Beta", "route_unfilmed")["stdout"] = "not sent: target_unlocated: 'Beta': not wholly in view"
+
+
+def _an_unfocused_field_refused_for_another_reason(steps, handlers, gestures):
+    _step(steps, "Note", "target_unfocused")["stdout"] = "not sent: target_unlocated: 'Note': not wholly in view"
 
 
 def _a_pinched_page(steps, handlers, gestures):
@@ -133,14 +256,28 @@ def _a_step_without_a_pinch_scale(steps, handlers, gestures):
 
 
 def _a_refusal_for_another_reason(steps, handlers, gestures):
-    clipped = next(step for step in steps if step["label"] == "Clipped")
+    clipped = _step(steps, "Clipped", "target_unlocated")
     clipped["stdout"] = "not sent: target_unlocated: 'Clipped': another element is at its centre"
 
 
+def _forged_refused_for_another_reason(steps, handlers, gestures):
+    forged = _step(steps, "Forged", "target_unlocated")
+    forged["stdout"] = "not sent: target_unlocated: 'Forged': the driver could not locate it (world_unavailable)"
+
+
 def _a_step_that_could_not_be_tried(steps, handlers, gestures):
-    turned = next(step for step in steps if step["label"] == "Turned")
+    turned = _step(steps, "Turned", "target_unlocated")
     turned.pop("expect")
     turned["skipped"] = "not on the observation"
+
+
+def _a_typed_step_that_was_refused(steps, handlers, gestures):
+    typed = _step(steps, "Note", "typed")
+    typed.update(exit=4, stdout="not sent: target_unfocused: 'Note': the page does not have the keyboard")
+    handlers.inputs.clear()
+    del gestures[3]
+    for step in steps[steps.index(typed):]:
+        step["gestures_after"] -= 1
 
 
 def _gamma_clicked_without_scrolling(steps, handlers, gestures):
@@ -151,9 +288,19 @@ def _gamma_clicked_without_scrolling(steps, handlers, gestures):
     _another_handler_in_a_refused_step, _another_handler_in_a_clicked_step, _ratio_of_one,
     _pointer_event_outside_the_button, _pointer_event_without_coordinates,
     _stale_pointer_event_after_a_posted_approach, _pointer_event_on_another_button,
-    _gesture_ending_off_the_button, _a_gesture_in_a_refused_step, _a_refusal_without_its_code,
+    _gesture_ending_off_the_button, _a_gesture_in("Covered", "target_unlocated"), _a_refusal_without_its_code,
     _a_refusal_for_another_reason, _a_step_that_could_not_be_tried, _gamma_clicked_without_scrolling,
     _a_pinched_page, _a_step_without_a_pinch_scale,
+    # FP20: the fifth review's three cases
+    _the_forged_button_clicked, _a_gesture_in("Forged", "target_unlocated"), _forged_refused_for_another_reason,
+    _a_page_whose_hit_test_was_not_replaced, _a_page_that_did_not_say_what_its_hit_test_answers,
+    _a_forged_button_nothing_covers,
+    _a_trusted_click_that_was_sent, _a_gesture_in("Beta", "route_unfilmed"),
+    _a_trusted_click_refused_for_another_reason,
+    _text_inserted_into_the_unfocused_field, _a_gesture_in("Note", "target_unfocused"),
+    _an_unfocused_field_refused_for_another_reason,
+    _a_click_handler_in_the_typed_step, _the_field_holding_other_text, _two_inputs_in_the_typed_step,
+    _typed_with_the_pointer_where_the_field_was, _a_typed_step_at_a_ratio_of_one, _a_typed_step_that_was_refused,
 ])
 def test_a_run_that_departs_from_the_prediction_does_not_hold(tmp_path, change):
     verdict = probe.analyze(_run(tmp_path, change))
@@ -174,12 +321,13 @@ def test_a_clicked_step_that_reported_no_device_pixel_ratio_does_not_hold(tmp_pa
     {"chrome_closed": None},
     {"chrome_launch": None},
     {"cleanup_errors": ["holder: HolderUnavailable: the holder did not exit"]},
+    {"cleanup_errors": ["front: RuntimeError: pid 501 was frontmost at the start and pid 4321 is at the end"]},
     {"setup": (0, 2)},
     {"setup": (1, 4)},
 ])
 def test_a_run_whose_setup_or_cleanup_departs_from_the_prediction_does_not_hold(tmp_path, record):
-    """FP11 predicts the start and the park succeed and the run's own Chrome is closed; seven good
-    steps do not make the run hold without them."""
+    """FP11 predicts the start and the park succeed and the run's own Chrome is closed; good steps do
+    not make the run hold without them."""
     verdict = probe.analyze(_run(tmp_path, record=record))
     assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict
 
@@ -218,6 +366,55 @@ def test_a_cleanup_step_that_raises_does_not_skip_the_others(tmp_path, monkeypat
     assert written["cleanup_errors"] == ["holder: RuntimeError: the holder did not exit"]
     assert verdict["held"] is False and all(v["held"] for v in verdict["steps"])
     assert json.loads((out / "verdict.json").read_text())["held"] is False
+
+
+def _front(monkeypatch, record, fronts):
+    """Run the restoration with the frontmost pid read as ``fronts`` in turn (the last one repeating);
+    return the pids it activated."""
+    activated: list = []
+    reads = list(fronts)
+    monkeypatch.setattr(probe, "_front_pid", lambda: reads.pop(0) if len(reads) > 1 else reads[0])
+    monkeypatch.setattr(probe, "_activate_pid", activated.append)
+    monkeypatch.setattr(probe.time, "sleep", lambda seconds: None)
+    probe._restore_front(record)
+    return activated
+
+
+def test_the_front_application_is_brought_back_and_left_alone_when_it_never_left(monkeypatch):
+    record = {"front_pid_at_start": 501}
+    assert _front(monkeypatch, record, [4321, 4321, 501]) == [501] and record["front_pid_at_end"] == 501
+    assert _front(monkeypatch, {"front_pid_at_start": 501}, [501]) == []
+
+
+@pytest.mark.parametrize(("record", "fronts", "why"), [
+    ({"front_pid_at_start": 501}, [4321], "pid 501 was frontmost at the start and pid 4321 is at the end"),
+    ({"front_pid_at_start": 501}, [4321, None], "pid None is at the end"),
+    ({}, [4321], "did not record which application was frontmost"),
+    ({"front_pid_at_start": None}, [4321], "did not record which application was frontmost"),
+])
+def test_a_front_application_that_did_not_come_back_is_an_error(monkeypatch, record, fronts, why):
+    """Sol round 5: recording the final frontmost application is not requiring that it was restored."""
+    with pytest.raises(RuntimeError, match=why):
+        _front(monkeypatch, record, fronts)
+    assert "front_pid_at_end" in record
+
+
+def test_a_front_application_that_did_not_come_back_fails_the_run(tmp_path, monkeypatch):
+    out = _run(tmp_path)
+    record = json.loads((out / "run.json").read_text()) | {"front_pid_at_start": 501}
+    monkeypatch.setattr(probe, "_retire_holder", lambda record, session: None)
+    monkeypatch.setattr(probe, "_close_owned_chrome", lambda record, launch: record.update(chrome_closed=True))
+    monkeypatch.setattr(probe, "_front_pid", lambda: 4321)
+    monkeypatch.setattr(probe, "_activate_pid", lambda pid: None)
+    monkeypatch.setattr(probe.time, "sleep", lambda seconds: None)
+    helper = type("Helper", (), {"join": lambda self, timeout=None: None, "shutdown": lambda self: None})()
+    verdict = probe._finish(record, out, out / "session", "", probe.threading.Event(), helper, helper)
+    written = json.loads((out / "run.json").read_text())
+    assert written["cleanup_errors"] == [
+        "front: RuntimeError: pid 501 was frontmost at the start and pid 4321 is at the end"]
+    assert written["front_pid_at_end"] == 4321
+    assert verdict["held"] is False and verdict["own_chrome_closed"] is False
+    assert all(v["held"] for v in verdict["steps"])
 
 
 def _session(tmp_path, launch):

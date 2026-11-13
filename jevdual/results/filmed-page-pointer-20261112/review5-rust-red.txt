@@ -1,0 +1,15 @@
+test browser::v2_tests::locate_ref_refuses_a_malformed_point_before_reading_the_page ... ok
+test browser::v2_tests::locate_ref_is_unavailable_in_a_child_frame_without_touching_it ... ok
+test browser::v2_tests::locate_ref_refuses_a_ref_that_is_not_current ... ok
+test browser::v2_tests::locate_ref_refuses_a_removed_node_as_a_click_does ... ok
+test browser::v2_tests::locate_ref_reports_where_the_element_is_and_changes_nothing ... FAILED
+test browser::v2_tests::locate_ref_passes_on_clipping_and_a_hidden_document ... FAILED
+test browser::v2_tests::locate_ref_reports_no_position_without_an_isolated_world ... FAILED
+test browser::v2_tests::locate_ref_passes_on_what_is_at_the_centre ... FAILED
+test browser::v2_tests::locate_ref_passes_on_focus_it_could_not_read_as_null ... FAILED
+test browser::v2_tests::locate_ref_reads_in_an_isolated_world_of_the_main_frame ... FAILED
+test browser::v2_tests::locate_ref_reports_the_isolated_reading_when_the_pages_world_disagrees ... FAILED
+test browser::v2_tests::locate_ref_reports_no_position_for_a_rotated_node ... FAILED
+test browser::v2_tests::locate_ref_with_a_point_asks_the_page_what_is_at_that_point ... FAILED
+test browser::v2_tests::locate_ref_without_a_point_passes_the_page_function_no_arguments ... ok
+test result: FAILED. 5 passed; 9 failed; 0 ignored; 0 measured; 1250 filtered out; finished in 0.02s

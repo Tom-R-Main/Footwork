@@ -1,3 +1,30 @@
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/cdp_ws.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/cdp_ws.rs
+@@ -60,6 +60,7 @@
+     "Input.insertText",
+     "Page.bringToFront",
+     "Page.captureScreenshot",
++    "Page.createIsolatedWorld",
+     "Page.enable",
+     "Page.getFrameTree",
+     "Page.getLayoutMetrics",
+@@ -1234,7 +1235,15 @@
+         conn.call(None, "Target.getTargets", json!({}))
+             .await
+             .expect("reviewed method remains available");
+-        assert_eq!(&*seen.lock().unwrap(), &["Target.getTargets"]);
++        // the locate reads in an isolated world; the name list is searched as
++        // sorted, so a misplaced entry would be refused here
++        conn.call(None, "Page.createIsolatedWorld", json!({}))
++            .await
++            .expect("the locate's world can be made on a personal profile");
++        assert_eq!(
++            &*seen.lock().unwrap(),
++            &["Target.getTargets", "Page.createIsolatedWorld"]
++        );
+     }
+ 
+     #[tokio::test]
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs
 @@ -33,7 +33,7 @@
@@ -23,7 +50,7 @@
                  attached yet refuses with browser_consent_required or \
                  browser_requires_setup, and detail.next_call names the browser_prepare call \
                  that attaches it. Use this route for any web page in Chrome, Edge or Brave; \
-@@ -579,7 +584,27 @@
+@@ -579,7 +584,30 @@
                      "continuation": {
                          "type": "string",
                          "description": "Opaque continuation minted by an earlier semantic_v2 response."
@@ -35,10 +62,13 @@
 +                            that centre is the target or inside it, the border-box centre \
 +                            from DOM.getBoxModel, the viewport's size, zoom and pinch \
 +                            scale, `clipped` (an ancestor that clips or scrolls its overflow \
-+                            hides part of the rectangle) and `visibility_state` (the \
-+                            document's). Read-only: nothing is scrolled, focused or \
++                            hides part of the rectangle), `visibility_state` (the \
++                            document's), `focused` (the element is its root's active \
++                            element) and `page_focused` (its document has focus). The page \
++                            is read in an isolated world (`world`), out of reach of the \
++                            page's own script. Read-only: nothing is scrolled, focused or \
 +                            dispatched, and no snapshot is taken. Unavailable for a ref in a \
-+                            child frame."
++                            child frame, or when no isolated world can be made."
                      },
 +                    "locate_point": {
 +                        "type": "object",
@@ -51,7 +81,7 @@
                      "include_screenshot": {
                          "type": "boolean",
                          "default": false,
-@@ -646,6 +671,50 @@
+@@ -646,6 +674,50 @@
                      .to_tool_result()
                  }
              };
@@ -102,19 +132,27 @@
              let snapshot_format = args
                  .opt_str("snapshot_format")
                  .unwrap_or_else(|| "dom_refs_v1".into());
-@@ -1878,9 +1947,297 @@
+@@ -1878,9 +1950,349 @@
      })
  }
  
 +/// Where one current ref's element is, for `get_browser_state`'s locate
 +/// mode. It proves the binding and the ref's document as a click does and
 +/// refuses a stale or removed node the same way, then only reads: the
-+/// node's rectangle and the hit test at its centre (page script on the
-+/// node, the click sequence's own geometry), whether a clipping ancestor
-+/// hides part of it, its document's visibility state, the hit test at
-+/// `point` when one is given, the border-box centre from `DOM.getBoxModel`,
-+/// and the viewport's zoom and scale. Nothing is scrolled, focused or
-+/// dispatched.
++/// node's rectangle and the hit test at its centre (script on the node,
++/// the click sequence's own geometry), whether a clipping ancestor hides
++/// part of it, its document's visibility state, whether it has focus, the
++/// hit test at `point` when one is given, the border-box centre from
++/// `DOM.getBoxModel`, and the viewport's zoom and scale. Nothing is
++/// scrolled, focused or dispatched.
++///
++/// The script runs in an isolated world of the tab's main frame
++/// ([`LOCATE_WORLD`]), with the node resolved into that world. The world
++/// shares the page's DOM and none of its script objects, so what the read
++/// calls (`elementFromPoint`, `getBoundingClientRect`, `getComputedStyle`,
++/// `contains`, `isConnected`, `visibilityState`, `hasFocus`) is the
++/// browser's own whatever the page's script replaced. Without such a world
++/// there is no position to report.
 +async fn locate_browser_ref(
 +    engine: &Arc<BrowserEngine>,
 +    session: &str,
@@ -156,11 +194,35 @@
 +    let cdp = cdp_session.as_str();
 +    let backend = entry.backend_node_id;
 +    let stale = |message: &str| BrowserRefusal::new(BrowserRefusalCode::BrowserRefStale, message);
++    let frame_tree = conn
++        .call(Some(cdp), "Page.getFrameTree", json!({}))
++        .await
++        .ok();
++    let main_frame = frame_tree
++        .as_ref()
++        .and_then(|tree| tree.pointer("/frameTree/frame/id"))
++        .and_then(Value::as_str);
++    let world = match main_frame {
++        Some(frame) => conn
++            .call(
++                Some(cdp),
++                "Page.createIsolatedWorld",
++                json!({ "frameId": frame, "worldName": LOCATE_WORLD }),
++            )
++            .await
++            .ok()
++            .and_then(|made| made.get("executionContextId").and_then(Value::as_i64)),
++        None => None,
++    };
++    let Some(world) = world else {
++        // Read in the page's own world, a position would be the page's word.
++        return Ok(json!({ "available": false, "reason": "world_unavailable" }));
++    };
 +    let resolved = conn
 +        .call(
 +            Some(cdp),
 +            "DOM.resolveNode",
-+            json!({ "backendNodeId": backend }),
++            json!({ "backendNodeId": backend, "executionContextId": world }),
 +        )
 +        .await
 +        .map_err(|_| stale("the ref's node no longer resolves in the live page"))?;
@@ -236,16 +298,26 @@
 +    quad_center_of(box_model, "border").or_else(|| quad_center_of(box_model, "content"))
 +}
 +
++/// Name of the isolated world [`locate_browser_ref`] reads in. Chromium keeps
++/// one world per frame and name, so repeated locates of a document share it.
++const LOCATE_WORLD: &str = "cua-driver-locate";
++
 +/// Where the ref's node is, evaluated ON the node with the click sequence's
 +/// own geometry: its bounding rectangle in viewport CSS px and what
 +/// `elementFromPoint` finds at its centre, and at (`px`, `py`) when both are
 +/// numbers.
 +///
++/// `focus` is whether the node is the active element of its root (its
++/// document or shadow root) and whether its document has focus: when both
++/// hold, focusing the node again changes nothing in the page.
++///
 +/// `clipped` is whether an ancestor that clips or scrolls its overflow
 +/// leaves part of the rectangle outside its padding box: such a node is
 +/// what `DOM.scrollIntoViewIfNeeded` and `focus()` scroll. The walk follows
-+/// the flat tree (an assigned slot, then the parent, then a shadow host). The
-+/// root element is skipped: its overflow applies to the viewport, which the
++/// the flat tree (an assigned slot, then the parent, then a shadow host). A
++/// slot in a closed shadow tree is not visible to script in any world, so a
++/// clipping ancestor inside a closed tree, between a slotted node and the
++/// tree's host, is not seen: a known limit. The root element is skipped: its overflow applies to the viewport, which the
 +/// rectangle and `inner` already describe. `body` is skipped only when its
 +/// overflow propagates to the viewport too, that is when the root's overflow
 +/// is `visible` and neither element has containment; otherwise it is a
@@ -306,9 +378,10 @@
 +            || r.right > left + width + 0.5 || r.bottom > top + height + 0.5; \
 +    } \
 +    const point = (typeof px === 'number' && typeof py === 'number') ? [px, py, probe(px, py)] : null; \
++    const active = ('activeElement' in root) ? root.activeElement === node : false; \
 +    return { rect: [r.left, r.top, r.width, r.height], hit: probe(x, y), \
 +        inner: [view.innerWidth, view.innerHeight], clipped, transformed, \
-+        visibility: doc.visibilityState, point }; \
++        visibility: doc.visibilityState, focus: [active, doc.hasFocus() === true], point }; \
 +}";
 +
 +/// The `locate` block of `get_browser_state`'s locate mode from the locate
@@ -316,8 +389,10 @@
 +/// but a well-formed reply with a positive-area rectangle is unavailable,
 +/// and so is a node the script found under a rotation, skew or 3D transform;
 +/// the box-model centre, the viewport's zoom and scale, `clipped`,
-+/// `visibility_state` and `point` are `null` when they could not be read or
-+/// were not asked for, for the caller to refuse on.
++/// `visibility_state`, `focused`, `page_focused` and `point` are `null` when
++/// they could not be read or were not asked for, for the caller to refuse
++/// on. `world` says the reply was read in an isolated world: this is called
++/// with no other.
 +fn dom_locate_value(
 +    located: Option<&Value>,
 +    box_center: Option<(f64, f64)>,
@@ -371,6 +446,10 @@
 +                _ => None,
 +            }
 +        });
++    let focus = value
++        .get("focus")
++        .and_then(Value::as_array)
++        .filter(|focus| focus.len() == 2);
 +    let viewport = metrics.and_then(|m| m.get("cssVisualViewport"));
 +    let factor = |field: &str| {
 +        viewport
@@ -392,6 +471,9 @@
 +        },
 +        "clipped": value.get("clipped").and_then(Value::as_bool),
 +        "visibility_state": value.get("visibility").and_then(Value::as_str),
++        "focused": focus.and_then(|focus| focus[0].as_bool()),
++        "page_focused": focus.and_then(|focus| focus[1].as_bool()),
++        "world": "isolated",
 +        "point": point,
 +    })
 +}
@@ -401,7 +483,7 @@
      if quad.len() < 8 {
          return None;
      }
-@@ -3380,7 +3737,135 @@
+@@ -3380,7 +3792,135 @@
  #[cfg(test)]
  mod tests {
      use super::*;
@@ -539,26 +621,29 @@
              generation,
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
-@@ -115,6 +115,9 @@
+@@ -115,6 +115,11 @@
      dom_click_focused: bool,
      /// The ref's node resolves but the page has removed it from its document.
      dom_click_node_detached: bool,
 +    /// What the locate script reports; the default is the main button, hit.
 +    dom_locate_reply: Option<Value>,
 +    dom_locate_point_hit: &'static str,
++    /// `Page.createIsolatedWorld` fails, as on an endpoint without it.
++    isolated_world_unavailable: bool,
      /// The click sequence finds the ref's node detached after sending these
      /// events, and stops.
      dom_click_sequence_stops_after: Option<Vec<&'static str>>,
-@@ -173,6 +176,8 @@
+@@ -173,6 +178,9 @@
              dom_click_generation: 0,
              dom_click_focused: false,
              dom_click_node_detached: false,
 +            dom_locate_reply: None,
 +            dom_locate_point_hit: "target",
++            isolated_world_unavailable: false,
              dom_click_sequence_stops_after: None,
              dom_click_sequence_reply: None,
              dom_click_reads_before_failure: None,
-@@ -685,7 +690,9 @@
+@@ -685,7 +693,9 @@
                      "pageX": 0.0,
                      "pageY": 0.0,
                      "clientWidth": st.viewport_css_width,
@@ -569,14 +654,46 @@
                  }
              })),
              "Runtime.evaluate"
-@@ -868,6 +875,37 @@
+@@ -821,8 +831,18 @@
+             | "Emulation.setFocusEmulationEnabled"
+             | "Input.dispatchMouseEvent"
+             | "Input.insertText" => MockReply::ok(json!({})),
++            "Page.createIsolatedWorld" if st.isolated_world_unavailable => {
++                MockReply::err(-32601, "'Page.createIsolatedWorld' wasn't found")
++            }
++            "Page.createIsolatedWorld" => {
++                MockReply::ok(json!({ "executionContextId": ISOLATED_CONTEXT }))
++            }
++            // an object belongs to the world it was resolved into
+             "DOM.resolveNode" => MockReply::ok(json!({
+-                "object": { "objectId": format!("obj-{}", call.params["backendNodeId"]) }
++                "object": { "objectId": match call.params["executionContextId"].as_i64() {
++                    Some(context) => format!("iso{context}-obj-{}", call.params["backendNodeId"]),
++                    None => format!("obj-{}", call.params["backendNodeId"]),
++                } }
+             })),
+             "Runtime.callFunctionOn"
                  if call.params["functionDeclaration"]
-                     .as_str()
-                     .is_some_and(|function| {
+@@ -863,6 +883,50 @@
+                 let mut reply = MockReply::ok(json!({ "result": { "value": value } }));
+                 reply.delay = st.dom_click_readback_delay;
+                 reply
++            }
++            "Runtime.callFunctionOn"
++                if call.params["functionDeclaration"]
++                    .as_str()
++                    .is_some_and(|function| {
 +                        function.contains("'descendant'") && !function.contains("'pointerdown'")
 +                    }) =>
 +            {
 +                assert_eq!(call.params["returnByValue"], true);
++                // The page's own world answers as a page that replaced the
++                // methods the function calls: the target is hit, wherever
++                // asked. Only an object of the isolated world gets the
++                // reading the test configured.
++                let isolated = call.params["objectId"]
++                    .as_str()
++                    .is_some_and(|object| object.starts_with(&format!("iso{ISOLATED_CONTEXT}-")));
 +                // as the page function does: a point is answered only when both numbers arrive
 +                let point = call.params["arguments"]
 +                    .as_array()
@@ -585,10 +702,15 @@
 +                        json!([
 +                            arguments[0]["value"],
 +                            arguments[1]["value"],
-+                            st.dom_locate_point_hit
++                            if isolated {
++                                st.dom_locate_point_hit
++                            } else {
++                                "target"
++                            }
 +                        ])
 +                    });
-+                MockReply::ok(st.dom_locate_reply.clone().unwrap_or_else(|| {
++                let configured = st.dom_locate_reply.clone().filter(|_| isolated);
++                MockReply::ok(configured.unwrap_or_else(|| {
 +                    json!({ "result": { "value": {
 +                        "rect": [100.0, 100.0, 20.0, 10.0],
 +                        "hit": "target",
@@ -596,22 +718,21 @@
 +                        "clipped": false,
 +                        "transformed": false,
 +                        "visibility": "visible",
++                        "focus": [false, true],
 +                        "point": point,
 +                    } } })
 +                }))
-+            }
-+            "Runtime.callFunctionOn"
-+                if call.params["functionDeclaration"]
-+                    .as_str()
-+                    .is_some_and(|function| {
-                         function.contains("isConnected") && !function.contains("'pointerdown'")
-                     }) =>
-             {
-@@ -3405,9 +3443,301 @@
+             }
+             "Runtime.callFunctionOn"
+                 if call.params["functionDeclaration"]
+@@ -3405,9 +3469,445 @@
      assert_eq!(state.dom_click_generation, 0);
      drop(state);
      assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
 +}
++
++/// The execution context the mock gives the locate's isolated world.
++const ISOLATED_CONTEXT: i64 = 77;
 +
 +async fn locate(f: &Fixture, target: &str, tab: &str, r: &str) -> ToolResult {
 +    GetBrowserStateTool::new(f.engine.clone())
@@ -674,6 +795,9 @@
 +    );
 +    assert_eq!(found["clipped"], false, "{reply}");
 +    assert_eq!(found["visibility_state"], "visible", "{reply}");
++    assert_eq!(found["focused"], false, "{reply}");
++    assert_eq!(found["page_focused"], true, "{reply}");
++    assert_eq!(found["world"], "isolated", "{reply}");
 +    assert!(
 +        found["point"].is_null(),
 +        "no point was asked about: {reply}"
@@ -741,8 +865,8 @@
 +    assert_eq!(found["clipped"], true);
 +    assert_eq!(found["visibility_state"], "hidden");
 +    assert!(!sent_any_event(&f));
- }
- 
++}
++
 +async fn locate_at(f: &Fixture, target: &str, tab: &str, r: &str, point: Value) -> ToolResult {
 +    GetBrowserStateTool::new(f.engine.clone())
 +        .invoke(json!({
@@ -767,7 +891,7 @@
 +        .collect()
 +}
 +
- #[tokio::test]
++#[tokio::test]
 +async fn locate_ref_with_a_point_asks_the_page_what_is_at_that_point() {
 +    let f = fixture_with(|state| state.dom_locate_point_hit = "other").await;
 +    let (target, tab) = bind(&f).await;
@@ -800,9 +924,9 @@
 +    );
 +    assert!(!sent_any_event(&f), "a locate sends no event");
 +    assert!(recorded_calls(&f, "DOM.scrollIntoViewIfNeeded").is_empty());
-+}
-+
-+#[tokio::test]
+ }
+ 
+ #[tokio::test]
 +async fn locate_ref_without_a_point_passes_the_page_function_no_arguments() {
 +    let f = fixture().await;
 +    let (target, tab) = bind(&f).await;
@@ -854,6 +978,144 @@
 +        json!({ "available": false, "reason": "transformed" })
 +    );
 +    assert!(!sent_any_event(&f));
++}
++
++/// The object ids of the page functions a locate ran, in order.
++fn located_objects(f: &Fixture) -> Vec<String> {
++    recorded_calls(f, "Runtime.callFunctionOn")
++        .iter()
++        .filter_map(|(_, params)| params["objectId"].as_str().map(str::to_owned))
++        .collect()
++}
++
++#[tokio::test]
++async fn locate_ref_reads_in_an_isolated_world_of_the_main_frame() {
++    let f = fixture().await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    let functions_before = located_objects(&f).len();
++    let resolved_before = recorded_calls(&f, "DOM.resolveNode").len();
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    assert_eq!(structured(&result)["locate"]["world"], "isolated");
++    let worlds = recorded_calls(&f, "Page.createIsolatedWorld");
++    assert_eq!(worlds.len(), 1, "{worlds:?}");
++    assert_eq!(
++        worlds[0].1,
++        json!({ "frameId": "F_MAIN", "worldName": "cua-driver-locate" }),
++        "the tab's main frame, by name, with no universal access"
++    );
++    let resolved = &recorded_calls(&f, "DOM.resolveNode")[resolved_before..];
++    assert_eq!(resolved.len(), 1, "{resolved:?}");
++    assert_eq!(resolved[0].1["executionContextId"], ISOLATED_CONTEXT);
++    let functions = &located_objects(&f)[functions_before..];
++    assert_eq!(
++        functions.len(),
++        2,
++        "the connected check and the locate: {functions:?}"
++    );
++    assert!(
++        functions
++            .iter()
++            .all(|object| object.starts_with("iso77-obj-")),
++        "both run on the isolated world's object: {functions:?}"
++    );
++}
++
++#[tokio::test]
++async fn locate_ref_reports_the_isolated_reading_when_the_pages_world_disagrees() {
++    // The mock's page world says the target is hit at its centre and at any
++    // point, as a page that replaced `elementFromPoint` would; the isolated
++    // world sees the overlay.
++    let f = fixture_with(|state| {
++        state.dom_locate_point_hit = "other";
++        state.dom_locate_reply = Some(json!({ "result": { "value": {
++            "rect": [100.0, 100.0, 20.0, 10.0],
++            "hit": "other",
++            "inner": [800.0, 600.0],
++            "clipped": false,
++            "transformed": false,
++            "visibility": "visible",
++            "focus": [true, true],
++            "point": [104.5, 105.0, "other"],
++        } } }));
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate_at(
++        &f,
++        &target,
++        &tab,
++        &main_ref,
++        json!({ "x": 104.5, "y": 105.0 }),
++    )
++    .await;
++
++    let found = &structured(&result)["locate"];
++    assert_eq!(found["hit"], "other", "{found}");
++    assert_eq!(found["point"]["hit"], "other", "{found}");
++    assert_eq!(found["focused"], true, "{found}");
++    assert_eq!(found["page_focused"], true, "{found}");
++}
++
++#[tokio::test]
++async fn locate_ref_reports_no_position_without_an_isolated_world() {
++    let f = fixture_with(|state| state.isolated_world_unavailable = true).await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++    let functions_before = located_objects(&f).len();
++    let resolved_before = recorded_calls(&f, "DOM.resolveNode").len();
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    let reply = structured(&result);
++    assert_eq!(reply["status"], "ok", "{reply}");
++    assert_eq!(
++        reply["locate"],
++        json!({ "available": false, "reason": "world_unavailable" }),
++        "{reply}"
++    );
++    assert_eq!(
++        located_objects(&f).len(),
++        functions_before,
++        "nothing is read in the page's own world instead"
++    );
++    assert_eq!(recorded_calls(&f, "DOM.resolveNode").len(), resolved_before);
++}
++
++#[tokio::test]
++async fn locate_ref_passes_on_focus_it_could_not_read_as_null() {
++    let f = fixture_with(|state| {
++        state.dom_locate_reply = Some(json!({ "result": { "value": {
++            "rect": [100.0, 100.0, 20.0, 10.0],
++            "hit": "target",
++            "inner": [800.0, 600.0],
++            "clipped": false,
++            "transformed": false,
++            "visibility": "visible",
++            "focus": ["yes"],
++            "point": null,
++        } } }));
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    let found = &structured(&result)["locate"];
++    assert_eq!(found["available"], true, "{found}");
++    // present and null: the caller can tell an unread focus from a driver
++    // that reports none
++    assert_eq!(found.get("focused"), Some(&Value::Null), "{found}");
++    assert_eq!(found.get("page_focused"), Some(&Value::Null), "{found}");
 +}
 +
 +#[tokio::test]

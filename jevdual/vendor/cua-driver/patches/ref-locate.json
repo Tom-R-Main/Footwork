@@ -1,20 +1,24 @@
 {
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4",
-  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate4",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate5",
   "base_archive_sha256": "6f673125f9bece9777ef01c42575a93911153c37a19780f02cd40ef68d2fb94a",
-  "patched_archive_sha256": "6a4dc32c3b707a96fdc7c3cfbdc774fe46fe4068999cd1801f5c9c630a30ff19",
-  "patch_sha256": "7bed7ababa7244f524d885ebd4360cf96a6a372d8344150bd18d512524a35157",
+  "patched_archive_sha256": "0d4105b397b5cb86c23e480487324cfb5a8ce0e6e829bbb6bf7b40987047914a",
+  "patch_sha256": "d326ec7195fabdc1879af6b87ac5617bb0ea73a419c90ff3faf697357b51067a",
   "files": {
+    "libs/cua-driver/rust/crates/cua-driver-core/src/browser/cdp_ws.rs": {
+      "before": "181304de78c5d0907786d5a0d65e5012d6e4aeef2654446117b6dbac90b2ffd3",
+      "after": "9cf9ab81247dcd11b75bfda18e798ddfaa20423acb9852fd8066afe170d5d6ce"
+    },
     "libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs": {
       "before": "0296798424f2fc9197d35849936dbc91fc5dff71d59a322ef3c20b7433409ce4",
-      "after": "15284673c200c7278d7a8dd1ee87970528f022953a72de841a0741c821ae964c"
+      "after": "921d8072fd02397542a00edead8cef6a3f366f8b85185c63d04d92303cdae15f"
     },
     "libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs": {
       "before": "cf2f59d4f53de9f3c65d20c0c2c66221fed95ead0d1b4d8a42b9f71621f8b4c6",
-      "after": "6c63f7efeb23843ce332041a6dc1597d0be815e3523063d9334fe3d826f61ed7"
+      "after": "4723c0ea3652f2906c05270ac04ce36d42998327f5236e3284b637622e0c8b11"
     }
   },
-  "abi": "unchanged six Python binding files; get_browser_state gains a read-only locate_ref mode with an optional locate_point",
+  "abi": "unchanged six Python binding files; get_browser_state gains a read-only locate_ref mode with an optional locate_point, read in an isolated world",
   "toolchain": "1.97.1"
 }

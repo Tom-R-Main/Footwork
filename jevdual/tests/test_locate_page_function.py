@@ -1,4 +1,4 @@
-"""The driver's locate page function, executed (FP16).
+"""The driver's locate page function, executed (FP16, FP19).
 
 The Rust tests give the function's result to a mock CDP; nothing there runs it. This takes its text
 from the pinned driver source archive and runs it in Node against hand-built stand-ins for the node, its
@@ -28,7 +28,8 @@ const input = JSON.parse(require('fs').readFileSync(0, 'utf8'));
 const locate = eval('(' + input.source + ')');
 const out = input.cases.map((spec) => {
   const view = { innerWidth: spec.viewport[0], innerHeight: spec.viewport[1], getComputedStyle: (el) => el.style };
-  const doc = { defaultView: view, visibilityState: spec.visibility || 'visible' };
+  const doc = { defaultView: view, visibilityState: spec.visibility || 'visible',
+                hasFocus: () => spec.page_focus !== false };
   const make = (item, parent, root) => {
     const [left, top, width, height] = item.rect;
     const layout = item.layout || {};
@@ -55,10 +56,13 @@ const out = input.cases.map((spec) => {
     const root = { host: parent };
     node = make(spec.shadow, null, root);
     root.elementFromPoint = () => node;
+    // a shadow root names its own active element; the document names the host
+    if (spec.active) root.activeElement = spec.active === 'target' ? node : null;
   }
   const child = make({ name: 'icon', rect: [0, 0, 1, 1] }, node, doc);
   const other = make({ name: 'other', rect: [0, 0, 1, 1] }, byName.html, doc);
   const hits = { target: node, descendant: child, other, none: null };
+  doc.activeElement = spec.shadow ? (spec.active ? parent : doc.body) : (hits[spec.active] || doc.body);
   doc.elementFromPoint = (x, y) => {
     const at = spec.at || {};
     const key = `${x},${y}`;
@@ -101,7 +105,7 @@ def page(*between: dict, button: dict = BUTTON, html: dict = HTML, body: dict = 
 def test_a_plain_button_is_located_with_its_rectangle_and_what_is_at_its_centre():
     plain, covered, inner = _locate(page(), page(hit="other"), page(hit="descendant"))
     assert plain == {"rect": [60, 330, 140, 44], "hit": "target", "inner": [800, 600], "clipped": False,
-                     "transformed": False, "visibility": "visible", "point": None}
+                     "transformed": False, "visibility": "visible", "focus": [False, True], "point": None}
     assert (covered["hit"], inner["hit"]) == ("other", "descendant")
 
 
@@ -114,6 +118,29 @@ def test_a_point_is_hit_tested_only_when_both_numbers_are_given():
 
 def test_a_hidden_document_is_reported():
     assert _locate(page(visibility="hidden"))[0]["visibility"] == "hidden"
+
+
+def test_focus_is_the_nodes_own_and_its_documents():
+    """FP19: only a field that is its root's active element in a focused document is typed into."""
+    mine, elsewhere, inside, background, neither = _locate(
+        page(active="target"), page(active="other"), page(active="descendant"),
+        page(active="target", page_focus=False), page(active="other", page_focus=False))
+    assert mine["focus"] == [True, True]
+    assert elsewhere["focus"] == [False, True]
+    assert inside["focus"] == [False, True]  # something inside the node has focus, not the node
+    assert background["focus"] == [True, False]
+    assert neither["focus"] == [False, False]
+
+
+def test_focus_inside_a_shadow_tree_is_read_from_its_root():
+    host = {"name": "host", "rect": [60, 330, 140, 44]}
+    inside = {"name": "button", "rect": [60, 330, 140, 44]}
+    mine, another, unnamed = _locate(
+        page(button=host, shadow=inside, active="target"),  # the document's active element is the host
+        page(button=host, shadow=inside, active="other"),
+        page(button=host, shadow=inside))  # a root that names no active element
+    assert mine["focus"] == [True, True]
+    assert another["focus"] == [False, True] and unnamed["focus"] == [False, True]
 
 
 SCROLLER = {"name": "scroller", "rect": [40, 300, 200, 60], "style": {"overflowX": "auto", "overflowY": "auto"}}
