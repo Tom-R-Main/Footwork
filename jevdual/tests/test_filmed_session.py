@@ -572,15 +572,16 @@ def test_a_filmed_browser_take_needs_a_web_area(world, fw, filmed, monkeypatch):
     monkeypatch.setattr(session, "WEB_AREA_POLL_S", 0.01, raising=False)
     code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
                       "--pointer-motion", "filmed", "--rest", "20,40")
-    assert code == 2 and "no web area to film (asked with AXManualAccessibility, waited 0." in err, err
+    assert code == 2 and "no web area to film (asked: AXManualAccessibility accepted at 0.0 s, waited 0." in err, err
     assert "the window shows 'New Tab': level 1: AXGroup, AXToolbar)" in err  # what one run needs to tell why
     assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
     assert not (fw.session / "session.json").exists()
 
 
-def _a_browser_start_reading(monkeypatch, readings, *, wait=0.5, refuses=False):
+def _a_browser_start_reading(monkeypatch, readings, *, wait=0.5, refuses=0, ask_every=60.0):
     """A filmed browser start whose window gives ``readings`` of its web area in turn, the last for ever;
-    returns the readings taken, with the request to show web content where it fell among them."""
+    returns the readings taken, with each request to show web content where it fell among them. The
+    browser refuses the first ``refuses`` requests (all of them when True), as the fourth live run's did."""
     from jevdual import ax, browser_driver, browser_target, session
     from jevdual.browser_driver import BrowserBridge
 
@@ -602,8 +603,8 @@ def _a_browser_start_reading(monkeypatch, readings, *, wait=0.5, refuses=False):
 
     def ask(pid):
         taken.append(("asked", pid))
-        if refuses:
-            raise ax.AXError("web_content_refused", "AXManualAccessibility did not acknowledge the write (-25204)")
+        if refuses is True or sum(1 for entry in taken if isinstance(entry, tuple)) <= refuses:
+            raise ax.AXError("web_content_refused", "AXEnhancedUserInterface did not acknowledge the write (-25208)")
         return "AXManualAccessibility"
 
     monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
@@ -612,6 +613,7 @@ def _a_browser_start_reading(monkeypatch, readings, *, wait=0.5, refuses=False):
     monkeypatch.setattr(ax, "outline", lambda win: "'Fixture': level 1: AXGroup", raising=False)
     monkeypatch.setattr(session, "WEB_AREA_WAIT_S", wait, raising=False)
     monkeypatch.setattr(session, "WEB_AREA_POLL_S", 0.01, raising=False)
+    monkeypatch.setattr(session, "WEB_AREA_ASK_S", ask_every, raising=False)
     return taken
 
 
@@ -630,7 +632,7 @@ def test_a_filmed_browser_start_asks_a_browser_that_shows_no_web_area_and_waits_
     # asked once, straight after the first reading, of the browser it is bound to; then read until it
     # shows, and once more to see it keep its frame
     assert taken == [None, ("asked", 77), None, None, shown, shown]
-    assert "; web area shown after 0." in out and ", asked with AXManualAccessibility" in out
+    assert "; web area shown after 0." in out and ", asked: AXManualAccessibility accepted at 0.0 s" in out
     assert json.loads((fw.session / "session.json").read_text())["filmed"]["content"] == list(CONTENT)
 
 
@@ -646,14 +648,52 @@ def test_a_browser_that_shows_its_web_area_already_is_not_asked(world, fw, filme
     assert "; web area shown after 0." in out and "asked with" not in out
 
 
-def test_a_browser_that_refuses_the_request_does_not_start_and_says_so(world, fw, filmed, monkeypatch):
+def test_a_request_the_browser_refuses_does_not_end_the_start(world, fw, filmed, monkeypatch):
+    """FP84, FP85: the fourth live start found no web area, asked, was answered "not implemented" a
+    second after the launch, and refused at once. The web area has appeared with no request made
+    (the second run), so a refused request decides nothing: the reading goes on, and start says
+    what the request answered."""
+    from jevdual import ax
+
+    shown = ax.Frame(*CONTENT)
+    taken = _a_browser_start_reading(monkeypatch, [None, None, None, shown], refuses=True)
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    assert taken == [None, ("asked", 77), None, None, shown, shown]
+    assert ("; web area shown after 0.0 s, asked: AXEnhancedUserInterface did not acknowledge the write (-25208) "
+            "at 0.0 s") in out
+    assert json.loads((fw.session / "session.json").read_text())["filmed"]["content"] == list(CONTENT)
+
+
+def test_the_request_is_made_again_while_no_web_area_is_shown_until_one_is_accepted(world, fw, filmed, monkeypatch):
+    """FP85 (a): if the browser accepts the request only some time after its launch, a later one in the
+    same wait is accepted. Requests stop once one is, and the readings go on."""
+    from jevdual import ax
+
+    shown = ax.Frame(*CONTENT)
+    taken = _a_browser_start_reading(monkeypatch, [None] * 12 + [shown], refuses=2, ask_every=0.03, wait=2.0)
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    asks = [n for n, entry in enumerate(taken) if isinstance(entry, tuple)]
+    assert len(asks) == 3 and asks[0] == 1, taken  # two refused, the third accepted, then no more
+    assert taken[-2:] == [shown, shown] and taken.count(None) == 12
+    assert out.count("did not acknowledge the write (-25208)") == 2 and "AXManualAccessibility accepted at 0." in out
+    assert "asked 3 times: " in out
+
+
+def test_a_browser_that_never_shows_a_web_area_does_not_start_and_says_what_each_request_answered(
+        world, fw, filmed, monkeypatch):
     from jevdual.coordination import Coordinator
 
-    taken = _a_browser_start_reading(monkeypatch, [None], refuses=True)
+    taken = _a_browser_start_reading(monkeypatch, [None], refuses=True, ask_every=0.02, wait=0.1)
     code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
                       "--pointer-motion", "filmed", "--rest", "20,40")
-    assert code == 2 and taken == [None, ("asked", 77)], (err, taken)
-    assert "the browser was asked to show it: AXManualAccessibility did not acknowledge the write (-25204)" in err
+    asks = sum(1 for entry in taken if isinstance(entry, tuple))
+    assert code == 2 and asks >= 3 and not any(entry for entry in taken if not isinstance(entry, tuple)), (err, taken)
+    assert f"no web area to film (asked {asks} times: AXEnhancedUserInterface did not acknowledge the write (-25208) at 0.0 s; " in err
+    assert err.count("(-25208)") == asks and "waited 0.1 s; the window shows 'Fixture': level 1: AXGroup)" in err
     assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
     assert not (fw.session / "session.json").exists()
 

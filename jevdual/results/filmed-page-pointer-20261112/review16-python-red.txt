@@ -1,0 +1,139 @@
+..........................FF.FFF...                                      [100%]
+=================================== FAILURES ===================================
+_________________ test_a_filmed_browser_take_needs_a_web_area __________________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1057eaa20>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1056609b0>
+
+    def test_a_filmed_browser_take_needs_a_web_area(world, fw, filmed, monkeypatch):
+        """FP9: a page position maps to the screen from the web area's origin, so a browser take whose window
+        shows no web area does not start (a native take still films from the window's frame)."""
+        from jevdual import ax, browser_driver, browser_target, session
+        from jevdual.browser_driver import BrowserBridge
+        from jevdual.coordination import Coordinator
+    
+        from tests.test_filmed_page_pointer import URL, Wire
+    
+        monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+            {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+    
+        async def browser(url, policy):
+            wire = Wire([])
+            return wire, BrowserBridge(wire, 77, 40335, policy=policy)
+    
+        monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+        monkeypatch.setattr(ax, "web_area_frame", lambda el: None)
+        monkeypatch.setattr(ax, "show_web_content", lambda pid: "AXManualAccessibility", raising=False)
+        monkeypatch.setattr(ax, "outline", lambda win: "'New Tab': level 1: AXGroup, AXToolbar", raising=False)
+        monkeypatch.setattr(session, "WEB_AREA_WAIT_S", 0.05, raising=False)
+        monkeypatch.setattr(session, "WEB_AREA_POLL_S", 0.01, raising=False)
+        code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                          "--pointer-motion", "filmed", "--rest", "20,40")
+>       assert code == 2 and "no web area to film (asked: AXManualAccessibility accepted at 0.0 s, waited 0." in err, err
+E       AssertionError: not starting: the browser window shows no web area to film (asked with AXManualAccessibility, waited 0.1 s; the window shows 'New Tab': level 1: AXGroup, AXToolbar)
+E         
+E       assert (2 == 2 and 'no web area to film (asked: AXManualAccessibility accepted at 0.0 s, waited 0.' in "not starting: the browser window shows no web area to film (asked with AXManualAccessibility, waited 0.1 s; the window shows 'New Tab': level 1: AXGroup, AXToolbar)\n")
+
+tests/test_filmed_session.py:575: AssertionError
+_ test_a_filmed_browser_start_asks_a_browser_that_shows_no_web_area_and_waits_for_it _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1057eaf20>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1058ac920>
+
+    def test_a_filmed_browser_start_asks_a_browser_that_shows_no_web_area_and_waits_for_it(world, fw, filmed, monkeypatch):
+        """FP69, FP72: the first live start read the window of a Chrome it had launched a second before,
+        found no web area and refused. Chromium builds the accessibility tree of its page only after a
+        client opts in, which the Driver does for a native session and nothing did for this one. So start
+        asks, once, and reads again for a bounded time."""
+        from jevdual import ax
+    
+        shown = ax.Frame(*CONTENT)
+        taken = _a_browser_start_reading(monkeypatch, [None, None, None, shown])
+        code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                            "--pointer-motion", "filmed", "--rest", "20,40")
+        assert code == 0, (out, err)
+        # asked once, straight after the first reading, of the browser it is bound to; then read until it
+        # shows, and once more to see it keep its frame
+        assert taken == [None, ("asked", 77), None, None, shown, shown]
+>       assert "; web area shown after 0." in out and ", asked: AXManualAccessibility accepted at 0.0 s" in out
+E       AssertionError: assert ('; web area shown after 0.' in 'filmed take: content 300x450 at 420,330; keep-out None; rest (440.0, 370.0); web area shown after 0.0 s, asked with A...2h7d74lx2vb5376m0000gn/T/pytest-of-<user>/pytest-1111/test_a_filmed_browser_start_as0/session to omit --session)\n' and ', asked: AXManualAccessibility accepted at 0.0 s' in 'filmed take: content 300x450 at 420,330; keep-out None; rest (440.0, 370.0); web area shown after 0.0 s, asked with A...2h7d74lx2vb5376m0000gn/T/pytest-of-<user>/pytest-1111/test_a_filmed_browser_start_as0/session to omit --session)\n')
+
+tests/test_filmed_session.py:635: AssertionError
+__________ test_a_request_the_browser_refuses_does_not_end_the_start ___________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1057ebec0>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1073ae060>
+
+    def test_a_request_the_browser_refuses_does_not_end_the_start(world, fw, filmed, monkeypatch):
+        """FP84, FP85: the fourth live start found no web area, asked, was answered "not implemented" a
+        second after the launch, and refused at once. The web area has appeared with no request made
+        (the second run), so a refused request decides nothing: the reading goes on, and start says
+        what the request answered."""
+        from jevdual import ax
+    
+        shown = ax.Frame(*CONTENT)
+        taken = _a_browser_start_reading(monkeypatch, [None, None, None, shown], refuses=True)
+        code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                            "--pointer-motion", "filmed", "--rest", "20,40")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'not starting: the browser window shows no web area to film, and the browser was asked to show it: AXEnhancedUserInterface did not acknowledge the write (-25208)
+E         ')
+E       assert 2 == 0
+
+tests/test_filmed_session.py:662: AssertionError
+_ test_the_request_is_made_again_while_no_web_area_is_shown_until_one_is_accepted _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107060d60>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104d0cbf0>
+
+    def test_the_request_is_made_again_while_no_web_area_is_shown_until_one_is_accepted(world, fw, filmed, monkeypatch):
+        """FP85 (a): if the browser accepts the request only some time after its launch, a later one in the
+        same wait is accepted. Requests stop once one is, and the readings go on."""
+        from jevdual import ax
+    
+        shown = ax.Frame(*CONTENT)
+        taken = _a_browser_start_reading(monkeypatch, [None] * 12 + [shown], refuses=2, ask_every=0.03, wait=2.0)
+        code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                            "--pointer-motion", "filmed", "--rest", "20,40")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'not starting: the browser window shows no web area to film, and the browser was asked to show it: AXEnhancedUserInterface did not acknowledge the write (-25208)
+E         ')
+E       assert 2 == 0
+
+tests/test_filmed_session.py:678: AssertionError
+_ test_a_browser_that_never_shows_a_web_area_does_not_start_and_says_what_each_request_answered _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107060a40>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10943f050>
+
+    def test_a_browser_that_never_shows_a_web_area_does_not_start_and_says_what_each_request_answered(
+            world, fw, filmed, monkeypatch):
+        from jevdual.coordination import Coordinator
+    
+        taken = _a_browser_start_reading(monkeypatch, [None], refuses=True, ask_every=0.02, wait=0.1)
+        code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                          "--pointer-motion", "filmed", "--rest", "20,40")
+        asks = sum(1 for entry in taken if isinstance(entry, tuple))
+>       assert code == 2 and asks >= 3 and not any(entry for entry in taken if not isinstance(entry, tuple)), (err, taken)
+E       AssertionError: ('not starting: the browser window shows no web area to film, and the browser was asked to show it: AXEnhancedUserInterface did not acknowledge the write (-25208)
+E         ', [None, ('asked', 77)])
+E       assert (2 == 2 and 1 >= 3)
+
+tests/test_filmed_session.py:694: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_filmed_session.py::test_a_filmed_browser_take_needs_a_web_area
+FAILED tests/test_filmed_session.py::test_a_filmed_browser_start_asks_a_browser_that_shows_no_web_area_and_waits_for_it
+FAILED tests/test_filmed_session.py::test_a_request_the_browser_refuses_does_not_end_the_start
+FAILED tests/test_filmed_session.py::test_the_request_is_made_again_while_no_web_area_is_shown_until_one_is_accepted
+FAILED tests/test_filmed_session.py::test_a_browser_that_never_shows_a_web_area_does_not_start_and_says_what_each_request_answered
+5 failed, 30 passed in 2.92s

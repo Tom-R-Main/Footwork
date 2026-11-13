@@ -1262,40 +1262,41 @@ def finish_observation(
 # ---- commands --------------------------------------------------------------------------------
 
 
-#: how long a filmed browser start waits for the window to show its web area, and how often it reads.
-#: Chromium builds the accessibility tree of its page only after a client opts in, and then
-#: asynchronously (FP69, FP72); the Driver, which opts in for a native session, allows it four seconds.
+#: how long a filmed browser start waits for the window to show its web area, how often it reads, and
+#: how often it asks the browser to show its web content while none is shown. For about a second after
+#: a launch the window of a Chrome may show no web area, and may not accept the request either (FP69,
+#: FP84); the Driver, which makes the same request for a native session, allows the page's tree four seconds.
 WEB_AREA_WAIT_S = 8.0
 WEB_AREA_POLL_S = 0.1
+WEB_AREA_ASK_S = 1.0
 
 
 def _web_area_when_shown(pid: int, window_id: int) -> tuple[Any, str, str | None]:
     """The frame of the browser window's web area, how it was got (for start to print), and why not.
 
-    A browser nothing has read through the accessibility interface shows no web area: when the first
-    reading finds none, the browser is asked once to show its web content (``ax.show_web_content``) and
-    read again for up to ``WEB_AREA_WAIT_S``. A browser that shows one already is not written to. The
-    frame is recorded once and every page position is mapped from it, so it is taken only when two
-    readings ``WEB_AREA_POLL_S`` apart agree, and one reading of a window still settling is not. The
-    window is found again for each reading: the browser rebuilds what it shows when it is asked."""
+    The window is read for up to ``WEB_AREA_WAIT_S``, whatever else happens. While a reading finds no
+    web area the browser is asked to show its web content (``ax.show_web_content``), again every
+    ``WEB_AREA_ASK_S`` until one request is accepted; a request the browser does not accept is recorded
+    with its answer and decides nothing, because the web area has appeared with no request made and
+    has been absent when a request was refused. A browser that shows one already is not written to.
+    The frame is recorded once and every page position is mapped from it, so it is taken only when two
+    readings ``WEB_AREA_POLL_S`` apart agree. The window is found again for each reading."""
     from jevdual import ax
 
     began = time.monotonic()
-    last = ax.web_area_frame(ax.window_element(pid, window_id))
-    seen, asked = last is not None, None
-    if last is None:
-        try:
-            asked = ax.show_web_content(pid)
-        except ax.AXError as exc:
-            return None, "", f"the browser window shows no web area to film, and the browser was asked to show it: {exc}"
-    how = f"asked with {asked}" if asked else ""
+    asked: list[str] = []  # each request's answer, in order: the attribute accepted, or the error
+    accepted, last_ask, last, seen = False, -math.inf, None, False
+
+    def how() -> str:
+        return f"asked {len(asked)} times: {'; '.join(asked)}" if len(asked) > 1 else (
+            f"asked: {asked[0]}" if asked else "")
+
     while True:
-        time.sleep(WEB_AREA_POLL_S)
         win = ax.window_element(pid, window_id)
         found = ax.web_area_frame(win)
         waited = time.monotonic() - began
         if found is not None and found == last:
-            return found, f"web area shown after {waited:.1f} s" + (f", {how}" if how else ""), None
+            return found, f"web area shown after {waited:.1f} s" + (f", {how()}" if asked else ""), None
         seen, last = seen or found is not None, found
         if waited >= WEB_AREA_WAIT_S:
             why = ("the browser window's web area did not keep one frame" if seen
@@ -1304,7 +1305,15 @@ def _web_area_when_shown(pid: int, window_id: int) -> tuple[Any, str, str | None
                 shows = ax.outline(win)
             except Exception as exc:  # noqa: BLE001  (saying what the window shows helps; failing to is not the refusal)
                 shows = f"nothing readable ({type(exc).__name__})"
-            return None, "", f"{why} ({how + ', ' if how else ''}waited {waited:.1f} s; the window shows {shows})"
+            return None, "", f"{why} ({how() + ', ' if asked else ''}waited {waited:.1f} s; the window shows {shows})"
+        if found is None and not accepted and waited - last_ask >= WEB_AREA_ASK_S:
+            last_ask = waited
+            try:
+                asked.append(f"{ax.show_web_content(pid)} accepted at {waited:.1f} s")
+                accepted = True
+            except ax.AXError as exc:
+                asked.append(f"{exc} at {waited:.1f} s")
+        time.sleep(WEB_AREA_POLL_S)
 
 
 def _filmed_setup(state: SessionState, args: Any) -> str | None:
