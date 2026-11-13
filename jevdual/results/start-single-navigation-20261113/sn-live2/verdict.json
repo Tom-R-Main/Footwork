@@ -1,0 +1,1153 @@
+{
+ "steps": [
+  {
+   "label": "Alpha",
+   "op": "click",
+   "expect": "clicked",
+   "exit": 0,
+   "handlers": 1,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 5,
+   "sequence": [
+    "pointerdown",
+    "mousedown",
+    "pointerup",
+    "mouseup",
+    "click"
+   ],
+   "page_events_elsewhere": [],
+   "new_gestures": [
+    [
+     "approach",
+     "Alpha",
+     "arrived"
+    ]
+   ],
+   "in_order": true,
+   "said": true,
+   "events": [
+    {
+     "event": "pointerdown",
+     "rect": [
+      40.0,
+      60.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 81,
+     "off_control": 0,
+     "largest_gap_s": 0.0074,
+     "held": true
+    },
+    {
+     "event": "mousedown",
+     "rect": [
+      40.0,
+      60.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 81,
+     "off_control": 0,
+     "largest_gap_s": 0.0074,
+     "held": true
+    },
+    {
+     "event": "pointerup",
+     "rect": [
+      40.0,
+      60.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 81,
+     "off_control": 0,
+     "largest_gap_s": 0.0074,
+     "held": true
+    },
+    {
+     "event": "mouseup",
+     "rect": [
+      40.0,
+      60.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.0074,
+     "held": true
+    },
+    {
+     "event": "click",
+     "rect": [
+      40.0,
+      60.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.0074,
+     "held": true
+    }
+   ],
+   "pointer_target": "Alpha",
+   "pointer_during_step": true,
+   "pointer_inside": true,
+   "event_trusted": false,
+   "scroll": [
+    0,
+    0
+   ],
+   "dpr": 2,
+   "pinch": 1,
+   "page_focused": false,
+   "rect": [
+    40.0,
+    60.0,
+    140.0,
+    44.0
+   ],
+   "control_screen_rect": [
+    62.0,
+    202.0,
+    140.0,
+    44.0
+   ],
+   "gesture_end": [
+    132.0,
+    224.0
+   ],
+   "end_inside": true,
+   "already_there": false,
+   "samples_around_delivery": 80,
+   "samples_off_control": 0,
+   "largest_sample_gap_s": 0.0074,
+   "pointer_on_control_at_delivery": true,
+   "held": true
+  },
+  {
+   "label": "Beta",
+   "op": "trusted",
+   "expect": "route_unfilmed",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [],
+   "said_code": true,
+   "said_reason": true,
+   "held": true
+  },
+  {
+   "label": "Beta",
+   "op": "click",
+   "expect": "clicked",
+   "exit": 0,
+   "handlers": 1,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 5,
+   "sequence": [
+    "pointerdown",
+    "mousedown",
+    "pointerup",
+    "mouseup",
+    "click"
+   ],
+   "page_events_elsewhere": [],
+   "new_gestures": [
+    [
+     "approach",
+     "Beta",
+     "arrived"
+    ]
+   ],
+   "in_order": true,
+   "said": true,
+   "events": [
+    {
+     "event": "pointerdown",
+     "rect": [
+      620.0,
+      330.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.0071,
+     "held": true
+    },
+    {
+     "event": "mousedown",
+     "rect": [
+      620.0,
+      330.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.0071,
+     "held": true
+    },
+    {
+     "event": "pointerup",
+     "rect": [
+      620.0,
+      330.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 79,
+     "off_control": 0,
+     "largest_gap_s": 0.0071,
+     "held": true
+    },
+    {
+     "event": "mouseup",
+     "rect": [
+      620.0,
+      330.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 79,
+     "off_control": 0,
+     "largest_gap_s": 0.0071,
+     "held": true
+    },
+    {
+     "event": "click",
+     "rect": [
+      620.0,
+      330.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 79,
+     "off_control": 0,
+     "largest_gap_s": 0.0071,
+     "held": true
+    }
+   ],
+   "pointer_target": "Beta",
+   "pointer_during_step": true,
+   "pointer_inside": true,
+   "event_trusted": false,
+   "scroll": [
+    0,
+    0
+   ],
+   "dpr": 2,
+   "pinch": 1,
+   "page_focused": false,
+   "rect": [
+    620.0,
+    330.0,
+    140.0,
+    44.0
+   ],
+   "control_screen_rect": [
+    642.0,
+    472.0,
+    140.0,
+    44.0
+   ],
+   "gesture_end": [
+    712.0,
+    494.0
+   ],
+   "end_inside": true,
+   "already_there": false,
+   "samples_around_delivery": 79,
+   "samples_off_control": 0,
+   "largest_sample_gap_s": 0.0071,
+   "pointer_on_control_at_delivery": true,
+   "held": true
+  },
+  {
+   "label": "Covered",
+   "op": "click",
+   "expect": "target_unlocated",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [],
+   "said_code": true,
+   "said_reason": true,
+   "held": true
+  },
+  {
+   "label": "Forged",
+   "op": "click",
+   "expect": "target_unlocated",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [],
+   "said_code": true,
+   "said_reason": true,
+   "held": true
+  },
+  {
+   "label": "Edge",
+   "op": "click",
+   "expect": "target_unlocated",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [],
+   "said_code": true,
+   "said_reason": true,
+   "held": true
+  },
+  {
+   "label": "Clipped",
+   "op": "click",
+   "expect": "target_unlocated",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [],
+   "said_code": true,
+   "said_reason": true,
+   "held": true
+  },
+  {
+   "label": "Turned",
+   "op": "click",
+   "expect": "target_unlocated",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [],
+   "said_code": true,
+   "said_reason": true,
+   "held": true
+  },
+  {
+   "label": "Hidden",
+   "op": "click",
+   "expect": "target_unlocated",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [],
+   "said_code": true,
+   "said_reason": true,
+   "held": true
+  },
+  {
+   "label": "Shy",
+   "op": "click",
+   "expect": "unpressed",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 1,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [
+    [
+     "approach",
+     "Shy",
+     "arrived"
+    ]
+   ],
+   "in_order": true,
+   "said": true,
+   "events": [],
+   "pointer_target": "Shy",
+   "pointer_during_step": true,
+   "pointer_inside": true,
+   "event_trusted": false,
+   "scroll": [
+    0,
+    0
+   ],
+   "dpr": 2,
+   "pinch": 1,
+   "page_focused": false,
+   "rect": [
+    40.0,
+    130.0,
+    140.0,
+    44.0
+   ],
+   "moved": {
+    "samples": 78,
+    "off_control": 0,
+    "largest_gap_s": 0.0165,
+    "held": true
+   },
+   "control_screen_rect": [
+    62.0,
+    272.0,
+    140.0,
+    44.0
+   ],
+   "gesture_end": [
+    132.0,
+    294.0
+   ],
+   "end_inside": true,
+   "already_there": false,
+   "samples_around_delivery": 78,
+   "samples_off_control": 0,
+   "largest_sample_gap_s": 0.0165,
+   "pointer_on_control_at_delivery": true,
+   "held": true
+  },
+  {
+   "label": "Dodge",
+   "op": "click",
+   "expect": "pressed",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 1,
+   "other_handlers": [],
+   "page_events": 2,
+   "sequence": [
+    "pointerdown",
+    "mousedown"
+   ],
+   "page_events_elsewhere": [],
+   "new_gestures": [
+    [
+     "approach",
+     "Dodge",
+     "arrived"
+    ]
+   ],
+   "in_order": true,
+   "said": true,
+   "events": [
+    {
+     "event": "pointerdown",
+     "rect": [
+      300.0,
+      200.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 81,
+     "off_control": 0,
+     "largest_gap_s": 0.0071,
+     "held": true
+    },
+    {
+     "event": "mousedown",
+     "rect": [
+      300.0,
+      200.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 81,
+     "off_control": 0,
+     "largest_gap_s": 0.0071,
+     "held": true
+    }
+   ],
+   "pointer_target": "Dodge",
+   "pointer_during_step": true,
+   "pointer_inside": true,
+   "event_trusted": false,
+   "scroll": [
+    0,
+    0
+   ],
+   "dpr": 2,
+   "pinch": 1,
+   "page_focused": false,
+   "rect": [
+    300.0,
+    200.0,
+    140.0,
+    44.0
+   ],
+   "moved": {
+    "samples": 81,
+    "off_control": 0,
+    "largest_gap_s": 0.0071,
+    "held": true
+   },
+   "control_screen_rect": [
+    322.0,
+    342.0,
+    140.0,
+    44.0
+   ],
+   "gesture_end": [
+    392.0,
+    364.0
+   ],
+   "end_inside": true,
+   "already_there": false,
+   "samples_around_delivery": 81,
+   "samples_off_control": 0,
+   "largest_sample_gap_s": 0.0071,
+   "pointer_on_control_at_delivery": true,
+   "held": true
+  },
+  {
+   "label": "Note",
+   "op": "type",
+   "expect": "target_unfocused",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [],
+   "said_code": true,
+   "said_reason": true,
+   "held": true
+  },
+  {
+   "label": "Note",
+   "op": "click",
+   "expect": "clicked",
+   "exit": 0,
+   "handlers": 1,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 5,
+   "sequence": [
+    "pointerdown",
+    "mousedown",
+    "pointerup",
+    "mouseup",
+    "click"
+   ],
+   "page_events_elsewhere": [],
+   "new_gestures": [
+    [
+     "approach",
+     "Note",
+     "arrived"
+    ]
+   ],
+   "in_order": true,
+   "said": true,
+   "events": [
+    {
+     "event": "pointerdown",
+     "rect": [
+      620.0,
+      130.0,
+      140.0,
+      30.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.0084,
+     "held": true
+    },
+    {
+     "event": "mousedown",
+     "rect": [
+      620.0,
+      130.0,
+      140.0,
+      30.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.0084,
+     "held": true
+    },
+    {
+     "event": "pointerup",
+     "rect": [
+      620.0,
+      130.0,
+      140.0,
+      30.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.0084,
+     "held": true
+    },
+    {
+     "event": "mouseup",
+     "rect": [
+      620.0,
+      130.0,
+      140.0,
+      30.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.0084,
+     "held": true
+    },
+    {
+     "event": "click",
+     "rect": [
+      620.0,
+      130.0,
+      140.0,
+      30.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.0084,
+     "held": true
+    }
+   ],
+   "pointer_target": "Note",
+   "pointer_during_step": true,
+   "pointer_inside": true,
+   "event_trusted": false,
+   "scroll": [
+    0,
+    0
+   ],
+   "dpr": 2,
+   "pinch": 1,
+   "page_focused": false,
+   "rect": [
+    620.0,
+    130.0,
+    140.0,
+    30.0
+   ],
+   "control_screen_rect": [
+    642.0,
+    272.0,
+    140.0,
+    30.0
+   ],
+   "gesture_end": [
+    712.0,
+    287.0
+   ],
+   "end_inside": true,
+   "already_there": false,
+   "samples_around_delivery": 80,
+   "samples_off_control": 0,
+   "largest_sample_gap_s": 0.0084,
+   "pointer_on_control_at_delivery": true,
+   "held": true
+  },
+  {
+   "label": "Note",
+   "op": "type",
+   "expect": "typed",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 1,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 1,
+   "sequence": [
+    "input"
+   ],
+   "page_events_elsewhere": [],
+   "new_gestures": [
+    [
+     "approach",
+     "Note",
+     "arrived"
+    ]
+   ],
+   "in_order": true,
+   "said": true,
+   "events": [
+    {
+     "event": "input",
+     "rect": [
+      620.0,
+      130.0,
+      140.0,
+      30.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.0119,
+     "held": true
+    }
+   ],
+   "pointer_target": "Note",
+   "pointer_during_step": false,
+   "pointer_inside": true,
+   "event_trusted": true,
+   "scroll": [
+    0,
+    0
+   ],
+   "dpr": 2,
+   "pinch": 1,
+   "page_focused": false,
+   "rect": [
+    620.0,
+    130.0,
+    140.0,
+    30.0
+   ],
+   "value": "footwork",
+   "control_screen_rect": [
+    642.0,
+    272.0,
+    140.0,
+    30.0
+   ],
+   "gesture_end": [
+    712.0,
+    287.0
+   ],
+   "end_inside": true,
+   "already_there": true,
+   "samples_around_delivery": 80,
+   "samples_off_control": 0,
+   "largest_sample_gap_s": 0.0119,
+   "pointer_on_control_at_delivery": true,
+   "held": true
+  },
+  {
+   "label": "Note",
+   "op": "type",
+   "expect": "replace_unfilmed",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [],
+   "said_code": true,
+   "said_reason": true,
+   "held": true
+  },
+  {
+   "label": "Gamma",
+   "op": "click",
+   "expect": "target_unlocated",
+   "exit": 0,
+   "handlers": 0,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 0,
+   "sequence": [],
+   "page_events_elsewhere": [],
+   "new_gestures": [],
+   "said_code": true,
+   "said_reason": true,
+   "held": true
+  },
+  {
+   "label": "Jump down",
+   "op": "click",
+   "expect": "clicked",
+   "exit": 0,
+   "handlers": 1,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 5,
+   "sequence": [
+    "pointerdown",
+    "mousedown",
+    "pointerup",
+    "mouseup",
+    "click"
+   ],
+   "page_events_elsewhere": [],
+   "new_gestures": [
+    [
+     "approach",
+     "Jump down",
+     "arrived"
+    ]
+   ],
+   "in_order": true,
+   "said": true,
+   "events": [
+    {
+     "event": "pointerdown",
+     "rect": [
+      300.0,
+      60.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.007,
+     "held": true
+    },
+    {
+     "event": "mousedown",
+     "rect": [
+      300.0,
+      60.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.007,
+     "held": true
+    },
+    {
+     "event": "pointerup",
+     "rect": [
+      300.0,
+      60.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.007,
+     "held": true
+    },
+    {
+     "event": "mouseup",
+     "rect": [
+      300.0,
+      60.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.007,
+     "held": true
+    },
+    {
+     "event": "click",
+     "rect": [
+      300.0,
+      60.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 80,
+     "off_control": 0,
+     "largest_gap_s": 0.007,
+     "held": true
+    }
+   ],
+   "pointer_target": "Jump down",
+   "pointer_during_step": true,
+   "pointer_inside": true,
+   "event_trusted": false,
+   "scroll": [
+    0,
+    0
+   ],
+   "dpr": 2,
+   "pinch": 1,
+   "page_focused": false,
+   "rect": [
+    300.0,
+    60.0,
+    140.0,
+    44.0
+   ],
+   "control_screen_rect": [
+    322.0,
+    202.0,
+    140.0,
+    44.0
+   ],
+   "gesture_end": [
+    392.0,
+    224.0
+   ],
+   "end_inside": true,
+   "already_there": false,
+   "samples_around_delivery": 80,
+   "samples_off_control": 0,
+   "largest_sample_gap_s": 0.007,
+   "pointer_on_control_at_delivery": true,
+   "held": true
+  },
+  {
+   "label": "Gamma",
+   "op": "click",
+   "expect": "clicked",
+   "exit": 0,
+   "handlers": 1,
+   "inputs": 0,
+   "moves": 0,
+   "other_handlers": [],
+   "page_events": 5,
+   "sequence": [
+    "pointerdown",
+    "mousedown",
+    "pointerup",
+    "mouseup",
+    "click"
+   ],
+   "page_events_elsewhere": [],
+   "new_gestures": [
+    [
+     "approach",
+     "Gamma",
+     "arrived"
+    ]
+   ],
+   "in_order": true,
+   "said": true,
+   "events": [
+    {
+     "event": "pointerdown",
+     "rect": [
+      240.0,
+      400.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 81,
+     "off_control": 0,
+     "largest_gap_s": 0.0109,
+     "held": true
+    },
+    {
+     "event": "mousedown",
+     "rect": [
+      240.0,
+      400.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 81,
+     "off_control": 0,
+     "largest_gap_s": 0.0109,
+     "held": true
+    },
+    {
+     "event": "pointerup",
+     "rect": [
+      240.0,
+      400.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 81,
+     "off_control": 0,
+     "largest_gap_s": 0.0109,
+     "held": true
+    },
+    {
+     "event": "mouseup",
+     "rect": [
+      240.0,
+      400.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 81,
+     "off_control": 0,
+     "largest_gap_s": 0.0109,
+     "held": true
+    },
+    {
+     "event": "click",
+     "rect": [
+      240.0,
+      400.0,
+      140.0,
+      44.0
+     ],
+     "inside": true,
+     "samples": 81,
+     "off_control": 0,
+     "largest_gap_s": 0.0109,
+     "held": true
+    }
+   ],
+   "pointer_target": "Gamma",
+   "pointer_during_step": true,
+   "pointer_inside": true,
+   "event_trusted": false,
+   "scroll": [
+    0,
+    1500
+   ],
+   "dpr": 2,
+   "pinch": 1,
+   "page_focused": false,
+   "rect": [
+    240.0,
+    400.0,
+    140.0,
+    44.0
+   ],
+   "control_screen_rect": [
+    262.0,
+    542.0,
+    140.0,
+    44.0
+   ],
+   "gesture_end": [
+    332.0,
+    564.0
+   ],
+   "end_inside": true,
+   "already_there": false,
+   "samples_around_delivery": 81,
+   "samples_off_control": 0,
+   "largest_sample_gap_s": 0.0109,
+   "pointer_on_control_at_delivery": true,
+   "held": true
+  }
+ ],
+ "complete": true,
+ "gamma_clicked_after_scrolling": true,
+ "clock": {
+  "low_s": -0.0013,
+  "high_s": 0.001,
+  "width_s": 0.0023,
+  "offset_s": -0.00015687942504882812,
+  "posts": 216,
+  "answers": 214,
+  "held": true,
+  "widest_action_record_s": 0.0059,
+  "page_clock_step_s": 9.999990463256836e-05
+ },
+ "page_log": {
+  "records": 216,
+  "numbered_without_gaps": true,
+  "one_load": true,
+  "other_documents": {
+   "documents": 0,
+   "records": 0,
+   "only_loading_and_beats": true,
+   "all_received_before_the_first_step": true,
+   "this_document_loaded_before_the_first_step": true
+  },
+  "one_document_under_the_steps": true,
+  "fenced_after_the_last_step": true,
+  "accounted_through": {
+   "record": 216,
+   "asked_at": 1794609725.135263
+  },
+  "missing_after_the_fence": [],
+  "step_intervals_apart": true,
+  "unaccounted": [],
+  "ambiguous": [],
+  "held": true
+ },
+ "pointer_samples": 12286,
+ "pointer_sampler": {
+  "samples": 12286,
+  "largest_gap_s": 0.023
+ },
+ "device_pixel_ratios": [
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2,
+  2
+ ],
+ "scale_factor_tested": true,
+ "pinch_scales": [
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1
+ ],
+ "setup_exits": {
+  "00-start": 0,
+  "00-park": 0
+ },
+ "own_chrome_closed": true,
+ "page_forges_its_hit_test": true,
+ "closed": {
+  "registry": true,
+  "browser": true,
+  "port": true,
+  "holder": true
+ },
+ "everything_closed": true,
+ "held": true
+}
