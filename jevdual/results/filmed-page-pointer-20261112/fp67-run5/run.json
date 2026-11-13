@@ -1,0 +1,45 @@
+{
+ "gate": {
+  "polls": 1,
+  "idle_s": 1342.7,
+  "waited_s": 0.0
+ },
+ "front_pid_at_start": 74505,
+ "fixture": "http://127.0.0.1:61193/",
+ "steps": [
+  {
+   "name": "00-start",
+   "t_start": 1794580602.582486,
+   "t_end": 1794580611.891377,
+   "exit": 2,
+   "stdout": "",
+   "stderr": "terface did not acknowledge the write (-25208) at 2.2 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 3.3 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 4.4 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 5.5 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 6.6 s; AXEnhancedUserInterface did not acknowledge the write (-25208) at 7.7 s, waited 8.0 s; the window shows 'Footwork filmed page pointer fixture - Google Chrome': level 1: AXButton x3, AXGroup; level 2: AXGroup x2; level 3: AXGroup x2; level 4: AXGroup)\n"
+  }
+ ],
+ "pointer_sampler": {
+  "samples": 1314,
+  "largest_gap_s": 0.018
+ },
+ "finished": 1794580611.8913972,
+ "cleanup_errors": [],
+ "session_reservation": {
+  "released": true,
+  "named_by_session": null,
+  "held": [],
+  "yields": [],
+  "still_held": []
+ },
+ "chrome_launch": {
+  "pid": 44905,
+  "incarnation": 1794580602.797342
+ },
+ "chrome_pid": 44905,
+ "chrome_closed": true,
+ "front_pid_at_end": 74505,
+ "closed": {
+  "registry": true,
+  "browser": true,
+  "port": true,
+  "holder": true
+ }
+}

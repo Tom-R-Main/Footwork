@@ -1,0 +1,18 @@
+{"t": 1794580603.2219, "n": 1, "doc": "mwf2yfka-cefscgtpezi", "type": "loaded", "detail": {"dpr": 2, "viewport": [1200, 813], "clock_step_s": 9.999990463256836e-05, "page_says_at_forged": "Forged", "browser_says_at_forged": "lid2"}, "received": 1794580603.223692}
+{"t": 1794580603.7124, "n": 2, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[1, 1794580603.2296999]]}, "received": 1794580603.7177851}
+{"t": 1794580604.2131, "n": 3, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[2, 1794580603.7184]]}, "received": 1794580604.214093}
+{"t": 1794580604.7123, "n": 4, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[3, 1794580604.2145998]]}, "received": 1794580604.713207}
+{"t": 1794580605.2131999, "n": 5, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[4, 1794580604.7138]]}, "received": 1794580605.215065}
+{"t": 1794580605.712, "n": 6, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[5, 1794580605.2171]]}, "received": 1794580605.712895}
+{"t": 1794580606.2133, "n": 7, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[6, 1794580605.7134]]}, "received": 1794580606.214468}
+{"t": 1794580606.7123, "n": 8, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[7, 1794580606.215]]}, "received": 1794580606.7139862}
+{"t": 1794580607.2110999, "n": 9, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[8, 1794580606.7145998]]}, "received": 1794580607.2119548}
+{"t": 1794580607.7129, "n": 10, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[9, 1794580607.2124]]}, "received": 1794580607.7137642}
+{"t": 1794580608.2135, "n": 11, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[10, 1794580607.7143002]]}, "received": 1794580608.2144918}
+{"t": 1794580608.7134, "n": 12, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[11, 1794580608.215]]}, "received": 1794580608.71422}
+{"t": 1794580609.2133, "n": 13, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[12, 1794580608.7147]]}, "received": 1794580609.214392}
+{"t": 1794580609.7133, "n": 14, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[13, 1794580609.2150998]]}, "received": 1794580609.714284}
+{"t": 1794580610.213, "n": 15, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[14, 1794580609.7148001]]}, "received": 1794580610.21522}
+{"t": 1794580610.7122, "n": 16, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[15, 1794580610.216]]}, "received": 1794580610.7132878}
+{"t": 1794580611.2135, "n": 17, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[16, 1794580610.7138999]]}, "received": 1794580611.2144508}
+{"t": 1794580611.7125, "n": 18, "doc": "mwf2yfka-cefscgtpezi", "type": "beat", "detail": {"acks": [[17, 1794580611.215]]}, "received": 1794580611.722455}
