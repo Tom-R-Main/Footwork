@@ -30,10 +30,13 @@ Rect = tuple[float, float, float, float]
 HELD_TOLERANCE_PT = 0.01
 
 
-#: what the page bridge adds to the evidence of a filmed page action that went, for the command to say
-#: (``BrowserBridge._stopped_click`` and ``_after_delivery``): the click stopped after its press, or the
-#: pointer or the scene was found elsewhere when the delivery returned
-PAGE_MARKS = ("click_stopped_after_press", "pointer_left_during_delivery", "scene_changed_during_delivery")
+#: what the page bridge adds to the evidence of a filmed page action that was not refused, for the
+#: command to say (``BrowserBridge._incomplete_click`` and ``_after_delivery``). The ``click_`` marks
+#: are a click that did not complete: stopped during its hover events, stopped after its press, or
+#: interrupted with what was sent unknown. The other two are what was found when a delivery returned:
+#: the pointer, or the scene, elsewhere.
+PAGE_MARKS = ("click_stopped_before_press", "click_stopped_after_press", "click_interrupted",
+              "pointer_left_during_delivery", "scene_changed_during_delivery")
 
 
 class FilmedRefusal(Exception):

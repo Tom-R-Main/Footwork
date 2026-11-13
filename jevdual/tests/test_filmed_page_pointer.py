@@ -90,11 +90,12 @@ class Wire:
     block says otherwise."""
 
     def __init__(self, log: list, locates: list | None = None, action: dict | None = None,
-                 action_text: str | None = None) -> None:
+                 action_text: str | None = None, action_error: bool = False) -> None:
         self.log = log
         self.locates = list(locates or [])
         self.action = action  # the driver's whole reply to the click or the type, when not a success
         self.action_text = action_text  # and its text
+        self.action_error = action_error  # and whether the driver flagged it an error
 
     async def call_tool(self, name, args_json):
         args = json.loads(args_json)
@@ -120,7 +121,8 @@ class Wire:
             if self.action is not None and name in ("browser_click", "browser_type"):
                 reply = self.action
         text = self.action_text if self.action_text and name in ("browser_click", "browser_type") else "done"
-        return SimpleNamespace(structured_json=json.dumps(reply), text=text, is_error=False)
+        failed = self.action_error and name in ("browser_click", "browser_type")
+        return SimpleNamespace(structured_json=json.dumps(reply), text=text, is_error=failed)
 
     async def shutdown(self):
         pass
@@ -168,7 +170,7 @@ def take(monkeypatch):
 
 
 def _act(log, operation, label, text=None, *, locates=None, filmed=True, take_ended=None, scene=True,
-         action=None, route=None, session=None, action_text=None):
+         action=None, route=None, session=None, action_text=None, action_error=False):
     def read_scene(filmed, url, point=None, *, delivered=False):
         assert isinstance(filmed, Filmed)
         if delivered:
@@ -182,7 +184,7 @@ def _act(log, operation, label, text=None, *, locates=None, filmed=True, take_en
         return answer
 
     async def run():
-        bridge = BrowserBridge(Wire(log, locates, action, action_text), 42, 7,
+        bridge = BrowserBridge(Wire(log, locates, action, action_text, action_error), 42, 7,
                                policy=ExecutionPolicy("exclusive_desktop"))
         if filmed:
             bridge.filmed = session or Filmed(window=WINDOW, content=CONTENT, take_ended=take_ended)
@@ -437,27 +439,20 @@ def test_a_stopped_click_outside_a_filmed_take_and_an_ordinary_click_keep_the_dr
     assert "click_stopped_after_press" not in eff.evidence and "stopped" not in eff.summary
 
 
-UNPRESSED = ("refused (browser_action_unavailable): {why} after {last}, before the press: 6 hover and move events "
-             "were sent and no press or click was sent")
+UNPRESSED = ("refused (browser_action_unavailable): no press or click was sent: {why} after {last} (6 hover and move "
+             "events were sent)")
 
 
 @pytest.mark.parametrize("why", ["the ref's node left the filmed point",
                                  "the page hid or replaced the pointer over the ref's node"])
 def test_a_click_refused_after_its_own_hover_events_begins_by_saying_no_press_went(take, why):
-    """FP38: hover events reached the page, so this is not "not sent"; the session prints a hundred
-    characters of a refusal's summary, and the fact that matters has to be inside them."""
+    """FP38, FP44: hover events reached the page, so this is not "not sent"; the session prints a
+    hundred characters of a refusal's summary, and the driver's text begins with the fact that matters."""
     text = UNPRESSED.format(why=why, last="mousemove")
     eff = _act(take, "click", "Go", action={"effect": "refused", "summary": text}, action_text=text)
     assert (eff.effect, eff.error_code) == ("refused", "browser_action_unavailable") and eff.dispatched is not False
     assert eff.summary.startswith("the pointer moved; the click was then refused: no press or click was sent: " + why)
     assert "no press or click was sent" in eff.summary[:100]
-    assert "(6 sent, the last mousemove)" in eff.summary and "click_stopped_before_press" in eff.evidence
-
-
-def test_a_click_refused_before_its_press_outside_a_filmed_take_keeps_the_drivers_words(take):
-    text = UNPRESSED.format(why="the ref's node left the filmed point", last="mousemove")
-    eff = _act(take, "click", "Go", filmed=False, action={"effect": "refused", "summary": text}, action_text=text)
-    assert eff.summary == text.split(": ", 1)[1][:200] and "click_stopped_before_press" not in eff.evidence
 
 
 def test_every_mark_the_bridge_adds_to_a_delivery_that_went_is_one_the_session_says(take):
@@ -469,8 +464,10 @@ def test_every_mark_the_bridge_adds_to_a_delivery_that_went_is_one_the_session_s
     take.left, take.frames = 2, "the page area is 300x450 at 420.0,360.0; the take recorded 300x450 at 420.0,330.0"
     eff = _act(take, "click", "Go", action={"effect": "unverifiable", "summary": text}, action_text=text)
     assert eff.evidence == ("click_stopped_after_press", "pointer_left_during_delivery", "scene_changed_during_delivery")
-    assert set(eff.evidence) == set(PAGE_MARKS)
-    assert eff.summary.startswith("the click stopped part way, but when it returned the pointer was not where")
+    assert set(eff.evidence) <= set(PAGE_MARKS)
+    # the click that did not complete is said first, then what was found when it returned
+    assert eff.summary.startswith("the click stopped after mousedown and no click event was sent: ")
+    assert "observe before acting again. When it returned, the pointer was not where it was verified" in eff.summary
 
 
 @pytest.mark.parametrize("world", [None, "main", True])

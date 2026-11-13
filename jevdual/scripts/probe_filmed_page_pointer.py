@@ -1,4 +1,4 @@
-"""Probe for notebook prediction FP37 (which revises FP29, FP28 and FP20): does a filmed browser take put
+"""Probe for notebook prediction FP46 (which revises FP37, FP29, FP28 and FP20): does a filmed browser take put
 the real pointer on each page target, keep it there while every event of the action is delivered, and
 refuse or stop where it cannot?
 
@@ -19,8 +19,8 @@ owned local fixture in a Chrome that Footwork launches on a fresh profile and it
 9. click Hidden, whose style hides the pointer (``cursor: none``): refused the same way, because the
    film would show no pointer on it;
 10. click Shy, which moves 300 px away when an untrusted ``pointerover`` reaches it (the click's own
-    hover events; the real pointer's arrival does not move it): the pointer goes to it, the click's
-    hover events move it, and no press or click is sent;
+    first hover event; the real pointer's arrival does not move it): the pointer goes to it, that
+    event moves it, and nothing more is sent, no press and no click;
 11. click Dodge, which moves 300 px away when it is pressed: the pointer goes to it, ``pointerdown`` and
     ``mousedown`` are sent, and no release or click is, because it is no longer under the pointer;
 12. type into Note, a text field without focus: refused (``target_unfocused``), no input, no pointer move;
@@ -53,6 +53,22 @@ events, the probe's own samples from 250 ms before it to 250 ms after must all l
 screen, at least twenty of them, with no gap between consecutive samples or to either end of that window
 longer than 50 ms. The verdict needs a device pixel ratio of 2, the case in which page and screen units
 could differ, and the page's own record that its replaced hit test answers Forged.
+
+Three things make that reading sound, and the run does not hold without them (FP46):
+
+- every press, release, insertion, click handler, input and move the page recorded, at any time in the
+  run, must lie inside the interval of exactly one tried step, where it is judged. A record between two
+  steps is not ignored;
+- the page numbers every record it makes, and the numbers received must run from one with none missing
+  or repeated, from a single load, with a record made after the last step's interval ended, so nothing
+  the page made before that is missing;
+- the page's clock and the probe's are two clocks. Each of the page's posts was made at a page time,
+  received at a probe time, and answered at a later page time, which the page reports back; so the
+  difference between the clocks is bounded on both sides, and the bounds must agree within 20 ms
+  (``_clock``). Page times are converted by it before anything is matched to a step or to a sample.
+
+What the samples cannot show: where the pointer was between two of them. They are about 5 ms apart and
+at most 50; an excursion off a control and back inside one gap is not excluded by this probe.
 
 Waits for an unlocked screen and 10 s of idle, then checks again, immediately before launching, that
 the profile directory does not exist, the port is not Footwork's default or the sign-in test's and has
@@ -146,6 +162,11 @@ DELIVERY_WINDOW_S = 0.25
 MIN_SAMPLES = 20
 MAX_GAP_S = 0.05
 SAMPLE_EVERY_S = 0.005
+#: the two bounds on the difference between the probe's clock and the page's must agree this closely
+#: for a page time to be read against the pointer samples (FP46)
+MAX_CLOCK_WIDTH_S = 0.02
+#: the page's records of something done to it; each must fall in one tried step's interval
+ACTION_RECORDS = ("page_event", "click_handler", "input", "moved")
 
 FIXTURE = """<!doctype html>
 <meta charset="utf-8">
@@ -182,8 +203,17 @@ const now = () => (performance.timeOrigin + performance.now()) / 1000;
 // n numbers the records in the order the page made them: several events of one click can carry the
 // same time, and the posts need not arrive in order
 let seq = 0;
-const post = (type, detail) => fetch('/log', {method: 'POST', keepalive: true,
-  body: JSON.stringify({t: now(), n: ++seq, type, detail})});
+// when each post was answered, by this page's clock: with the time it was made and the probe's time of
+// receiving it, that bounds the difference between the two clocks on both sides
+const acks = [];
+const post = (type, detail) => {
+  const n = ++seq;
+  fetch('/log', {method: 'POST', keepalive: true, body: JSON.stringify({t: now(), n, type, detail})})
+    .then(() => { acks.push([n, now()]); }, () => {});
+};
+// a record twice a second whatever else happens: it carries the answers, and one made after the last
+// step shows that everything numbered before it has arrived
+setInterval(() => post('beat', {acks: acks.splice(0, 60)}), 500);
 const box = (el) => { const r = el.getBoundingClientRect(); return [r.x, r.y, r.width, r.height]; };
 const control = (el) => (el && el.closest) ? el.closest('button, input') : null;
 const named = (c) => c.getAttribute('aria-label') || c.textContent;
@@ -321,6 +351,42 @@ def _bracket(samples, t: float, rect) -> dict:
             "held": len(around) >= MIN_SAMPLES and off == 0 and gap <= MAX_GAP_S}
 
 
+def _clock(received: list[dict]) -> dict:
+    """How the page's clock and the probe's correspond, from the page's own posts.
+
+    A record made at page time ``t`` and answered at page time ``r`` was received by the probe's server
+    at probe time ``received``, between the two. With ``offset`` the probe's clock less the page's:
+    ``t + offset <= received <= r + offset``, so every record bounds the offset above by
+    ``received - t`` and every answered one bounds it below by ``received - r``. The page reports its
+    answers in its ``beat`` records. ``held`` needs both bounds, not crossed (crossed bounds mean one of
+    the clocks was changed during the run), and within ``MAX_CLOCK_WIDTH_S`` of each other; the offset
+    used is their midpoint."""
+    made = {e["n"]: e for e in received if isinstance(e.get("n"), int)}
+    highs, lows = [], []
+    for e in received:
+        try:
+            highs.append(float(e["received"]) - float(e["t"]))
+        except (KeyError, TypeError, ValueError):
+            pass
+        answers = (e.get("detail") or {}).get("acks") if e.get("type") == "beat" else None
+        for answer in answers if isinstance(answers, list) else []:
+            try:
+                n, answered = answer
+                lows.append(float(made[n]["received"]) - float(answered))
+            except (KeyError, TypeError, ValueError):
+                pass
+    if not highs or not lows:
+        return {"held": False, "why": "the page's posts do not bound the clocks on both sides",
+                "posts": len(highs), "answers": len(lows)}
+    low, high = max(lows), min(highs)
+    width = high - low
+    why = ("the bounds cross: a clock changed during the run" if width < -1e-6
+           else f"the bounds are {width * 1000:.1f} ms apart" if width > MAX_CLOCK_WIDTH_S else None)
+    return {"low_s": round(low, 4), "high_s": round(high, 4), "width_s": round(width, 4),
+            "offset_s": (low + high) / 2, "posts": len(highs), "answers": len(lows),
+            "held": why is None, **({"why": why} if why else {})}
+
+
 def _rect(value) -> list[float] | None:
     try:
         x, y, w, h = (float(part) for part in value)
@@ -363,8 +429,17 @@ def analyze(out: Path) -> dict:
         content = json.loads((out / "session/session.json").read_text())["filmed"]["content"]
     except (OSError, ValueError, KeyError, TypeError) as exc:
         return {"held": False, "unreadable": f"{type(exc).__name__}: {exc}"}
-    # in the order the page made them, where it numbered them
-    events = sorted(_jsonl(out / "page-events.jsonl"), key=lambda e: (e.get("n") is None, e.get("n") or 0))
+    received = _jsonl(out / "page-events.jsonl")
+    clock = _clock(received)
+    numbers = [e.get("n") for e in received]
+    numbered = (bool(numbers) and all(isinstance(n, int) for n in numbers)
+                and sorted(numbers) == list(range(1, len(numbers) + 1)))
+    # page times in the probe's clock from here on; a run whose clocks cannot be related is read as it
+    # stands and does not hold
+    offset = clock["offset_s"] if clock["held"] else 0.0
+    events = [e | {"t": e["t"] + offset} for e in received if isinstance(e.get("t"), (int, float))]
+    # in the order the page made them
+    events.sort(key=lambda e: (not isinstance(e.get("n"), int), e.get("n") if isinstance(e.get("n"), int) else 0))
     handlers = [e for e in events if e.get("type") == "click_handler"]
     inputs = [e for e in events if e.get("type") == "input"]
     moved = [e for e in events if e.get("type") == "moved"]
@@ -435,7 +510,8 @@ def analyze(out: Path) -> dict:
         if record is not None:
             pointer = record.get("last_trusted_pointer") or {}
             v["pointer_target"] = pointer.get("target")
-            v["pointer_during_step"] = bool(pointer.get("t") and window[0] <= pointer["t"] <= record["t"])
+            # the pointer event's time is the page's own; the record's is already the probe's
+            v["pointer_during_step"] = bool(pointer.get("t") and window[0] <= pointer["t"] + offset <= record["t"])
             try:
                 v["pointer_inside"] = rect is not None and _inside((float(pointer["x"]), float(pointer["y"])), rect)
             except (KeyError, TypeError, ValueError):
@@ -481,12 +557,29 @@ def analyze(out: Path) -> dict:
     loaded = next((e.get("detail") or {} for e in events if e.get("type") == "loaded"), {})
     # the Forged step tests something only if the page's replaced hit test does answer Forged there
     forgery = loaded.get("page_says_at_forged") == "Forged" and loaded.get("browser_says_at_forged") != "Forged"
+    # every record of something done to the page belongs to one tried step, whose verdict judged it
+    windows = [(step["t_start"], step["t_end"] + 1.0) for step in tried]
+    apart = all(earlier[1] <= later[0] for earlier, later in itertools.pairwise(windows))
+    unaccounted = [{"type": e.get("type"), "event": (e.get("detail") or {}).get("event"),
+                    "on": next((e["detail"][key] for key in ("target", "button", "field", "control")
+                                if key in (e.get("detail") or {})), None), "t": round(e["t"], 3)}
+                   for e in events if e.get("type") in ACTION_RECORDS
+                   and not any(low <= e["t"] <= high for low, high in windows)]
+    # nothing the page made is missing: its numbers are whole, from one load, and a record made after
+    # the last step's interval has arrived
+    one_load = sum(1 for e in received if e.get("type") == "loaded") == 1
+    after_last = bool(windows) and any(e["t"] >= windows[-1][1] for e in events)
+    log = {"records": len(received), "numbered_without_gaps": numbered, "one_load": one_load,
+           "a_record_after_the_last_step": after_last, "step_intervals_apart": apart, "unaccounted": unaccounted,
+           "held": numbered and one_load and after_last and apart and not unaccounted}
     return {"steps": verdicts, "complete": complete, "gamma_clicked_after_scrolling": scrolled,
+            "clock": clock, "page_log": log,
             "pointer_samples": None if samples is None else len(samples),
             "pointer_sampler": run.get("pointer_sampler"),
             "device_pixel_ratios": ratios, "scale_factor_tested": scale, "pinch_scales": pinches,
             "setup_exits": setup, "own_chrome_closed": owned, "page_forges_its_hit_test": forgery,
             "held": (complete and scrolled and scale and unpinched and owned and forgery
+                     and clock["held"] and log["held"]
                      and all(code == 0 for code in setup.values())
                      and all(v["held"] for v in verdicts))}
 
@@ -651,6 +744,7 @@ def main() -> None:
                 time.sleep(1.0)  # let the page's log of this step arrive before the next one starts
                 done.update(label=label, op=op, expect=expect, gestures_after=_gestures(session))
                 steps.append(done)
+            time.sleep(1.5)  # for the page's next beat: a record made after the last step's interval
     finally:
         _finish(record, out, session, start_stdout, stop, sampler, server)
 

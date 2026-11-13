@@ -1,0 +1,84 @@
+{
+ "predictions": {
+  "FP44": "held",
+  "FP45": "failed in one clause (a stale check of the script; see headless)",
+  "FP47": "held"
+ },
+ "open": [
+  "FP46 (the live probe, revising FP37; needs a granted screen window)"
+ ],
+ "coverage": {
+  "document": "review8-invariant-matrix.md",
+  "invariant": "every event a filmed click dispatches, and the focus it gives, goes to an element that is under the pointer in the same turn, immediately before (vendor/cua-driver/PROVENANCE.md, Filmed delivery)",
+  "sequence": "tests/test_filmed_click_invariant.py: 437 cells = boundary (before the first event, in each of the eleven events' listeners, in the focus; nine events when the page cancels pointerdown) x disturbance (moved, covered, nothing there, a sibling under the point, the control itself under the point, the receiving child removed, the node removed, cursor none, an image cursor, pointer lock) x start (on the control, on a child). Per cell: the receipt and events equal an oracle written from the record's two tables; the stand-in page saw no event or focus go to an element it did not have under the pointer; the unfilmed sequence sent what the source with the step's patch reversed sends.",
+  "reporting": "tests/test_filmed_outcome_reporting.py: 27 rows, one per outcome; each row's text is in the pinned driver's source; the rows cover every variant of the driver's click outcome type and every reason its insert function returns; each is checked at the bridge and through the do command.",
+  "page_log": "tests/test_probe_filmed_page_pointer.py: every record of something done to the page must fall in one tried step's interval; the page's numbers must be whole from one load with a record after the last step; the two clocks must be bounded within 20 ms by the page's own answered posts."
+ },
+ "footwork": {
+  "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_probe_filmed_page_pointer.py tests/test_filmed_session.py tests/test_locate_page_function.py tests/test_filmed_delivery_functions.py tests/test_browser_session_holder.py tests/test_filmed_click_invariant.py tests/test_filmed_outcome_reporting.py",
+  "red": [
+   {
+    "tree": "the click sequence pinned at 47bf4bb (locate7) under tests/test_filmed_click_invariant.py",
+    "log": "review8-matrix-red.txt",
+    "summary": "review8-matrix-red-summary.json",
+    "outcome": "6 of 8 tests fail. 183 of 437 cells differ from the rule. 436 dispatches went to an element not under the pointer: 420 hover and move events after a listener had moved the control, 12 focuses, and 4 click events (the eighth review's first finding, in four cells). The two that pass are the matrix's own shape and the unfilmed comparison, which must pass before."
+   },
+   {
+    "tree": "47bf4bb (python/, scripts/ and the pinned locate7 archive) with six test files of this change copied in",
+    "log": "review8-python-red.txt",
+    "outcome": "54 failed, 530 passed. Of 88 new tests 47 fail: the outcome table's text check and coverage check, 8 rows at the bridge and the same 8 through the command (a node removed during the click in three places, the three interrupted sequences, a dialog, a node gone before the first event), the child that leaves at a hover event, and 28 probe tests (records outside every step, incomplete logs, clocks). 41 pass before by design, below. Of 496 existing tests 7 fail, changed with the rule."
+   }
+  ],
+  "passing_before_by_design": [
+   "the outcome table's 19 other rows, at the bridge and through the command (38 tests): the refusals, whose wording is the driver's and is checked by test_every_rows_text_is_the_pinned_drivers, which fails before; and the three stopped-after-press rows the seventh round already handled",
+   "test_a_completed_action_prints_nothing_more x2 and test_outside_a_filmed_take_the_drivers_words_are_kept: guards"
+  ],
+  "changed_with_the_rule": [
+   "tests/test_filmed_delivery_functions.py: a control that leaves during hover now stops at that event, not after the sixth (3 cases, and the hidden-on-hover case); test_the_press_goes_to_what_is_under_the_point_when_the_hover_rearranged_the_control is replaced by test_a_child_that_leaves_at_a_hover_event_gets_no_further_event; the two-children click is reached through the focus, and a pointerdown listener that swaps them stops the sequence",
+   "tests/test_filmed_page_pointer.py: the refusal before the press is the driver's own front-loaded text and is no longer rewritten or marked; a click that did not complete is said first, and what was found on return after it",
+   "tests/test_probe_filmed_page_pointer.py: composed runs are written as the page posts them (numbered, received, answered, with beats)"
+  ],
+  "green": {
+   "focused": "639 passed (703 with the pin, chain and seam tests)",
+   "offline_suite": "PYTHONPATH=python .venv/bin/python -m pytest -q -m \"not browser\" -p no:cacheprovider --ignore=tests/live: 4089 passed, 52 skipped, 61 deselected",
+   "lint": ".venv/bin/ruff check python scripts tests: clean"
+  }
+ },
+ "driver": {
+  "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
+  "red": {
+   "tree": "the updated v2_tests.rs against the tools.rs that 47bf4bb pinned",
+   "log": "review8-rust-red.txt",
+   "outcome": "7 failed, 1266 passed: the front-loaded refusal texts and the single dispatch function"
+  },
+  "green": "1273 passed, 2 ignored",
+  "archive": {
+   "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate8",
+   "sha256": "9f7a7a8e2cc5a7de6c370dffbd7497221ab40a522962599aaa7efb1d2044f698",
+   "bytes": 6429127,
+   "chain": "scripts/cua_source_chain.py rebuilds it byte for byte from the focus1 base",
+   "installed": "the venv's cua-driver is this version; the binary and the library carry the new dispatch function"
+  }
+ },
+ "headless": {
+  "command": "PYTHONPATH=python .venv/bin/python scripts/probe_locate_world_headless.py --out <fresh dir>",
+  "runs": [
+   {
+    "log": "review8-headless-first.json",
+    "prediction": "FP45",
+    "outcome": "the 28 delivery checks held, including the two FP45 names. One of the 16 earlier checks failed: 'note moved 40 px exactly when its document has focus'. That check reads the live probe's fixture, whose focus style was removed in the seventh round; the check was not changed with it and the headless script is not run by the suite. FP45 predicted the earlier checks would hold with one changed, so it failed in that clause."
+   },
+   {
+    "log": "review8-headless.json",
+    "prediction": "FP45, after the stale check was replaced",
+    "outcome": "16 and 28 held"
+   },
+   {
+    "log": "review8-headless-shadow.json",
+    "prediction": "FP47",
+    "outcome": "16 and 30 held as first run: a button inside a shadow root is located and clicked; one that an element outside the shadow root covers is located with hit other and its filmed click sends nothing"
+   }
+  ],
+  "each_run": "Chrome 157 headless, temporary profile; Chrome exited 0, the profile was removed, the frontmost application did not change"
+ }
+}

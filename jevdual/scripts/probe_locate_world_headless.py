@@ -1,4 +1,4 @@
-"""Headless check for notebook predictions FP22, FP27, FP30 and FP36: what the driver's locate page function reports
+"""Headless check for notebook predictions FP22, FP27, FP30, FP36, FP45 and FP47: what the driver's locate page function reports
 in a real Chrome, read in the page's own script world and in an isolated world, and whether its two
 filmed delivery functions act on a real page from the isolated world.
 
@@ -21,7 +21,9 @@ counts every call of the methods it replaced. On that page it runs, with the tex
 the driver uses: the filmed click on the button from the isolated world, at its centre; the same click
 after the button has been moved away; the filmed click on a second button that moves itself 300 px when
 a pointer comes over it (FP30); on a button that moves on mousedown, on a container whose two children
-swap when hovered, and on buttons whose cursor is none or an image (FP36); the filmed insert into a focused field with the point off it, into a
+swap when hovered, and on buttons whose cursor is none or an image (FP36); on a container whose top
+child leaves when released (FP45); on two buttons inside a shadow root, one of them covered by an
+element outside it (FP47); the filmed insert into a focused field with the point off it, into a
 field without focus, and into the focused field at its centre; and last, as controls that the two
 counterexamples are real, the click sequence without a point on the page's own object, which is what
 the driver did before the filmed delivery, on each button.
@@ -87,6 +89,12 @@ DELIVERY = """<!doctype html>
   <span id="second" style="position: absolute; left: 0; top: 0; width: 140px; height: 44px; background: #cde">Second</span>
   <span id="first" style="position: absolute; left: 0; top: 0; width: 140px; height: 44px; background: #edc">First</span>
 </div>
+<div id="late" role="button" style="position: absolute; left: 300px; top: 360px; width: 140px; height: 44px">
+  <span id="beneath" style="position: absolute; left: 0; top: 0; width: 140px; height: 44px; background: #cde">Beneath</span>
+  <span id="above" style="position: absolute; left: 0; top: 0; width: 140px; height: 44px; background: #edc">Above</span>
+</div>
+<div id="host" style="position: absolute; left: 560px; top: 260px; width: 200px; height: 120px"></div>
+<div id="veil" style="position: absolute; left: 600px; top: 325px; width: 60px; height: 34px; background: #c33"></div>
 <button type="button" id="ghost" style="position: absolute; left: 560px; top: 60px; width: 140px; height: 44px; cursor: none">Ghost</button>
 <button type="button" id="drawn" style="position: absolute; left: 560px; top: 160px; width: 140px; height: 44px; cursor: url('data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='), auto">Drawn</button>
 <input type="text" id="field" style="position: absolute; left: 300px; top: 60px; width: 140px; height: 30px; box-sizing: border-box">
@@ -115,8 +123,19 @@ dodge.addEventListener('mousedown', () => { dodge.style.top = '560px'; });
 // Pair keeps its place; when hovered its top child shrinks to the right quarter and bares the other
 const first = document.getElementById('first');
 document.getElementById('pair').addEventListener('pointerover', () => { first.style.left = '105px'; first.style.width = '35px'; });
+// two buttons inside a shadow root; the veil, which is outside it, covers the centre of the second
+const shadow = document.getElementById('host').attachShadow({mode: 'open'});
+shadow.innerHTML = '<button type="button" id="plain" style="position: absolute; left: 0; top: 0; width: 140px; height: 44px">Plain</button>'
+  + '<button type="button" id="veiled" style="position: absolute; left: 0; top: 60px; width: 140px; height: 44px">Veiled</button>';
+// Late keeps its place too; its top child leaves when the release reaches it, after the press and the
+// release went to that child
+const above = document.getElementById('above');
+document.getElementById('late').addEventListener('mouseup', () => { above.style.left = '105px'; above.style.width = '35px'; });
+for (const type of ['pointerover', 'pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click'])
+  shadow.addEventListener(type, (e) => log.events.push({type, target: e.target.id, trusted: e.isTrusted,
+    x: e.clientX, y: e.clientY, top: e.target.style.top, data: null}), true);
 for (const type of ['pointerover', 'pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click', 'beforeinput', 'input'])
-  document.addEventListener(type, (e) => log.events.push({type, target: e.target.id, trusted: e.isTrusted,
+  document.addEventListener(type, (e) => e.target.id === 'host' ? null : log.events.push({type, target: e.target.id, trusted: e.isTrusted,
     x: 'clientX' in e ? e.clientX : null, y: 'clientY' in e ? e.clientY : null,
     top: e.target.style.top, data: 'data' in e ? e.data : null}), true);
 </script>
@@ -125,6 +144,9 @@ MOVER_CENTRE = (110.0, 82.0)  # of (40, 60, 140, 44)
 SHY_CENTRE = (110.0, 182.0)  # of (40, 160, 140, 44)
 DODGE_CENTRE = (110.0, 282.0)  # of (40, 260, 140, 44)
 PAIR_CENTRE = (370.0, 282.0)  # of (300, 260, 140, 44): on First before the hover, on Second after it
+LATE_CENTRE = (370.0, 382.0)  # of (300, 360, 140, 44): on Above until the release, on Beneath after it
+PLAIN_CENTRE = (630.0, 282.0)  # of (560, 260, 140, 44), inside the shadow root
+VEILED_CENTRE = (630.0, 342.0)  # of (560, 320, 140, 44); the veil (600, 325, 60, 34) covers it
 GHOST_CENTRE = (630.0, 82.0)
 DRAWN_CENTRE = (630.0, 182.0)
 PRESS = ("pointerdown", "mousedown", "mouseup", "click")
@@ -188,8 +210,8 @@ async def deliver(cdp: Cdp, url: str) -> dict:
         reply = await cdp.call("Runtime.evaluate", {"expression": expression, "returnByValue": True})
         return reply["result"].get("value")
 
-    async def objects(control: str) -> tuple[str, str]:
-        mine = (await cdp.call("Runtime.evaluate", {"expression": f"document.getElementById('{control}')"}))["result"]["objectId"]
+    async def objects(control: str, within: str = "document") -> tuple[str, str]:
+        mine = (await cdp.call("Runtime.evaluate", {"expression": f"{within}.getElementById('{control}')"}))["result"]["objectId"]
         backend = (await cdp.call("DOM.describeNode", {"objectId": mine}))["node"]["backendNodeId"]
         isolated = (await cdp.call("DOM.resolveNode", {"backendNodeId": backend, "executionContextId": world}))["object"]["objectId"]
         return mine, isolated
@@ -197,6 +219,7 @@ async def deliver(cdp: Cdp, url: str) -> dict:
     async def state() -> dict:
         return await page("({...window.__log, events: window.__log.events.slice(), mover_top: mover.style.top, "
                           "shy_top: shy.style.top, dodge_top: dodge.style.top, first_left: first.style.left, "
+                          "above_left: above.style.left, "
                           "field: document.getElementById('field').value, other: document.getElementById('other').value, "
                           "active: document.activeElement && document.activeElement.id, page_focused: document.hasFocus()})")
 
@@ -217,11 +240,24 @@ async def deliver(cdp: Cdp, url: str) -> dict:
     # 2c (FP36): pressed, it moves away: the press goes, the release and the click must not
     dodge_page, dodge = await objects("dodge")
     out["dodge_click"] = {"receipt": await read(cdp, click, dodge, *DODGE_CENTRE), "after": await state()}
-    # 2d: its top child leaves the point when hovered; the press goes to the child then under the point
+    # 2d: its top child leaves the point at the click's first hover event: nothing more is sent
     pair_page, pair = await objects("pair")
     out["pair_click"] = {"receipt": await read(cdp, click, pair, *PAIR_CENTRE), "after": await state()}
-    # 2e, 2f: the page hides the pointer, or replaces it with an image: nothing may be sent
+    # 2d' (FP45): its top child, pressed and released, leaves at the release: no click event
+    late_page, late = await objects("late")
+    out["late_click"] = {"receipt": await read(cdp, click, late, *LATE_CENTRE), "after": await state()}
+    # 2d'' (FP47): inside a shadow root, one button in the open and one that an element outside the
+    # shadow tree covers: what the hit test of the node's own root says, and what the click does
     locate = function_text()
+    out["shadow"] = {}
+    for control, centre in (("plain", PLAIN_CENTRE), ("veiled", VEILED_CENTRE)):
+        _, isolated = await objects(control, "document.getElementById('host').shadowRoot")
+        located = await read(cdp, locate, isolated, *centre)
+        before = await state()
+        out["shadow"][control] = {"locate": located, "receipt": await read(cdp, click, isolated, *centre),
+                                  "events": (await state())["events"][len(before["events"]):]}
+    out["shadow"]["after"] = await state()
+    # 2e, 2f: the page hides the pointer, or replaces it with an image: nothing may be sent
     out["cursors"] = {}
     for control in ("mover", "field", "ghost", "drawn"):
         _, isolated = await objects(control)
@@ -232,7 +268,8 @@ async def deliver(cdp: Cdp, url: str) -> dict:
     out["drawn_click"] = {"receipt": await read(cdp, click, drawn, *DRAWN_CENTRE), "after": await state()}
     # 3: the filmed insert. The field is focused by the page; first with the point off it, ...
     await page("mover.style.top = '60px'; shy.style.top = '160px'; dodge.style.top = '260px'; "
-               "first.style.left = '0'; first.style.width = '140px'; document.getElementById('field').focus()")
+               "first.style.left = '0'; first.style.width = '140px'; above.style.left = '0'; "
+               "above.style.width = '140px'; document.getElementById('field').focus()")
     _, field = await objects("field")
     _, other = await objects("other")
     out["insert_off_point"] = {"receipt": await read(cdp, insert, field, 10.0, 10.0, INSERTED), "after": await state()}
@@ -248,7 +285,7 @@ async def deliver(cdp: Cdp, url: str) -> dict:
     out["page_world_shy_click"] = {"before": await state(), "receipt": await read(cdp, click, shy_page),
                                    "after": await state()}
     # FP36's controls: each of these the sequence without a point still clicks
-    for name, mine in (("dodge", dodge_page), ("pair", pair_page), ("ghost", ghost_page)):
+    for name, mine in (("dodge", dodge_page), ("pair", pair_page), ("late", late_page), ("ghost", ghost_page)):
         out[f"page_world_{name}_click"] = {"before": await state(), "receipt": await read(cdp, click, mine),
                                            "after": await state()}
     await cdp.call("Target.closeTarget", {"targetId": target}, browser=True)
@@ -285,6 +322,7 @@ def delivery_verdict(found: dict) -> dict:
         return [(e["type"], e["target"]) for e in run["after"]["events"][len(run["before"]["events"]):]]
 
     cursors = found["cursors"]
+    shadow = found["shadow"]
     checks = {
         "the page's wrappers were in place and unused at load": found["loaded"]["rect_calls"] == 0,
         "the filmed click completed": (found["click"]["receipt"] or {}).get("complete") is True,
@@ -298,8 +336,8 @@ def delivery_verdict(found: dict) -> dict:
                                                   and untouched("click_after_move")),
         # FP30
         "the click on the button that moves when hovered stopped before the press": (
-            found["shy_click"]["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 6,
-                                              "last": "mousemove", "retargeted": False, "hidden": False}),
+            found["shy_click"]["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 1,
+                                              "last": "pointerover", "retargeted": False, "hidden": False}),
         "it reached the page as hover events only, and the button had moved": (
             [(e["type"], e["target"]) for e in hovered] == [("pointerover", "shy")]
             and found["shy_click"]["after"]["shy_top"] == "460px" and untouched("shy_click")),
@@ -310,10 +348,18 @@ def delivery_verdict(found: dict) -> dict:
             and seen("dodge_click", "shy_click") == [("pointerover", "dodge"), ("pointerdown", "dodge"),
                                                      ("mousedown", "dodge")]
             and found["dodge_click"]["after"]["dodge_top"] == "560px" and untouched("dodge_click")),
-        "the press went to the child under the point after the hover bared it": (
-            (found["pair_click"]["receipt"] or {}).get("complete") is True
-            and seen("pair_click", "dodge_click") == [("pointerover", "first"), *((kind, "second") for kind in WHOLE[1:])]
+        # FP45 (the third run's expectation, that the press then went to the child laid bare, is
+        # replaced: the hover events after the first would have gone to a child no longer there)
+        "the child that leaves at the first hover event gets nothing more, and nothing is pressed": (
+            found["pair_click"]["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 1,
+                                               "last": "pointerover", "retargeted": False, "hidden": False}
+            and seen("pair_click", "dodge_click") == [("pointerover", "first")]
             and found["pair_click"]["after"]["first_left"] == "105px" and untouched("pair_click")),
+        "the child pressed and released that leaves at the release is not clicked": (
+            found["late_click"]["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 10,
+                                               "last": "mouseup", "retargeted": False, "hidden": False}
+            and seen("late_click", "pair_click") == [(kind, "above") for kind in WHOLE[:-1]]
+            and found["late_click"]["after"]["above_left"] == "105px" and untouched("late_click")),
         "an ordinary button and field show the pointer by the rule": (
             pointer_shown(cursors.get("mover")) and pointer_shown(cursors.get("field"))),
         "the isolated world reads the page's hidden and replaced cursors": (
@@ -321,8 +367,18 @@ def delivery_verdict(found: dict) -> dict:
             and not pointer_shown(cursors.get("drawn"))),
         "nothing was sent under the hidden pointer or the replaced one": (
             found["ghost_click"]["receipt"] == found["drawn_click"]["receipt"] == {**nothing, "hidden": True}
-            and not events("ghost_click", "pair_click") and not events("drawn_click", "ghost_click")
+            and found["ghost_click"]["after"]["events"] == found["shadow"]["after"]["events"]
+            and not events("drawn_click", "ghost_click")
             and untouched("drawn_click")),
+        # FP47
+        "a button in the open inside a shadow root is located and clicked": (
+            (shadow["plain"]["locate"] or {}).get("hit") == "target"
+            and (shadow["plain"]["receipt"] or {}).get("complete") is True
+            and [(e["type"], e["target"]) for e in shadow["plain"]["events"]] == [(kind, "plain") for kind in WHOLE]),
+        "one that an element outside the shadow root covers is not located as the hit, and is sent nothing": (
+            (shadow["veiled"]["locate"] or {}).get("hit") not in (None, "target")
+            and shadow["veiled"]["receipt"] == nothing and shadow["veiled"]["events"] == []
+            and (shadow["after"]["rect_calls"], shadow["after"]["dispatch_calls"]) == (0, 0)),
         "the field had focus for the inserts": found["insert_off_point"]["after"]["active"] == "field",
         "the insert with the point off the field left it empty": (
             found["insert_off_point"]["receipt"] == {"inserted": False, "why": "not_under_pointer"}
@@ -348,6 +404,9 @@ def delivery_verdict(found: dict) -> dict:
             and found["page_world_dodge_click"]["after"]["dodge_top"] == "560px"),
         "control: without a point the child that left is pressed where it no longer is": (
             control_seen("pair") == [(kind, "first") for kind in WHOLE]),
+        "control: without a point the child that left at the release is clicked where it went": (
+            control_seen("late") == [(kind, "above") for kind in WHOLE]
+            and found["page_world_late_click"]["after"]["above_left"] == "105px"),
         "control: without a point the button under a hidden pointer is clicked": (
             control_seen("ghost") == [(kind, "ghost") for kind in WHOLE]),
     }
@@ -433,8 +492,9 @@ def verdict(found: dict) -> dict:
         "note is not focused before": (iso("note", "focus") or [None])[0] is False,
         "note is the active element after focus": bool(focus_after) and focus_after[0] is True,
         # only in a document that has focus does the focus style apply; a move without it would be a surprise
-        "note moved 40 px exactly when its document has focus": bool(note_before and note_after and focus_after) and (
-            (note_after[1] - note_before[1] == 40) is (focus_after[1] is True)),
+        # the live fixture's field no longer moves when focused (FP37); until then this check asked for
+        # the 40 px its focus style gave it
+        "note is where it was once focused": bool(note_before and note_after) and note_after == note_before,
         "the page's world reports the replaced rectangle": (lied["page_world"] or {}).get("rect") == [0, 0, 10, 10],
         "the isolated world reports the real rectangle": (lied["isolated_world"] or {}).get("rect") == [40, 60, 140, 44],
         "the isolated world reads the real isConnected": (found["is_connected"]["page_world"] == "forged"

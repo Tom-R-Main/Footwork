@@ -178,10 +178,13 @@ def _left(count: int, last: str, hidden: bool = False) -> dict:
     {"event": "pointermove", "then": {"hit": "none"}},
 ], ids=["moved-on-pointerover", "moved-on-mousemove", "covered-on-mouseenter", "gone-from-under-on-pointermove"])
 def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on):
-    """FP30: page listeners run on the six hover and move events; the point is checked again in the
-    same turn as the press. Without a point the same page receives the whole sequence, as before."""
+    """FP30, FP44: page listeners run on the six hover and move events, and every one of them is sent
+    only to an element under the pointer: the sequence stops at the event whose listener took the
+    control away, and nothing is pressed. Without a point the same page receives the whole sequence,
+    as before. tests/test_filmed_click_invariant.py has every boundary; these are four of its cells."""
     filmed, unfilmed = _click({"args": POINT, "on": on}, {"on": on})
-    assert filmed["receipt"] == _left(6, "mousemove") and _types(filmed) == HOVER
+    sent = HOVER.index(on["event"]) + 1
+    assert filmed["receipt"] == _left(sent, on["event"]) and _types(filmed) == HOVER[:sent]
     assert unfilmed["receipt"] == COMPLETE and _types(unfilmed) == SEQUENCE
 
 
@@ -206,26 +209,33 @@ def test_a_control_that_leaves_the_point_once_pressed_is_not_clicked(case, count
     assert unfilmed["receipt"] == COMPLETE and _types(unfilmed) == SEQUENCE
 
 
-def test_the_press_goes_to_what_is_under_the_point_when_the_hover_rearranged_the_control():
-    """Sol round 7: a child that the hover moved inside an unchanged container is not pressed where it
-    no longer is; the press, the release and the click go to the child now under the point."""
+def test_a_child_that_leaves_at_a_hover_event_gets_no_further_event():
+    """Sol round 7 and 8: a child that the hover moved inside an unchanged container is not pressed
+    where it no longer is, and is not sent the rest of the hover events there either. A control whose
+    other child is under the point from the start is pressed on that child."""
     swap = {"hit": "descendant", "on": {"event": "pointerover", "then": {"hit": "second"}}}
-    filmed, unfilmed = _click({"args": POINT, **swap}, swap)
-    assert filmed["receipt"] == COMPLETE
-    assert [(e["type"], e["to"]) for e in filmed["sent"]] == [
-        *((kind, "icon") for kind in HOVER), *((kind, "label") for kind in SEQUENCE[6:])]
+    filmed, unfilmed, already = _click({"args": POINT, **swap}, swap, {"args": POINT, "hit": "second"})
+    assert filmed["receipt"] == _left(1, "pointerover")
+    assert [(e["type"], e["to"]) for e in filmed["sent"]] == [("pointerover", "icon")]
     # without a point the sequence keeps its first target, as it always has
     assert unfilmed["receipt"] == COMPLETE and {e["to"] for e in unfilmed["sent"]} == {"icon"}
+    assert already["receipt"] == COMPLETE and {e["to"] for e in already["sent"]} == {"label"}
 
 
 def test_a_press_and_a_release_on_two_children_click_what_holds_both():
     """As a real click does: its target is the nearest common ancestor of what was pressed and what was
-    released."""
-    (run,) = _click({"args": POINT, "hit": "descendant", "on": {"event": "mousedown", "then": {"hit": "second"}}})
-    assert run["receipt"] == COMPLETE
-    assert [(e["type"], e["to"]) for e in run["sent"]][6:] == [
-        ("pointerdown", "icon"), ("mousedown", "icon"), ("pointerup", "label"), ("mouseup", "label"),
-        ("click", "target")]
+    released. Here the focus the press gives rearranges the control; a listener of the press's own
+    events doing the same stops the sequence, because the mouse event is not sent apart from its
+    pointer event."""
+    by_focus, by_pointerdown = _click(
+        {"args": POINT, "hit": "descendant", "focus": {"then": {"hit": "second"}}},
+        {"args": POINT, "hit": "descendant", "on": {"event": "pointerdown", "then": {"hit": "second"}}})
+    assert by_focus["receipt"] == COMPLETE
+    assert [(e["type"], e["to"]) for e in by_focus["sent"]][6:] == [
+        ("pointerdown", "icon"), ("mousedown", "icon"), ("focus()", "target"), ("pointerup", "label"),
+        ("mouseup", "label"), ("click", "target")]
+    assert by_pointerdown["receipt"] == _left(7, "pointerdown")
+    assert [(e["type"], e["to"]) for e in by_pointerdown["sent"]][6:] == [("pointerdown", "icon")]
 
 
 def test_a_control_removed_while_hovered_or_pressed_is_reported_detached():
@@ -267,7 +277,7 @@ def test_a_pointer_lock_hides_the_pointer_whatever_the_style_says():
 
 
 @pytest.mark.parametrize(("case", "receipt"), [
-    ({"on": {"event": "pointerover", "then": {"cursor": "none"}}}, _left(6, "mousemove", hidden=True)),
+    ({"on": {"event": "pointerover", "then": {"cursor": "none"}}}, _left(1, "pointerover", hidden=True)),
     ({"on": {"event": "mousedown", "then": {"cursor": "none"}}}, _left(8, "mousedown", hidden=True)),
     ({"on": {"event": "mouseup", "then": {"lock": True}}}, _left(10, "mouseup", hidden=True)),
     ({"focus": {"then": {"cursor": 'url("blank.png"), auto'}}}, _left(8, "mousedown", hidden=True)),

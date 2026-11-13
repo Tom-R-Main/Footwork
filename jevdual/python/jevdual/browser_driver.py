@@ -279,7 +279,7 @@ def pointer_shown(cursor: Any) -> bool:
 
 def _hidden(cursor: Any, where: str) -> str:
     if cursor is None:
-        return f"the driver did not say what the pointer looks like {where} (it needs cua-driver locate7)"
+        return f"the driver did not say what the pointer looks like {where} (it needs cua-driver locate8)"
     return (f"the page hides or replaces the pointer {where} (cursor: {str(cursor)[:40]}); "
             "a filmed take needs the system pointer showing")
 
@@ -300,15 +300,15 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     ``DOM.getBoxModel`` also puts it. With ``point`` (where the pointer was sent), that point must lie
     inside the rectangle and hit the target too, with the pointer showing there."""
     if not isinstance(locate, dict):
-        return None, "the driver reported no position (it needs cua-driver locate7)"
+        return None, "the driver reported no position (it needs cua-driver locate8)"
     if locate.get("available") is not True:
         return None, f"the driver could not locate it ({locate.get('reason') or 'no reason given'})"
     if locate.get("world") != "isolated":
         return None, ("the driver did not read the page out of reach of the page's own script "
-                      "(it needs cua-driver locate7)")
+                      "(it needs cua-driver locate8)")
     if locate.get("filmed_delivery") is not True:
         return None, ("the driver does not say it checks the pointer's position when it delivers "
-                      "(it needs cua-driver locate7)")
+                      "(it needs cua-driver locate8)")
 
     def numbers(value: Any, keys: tuple[str, ...]) -> tuple[float, ...] | None:
         if not isinstance(value, dict):
@@ -333,7 +333,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     shown = locate.get("visibility_state")
     if shown != "visible":
         if shown is None:
-            return None, "the driver did not say whether the page is showing (it needs cua-driver locate7)"
+            return None, "the driver did not say whether the page is showing (it needs cua-driver locate8)"
         return None, f"the page is not showing (its document is {str(shown)[:20]!r}); its tab is not the one on screen"
     x, y, w, h = rect
     if x < -0.5 or y < -0.5 or x + w > view[0] + 0.5 or y + h > view[1] + 0.5:
@@ -341,7 +341,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     clipped = locate.get("clipped")
     if clipped is not False:
         if clipped is not True:
-            return None, "the driver did not say whether a container clips it (it needs cua-driver locate7)"
+            return None, "the driver did not say whether a container clips it (it needs cua-driver locate8)"
         return None, ("a scrolling or clipping container hides part of it; a filmed take acts only on a "
                       "target the film shows whole")
     hit = locate.get("hit")
@@ -374,7 +374,7 @@ def unfocused(locate: Any) -> str | None:
     field without focus is refused here, before the pointer moves. A filmed click on it gives it
     focus."""
     if not isinstance(locate, dict) or not isinstance(locate.get("focused"), bool):
-        return "the driver did not say whether it has focus (it needs cua-driver locate7)"
+        return "the driver did not say whether it has focus (it needs cua-driver locate8)"
     if not locate["focused"]:
         return "it does not have focus; click it first, then type"
     return None
@@ -669,7 +669,7 @@ class BrowserBridge:
             if refused is not None:
                 return refused
             out = await self.operations.click(**base, input_route=input_route, **self._filmed_point(at))
-            eff = self._after_approach(self._stopped_click(self._effect(out, operation, id, c.label), out), moved)
+            eff = self._after_approach(self._incomplete_click(self._effect(out, operation, id, c.label), out), moved)
             eff = await self._after_delivery(eff, at, nm.menu.url)
             self.last = None
             return dataclasses.replace(eff, route=out.route or input_route)
@@ -743,42 +743,66 @@ class BrowserBridge:
         origin = self.filmed.viewport(0.0, 0.0)
         return {"filmed_point": (at[0] - origin[0], at[1] - origin[1])}
 
-    #: the driver's report of a filmed click that stopped after its press (cua-driver locate7)
-    _STOPPED_CLICK = re.compile(
+    #: Every reply the driver gives for a page click that is neither a completed click nor a refusal
+    #: (cua-driver locate8, tools.rs ``DomClickNext``), by the start of its text: a sequence that
+    #: stopped part way, one that did not report completing, and one a dialog interrupted or followed.
+    _PARTIAL_CLICK = re.compile(
         r"^sent part of a synthetic DOM click .*?: (the ref's node left the filmed point|"
-        r"the page hid or replaced the pointer over the ref's node) after (\w+), so", re.DOTALL)
+        r"the page hid or replaced the pointer over the ref's node|the ref's node left its document) "
+        r"after (\w+), so the rest of the sequence was not sent", re.DOTALL)
+    _INTERRUPTED_CLICK = re.compile(
+        r"^ran a synthetic DOM click .*?, but its sequence did not report completing \((.*?)\);", re.DOTALL)
+    _DIALOG_CLICK = re.compile(r"^dispatched synthetic DOM click .*?; its handler opened an? (\w+) dialog", re.DOTALL)
+    #: its one refusal of a filmed click that does not begin with what was sent: the text is the
+    #: unfilmed sequence's and is left as it is there
+    _GONE_BEFORE_CLICK = "the ref's node left its document before the click's first event"
+    _PRESS_EVENTS = ("pointerdown", "mousedown", "pointerup", "mouseup")
 
-    #: its refusal of one that stopped before the press, after the sequence's own hover events
-    _UNPRESSED_CLICK = re.compile(
-        r"^(the ref's node left the filmed point|the page hid or replaced the pointer over the ref's node) "
-        r"after (\w+), before the press: (\d+) hover and move events were sent and no press or click was sent")
+    def _incomplete_click(self, eff: BrowserEffect, out: BrowserReply) -> BrowserEffect:
+        """A filmed click that did not complete, in one sentence that begins with what was sent, and
+        marked so that the session says it (``filmed.PAGE_MARKS``).
 
-    def _stopped_click(self, eff: BrowserEffect, out: BrowserReply) -> BrowserEffect:
-        """A filmed click that stopped part way, in the bridge's own words.
+        The driver sends every event of a filmed click only to an element under the pointer and stops
+        where it cannot. Stopped before anything, or after hover events only, it refuses, in a text
+        that begins with what was sent, and that is passed on as it is. The other outcomes are not
+        refusals, and their texts are longer than a summary keeps and written for a caller that can
+        act on the driver's advice, which this one cannot:
 
-        The driver aims every event from the press on at what is under the pointer, and stops when the
-        control is no longer there (it moved when pressed, or when the press focused it) or the page
-        hid the pointer. It reports that as a partial click with an unverifiable effect, in a text
-        longer than a summary keeps. The press went and no click event did: say exactly that.
+        - the sequence stopped after the press (the control left the pointer, the page hid the
+          pointer, or the node left its document): the press went and no click event did;
+        - the node left its document during the hover events: no press went;
+        - the sequence did not report completing, or a dialog opened: what was sent is unknown.
 
-        Stopped before the press (the sequence's own hover events moved the control, or hid the
-        pointer) it refuses instead. Hover events did reach the page, so this is not "not sent"; what
-        matters to the person is that no press or click went, so the summary begins with that."""
+        Outside a filmed take nothing is changed."""
         if self.filmed is None:
             return eff
         if eff.effect == "refused":
-            unpressed = self._UNPRESSED_CLICK.match(eff.summary)
-            if unpressed is None:
-                return eff
-            summary = (f"no press or click was sent: {unpressed[1]} after the click's own hover events "
-                       f"({unpressed[3]} sent, the last {unpressed[2]}).")
-            return dataclasses.replace(eff, summary=summary, evidence=(*eff.evidence, "click_stopped_before_press"))
-        said = self._STOPPED_CLICK.match(out.text or "")
-        if said is None:
+            if eff.summary.startswith(self._GONE_BEFORE_CLICK):
+                return dataclasses.replace(eff, summary=f"no event was sent: {eff.summary}"[:200])
             return eff
-        summary = (f"the click stopped after {said[2]} and no click event was sent: {said[1]}. The press was "
-                   "sent; what it did is unverifiable, so observe before acting again.")
-        return dataclasses.replace(eff, summary=summary, evidence=(*eff.evidence, "click_stopped_after_press"))
+        text = out.text or ""
+        observe = "so observe before acting again."
+        if (partial := self._PARTIAL_CLICK.match(text)) is not None:
+            why, last = partial[1], partial[2]
+            if last in self._PRESS_EVENTS:
+                mark = "click_stopped_after_press"
+                summary = (f"the click stopped after {last} and no click event was sent: {why}. The press was "
+                           f"sent; what it did is unverifiable, {observe}")
+            else:
+                mark = "click_stopped_before_press"
+                summary = (f"no press or click was sent: {why} after {last}. Hover events were sent; what they "
+                           f"did is unverifiable, {observe}")
+        elif (interrupted := self._INTERRUPTED_CLICK.match(text)) is not None:
+            mark = "click_interrupted"
+            summary = (f"the click did not report completing ({interrupted[1]}): some of its events may have been "
+                       f"sent and what they did is unverifiable, {observe}")
+        elif (dialog := self._DIALOG_CLICK.match(text)) is not None:
+            mark = "click_interrupted"
+            summary = (f"a {dialog[1]} dialog opened during the click and is blocking the page: whether the whole "
+                       f"click was sent is unknown, {observe}")
+        else:
+            return eff
+        return dataclasses.replace(eff, summary=summary, evidence=(*eff.evidence, mark))
 
     async def _after_delivery(
         self, eff: BrowserEffect, at: tuple[float, float] | None, url: str | None
@@ -815,10 +839,13 @@ class BrowserBridge:
             found.append(("scene_changed_during_delivery", refusal.reason))
         if not found:
             return eff
-        went = "stopped part way" if "click_stopped_after_press" in eff.evidence else "was delivered"
-        lead = (f"the {eff.operation} {went}, but when it returned "
-                + "; and ".join(why for _, why in found) + ". ")
-        return dataclasses.replace(eff, summary=(lead + eff.summary)[:400],
+        findings = "; and ".join(why for _, why in found)
+        if any(mark.startswith("click_") for mark in eff.evidence):
+            # a click that did not complete says that first; what was found afterwards follows it
+            summary = f"{eff.summary} When it returned, {findings}."
+        else:
+            summary = f"the {eff.operation} was delivered, but when it returned {findings}. {eff.summary}"
+        return dataclasses.replace(eff, summary=summary[:500],
                                    evidence=(*eff.evidence, *(mark for mark, _ in found)))
 
     @staticmethod

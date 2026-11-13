@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate7`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate8`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 The six Python files are copied byte-for-byte from the exact release source. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -20,7 +20,7 @@ The six Python files are copied byte-for-byte from the exact release source. The
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `bb3600a3030eb952deda44d490b36ac798b685549dff1ad86de75d1d5b7107d7` (6,428,414 bytes). It is the end of a five-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate7. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
+`native-source.tar.gz` SHA256: `9f7a7a8e2cc5a7de6c370dffbd7497221ab40a522962599aaa7efb1d2044f698` (6,429,127 bytes). It is the end of a five-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate8. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -89,7 +89,7 @@ before. Two cua-driver-core browser files change (the tool and its mock-CDP test
 bindings and dependencies do not. connected1 (the guard alone), connected2 (without the receipt
 and containment checks) and connected3 (without the single dialog snapshot) were never released.
 
-## Ref locate patch (locate7)
+## Ref locate patch (locate8)
 
 `patches/ref-locate.patch` and its JSON manifest apply on top of the connected4 archive and produce
 the pinned archive. `get_browser_state` gains a third mode: with `target_id`, `tab_id` and
@@ -137,9 +137,11 @@ rects1 step (a rectangle on each snapshot ref), locate1 (this step without the c
 visibility state and the point) locate2 (with a body always skipped and no transform check), locate3 (which let a
 reflection, a half turn and a motion path through), locate4 (which read in the page's own
 script world and reported no focus), locate5 (whose reads were isolated but whose click and
-type still prepared and ran in the page's world after them) and locate6 (which checked the point
+type still prepared and ran in the page's world after them), locate6 (which checked the point
 before the press only, followed the node wherever it went afterwards, and had no rule for a
-pointer the page hides) were withdrawn before release.
+pointer the page hides) and locate7 (which checked before each event from the press on in five
+separate places, sent the click to a target it had not checked, and could split a pointer event
+from its mouse event) were withdrawn before release.
 
 ### Filmed delivery (`filmed_point`)
 
@@ -154,23 +156,58 @@ pointer is), for a ref in the tab's main frame.
 `browser_click` with `input_route: "dom_event"` and `filmed_point` resolves the node into the
 isolated world and runs its baseline read, its event sequence and its readback on that object.
 It calls no `DOM.scrollIntoViewIfNeeded` and draws no cursor. The sequence acts at the point
-instead of the centre, and first requires the point to lie inside the node's rectangle and to
-hit-test as the node or something inside it; otherwise it returns `not_under_pointer` having
-sent nothing, and the tool refuses `browser_action_unavailable` saying no event was sent. The
-check and the first event are one turn of script, so no page script runs between them, and
-every method called before the first event is the browser's own. Listeners the page registered
-run as they do for any event, from the first event on. Any of them can move the node or what is
-inside it, and the press gives focus, which can too. So the sequence makes the requirement
-again, in one turn with the event, before each of `pointerdown`, `mousedown`, `pointerup`,
-`mouseup` and `click`, and sends that event to what the hit test finds at the point then (the
-click to the nearest common ancestor of what was pressed and what was released, as a real click
-goes). When the requirement fails it returns `left_pointer` naming the last event it sent.
-Stopped before the press, the tool refuses (`browser_action_unavailable`) saying how many hover
-and move events were sent and that no press or click was. Stopped after it, the tool reports a
-partial click with an unverifiable effect, naming that event and saying no click event was sent:
-a control that moves away when pressed, or when the press focuses it, is pressed and not
-clicked, as it is under a real pointer. `filmed_point` with another route, without a ref, for a
-ref in a child frame, or when no isolated world can be made is refused before anything runs.
+instead of the centre, under one invariant:
+
+> Every event the sequence dispatches, and the focus it gives, goes to an element that is under
+> the pointer in the same turn of script, immediately before.
+
+"Under the pointer" means all of: the ref's node is in its document; the point lies inside the
+node's rectangle; the hit test at the point finds something inside the node; the pointer shows
+there (below); and the receiving element is that hit or holds it, and is the node or inside it.
+The check is made in the one function that dispatches an event, so no event is sent without it,
+and JavaScript runs to completion, so no page script runs between the check and its event. Every
+method called is the browser's own. Listeners the page registered run as they do for any event,
+and any of them can move the node or what is inside it; that is why the check is made before
+every event and not once.
+
+Which element receives each event follows what one pointer gives:
+
+| events | receiver | checked |
+| --- | --- | --- |
+| `pointerover`, `pointerenter`, `mouseover`, `mouseenter`, `pointermove`, `mousemove` | what the hit test found when the sequence began (one hit test, as one move of a pointer gives) | before each |
+| `pointerdown` | a fresh hit at the press | before it |
+| `mousedown`, then the focus | the `pointerdown` target (a pair is never split) | before each |
+| `pointerup` | a fresh hit at the release | before it |
+| `mouseup` | the `pointerup` target | before it |
+| `click` | the nearest ancestor holding the `pointerdown` and `pointerup` targets; the ref's node when the pressed element has left it (an icon its own `mouseup` listener re-rendered), as a browser sends it to the surviving ancestor | before it |
+
+What a failed check does, and what the caller is told:
+
+| when | sequence returns | tool result |
+| --- | --- | --- |
+| before the first event | `not_under_pointer`, nothing sent | refusal `browser_action_unavailable`, beginning "no event was sent" |
+| after a hover or move event | `left_pointer`, the last event sent, the count | refusal `browser_action_unavailable`, beginning "no press or click was sent" |
+| after `pointerdown`, `mousedown`, `pointerup` or `mouseup` | `left_pointer`, the last event sent, the count | a partial click with an unverifiable effect, naming that event and saying no click event was sent |
+| the node left its document (any time after the first event) | `detached`, the last event sent, the count | the partial click the unfilmed sequence reports, unchanged |
+| the pointer not showing (any of the above) | the same, with `hidden` set | the same, saying the page hid or replaced the pointer |
+
+So a control that leaves the pointer is not pressed, or is pressed and not released, or released
+and not clicked, and the result says which. This is stricter than a real pointer in two ways,
+both deliberate: a real click follows its release without another hit test, and a real release
+always goes somewhere. A sequence that stops sends nothing more, so a page that tracks a press
+may still hold it; the caller is told the effect is unverifiable and must observe. It also
+differs from a real pointer in the hover group: a real pointer that finds something else under
+it after a move gets leave and enter events for the change. This sequence sends none: it stops
+when the element that was receiving the hover events is no longer under the pointer, and when
+the listener of the last of them puts another element of the control there, the press goes to
+that element without hover events of its own.
+Every refusal of a filmed call begins with what was sent, because a caller may keep only the
+start of it. Footwork's `tests/test_filmed_click_invariant.py` runs this sequence from the
+archive on a stand-in page through every boundary (before the first event, in each event's
+listener, in the focus) against every disturbance it models, and checks in each cell that no
+event went to an element not under the pointer; `tests/test_filmed_outcome_reporting.py` has
+one row for every outcome above and checks what the caller's command says of it. `filmed_point` with another route, without a ref, for a ref in a child frame, or
+when no isolated world can be made is refused before anything runs.
 
 The requirement includes a pointer that shows. A page can hide the system pointer over an
 element (`cursor: none`), replace it with an image that may be empty, or hold a pointer lock,
@@ -179,11 +216,11 @@ element only when the document holds no pointer lock and the element's computed 
 single keyword other than `none`. The locate block reports that cursor at the node's centre and
 at the point asked about (`cursor`, null when what is there is not the node; `none` under a
 pointer lock), for the caller to refuse on before it moves anything, and both delivery functions
-apply the rule in the turn they act: the click before every event from its first check on, with
+apply the rule in the turn they act: the click as part of the check before every event, with
 `hidden` set in its receipt, and the insert before it inserts (`pointer_hidden`).
 
 What this establishes, and what it cannot. Inside the page, at the moment of each event, the
-point is on the node and the pointer is not hidden by the page. Whether the caller's pointer is
+element receiving it is under the point and the pointer is not hidden by the page. Whether the caller's pointer is
 at that point on screen, and whether the page is what the screen shows there, is outside the
 page and outside this driver: Footwork reads the pointer, the window's and the page area's
 frames and what the system finds under the pointer immediately before the delivery and again
@@ -199,9 +236,9 @@ the document's `insertText` command. Chrome fires a trusted `input` event for th
 `beforeinput` (notebook FP27, Chrome 157), so a page that takes its text from `beforeinput` does
 not see this insertion as it sees typing; the unfilmed `Input.insertText` route is unchanged. It
 calls no `DOM.focus`, no scroll, no selection and no focus emulation, and sends no
-`Input.insertText`. Each failed check is a refusal that says nothing was inserted; a command that
-reports no insertion, an exception or a dialog is `browser_input_incomplete` with delivery
-unknown. `filmed_point` with keystrokes or with `replace` is refused before anything runs.
+`Input.insertText`. Each failed check is a refusal that begins "nothing was inserted"; a command
+that reports no insertion, an exception or a dialog is `browser_input_incomplete`, beginning
+"what reached the page is unknown". `filmed_point` with keystrokes or with `replace` is refused before anything runs.
 
 An older build of this driver accepts `filmed_point` as an unknown argument and ignores it. The
 locate block therefore says `filmed_delivery: true`, and a caller that relies on the delivery
@@ -211,6 +248,9 @@ the pointer without it).
 Without `filmed_point` both tools send exactly the requests they sent before (a mock-CDP test
 holds the click to that). What the mock cannot show is Chrome's behaviour: that an event
 dispatched from an isolated world reaches the page's listeners, and that `insertText` acts on the
-focused field from there. Footwork's `scripts/probe_locate_world_headless.py` runs both functions
-from this archive in a headless Chrome (notebook FP27), and `tests/test_filmed_delivery_functions.py`
-runs them in Node on stand-in elements.
+focused field from there, and that the hit test of a node's own root sees what covers it.
+Footwork's `scripts/probe_locate_world_headless.py` runs both functions from this archive in a
+headless Chrome (notebook FP27, FP36, FP45), including on a button inside a shadow root that an
+element outside the shadow tree covers (FP47: the shadow root's hit test answers with the
+covering element, and nothing is sent), and `tests/test_filmed_delivery_functions.py` runs them
+in Node on stand-in elements.

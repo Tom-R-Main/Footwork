@@ -487,6 +487,7 @@ def _filmed_page(monkeypatch, fw, log, **wire):
     code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
                         "--pointer-motion", "filmed", "--rest", "20,40")
     assert code == 0, (out, err)
+    fw.started = out
     return str(_id(out, "Go"))
 
 

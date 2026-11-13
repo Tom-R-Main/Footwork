@@ -45,7 +45,11 @@ class Events(list):
     samples: list | None
 
 
+#: the order records were made in; the page's own numbers (1, 2, ...) are given from it when the run
+#: is written
 _numbers = itertools.count(1)
+#: how long a post takes to reach the probe, and to be answered, in a composed run
+UP_S, DOWN_S = 0.002, 0.002
 
 
 def _seen(t, event, target, rect=None, point=None):
@@ -54,6 +58,27 @@ def _seen(t, event, target, rect=None, point=None):
     x, y = point or (None, None)
     return {"t": t, "n": next(_numbers), "type": "page_event",
             "detail": {"event": event, "trusted": False, "target": target, "x": x, "y": y, "rect": rect}}
+
+
+def _as_the_page_posts(records, *, offset, until):
+    """``records`` (times in the probe's clock) as the page's log file holds them: a beat twice a second
+    until ``until``, every record numbered from one in the order it was made, stamped with the page's
+    own time (the probe's less ``offset``) and the probe's time of receiving it, and the last beat
+    carrying the page's time of each answer."""
+    records = [dict(r, n=r.get("n", 10**9)) for r in records]
+    beats, t = [], 999.5
+    while t <= until:
+        beats.append({"t": t, "n": 10**9, "type": "beat", "detail": {"acks": []}})
+        t += 0.5
+    rows = sorted([*records, *beats], key=lambda r: r["n"])  # stable: beats after, in time order
+    for n, row in enumerate(rows, start=1):
+        row["n"], row["received"] = n, row["t"] + UP_S
+        row["t"] -= offset
+        last = (row.get("detail") or {}).get("last_trusted_pointer")
+        if last:
+            row["detail"] = row["detail"] | {"last_trusted_pointer": last | {"t": last["t"] - offset}}
+    rows[-1]["detail"]["acks"] = [[row["n"], row["t"] + UP_S + DOWN_S] for row in rows[:-1]]
+    return rows
 
 
 def _screen(label, expect):
@@ -74,10 +99,11 @@ def _gesture(steps, gestures, label, expect):
     return gestures[_step(steps, label, expect)["gestures_after"] - 1]
 
 
-def _run(tmp_path, change=None, record=None):
+def _run(tmp_path, change=None, record=None, *, offset=0.0, page=None):
     """A composed run in which every step went as predicted, with ``change(steps, handlers, gestures)``
-    applied to the tried steps and ``record`` merged into the run record before it is written.
-    Returns the output directory."""
+    applied to the tried steps and ``record`` merged into the run record before it is written. The
+    page's clock runs ``offset`` seconds behind the probe's, and ``page(rows)`` may change the page's
+    log as it was received. Returns the output directory."""
     out = tmp_path / "out"
     (out / "session").mkdir(parents=True)
     handlers, gestures = Events(), []
@@ -128,9 +154,12 @@ def _run(tmp_path, change=None, record=None):
         steps[index]["exit"] = code
     (out / "run.json").write_text(json.dumps(run))
     (out / "session/session.json").write_text(json.dumps({"filmed": {"content": CONTENT}}))
-    page = [{"t": 999.0, "type": "loaded", "detail": handlers.loaded}, *handlers, *handlers.inputs,
+    made = [{"t": 999.0, "n": 0, "type": "loaded", "detail": handlers.loaded}, *handlers, *handlers.inputs,
             *handlers.moved, *handlers.pressed]
-    (out / "page-events.jsonl").write_text("".join(json.dumps(event) + "\n" for event in page))
+    rows = _as_the_page_posts(made, offset=offset, until=steps[-1]["t_end"] + 2.0)
+    if page is not None:
+        page(rows)
+    (out / "page-events.jsonl").write_text("".join(json.dumps(event) + "\n" for event in rows))
     if handlers.samples is not None:
         (out / "pointer-samples.jsonl").write_text("".join(json.dumps(row) + "\n" for row in handlers.samples))
     (out / "session/pointer-gestures.jsonl").write_text("".join(json.dumps(g) + "\n" for g in gestures))
@@ -170,8 +199,132 @@ def test_the_fixture_reports_every_press_release_and_insertion_and_the_probe_sam
                                            "input"]
     assert "window.addEventListener(type, (e) => post('page_event'" in probe.FIXTURE
     # each with the control's rectangle at that moment, numbered in the order the page made them
-    assert "rect: control(e.target) ? box(control(e.target)) : null" in probe.FIXTURE and "n: ++seq" in probe.FIXTURE
+    assert "rect: control(e.target) ? box(control(e.target)) : null" in probe.FIXTURE and "const n = ++seq;" in probe.FIXTURE
     assert (probe.DELIVERY_WINDOW_S, probe.MIN_SAMPLES, probe.MAX_GAP_S, probe.SAMPLE_EVERY_S) == (0.25, 20, 0.05, 0.005)
+
+
+def test_the_whole_log_is_accounted_for_and_the_clocks_are_related(tmp_path):
+    """FP46: what a run that went as predicted says of its own log and clocks."""
+    verdict = probe.analyze(_run(tmp_path))
+    log, clock = verdict["page_log"], verdict["clock"]
+    assert log["held"] and log["numbered_without_gaps"] and log["one_load"] and log["a_record_after_the_last_step"]
+    assert log["unaccounted"] == [] and log["step_intervals_apart"] is True
+    assert clock["held"] and (clock["low_s"], clock["high_s"], clock["width_s"]) == (-0.002, 0.002, 0.004)
+    assert abs(clock["offset_s"]) < 1e-6 and clock["answers"] == log["records"] - 1
+    assert "post('beat', {acks: acks.splice(0, 60)})" in probe.FIXTURE and "acks.push([n, now()])" in probe.FIXTURE
+    assert (probe.MAX_CLOCK_WIDTH_S, probe.ACTION_RECORDS) == (0.02, ("page_event", "click_handler", "input", "moved"))
+
+
+@pytest.mark.parametrize("offset", [3.0, -3.0, 0.31])
+def test_a_page_clock_that_differs_from_the_probes_is_converted(tmp_path, offset):
+    """Sol round 8: the page's time origin and the probe's clock are two clocks. Here they differ by
+    more than the window read around each event; the run holds because the page's times are converted,
+    and the same log read without the answers that bound the clocks does not."""
+    verdict = probe.analyze(_run(tmp_path, offset=offset))
+    assert verdict["held"] is True and abs(verdict["clock"]["offset_s"] - offset) < 1e-6, verdict["clock"]
+
+    def unanswered(rows):
+        rows[-1]["detail"]["acks"] = []
+
+    blind = probe.analyze(_run(tmp_path / "unanswered", offset=offset, page=unanswered))
+    assert blind["held"] is False and blind["clock"]["held"] is False
+    assert "do not bound the clocks on both sides" in blind["clock"]["why"]
+    # read as it stands, every delivered step fails its samples
+    assert not any(v["held"] for v in blind["steps"] if v["expect"] in probe.EXPECTED_EVENTS)
+
+
+def _slow_answers(rows):
+    """Every post took 30 ms to be answered: the clocks are bounded, 32 ms apart."""
+    rows[-1]["detail"]["acks"] = [[n, r + 0.028] for n, r in rows[-1]["detail"]["acks"]]
+
+
+def _a_clock_set_back_during_the_run(rows):
+    """Posts received in the second half of the run are stamped 80 ms early."""
+    for row in rows[len(rows) // 2:]:
+        row["received"] -= 0.08
+
+
+def _a_record_never_received(rows):
+    del rows[len(rows) // 2]
+
+
+def _a_number_twice(rows):
+    rows[5]["n"] = rows[4]["n"]
+
+
+def _a_record_without_a_number(rows):
+    del rows[7]["n"]
+
+
+def _a_page_loaded_twice(rows):
+    rows.append(dict(rows[0], n=len(rows) + 1))
+
+
+def _no_record_after_the_last_step(rows):
+    last = max(row["t"] for row in rows if row["type"] != "beat")
+    kept = [row for row in rows if row["t"] <= last]
+    kept[-1].setdefault("detail", {})
+    rows[:] = [dict(row, n=n) for n, row in enumerate(kept, start=1)]
+    beat = {"t": last, "n": len(rows) + 1, "type": "beat", "received": last + UP_S,
+            "detail": {"acks": [[row["n"], row["t"] + UP_S + DOWN_S] for row in rows]}}
+    rows.append(beat)
+
+
+def _an_unreadable_record(rows):
+    rows.insert(3, {"type": "unreadable", "received": 1000.0})
+
+
+@pytest.mark.parametrize(("page", "what", "says"), [
+    (_slow_answers, "clock", "32.0 ms apart"),
+    (_a_clock_set_back_during_the_run, "clock", "the bounds cross"),
+    (_a_record_never_received, "page_log", "numbered_without_gaps"),
+    (_a_number_twice, "page_log", "numbered_without_gaps"),
+    (_a_record_without_a_number, "page_log", "numbered_without_gaps"),
+    (_an_unreadable_record, "page_log", "numbered_without_gaps"),
+    (_a_page_loaded_twice, "page_log", "one_load"),
+    (_no_record_after_the_last_step, "page_log", "a_record_after_the_last_step"),
+])
+def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(tmp_path, page, what, says):
+    """FP46: every step as predicted, and the run still does not hold, for the one reason given."""
+    verdict = probe.analyze(_run(tmp_path, page=page))
+    assert verdict["held"] is False, verdict[what]
+    if what == "clock":
+        assert verdict["clock"]["held"] is False and says in verdict["clock"]["why"] and verdict["page_log"]["held"]
+    else:
+        assert verdict["page_log"][says] is False and verdict["clock"]["held"] is True
+        assert [name for name in ("numbered_without_gaps", "one_load", "a_record_after_the_last_step")
+                if verdict["page_log"][name] is False] == [says]
+
+
+@pytest.mark.parametrize(("kind", "detail"), [
+    ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                    "rect": [620, 330, 140, 44]}),
+    ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+    ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+    ("input", {"field": "Note", "value": "x"}),
+    ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+])
+@pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+    """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+    judged by no step. Every step still holds; the run does not, and names the record."""
+    def stray(steps, handlers, gestures):
+        t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+             "after the last": steps[-1]["t_end"] + 1.5}[when]
+        handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+
+    verdict = probe.analyze(_run(tmp_path, stray))
+    assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+    assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+    assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+
+
+def test_step_intervals_that_overlap_do_not_hold(tmp_path):
+    def overlapping(steps, handlers, gestures):
+        steps[1]["t_start"] = steps[0]["t_end"] + 0.5
+
+    verdict = probe.analyze(_run(tmp_path, overlapping))
+    assert verdict["held"] is False and verdict["page_log"]["step_intervals_apart"] is False
 
 
 def test_the_page_events_are_read_in_the_order_the_page_made_them(tmp_path):

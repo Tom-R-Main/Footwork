@@ -2770,8 +2770,9 @@ async def cmd_do(args: Any) -> int:
                 from jevdual.filmed import PAGE_MARKS
 
                 marks = [mark for mark in getattr(eff, "evidence", ()) if mark in PAGE_MARKS]
-                if "click_stopped_after_press" in marks:
-                    # the press went and no click event did; what the page did with the press is unknown
+                if any(mark.startswith("click_") for mark in marks):
+                    # the click did not complete: some of its events went and no click event is known
+                    # to have; what the page did with them is unknown
                     driver_effect = "unverifiable"
                     error = f"{', '.join(marks)}: {eff.summary[:400]}"
                 elif marks:
