@@ -177,6 +177,9 @@ def test_a_launch_reads_asks_and_closes_what_it_started(monkeypatch, tmp_path):
     monkeypatch.setattr(diag, "_ask", lambda pid: [{"attribute": "AXManualAccessibility", "set_error": -25205}])
     from jevdual import ax
 
+    # a stand-in for the framework, which only macOS has: nothing real is read
+    monkeypatch.setitem(sys.modules, "ApplicationServices",
+                        SimpleNamespace(AXUIElementCreateApplication=lambda pid: ("application", pid)))
     monkeypatch.setattr(ax, "_attr", lambda el, name: [])
     found = diag.launch("forced", (browser_driver.ACCESSIBILITY_SWITCH,), True)
     assert did == [("launch", [browser_driver.ACCESSIBILITY_SWITCH, diag.PAGE]), "terminate"]

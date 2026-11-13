@@ -16,6 +16,7 @@ pytest.importorskip("cua_driver")
 
 import itertools
 import json
+import re
 
 from tests.test_session_scenarios import _id, _mac_selectors, _state, fw, world  # noqa: F401
 
@@ -732,8 +733,9 @@ def test_a_request_the_browser_refuses_does_not_end_the_start(world, fw, filmed,
                         "--pointer-motion", "filmed", "--rest", "20,40")
     assert code == 0, (out, err)
     assert taken == [None, ("asked", 77), None, None, shown, shown]
-    assert ("; web area shown after 0.0 s, asked: AXEnhancedUserInterface did not acknowledge the write (-25208) "
-            "at 0.0 s") in out
+    # the times are real elapsed times, a few polls of a hundredth of a second: not always 0.0
+    assert re.search(r"; web area shown after 0\.\d s, asked: AXEnhancedUserInterface did not acknowledge the write "
+                     r"\(-25208\) at 0\.\d s", out), out
     assert json.loads((fw.session / "session.json").read_text())["filmed"]["content"] == list(CONTENT)
 
 
