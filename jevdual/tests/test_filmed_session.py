@@ -403,8 +403,9 @@ def test_a_browser_filmed_take_needs_the_exclusive_desktop(world, fw, filmed, mo
 
 
 def test_a_cancelled_browser_start_releases_the_reservation_it_created(world, fw, filmed, monkeypatch):
-    """Sol round 3 #3: cancellation after the filmed reservation (here at the first navigation) must
-    not leave the desktop reserved with no session published."""
+    """Sol round 3 #3: cancellation after the filmed reservation must not leave the desktop reserved with
+    no session published. The cancellation falls at the first observation: since SN5 a start navigates
+    before it reserves, so its navigation is no longer after the reservation."""
     import asyncio
 
     from jevdual import browser_driver, browser_target
@@ -419,15 +420,19 @@ def test_a_cancelled_browser_start_releases_the_reservation_it_created(world, fw
         bridge.tab_id = "owned-browser-tab"
         return world, bridge
 
-    async def cancelled(self, url):
+    held: list = []
+
+    async def cancelled(self, *a, **kw):
+        held.append([r for r in Coordinator().status()["reservations"] if r["state"] == "active"])
         raise asyncio.CancelledError
 
     monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
-    monkeypatch.setattr(NativeBridge, "navigate", cancelled, raising=False)
+    monkeypatch.setattr(NativeBridge, "observe", cancelled)
     with pytest.raises(BaseException) as raised:
         fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop", "--pointer-motion", "filmed",
-           "--rest", "20,40", "--url", "https://example.test/")
+           "--rest", "20,40")
     assert isinstance(raised.value, (asyncio.CancelledError, KeyboardInterrupt, SystemExit)), raised.value
+    assert len(held) == 1 and len(held[0]) == 1, held  # it was reserved when the cancellation fell
     assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
     assert not (fw.session / "session.json").exists()
 

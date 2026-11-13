@@ -1925,8 +1925,23 @@ async def _start_browser(args: Any, d: Path) -> int:
             # here whether the browser is this start's own
             print(f"footwork's Chrome pid {launch.get('pid')} started {launch.get('incarnation')!r}: "
                   + ("launched by this start" if launch.get("new_process") else "already running"))
+        print(f"bound footwork's Chrome (pid {bridge.pid}) window {bridge.window_id}, tab {bridge.tab_id}")
+        if args.url:
+            eff = await bridge.navigate(args.url)
+            print(f"navigate {args.url}: {eff.effect} {eff.summary[:80]}")
+            if eff.effect == "refused":
+                # a session must not start bound to whatever page the browser already showed
+                print(f"not starting: the first navigation was refused: {eff.error_code or eff.summary[:120]}",
+                      file=sys.stderr)
+                if holder:
+                    await bsh.retire_settled(Path(holder["runtime"]), expected=holder)
+                return 2
+            await asyncio.sleep(2.0)
         if filmed:
-            # B7: one session films the real pointer over the same window its page operations bind
+            # B7: one session films the real pointer over the same window its page operations bind. After
+            # the navigation, not before it: the window is read for where the page's content sits, and
+            # between the launch and the navigation its tab is on the launch's blank page, in which the
+            # one live start that read it then found no web area (SN4)
             refusal = _filmed_setup(state, args)
             if refusal:
                 print(f"not starting: {refusal}", file=sys.stderr)
@@ -1940,18 +1955,6 @@ async def _start_browser(args: Any, d: Path) -> int:
                 raise CoordinationError("filming requires the coordinated command entrypoint")
             state.coordination_token = claim.registry.reserve(claim, claim.resources)
             args._created_reservation = state.coordination_token
-        print(f"bound footwork's Chrome (pid {bridge.pid}) window {bridge.window_id}, tab {bridge.tab_id}")
-        if args.url:
-            eff = await bridge.navigate(args.url)
-            print(f"navigate {args.url}: {eff.effect} {eff.summary[:80]}")
-            if eff.effect == "refused":
-                # a session must not start bound to whatever page the browser already showed
-                print(f"not starting: the first navigation was refused: {eff.error_code or eff.summary[:120]}",
-                      file=sys.stderr)
-                if holder:
-                    await bsh.retire_settled(Path(holder["runtime"]), expected=holder)
-                return 2
-            await asyncio.sleep(2.0)
         state.log({"kind": "start", "task": args.task, "requirements": state.requirements, "mode": "browser"})
         initial = await bridge.observe()
         from jevdual.browser_target import resolve
