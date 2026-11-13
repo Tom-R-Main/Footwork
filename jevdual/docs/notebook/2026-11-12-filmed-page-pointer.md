@@ -172,3 +172,13 @@ Test: FP14's run with the locate5 driver installed, a Forged button, a Note text
 Predicts: FP14's, and: the trusted Beta reports route_unfilmed, Forged reports target_unlocated naming another element at its centre, and the first type reports target_unfocused, each with no handler run, no input and no new gesture; the click on Note runs its handler with the pointer inside the field as it was when the press began; the second type leaves the field holding exactly the text sent, with one new approach that arrived inside the field's rectangle as the page reported it at input time and the last trusted pointer event before the input on the field.
 Against: FP14's; Forged approached or clicked; a trusted click sent in a filmed take; text inserted by the first type, or the pointer moved by it; the second type refused, or its text inserted with the pointer off the field.
 Refs: #fp19; #fp14; scripts/probe_filmed_page_pointer.py
+
+## FP21 · prediction · 2026-11-13 00:35
+Revises: FP19
+Question: as FP19, with its third point narrowed before any of its tests has run. Under FP19's rule a Chrome whose address bar holds the keyboard could never be typed into in a filmed take: Footwork's click is synthetic, makes the field its document's active element, and cannot take the keyboard from the address bar.
+Hypothesis: as FP19 except (3). The document's own focus matters only where the driver changes it. Typing without replacement calls DOM.focus on the node and Input.insertText and nothing else (read in the driver's source); on a node that is already its root's active element that changes no focus whether or not the document has it, and a document without focus matches no focus style before or after. Replacing held text first enters CDP focus emulation, which gives a document without focus the appearance of it and can move a field styled on focus. So a filmed type or append needs the node to be the active element, and a type that replaces needs the document to have focus as well.
+Alternatives: FP19's, without its second; Input.insertText itself gives a document focus (live only: FP20's run records whether the field moved between the press and the input, and whether the document had focus at each).
+Test: FP19's, and: a field that is the active element of a document without focus is typed into when it holds nothing, and refused target_unfocused before the pointer moves when its text would be replaced.
+Predicts: as FP19.
+Against: as FP19.
+Refs: #fp19; #fp20
