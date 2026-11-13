@@ -1,20 +1,20 @@
 {
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4",
-  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate1",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate2",
   "base_archive_sha256": "6f673125f9bece9777ef01c42575a93911153c37a19780f02cd40ef68d2fb94a",
-  "patched_archive_sha256": "07eaae28ea9c689085cdd189c3565c684af6bb91cd09b4ddcb445ec97ba07f8b",
-  "patch_sha256": "298b974a2d0d84eb7b8eab921d4492a8db13753040adedeabd161712514250d1",
+  "patched_archive_sha256": "f9d8ab2e848a0a94b77d5548fc5b90c3a1399f7a669b493df25da1162e67d901",
+  "patch_sha256": "722c9b08012345dacff5ff360573b395cbfa9662ef8fcf840adcda37183c77e9",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs": {
       "before": "0296798424f2fc9197d35849936dbc91fc5dff71d59a322ef3c20b7433409ce4",
-      "after": "e4a37133a091b4f60bc0379adcc6e081dcc3d5f00b0c9c21e663b58f85f66ce5"
+      "after": "5167be09efd7f7b2322dde36eb5c064b45a8eeddc08ca09c7bef1c57412f1c4f"
     },
     "libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs": {
       "before": "cf2f59d4f53de9f3c65d20c0c2c66221fed95ead0d1b4d8a42b9f71621f8b4c6",
-      "after": "a45aee07adfd3c4375cc436ad1a09f512e48533ab05a840533a5cc64ce349c3b"
+      "after": "06871be7e735efe06741a6b9aa8033101283d3e11b42bb338d581819234a8c03"
     }
   },
-  "abi": "unchanged six Python binding files; get_browser_state gains a read-only locate_ref mode",
+  "abi": "unchanged six Python binding files; get_browser_state gains a read-only locate_ref mode with an optional locate_point",
   "toolchain": "1.97.1"
 }

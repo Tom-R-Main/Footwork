@@ -10,9 +10,9 @@ import subprocess
 import tarfile
 from pathlib import Path, PurePosixPath
 
-VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate1"
+VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate2"
 SOURCE_COMMIT = "5486b6246e4c807c0d793216e52df283671d9362"
-SOURCE_SHA256 = "07eaae28ea9c689085cdd189c3565c684af6bb91cd09b4ddcb445ec97ba07f8b"
+SOURCE_SHA256 = "f9d8ab2e848a0a94b77d5548fc5b90c3a1399f7a669b493df25da1162e67d901"
 TOOLCHAIN = "1.97.1"
 
 
