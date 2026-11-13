@@ -215,7 +215,7 @@ class CuaBrowserOperations:
         self, *, target_id: str, tab_id: str | None, ref: str, point: Any = None
     ) -> BrowserReply:
         """Where one current ref's element is in the viewport (get_browser_state's locate mode,
-        cua-driver locate3). Read-only: nothing is scrolled, focused or dispatched. ``point`` (x, y in
+        cua-driver locate4). Read-only: nothing is scrolled, focused or dispatched. ``point`` (x, y in
         viewport CSS px) also asks what is at that point."""
         args: dict[str, Any] = {"target_id": target_id, "tab_id": tab_id, "locate_ref": ref}
         if point is not None:

@@ -1,0 +1,24 @@
+{
+  "prediction": "FP16",
+  "footwork": {
+    "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_probe_filmed_page_pointer.py tests/test_filmed_session.py tests/test_locate_page_function.py",
+    "red": {
+      "tree": "e4d479e python/, scripts/ and pinned locate3 archive, with the updated tests",
+      "log": "review4-python-red.txt",
+      "outcome": "31 failed, 192 passed: 7 Footwork and probe tests, and 24 Node cases (the half turn, both reflections, both negative scale values and the motion path, each at four positions)"
+    },
+    "between": "with the Footwork change and the locate3 archive still pinned: the same 24 Node cases failed and nothing else (24 failed, 199 passed)",
+    "green": {"outcome": "223 passed; offline suite 3719 passed, 52 skipped against the installed locate4 build"}
+  },
+  "driver": {
+    "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
+    "outcome": "the change is the page function's text only; no Rust test distinguishes locate3 from locate4. Full runs on the locate4 source: 1258 passed in 3 of 6; in the other 3, 1257 passed and perception_client::tests::live_handle_replacement_does_not_break_an_in_flight_parse failed (\"the first parse must reach the worker\", a fixture worker process not started within its 5 s wait). That test passes when its module is run alone (35 passed) and passed in a locate3 run made between the failures; it passed in every full run earlier in the evening. It is unrelated to this change and intermittent on this machine tonight.",
+    "warnings": 0
+  },
+  "chain": {
+    "command": "scripts/cua_source_chain.py --base <focus1 archive from 6e8bb5e>",
+    "outcome": "byte-identical to vendor/cua-driver/native-source.tar.gz",
+    "sha256": "6a4dc32c3b707a96fdc7c3cfbdc774fe46fe4068999cd1801f5c9c630a30ff19",
+    "bytes": 6418000
+  }
+}

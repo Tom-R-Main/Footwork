@@ -102,7 +102,7 @@
              let snapshot_format = args
                  .opt_str("snapshot_format")
                  .unwrap_or_else(|| "dom_refs_v1".into());
-@@ -1878,9 +1947,292 @@
+@@ -1878,9 +1947,297 @@
      })
  }
  
@@ -254,9 +254,11 @@
 +/// node outside a clipping ancestor's box reads as clipped: the error is on
 +/// the side of saying so. An ancestor's padding box is scaled by the ratio of
 +/// its bounding rectangle to its layout size, which is exact only for
-+/// translation and scaling: `transformed` is true when the node or any
-+/// ancestor is rotated, skewed or transformed in 3D, and the caller then
-+/// reports no position at all.
++/// translation and scaling by positive factors: `transformed` is true when
++/// the node or any ancestor is rotated (a half turn included), skewed,
++/// reflected (a negative axis in `transform` or `scale`), transformed in 3D
++/// or placed on a motion path, and the caller then reports no position at
++/// all.
 +const DOM_NODE_LOCATE: &str = "function(px, py) { \
 +    const node = this; \
 +    const doc = node.ownerDocument, view = doc.defaultView; \
@@ -274,11 +276,14 @@
 +        && (style.contentVisibility || 'visible') === 'visible'; \
 +    const turned = (style) => { \
 +        if ((style.rotate || 'none') !== 'none') return true; \
++        if ((style.offsetPath || 'none') !== 'none') return true; \
++        const scale = style.scale || 'none'; \
++        if (scale !== 'none' && scale.split(' ').some((part) => !(Number(part) > 0))) return true; \
 +        const t = style.transform || 'none'; \
 +        if (t === 'none') return false; \
 +        if (!t.startsWith('matrix(')) return true; \
 +        const m = t.slice(7, -1).split(',').map(Number); \
-+        return !(Math.abs(m[1]) < 1e-6 && Math.abs(m[2]) < 1e-6); \
++        return !(m[0] > 0 && m[3] > 0 && Math.abs(m[1]) < 1e-6 && Math.abs(m[2]) < 1e-6); \
 +    }; \
 +    const rootStyle = view.getComputedStyle(doc.documentElement); \
 +    const bodyIsViewport = !!doc.body && shows(rootStyle) && free(rootStyle) \
@@ -396,7 +401,7 @@
      if quad.len() < 8 {
          return None;
      }
-@@ -3380,7 +3732,135 @@
+@@ -3380,7 +3737,135 @@
  #[cfg(test)]
  mod tests {
      use super::*;
@@ -404,7 +409,7 @@
 +    fn located(value: Value) -> Value {
 +        json!({ "result": { "value": value } })
 +    }
-+
+ 
 +    #[test]
 +    fn locate_value_reports_the_rectangle_its_centre_and_the_viewport() {
 +        let reply = located(
@@ -470,7 +475,7 @@
 +            true
 +        );
 +    }
- 
++
 +    #[test]
 +    fn locate_value_reports_no_point_for_a_malformed_one() {
 +        for point in [

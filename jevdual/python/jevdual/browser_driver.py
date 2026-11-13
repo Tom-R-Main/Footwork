@@ -277,7 +277,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     or something inside it); and where ``DOM.getBoxModel`` also puts it. With ``point`` (where the
     pointer was sent), that point must lie inside the rectangle and hit the target too."""
     if not isinstance(locate, dict):
-        return None, "the driver reported no position (it needs cua-driver locate3)"
+        return None, "the driver reported no position (it needs cua-driver locate4)"
     if locate.get("available") is not True:
         return None, f"the driver could not locate it ({locate.get('reason') or 'no reason given'})"
 
@@ -304,7 +304,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     shown = locate.get("visibility_state")
     if shown != "visible":
         if shown is None:
-            return None, "the driver did not say whether the page is showing (it needs cua-driver locate3)"
+            return None, "the driver did not say whether the page is showing (it needs cua-driver locate4)"
         return None, f"the page is not showing (its document is {str(shown)[:20]!r}); its tab is not the one on screen"
     x, y, w, h = rect
     if x < -0.5 or y < -0.5 or x + w > view[0] + 0.5 or y + h > view[1] + 0.5:
@@ -312,7 +312,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     clipped = locate.get("clipped")
     if clipped is not False:
         if clipped is not True:
-            return None, "the driver did not say whether a container clips it (it needs cua-driver locate3)"
+            return None, "the driver did not say whether a container clips it (it needs cua-driver locate4)"
         return None, ("a scrolling or clipping container hides part of it; the page click would scroll it "
                       "after the pointer arrived")
     hit = locate.get("hit")
