@@ -1,0 +1,2 @@
+{"t": 1794580134.7017999, "n": 1, "doc": "mwf2oe1z-d2mwdwwn58a", "type": "loaded", "detail": {"dpr": 2, "viewport": [1200, 813], "clock_step_s": 9.999990463256836e-05, "page_says_at_forged": "Forged", "browser_says_at_forged": "lid2"}, "received": 1794580134.702799}
+{"t": 1794580135.1978998, "n": 2, "doc": "mwf2oe1z-d2mwdwwn58a", "type": "beat", "detail": {"acks": [[1, 1794580134.7054]]}, "received": 1794580135.199198}

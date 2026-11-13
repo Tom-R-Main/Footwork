@@ -1,0 +1,45 @@
+{
+ "gate": {
+  "polls": 1,
+  "idle_s": 874.0,
+  "waited_s": 0.0
+ },
+ "front_pid_at_start": 74505,
+ "fixture": "http://127.0.0.1:60761/",
+ "steps": [
+  {
+   "name": "00-start",
+   "t_start": 1794580133.8281422,
+   "t_end": 1794580135.3368902,
+   "exit": 2,
+   "stdout": "",
+   "stderr": "not starting: the browser window shows no web area to film, and the browser was asked to show it: AXEnhancedUserInterface did not acknowledge the write (-25208)\n"
+  }
+ ],
+ "pointer_sampler": {
+  "samples": 241,
+  "largest_gap_s": 0.0242
+ },
+ "finished": 1794580135.336904,
+ "cleanup_errors": [],
+ "session_reservation": {
+  "released": true,
+  "named_by_session": null,
+  "held": [],
+  "yields": [],
+  "still_held": []
+ },
+ "chrome_launch": {
+  "pid": 84979,
+  "incarnation": 1794580134.044871
+ },
+ "chrome_pid": 84979,
+ "chrome_closed": true,
+ "front_pid_at_end": 74505,
+ "closed": {
+  "registry": true,
+  "browser": true,
+  "port": true,
+  "holder": true
+ }
+}
