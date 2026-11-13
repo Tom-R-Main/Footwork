@@ -61,6 +61,9 @@ def _seen(t, event, target, rect=None, point=None):
             "detail": {"event": event, "trusted": False, "target": target, "x": x, "y": y, "rect": rect}}
 
 
+DOCUMENT = "mhx1c2-0a9f"  # the name the document under test made for itself
+
+
 def _as_the_page_posts(records, *, offset, until, fence):
     """``records`` (times in the probe's clock) as the page's log file holds them: a beat twice a second
     until ``until``, the fence the probe asked for made at ``fence``, every record numbered from one in
@@ -77,7 +80,7 @@ def _as_the_page_posts(records, *, offset, until, fence):
     # records in the order they were made, then the beat
     rows = sorted([*records, *beats], key=lambda r: (r["t"], r["type"] in ("beat", "fence"), r["n"]))
     for n, row in enumerate(rows, start=1):
-        row["n"], row["received"] = n, row["t"] + UP_S
+        row["n"], row["received"], row["doc"] = n, row["t"] + UP_S, DOCUMENT
         row["t"] -= offset
         last = (row.get("detail") or {}).get("last_trusted_pointer")
         if last:
@@ -564,6 +567,82 @@ def test_an_action_made_before_its_step_is_not_placed_inside_it_by_two_opposite_
     start = 1000.0 + 10 * next(i for i, step in enumerate(probe.STEPS) if (step[0], step[2]) == ("Beta", "clicked"))
     low, high = log["ambiguous"][0]["between"]
     assert low < start < high and verdict["clock"]["held"]
+
+
+def _an_earlier_document(*, beat_received=None, acted=False):
+    """The document the launch opened, before start navigated to the page again: its own name, numbered
+    from one, a record of loading and a beat (received at ``beat_received`` when given), and when
+    ``acted`` a record of something done to it."""
+    def page(rows):
+        loaded = rows[0]
+        assert loaded["type"] == "loaded"
+        at, got = loaded["t"] - 0.9, loaded["received"] - 0.9
+        early = [dict(loaded, n=1, doc="launch-7f3", t=at, received=got),
+                 {"t": at + 0.5, "n": 2, "doc": "launch-7f3", "type": "beat",
+                  "detail": {"acks": [[1, at + UP_S + DOWN_S]]},
+                  "received": got + 0.5 if beat_received is None else beat_received}]
+        if acted:
+            early.insert(1, dict(_seen(0.0, "click", "Alpha"), n=2, doc="launch-7f3", t=at + 0.2, received=got + 0.2))
+            early[2]["n"] = 3
+        rows[:0] = early
+    return page
+
+
+def test_a_document_the_launch_opened_before_the_one_the_steps_ran_in_does_not_fail_the_run(tmp_path):
+    """FP73, FP74: a start that launches the browser opens the page and then navigates to it. Two records
+    of loading and numbers that begin again failed a correct run; each record now names its document and
+    the one that loaded last is the one read."""
+    verdict = probe.analyze(_run(tmp_path, page=_an_earlier_document()))
+    log = verdict["page_log"]
+    assert verdict["held"] is True and log["held"] is True and verdict["clock"]["held"] is True
+    assert (log["numbered_without_gaps"], log["one_load"], log["one_document_under_the_steps"]) == (True, True, True)
+    assert log["other_documents"] == {
+        "documents": 1, "records": 2, "only_loading_and_beats": True, "all_received_before_the_first_step": True,
+        "this_document_loaded_before_the_first_step": True}
+    alone = probe.analyze(_run(tmp_path / "alone"))
+    assert alone["held"] is True and alone["page_log"]["records"] == log["records"]
+    assert alone["page_log"]["other_documents"]["documents"] == 0
+
+
+def test_another_document_still_posting_or_acted_on_or_loaded_under_the_steps_fails_the_run(tmp_path):
+    """FP74: an earlier document may have loaded and idled. One whose record arrives once the steps have
+    begun, or that something was done to, or a page that loads again after the steps, is not that."""
+    def says(verdict, which):
+        log = verdict["page_log"]
+        assert verdict["held"] is False and log["held"] is False and log["one_document_under_the_steps"] is False
+        assert [name for name, value in log["other_documents"].items() if value is False] == which
+
+    late = probe.analyze(_run(tmp_path / "late", page=_an_earlier_document(beat_received=1000.2)))
+    says(late, ["all_received_before_the_first_step"])
+    acted = probe.analyze(_run(tmp_path / "acted", page=_an_earlier_document(acted=True)))
+    says(acted, ["only_loading_and_beats"])
+
+    def reloaded_after_the_steps(rows):
+        rows.append(dict(rows[0], n=1, doc="again-2b1", t=rows[-1]["t"] + 0.1, received=rows[-1]["received"] + 0.1))
+
+    again = probe.analyze(_run(tmp_path / "again", page=reloaded_after_the_steps))
+    # the steps' records are then another document's, and the one read holds nothing of them
+    says(again, ["only_loading_and_beats", "all_received_before_the_first_step",
+                 "this_document_loaded_before_the_first_step"])
+
+
+def test_a_record_that_names_no_document_is_read_as_the_documents_own(tmp_path):
+    """FP74: a record without a name is judged with the document under test and not set aside with
+    another's, so leaving the name off cannot take a record out of the account."""
+    def unnamed(rows):
+        for row in rows[1:]:
+            del row["doc"]
+
+    verdict = probe.analyze(_run(tmp_path, page=unnamed))
+    assert verdict["held"] is True and verdict["page_log"]["other_documents"]["records"] == 0
+
+    def an_unnamed_action_outside_every_step(rows):
+        stray = dict(_seen(0.0, "click", "Alpha"), n=len(rows) + 1, t=rows[-1]["t"] + 0.05,
+                     received=rows[-1]["received"] + 0.05)
+        rows.append(stray)
+
+    stray = probe.analyze(_run(tmp_path / "stray", page=an_unnamed_action_outside_every_step))
+    assert stray["held"] is False and stray["page_log"]["unaccounted"]
 
 
 def test_the_pointers_last_event_is_placed_by_the_record_that_carries_it(tmp_path):

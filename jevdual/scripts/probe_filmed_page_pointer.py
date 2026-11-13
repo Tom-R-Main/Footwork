@@ -88,6 +88,12 @@ Three things make that reading sound, and the run does not hold without them (FP
   requires: a record of something done to the page is judged by when it was made, wherever its number
   falls, so one made after the last step fails the run when it is in hand, before the fence or after
   it. Nothing should be acting on the page by then.
+- every record names the document that made it. A start that launches the browser opens the page from
+  the command line and then navigates to it, so the page loads twice and each document numbers its
+  records from one. The document under test is the one that loaded last, and everything above is read
+  from its records alone. The run holds only if it loaded before the first step began and every record
+  of another document is of loading or a beat and arrived before the first step began: an earlier
+  document may have loaded and idled, and may not have been acted on or still be posting under a step.
 
 What the samples cannot show: where the pointer was between two of them. They are about 5 ms apart and
 at most 50; an excursion off a control and back inside one gap is not excluded by this probe.
@@ -237,6 +243,9 @@ const now = () => (performance.timeOrigin + performance.now()) / 1000;
 // n numbers the records in the order the page made them: several events of one click can carry the
 // same time, and the posts need not arrive in order
 let seq = 0;
+// a name this document makes for itself when it loads. A start that launches the browser opens this page
+// and then navigates to it: two documents, each numbering from one, and the name says whose a record is
+const doc = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 // when each post was answered, by this page's clock: with the time it was made and the probe's time of
 // receiving it, that bounds the difference between the two clocks on both sides
 const acks = [];
@@ -246,7 +255,7 @@ const acks = [];
 let fenced = false;
 const post = (type, detail) => {
   const n = ++seq;
-  fetch('/log', {method: 'POST', keepalive: true, body: JSON.stringify({t: now(), n, type, detail})})
+  fetch('/log', {method: 'POST', keepalive: true, body: JSON.stringify({t: now(), n, doc, type, detail})})
     .then((answer) => { acks.push([n, now()]); return answer.status === 200 ? answer.text() : ''; })
     .then((body) => { if (body === 'fence' && !fenced) { fenced = true; post('fence', {asked_in_answer_to: n}); } },
           () => {});
@@ -568,7 +577,13 @@ def analyze(out: Path) -> dict:
         content = json.loads((out / "session/session.json").read_text())["filmed"]["content"]
     except (OSError, ValueError, KeyError, TypeError) as exc:
         return {"held": False, "unreadable": f"{type(exc).__name__}: {exc}"}
-    received = _jsonl(out / "page-events.jsonl")
+    # every record names the document that made it. The one under test is the one that loaded last; a
+    # record that names none is read as its own, so that it is judged and not set aside
+    everything = _jsonl(out / "page-events.jsonl")
+    document = next((e["doc"] for e in reversed(everything)
+                     if e.get("type") == "loaded" and isinstance(e.get("doc"), str)), None)
+    elsewhere = [e for e in everything if isinstance(e.get("doc"), str) and e["doc"] != document]
+    received = [e for e in everything if not (isinstance(e.get("doc"), str) and e["doc"] != document)]
     clock = _clock(received)
     numbers = [e.get("n") for e in received]
     whole = [n for n in numbers if isinstance(n, int) and not isinstance(n, bool)]
@@ -757,17 +772,34 @@ def analyze(out: Path) -> dict:
     # nothing the page made is missing: its numbers are whole, from one load, through a fence the page
     # made because the probe asked for it after the last step's interval had closed
     one_load = sum(1 for e in received if e.get("type") == "loaded") == 1
+    # another document may have loaded and idled before the steps (the launch opens the page and start
+    # then navigates to it); it may not have been acted on, nor be posting once the steps run, and the
+    # document under test must have loaded before the first step began
+    first = min((low for low, _ in windows), default=math.inf)
+
+    def before_the_steps(e):
+        return isinstance(e.get("received"), (int, float)) and not isinstance(e.get("received"), bool) \
+            and e["received"] < first
+
+    others = {"documents": len({e["doc"] for e in elsewhere}), "records": len(elsewhere),
+              "only_loading_and_beats": all(e.get("type") in ("loaded", "beat") for e in elsewhere),
+              "all_received_before_the_first_step": all(before_the_steps(e) for e in elsewhere),
+              "this_document_loaded_before_the_first_step": any(
+                  e.get("type") == "loaded" and before_the_steps(e) for e in received)}
+    alone = (others["only_loading_and_beats"] and others["all_received_before_the_first_step"]
+             and others["this_document_loaded_before_the_first_step"])
     asked = run.get("fence_asked")
     fenced = bool(windows and fence is not None and isinstance(fence.get("n"), int)
                   and isinstance(asked, (int, float)) and asked >= windows[-1][1]
                   and isinstance(fence.get("received"), (int, float)) and fence["received"] >= asked
                   and set(range(1, fence["n"] + 1)) <= set(whole))
     log = {"records": len(received), "numbered_without_gaps": numbered, "one_load": one_load,
+           "other_documents": others, "one_document_under_the_steps": alone,
            "fenced_after_the_last_step": fenced,
            "accounted_through": {"record": fence.get("n"), "asked_at": asked} if fenced else None,
            "missing_after_the_fence": missing_after if fenced else None,
            "step_intervals_apart": apart, "unaccounted": unaccounted, "ambiguous": ambiguous,
-           "held": numbered and one_load and fenced and apart and not unaccounted and not ambiguous}
+           "held": numbered and one_load and alone and fenced and apart and not unaccounted and not ambiguous}
     return {"steps": verdicts, "complete": complete, "gamma_clicked_after_scrolling": scrolled,
             "clock": clock, "page_log": log,
             "pointer_samples": None if samples is None else len(samples),
