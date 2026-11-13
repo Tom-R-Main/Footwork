@@ -24,8 +24,10 @@ from jevdual.coordination import owned_thread
 
 Point = tuple[float, float]
 Rect = tuple[float, float, float, float]
-#: how far (points) the pointer may sit from the position that was hit-tested on a page target
-HELD_TOLERANCE_PT = 0.5
+#: how far (points) the pointer may sit from the position that was hit-tested on a page target. The
+#: proof is of that position and no other, so this is float noise, not a tolerance: nothing moves the
+#: pointer between the two reads unless someone does.
+HELD_TOLERANCE_PT = 0.01
 
 
 class FilmedRefusal(Exception):
@@ -154,7 +156,7 @@ class Filmed:
 
     async def held(self, at: Point | None = None) -> None:
         """Refuse, ending the take, unless the pointer is still where the last gesture left it and,
-        with ``at`` (a position ``pointer`` read), still within half a point of that position."""
+        with ``at`` (a position ``pointer`` read and the page was asked about), still at that position."""
         await owned_thread(self._hold, at)
 
     def _move(self, end: Point, kind: str, label: str) -> dict[str, Any]:
@@ -284,8 +286,10 @@ class Filmed:
             trace.finish(poster, outcome)
 
 
-#: how far (points) a browser take's window or web area may sit from where the take recorded it
-SCENE_TOLERANCE_PT = 0.5
+#: how far (points) a browser take's window or web area may sit from where the take recorded it. Page
+#: positions are mapped to the screen from the recorded origin, so any real displacement is a refusal;
+#: this is float noise only.
+SCENE_TOLERANCE_PT = 0.01
 
 
 def browser_scene_change(

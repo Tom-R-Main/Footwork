@@ -463,10 +463,10 @@ def _scene(monkeypatch, *, front=42, main=True, window=WINDOW, area=(CONTENT, UR
 
 def test_the_recorded_scene_holds_while_nothing_changed(monkeypatch):
     assert _scene(monkeypatch) is None
-    # a fragment is not another page; less than half a point is not another place
+    # a fragment is not another page; float noise is not another place
     assert _scene(monkeypatch, area=(CONTENT, URL + "#step-2")) is None
     assert _scene(monkeypatch, url=URL + "#top") is None
-    assert _scene(monkeypatch, window=(420.4, 300.0, 300.0, 480.0), area=((420.4, 330.0, 300.0, 450.0), URL)) is None
+    assert _scene(monkeypatch, window=(420.004, 300.0, 300.0, 480.0), area=((420.004, 330.0, 300.0, 450.0), URL)) is None
     # with the pointer's position: the page of this window is what a native hit test finds there
     assert _scene(monkeypatch, point=GO_SCREEN) is None
 
@@ -478,6 +478,10 @@ def test_the_recorded_scene_holds_while_nothing_changed(monkeypatch):
     ({"main": False}, "not the browser's main window"),
     ({"main": None}, "not the browser's main window"),
     ({"window": (500.0, 300.0, 300.0, 480.0)}, "the scene window is 300x480 at 500.0,300.0"),
+    # Sol round 4: the page is mapped to the screen from the recorded origin, so 0.4 pt is another place
+    ({"window": (420.4, 300.0, 300.0, 480.0), "area": ((420.4, 330.0, 300.0, 450.0), URL)},
+     "the scene window is 300x480 at 420.4,300.0"),
+    ({"area": ((420.4, 330.0, 300.0, 450.0), URL)}, "the page area is 300x450 at 420.4,330.0"),
     ({"window": (420.0, 300.0, 300.0, 520.0)}, "the scene window is 300x520"),
     ({"window": None}, "without a frame"),
     ({"area": None}, "shows no web area"),
@@ -531,12 +535,13 @@ def test_the_pointer_check_refuses_and_ends_the_take_when_the_pointer_was_moved(
     where["pointer"] = (501.5, 445.0)  # within the take's continuity tolerance of 2 points
     asyncio.run(filmed.held())
     assert asyncio.run(filmed.pointer()) == (501.5, 445.0)
-    asyncio.run(filmed.held((501.1, 445.0)))  # within half a point of where it was read
+    asyncio.run(filmed.held((501.5, 445.0)))  # exactly where it was read
     assert filmed.take_ended is None
-    # continuity is not proof the pointer is still on the target: 1.5 points from where it was read ends the take
+    # continuity is not proof the pointer is still on the target (Sol round 4): 0.3 pt from the position
+    # the page was asked about is a position nothing verified, and ends the take
     moved = Filmed(window=WINDOW, content=CONTENT, last_pointer=(500.0, 445.0))
     with pytest.raises(FilmedRefusal) as away:
-        asyncio.run(moved.held((500.0, 445.0)))
+        asyncio.run(moved.held((501.2, 445.0)))
     assert away.value.code == "pointer_moved_idle" and moved.take_ended == "pointer_moved_idle"
     where["pointer"] = (530.0, 445.0)
     with pytest.raises(FilmedRefusal) as refused:

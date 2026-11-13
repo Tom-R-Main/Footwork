@@ -145,7 +145,8 @@ def analyze(out: Path) -> dict:
     pointer was already there. A refused step holds when the command reported ``target_unlocated``, the
     page ran no click handler of any button during the step, and the step added no gesture. The whole
     run holds only when the start and the park succeeded, every clicked step reported a device pixel
-    ratio of 2, and the run recorded the Chrome its start launched and that it closed."""
+    ratio of 2 and a pinch scale of 1, the run recorded the Chrome its start launched and that it
+    closed, and no cleanup step failed."""
     try:
         run = json.loads((out / "run.json").read_text())
         content = json.loads((out / "session/session.json").read_text())["filmed"]["content"]
@@ -201,13 +202,16 @@ def analyze(out: Path) -> dict:
     complete = [(v["label"], v["expect"]) for v in verdicts] == list(STEPS)
     ratios = [v.get("dpr") for v in verdicts if v["expect"] == "clicked"]
     scale = bool(ratios) and all(ratio == 2 for ratio in ratios)
+    pinches = [v.get("pinch") for v in verdicts if v["expect"] == "clicked"]
+    unpinched = bool(pinches) and all(pinch == 1 for pinch in pinches)
     setup = {name: next((s.get("exit") for s in run.get("steps", []) if s.get("name") == name), None)
              for name in ("00-start", "00-park")}
-    owned = bool(run.get("chrome_launch")) and run.get("chrome_closed") is True
+    owned = bool(run.get("chrome_launch")) and run.get("chrome_closed") is True and not run.get("cleanup_errors")
     return {"steps": verdicts, "complete": complete, "gamma_clicked_after_scrolling": scrolled,
-            "device_pixel_ratios": ratios, "scale_factor_tested": scale,
+            "device_pixel_ratios": ratios, "scale_factor_tested": scale, "pinch_scales": pinches,
             "setup_exits": setup, "own_chrome_closed": owned,
-            "held": (complete and scrolled and scale and owned and all(code == 0 for code in setup.values())
+            "held": (complete and scrolled and scale and unpinched and owned
+                     and all(code == 0 for code in setup.values())
                      and all(v["held"] for v in verdicts))}
 
 
@@ -366,31 +370,57 @@ def main() -> None:
                 click.update(label=label, expect=expect, gestures_after=_gestures(session))
                 steps.append(click)
     finally:
-        record["finished"] = time.time()
-        from jevdual import browser_session_holder as bsh
+        _finish(record, out, session, start_stdout, stop, sampler, server)
 
+
+def _retire_holder(record: dict, session: Path) -> None:
+    from jevdual import browser_session_holder as bsh
+
+    try:
+        holder = json.loads((session / "session.json").read_text()).get("browser_holder") or {}
+    except (OSError, ValueError):
         holder = {}
+    if holder:
+        record["holder_stop"] = asyncio.run(bsh.retire(bsh.recorded_runtime(holder, session), expected=holder))
+
+
+def _restore_front(record: dict) -> None:
+    if record.get("front_pid_at_start") and _front_pid() != record["front_pid_at_start"]:
+        _activate_pid(record["front_pid_at_start"])
+    record["front_pid_at_end"] = _front_pid()
+
+
+def _finish(record: dict, out: Path, session: Path, start_stdout: str, stop, sampler, server) -> dict:
+    """Clean up and write the run's records. Each step runs whatever the others raise; what raised is
+    kept in ``cleanup_errors``, and a run with any does not hold."""
+    record["finished"] = time.time()
+    errors: list[str] = record.setdefault("cleanup_errors", [])
+
+    def attempt(name: str, step, *args) -> None:
         try:
-            holder = json.loads((session / "session.json").read_text()).get("browser_holder") or {}
-        except (OSError, ValueError):
-            pass
-        if holder:
-            record["holder_stop"] = asyncio.run(bsh.retire(bsh.recorded_runtime(holder, session), expected=holder))
-        _close_owned_chrome(record, _launched_chrome(session, start_stdout))
-        if record["front_pid_at_start"] and _front_pid() != record["front_pid_at_start"]:
-            _activate_pid(record["front_pid_at_start"])
-        record["front_pid_at_end"] = _front_pid()
+            step(*args)
+        except Exception as exc:  # noqa: BLE001 - one failed cleanup step must not skip the others
+            errors.append(f"{name}: {type(exc).__name__}: {str(exc)[:200]}")
+
+    def stop_helpers() -> None:
         stop.set()
         sampler.join(timeout=5)
         server.shutdown()
-        for step in steps:
-            step["stdout"] = (step.get("stdout") or "")[-600:] if step.get("expect") else ""
-            step["stderr"] = (step.get("stderr") or "")[-600:]
-        (out / "run.json").write_text(json.dumps(record, indent=1, default=str))
-        verdict = analyze(out)
-        (out / "verdict.json").write_text(json.dumps(verdict, indent=1))
-        print(json.dumps({"chrome_closed": record.get("chrome_closed"),
-                          "chrome_not_signalled": record.get("chrome_not_signalled"), **verdict}, indent=1))
+
+    attempt("holder", _retire_holder, record, session)
+    attempt("chrome", lambda: _close_owned_chrome(record, _launched_chrome(session, start_stdout)))
+    attempt("front", _restore_front, record)
+    attempt("helpers", stop_helpers)
+    for step in record.get("steps", []):
+        step["stdout"] = (step.get("stdout") or "")[-600:] if step.get("expect") else ""
+        step["stderr"] = (step.get("stderr") or "")[-600:]
+    (out / "run.json").write_text(json.dumps(record, indent=1, default=str))
+    verdict = analyze(out)
+    (out / "verdict.json").write_text(json.dumps(verdict, indent=1))
+    print(json.dumps({"chrome_closed": record.get("chrome_closed"),
+                      "chrome_not_signalled": record.get("chrome_not_signalled"),
+                      "cleanup_errors": errors, **verdict}, indent=1))
+    return verdict
 
 
 if __name__ == "__main__":

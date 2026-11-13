@@ -124,6 +124,14 @@ def _a_refusal_without_its_code(steps, handlers, gestures):
     steps[3]["stdout"] = "not sent"
 
 
+def _a_pinched_page(steps, handlers, gestures):
+    handlers[1]["detail"]["pinch"] = 1.25
+
+
+def _a_step_without_a_pinch_scale(steps, handlers, gestures):
+    del handlers[0]["detail"]["pinch"]
+
+
 def _a_refusal_for_another_reason(steps, handlers, gestures):
     clipped = next(step for step in steps if step["label"] == "Clipped")
     clipped["stdout"] = "not sent: target_unlocated: 'Clipped': another element is at its centre"
@@ -145,6 +153,7 @@ def _gamma_clicked_without_scrolling(steps, handlers, gestures):
     _stale_pointer_event_after_a_posted_approach, _pointer_event_on_another_button,
     _gesture_ending_off_the_button, _a_gesture_in_a_refused_step, _a_refusal_without_its_code,
     _a_refusal_for_another_reason, _a_step_that_could_not_be_tried, _gamma_clicked_without_scrolling,
+    _a_pinched_page, _a_step_without_a_pinch_scale,
 ])
 def test_a_run_that_departs_from_the_prediction_does_not_hold(tmp_path, change):
     verdict = probe.analyze(_run(tmp_path, change))
@@ -164,6 +173,7 @@ def test_a_clicked_step_that_reported_no_device_pixel_ratio_does_not_hold(tmp_pa
     {"chrome_closed": False},
     {"chrome_closed": None},
     {"chrome_launch": None},
+    {"cleanup_errors": ["holder: HolderUnavailable: the holder did not exit"]},
     {"setup": (0, 2)},
     {"setup": (1, 4)},
 ])
@@ -179,6 +189,35 @@ def test_a_missing_directory_does_not_hold(tmp_path):
 
 
 # ---- cleanup
+
+
+def test_a_cleanup_step_that_raises_does_not_skip_the_others(tmp_path, monkeypatch):
+    """Sol round 4: retiring the holder raises when it survives; Chrome must still be closed, the
+    front application restored, and the run's records written, with the run not holding."""
+    out = _run(tmp_path)
+    record = json.loads((out / "run.json").read_text())
+    did: list = []
+
+    def retire(record, session):
+        did.append("holder")
+        raise RuntimeError("the holder did not exit")
+
+    def close(record, launch):
+        did.append("chrome")
+        record["chrome_closed"] = True
+
+    monkeypatch.setattr(probe, "_retire_holder", retire)
+    monkeypatch.setattr(probe, "_close_owned_chrome", close)
+    monkeypatch.setattr(probe, "_restore_front", lambda record: did.append("front"))
+    stop = probe.threading.Event()
+    helper = type("Helper", (), {"join": lambda self, timeout=None: did.append("sampler"),
+                                 "shutdown": lambda self: did.append("server")})()
+    verdict = probe._finish(record, out, out / "session", "", stop, helper, helper)
+    assert did == ["holder", "chrome", "front", "sampler", "server"] and stop.is_set()
+    written = json.loads((out / "run.json").read_text())
+    assert written["cleanup_errors"] == ["holder: RuntimeError: the holder did not exit"]
+    assert verdict["held"] is False and all(v["held"] for v in verdict["steps"])
+    assert json.loads((out / "verdict.json").read_text())["held"] is False
 
 
 def _session(tmp_path, launch):
