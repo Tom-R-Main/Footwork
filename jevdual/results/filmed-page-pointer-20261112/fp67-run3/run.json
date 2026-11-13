@@ -1,0 +1,31 @@
+{
+ "gate": {
+  "polls": 1,
+  "idle_s": 239.7,
+  "waited_s": 0.0
+ },
+ "front_pid_at_start": 91071,
+ "fixture": "http://127.0.0.1:60157/",
+ "steps": [
+  {
+   "name": "00-start",
+   "t_start": 1794579499.6132329,
+   "t_end": 1794579529.70732,
+   "exit": 7,
+   "stdout": "",
+   "stderr": "stopped: coordination_refused: resources busy; inspect footwork control status for owners and waiters\n"
+  }
+ ],
+ "pointer_sampler": {
+  "samples": 5131,
+  "largest_gap_s": 0.0212
+ },
+ "finished": 1794579529.707346,
+ "cleanup_errors": [
+  "front: RuntimeError: pid 91071 was frontmost at the start and pid 74505 is at the end"
+ ],
+ "chrome_launch": null,
+ "chrome_pid": null,
+ "chrome_closed": true,
+ "front_pid_at_end": 74505
+}
