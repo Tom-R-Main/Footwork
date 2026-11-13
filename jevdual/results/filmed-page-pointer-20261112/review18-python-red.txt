@@ -1,0 +1,12 @@
+
+tests/test_probe_filmed_page_pointer.py:835: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_whose_own_answer_was_slow_is_placed_by_a_prompt_record_made_soon_after[change0]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_whose_own_answer_was_slow_is_placed_by_a_prompt_record_made_soon_after[change1]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_is_bounded_by_the_ones_numbered_around_it_and_not_by_a_shared_timestamp
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_whose_own_post_was_slow_is_placed_by_the_prompt_record_made_just_before_it
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_whose_answer_was_slow_is_placed_by_the_prompt_record_made_just_after_it
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_neighbour_places_a_record_only_while_the_rate_allowance_between_them_is_small
+FAILED tests/test_probe_filmed_page_pointer.py::test_two_readings_a_grain_out_in_opposite_directions_do_not_place_a_record_before_it_was_made
+FAILED tests/test_probe_filmed_page_pointer.py::test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happened_in
+8 failed, 223 passed in 2.89s

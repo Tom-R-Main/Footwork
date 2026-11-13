@@ -469,27 +469,57 @@ def test_a_record_whose_time_reaches_across_a_steps_boundary_is_ambiguous(tmp_pa
     assert inside["page_log"]["ambiguous"] == [] and inside["page_log"]["held"] is True
 
 
-@pytest.mark.parametrize(("change", "width"), [(_at(2.2, late=0.030), 0.032), (_at(2.2, unanswered=True), 0.206)])
-def test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed(tmp_path, change, width):
-    """FP54 (u): the answers to one click's posts came 30 ms after them, or never. The run's common
-    bounds still agree, from all the other posts; these six records are not placed by them, because
-    that would assume the two clocks kept one difference. Each is bounded by its own post, 30 ms wide
-    and two grains, or, with no answer of its own, below by the last record numbered before it that was
-    answered: the beat 200 ms earlier."""
-    verdict = probe.analyze(_run(tmp_path, change, page=_answers))
+def _and_nothing_after_them_is_answered(rows):
+    """``_answers``, and no record numbered after the changed ones was answered either."""
+    last = max(row["n"] for row in rows if row.get("unanswered") or row.get("late") is not None)
+    _answers(rows)
+    answers = rows[-1]["detail"]["acks"]
+    answers[:] = [a for a in answers if a[0] <= last]
+
+
+LAST = ("Gamma", "clicked")
+
+
+@pytest.mark.parametrize(("change", "width"), [(_at(2.2, *LAST, late=0.030), 0.032),
+                                               (_at(2.2, *LAST, unanswered=True), 0.206)])
+def test_a_record_of_an_action_that_nothing_places_within_20_ms_is_untimed(tmp_path, change, width):
+    """FP54 (u), restated for FP94: the answers to the last click's posts came 30 ms after them, or
+    never, and no later record was answered at all, so nothing made after the click has a lower bound
+    to lend it. The run's common bounds still agree, from all the earlier posts; these six records are
+    not placed by them, because that would assume the two clocks kept one difference. Each is bounded
+    by its own post, 30 ms wide and two grains, or, with no answer of its own, below by the last record
+    numbered before it that was answered: the beat 200 ms earlier."""
+    verdict = probe.analyze(_run(tmp_path, change, page=_and_nothing_after_them_is_answered))
     clock = verdict["clock"]
     assert verdict["held"] is False and clock["held"] is False and clock["width_s"] <= 0.02
-    assert [r["on"] for r in clock["untimed"]] == ["Beta"] * 6 and "not placed within 20 ms" in clock["why"]
+    assert [r["on"] for r in clock["untimed"]] == ["Gamma"] * 6 and "not placed within 20 ms" in clock["why"]
     assert {r["width_s"] for r in clock["untimed"]} == {width} and clock["widest_action_record_s"] == width
     # nothing else is wrong with the run: the step is judged over the wider interval and holds there
     assert verdict["page_log"]["held"] and all(v["held"] for v in verdict["steps"])
+
+
+@pytest.mark.parametrize("change", [_at(2.2, late=0.030), _at(2.2, unanswered=True)])
+def test_a_record_whose_own_answer_was_slow_is_placed_by_a_prompt_record_made_soon_after(tmp_path, change):
+    """FP94: the same click, its six answers 30 ms late or never, in a run whose later records were
+    answered at once. The beat made 300 ms after the click has a lower bound of its own, and the click
+    was made no earlier than that less the page time between the two, taken two grains and the rate
+    allowance long. The 20 ms rule is unchanged and the click is now inside it."""
+    verdict = probe.analyze(_run(tmp_path, change, page=_answers))
+    clock = verdict["clock"]
+    assert verdict["held"] is True and "untimed" not in clock
+    assert 0.006 < clock["widest_action_record_s"] <= 0.009
 
 
 def test_a_record_is_bounded_by_the_ones_numbered_around_it_and_not_by_a_shared_timestamp(tmp_path):
     """Sol round 10: two records with one timestamp were not made at one moment. Here a click's posts
     were never answered, and another record carries the same timestamp and was answered at once. Made
     (numbered) before the click, it bounds the click from below and the click is placed. Made after
-    it, it shows nothing about how early the click was, and the click is untimed."""
+    it, it was held to show nothing about how early the click was. FP94 revises that much: two readings
+    of the page's clock that are equal were taken within two grains of each other, so the click was
+    made no earlier than two grains before the later record's own lower bound. That is a looser bound
+    than the earlier record gives, by those two grains, and not the same one: the equal timestamps are
+    still not one moment. A later record that was never answered has no bound to lend
+    (``test_a_neighbour_that_was_never_answered_lends_no_lower_bound``)."""
     def beside(numbered):
         def change(steps, handlers, gestures):
             _at(2.2, unanswered=True)(steps, handlers, gestures)
@@ -500,7 +530,8 @@ def test_a_record_is_bounded_by_the_ones_numbered_around_it_and_not_by_a_shared_
     before = probe.analyze(_run(tmp_path / "before", beside(-1), page=_answers))
     assert before["held"] is True and before["clock"]["widest_action_record_s"] == 0.006
     later = probe.analyze(_run(tmp_path / "after", beside(10**8), page=_answers))
-    assert later["held"] is False and [r["on"] for r in later["clock"]["untimed"]] == ["Beta"] * 6
+    assert later["held"] is True and later["clock"]["widest_action_record_s"] == pytest.approx(0.008, abs=0.0005)
+    assert later["clock"]["widest_action_record_s"] > before["clock"]["widest_action_record_s"]
 
 
 def test_two_records_with_one_coarse_timestamp_are_each_placed_around_their_own_true_time():
@@ -522,6 +553,120 @@ def test_two_records_with_one_coarse_timestamp_are_each_placed_around_their_own_
     # an event that was not posted, read at the same timestamp, is not bounded by either record: only
     # by records clearly earlier than two grains before it
     assert after(10.0000) == -math.inf and after(10.0000 + 2 * probe.PAGE_CLOCK_GRAIN_S) == pytest.approx(b_low)
+
+
+def _beat(n, t, answers, *, offset=90.0):
+    return {"t": t, "n": n, "type": "beat", "received": t + offset + 0.0005, "detail": {"acks": answers}}
+
+
+def test_a_record_whose_own_post_was_slow_is_placed_by_the_prompt_record_made_just_before_it():
+    """FP94, the first complete run with locate10: the last click's handler was made 0.1 ms, by the
+    page's clock, after the click event that called it. The event's post reached the probe in 2.6 ms
+    and the handler's in 32.2 ms. By its own post the handler was 35 ms wide. It was made no later than
+    the event's receipt plus the page time between them, taken two grains long."""
+    event = {"t": 10.0000, "n": 5, "type": "page_event", "received": 100.0026}
+    handler = {"t": 10.0001, "n": 6, "type": "click_handler", "received": 100.0323}
+    beat = _beat(7, 10.5, [[5, 10.0035], [6, 10.0334]])
+    placed, _ = probe._timer([event, handler, beat])
+    low, high = placed(handler)
+    assert low <= 100.0001 <= high  # when it was made, the probe's clock 90 s ahead of the page's
+    assert high == pytest.approx(100.0026 + probe._elapsed(0.0001), abs=1e-9) and high < handler["received"] - 0.025
+    assert low == pytest.approx(100.0026 - probe._elapsed(0.0035), abs=1e-9) and high - low < 0.010
+    # the event itself is where it was: its own post placed it
+    assert placed(event) == (pytest.approx(100.0026 - probe._elapsed(0.0035), abs=1e-9), 100.0026)
+    # alone, the handler has only its own post
+    alone_low, alone_high = probe._timer([handler, _beat(7, 10.5, [[6, 10.0334]])])[0](handler)
+    assert alone_high == 100.0323 and alone_high - alone_low > 0.030
+
+
+def test_a_record_whose_answer_was_slow_is_placed_by_the_prompt_record_made_just_after_it():
+    """FP94, the other side: the record reached the probe at once and its answer took 40 ms, so its own
+    post bounds it below only by 42 ms. A record made 0.2 ms after it was answered at once."""
+    slow = {"t": 10.0000, "n": 1, "type": "page_event", "received": 100.0010}
+    prompt = {"t": 10.0002, "n": 2, "type": "page_event", "received": 100.0012}
+    beat = _beat(3, 10.5, [[1, 10.0400], [2, 10.0022]])
+    placed, _ = probe._timer([slow, prompt, beat])
+    low, high = placed(slow)
+    own_low = 100.0010 - probe._elapsed(0.0400)
+    assert low == pytest.approx((100.0012 - probe._elapsed(0.0020)) - probe._elapsed(0.0002), abs=1e-9) and low > own_low + 0.030
+    assert low <= 100.0000 <= high == 100.0010 and high - low < 0.010
+
+
+def test_a_neighbour_places_a_record_only_while_the_rate_allowance_between_them_is_small():
+    """FP94: the bound through another record loosens by a millisecond for every second of page time
+    between the two. A record whose post took 40 ms, with a prompt record 30 s before it and another
+    30 s after, gains 7 ms from the earlier one and is still wider than the rule allows; with the same
+    two records 1 s away it is placed."""
+    def width(apart):
+        before = {"t": 40.0 - apart, "n": 1, "type": "page_event", "received": 130.0010 - apart}
+        record = {"t": 40.0, "n": 2, "type": "page_event", "received": 130.0400}
+        after = {"t": 40.0 + apart, "n": 3, "type": "page_event", "received": 130.0010 + apart}
+        beat = _beat(4, 80.0, [[1, 40.0020 - apart], [2, 40.0410], [3, 40.0020 + apart]])
+        low, high = probe._timer([before, record, after, beat])[0](record)
+        assert low <= 130.0 <= high
+        return high - low
+
+    assert probe.MAX_CLOCK_WIDTH_S < width(30.0) < 0.040 and width(1.0) < 0.010
+    # above: the earlier record's receipt, 1 ms after it was made, and 30 s taken long; below: its own answer
+    assert width(30.0) == pytest.approx(0.0010 + (probe._elapsed(30.0) - 30.0) + (probe._elapsed(0.041) - 0.040), abs=1e-6)
+
+
+def test_a_neighbour_that_was_never_answered_lends_no_lower_bound():
+    """FP94: what a later record lends is its own lower bound. One whose post was never answered has
+    none, and the earlier record is bounded below as it was."""
+    slow = {"t": 10.0000, "n": 1, "type": "page_event", "received": 100.0010}
+    silent = {"t": 10.0002, "n": 2, "type": "page_event", "received": 100.0012}
+    low, high = probe._timer([slow, silent, _beat(3, 10.5, [[1, 10.0400]])])[0](slow)
+    assert low == pytest.approx(100.0010 - probe._elapsed(0.0400), abs=1e-9) and high == 100.0010
+    # the later one is bounded above by its own receipt, which is sooner than the earlier one's plus the
+    # page time between them, and below by the earlier one's bound, as it always was
+    later_low, later_high = probe._timer([slow, silent, _beat(3, 10.5, [[1, 10.0400]])])[0](silent)
+    assert later_high == 100.0012 and later_low == pytest.approx(100.0010 - probe._elapsed(0.0400), abs=1e-9)
+
+
+def test_records_received_out_of_the_order_they_were_made_in_are_placed_by_their_numbers():
+    """FP94, as the live run's pointerup and mouseup arrived: the second record made reached the probe
+    before the first. Which was made first is their numbers. The first is made no later than the
+    second's receipt (as before), and the second no later than the first's receipt plus the page time
+    between them; each interval holds the moment its record was made."""
+    first = {"t": 10.0000, "n": 1, "type": "page_event", "received": 100.0030}
+    second = {"t": 10.0001, "n": 2, "type": "page_event", "received": 100.0019}
+    placed, _ = probe._timer([second, first, _beat(3, 10.5, [[1, 10.0040], [2, 10.0030]])])
+    (low_1, high_1), (low_2, high_2) = placed(first), placed(second)
+    assert low_1 <= 100.0000 <= high_1 == 100.0019 and low_2 <= 100.0001 <= high_2 == 100.0019
+    # below, each by its own answer: the other's bound is looser by the page time between them
+    assert low_1 == pytest.approx(100.0030 - probe._elapsed(0.0040), abs=1e-9)
+    assert low_2 == pytest.approx(100.0019 - probe._elapsed(0.0029), abs=1e-9)
+
+
+def test_a_record_of_another_document_lends_no_bound(tmp_path):
+    """FP94: only the records of the document under test are read against each other. A record of
+    another document, made beside the last click and received at once, does not place the click (and by
+    FP74's rule such a record fails the run in its own right)."""
+    def page(rows):
+        t = max(row["t"] for row in rows if (row.get("detail") or {}).get("button") == "Gamma")
+        _and_nothing_after_them_is_answered(rows)
+        rows.append({"t": t + 0.0001, "n": 1, "doc": "another-document", "type": "beat", "received": t + 0.0006,
+                     "detail": {"acks": []}})
+
+    verdict = probe.analyze(_run(tmp_path, _at(2.2, *LAST, unanswered=True), page=page))
+    clock = verdict["clock"]
+    assert verdict["held"] is False and [r["on"] for r in clock["untimed"]] == ["Gamma"] * 6
+    assert {r["width_s"] for r in clock["untimed"]} == {0.206}
+
+
+def test_two_readings_a_grain_out_in_opposite_directions_do_not_place_a_record_before_it_was_made():
+    """FP94 against the eleventh check's case. An event made at page time 10.0000 reads 10.0009 and is
+    received 0.1 ms after it is made. A handler made 1.8 ms later, at 10.0018, reads 10.0009 too: the
+    page time between them reads zero where 1.8 ms passed, and the handler's own post is slow. With one
+    grain allowed between the two readings the handler would be placed as made by 1.1 ms after the
+    event, 0.7 ms before it was."""
+    event = {"t": 10.0009, "n": 1, "type": "page_event", "received": 100.0001}
+    handler = {"t": 10.0009, "n": 2, "type": "click_handler", "received": 100.0400}
+    low, high = probe._timer([event, handler, _beat(3, 10.5, [[1, 10.0012], [2, 10.0410]])])[0](handler)
+    assert low <= 100.0018 <= high
+    assert high == pytest.approx(100.0001 + 2 * probe.PAGE_CLOCK_GRAIN_S * (1 + probe.CLOCK_RATE_SLACK), abs=1e-9)
+    assert 100.0001 + probe.PAGE_CLOCK_GRAIN_S < 100.0018  # which one grain did not reach
 
 
 def test_an_answer_time_that_reads_a_grain_early_still_bounds_its_record():
@@ -709,8 +854,8 @@ def test_common_bounds_cross_only_beyond_the_grain(tmp_path, seconds, holds):
 def test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happened_in(tmp_path):
     """Sol round 9: a sample off the control 251 ms before the latest moment an event can have happened
     is outside the window around that moment and inside the window around the earliest. The answers
-    here came 12 ms after the posts, so the interval is 14 ms wide with two grains and the run timed;
-    the sample counts."""
+    here came 12 ms after the posts, which alone would make the interval 14 ms wide with two grains;
+    the beat made after them places them within 8.3 ms (FP94) and the run is timed; the sample counts."""
     def off(at):
         def change(steps, handlers, gestures):
             _at(2.2, late=0.012)(steps, handlers, gestures)
@@ -718,7 +863,7 @@ def test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happene
         return change
 
     inside = probe.analyze(_run(tmp_path / "in", off(0.255), page=_answers))
-    assert inside["clock"]["held"] and inside["clock"]["widest_action_record_s"] == 0.014
+    assert inside["clock"]["held"] and inside["clock"]["widest_action_record_s"] == 0.0083
     assert _of(inside, "Beta", "clicked")["held"] is False and _of(inside, "Beta", "clicked")["samples_off_control"] == 5
     outside = probe.analyze(_run(tmp_path / "out", off(0.265), page=_answers))
     assert _of(outside, "Beta", "clicked")["held"] is True and outside["held"] is True

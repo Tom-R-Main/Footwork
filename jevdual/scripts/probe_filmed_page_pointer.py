@@ -66,8 +66,10 @@ Three things make that reading sound, and the run does not hold without them (FP
   is a diagnostic of its resolution: a step coarser than the grain shows the assumption false and
   the run does not hold; a fine one does not show it true. Records the page numbered earlier bound a record below too, and ones it
   numbered later above (``_timer``): by their numbers, which are an order with no ties, and never by
-  comparing timestamps, since two records with one timestamp were not made at one moment. Nothing here
-  assumes the two clocks keep a constant difference.
+  comparing timestamps, since two records with one timestamp were not made at one moment. A record is
+  also bounded through the page time between it and a record numbered before or after it, taken long
+  by the same two grains and rate (FP94), so that one slow post among prompt ones is still placed.
+  Nothing here assumes the two clocks keep a constant difference.
   A record of something done to the page must be placed within 20 ms this way, and everything read
   against it uses the whole interval: the samples must hold from 250 ms before its earliest moment to
   250 ms after its latest. As a check on the run, the difference between the clocks is also bounded
@@ -487,6 +489,16 @@ def _timer(received: list[dict]):
     one timestamp were made at two moments, and which was first is their numbers. A record without a
     number has only the receipt of its own post above it and nothing below.
 
+    A numbered record is bounded by the page's own clock as well (FP94), under the two assumptions
+    already made of it. One numbered before it was made no later; at most the page time between the two
+    readings, taken long as an elapsed time is (``_elapsed``), passed between making them; so the record
+    was made no later than the earlier one's receipt plus that. One numbered after it was made no
+    earlier, so the record was made no earlier than the later one's own lower bound less the page time
+    between them, taken long in the same way. Which of two records came first is still their numbers and
+    never their times, and two equal timestamps are still up to two grains apart. The rate allowance
+    grows with the page time between the two, a millisecond a second, so only near neighbours place a
+    record whose own post or answer was slow.
+
     A page event that was not posted (the last trusted pointer event) has a timestamp and no number.
     ``after`` bounds it below by the records whose timestamps are earlier than its own by two grains
     or more, which were therefore made before it.
@@ -533,7 +545,12 @@ def _timer(received: list[dict]):
         if not isinstance(n, int) or isinstance(n, bool):
             return bound[1], bound[2]
         upto, since = bisect.bisect_right(numbers, n), bisect.bisect_left(numbers, n)
-        return earliest[upto - 1], latest[since]
+        low, high = earliest[upto - 1], latest[since]
+        for _, (t, _, got) in numbered[:since]:  # made no later than this record
+            high = min(high, got + _elapsed(bound[0] - t))
+        for _, (t, lowest, _) in numbered[upto:]:  # made no earlier
+            low = max(low, lowest - _elapsed(t - bound[0]))
+        return low, high
 
     def after(page_t: float) -> float:
         before = bisect.bisect_right(times, page_t - 2 * PAGE_CLOCK_GRAIN_S)
