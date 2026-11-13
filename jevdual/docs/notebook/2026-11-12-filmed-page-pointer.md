@@ -113,7 +113,7 @@ Changes: the second locate is asked about the pointer's position as the system r
 Next: extend the probe's fixture so the page function runs on the cases it decides (a button partly clipped by a scroller, one inside a rotated box, one in a contained body's scroller if a fixture can hold it), each predicted target_unlocated, and register that as a revision of FP11; Sol's fourth review; then the live probe in a granted window. Nothing runs on this machine from 21:15 EST until the recorder sweep has finished.
 Refs: #fp12; #fp11; results/filmed-page-pointer-20261112/review3-red-green.json; vendor/cua-driver/patches/ref-locate.patch
 
-## FP14 · prediction · 2026-11-12 20:58
+## FP14 · prediction · 2026-11-12 20:57
 Revises: FP11
 Question: as FP11, with the page function's clip and transform decisions exercised on a real page (FP13's gap).
 Hypothesis: as FP11; and on a real page the locate reports a button whose lower part a scrolling box hides as clipped, although its centre is visible and it is wholly inside the viewport, and reports a button inside a rotated box as unavailable (transformed), so Footwork refuses both before the pointer moves.

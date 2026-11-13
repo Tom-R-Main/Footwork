@@ -35,13 +35,14 @@ def _run(tmp_path, change=None, record=None):
         t0 = 1000.0 + 10 * i
         step = {"name": f"{i + 1:02d}-click", "label": label, "expect": expect, "t_start": t0, "t_end": t0 + 3,
                 "exit": 0 if expect == "clicked" else 4,
-                "stdout": "" if expect == "clicked" else "not sent: target_unlocated: 'x': not wholly in view"}
+                "stdout": "" if expect == "clicked" else (
+                    "not sent: target_unlocated: 'x': " + (probe.REASONS.get(label) or "not wholly in view"))}
         if expect == "clicked":
             x, y, w, h = RECTS[label]
             centre = [x + w / 2, y + h / 2]
             handlers.append({"t": t0 + 2, "type": "click_handler", "detail": {
                 "button": label, "trusted": False, "rect": [x, y, w, h], "dpr": 2,
-                "scroll": [0, 1500 if (label, i) == ("Gamma", 6) else 0], "pinch": 1,
+                "scroll": [0, 1500 if i == len(probe.STEPS) - 1 else 0], "pinch": 1,
                 "last_trusted_pointer": {"t": t0 + 1.5, "type": "mousemove", "target": label,
                                          "x": centre[0], "y": centre[1]}}})
             gestures.append({"kind": "approach", "label": label, "outcome": "arrived",
@@ -123,6 +124,17 @@ def _a_refusal_without_its_code(steps, handlers, gestures):
     steps[3]["stdout"] = "not sent"
 
 
+def _a_refusal_for_another_reason(steps, handlers, gestures):
+    clipped = next(step for step in steps if step["label"] == "Clipped")
+    clipped["stdout"] = "not sent: target_unlocated: 'Clipped': another element is at its centre"
+
+
+def _a_step_that_could_not_be_tried(steps, handlers, gestures):
+    turned = next(step for step in steps if step["label"] == "Turned")
+    turned.pop("expect")
+    turned["skipped"] = "not on the observation"
+
+
 def _gamma_clicked_without_scrolling(steps, handlers, gestures):
     handlers[-1]["detail"]["scroll"] = [0, 0]
 
@@ -132,7 +144,7 @@ def _gamma_clicked_without_scrolling(steps, handlers, gestures):
     _pointer_event_outside_the_button, _pointer_event_without_coordinates,
     _stale_pointer_event_after_a_posted_approach, _pointer_event_on_another_button,
     _gesture_ending_off_the_button, _a_gesture_in_a_refused_step, _a_refusal_without_its_code,
-    _gamma_clicked_without_scrolling,
+    _a_refusal_for_another_reason, _a_step_that_could_not_be_tried, _gamma_clicked_without_scrolling,
 ])
 def test_a_run_that_departs_from_the_prediction_does_not_hold(tmp_path, change):
     verdict = probe.analyze(_run(tmp_path, change))

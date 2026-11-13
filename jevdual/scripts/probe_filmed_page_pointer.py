@@ -7,9 +7,12 @@ owned local fixture in a Chrome that Footwork launches on a fresh profile and it
 1. Alpha and Beta, in view: clicked, with the pointer on them first;
 2. Covered, whose centre a fixed overlay covers: refused, no click, no pointer move;
 3. Edge, fixed half below the viewport: refused the same way;
-4. Gamma, below the fold: refused the same way;
-5. Jump down, in view: clicked; its handler scrolls Gamma into view;
-6. Gamma again: clicked, with the pointer on it first, on the scrolled page.
+4. Clipped, whose lower part a scrolling box hides though its centre shows: refused the same way,
+   because the page click would scroll the box after the pointer arrived;
+5. Turned, inside a rotated box: refused the same way (the driver reports no position for it);
+6. Gamma, below the fold: refused the same way;
+7. Jump down, in view: clicked; its handler scrolls Gamma into view;
+8. Gamma again: clicked, with the pointer on it first, on the scrolled page.
 
 Before the clicks it parks the pointer on an empty part of the page, so no step starts on its target by
 accident.
@@ -57,7 +60,10 @@ from probe_browser_holder import _activate_pid, _cli, _front_pid, _sample_front,
 PROTECTED_PORTS = frozenset({9333, 9555})
 #: (label, "clicked" | "refused") in order; Gamma is refused until Jump down has scrolled it into view
 STEPS = (("Alpha", "clicked"), ("Beta", "clicked"), ("Covered", "refused"), ("Edge", "refused"),
+         ("Clipped", "refused"), ("Turned", "refused"),
          ("Gamma", "refused"), ("Jump down", "clicked"), ("Gamma", "clicked"))
+#: what a refused step's refusal must also say, where the prediction names the reason
+REASONS = {"Clipped": "container hides part of it", "Turned": "(transformed)"}
 
 #: viewport CSS px with no button, overlay or fixed element near it
 EMPTY_SPOT = (520, 200)
@@ -72,6 +78,14 @@ FIXTURE = """<!doctype html>
   <button type="button" id="covered" style="position: absolute; left: 40px; top: 200px; width: 140px; height: 44px">Covered</button>
   <button type="button" id="jump" style="position: absolute; left: 300px; top: 60px; width: 140px; height: 44px">Jump down</button>
   <button type="button" id="gamma" style="position: absolute; left: 240px; top: 1900px; width: 140px; height: 44px">Gamma</button>
+  <div id="scroller" style="position: absolute; left: 40px; top: 300px; width: 200px; height: 60px; overflow: auto">
+    <div style="position: relative; height: 300px">
+      <button type="button" id="clipped" style="position: absolute; left: 20px; top: 30px; width: 140px; height: 44px">Clipped</button>
+    </div>
+  </div>
+  <div id="turner" style="position: absolute; left: 300px; top: 300px; width: 180px; height: 70px; transform: rotate(8deg)">
+    <button type="button" id="turned" style="position: absolute; left: 20px; top: 13px; width: 140px; height: 44px">Turned</button>
+  </div>
 </div>
 <div id="lid" style="position: absolute; left: 80px; top: 205px; width: 60px; height: 34px; background: #c33"></div>
 <button type="button" id="edge" style="position: fixed; left: 480px; bottom: -22px; width: 140px; height: 44px">Edge</button>
@@ -152,8 +166,10 @@ def analyze(out: Path) -> dict:
                    "other_handlers": sorted({str(h.get("button")) for h in during if h.get("button") != label}),
                    "new_gestures": [(g.get("kind"), g.get("label"), g.get("outcome")) for g in new]}
         if expect == "refused":
-            v["said_unlocated"] = "target_unlocated" in (step.get("stdout", "") + step.get("stderr", ""))
-            v["held"] = bool(v["said_unlocated"] and not during and not new)
+            said = step.get("stdout", "") + step.get("stderr", "")
+            v["said_unlocated"] = "target_unlocated" in said
+            v["said_reason"] = REASONS.get(label, "") in said
+            v["held"] = bool(v["said_unlocated"] and v["said_reason"] and not during and not new)
         else:
             handler = mine[0] if len(during) == 1 and len(mine) == 1 else None
             arrived = (len(new) == 1 and new[0].get("kind") == "approach" and new[0].get("label") == label
@@ -342,8 +358,9 @@ def main() -> None:
                 ref = _ref(look["stdout"], label)
                 steps.append(look)
                 if ref is None:
+                    # the verdict is then incomplete; the remaining steps still give their evidence
                     steps.append({"name": f"{i:02d}-click", "label": label, "skipped": "not on the observation"})
-                    break
+                    continue
                 click = _cli(env, out, f"{i:02d}-click", "do", "click", str(ref), "--no-judge", "--session", str(session))
                 time.sleep(1.0)  # let the page's log of this step arrive before the next one starts
                 click.update(label=label, expect=expect, gestures_after=_gestures(session))
