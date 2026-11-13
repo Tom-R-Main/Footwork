@@ -52,3 +52,16 @@ Inferred: DGR3's prediction held on its terms: arm 3 shows no event beyond arm 1
 Changes: none to code. The script is unchanged (its hash was pinned for the run).
 Next: after Desktop releases its hold, one control status run to see whether its reply parses and how long it is; if a further sweep is agreed, log the status result and parse it before truncating. Desktop reads the recorder side (late replies under load) in its own block; nothing further is owed to this prediction.
 Refs: #dgr3; #dgr5; DemoGeek .local-reviews/application-film/sweep-2026-11-12 (night3-1-none.jsonl, night3-2-glide.jsonl, night3-3-footwork.jsonl, night3-4-drift.jsonl, arm3-footwork-night3/arm3.jsonl)
+
+## DGR7 · update · 2026-11-13 12:33
+Observed: the check DGR6 left open, made read-only with nothing of mine running: footwork control status answers 10,500 characters today (32 reservations, all revoked, no request) and the reply parses whole. The arm 3 script's runner keeps the last 600 characters of a command's output (scripts/recorder_sweep_arm3.py, the return of its runner) and cmd_end parses what was kept. The store held 30 reservations when the third attempt ended.
+Inferred: the watcher's "clean false" on the third night is explained by the script: a reply of that length cut to its last 600 characters is not JSON, so the reading was null whatever the registry held. That the status call itself also failed that night cannot be excluded, since its result was not kept, but nothing needs it. The session's clean close that night still rests on the yield's exit and the store read afterwards, not on a reading the watcher made.
+Changes: none. The script is left as it ran, since its hash is the record of what the third attempt executed; the fault is stated here and in the summary.
+Next: the summary. A further sweep, if one is ever agreed, parses the reply before cutting it and keeps the status result.
+Refs: #dgr6; scripts/recorder_sweep_arm3.py
+
+## DGR8 · summary · 2026-11-13 12:33
+Established: across twenty recorder start/stop cycles per arm on one throwaway window, with the recorder at DemoGeek e25cb152, a Footwork exclusive_desktop filmed session parking the pointer during each take produced no start refusal and no mid-take interruption, the same as no pointer driver and as glide.py; all 160 parks exited 0. The seven refused or uncertain jobs of 2026-11-11 are in DemoGeek's own logs, and four of the five start refusals happened with no Footwork session open.
+Uncertain: zero events in every arm only bounds each arm's rate below about 14%, and the recorder was changed between the incidents and the sweep, so nothing here says what caused them. The one mid-take interruption of that night had two candidate contributors and stays unattributed. The arm 3 script's own end-of-run reading of the registry never worked (DGR7); it has no tests and was written for one experiment.
+Decision: close the package. Footwork is not shown to raise the recorder's refusal or interruption rate, at the bound stated; no change to Footwork follows from it. The script stays in the repository unchanged as the record of what ran and is not to be reused for a new sweep without fixing its status reading first.
+Refs: #dgr7; #dgr6; #dgr1; scripts/recorder_sweep_arm3.py
