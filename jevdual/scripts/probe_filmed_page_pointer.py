@@ -98,6 +98,13 @@ Three things make that reading sound, and the run does not hold without them (FP
 What the samples cannot show: where the pointer was between two of them. They are about 5 ms apart and
 at most 50; an excursion off a control and back inside one gap is not excluded by this probe.
 
+Reads Footwork's coordination registry first and does not start while anything is held there. A filmed
+start reserves the desktop and the browser until someone yields, so the cleanup yields what the run's
+session holds, whatever the steps did, before it retires the holder and closes the browser. It then
+reads what is closed, each thing for itself: nothing of the session's in the registry, the browser's
+process gone, nothing listening on the port, the holder's process gone. The run holds only if all four
+are read as closed, and the replies of every registry command are kept in the output directory.
+
 Waits for an unlocked screen and 10 s of idle, then checks again, immediately before launching, that
 the profile directory does not exist, the port is not Footwork's default or the sign-in test's and has
 no listener, and no Chrome matches that profile and port. It signals only the Chrome the session says
@@ -730,6 +737,11 @@ def analyze(out: Path) -> dict:
     setup = {name: next((s.get("exit") for s in run.get("steps", []) if s.get("name") == name), None)
              for name in ("00-start", "00-park")}
     owned = bool(run.get("chrome_launch")) and run.get("chrome_closed") is True and not run.get("cleanup_errors")
+    # what the cleanup read as closed, each for itself: the registry (the session's reservation given up),
+    # the browser, its port, the holder. A run that does not say all four are closed does not hold
+    closed = run.get("closed") if isinstance(run.get("closed"), dict) else {}
+    closed = {name: closed.get(name) for name in ("registry", "browser", "port", "holder")}
+    everything_closed = all(value is True for value in closed.values())
     loaded = next((e.get("detail") or {} for e in events if e.get("type") == "loaded"), {})
     # the Forged step tests something only if the page's replaced hit test does answer Forged there
     forgery = loaded.get("page_says_at_forged") == "Forged" and loaded.get("browser_says_at_forged") != "Forged"
@@ -806,7 +818,8 @@ def analyze(out: Path) -> dict:
             "pointer_sampler": run.get("pointer_sampler"),
             "device_pixel_ratios": ratios, "scale_factor_tested": scale, "pinch_scales": pinches,
             "setup_exits": setup, "own_chrome_closed": owned, "page_forges_its_hit_test": forgery,
-            "held": (complete and scrolled and scale and unpinched and owned and forgery
+            "closed": closed, "everything_closed": everything_closed,
+            "held": (complete and scrolled and scale and unpinched and owned and everything_closed and forgery
                      and clock["held"] and log["held"]
                      and all(code == 0 for code in setup.values())
                      and all(v["held"] for v in verdicts))}
@@ -920,6 +933,11 @@ def main() -> None:
     out.mkdir(parents=True)
     session = out / "session"
     env = dict(os.environ)
+    # a desktop someone holds refuses the start after its wait; read the registry first and say whose
+    busy = _held(_registry(env, out, "00-registry-at-start"))
+    if busy:
+        raise SystemExit("not starting: Footwork's registry shows something held: " + "; ".join(
+            f"{row['kind']} {row.get('token')} on {row.get('resources')} by {row.get('owner')}" for row in busy))
     probe_page_effects.FIXTURE = FIXTURE
     fence = threading.Event()
     server, fixture_port = probe_page_effects._serve(out, answer=lambda _record: b"fence" if fence.is_set() else None)
@@ -981,7 +999,7 @@ def main() -> None:
             fence.set()
             record["fence_received"] = _await_fence(out / "page-events.jsonl", FENCE_WAIT_S)
     finally:
-        _finish(record, out, session, start_stdout, stop, sampler, server)
+        _finish(record, out, session, start_stdout, stop, sampler, server, env)
 
 
 def _await_fence(events: Path, wait_s: float) -> bool:
@@ -995,6 +1013,112 @@ def _await_fence(events: Path, wait_s: float) -> bool:
             pass
         time.sleep(0.1)
     return False
+
+
+def _registry(env: dict, out: Path, name: str) -> dict:
+    """Footwork's coordination registry as its own command reports it. The whole answer is kept in
+    ``out`` under ``name``; an answer that cannot be read raises."""
+    said = _cli(env, out, name, "control", "status")
+    try:
+        status = json.loads(said["stdout"])
+    except ValueError:
+        status = None
+    if said["exit"] != 0 or not isinstance(status, dict):
+        raise RuntimeError(f"footwork control status could not be read (exit {said['exit']})")
+    return status
+
+
+def _held(status: dict, session: Path | None = None) -> list[dict]:
+    """What the registry shows as held: active reservations, and requests that have not been revoked.
+    With ``session``, only what that session directory owns."""
+    def mine(row: dict) -> bool:
+        return session is None or os.path.realpath(str(row.get("owner"))) == os.path.realpath(str(session))
+
+    return ([dict(row, kind="reservation") for row in status.get("reservations", [])
+             if row.get("state") == "active" and mine(row)]
+            + [dict(row, kind="request") for row in status.get("requests", [])
+               if row.get("state") != "revoked" and mine(row)])
+
+
+def _release_session(record: dict, env: dict, out: Path, session: Path) -> None:
+    """Give up what this run's filmed session reserved. A filmed start stores a reservation on the
+    desktop and the browser that outlives every command and has no expiry (docs/desktop-coordination.md);
+    ending it is the operator's act, with ``footwork control yield`` and the reservation's own token.
+    The second live run closed its browser and left the desktop reserved for sixteen minutes (FP81).
+
+    What is released is what the registry shows this run's session directory owning, so a start that
+    failed after reserving and wrote no session record is covered too. The registry is read before
+    and after, each yield's whole reply is kept, and anything of this session's still held raises."""
+    said = record["session_reservation"] = {"released": False}
+    try:
+        said["named_by_session"] = json.loads((session / "session.json").read_text()).get("coordination_token") or None
+    except (OSError, ValueError):
+        said["named_by_session"] = None
+    held = _held(_registry(env, out, "zz-registry-before-release"), session)
+    said["held"] = [{"kind": row["kind"], "token": row.get("token"), "resources": row.get("resources")} for row in held]
+    said["yields"] = []
+    for n, row in enumerate(held):
+        done = _cli(env, out, f"zz-release-{n}", "control", "yield" if row["kind"] == "reservation" else "cancel",
+                    str(row.get("token")))
+        said["yields"].append({"token": row.get("token"), "exit": done["exit"], "stdout": done["stdout"],
+                               "stderr": done["stderr"]})
+    left = _held(_registry(env, out, "zz-registry-after-release"), session)
+    said["still_held"] = [row.get("token") for row in left]
+    said["released"] = not left and all(done["exit"] == 0 for done in said["yields"])
+    if not said["released"]:
+        raise RuntimeError(f"this run's session still holds {said['still_held']} in Footwork's registry"
+                           if left else "a release command failed")
+
+
+def _gone(pid: object, started: object = None) -> bool:
+    """Whether the process recorded as ``pid`` (begun at ``started``, when that is known) is gone."""
+    import psutil
+
+    if not isinstance(pid, int) or isinstance(pid, bool):
+        return False
+    try:
+        process = psutil.Process(pid)
+        if started is not None and abs(process.create_time() - float(started)) > 0.01:  # type: ignore[arg-type]
+            return True  # the number belongs to another process now
+        return process.status() == psutil.STATUS_ZOMBIE
+    except psutil.NoSuchProcess:
+        return True
+    except (psutil.Error, TypeError, ValueError):
+        return False
+
+
+def _closures(record: dict, env: dict, out: Path, session: Path, start_stdout: str) -> dict:
+    """What is closed, each thing read for itself after the cleanup and none inferred from another:
+    the registry holds nothing of this run's session; the browser this run launched is gone (or it
+    launched none and none matches its profile and port); nothing listens on its port; its holder is
+    gone. ``None`` is a reading that could not be made; only ``True`` counts."""
+    from jevdual.browser_driver import chrome_pid
+
+    def reading(read) -> bool | None:
+        try:
+            return bool(read())
+        except Exception:  # noqa: BLE001 - a closure that cannot be read is not a closure
+            return None
+
+    def browser() -> bool:
+        launch = _launched_chrome(session, start_stdout)
+        return _gone(launch["pid"], launch["incarnation"]) if launch else chrome_pid() is None
+
+    def holder() -> bool:
+        try:
+            recorded = json.loads((session / "session.json").read_text()).get("browser_holder") or {}
+        except (OSError, ValueError):
+            recorded = {}
+        if recorded:
+            return _gone(recorded.get("pid"), recorded.get("start"))
+        named = re.search(r"browser holder pid (\d+) keeps this session's driver", start_stdout)
+        return _gone(int(named.group(1))) if named else True
+
+    port = env.get("FOOTWORK_CHROME_PORT", "")
+    return {"registry": reading(lambda: not _held(_registry(env, out, "zz-registry-final"), session)),
+            "browser": reading(browser),
+            "port": reading(lambda: port.isdigit() and not _port_open(int(port))),
+            "holder": reading(holder)}
 
 
 def _retire_holder(record: dict, session: Path) -> None:
@@ -1025,9 +1149,12 @@ def _restore_front(record: dict) -> None:
         raise RuntimeError(f"pid {before} was frontmost at the start and pid {record['front_pid_at_end']} is at the end")
 
 
-def _finish(record: dict, out: Path, session: Path, start_stdout: str, stop, sampler, server) -> dict:
+def _finish(record: dict, out: Path, session: Path, start_stdout: str, stop, sampler, server,
+            env: dict | None = None) -> dict:
     """Clean up and write the run's records. Each step runs whatever the others raise; what raised is
-    kept in ``cleanup_errors``, and a run with any does not hold."""
+    kept in ``cleanup_errors``, and a run with any does not hold. The session's reservation is given
+    up first, then the holder and the browser; what is closed is then read, each thing for itself."""
+    env = dict(os.environ) if env is None else env
     record["finished"] = time.time()
     errors: list[str] = record.setdefault("cleanup_errors", [])
 
@@ -1042,10 +1169,13 @@ def _finish(record: dict, out: Path, session: Path, start_stdout: str, stop, sam
         sampler.join(timeout=5)
         server.shutdown()
 
+    attempt("session", _release_session, record, env, out, session)
     attempt("holder", _retire_holder, record, session)
     attempt("chrome", lambda: _close_owned_chrome(record, _launched_chrome(session, start_stdout)))
     attempt("front", _restore_front, record)
     attempt("helpers", stop_helpers)
+    record["closed"] = {"registry": None, "browser": None, "port": None, "holder": None}
+    attempt("closures", lambda: record.update(closed=_closures(record, env, out, session, start_stdout)))
     for step in record.get("steps", []):
         # a tried step's first words say what the driver did, and its last what was refused; the whole
         # output is in the step's own file
@@ -1055,7 +1185,8 @@ def _finish(record: dict, out: Path, session: Path, start_stdout: str, stop, sam
     (out / "run.json").write_text(json.dumps(record, indent=1, default=str))
     verdict = analyze(out)
     (out / "verdict.json").write_text(json.dumps(verdict, indent=1))
-    print(json.dumps({"chrome_closed": record.get("chrome_closed"),
+    print(json.dumps({"closed": record.get("closed"), "session_reservation": record.get("session_reservation"),
+                      "chrome_closed": record.get("chrome_closed"),
                       "chrome_not_signalled": record.get("chrome_not_signalled"),
                       "cleanup_errors": errors, **verdict}, indent=1))
     return verdict

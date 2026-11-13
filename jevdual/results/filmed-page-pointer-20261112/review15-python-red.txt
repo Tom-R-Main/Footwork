@@ -1,0 +1,504 @@
+........................................................................ [ 32%]
+........................................................................ [ 64%]
+..............................F.........FFFFFFFFFFFFFFFFFFFFFFF.....F... [ 96%]
+........                                                                 [100%]
+=================================== FAILURES ===================================
+___ test_the_run_record_keeps_the_first_and_the_last_words_of_a_long_output ____
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105d39100>
+
+    def test_the_run_record_keeps_the_first_and_the_last_words_of_a_long_output(tmp_path, monkeypatch):
+        """FP37: the line that says what the driver did comes first and a long observation follows it."""
+        out = _run(tmp_path)
+        record = json.loads((out / "run.json").read_text())
+        dodge = next(step for step in record["steps"] if step.get("label") == "Dodge")
+        dodge["stdout"] = SAID["pressed"] + "\n" + "  [  1] button 'Alpha'\n" * 300 + "the last line"
+>       monkeypatch.setattr(probe, "_release_session", lambda record, env, out, session: None)
+E       AttributeError: <module 'probe_filmed_page_pointer' from '<scratch>/red15/jevdual/scripts/probe_filmed_page_pointer.py'> has no attribute '_release_session'
+
+tests/test_probe_filmed_page_pointer.py:1317: AttributeError
+___________ test_a_cleanup_step_that_raises_does_not_skip_the_others ___________
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105ddd040>
+
+    def test_a_cleanup_step_that_raises_does_not_skip_the_others(tmp_path, monkeypatch):
+        """Sol round 4: retiring the holder raises when it survives; Chrome must still be closed, the
+        front application restored, and the run's records written, with the run not holding."""
+        out = _run(tmp_path)
+        record = json.loads((out / "run.json").read_text())
+        did: list = []
+    
+        def retire(record, session):
+            did.append("holder")
+            raise RuntimeError("the holder did not exit")
+    
+        def close(record, launch):
+            did.append("chrome")
+            record["chrome_closed"] = True
+    
+>       monkeypatch.setattr(probe, "_release_session", lambda record, env, out, session: did.append("session"))
+E       AttributeError: <module 'probe_filmed_page_pointer' from '<scratch>/red15/jevdual/scripts/probe_filmed_page_pointer.py'> has no attribute '_release_session'
+
+tests/test_probe_filmed_page_pointer.py:1376: AttributeError
+___________ test_the_cleanup_gives_up_what_the_runs_session_reserved ___________
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105dde9f0>
+
+    def test_the_cleanup_gives_up_what_the_runs_session_reserved(tmp_path, monkeypatch):
+        """FP81, FP82: a filmed start reserves the desktop and the browser until someone yields. The second
+        live run closed its browser and left that reservation active; the next start, sixteen minutes
+        later, was refused for it. The cleanup yields the session's own token and reads the registry again."""
+        session = tmp_path / "out/session"
+        session.mkdir(parents=True)
+        (session / "session.json").write_text(json.dumps({"coordination_token": "194718ca"}))
+        others = [_reserved(tmp_path / "another/session", "aa11", state="revoked"), _reserved(tmp_path / "theirs", "bb22")]
+        registry = Registry([*others, _reserved(session)])
+        monkeypatch.setattr(probe, "_cli", registry)
+        record: dict = {}
+>       probe._release_session(record, {}, tmp_path / "out", session)
+        ^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'probe_filmed_page_pointer' has no attribute '_release_session'
+
+tests/test_probe_filmed_page_pointer.py:1434: AttributeError
+______ test_a_session_that_reserved_nothing_releases_nothing_and_says_so _______
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105ddcb00>
+
+    def test_a_session_that_reserved_nothing_releases_nothing_and_says_so(tmp_path, monkeypatch):
+        session = tmp_path / "out/session"
+        registry = Registry([_reserved(tmp_path / "theirs", "bb22")])
+        monkeypatch.setattr(probe, "_cli", registry)
+        record: dict = {}
+>       probe._release_session(record, {}, tmp_path / "out", session)
+        ^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'probe_filmed_page_pointer' has no attribute '_release_session'
+
+tests/test_probe_filmed_page_pointer.py:1452: AttributeError
+_ test_a_start_that_failed_after_reserving_and_wrote_no_record_is_still_released _
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105ddec60>
+
+    def test_a_start_that_failed_after_reserving_and_wrote_no_record_is_still_released(tmp_path, monkeypatch):
+        """FP82 (b): the token comes from the registry, by the session's directory, so a reservation whose
+        session never wrote its record is found. A waiting request of the session's is cancelled."""
+        session = tmp_path / "out/session"
+        waiting = {"token": "cc33", "owner": str(session), "resources": ["desktop"], "state": "waiting", "pid": 9}
+        registry = Registry([_reserved(session)], [waiting])
+        monkeypatch.setattr(probe, "_cli", registry)
+        record: dict = {}
+>       probe._release_session(record, {}, tmp_path / "out", session)
+        ^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'probe_filmed_page_pointer' has no attribute '_release_session'
+
+tests/test_probe_filmed_page_pointer.py:1466: AttributeError
+_ test_a_reservation_that_is_still_there_after_the_yield_is_an_error[how0-still holds \\['194718ca'\\]-left0] _
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105dde030>
+how = {'stuck': True}, why = "still holds \\['194718ca'\\]", left = ['194718ca']
+
+    @pytest.mark.parametrize(("how", "why", "left"), [
+        ({"stuck": True}, "still holds \\['194718ca'\\]", ["194718ca"]),
+        ({"refuses": True}, "still holds \\['194718ca'\\]", ["194718ca"]),
+    ])
+    def test_a_reservation_that_is_still_there_after_the_yield_is_an_error(tmp_path, monkeypatch, how, why, left):
+        session = tmp_path / "out/session"
+        monkeypatch.setattr(probe, "_cli", Registry([_reserved(session)], **how))
+        record: dict = {}
+        with pytest.raises(RuntimeError, match=why):
+>           probe._release_session(record, {}, tmp_path / "out", session)
+            ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'probe_filmed_page_pointer' has no attribute '_release_session'
+
+tests/test_probe_filmed_page_pointer.py:1481: AttributeError
+_ test_a_reservation_that_is_still_there_after_the_yield_is_an_error[how1-still holds \\['194718ca'\\]-left1] _
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105ddd8e0>
+how = {'refuses': True}, why = "still holds \\['194718ca'\\]"
+left = ['194718ca']
+
+    @pytest.mark.parametrize(("how", "why", "left"), [
+        ({"stuck": True}, "still holds \\['194718ca'\\]", ["194718ca"]),
+        ({"refuses": True}, "still holds \\['194718ca'\\]", ["194718ca"]),
+    ])
+    def test_a_reservation_that_is_still_there_after_the_yield_is_an_error(tmp_path, monkeypatch, how, why, left):
+        session = tmp_path / "out/session"
+        monkeypatch.setattr(probe, "_cli", Registry([_reserved(session)], **how))
+        record: dict = {}
+        with pytest.raises(RuntimeError, match=why):
+>           probe._release_session(record, {}, tmp_path / "out", session)
+            ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'probe_filmed_page_pointer' has no attribute '_release_session'
+
+tests/test_probe_filmed_page_pointer.py:1481: AttributeError
+_____ test_a_registry_that_cannot_be_read_is_an_error_and_releases_nothing _____
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105ddcf20>
+
+    def test_a_registry_that_cannot_be_read_is_an_error_and_releases_nothing(tmp_path, monkeypatch):
+        def unreadable(env, out, name, *argv):
+            return {"name": name, "exit": 1, "stdout": "", "stderr": "database is locked", "t_start": 0.0, "t_end": 0.0}
+    
+        monkeypatch.setattr(probe, "_cli", unreadable)
+        record: dict = {}
+        with pytest.raises(RuntimeError, match="control status could not be read"):
+>           probe._release_session(record, {}, tmp_path / "out", tmp_path / "out/session")
+            ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'probe_filmed_page_pointer' has no attribute '_release_session'
+
+tests/test_probe_filmed_page_pointer.py:1492: AttributeError
+_ test_a_session_left_reserved_fails_the_run_and_the_rest_of_the_cleanup_still_runs _
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105ddcdd0>
+
+    def test_a_session_left_reserved_fails_the_run_and_the_rest_of_the_cleanup_still_runs(tmp_path, monkeypatch):
+        """FP82: the leak itself, end to end through the cleanup: the browser closes, the holder retires,
+        and the run does not hold, because the registry still shows its session holding the desktop."""
+        out = _run(tmp_path)
+        record = json.loads((out / "run.json").read_text())
+        del record["closed"]
+        registry = Registry([_reserved(out / "session")], stuck=True)
+        did: list = []
+        monkeypatch.setattr(probe, "_cli", registry)
+        monkeypatch.setattr(probe, "_retire_holder", lambda record, session: did.append("holder"))
+        monkeypatch.setattr(probe, "_close_owned_chrome", lambda record, launch: did.append("chrome") or record.update(chrome_closed=True))
+        monkeypatch.setattr(probe, "_restore_front", lambda record: did.append("front"))
+        monkeypatch.setattr(probe, "_launched_chrome", lambda session, said: None)
+        monkeypatch.setattr(probe, "_port_open", lambda port: False)
+        import jevdual.browser_driver
+    
+        monkeypatch.setattr(jevdual.browser_driver, "chrome_pid", lambda: None)
+        helper = type("Helper", (), {"join": lambda self, timeout=None: None, "shutdown": lambda self: None})()
+>       verdict = probe._finish(record, out, out / "session", "", probe.threading.Event(), helper, helper,
+                                {"FOOTWORK_CHROME_PORT": "9466"})
+E       TypeError: _finish() takes 7 positional arguments but 8 were given
+
+tests/test_probe_filmed_page_pointer.py:1514: TypeError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[False-browser] _
+
+tmp_path = PosixPath('<tmp>')
+name = 'browser', read = False
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[False-holder] _
+
+tmp_path = PosixPath('<tmp>')
+name = 'holder', read = False
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[False-port] __
+
+tmp_path = PosixPath('<tmp>')
+name = 'port', read = False
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[False-registry] _
+
+tmp_path = PosixPath('<tmp>')
+name = 'registry', read = False
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[None-browser] _
+
+tmp_path = PosixPath('<tmp>')
+name = 'browser', read = None
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[None-holder] _
+
+tmp_path = PosixPath('<tmp>')
+name = 'holder', read = None
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+__ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[None-port] __
+
+tmp_path = PosixPath('<tmp>')
+name = 'port', read = None
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[None-registry] _
+
+tmp_path = PosixPath('<tmp>')
+name = 'registry', read = None
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[missing-browser] _
+
+tmp_path = PosixPath('<tmp>')
+name = 'browser', read = 'missing'
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[missing-holder] _
+
+tmp_path = PosixPath('<tmp>')
+name = 'holder', read = 'missing'
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[missing-port] _
+
+tmp_path = PosixPath('<tmp>')
+name = 'port', read = 'missing'
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_ test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[missing-registry] _
+
+tmp_path = PosixPath('<tmp>')
+name = 'registry', read = 'missing'
+
+    @pytest.mark.parametrize("name", sorted(CLOSED))
+    @pytest.mark.parametrize("read", [False, None, "missing"])
+    def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+        """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+        are read separately and the verdict needs each; a reading that was not made is not a closure."""
+        closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+        if read != "missing":
+            closed[name] = read
+        verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+>       assert verdict["held"] is False and verdict["everything_closed"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:1542: AssertionError
+_________________ test_what_is_closed_is_read_each_for_itself __________________
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105de6810>
+
+    def test_what_is_closed_is_read_each_for_itself(tmp_path, monkeypatch):
+        """FP82: the registry by a fresh reading, the browser by its process, the port by connecting, the
+        holder by its process; one that cannot be read is None and not True."""
+        import jevdual.browser_driver
+    
+        session = tmp_path / "out/session"
+        session.mkdir(parents=True)
+        (session / "session.json").write_text(json.dumps({"browser_holder": {"pid": 700, "start": "12.5"}}))
+        registry = Registry([_reserved(session, state="revoked")])
+        gone = {(800, 5.5): True, (700, "12.5"): True}
+        monkeypatch.setattr(probe, "_cli", registry)
+        monkeypatch.setattr(probe, "_launched_chrome", lambda session, said: {"pid": 800, "incarnation": 5.5})
+>       monkeypatch.setattr(probe, "_gone", lambda pid, started=None: gone[pid, started])
+E       AttributeError: <module 'probe_filmed_page_pointer' from '<scratch>/red15/jevdual/scripts/probe_filmed_page_pointer.py'> has no attribute '_gone'
+
+tests/test_probe_filmed_page_pointer.py:1561: AttributeError
+_____ test_a_process_is_gone_when_its_number_is_free_or_belongs_to_another _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105de5fd0>
+
+    def test_a_process_is_gone_when_its_number_is_free_or_belongs_to_another(monkeypatch):
+        import os
+    
+        import psutil
+    
+        me = psutil.Process(os.getpid())
+>       assert probe._gone(os.getpid(), me.create_time()) is False and probe._gone(os.getpid()) is False
+               ^^^^^^^^^^^
+E       AttributeError: module 'probe_filmed_page_pointer' has no attribute '_gone'
+
+tests/test_probe_filmed_page_pointer.py:1594: AttributeError
+_ test_a_desktop_someone_holds_refuses_the_run_before_the_gate_and_says_whose __
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105defb30>
+
+    def test_a_desktop_someone_holds_refuses_the_run_before_the_gate_and_says_whose(tmp_path, monkeypatch):
+        """FP81: the third run waited at start for thirty seconds and was refused, in a slot three tracks
+        had arranged. The registry is read before the idle gate; nothing is launched and nothing waited for."""
+        out = tmp_path / "out"
+        registry = Registry([_reserved("/somewhere/else/session", "bb22")])
+        monkeypatch.setattr(probe, "_cli", registry)
+        monkeypatch.setattr(probe, "preflight", lambda *args, **kwargs: None)
+        monkeypatch.setattr(probe, "_wait_idle", lambda: pytest.fail("the gate was reached"))
+        monkeypatch.setattr(probe.sys, "argv", ["probe", "--out", str(out)])
+        with pytest.raises(SystemExit, match="registry shows something held: reservation bb22 on .*desktop.* by /somewhere/else/session"):
+>           probe.main()
+
+tests/test_probe_filmed_page_pointer.py:1610: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/probe_filmed_page_pointer.py:927: in main
+    record: dict = {"gate": _wait_idle(), "front_pid_at_start": _front_pid(), "fixture": url, "steps": []}
+                            ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   monkeypatch.setattr(probe, "_wait_idle", lambda: pytest.fail("the gate was reached"))
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: the gate was reached
+
+tests/test_probe_filmed_page_pointer.py:1607: Failed
+________ test_a_front_application_that_did_not_come_back_fails_the_run _________
+
+tmp_path = PosixPath('<tmp>')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105df5ee0>
+
+    def test_a_front_application_that_did_not_come_back_fails_the_run(tmp_path, monkeypatch):
+        out = _run(tmp_path)
+        record = json.loads((out / "run.json").read_text()) | {"front_pid_at_start": 501}
+>       monkeypatch.setattr(probe, "_release_session", lambda record, env, out, session: None)
+E       AttributeError: <module 'probe_filmed_page_pointer' from '<scratch>/red15/jevdual/scripts/probe_filmed_page_pointer.py'> has no attribute '_release_session'
+
+tests/test_probe_filmed_page_pointer.py:1648: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_probe_filmed_page_pointer.py::test_the_run_record_keeps_the_first_and_the_last_words_of_a_long_output
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_cleanup_step_that_raises_does_not_skip_the_others
+FAILED tests/test_probe_filmed_page_pointer.py::test_the_cleanup_gives_up_what_the_runs_session_reserved
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_session_that_reserved_nothing_releases_nothing_and_says_so
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_start_that_failed_after_reserving_and_wrote_no_record_is_still_released
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_reservation_that_is_still_there_after_the_yield_is_an_error[how0-still holds \\['194718ca'\\]-left0]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_reservation_that_is_still_there_after_the_yield_is_an_error[how1-still holds \\['194718ca'\\]-left1]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_registry_that_cannot_be_read_is_an_error_and_releases_nothing
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_session_left_reserved_fails_the_run_and_the_rest_of_the_cleanup_still_runs
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[False-browser]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[False-holder]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[False-port]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[False-registry]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[None-browser]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[None-holder]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[None-port]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[None-registry]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[missing-browser]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[missing-holder]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[missing-port]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed[missing-registry]
+FAILED tests/test_probe_filmed_page_pointer.py::test_what_is_closed_is_read_each_for_itself
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_process_is_gone_when_its_number_is_free_or_belongs_to_another
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_desktop_someone_holds_refuses_the_run_before_the_gate_and_says_whose
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_front_application_that_did_not_come_back_fails_the_run
+25 failed, 199 passed in 3.26s

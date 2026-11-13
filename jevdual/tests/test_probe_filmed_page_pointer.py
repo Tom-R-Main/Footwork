@@ -107,6 +107,10 @@ def _gesture(steps, gestures, label, expect):
     return gestures[_step(steps, label, expect)["gestures_after"] - 1]
 
 
+#: what a run's cleanup read for itself when everything it began was ended
+CLOSED = {"registry": True, "browser": True, "port": True, "holder": True}
+
+
 def _run(tmp_path, change=None, record=None, *, offset=0.0, page=None):
     """A composed run in which every step went as predicted, with ``change(steps, handlers, gestures)``
     applied to the tried steps and ``record`` merged into the run record before it is written. The
@@ -158,7 +162,7 @@ def _run(tmp_path, change=None, record=None, *, offset=0.0, page=None):
         change([step for step in steps if step.get("expect")], handlers, gestures)
     # the probe asks for the fence once the last step's interval (a second past its end) has closed
     run = {"gestures_at_start": 0, "steps": steps, "chrome_closed": True, "fence_asked": steps[-1]["t_end"] + 1.1,
-           "chrome_launch": {"pid": 4321, "incarnation": 5.5}} | (record or {})
+           "chrome_launch": {"pid": 4321, "incarnation": 5.5}, "closed": dict(CLOSED)} | (record or {})
     if "setup" in run:
         index, code = run.pop("setup")
         steps[index]["exit"] = code
@@ -1310,6 +1314,8 @@ def test_the_run_record_keeps_the_first_and_the_last_words_of_a_long_output(tmp_
     record = json.loads((out / "run.json").read_text())
     dodge = next(step for step in record["steps"] if step.get("label") == "Dodge")
     dodge["stdout"] = SAID["pressed"] + "\n" + "  [  1] button 'Alpha'\n" * 300 + "the last line"
+    monkeypatch.setattr(probe, "_release_session", lambda record, env, out, session: None)
+    monkeypatch.setattr(probe, "_closures", lambda record, env, out, session, said: dict(CLOSED))
     monkeypatch.setattr(probe, "_retire_holder", lambda record, session: None)
     monkeypatch.setattr(probe, "_close_owned_chrome", lambda record, launch: record.update(chrome_closed=True))
     monkeypatch.setattr(probe, "_restore_front", lambda record: None)
@@ -1367,6 +1373,8 @@ def test_a_cleanup_step_that_raises_does_not_skip_the_others(tmp_path, monkeypat
         did.append("chrome")
         record["chrome_closed"] = True
 
+    monkeypatch.setattr(probe, "_release_session", lambda record, env, out, session: did.append("session"))
+    monkeypatch.setattr(probe, "_closures", lambda record, env, out, session, said: did.append("closures") or dict(CLOSED))
     monkeypatch.setattr(probe, "_retire_holder", retire)
     monkeypatch.setattr(probe, "_close_owned_chrome", close)
     monkeypatch.setattr(probe, "_restore_front", lambda record: did.append("front"))
@@ -1374,11 +1382,233 @@ def test_a_cleanup_step_that_raises_does_not_skip_the_others(tmp_path, monkeypat
     helper = type("Helper", (), {"join": lambda self, timeout=None: did.append("sampler"),
                                  "shutdown": lambda self: did.append("server")})()
     verdict = probe._finish(record, out, out / "session", "", stop, helper, helper)
-    assert did == ["holder", "chrome", "front", "sampler", "server"] and stop.is_set()
+    # the session's reservation is given up first, and what is closed is read last
+    assert did == ["session", "holder", "chrome", "front", "sampler", "server", "closures"] and stop.is_set()
     written = json.loads((out / "run.json").read_text())
     assert written["cleanup_errors"] == ["holder: RuntimeError: the holder did not exit"]
     assert verdict["held"] is False and all(v["held"] for v in verdict["steps"])
     assert json.loads((out / "verdict.json").read_text())["held"] is False
+
+
+class Registry:
+    """Footwork's coordination registry as the probe's commands see it: ``control status`` prints it,
+    ``control yield TOKEN`` and ``control cancel TOKEN`` revoke that entry unless ``stuck`` or ``refuses``.
+    Every command is kept, in order."""
+
+    def __init__(self, reservations=(), requests=(), *, stuck=False, refuses=False):
+        self.reservations = [dict(row) for row in reservations]
+        self.requests = [dict(row) for row in requests]
+        self.stuck, self.refuses, self.commands = stuck, refuses, []
+
+    def __call__(self, env, out, name, *argv):
+        self.commands.append((name, *argv))
+        reply = {"name": name, "t_start": 0.0, "t_end": 0.0, "exit": 0, "stderr": ""}
+        if argv == ("control", "status"):
+            return reply | {"stdout": json.dumps({"requests": self.requests, "reservations": self.reservations})}
+        assert argv[:2] in (("control", "yield"), ("control", "cancel")), argv
+        if self.refuses:
+            return reply | {"exit": 2, "stdout": "", "stderr": "unknown ownership token"}
+        if not self.stuck:
+            for row in (*self.reservations, *self.requests):
+                if row["token"] == argv[2]:
+                    row["state"] = "revoked"
+        return reply | {"stdout": "revoked; active input retains ownership until readback and cleanup finish"}
+
+
+def _reserved(session, token="194718ca", **more):
+    return {"token": token, "owner": str(session), "desktop": "console",
+            "resources": ["app/google%20chrome", "desktop"], "state": "active"} | more
+
+
+def test_the_cleanup_gives_up_what_the_runs_session_reserved(tmp_path, monkeypatch):
+    """FP81, FP82: a filmed start reserves the desktop and the browser until someone yields. The second
+    live run closed its browser and left that reservation active; the next start, sixteen minutes
+    later, was refused for it. The cleanup yields the session's own token and reads the registry again."""
+    session = tmp_path / "out/session"
+    session.mkdir(parents=True)
+    (session / "session.json").write_text(json.dumps({"coordination_token": "194718ca"}))
+    others = [_reserved(tmp_path / "another/session", "aa11", state="revoked"), _reserved(tmp_path / "theirs", "bb22")]
+    registry = Registry([*others, _reserved(session)])
+    monkeypatch.setattr(probe, "_cli", registry)
+    record: dict = {}
+    probe._release_session(record, {}, tmp_path / "out", session)
+    assert registry.commands == [("zz-registry-before-release", "control", "status"),
+                                 ("zz-release-0", "control", "yield", "194718ca"),
+                                 ("zz-registry-after-release", "control", "status")]
+    said = record["session_reservation"]
+    assert said["released"] is True and said["still_held"] == [] and said["named_by_session"] == "194718ca"
+    assert said["held"] == [{"kind": "reservation", "token": "194718ca", "resources": ["app/google%20chrome", "desktop"]}]
+    assert said["yields"] == [{"token": "194718ca", "exit": 0, "stderr": "",
+                               "stdout": "revoked; active input retains ownership until readback and cleanup finish"}]
+    # only its own: another session's active reservation is not touched
+    assert [row["state"] for row in registry.reservations] == ["revoked", "active", "revoked"]
+
+
+def test_a_session_that_reserved_nothing_releases_nothing_and_says_so(tmp_path, monkeypatch):
+    session = tmp_path / "out/session"
+    registry = Registry([_reserved(tmp_path / "theirs", "bb22")])
+    monkeypatch.setattr(probe, "_cli", registry)
+    record: dict = {}
+    probe._release_session(record, {}, tmp_path / "out", session)
+    assert [command[1:] for command in registry.commands] == [("control", "status"), ("control", "status")]
+    assert record["session_reservation"] == {"released": True, "named_by_session": None, "held": [], "yields": [],
+                                             "still_held": []}
+
+
+def test_a_start_that_failed_after_reserving_and_wrote_no_record_is_still_released(tmp_path, monkeypatch):
+    """FP82 (b): the token comes from the registry, by the session's directory, so a reservation whose
+    session never wrote its record is found. A waiting request of the session's is cancelled."""
+    session = tmp_path / "out/session"
+    waiting = {"token": "cc33", "owner": str(session), "resources": ["desktop"], "state": "waiting", "pid": 9}
+    registry = Registry([_reserved(session)], [waiting])
+    monkeypatch.setattr(probe, "_cli", registry)
+    record: dict = {}
+    probe._release_session(record, {}, tmp_path / "out", session)
+    assert [command[1:] for command in registry.commands[1:3]] == [("control", "yield", "194718ca"),
+                                                                    ("control", "cancel", "cc33")]
+    assert record["session_reservation"]["released"] is True and record["session_reservation"]["named_by_session"] is None
+
+
+@pytest.mark.parametrize(("how", "why", "left"), [
+    ({"stuck": True}, "still holds \\['194718ca'\\]", ["194718ca"]),
+    ({"refuses": True}, "still holds \\['194718ca'\\]", ["194718ca"]),
+])
+def test_a_reservation_that_is_still_there_after_the_yield_is_an_error(tmp_path, monkeypatch, how, why, left):
+    session = tmp_path / "out/session"
+    monkeypatch.setattr(probe, "_cli", Registry([_reserved(session)], **how))
+    record: dict = {}
+    with pytest.raises(RuntimeError, match=why):
+        probe._release_session(record, {}, tmp_path / "out", session)
+    assert record["session_reservation"]["released"] is False and record["session_reservation"]["still_held"] == left
+
+
+def test_a_registry_that_cannot_be_read_is_an_error_and_releases_nothing(tmp_path, monkeypatch):
+    def unreadable(env, out, name, *argv):
+        return {"name": name, "exit": 1, "stdout": "", "stderr": "database is locked", "t_start": 0.0, "t_end": 0.0}
+
+    monkeypatch.setattr(probe, "_cli", unreadable)
+    record: dict = {}
+    with pytest.raises(RuntimeError, match="control status could not be read"):
+        probe._release_session(record, {}, tmp_path / "out", tmp_path / "out/session")
+    assert record["session_reservation"]["released"] is False
+
+
+def test_a_session_left_reserved_fails_the_run_and_the_rest_of_the_cleanup_still_runs(tmp_path, monkeypatch):
+    """FP82: the leak itself, end to end through the cleanup: the browser closes, the holder retires,
+    and the run does not hold, because the registry still shows its session holding the desktop."""
+    out = _run(tmp_path)
+    record = json.loads((out / "run.json").read_text())
+    del record["closed"]
+    registry = Registry([_reserved(out / "session")], stuck=True)
+    did: list = []
+    monkeypatch.setattr(probe, "_cli", registry)
+    monkeypatch.setattr(probe, "_retire_holder", lambda record, session: did.append("holder"))
+    monkeypatch.setattr(probe, "_close_owned_chrome", lambda record, launch: did.append("chrome") or record.update(chrome_closed=True))
+    monkeypatch.setattr(probe, "_restore_front", lambda record: did.append("front"))
+    monkeypatch.setattr(probe, "_launched_chrome", lambda session, said: None)
+    monkeypatch.setattr(probe, "_port_open", lambda port: False)
+    import jevdual.browser_driver
+
+    monkeypatch.setattr(jevdual.browser_driver, "chrome_pid", lambda: None)
+    helper = type("Helper", (), {"join": lambda self, timeout=None: None, "shutdown": lambda self: None})()
+    verdict = probe._finish(record, out, out / "session", "", probe.threading.Event(), helper, helper,
+                            {"FOOTWORK_CHROME_PORT": "9466"})
+    assert did == ["holder", "chrome", "front"]
+    written = json.loads((out / "run.json").read_text())
+    assert written["cleanup_errors"] == [
+        "session: RuntimeError: this run's session still holds ['194718ca'] in Footwork's registry"]
+    assert written["closed"] == {"registry": False, "browser": True, "port": True, "holder": True}
+    assert verdict["held"] is False and verdict["everything_closed"] is False and verdict["closed"]["registry"] is False
+    assert all(v["held"] for v in verdict["steps"])
+    # and with a registry that lets go, the same cleanup holds
+    record = json.loads((_run(tmp_path / "let-go") / "run.json").read_text())
+    del record["closed"]
+    out = tmp_path / "let-go/out"
+    monkeypatch.setattr(probe, "_cli", Registry([_reserved(out / "session")]))
+    verdict = probe._finish(record, out, out / "session", "", probe.threading.Event(), helper, helper,
+                            {"FOOTWORK_CHROME_PORT": "9466"})
+    assert verdict["held"] is True and verdict["closed"] == CLOSED
+
+
+@pytest.mark.parametrize("name", sorted(CLOSED))
+@pytest.mark.parametrize("read", [False, None, "missing"])
+def test_a_run_holds_only_if_each_thing_it_began_was_read_as_closed(tmp_path, name, read):
+    """FP81: "Chrome closed" was checked and "session ended" was said with it and was false. The four
+    are read separately and the verdict needs each; a reading that was not made is not a closure."""
+    closed = {key: value for key, value in CLOSED.items() if not (key == name and read == "missing")}
+    if read != "missing":
+        closed[name] = read
+    verdict = probe.analyze(_run(tmp_path, record={"closed": closed}))
+    assert verdict["held"] is False and verdict["everything_closed"] is False
+    assert verdict["closed"][name] is (None if read == "missing" else read)
+    assert all(v["held"] for v in verdict["steps"]) and verdict["own_chrome_closed"] is True
+    legacy = probe.analyze(_run(tmp_path / "legacy", record={"closed": None}))
+    assert legacy["held"] is False and legacy["closed"] == dict.fromkeys(CLOSED)
+
+
+def test_what_is_closed_is_read_each_for_itself(tmp_path, monkeypatch):
+    """FP82: the registry by a fresh reading, the browser by its process, the port by connecting, the
+    holder by its process; one that cannot be read is None and not True."""
+    import jevdual.browser_driver
+
+    session = tmp_path / "out/session"
+    session.mkdir(parents=True)
+    (session / "session.json").write_text(json.dumps({"browser_holder": {"pid": 700, "start": "12.5"}}))
+    registry = Registry([_reserved(session, state="revoked")])
+    gone = {(800, 5.5): True, (700, "12.5"): True}
+    monkeypatch.setattr(probe, "_cli", registry)
+    monkeypatch.setattr(probe, "_launched_chrome", lambda session, said: {"pid": 800, "incarnation": 5.5})
+    monkeypatch.setattr(probe, "_gone", lambda pid, started=None: gone[pid, started])
+    monkeypatch.setattr(probe, "_port_open", lambda port: port != 9466)
+    env = {"FOOTWORK_CHROME_PORT": "9466"}
+    assert probe._closures({}, env, tmp_path / "out", session, "") == CLOSED
+    assert registry.commands == [("zz-registry-final", "control", "status")]
+    gone[800, 5.5] = False
+    assert probe._closures({}, env, tmp_path / "out", session, "")["browser"] is False
+    gone[800, 5.5], gone[700, "12.5"] = True, False
+    assert probe._closures({}, env, tmp_path / "out", session, "")["holder"] is False
+    gone[700, "12.5"] = True
+    monkeypatch.setattr(probe, "_port_open", lambda port: True)
+    assert probe._closures({}, env, tmp_path / "out", session, "")["port"] is False
+    registry.reservations[0]["state"] = "active"
+    monkeypatch.setattr(probe, "_port_open", lambda port: False)
+    assert probe._closures({}, env, tmp_path / "out", session, "")["registry"] is False
+
+    def unreadable(env, out, name, *argv):
+        raise OSError("no such command")
+
+    monkeypatch.setattr(probe, "_cli", unreadable)
+    assert probe._closures({}, env, tmp_path / "out", session, "")["registry"] is None
+    # no browser was launched: closed only if no Chrome matches this run's profile and port
+    monkeypatch.setattr(probe, "_launched_chrome", lambda session, said: None)
+    monkeypatch.setattr(jevdual.browser_driver, "chrome_pid", lambda: 4242)
+    assert probe._closures({}, env, tmp_path / "out", session, "")["browser"] is False
+
+
+def test_a_process_is_gone_when_its_number_is_free_or_belongs_to_another(monkeypatch):
+    import os
+
+    import psutil
+
+    me = psutil.Process(os.getpid())
+    assert probe._gone(os.getpid(), me.create_time()) is False and probe._gone(os.getpid()) is False
+    assert probe._gone(os.getpid(), me.create_time() - 100.0) is True  # the number is another process's now
+    assert probe._gone(2 ** 22 + 12345) is True
+    assert probe._gone(None) is False and probe._gone("700") is False and probe._gone(True) is False
+
+
+def test_a_desktop_someone_holds_refuses_the_run_before_the_gate_and_says_whose(tmp_path, monkeypatch):
+    """FP81: the third run waited at start for thirty seconds and was refused, in a slot three tracks
+    had arranged. The registry is read before the idle gate; nothing is launched and nothing waited for."""
+    out = tmp_path / "out"
+    registry = Registry([_reserved("/somewhere/else/session", "bb22")])
+    monkeypatch.setattr(probe, "_cli", registry)
+    monkeypatch.setattr(probe, "preflight", lambda *args, **kwargs: None)
+    monkeypatch.setattr(probe, "_wait_idle", lambda: pytest.fail("the gate was reached"))
+    monkeypatch.setattr(probe.sys, "argv", ["probe", "--out", str(out)])
+    with pytest.raises(SystemExit, match="registry shows something held: reservation bb22 on .*desktop.* by /somewhere/else/session"):
+        probe.main()
+    assert registry.commands == [("00-registry-at-start", "control", "status")]
 
 
 def _front(monkeypatch, record, fronts):
@@ -1415,6 +1645,8 @@ def test_a_front_application_that_did_not_come_back_is_an_error(monkeypatch, rec
 def test_a_front_application_that_did_not_come_back_fails_the_run(tmp_path, monkeypatch):
     out = _run(tmp_path)
     record = json.loads((out / "run.json").read_text()) | {"front_pid_at_start": 501}
+    monkeypatch.setattr(probe, "_release_session", lambda record, env, out, session: None)
+    monkeypatch.setattr(probe, "_closures", lambda record, env, out, session, said: dict(CLOSED))
     monkeypatch.setattr(probe, "_retire_holder", lambda record, session: None)
     monkeypatch.setattr(probe, "_close_owned_chrome", lambda record, launch: record.update(chrome_closed=True))
     monkeypatch.setattr(probe, "_front_pid", lambda: 4321)
