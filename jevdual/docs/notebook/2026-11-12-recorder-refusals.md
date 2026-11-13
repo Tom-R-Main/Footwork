@@ -38,7 +38,7 @@ Changes: none to the script. Desktop's launcher now refuses to write a grant whi
 Next: wait for Desktop's request to arm for the retry (out folder arm3-footwork-night2); DGR3 stays open.
 Refs: #dgr3; DemoGeek .local-reviews/application-film/sweep-2026-11-12/arm3-footwork-night
 
-## DGR5 · update · 2026-11-12 21:58
+## DGR5 · update · 2026-11-12 21:57
 Observed: the second attempt (Desktop's label night2) ran arm 1 only. The watcher was armed at 21:35:18 EST (20 minutes after the agreed 21:15, because the scheduled run that arms it fired late) and read Desktop's go file at 21:43:14 (until 23:13). Desktop's runner then recorded 11 cycles with no Footwork session and no pointer motion: 7 ok, 2 uncertain, 2 harness faults ("the target window was not offered"); one uncertain take's line reads "screen capture interrupted (Internal): Trusted source target health changed, expired or mismatched (first fault at source.rs:668)". It stopped at 21:51:55 because it could not reopen its scratch project after the second uncertain take. No arm3-request was written; the watcher was stopped at 21:57:14 having started no session, and nothing of Footwork's was left running.
 Inferred: nothing about DGR3 (arm 3 did not run), but the hypothesis's premise is again visible in the control arm alone: takes end uncertain with no Footwork session and no pointer motion on the machine. Two in eleven is too few to give a rate.
 Changes: none. The 21:43 grant is spent; the out folder arm3-footwork-night2 is not reused.
