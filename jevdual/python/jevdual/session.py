@@ -1271,6 +1271,20 @@ WEB_AREA_POLL_S = 0.1
 WEB_AREA_ASK_S = 1.0
 
 
+def _launched_without_page_accessibility(pid: int) -> bool | None:
+    """Whether the browser process ``pid`` was launched without the switch that makes Chrome show a
+    page's web area (``browser_driver.ACCESSIBILITY_SWITCH``), read from its own command line. None
+    when that cannot be read."""
+    import psutil
+
+    from jevdual.browser_driver import ACCESSIBILITY_SWITCH
+
+    try:
+        return ACCESSIBILITY_SWITCH not in psutil.Process(pid).cmdline()
+    except (psutil.Error, OSError, ValueError):
+        return None
+
+
 def _web_area_when_shown(pid: int, window_id: int) -> tuple[Any, str, str | None]:
     """The frame of the browser window's web area, how it was got (for start to print), and why not.
 
@@ -1280,7 +1294,11 @@ def _web_area_when_shown(pid: int, window_id: int) -> tuple[Any, str, str | None
     with its answer and decides nothing, because the web area has appeared with no request made and
     has been absent when a request was refused. A browser that shows one already is not written to.
     The frame is recorded once and every page position is mapped from it, so it is taken only when two
-    readings ``WEB_AREA_POLL_S`` apart agree. The window is found again for each reading."""
+    readings ``WEB_AREA_POLL_S`` apart agree. The window is found again for each reading.
+
+    A refusal for a window that never showed one names the likely cause when the browser's own command
+    line shows it: launched without the switch that forces page accessibility, which a filmed start
+    passes only to a browser it launches."""
     from jevdual import ax
 
     began = time.monotonic()
@@ -1305,7 +1323,17 @@ def _web_area_when_shown(pid: int, window_id: int) -> tuple[Any, str, str | None
                 shows = ax.outline(win)
             except Exception as exc:  # noqa: BLE001  (saying what the window shows helps; failing to is not the refusal)
                 shows = f"nothing readable ({type(exc).__name__})"
-            return None, "", f"{why} ({how() + ', ' if asked else ''}waited {waited:.1f} s; the window shows {shows})"
+            refusal = f"{why} ({how() + ', ' if asked else ''}waited {waited:.1f} s; the window shows {shows})"
+            if not seen and _launched_without_page_accessibility(pid):
+                # the likely cause, and one the person can act on: a filmed start passes the switch only to
+                # a browser it launches itself, and this one was already running (FP90). Said as what was
+                # read of this process, not as a rule about Chrome: a browser without the switch has shown
+                # a web area before
+                from jevdual.browser_driver import ACCESSIBILITY_SWITCH
+
+                refusal += (f". This browser was already running without {ACCESSIBILITY_SWITCH}. Quit Footwork's "
+                            "Chrome and start again so this start can launch it with page accessibility forced")
+            return None, "", refusal
         if found is None and not accepted and waited - last_ask >= WEB_AREA_ASK_S:
             last_ask = waited
             try:
