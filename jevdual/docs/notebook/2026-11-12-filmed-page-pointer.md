@@ -394,3 +394,12 @@ Test: FP37's run with these changes; composed runs for a record between two step
 Predicts: FP37's with Shy stopping after pointerover; the accounting, the numbering and the clock bounds hold.
 Against: FP37's; any unaccounted record; a gap in the numbers; clock bounds wider than 20 ms or crossed.
 Refs: #fp37; #fp43; scripts/probe_filmed_page_pointer.py
+
+## FP47 · prediction · 2026-11-13 03:50
+Question: the invariant rests on one primitive, the hit test at the point, which both the locate and the delivery take from the node's own root. For a node inside a shadow root, does that hit test see an element outside the shadow tree that covers the node?
+Hypothesis: it does. Chrome's elementFromPoint on a shadow root answers with the topmost element at the point retargeted to that root; when a document-level element covers a button inside an open shadow root the answer is not the button or anything inside it, so the locate block reports that its centre is not the target and the filmed click returns not_under_pointer having sent nothing. An uncovered button in the same shadow root is located and clicked. Found by reading the whole path against FP44's invariant, not by a review; no test, composed or in Chrome, has a covered node in a shadow root.
+Alternatives: the shadow root's hit test considers only its own tree and answers with the covered button, in which case a filmed click is delivered to a button the film shows covered, and the primitive has to hit-test from the document and descend through shadow roots instead.
+Test: scripts/probe_locate_world_headless.py, one more run on the pinned locate8 archive: a host with an open shadow root holding two buttons, one with a document-level lid over its centre; the locate function and the filmed click on each, from the isolated world.
+Predicts: the uncovered one is located with hit target and clicked (five press and click events on it); the covered one is located with another hit and its filmed click is not_under_pointer with no event; the earlier checks of the fourth run hold.
+Against: the covered button located as hit target, or sent any event.
+Refs: #fp44; #fp45; scripts/probe_locate_world_headless.py
