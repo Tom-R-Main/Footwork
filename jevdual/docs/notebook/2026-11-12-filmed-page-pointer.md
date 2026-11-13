@@ -319,3 +319,12 @@ Test: FP29's run with these changes. The page: Note no longer moves on focus (th
 Predicts: FP29's for the steps it had, and the three new steps as stated.
 Against: FP29's; a release or click on Dodge; any press on Shy or Hidden; a gap in the samples around any delivered event.
 Refs: #fp29; #fp35; scripts/probe_filmed_page_pointer.py
+
+## FP38 · prediction · 2026-11-13 03:02
+Question: does what the bridge finds about a filmed delivery reach the person running the command?
+Hypothesis: it does not. From a page effect that was not refused, the session's do keeps the effect word and nothing else: the summary and the marks the bridge adds (a click that stopped after its press, the pointer or the scene found elsewhere when the delivery returned) are neither printed nor logged, so the command says "driver says unverifiable" or reports the page's change with no word of them. A click refused after its hover events prints the first 100 characters of its summary, which end before "no press or click was sent". Found while making the live probe read the command's output for the button that moves when pressed (FP37), which it could not do. With the change: a stopped click is printed and logged under its mark with the bridge's sentence, and its receipt is unverifiable; the two delivery marks are printed on a line of their own and logged, and leave the receipt as the page's change decides it; the refusal before the press begins with "no press or click was sent".
+Alternatives: the summary reaches the output by a path I have not read (the receipt, the status command), and the new tests then pass before the change; printing the marks changes the output of a command that has none.
+Test: tests/test_filmed_session.py or tests/test_browser_contract.py, through the do command with the bridge's act answering each effect: a stopped click, each delivery mark, both together, and an effect with no mark. tests/test_filmed_page_pointer.py: the wording of the refusal before the press as the bridge passes it on.
+Predicts: the new tests fail before the change and pass with it; a command whose effect carries no mark prints exactly what it printed.
+Against: a new test passing before the change; the output or the log of an effect without a mark changing.
+Refs: #fp35; #fp37; python/jevdual/session.py
