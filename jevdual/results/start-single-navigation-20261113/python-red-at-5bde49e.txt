@@ -1,0 +1,11 @@
+E         At index 1 diff: ('window read', None) != ('navigate', 'http://127.0.0.1:1/order?token=single-use')
+E         At index 1 diff: ('window read', None) != ('navigate', 'http://127.0.0.1:1/order?token=single-use')
+E         At index 1 diff: ('window read', None) != ('navigate', 'http://127.0.0.1:1/order?token=single-use')
+E         Left contains one more item: ('navigate', 'http://127.0.0.1:1/order?token=single-use')
+E         At index 1 diff: ('window read', None) != ('navigate', 'http://127.0.0.1:1/order?token=single-use')
+E         Left contains one more item: ('navigate', 'http://127.0.0.1:1/order?token=single-use')
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_reads_the_window_after_its_navigation_and_reserves_after_that[False]
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_reads_the_window_after_its_navigation_and_reserves_after_that[True]
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_whose_navigation_is_refused_reads_no_window_and_reserves_nothing[False]
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_whose_navigation_is_refused_reads_no_window_and_reserves_nothing[True]
+4 failed, 53 passed

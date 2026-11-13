@@ -1,0 +1,41 @@
+{
+ "arms": [
+  {
+   "arm": "launched on the URL",
+   "launch_opens": "the URL",
+   "fetched_before_the_navigation": 1,
+   "tab_showed": "http://127.0.0.1:53544/page",
+   "navigation": {
+    "answer": {
+     "frameId": "5259D663F3A0637E72F09CD92D132710",
+     "loaderId": "86A8805798AC250E678F0DA87155CE00",
+     "isDownload": false
+    },
+    "load_event": true
+   },
+   "fetched": 2,
+   "closed": true
+  },
+  {
+   "arm": "launched on a blank page",
+   "launch_opens": "about:blank",
+   "fetched_before_the_navigation": 0,
+   "tab_showed": "about:blank",
+   "navigation": {
+    "answer": {
+     "frameId": "F91B269D5856A1F575B4A142C784F649",
+     "loaderId": "994DF11CB8C319E51A98FD33575C4E39",
+     "isDownload": false
+    },
+    "load_event": true
+   },
+   "fetched": 1,
+   "closed": true
+  }
+ ],
+ "fetches": {
+  "launched on the URL": 2,
+  "launched on a blank page": 1
+ },
+ "every_browser_closed": true
+}

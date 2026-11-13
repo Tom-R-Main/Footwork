@@ -1,0 +1,8 @@
+E       Failed: DID NOT RAISE RuntimeError
+E       Failed: DID NOT RAISE RuntimeError
+E       Failed: DID NOT RAISE RuntimeError
+E       Failed: DID NOT RAISE RuntimeError
+FAILED tests/test_filmed_session.py::test_only_a_filmed_browser_start_asks_for_a_launch_with_page_accessibility[filmed-False]
+FAILED tests/test_filmed_session.py::test_only_a_filmed_browser_start_asks_for_a_launch_with_page_accessibility[filmed-True]
+FAILED tests/test_filmed_session.py::test_a_start_names_its_holder_before_the_attach_can_fail_and_says_when_it_was_not_retired[True]
+FAILED tests/test_filmed_session.py::test_a_start_names_its_holder_before_the_attach_can_fail_and_says_when_it_was_not_retired[False]

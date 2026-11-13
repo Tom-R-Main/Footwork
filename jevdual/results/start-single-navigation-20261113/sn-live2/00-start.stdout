@@ -1,0 +1,26 @@
+browser holder pid 45412 keeps this session's driver
+footwork's Chrome pid 45437 started 1794609647.739778: launched by this start
+bound footwork's Chrome (pid 45437) window 500554, tab tab-b156bb80-be3b-470e-bd23-11ed8910f106
+navigate http://127.0.0.1:63188/: unverifiable navigated tab-b156bb80-be3b-470e-bd23-11ed8910f106 to http://127.0.0.1:63188/
+filmed take: content 1200x813 at 22,142; keep-out None; rest None; web area shown after 0.1 s
+Google Chrome (footwork): 'Footwork filmed page pointer fixture'
+15 elements:
+  [   0] button     'Alpha'
+  [   1] button     'Covered'
+  [   2] button     'Jump down'
+  [   3] button     'Hidden'
+  [   4] button     'Shy'
+  [   5] button     'Dodge'
+  [   6] generic    'generic'
+  [   7] button     'Clipped'
+  [   8] button     'Turned'
+  [  14] button     'Beta'
+  [  15] button     'Forged'
+  [  16] textbox    'Note'
+  [  17] button     'Edge'
+  [  19] generic    'generic'
+  [  20] button     'Gamma'
+page text (0 chars):
+
+
+session: <scratch>/sn-live2/out/session  (export FOOTWORK_SESSION=<scratch>/sn-live2/out/session to omit --session)

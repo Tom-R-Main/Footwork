@@ -1344,14 +1344,14 @@ def _web_area_when_shown(pid: int, window_id: int) -> tuple[Any, str, str | None
         time.sleep(WEB_AREA_POLL_S)
 
 
-def _filmed_setup(state: SessionState, args: Any) -> str | None:
-    """Record a filmed take's geometry at start: the scene window, its web content origin, and the keep-out
-    and rest position converted from viewport CSS px to screen points."""
-    from jevdual import ax
-    from jevdual.filmed import Filmed
+def _filmed_options(posture: str, args: Any) -> tuple[tuple[float, ...] | None, tuple[float, ...] | None]:
+    """A filmed take's keep-out and rest position as given, in viewport CSS px, or ValueError saying why
+    the take cannot start. Everything a filmed start refuses that the arguments alone decide, so it can be
+    refused before anything is launched, navigated or read (SN8)."""
+    from jevdual.filmed import _inside
 
-    if state.posture != "exclusive_desktop":
-        return "--pointer-motion filmed moves the real pointer; it needs --mode exclusive_desktop"
+    if posture != "exclusive_desktop":
+        raise ValueError("--pointer-motion filmed moves the real pointer; it needs --mode exclusive_desktop")
 
     def pair(raw: str | None, n: int, name: str) -> tuple[float, ...] | None:
         if raw is None:
@@ -1361,11 +1361,26 @@ def _filmed_setup(state: SessionState, args: Any) -> str | None:
             raise ValueError(f"{name} needs {n} numbers, got {raw!r}")
         return tuple(parts)
 
+    keep = pair(getattr(args, "keep_out", None), 4, "--keep-out")
+    rest = pair(getattr(args, "rest", None), 2, "--rest")
+    if rest is not None and keep is not None and _inside(rest, keep):  # both shift by one origin later
+        raise ValueError("the rest position is inside the keep-out")
+    return keep, rest
+
+
+def _filmed_setup(state: SessionState, args: Any) -> str | None:
+    """Record a filmed take's geometry at start: the scene window, its web content origin, and the keep-out
+    and rest position converted from viewport CSS px to screen points."""
+    from jevdual import ax
+    from jevdual.filmed import Filmed
+
+    try:
+        keep, rest = _filmed_options(state.posture, args)
+    except ValueError as exc:
+        return str(exc)
     try:
         win = ax.window_element(state.pid, state.window_id)
         window = ax.frame_of(win)
-        keep = pair(getattr(args, "keep_out", None), 4, "--keep-out")
-        rest = pair(getattr(args, "rest", None), 2, "--rest")
         if window is None:
             return "the scene window has no frame"
         shown = ""
@@ -1857,6 +1872,11 @@ async def _start_new(args: Any) -> int:
     return 0
 
 
+#: what a browser launched by a start that has a URL opens on, before the start navigates to it. Not no
+#: argument: Chrome then opens its new-tab page, which is a page with requests of its own
+START_LAUNCH_PAGE = "about:blank"
+
+
 async def _start_browser(args: Any, d: Path) -> int:
     """A session on footwork's own Chrome through the Driver's browser mode (jevdual.browser_driver)."""
     from jevdual.browser_driver import bind_footwork_chrome
@@ -1868,11 +1888,24 @@ async def _start_browser(args: Any, d: Path) -> int:
     # a filmed take reads the page's web area from the window, which a Chrome shows when launched to
     # (FP88); only that start's launch differs, and only by the one switch
     filmed = getattr(args, "pointer_motion", "off") == "filmed"
+    # the start's URL reaches the browser once, by the navigation below, which happens on every path and
+    # whose effect this start can refuse on. A browser this start has to launch (or open a window for)
+    # opens on a blank page: given the URL as well, it loaded the page and the navigation loaded it again
+    launch_url = START_LAUNCH_PAGE if args.url else None
+    if filmed:
+        # what a filmed take's own options refuse is refused here, before a browser is launched, bound or
+        # navigated: the window is read after the navigation (SN4), and a start that cannot begin should
+        # not have replaced the page of a browser that was already running (SN8)
+        try:
+            _filmed_options(posture, args)
+        except ValueError as exc:
+            print(f"not starting: {exc}", file=sys.stderr)
+            return 2
     holder: dict[str, Any] = {}
     if bsh.enabled():
         from jevdual.browser_driver import BrowserBridge
 
-        identity = await bsh.spawn_owned(url=args.url, page_accessibility=filmed)
+        identity = await bsh.spawn_owned(url=launch_url, page_accessibility=filmed)
         holder = {k: identity[k] for k in ("boot", "pid", "start", "runtime")}
         runtime = Path(identity["runtime"])
         driver = bsh.HeldDriver()
@@ -1892,7 +1925,7 @@ async def _start_browser(args: Any, d: Path) -> int:
             raise
         launch = dict(identity.get("launch_identity") or {})
     else:
-        driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture),  # type: ignore[arg-type]
+        driver, bridge = await bind_footwork_chrome(launch_url, policy=ExecutionPolicy(posture),  # type: ignore[arg-type]
                                                     page_accessibility=filmed)
         launch = dict(getattr(bridge, "launch_identity", None) or {})
     try:
@@ -1916,8 +1949,23 @@ async def _start_browser(args: Any, d: Path) -> int:
             # here whether the browser is this start's own
             print(f"footwork's Chrome pid {launch.get('pid')} started {launch.get('incarnation')!r}: "
                   + ("launched by this start" if launch.get("new_process") else "already running"))
+        print(f"bound footwork's Chrome (pid {bridge.pid}) window {bridge.window_id}, tab {bridge.tab_id}")
+        if args.url:
+            eff = await bridge.navigate(args.url)
+            print(f"navigate {args.url}: {eff.effect} {eff.summary[:80]}")
+            if eff.effect == "refused":
+                # a session must not start bound to whatever page the browser already showed
+                print(f"not starting: the first navigation was refused: {eff.error_code or eff.summary[:120]}",
+                      file=sys.stderr)
+                if holder:
+                    await bsh.retire_settled(Path(holder["runtime"]), expected=holder)
+                return 2
+            await asyncio.sleep(2.0)
         if filmed:
-            # B7: one session films the real pointer over the same window its page operations bind
+            # B7: one session films the real pointer over the same window its page operations bind. After
+            # the navigation, not before it: the window is read for where the page's content sits, and
+            # between the launch and the navigation its tab is on the launch's blank page, in which the
+            # one live start that read it then found no web area (SN4)
             refusal = _filmed_setup(state, args)
             if refusal:
                 print(f"not starting: {refusal}", file=sys.stderr)
@@ -1931,18 +1979,6 @@ async def _start_browser(args: Any, d: Path) -> int:
                 raise CoordinationError("filming requires the coordinated command entrypoint")
             state.coordination_token = claim.registry.reserve(claim, claim.resources)
             args._created_reservation = state.coordination_token
-        print(f"bound footwork's Chrome (pid {bridge.pid}) window {bridge.window_id}, tab {bridge.tab_id}")
-        if args.url:
-            eff = await bridge.navigate(args.url)
-            print(f"navigate {args.url}: {eff.effect} {eff.summary[:80]}")
-            if eff.effect == "refused":
-                # a session must not start bound to whatever page the browser already showed
-                print(f"not starting: the first navigation was refused: {eff.error_code or eff.summary[:120]}",
-                      file=sys.stderr)
-                if holder:
-                    await bsh.retire_settled(Path(holder["runtime"]), expected=holder)
-                return 2
-            await asyncio.sleep(2.0)
         state.log({"kind": "start", "task": args.task, "requirements": state.requirements, "mode": "browser"})
         initial = await bridge.observe()
         from jevdual.browser_target import resolve

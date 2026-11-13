@@ -1,0 +1,9 @@
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_its_own_options_refuse_hands_the_browser_nothing[options0-it needs --mode exclusive_desktop-False]
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_its_own_options_refuse_hands_the_browser_nothing[options0-it needs --mode exclusive_desktop-True]
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_its_own_options_refuse_hands_the_browser_nothing[options1---rest needs 2 numbers, got '20'-False]
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_its_own_options_refuse_hands_the_browser_nothing[options1---rest needs 2 numbers, got '20'-True]
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_its_own_options_refuse_hands_the_browser_nothing[options2---keep-out needs 4 numbers, got '0,0,100'-False]
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_its_own_options_refuse_hands_the_browser_nothing[options2---keep-out needs 4 numbers, got '0,0,100'-True]
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_its_own_options_refuse_hands_the_browser_nothing[options3-the rest position is inside the keep-out-False]
+FAILED tests/test_start_single_navigation.py::test_a_filmed_start_its_own_options_refuse_hands_the_browser_nothing[options3-the rest position is inside the keep-out-True]
+8 failed, 13 passed
