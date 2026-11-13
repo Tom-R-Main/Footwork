@@ -1,0 +1,9 @@
+test browser::v2_tests::dom_event_click_sequence_checks_its_node_before_every_event_and_reports_by_value ... FAILED
+test browser::v2_tests::filmed_click_that_gave_no_focus_says_so_and_one_that_did_does_not ... FAILED
+failures:
+thread 'browser::v2_tests::dom_event_click_sequence_checks_its_node_before_every_event_and_reports_by_value' (154942202) panicked at crates/cua-driver-core/src/browser/v2_tests.rs:4665:5:
+thread 'browser::v2_tests::filmed_click_that_gave_no_focus_says_so_and_one_that_did_does_not' (154942212) panicked at crates/cua-driver-core/src/browser/v2_tests.rs:3662:9:
+failures:
+    browser::v2_tests::dom_event_click_sequence_checks_its_node_before_every_event_and_reports_by_value
+    browser::v2_tests::filmed_click_that_gave_no_focus_says_so_and_one_that_did_does_not
+test result: FAILED. 1272 passed; 2 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.55s

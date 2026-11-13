@@ -23,7 +23,9 @@ after the button has been moved away; the filmed click on a second button that m
 a pointer comes over it (FP30); on a button that moves on mousedown, on a container whose two children
 swap when hovered, and on buttons whose cursor is none or an image (FP36); on a container whose top
 child leaves when released (FP45); on two buttons inside a shadow root, one of them covered by an
-element outside it (FP47); the filmed insert into a focused field with the point off it, into a
+element outside it (FP47); on a control inside a focusable container, and on a node that holds a
+focusable button (FP55, after the inserts), and the insert into an editable region whose selection a
+script has put elsewhere (FP56); the filmed insert into a focused field with the point off it, into a
 field without focus, and into the focused field at its centre; and last, as controls that the two
 counterexamples are real, the click sequence without a point on the page's own object, which is what
 the driver did before the filmed delivery, on each button.
@@ -94,6 +96,15 @@ DELIVERY = """<!doctype html>
   <span id="above" style="position: absolute; left: 0; top: 0; width: 140px; height: 44px; background: #edc">Above</span>
 </div>
 <div id="host" style="position: absolute; left: 560px; top: 260px; width: 200px; height: 120px"></div>
+<div id="row" tabindex="0" style="position: absolute; left: 800px; top: 60px; width: 300px; height: 60px">
+  <div id="inrow" role="button" style="position: absolute; left: 10px; top: 8px; width: 140px; height: 44px">In row</div>
+</div>
+<div id="eda" contenteditable="true" style="position: absolute; left: 800px; top: 260px; width: 300px; height: 40px">one</div>
+<div id="edb" contenteditable="true" style="position: absolute; left: 800px; top: 320px; width: 300px; height: 40px">two</div>
+<p id="plaintext" style="position: absolute; left: 800px; top: 380px; width: 300px; height: 30px; margin: 0">plain</p>
+<div id="group" style="position: absolute; left: 800px; top: 160px; width: 300px; height: 60px">
+  <button type="button" id="ingroup" style="position: absolute; left: 10px; top: 8px; width: 140px; height: 44px">In group</button>
+</div>
 <div id="veil" style="position: absolute; left: 600px; top: 325px; width: 60px; height: 34px; background: #c33"></div>
 <button type="button" id="ghost" style="position: absolute; left: 560px; top: 60px; width: 140px; height: 44px; cursor: none">Ghost</button>
 <button type="button" id="drawn" style="position: absolute; left: 560px; top: 160px; width: 140px; height: 44px; cursor: url('data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='), auto">Drawn</button>
@@ -147,6 +158,9 @@ PAIR_CENTRE = (370.0, 282.0)  # of (300, 260, 140, 44): on First before the hove
 LATE_CENTRE = (370.0, 382.0)  # of (300, 360, 140, 44): on Above until the release, on Beneath after it
 PLAIN_CENTRE = (630.0, 282.0)  # of (560, 260, 140, 44), inside the shadow root
 VEILED_CENTRE = (630.0, 342.0)  # of (560, 320, 140, 44); the veil (600, 325, 60, 34) covers it
+INROW_CENTRE = (880.0, 90.0)  # of (810, 68, 140, 44): a control that is not focusable, in a row that is
+EDA_CENTRE = (950.0, 280.0)  # of (800, 260, 300, 40): an editable region
+INGROUP_CENTRE = (880.0, 190.0)  # of (810, 168, 140, 44): a button, inside the group that is the ref's node
 GHOST_CENTRE = (630.0, 82.0)
 DRAWN_CENTRE = (630.0, 182.0)
 PRESS = ("pointerdown", "mousedown", "mouseup", "click")
@@ -277,6 +291,35 @@ async def deliver(cdp: Cdp, url: str) -> dict:
     out["insert_unfocused"] = {"receipt": await read(cdp, insert, other, *OTHER_CENTRE, INSERTED), "after": await state()}
     # ... then into the focused field at its centre
     out["insert"] = {"receipt": await read(cdp, insert, field, *FIELD_CENTRE, INSERTED), "after": await state()}
+    # 3b (FP55): where the press's focus goes. A control that is not focusable, inside a row that is: a
+    # press would focus the row, which the ref does not name. Then a node that holds a button, with the
+    # point on the button: the button is inside the node and is focused.
+    inrow_page, inrow = await objects("inrow")
+    before = await state()
+    out["inrow_click"] = {"before": before, "receipt": await read(cdp, click, inrow, *INROW_CENTRE), "after": await state()}
+    _, group = await objects("group")
+    before = await state()
+    out["group_click"] = {"before": before, "receipt": await read(cdp, click, group, *INGROUP_CENTRE), "after": await state()}
+    # 3c (FP56): the insert goes where the selection is. An editable region, focused, with its caret
+    # in it; then the selection put inside another region; then in text that cannot be edited. Each
+    # time the insert is asked for on the first region, with the point on it.
+    _, eda = await objects("eda")
+
+    async def regions() -> dict:
+        return await page("({eda: eda.textContent, edb: edb.textContent, plain: plaintext.textContent, "
+                          "active: document.activeElement && document.activeElement.id, "
+                          "anchor: (() => { const n = getSelection().anchorNode; "
+                          "return n && (n.id || (n.parentElement && n.parentElement.id)); })()})")
+
+    out["editable"] = {}
+    for name, arrange in (
+            ("plain", "eda.focus(); getSelection().collapse(eda.firstChild, 3)"),
+            ("selection_in_another_region", "eda.focus(); getSelection().collapse(edb.firstChild, 3)"),
+            ("selection_in_plain_text", "eda.focus(); getSelection().collapse(plaintext.firstChild, 2)")):
+        await page("eda.textContent = 'one'; edb.textContent = 'two'; " + arrange)
+        before = await regions()
+        out["editable"][name] = {"before": before, "receipt": await read(cdp, insert, eda, *EDA_CENTRE, INSERTED),
+                                 "after": await regions()}
     # 4: the control. Without a point, on the page's own object, as the driver clicked before the filmed delivery:
     # the page's wrapper answers the sequence's rectangle read and moves the button under it.
     out["page_world_click"] = {"before": await state(), "receipt": await read(cdp, click, mover_page),
@@ -285,7 +328,8 @@ async def deliver(cdp: Cdp, url: str) -> dict:
     out["page_world_shy_click"] = {"before": await state(), "receipt": await read(cdp, click, shy_page),
                                    "after": await state()}
     # FP36's controls: each of these the sequence without a point still clicks
-    for name, mine in (("dodge", dodge_page), ("pair", pair_page), ("late", late_page), ("ghost", ghost_page)):
+    for name, mine in (("dodge", dodge_page), ("pair", pair_page), ("late", late_page), ("ghost", ghost_page),
+                       ("inrow", inrow_page)):
         out[f"page_world_{name}_click"] = {"before": await state(), "receipt": await read(cdp, click, mine),
                                            "after": await state()}
     await cdp.call("Target.closeTarget", {"targetId": target}, browser=True)
@@ -321,8 +365,19 @@ def delivery_verdict(found: dict) -> dict:
         run = found[f"page_world_{name}_click"]
         return [(e["type"], e["target"]) for e in run["after"]["events"][len(run["before"]["events"]):]]
 
+    def during(step: str) -> list[tuple[str, str]]:
+        run = found[step]
+        return [(e["type"], e["target"]) for e in run["after"]["events"][len(run["before"]["events"]):]]
+
     cursors = found["cursors"]
     shadow = found["shadow"]
+    inrow, group = found["inrow_click"], found["group_click"]
+    editable = found["editable"]
+
+    def unchanged(name: str) -> bool:
+        after = editable[name]["after"]
+        return (after["eda"], after["edb"], after["plain"]) == ("one", "two", "plain")
+    done = {"complete": True, "stopped": None, "count": 11, "last": "click", "retargeted": False}
     checks = {
         "the page's wrappers were in place and unused at load": found["loaded"]["rect_calls"] == 0,
         "the filmed click completed": (found["click"]["receipt"] or {}).get("complete") is True,
@@ -409,6 +464,31 @@ def delivery_verdict(found: dict) -> dict:
             and found["page_world_late_click"]["after"]["above_left"] == "105px"),
         "control: without a point the button under a hidden pointer is clicked": (
             control_seen("ghost") == [(kind, "ghost") for kind in WHOLE]),
+        # FP55: the focus is given only to an element of the ref's node
+        "a control inside a focusable container is clicked, the container is given no focus, and the receipt says so": (
+            inrow["receipt"] == {**done, "unfocused": True}
+            and during("inrow_click") == [(kind, "inrow") for kind in WHOLE]
+            and inrow["after"]["active"] == inrow["before"]["active"] != "row"),
+        "a focusable control inside the ref's node is focused by the press": (
+            group["receipt"] == {**done, "unfocused": False}
+            and during("group_click") == [(kind, "ingroup") for kind in WHOLE]
+            and group["before"]["active"] != "ingroup" and group["after"]["active"] == "ingroup"),
+        # FP56: the insert goes where the selection is, and the selection cannot be outside the node
+        # while the node is the active element and the command still inserts
+        "the insert into a focused editable region puts the text at its caret": (
+            editable["plain"]["receipt"] == {"inserted": True, "why": None}
+            and editable["plain"]["after"]["eda"] == "one" + INSERTED and editable["plain"]["after"]["edb"] == "two"),
+        "with the selection in another editable region, that region is the active element and nothing is inserted": (
+            editable["selection_in_another_region"]["before"]["active"] == "edb"
+            and editable["selection_in_another_region"]["receipt"] == {"inserted": False, "why": "not_focused"}
+            and unchanged("selection_in_another_region")),
+        "with the selection in text that cannot be edited, the command inserts nothing and says so": (
+            editable["selection_in_plain_text"]["receipt"] == {"inserted": False, "why": "command_refused"}
+            and unchanged("selection_in_plain_text")),
+        "control: without a point the container is focused": (
+            control_seen("inrow") == [(kind, "inrow") for kind in WHOLE]
+            and found["page_world_inrow_click"]["before"]["active"] != "row"
+            and found["page_world_inrow_click"]["after"]["active"] == "row"),
     }
     return {"checks": checks, "held": all(checks.values()), "cursors": cursors,
             "page_focused": found["insert"]["after"]["page_focused"],

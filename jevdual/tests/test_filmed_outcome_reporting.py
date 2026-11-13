@@ -11,7 +11,9 @@ returns. For each row, at the bridge and through the ``do`` command:
   prints of a refusal after the bridge's lead;
 - an outcome that is not a refusal and not a completed action is marked, printed as an error under its
   mark with one sentence saying what was sent, and its receipt is unverifiable;
-- a completed action prints nothing more than it did.
+- a completed action prints nothing more than it did, except the one completed click that has
+  something to say (``NOTES``): its press gave no focus, which is printed on the take's own line and is
+  not an error.
 
 The first two are what "the command says so" means; nothing here is about the page's own change.
 """
@@ -127,6 +129,13 @@ ROWS = [
 ]
 IDS = [row[0] for row in ROWS]
 
+COMPLETED = ("dispatched synthetic DOM click on {ext} in {tab_id}; bounded semantic target state remained unchanged; "
+             "application effect is unverifiable. Refresh page state and verify the expected postcondition")
+UNFOCUSED = (". The press moved no focus: the element a press would focus holds the ref's node and is not part of "
+             "it. Click that element to focus it")
+#: completed clicks that still have something to say: (row, the driver's text, the mark, the fact)
+NOTES = [("no focus given", COMPLETED + UNFOCUSED, "focus_not_given", "the press moved no focus")]
+
 
 def _text(row) -> str:
     template, fill = row[3], row[4]
@@ -170,12 +179,18 @@ def test_the_rows_cover_every_outcome_the_driver_has(driver_source):
                               re.MULTILINE))
     assert variants == {"Readback", "Dialog", "Refuse", "Misplaced", "Left", "Partial", "Interrupted", "Failed"}
     assert variants - {"Readback"} == {row[2] for row in ROWS if row[1] == "click"} - {"before"}
+    # a completed click carries one thing besides its completion, and it has its note
+    readback = re.search(r"Readback \{(.*?)\}", re.search(r"enum DomClickNext \{(.*?)\n\}", driver_source, re.DOTALL)[1],
+                         re.DOTALL)[1]
+    assert re.findall(r"(\w+): bool", readback) == ["unfocused"] and len(NOTES) == 1
     insert = re.search(r'const DOM_FILMED_INSERT: &str = "(.*?)";\n', driver_source, re.DOTALL)[1]
     reasons = set(re.findall(r"why: (?:done \? null : )?'(\w+)'", insert))
     assert reasons == {"detached", "not_focused", "not_editable", "not_under_pointer", "pointer_hidden", "command_refused"}
     assert reasons == {row[2] for row in ROWS if row[1] == "type"} - {"before", "unknown"}
     # every mark a row expects is one the session says, and every click mark has a row
     assert {row[6] for row in ROWS if row[6]} == {mark for mark in PAGE_MARKS if mark.startswith("click_")}
+    delivery = {"pointer_left_during_delivery", "scene_changed_during_delivery"}  # test_filmed_page_pointer.py
+    assert {mark for _, _, mark, _ in NOTES} == set(PAGE_MARKS) - {row[6] for row in ROWS} - delivery
 
 
 @pytest.mark.parametrize("row", ROWS, ids=IDS)
@@ -207,6 +222,31 @@ def test_the_command_says_what_was_sent(world, fw, filmed, monkeypatch, row):
     if mark is not None:
         assert f"driver says unverifiable ({mark}: {fact}" in said
         assert _did(fw)["error"].startswith(f"{mark}: ") and "input outcome unknown after error" in out
+
+
+@pytest.mark.parametrize("note", NOTES, ids=[note[0] for note in NOTES])
+def test_a_completed_click_with_something_to_say_says_it_and_is_not_an_error(take, world, fw, filmed, monkeypatch,
+                                                                             driver_source, note):
+    """Sol round 9: a filmed click gives focus only to an element of the control. Where a pointer would
+    have focused a container of it, the click completes and the command says the focus did not move."""
+    _, text, mark, fact = note
+    text = text.format(ext=EXT, tab_id=TAB)
+    assert UNFOCUSED in driver_source and COMPLETED.split("{ext}")[0] in driver_source
+    reply = {"action": {"effect": "unverifiable", "summary": text}, "action_text": text}
+    eff = _act(take, "click", "Go", None, **reply)
+    assert eff.effect == "unverifiable" and mark in eff.evidence and eff.summary.startswith(fact), eff
+    assert "The click was sent" in eff.summary and not any(m.startswith("click_") for m in eff.evidence)
+    del take[:]
+    unfilmed = _act(take, "click", "Go", None, filmed=False, **reply)
+    assert not set(unfilmed.evidence) & set(PAGE_MARKS) and unfilmed.summary == text[:200]
+
+    go = _filmed_page(monkeypatch, fw, [], **reply)
+    code, out, err = fw("do", "click", go, "--no-judge")
+    said = next(line for line in out.splitlines() if line.startswith("dispatched "))
+    assert code == 0 and "(" not in said.split(": driver says ")[1], (out, err)
+    assert f"filmed take: {mark}: {fact}" in out
+    did = _did(fw)
+    assert did["error"] is None and did["filmed_note"].startswith(f"{mark}: {fact}")
 
 
 @pytest.mark.parametrize("op", ["click", "type"])

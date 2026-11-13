@@ -66,7 +66,9 @@ window.addEventListener('load', () => {
 """
 
 
-def _serve(out: Path) -> tuple[http.server.ThreadingHTTPServer, int]:
+def _serve(out: Path, answer=None) -> tuple[http.server.ThreadingHTTPServer, int]:
+    """Serve ``FIXTURE`` and append what the page posts to ``page-events.jsonl``. ``answer(record)``,
+    when given, may return a body to answer a post with (200); otherwise a post is answered 204."""
     events = out / "page-events.jsonl"
 
     class Handler(http.server.BaseHTTPRequestHandler):
@@ -90,8 +92,16 @@ def _serve(out: Path) -> tuple[http.server.ThreadingHTTPServer, int]:
             record["received"] = time.time()
             with events.open("a") as stream:
                 stream.write(json.dumps(record) + "\n")
-            self.send_response(204)
+            body = answer(record) if answer is not None else None
+            if not body:
+                self.send_response(204)
+                self.end_headers()
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain")
+            self.send_header("Content-Length", str(len(body)))
             self.end_headers()
+            self.wfile.write(body)
 
     server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()

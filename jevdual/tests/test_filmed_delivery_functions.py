@@ -116,7 +116,8 @@ NOTHING = {"complete": False, "stopped": "not_under_pointer", "count": 0, "last"
 
 def test_a_filmed_click_on_its_point_sends_the_whole_sequence_at_that_point():
     (on,) = _click({"args": POINT})
-    assert on["receipt"] == {"complete": True, "stopped": None, "count": 11, "last": "click", "retargeted": False}
+    assert on["receipt"] == {"complete": True, "stopped": None, "count": 11, "last": "click", "retargeted": False,
+                             "unfocused": False}
     assert [e["type"] for e in on["sent"]] == SEQUENCE
     assert {e["to"] for e in on["sent"]} == {"target"}
     assert {tuple(e["at"]) for e in on["sent"]} == {tuple(POINT)}
@@ -160,6 +161,8 @@ def test_a_filmed_click_on_a_detached_control_says_detached_before_anything_else
 HOVER = SEQUENCE[:6]
 MOVED = {"rect": [60, 630, 140, 44]}
 COMPLETE = {"complete": True, "stopped": None, "count": 11, "last": "click", "retargeted": False}
+#: a filmed click that completes also says whether its press gave the focus a press gives (FP53)
+FILMED_COMPLETE = COMPLETE | {"unfocused": False}
 
 
 def _types(run: dict) -> list[str]:
@@ -219,7 +222,7 @@ def test_a_child_that_leaves_at_a_hover_event_gets_no_further_event():
     assert [(e["type"], e["to"]) for e in filmed["sent"]] == [("pointerover", "icon")]
     # without a point the sequence keeps its first target, as it always has
     assert unfilmed["receipt"] == COMPLETE and {e["to"] for e in unfilmed["sent"]} == {"icon"}
-    assert already["receipt"] == COMPLETE and {e["to"] for e in already["sent"]} == {"label"}
+    assert already["receipt"] == FILMED_COMPLETE and {e["to"] for e in already["sent"]} == {"label"}
 
 
 def test_a_press_and_a_release_on_two_children_click_what_holds_both():
@@ -230,7 +233,7 @@ def test_a_press_and_a_release_on_two_children_click_what_holds_both():
     by_focus, by_pointerdown = _click(
         {"args": POINT, "hit": "descendant", "focus": {"then": {"hit": "second"}}},
         {"args": POINT, "hit": "descendant", "on": {"event": "pointerdown", "then": {"hit": "second"}}})
-    assert by_focus["receipt"] == COMPLETE
+    assert by_focus["receipt"] == FILMED_COMPLETE
     assert [(e["type"], e["to"]) for e in by_focus["sent"]][6:] == [
         ("pointerdown", "icon"), ("mousedown", "icon"), ("focus()", "target"), ("pointerup", "label"),
         ("mouseup", "label"), ("click", "target")]
@@ -255,7 +258,7 @@ HIDDEN = ["none", 'url("x.png") 4 4, auto', "url(x.cur), pointer", "", "Pointer"
 def test_a_keyword_cursor_shows_the_pointer(cursor):
     click, insert = _click({"args": POINT, "cursor": cursor}), _insert({"args": [*POINT, "Ada"], "node": FIELD,
                                                                            "cursor": cursor})
-    assert click[0]["receipt"] == COMPLETE and insert[0]["receipt"] == INSERTED
+    assert click[0]["receipt"] == FILMED_COMPLETE and insert[0]["receipt"] == INSERTED
 
 
 @pytest.mark.parametrize("cursor", HIDDEN)

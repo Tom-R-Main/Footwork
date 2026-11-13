@@ -1,0 +1,1306 @@
+........................................................................ [ 10%]
+........................................................................ [ 21%]
+..................................F.....FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF. [ 32%]
+........................................................................ [ 43%]
+........................................................................ [ 54%]
+........................................................................ [ 65%]
+...............................F.......................FF.FFFFFFFF...... [ 76%]
+........................................................................ [ 87%]
+.......FFF...FF......F.................................................. [ 98%]
+....F...                                                                 [100%]
+=================================== FAILURES ===================================
+________ test_the_whole_log_is_accounted_for_and_the_clocks_are_related ________
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_the_whole_log_is_accounte0')
+
+    def test_the_whole_log_is_accounted_for_and_the_clocks_are_related(tmp_path):
+        """FP46: what a run that went as predicted says of its own log and clocks."""
+        verdict = probe.analyze(_run(tmp_path))
+        log, clock = verdict["page_log"], verdict["clock"]
+>       assert log["held"] and log["numbered_without_gaps"] and log["one_load"] and log["fenced_after_the_last_step"]
+                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'fenced_after_the_last_step'
+
+tests/test_probe_filmed_page_pointer.py:213: KeyError
+_ test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_record_never_received-page_log-numbered_without_gaps] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_log_that_is_incomplete_2')
+page = <function _a_record_never_received at 0x104d79300>, what = 'page_log'
+says = 'numbered_without_gaps'
+
+    @pytest.mark.parametrize(("page", "what", "says"), [
+        (_slow_answers, "clock", "32.0 ms apart"),
+        (_a_clock_set_back_during_the_run, "clock", "the bounds cross"),
+        (_a_record_never_received, "page_log", "numbered_without_gaps"),
+        (_a_number_twice, "page_log", "numbered_without_gaps"),
+        (_a_record_without_a_number, "page_log", "numbered_without_gaps"),
+        (_an_unreadable_record, "page_log", "numbered_without_gaps"),
+        (_a_page_loaded_twice, "page_log", "one_load"),
+        (_no_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_suffix_lost_from_before_the_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_fence_the_page_made_unasked, "page_log", "fenced_after_the_last_step"),
+    ])
+    def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(tmp_path, page, what, says):
+        """FP46: every step as predicted, and the run still does not hold, for the one reason given."""
+        verdict = probe.analyze(_run(tmp_path, page=page))
+        assert verdict["held"] is False, verdict[what]
+        if what == "clock":
+            assert verdict["clock"]["held"] is False and says in verdict["clock"]["why"] and verdict["page_log"]["held"]
+        else:
+            assert verdict["page_log"][says] is False and verdict["clock"]["held"] is True
+            false = [name for name in ("numbered_without_gaps", "one_load", "fenced_after_the_last_step")
+>                    if verdict["page_log"][name] is False]
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'fenced_after_the_last_step'
+
+tests/test_probe_filmed_page_pointer.py:328: KeyError
+_ test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_number_twice-page_log-numbered_without_gaps] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_log_that_is_incomplete_3')
+page = <function _a_number_twice at 0x104d793a0>, what = 'page_log'
+says = 'numbered_without_gaps'
+
+    @pytest.mark.parametrize(("page", "what", "says"), [
+        (_slow_answers, "clock", "32.0 ms apart"),
+        (_a_clock_set_back_during_the_run, "clock", "the bounds cross"),
+        (_a_record_never_received, "page_log", "numbered_without_gaps"),
+        (_a_number_twice, "page_log", "numbered_without_gaps"),
+        (_a_record_without_a_number, "page_log", "numbered_without_gaps"),
+        (_an_unreadable_record, "page_log", "numbered_without_gaps"),
+        (_a_page_loaded_twice, "page_log", "one_load"),
+        (_no_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_suffix_lost_from_before_the_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_fence_the_page_made_unasked, "page_log", "fenced_after_the_last_step"),
+    ])
+    def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(tmp_path, page, what, says):
+        """FP46: every step as predicted, and the run still does not hold, for the one reason given."""
+        verdict = probe.analyze(_run(tmp_path, page=page))
+        assert verdict["held"] is False, verdict[what]
+        if what == "clock":
+            assert verdict["clock"]["held"] is False and says in verdict["clock"]["why"] and verdict["page_log"]["held"]
+        else:
+            assert verdict["page_log"][says] is False and verdict["clock"]["held"] is True
+            false = [name for name in ("numbered_without_gaps", "one_load", "fenced_after_the_last_step")
+>                    if verdict["page_log"][name] is False]
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'fenced_after_the_last_step'
+
+tests/test_probe_filmed_page_pointer.py:328: KeyError
+_ test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_record_without_a_number-page_log-numbered_without_gaps] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_log_that_is_incomplete_4')
+page = <function _a_record_without_a_number at 0x104d79440>, what = 'page_log'
+says = 'numbered_without_gaps'
+
+    @pytest.mark.parametrize(("page", "what", "says"), [
+        (_slow_answers, "clock", "32.0 ms apart"),
+        (_a_clock_set_back_during_the_run, "clock", "the bounds cross"),
+        (_a_record_never_received, "page_log", "numbered_without_gaps"),
+        (_a_number_twice, "page_log", "numbered_without_gaps"),
+        (_a_record_without_a_number, "page_log", "numbered_without_gaps"),
+        (_an_unreadable_record, "page_log", "numbered_without_gaps"),
+        (_a_page_loaded_twice, "page_log", "one_load"),
+        (_no_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_suffix_lost_from_before_the_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_fence_the_page_made_unasked, "page_log", "fenced_after_the_last_step"),
+    ])
+    def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(tmp_path, page, what, says):
+        """FP46: every step as predicted, and the run still does not hold, for the one reason given."""
+        verdict = probe.analyze(_run(tmp_path, page=page))
+        assert verdict["held"] is False, verdict[what]
+        if what == "clock":
+            assert verdict["clock"]["held"] is False and says in verdict["clock"]["why"] and verdict["page_log"]["held"]
+        else:
+            assert verdict["page_log"][says] is False and verdict["clock"]["held"] is True
+            false = [name for name in ("numbered_without_gaps", "one_load", "fenced_after_the_last_step")
+>                    if verdict["page_log"][name] is False]
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'fenced_after_the_last_step'
+
+tests/test_probe_filmed_page_pointer.py:328: KeyError
+_ test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_an_unreadable_record-page_log-numbered_without_gaps] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_log_that_is_incomplete_5')
+page = <function _an_unreadable_record at 0x104d79800>, what = 'page_log'
+says = 'numbered_without_gaps'
+
+    @pytest.mark.parametrize(("page", "what", "says"), [
+        (_slow_answers, "clock", "32.0 ms apart"),
+        (_a_clock_set_back_during_the_run, "clock", "the bounds cross"),
+        (_a_record_never_received, "page_log", "numbered_without_gaps"),
+        (_a_number_twice, "page_log", "numbered_without_gaps"),
+        (_a_record_without_a_number, "page_log", "numbered_without_gaps"),
+        (_an_unreadable_record, "page_log", "numbered_without_gaps"),
+        (_a_page_loaded_twice, "page_log", "one_load"),
+        (_no_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_suffix_lost_from_before_the_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_fence_the_page_made_unasked, "page_log", "fenced_after_the_last_step"),
+    ])
+    def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(tmp_path, page, what, says):
+        """FP46: every step as predicted, and the run still does not hold, for the one reason given."""
+        verdict = probe.analyze(_run(tmp_path, page=page))
+        assert verdict["held"] is False, verdict[what]
+        if what == "clock":
+            assert verdict["clock"]["held"] is False and says in verdict["clock"]["why"] and verdict["page_log"]["held"]
+        else:
+            assert verdict["page_log"][says] is False and verdict["clock"]["held"] is True
+            false = [name for name in ("numbered_without_gaps", "one_load", "fenced_after_the_last_step")
+>                    if verdict["page_log"][name] is False]
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'fenced_after_the_last_step'
+
+tests/test_probe_filmed_page_pointer.py:328: KeyError
+_ test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_page_loaded_twice-page_log-one_load] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_log_that_is_incomplete_6')
+page = <function _a_page_loaded_twice at 0x104d794e0>, what = 'page_log'
+says = 'one_load'
+
+    @pytest.mark.parametrize(("page", "what", "says"), [
+        (_slow_answers, "clock", "32.0 ms apart"),
+        (_a_clock_set_back_during_the_run, "clock", "the bounds cross"),
+        (_a_record_never_received, "page_log", "numbered_without_gaps"),
+        (_a_number_twice, "page_log", "numbered_without_gaps"),
+        (_a_record_without_a_number, "page_log", "numbered_without_gaps"),
+        (_an_unreadable_record, "page_log", "numbered_without_gaps"),
+        (_a_page_loaded_twice, "page_log", "one_load"),
+        (_no_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_suffix_lost_from_before_the_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_fence_the_page_made_unasked, "page_log", "fenced_after_the_last_step"),
+    ])
+    def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(tmp_path, page, what, says):
+        """FP46: every step as predicted, and the run still does not hold, for the one reason given."""
+        verdict = probe.analyze(_run(tmp_path, page=page))
+        assert verdict["held"] is False, verdict[what]
+        if what == "clock":
+            assert verdict["clock"]["held"] is False and says in verdict["clock"]["why"] and verdict["page_log"]["held"]
+        else:
+            assert verdict["page_log"][says] is False and verdict["clock"]["held"] is True
+            false = [name for name in ("numbered_without_gaps", "one_load", "fenced_after_the_last_step")
+>                    if verdict["page_log"][name] is False]
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'fenced_after_the_last_step'
+
+tests/test_probe_filmed_page_pointer.py:328: KeyError
+_ test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_no_fence-page_log-fenced_after_the_last_step] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_log_that_is_incomplete_7')
+page = <function _no_fence at 0x104d79620>, what = 'page_log'
+says = 'fenced_after_the_last_step'
+
+    @pytest.mark.parametrize(("page", "what", "says"), [
+        (_slow_answers, "clock", "32.0 ms apart"),
+        (_a_clock_set_back_during_the_run, "clock", "the bounds cross"),
+        (_a_record_never_received, "page_log", "numbered_without_gaps"),
+        (_a_number_twice, "page_log", "numbered_without_gaps"),
+        (_a_record_without_a_number, "page_log", "numbered_without_gaps"),
+        (_an_unreadable_record, "page_log", "numbered_without_gaps"),
+        (_a_page_loaded_twice, "page_log", "one_load"),
+        (_no_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_suffix_lost_from_before_the_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_fence_the_page_made_unasked, "page_log", "fenced_after_the_last_step"),
+    ])
+    def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(tmp_path, page, what, says):
+        """FP46: every step as predicted, and the run still does not hold, for the one reason given."""
+        verdict = probe.analyze(_run(tmp_path, page=page))
+>       assert verdict["held"] is False, verdict[what]
+E       AssertionError: {'records': 389, 'numbered_without_gaps': True, 'one_load': True, 'a_record_after_the_last_step': True, ...}
+E       assert True is False
+
+tests/test_probe_filmed_page_pointer.py:322: AssertionError
+_ test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_suffix_lost_from_before_the_fence-page_log-fenced_after_the_last_step] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_log_that_is_incomplete_8')
+page = <function _a_suffix_lost_from_before_the_fence at 0x104d796c0>
+what = 'page_log', says = 'fenced_after_the_last_step'
+
+    @pytest.mark.parametrize(("page", "what", "says"), [
+        (_slow_answers, "clock", "32.0 ms apart"),
+        (_a_clock_set_back_during_the_run, "clock", "the bounds cross"),
+        (_a_record_never_received, "page_log", "numbered_without_gaps"),
+        (_a_number_twice, "page_log", "numbered_without_gaps"),
+        (_a_record_without_a_number, "page_log", "numbered_without_gaps"),
+        (_an_unreadable_record, "page_log", "numbered_without_gaps"),
+        (_a_page_loaded_twice, "page_log", "one_load"),
+        (_no_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_suffix_lost_from_before_the_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_fence_the_page_made_unasked, "page_log", "fenced_after_the_last_step"),
+    ])
+    def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(tmp_path, page, what, says):
+        """FP46: every step as predicted, and the run still does not hold, for the one reason given."""
+        verdict = probe.analyze(_run(tmp_path, page=page))
+        assert verdict["held"] is False, verdict[what]
+        if what == "clock":
+            assert verdict["clock"]["held"] is False and says in verdict["clock"]["why"] and verdict["page_log"]["held"]
+        else:
+>           assert verdict["page_log"][says] is False and verdict["clock"]["held"] is True
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'fenced_after_the_last_step'
+
+tests/test_probe_filmed_page_pointer.py:326: KeyError
+_ test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_fence_the_page_made_unasked-page_log-fenced_after_the_last_step] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_log_that_is_incomplete_9')
+page = <function _a_fence_the_page_made_unasked at 0x104d79760>
+what = 'page_log', says = 'fenced_after_the_last_step'
+
+    @pytest.mark.parametrize(("page", "what", "says"), [
+        (_slow_answers, "clock", "32.0 ms apart"),
+        (_a_clock_set_back_during_the_run, "clock", "the bounds cross"),
+        (_a_record_never_received, "page_log", "numbered_without_gaps"),
+        (_a_number_twice, "page_log", "numbered_without_gaps"),
+        (_a_record_without_a_number, "page_log", "numbered_without_gaps"),
+        (_an_unreadable_record, "page_log", "numbered_without_gaps"),
+        (_a_page_loaded_twice, "page_log", "one_load"),
+        (_no_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_suffix_lost_from_before_the_fence, "page_log", "fenced_after_the_last_step"),
+        (_a_fence_the_page_made_unasked, "page_log", "fenced_after_the_last_step"),
+    ])
+    def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(tmp_path, page, what, says):
+        """FP46: every step as predicted, and the run still does not hold, for the one reason given."""
+        verdict = probe.analyze(_run(tmp_path, page=page))
+>       assert verdict["held"] is False, verdict[what]
+E       AssertionError: {'records': 390, 'numbered_without_gaps': True, 'one_load': True, 'a_record_after_the_last_step': True, ...}
+E       assert True is False
+
+tests/test_probe_filmed_page_pointer.py:322: AssertionError
+_______ test_a_fence_asked_for_before_the_last_step_ended_does_not_hold ________
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_fence_asked_for_before_0')
+
+    def test_a_fence_asked_for_before_the_last_step_ended_does_not_hold(tmp_path):
+        """The fence shows the log whole up to the moment it was asked for. Asked while the last step's
+        interval was still open, it says nothing of the rest of that interval."""
+        verdict = probe.analyze(_run(tmp_path, record={"fence_asked": 1173.9}))
+>       assert verdict["held"] is False and verdict["page_log"]["fenced_after_the_last_step"] is False
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:338: AssertionError
+_ test_a_number_missing_before_the_fence_does_not_hold_and_one_lost_after_it_is_outside_the_run _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_number_missing_before_t0')
+
+    def test_a_number_missing_before_the_fence_does_not_hold_and_one_lost_after_it_is_outside_the_run(tmp_path):
+        """What the fence claims and what it does not. A record the page made before the fence and the
+        probe never got leaves a hole below the fence's number. One made after the fence and lost at
+        shutdown leaves the log whole through the fence: the run holds, and says through where."""
+        def before(rows):
+            fence = next(i for i, row in enumerate(rows) if row["type"] == "fence")
+            del rows[fence - 3]
+    
+        def after(rows):
+            fence = next(i for i, row in enumerate(rows) if row["type"] == "fence")
+            assert rows[-1]["n"] > rows[fence]["n"] + 1
+            kept = rows[:-1]
+            kept[-1]["detail"]["acks"] = rows[-1]["detail"]["acks"][:-1]
+            rows[:] = kept
+    
+        holed = probe.analyze(_run(tmp_path / "before", page=before))
+>       assert holed["held"] is False and holed["page_log"]["fenced_after_the_last_step"] is False
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'fenced_after_the_last_step'
+
+tests/test_probe_filmed_page_pointer.py:359: KeyError
+_ test_a_record_whose_time_reaches_across_a_steps_boundary_is_ambiguous[4.001-end] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_whose_time_reach0')
+seconds_into = 4.001, where = 'end'
+
+    @pytest.mark.parametrize(("seconds_into", "where"), [(4.001, "end"), (-0.001, "start")])
+    def test_a_record_whose_time_reaches_across_a_steps_boundary_is_ambiguous(tmp_path, seconds_into, where):
+        """Sol round 9: a record's time in the probe's clock is an interval, here 4 ms wide. Its midpoint
+        would put it a millisecond inside or outside the step; the truth can be on either side, so the run
+        does not hold and names the records, and it is not counted as inside or as outside."""
+        verdict = probe.analyze(_run(tmp_path, _at(seconds_into), page=_answers))
+        log = verdict["page_log"]
+>       assert verdict["held"] is False and log["held"] is False and log["unaccounted"] == []
+E       AssertionError: assert (False is False and False is False and [{'type': 'pa...t': 1024.001}] == []
+E         
+E         Left contains 6 more items, first extra item: {'type': 'page_event', 'event': 'pointerdown', 'on': 'Beta', 't': 1024.001}
+E         Use -v to get more diff)
+
+tests/test_probe_filmed_page_pointer.py:405: AssertionError
+_ test_a_record_whose_time_reaches_across_a_steps_boundary_is_ambiguous[-0.001-start] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_whose_time_reach1')
+seconds_into = -0.001, where = 'start'
+
+    @pytest.mark.parametrize(("seconds_into", "where"), [(4.001, "end"), (-0.001, "start")])
+    def test_a_record_whose_time_reaches_across_a_steps_boundary_is_ambiguous(tmp_path, seconds_into, where):
+        """Sol round 9: a record's time in the probe's clock is an interval, here 4 ms wide. Its midpoint
+        would put it a millisecond inside or outside the step; the truth can be on either side, so the run
+        does not hold and names the records, and it is not counted as inside or as outside."""
+        verdict = probe.analyze(_run(tmp_path, _at(seconds_into), page=_answers))
+        log = verdict["page_log"]
+>       assert verdict["held"] is False and log["held"] is False and log["unaccounted"] == []
+E       AssertionError: assert (False is False and False is False and [{'type': 'pa...t': 1019.999}] == []
+E         
+E         Left contains 6 more items, first extra item: {'type': 'page_event', 'event': 'pointerdown', 'on': 'Beta', 't': 1019.999}
+E         Use -v to get more diff)
+
+tests/test_probe_filmed_page_pointer.py:405: AssertionError
+_ test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed[change-0.03] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_of_an_action_tha0')
+change = <function _at.<locals>.change at 0x104d79c60>, width = 0.03
+
+    @pytest.mark.parametrize(("change", "width"), [(_at(2.2, late=0.030), 0.030), (_at(2.2, unanswered=True), 0.204)])
+    def test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed(tmp_path, change, width):
+        """FP54 (u): the answers to one click's posts came 30 ms after them, or never. The run's common
+        bounds still agree, from all the other posts; these six records are not placed by them, because
+        that would assume the two clocks kept one difference. Each is bounded by its own post, 30 ms wide,
+        or, with no answer of its own, below by the last record before it that was answered: the beat
+        200 ms earlier."""
+        verdict = probe.analyze(_run(tmp_path, change, page=_answers))
+        clock = verdict["clock"]
+>       assert verdict["held"] is False and clock["held"] is False and clock["width_s"] <= 0.02
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:422: AssertionError
+_ test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed[change-0.204] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_of_an_action_tha1')
+change = <function _at.<locals>.change at 0x104d79d00>, width = 0.204
+
+    @pytest.mark.parametrize(("change", "width"), [(_at(2.2, late=0.030), 0.030), (_at(2.2, unanswered=True), 0.204)])
+    def test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed(tmp_path, change, width):
+        """FP54 (u): the answers to one click's posts came 30 ms after them, or never. The run's common
+        bounds still agree, from all the other posts; these six records are not placed by them, because
+        that would assume the two clocks kept one difference. Each is bounded by its own post, 30 ms wide,
+        or, with no answer of its own, below by the last record before it that was answered: the beat
+        200 ms earlier."""
+        verdict = probe.analyze(_run(tmp_path, change, page=_answers))
+        clock = verdict["clock"]
+>       assert verdict["held"] is False and clock["held"] is False and clock["width_s"] <= 0.02
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:422: AssertionError
+__ test_a_record_made_at_the_moment_of_one_answered_promptly_is_placed_by_it ___
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_made_at_the_mome0')
+
+    def test_a_record_made_at_the_moment_of_one_answered_promptly_is_placed_by_it(tmp_path):
+        """The page's clock does not run backwards, so a record is no earlier than any made at or before
+        its own page time. Here the click's posts were never answered, and a beat made at the same page
+        time was: the click is placed by the beat."""
+        verdict = probe.analyze(_run(tmp_path, _at(2.0, unanswered=True), page=_answers))
+>       assert verdict["held"] is True and verdict["clock"]["widest_action_record_s"] == 0.004
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'widest_action_record_s'
+
+tests/test_probe_filmed_page_pointer.py:434: KeyError
+_ test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happened_in _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_the_samples_must_hold_ove0')
+
+    def test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happened_in(tmp_path):
+        """Sol round 9: a sample off the control 251 ms before the latest moment an event can have happened
+        is outside the window around that moment and inside the window around the earliest. The answers
+        here came 12 ms after the posts, so the interval is 12 ms wide and the run timed; the sample counts."""
+        def off(at):
+            def change(steps, handlers, gestures):
+                _at(2.2, late=0.012)(steps, handlers, gestures)
+                handlers.samples.append([_step(steps, "Beta", "clicked")["t_start"] + 2.202 - at, 5.0, 5.0])
+            return change
+    
+        inside = probe.analyze(_run(tmp_path / "in", off(0.255), page=_answers))
+>       assert inside["clock"]["held"] and inside["clock"]["widest_action_record_s"] == 0.012
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'widest_action_record_s'
+
+tests/test_probe_filmed_page_pointer.py:448: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[between two steps-page_event-detail0] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st0')
+kind = 'page_event'
+detail = {'event': 'pointerdown', 'trusted': True, 'target': 'Beta', 'x': 690, ...}
+when = 'between two steps'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[between two steps-page_event-detail1] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st1')
+kind = 'page_event'
+detail = {'event': 'click', 'trusted': False, 'target': None, 'x': 5, ...}
+when = 'between two steps'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[between two steps-click_handler-detail2] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st2')
+kind = 'click_handler'
+detail = {'button': 'Alpha', 'rect': [40, 60, 140, 44], 'dpr': 2}
+when = 'between two steps'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[between two steps-input-detail3] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st3')
+kind = 'input', detail = {'field': 'Note', 'value': 'x'}
+when = 'between two steps'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[between two steps-moved-detail4] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st4')
+kind = 'moved'
+detail = {'control': 'Dodge', 'by': 'mousedown', 'trusted': True}
+when = 'between two steps'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[before the first-page_event-detail0] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st5')
+kind = 'page_event'
+detail = {'event': 'pointerdown', 'trusted': True, 'target': 'Beta', 'x': 690, ...}
+when = 'before the first'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[before the first-page_event-detail1] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st6')
+kind = 'page_event'
+detail = {'event': 'click', 'trusted': False, 'target': None, 'x': 5, ...}
+when = 'before the first'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[before the first-click_handler-detail2] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st7')
+kind = 'click_handler'
+detail = {'button': 'Alpha', 'rect': [40, 60, 140, 44], 'dpr': 2}
+when = 'before the first'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[before the first-input-detail3] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st8')
+kind = 'input', detail = {'field': 'Note', 'value': 'x'}
+when = 'before the first'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[before the first-moved-detail4] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st9')
+kind = 'moved'
+detail = {'control': 'Dodge', 'by': 'mousedown', 'trusted': True}
+when = 'before the first'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[after the last-page_event-detail0] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st10')
+kind = 'page_event'
+detail = {'event': 'pointerdown', 'trusted': True, 'target': 'Beta', 'x': 690, ...}
+when = 'after the last'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[after the last-page_event-detail1] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st11')
+kind = 'page_event'
+detail = {'event': 'click', 'trusted': False, 'target': None, 'x': 5, ...}
+when = 'after the last'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[after the last-click_handler-detail2] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st12')
+kind = 'click_handler'
+detail = {'button': 'Alpha', 'rect': [40, 60, 140, 44], 'dpr': 2}
+when = 'after the last'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[after the last-input-detail3] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st13')
+kind = 'input', detail = {'field': 'Note', 'value': 'x'}
+when = 'after the last'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+_ test_a_record_outside_every_step_is_not_ignored[after the last-moved-detail4] _
+
+tmp_path = PosixPath('<tmp>/pytest-1056/test_a_record_outside_every_st14')
+kind = 'moved'
+detail = {'control': 'Dodge', 'by': 'mousedown', 'trusted': True}
+when = 'after the last'
+
+    @pytest.mark.parametrize(("kind", "detail"), [
+        ("page_event", {"event": "pointerdown", "trusted": True, "target": "Beta", "x": 690, "y": 352,
+                        "rect": [620, 330, 140, 44]}),
+        ("page_event", {"event": "click", "trusted": False, "target": None, "x": 5, "y": 5, "rect": None}),
+        ("click_handler", {"button": "Alpha", "rect": [40, 60, 140, 44], "dpr": 2}),
+        ("input", {"field": "Note", "value": "x"}),
+        ("moved", {"control": "Dodge", "by": "mousedown", "trusted": True}),
+    ])
+    @pytest.mark.parametrize("when", ["between two steps", "before the first", "after the last"])
+    def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when):
+        """Sol round 8: Alpha's interval ends at 1004 and the next step starts at 1010; a press at 1005 was
+        judged by no step. Every step still holds; the run does not, and names the record."""
+        def stray(steps, handlers, gestures):
+            t = {"between two steps": steps[0]["t_end"] + 2.0, "before the first": steps[0]["t_start"] - 1.5,
+                 "after the last": steps[-1]["t_end"] + 1.5}[when]
+            handlers.moved.append({"t": t, "n": next(_numbers), "type": kind, "detail": detail})
+    
+        verdict = probe.analyze(_run(tmp_path, stray))
+        assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
+        assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
+        assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+>       assert verdict["page_log"]["ambiguous"] == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ambiguous'
+
+tests/test_probe_filmed_page_pointer.py:475: KeyError
+___ test_a_filmed_click_on_its_point_sends_the_whole_sequence_at_that_point ____
+
+    def test_a_filmed_click_on_its_point_sends_the_whole_sequence_at_that_point():
+        (on,) = _click({"args": POINT})
+>       assert on["receipt"] == {"complete": True, "stopped": None, "count": 11, "last": "click", "retargeted": False,
+                                 "unfocused": False}
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff
+
+tests/test_filmed_delivery_functions.py:119: AssertionError
+_______ test_a_child_that_leaves_at_a_hover_event_gets_no_further_event ________
+
+    def test_a_child_that_leaves_at_a_hover_event_gets_no_further_event():
+        """Sol round 7 and 8: a child that the hover moved inside an unchanged container is not pressed
+        where it no longer is, and is not sent the rest of the hover events there either. A control whose
+        other child is under the point from the start is pressed on that child."""
+        swap = {"hit": "descendant", "on": {"event": "pointerover", "then": {"hit": "second"}}}
+        filmed, unfilmed, already = _click({"args": POINT, **swap}, swap, {"args": POINT, "hit": "second"})
+        assert filmed["receipt"] == _left(1, "pointerover")
+        assert [(e["type"], e["to"]) for e in filmed["sent"]] == [("pointerover", "icon")]
+        # without a point the sequence keeps its first target, as it always has
+        assert unfilmed["receipt"] == COMPLETE and {e["to"] for e in unfilmed["sent"]} == {"icon"}
+>       assert already["receipt"] == FILMED_COMPLETE and {e["to"] for e in already["sent"]} == {"label"}
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:225: AssertionError
+_______ test_a_press_and_a_release_on_two_children_click_what_holds_both _______
+
+    def test_a_press_and_a_release_on_two_children_click_what_holds_both():
+        """As a real click does: its target is the nearest common ancestor of what was pressed and what was
+        released. Here the focus the press gives rearranges the control; a listener of the press's own
+        events doing the same stops the sequence, because the mouse event is not sent apart from its
+        pointer event."""
+        by_focus, by_pointerdown = _click(
+            {"args": POINT, "hit": "descendant", "focus": {"then": {"hit": "second"}}},
+            {"args": POINT, "hit": "descendant", "on": {"event": "pointerdown", "then": {"hit": "second"}}})
+>       assert by_focus["receipt"] == FILMED_COMPLETE
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff
+
+tests/test_filmed_delivery_functions.py:236: AssertionError
+________________ test_a_keyword_cursor_shows_the_pointer[auto] _________________
+
+cursor = 'auto'
+
+    @pytest.mark.parametrize("cursor", SHOWN)
+    def test_a_keyword_cursor_shows_the_pointer(cursor):
+        click, insert = _click({"args": POINT, "cursor": cursor}), _insert({"args": [*POINT, "Ada"], "node": FIELD,
+                                                                               "cursor": cursor})
+>       assert click[0]["receipt"] == FILMED_COMPLETE and insert[0]["receipt"] == INSERTED
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:261: AssertionError
+_______________ test_a_keyword_cursor_shows_the_pointer[default] _______________
+
+cursor = 'default'
+
+    @pytest.mark.parametrize("cursor", SHOWN)
+    def test_a_keyword_cursor_shows_the_pointer(cursor):
+        click, insert = _click({"args": POINT, "cursor": cursor}), _insert({"args": [*POINT, "Ada"], "node": FIELD,
+                                                                               "cursor": cursor})
+>       assert click[0]["receipt"] == FILMED_COMPLETE and insert[0]["receipt"] == INSERTED
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:261: AssertionError
+_______________ test_a_keyword_cursor_shows_the_pointer[pointer] _______________
+
+cursor = 'pointer'
+
+    @pytest.mark.parametrize("cursor", SHOWN)
+    def test_a_keyword_cursor_shows_the_pointer(cursor):
+        click, insert = _click({"args": POINT, "cursor": cursor}), _insert({"args": [*POINT, "Ada"], "node": FIELD,
+                                                                               "cursor": cursor})
+>       assert click[0]["receipt"] == FILMED_COMPLETE and insert[0]["receipt"] == INSERTED
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:261: AssertionError
+________________ test_a_keyword_cursor_shows_the_pointer[text] _________________
+
+cursor = 'text'
+
+    @pytest.mark.parametrize("cursor", SHOWN)
+    def test_a_keyword_cursor_shows_the_pointer(cursor):
+        click, insert = _click({"args": POINT, "cursor": cursor}), _insert({"args": [*POINT, "Ada"], "node": FIELD,
+                                                                               "cursor": cursor})
+>       assert click[0]["receipt"] == FILMED_COMPLETE and insert[0]["receipt"] == INSERTED
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:261: AssertionError
+________________ test_a_keyword_cursor_shows_the_pointer[grab] _________________
+
+cursor = 'grab'
+
+    @pytest.mark.parametrize("cursor", SHOWN)
+    def test_a_keyword_cursor_shows_the_pointer(cursor):
+        click, insert = _click({"args": POINT, "cursor": cursor}), _insert({"args": [*POINT, "Ada"], "node": FIELD,
+                                                                               "cursor": cursor})
+>       assert click[0]["receipt"] == FILMED_COMPLETE and insert[0]["receipt"] == INSERTED
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:261: AssertionError
+____________ test_a_keyword_cursor_shows_the_pointer[-webkit-grab] _____________
+
+cursor = '-webkit-grab'
+
+    @pytest.mark.parametrize("cursor", SHOWN)
+    def test_a_keyword_cursor_shows_the_pointer(cursor):
+        click, insert = _click({"args": POINT, "cursor": cursor}), _insert({"args": [*POINT, "Ada"], "node": FIELD,
+                                                                               "cursor": cursor})
+>       assert click[0]["receipt"] == FILMED_COMPLETE and insert[0]["receipt"] == INSERTED
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:261: AssertionError
+_____________ test_a_keyword_cursor_shows_the_pointer[not-allowed] _____________
+
+cursor = 'not-allowed'
+
+    @pytest.mark.parametrize("cursor", SHOWN)
+    def test_a_keyword_cursor_shows_the_pointer(cursor):
+        click, insert = _click({"args": POINT, "cursor": cursor}), _insert({"args": [*POINT, "Ada"], "node": FIELD,
+                                                                               "cursor": cursor})
+>       assert click[0]["receipt"] == FILMED_COMPLETE and insert[0]["receipt"] == INSERTED
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:261: AssertionError
+_______________ test_a_keyword_cursor_shows_the_pointer[zoom-in] _______________
+
+cursor = 'zoom-in'
+
+    @pytest.mark.parametrize("cursor", SHOWN)
+    def test_a_keyword_cursor_shows_the_pointer(cursor):
+        click, insert = _click({"args": POINT, "cursor": cursor}), _insert({"args": [*POINT, "Ada"], "node": FIELD,
+                                                                               "cursor": cursor})
+>       assert click[0]["receipt"] == FILMED_COMPLETE and insert[0]["receipt"] == INSERTED
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:261: AssertionError
+____________________ test_every_cell_is_what_the_rule_gives ____________________
+
+matrix = [{'start': 'target', 'cancel': False, 'at': 0, 'name': 'moved', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'n...': False, 'at': 0, 'name': 'covered', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'name': 'covered', ...}, ...]
+
+    def test_every_cell_is_what_the_rule_gives(matrix):
+        """(1): the receipt and the events of the pinned function against the oracle's."""
+        wrong = []
+        for cell in matrix:
+            receipt, sent = oracle(cell["start"], cell["at"], cell["then"], cell["cancel"], cell["focusable"])
+            if cell["filmed"]["receipt"] != receipt or _pairs(cell["filmed"]) != sent:
+                wrong.append((cell["id"], cell["filmed"]["receipt"], receipt, _pairs(cell["filmed"])[6:], sent[6:]))
+>       assert not wrong, f"{len(wrong)} of {len(matrix)} cells differ; first: {wrong[0]}"
+E       AssertionError: 320 of 1178 cells differ; first: ('target sibling at 0', {'complete': True, 'stopped': None, 'count': 11, 'last': 'click', 'retargeted': False}, {'complete': True, 'stopped': None, 'count': 11, 'last': 'click', 'retargeted': False, 'unfocused': False}, [('pointerdown', 'label'), ('mousedown', 'label'), ('focus()', 'target'), ('pointerup', 'label'), ('mouseup', 'label'), ('click', 'label')], [('pointerdown', 'label'), ('mousedown', 'label'), ('focus()', 'target'), ('pointerup', 'label'), ('mouseup', 'label'), ('click', 'label')])
+E       assert not [('target sibling at 0', {'complete': True, 'stopped': None, 'count': 11, 'last': 'click', ...}, {'complete': True, 's...usedown', 'target'), ('focus()', 'target'), ('pointerup', 'target'), ('mouseup', 'target'), ('click', 'target')]), ...]
+
+tests/test_filmed_click_invariant.py:324: AssertionError
+_ test_no_event_and_no_focus_goes_to_an_element_that_is_not_under_the_pointer __
+
+matrix = [{'start': 'target', 'cancel': False, 'at': 0, 'name': 'moved', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'n...': False, 'at': 0, 'name': 'covered', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'name': 'covered', ...}, ...]
+
+    def test_no_event_and_no_focus_goes_to_an_element_that_is_not_under_the_pointer(matrix):
+        """(2): the invariant itself, by the stand-in page's own state and not the oracle's."""
+        off = [(cell["id"], e["type"], e["to"]) for cell in matrix for e in cell["filmed"]["sent"] if e["under"] is not True]
+>       assert not off, f"{len(off)} events off the pointer; first: {off[0]}"
+E       AssertionError: 100 events off the pointer; first: ('target sibling at 0, focusable outside', 'focus()', 'outer')
+E       assert not [('target sibling at 0, focusable outside', 'focus()', 'outer'), ('target onto_control at 0, focusable outside', 'focu...t 2, focusable outside', 'focus()', 'outer'), ('target onto_control at 2, focusable outside', 'focus()', 'outer'), ...]
+
+tests/test_filmed_click_invariant.py:330: AssertionError
+______________ test_the_focus_goes_only_to_an_element_of_the_node ______________
+
+matrix = [{'start': 'target', 'cancel': False, 'at': 0, 'name': 'moved', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'n...': False, 'at': 0, 'name': 'covered', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'name': 'covered', ...}, ...]
+
+    def test_the_focus_goes_only_to_an_element_of_the_node(matrix):
+        """Sol round 9: the focus was given to the nearest focusable element after a check of the pressed
+        one. For a control inside a focusable container that element is the container, which the ref does
+        not name. Now the focus has the events' check, on the element it is given to."""
+        inside = {"target", "icon", "label"}
+        focused = [(cell, e) for cell in matrix for e in cell["filmed"]["sent"] if e["type"] == "focus()"]
+>       assert focused and all(e["to"] in inside and e["under"] is True for _, e in focused)
+E       AssertionError: assert ([({'start': 'target', 'cancel': False, 'at': 0, 'name': 'sibling', ...}, {'type': 'focus()', 'to': 'target', 'under': ...get', 'cancel': False, 'at': 0, 'name': 'onto_control', ...}, {'type': 'focus()', 'to': 'outer', 'under': False}), ...] and False)
+E        +  where False = all(<generator object test_the_focus_goes_only_to_an_element_of_the_node.<locals>.<genexpr> at 0x11108e180>)
+
+tests/test_filmed_click_invariant.py:341: AssertionError
+_______________________ test_the_cells_the_reviews_found _______________________
+
+matrix = [{'start': 'target', 'cancel': False, 'at': 0, 'name': 'moved', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'n...': False, 'at': 0, 'name': 'covered', ...}, {'start': 'target', 'cancel': False, 'at': 0, 'name': 'covered', ...}, ...]
+
+    def test_the_cells_the_reviews_found(matrix):
+        """Each review's counterexample is a cell; these pin them by name so that the matrix cannot lose one
+        by a change to how it is built."""
+        # round 6: a control that moves when hovered is not pressed (now after the first event, not the sixth)
+        shy = _cell(matrix, "target", "moved", 1)
+        assert (shy["filmed"]["receipt"]["stopped"], shy["filmed"]["receipt"]["count"]) == ("left_pointer", 1)
+        # round 7: one that moves when pressed, or when the press focuses it, is not released or clicked
+        for at in (8, "focus"):
+            dodge = _cell(matrix, "target", "moved", at)
+            assert (dodge["filmed"]["receipt"]["stopped"], dodge["filmed"]["receipt"]["last"]) == ("left_pointer", "mousedown")
+            assert [e[0] for e in _pairs(dodge["filmed"])][6:8] == ["pointerdown", "mousedown"]
+        # round 7: a child the hover moved inside an unchanged control is not pressed where it was
+        swapped = _cell(matrix, "icon", "sibling", 1)
+        assert _pairs(swapped["filmed"]) == [("pointerover", "icon")]
+        # round 8: a child pressed and released whose mouseup listener moves it away gets no click
+        late = _cell(matrix, "icon", "sibling", 10)
+        assert late["filmed"]["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 10, "last": "mouseup",
+                                             "retargeted": False, "hidden": False}
+        assert _pairs(late["filmed"])[6:] == [("pointerdown", "icon"), ("mousedown", "icon"), ("focus()", "target"),
+                                              ("pointerup", "icon"), ("mouseup", "icon")]
+        # ... and without a point the same page is clicked on that child, where it went
+        assert _pairs(late["unfilmed"])[-1] == ("click", "icon")
+        # round 8: a mouse event is not sent apart from its pointer event
+        split = _cell(matrix, "icon", "sibling", 7)
+        assert split["filmed"]["receipt"]["last"] == "pointerdown" and "mousedown" not in [e[0] for e in _pairs(split["filmed"])]
+        # round 8: the click goes to what holds the pointerdown and pointerup targets, and only if it is
+        # under the pointer then: here the focus bared the sibling, which is released on, and the control
+        # holding both is clicked
+        both = _cell(matrix, "icon", "sibling", "focus")
+        assert both["filmed"]["receipt"]["complete"] is True
+        assert _pairs(both["filmed"])[-3:] == [("pointerup", "label"), ("mouseup", "label"), ("click", "target")]
+        # a pressed child that its own mouseup listener removed: the click goes to the control, which is
+        # under the pointer, as a browser sends it to the surviving ancestor
+        rerendered = _cell(matrix, "icon", "child_removed", 10)
+        assert rerendered["filmed"]["receipt"]["complete"] is True and _pairs(rerendered["filmed"])[-1] == ("click", "target")
+        # ... while one removed by its pointerdown listener is not sent the mousedown at all
+        early = _cell(matrix, "icon", "child_removed", 7)
+        assert early["filmed"]["receipt"]["last"] == "pointerdown" and early["filmed"]["receipt"]["stopped"] == "left_pointer"
+        # a pointer the page hides part way stops it, and says so
+        hidden = _cell(matrix, "target", "cursor_none", 9)
+        assert (hidden["filmed"]["receipt"]["stopped"], hidden["filmed"]["receipt"]["hidden"]) == ("left_pointer", True)
+        # round 9: a control in a focusable container. Nothing moves; the click completes on the control,
+        # the container is given no focus, and the receipt says so. Without a point it is focused.
+        nested = _cell(matrix, "icon", "covered", 11, focusable="outside")
+>       assert nested["filmed"]["receipt"] == {"complete": True, "stopped": None, "count": 11, "last": "click",
+                                               "retargeted": False, "unfocused": True}
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': True}
+E         Use -v to get more diff
+
+tests/test_filmed_click_invariant.py:444: AssertionError
+____ test_every_call_the_functions_make_is_a_read_or_a_checked_act[pinned] _____
+
+sources = {'pinned': "function(px, py) { const el = this; let count = 0, last = '', retargeted = false, hidden = false; if (!el....ht], clipped, transformed, visibility: doc.visibilityState, focus: [active, doc.hasFocus() === true], point }; }', ...}
+name = 'pinned'
+reads = {'MouseEvent', 'PointerEvent', 'closest', 'contains', 'elementFromPoint', 'getBoundingClientRect', ...}
+acts = {'dispatchEvent': 'const send = (type, event) => { if (filmed) under(target); else live(); const kept = target.dispatc...ntains(focusable)) unfocused = true; else { if (filmed) under(focusable); focusable.focus({ preventScroll: true }); }'}
+
+    @pytest.mark.parametrize(("name", "reads", "acts"), FUNCTIONS, ids=[name for name, _, _ in FUNCTIONS])
+    def test_every_call_the_functions_make_is_a_read_or_a_checked_act(sources, name, reads, acts):
+        """Sol round 9: the events were checked in the one function that sends them and the focus was a
+        second path beside it. This reads the function instead of trusting a list of what it does: every
+        method call in its text is one named above, each acting call is made once, in the statement that
+        checks its receiver, and nothing is done to the page by assignment or by a computed call."""
+        text = sources[name]
+        calls = _calls(text)
+        assert set(calls) == reads | set(acts), sorted(set(calls) ^ (reads | set(acts)))
+        for method, statement in acts.items():
+>           assert calls[method] == 1 and statement in text, method
+E           AssertionError: focus
+E           assert (1 == 1 and 'if (filmed && !el.contains(focusable)) unfocused = true; else { if (filmed) under(focusable); focusable.focus({ preventScroll: true }); }' in "function(px, py) { const el = this; let count = 0, last = '', retargeted = false, hidden = false; if (!el.isConnected...LEFT) return left('left_pointer'); throw error; } return { complete: true, stopped: null, count, last, retargeted }; }")
+
+tests/test_filmed_click_invariant.py:493: AssertionError
+_______________ test_the_rows_cover_every_outcome_the_driver_has _______________
+
+driver_source = '// SPDX-License-Identifier: MIT\n// Copyright (c) 2026 Cua AI, Inc.\n\n//! Browser state, preparation, navigation, in...    e.store.target_count(sid),\n            0,\n            "session end must clean the store"\n        );\n    }\n}\n'
+
+    def test_the_rows_cover_every_outcome_the_driver_has(driver_source):
+        """A new variant of the driver's click outcome, or a new reason from its insert function, has no
+        row until someone writes one, and this fails until they do."""
+        variants = set(re.findall(r"^    (\w+)", re.search(r"enum DomClickNext \{(.*?)\n\}", driver_source, re.DOTALL)[1],
+                                  re.MULTILINE))
+        assert variants == {"Readback", "Dialog", "Refuse", "Misplaced", "Left", "Partial", "Interrupted", "Failed"}
+        assert variants - {"Readback"} == {row[2] for row in ROWS if row[1] == "click"} - {"before"}
+        # a completed click carries one thing besides its completion, and it has its note
+>       readback = re.search(r"Readback \{(.*?)\}", re.search(r"enum DomClickNext \{(.*?)\n\}", driver_source, re.DOTALL)[1],
+                             re.DOTALL)[1]
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_filmed_outcome_reporting.py:183: TypeError
+_ test_a_completed_click_with_something_to_say_says_it_and_is_not_an_error[no focus given] _
+
+take = []
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x111088f40>
+filmed = <class 'tests.test_filmed_session.Poster'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107eb4980>
+driver_source = '// SPDX-License-Identifier: MIT\n// Copyright (c) 2026 Cua AI, Inc.\n\n//! Browser state, preparation, navigation, in...    e.store.target_count(sid),\n            0,\n            "session end must clean the store"\n        );\n    }\n}\n'
+note = ('no focus given', "dispatched synthetic DOM click on {ext} in {tab_id}; bounded semantic target state remained unchan...s the ref's node and is not part of it. Click that element to focus it", 'focus_not_given', 'the press moved no focus')
+
+    @pytest.mark.parametrize("note", NOTES, ids=[note[0] for note in NOTES])
+    def test_a_completed_click_with_something_to_say_says_it_and_is_not_an_error(take, world, fw, filmed, monkeypatch,
+                                                                                 driver_source, note):
+        """Sol round 9: a filmed click gives focus only to an element of the control. Where a pointer would
+        have focused a container of it, the click completes and the command says the focus did not move."""
+        _, text, mark, fact = note
+        text = text.format(ext=EXT, tab_id=TAB)
+>       assert UNFOCUSED in driver_source and COMPLETED.split("{ext}")[0] in driver_source
+E       assert (". The press moved no focus: the element a press would focus holds the ref's node and is not part of it. Click that element to focus it" in '// SPDX-License-Identifier: MIT\n// Copyright (c) 2026 Cua AI, Inc.\n\n//! Browser state, preparation, navigation, in...    e.store.target_count(sid),\n            0,\n            "session end must clean the store"\n        );\n    }\n}\n')
+
+tests/test_filmed_outcome_reporting.py:234: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_probe_filmed_page_pointer.py::test_the_whole_log_is_accounted_for_and_the_clocks_are_related
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_record_never_received-page_log-numbered_without_gaps]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_number_twice-page_log-numbered_without_gaps]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_record_without_a_number-page_log-numbered_without_gaps]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_an_unreadable_record-page_log-numbered_without_gaps]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_page_loaded_twice-page_log-one_load]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_no_fence-page_log-fenced_after_the_last_step]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_suffix_lost_from_before_the_fence-page_log-fenced_after_the_last_step]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold[_a_fence_the_page_made_unasked-page_log-fenced_after_the_last_step]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_fence_asked_for_before_the_last_step_ended_does_not_hold
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_number_missing_before_the_fence_does_not_hold_and_one_lost_after_it_is_outside_the_run
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_whose_time_reaches_across_a_steps_boundary_is_ambiguous[4.001-end]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_whose_time_reaches_across_a_steps_boundary_is_ambiguous[-0.001-start]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed[change-0.03]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed[change-0.204]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_made_at_the_moment_of_one_answered_promptly_is_placed_by_it
+FAILED tests/test_probe_filmed_page_pointer.py::test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happened_in
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[between two steps-page_event-detail0]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[between two steps-page_event-detail1]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[between two steps-click_handler-detail2]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[between two steps-input-detail3]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[between two steps-moved-detail4]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[before the first-page_event-detail0]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[before the first-page_event-detail1]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[before the first-click_handler-detail2]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[before the first-input-detail3]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[before the first-moved-detail4]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[after the last-page_event-detail0]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[after the last-page_event-detail1]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[after the last-click_handler-detail2]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[after the last-input-detail3]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_outside_every_step_is_not_ignored[after the last-moved-detail4]
+FAILED tests/test_filmed_delivery_functions.py::test_a_filmed_click_on_its_point_sends_the_whole_sequence_at_that_point
+FAILED tests/test_filmed_delivery_functions.py::test_a_child_that_leaves_at_a_hover_event_gets_no_further_event
+FAILED tests/test_filmed_delivery_functions.py::test_a_press_and_a_release_on_two_children_click_what_holds_both
+FAILED tests/test_filmed_delivery_functions.py::test_a_keyword_cursor_shows_the_pointer[auto]
+FAILED tests/test_filmed_delivery_functions.py::test_a_keyword_cursor_shows_the_pointer[default]
+FAILED tests/test_filmed_delivery_functions.py::test_a_keyword_cursor_shows_the_pointer[pointer]
+FAILED tests/test_filmed_delivery_functions.py::test_a_keyword_cursor_shows_the_pointer[text]
+FAILED tests/test_filmed_delivery_functions.py::test_a_keyword_cursor_shows_the_pointer[grab]
+FAILED tests/test_filmed_delivery_functions.py::test_a_keyword_cursor_shows_the_pointer[-webkit-grab]
+FAILED tests/test_filmed_delivery_functions.py::test_a_keyword_cursor_shows_the_pointer[not-allowed]
+FAILED tests/test_filmed_delivery_functions.py::test_a_keyword_cursor_shows_the_pointer[zoom-in]
+FAILED tests/test_filmed_click_invariant.py::test_every_cell_is_what_the_rule_gives
+FAILED tests/test_filmed_click_invariant.py::test_no_event_and_no_focus_goes_to_an_element_that_is_not_under_the_pointer
+FAILED tests/test_filmed_click_invariant.py::test_the_focus_goes_only_to_an_element_of_the_node
+FAILED tests/test_filmed_click_invariant.py::test_the_cells_the_reviews_found
+FAILED tests/test_filmed_click_invariant.py::test_every_call_the_functions_make_is_a_read_or_a_checked_act[pinned]
+FAILED tests/test_filmed_outcome_reporting.py::test_the_rows_cover_every_outcome_the_driver_has
+FAILED tests/test_filmed_outcome_reporting.py::test_a_completed_click_with_something_to_say_says_it_and_is_not_an_error[no focus given]
+50 failed, 606 passed in 23.58s

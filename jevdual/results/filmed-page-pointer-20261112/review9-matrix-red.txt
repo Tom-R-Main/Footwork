@@ -1,0 +1,60 @@
+        split = _cell(matrix, "icon", "sibling", 7)
+        assert split["filmed"]["receipt"]["last"] == "pointerdown" and "mousedown" not in [e[0] for e in _pairs(split["filmed"])]
+        # round 8: the click goes to what holds the pointerdown and pointerup targets, and only if it is
+        # under the pointer then: here the focus bared the sibling, which is released on, and the control
+        # holding both is clicked
+        both = _cell(matrix, "icon", "sibling", "focus")
+        assert both["filmed"]["receipt"]["complete"] is True
+        assert _pairs(both["filmed"])[-3:] == [("pointerup", "label"), ("mouseup", "label"), ("click", "target")]
+        # a pressed child that its own mouseup listener removed: the click goes to the control, which is
+        # under the pointer, as a browser sends it to the surviving ancestor
+        rerendered = _cell(matrix, "icon", "child_removed", 10)
+        assert rerendered["filmed"]["receipt"]["complete"] is True and _pairs(rerendered["filmed"])[-1] == ("click", "target")
+        # ... while one removed by its pointerdown listener is not sent the mousedown at all
+        early = _cell(matrix, "icon", "child_removed", 7)
+        assert early["filmed"]["receipt"]["last"] == "pointerdown" and early["filmed"]["receipt"]["stopped"] == "left_pointer"
+        # a pointer the page hides part way stops it, and says so
+        hidden = _cell(matrix, "target", "cursor_none", 9)
+        assert (hidden["filmed"]["receipt"]["stopped"], hidden["filmed"]["receipt"]["hidden"]) == ("left_pointer", True)
+        # round 9: a control in a focusable container. Nothing moves; the click completes on the control,
+        # the container is given no focus, and the receipt says so. Without a point it is focused.
+        nested = _cell(matrix, "icon", "covered", 11, focusable="outside")
+>       assert nested["filmed"]["receipt"] == {"complete": True, "stopped": None, "count": 11, "last": "click",
+                                               "retargeted": False, "unfocused": True}
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ... 'click', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'unfocused': True}
+E         Use -v to get more diff
+
+tests/test_filmed_click_invariant.py:444: AssertionError
+____ test_every_call_the_functions_make_is_a_read_or_a_checked_act[pinned] _____
+
+sources = {'pinned': "function(px, py) { const el = this; let count = 0, last = '', retargeted = false, hidden = false; if (!el....ht], clipped, transformed, visibility: doc.visibilityState, focus: [active, doc.hasFocus() === true], point }; }', ...}
+name = 'pinned'
+reads = {'MouseEvent', 'PointerEvent', 'closest', 'contains', 'elementFromPoint', 'getBoundingClientRect', ...}
+acts = {'dispatchEvent': 'const send = (type, event) => { if (filmed) under(target); else live(); const kept = target.dispatc...ntains(focusable)) unfocused = true; else { if (filmed) under(focusable); focusable.focus({ preventScroll: true }); }'}
+
+    @pytest.mark.parametrize(("name", "reads", "acts"), FUNCTIONS, ids=[name for name, _, _ in FUNCTIONS])
+    def test_every_call_the_functions_make_is_a_read_or_a_checked_act(sources, name, reads, acts):
+        """Sol round 9: the events were checked in the one function that sends them and the focus was a
+        second path beside it. This reads the function instead of trusting a list of what it does: every
+        method call in its text is one named above, each acting call is made once, in the statement that
+        checks its receiver, and nothing is done to the page by assignment or by a computed call."""
+        text = sources[name]
+        calls = _calls(text)
+        assert set(calls) == reads | set(acts), sorted(set(calls) ^ (reads | set(acts)))
+        for method, statement in acts.items():
+>           assert calls[method] == 1 and statement in text, method
+E           AssertionError: focus
+E           assert (1 == 1 and 'if (filmed && !el.contains(focusable)) unfocused = true; else { if (filmed) under(focusable); focusable.focus({ preventScroll: true }); }' in "function(px, py) { const el = this; let count = 0, last = '', retargeted = false, hidden = false; if (!el.isConnected...LEFT) return left('left_pointer'); throw error; } return { complete: true, stopped: null, count, last, retargeted }; }")
+
+tests/test_filmed_click_invariant.py:493: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_filmed_click_invariant.py::test_every_cell_is_what_the_rule_gives
+FAILED tests/test_filmed_click_invariant.py::test_no_event_and_no_focus_goes_to_an_element_that_is_not_under_the_pointer
+FAILED tests/test_filmed_click_invariant.py::test_the_focus_goes_only_to_an_element_of_the_node
+FAILED tests/test_filmed_click_invariant.py::test_the_cells_the_reviews_found
+FAILED tests/test_filmed_click_invariant.py::test_every_call_the_functions_make_is_a_read_or_a_checked_act[pinned]
+5 failed, 9 passed in 0.75s

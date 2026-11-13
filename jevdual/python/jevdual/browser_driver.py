@@ -279,7 +279,7 @@ def pointer_shown(cursor: Any) -> bool:
 
 def _hidden(cursor: Any, where: str) -> str:
     if cursor is None:
-        return f"the driver did not say what the pointer looks like {where} (it needs cua-driver locate8)"
+        return f"the driver did not say what the pointer looks like {where} (it needs cua-driver locate9)"
     return (f"the page hides or replaces the pointer {where} (cursor: {str(cursor)[:40]}); "
             "a filmed take needs the system pointer showing")
 
@@ -300,15 +300,15 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     ``DOM.getBoxModel`` also puts it. With ``point`` (where the pointer was sent), that point must lie
     inside the rectangle and hit the target too, with the pointer showing there."""
     if not isinstance(locate, dict):
-        return None, "the driver reported no position (it needs cua-driver locate8)"
+        return None, "the driver reported no position (it needs cua-driver locate9)"
     if locate.get("available") is not True:
         return None, f"the driver could not locate it ({locate.get('reason') or 'no reason given'})"
     if locate.get("world") != "isolated":
         return None, ("the driver did not read the page out of reach of the page's own script "
-                      "(it needs cua-driver locate8)")
+                      "(it needs cua-driver locate9)")
     if locate.get("filmed_delivery") is not True:
         return None, ("the driver does not say it checks the pointer's position when it delivers "
-                      "(it needs cua-driver locate8)")
+                      "(it needs cua-driver locate9)")
 
     def numbers(value: Any, keys: tuple[str, ...]) -> tuple[float, ...] | None:
         if not isinstance(value, dict):
@@ -333,7 +333,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     shown = locate.get("visibility_state")
     if shown != "visible":
         if shown is None:
-            return None, "the driver did not say whether the page is showing (it needs cua-driver locate8)"
+            return None, "the driver did not say whether the page is showing (it needs cua-driver locate9)"
         return None, f"the page is not showing (its document is {str(shown)[:20]!r}); its tab is not the one on screen"
     x, y, w, h = rect
     if x < -0.5 or y < -0.5 or x + w > view[0] + 0.5 or y + h > view[1] + 0.5:
@@ -341,7 +341,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     clipped = locate.get("clipped")
     if clipped is not False:
         if clipped is not True:
-            return None, "the driver did not say whether a container clips it (it needs cua-driver locate8)"
+            return None, "the driver did not say whether a container clips it (it needs cua-driver locate9)"
         return None, ("a scrolling or clipping container hides part of it; a filmed take acts only on a "
                       "target the film shows whole")
     hit = locate.get("hit")
@@ -374,7 +374,7 @@ def unfocused(locate: Any) -> str | None:
     field without focus is refused here, before the pointer moves. A filmed click on it gives it
     focus."""
     if not isinstance(locate, dict) or not isinstance(locate.get("focused"), bool):
-        return "the driver did not say whether it has focus (it needs cua-driver locate8)"
+        return "the driver did not say whether it has focus (it needs cua-driver locate9)"
     if not locate["focused"]:
         return "it does not have focus; click it first, then type"
     return None
@@ -744,7 +744,7 @@ class BrowserBridge:
         return {"filmed_point": (at[0] - origin[0], at[1] - origin[1])}
 
     #: Every reply the driver gives for a page click that is neither a completed click nor a refusal
-    #: (cua-driver locate8, tools.rs ``DomClickNext``), by the start of its text: a sequence that
+    #: (cua-driver locate9, tools.rs ``DomClickNext``), by the start of its text: a sequence that
     #: stopped part way, one that did not report completing, and one a dialog interrupted or followed.
     _PARTIAL_CLICK = re.compile(
         r"^sent part of a synthetic DOM click .*?: (the ref's node left the filmed point|"
@@ -756,6 +756,8 @@ class BrowserBridge:
     #: its one refusal of a filmed click that does not begin with what was sent: the text is the
     #: unfilmed sequence's and is left as it is there
     _GONE_BEFORE_CLICK = "the ref's node left its document before the click's first event"
+    #: what it adds to a completed filmed click whose press gave no focus
+    _UNFOCUSED_CLICK = ". The press moved no focus: "
     _PRESS_EVENTS = ("pointerdown", "mousedown", "pointerup", "mouseup")
 
     def _incomplete_click(self, eff: BrowserEffect, out: BrowserReply) -> BrowserEffect:
@@ -772,6 +774,11 @@ class BrowserBridge:
           pointer, or the node left its document): the press went and no click event did;
         - the node left its document during the hover events: no press went;
         - the sequence did not report completing, or a dialog opened: what was sent is unknown.
+
+        One completed click is marked too, without becoming an error: the driver gives focus only to
+        an element of the control, so for a control inside a focusable container the press moves no
+        focus where a pointer's would have focused the container. The click went; the person is told
+        the focus did not, and what to click for it.
 
         Outside a filmed take nothing is changed."""
         if self.filmed is None:
@@ -800,6 +807,10 @@ class BrowserBridge:
             mark = "click_interrupted"
             summary = (f"a {dialog[1]} dialog opened during the click and is blocking the page: whether the whole "
                        f"click was sent is unknown, {observe}")
+        elif self._UNFOCUSED_CLICK in text:
+            mark = "focus_not_given"
+            summary = ("the press moved no focus: the element a press would focus holds this control and is not "
+                       "part of it. The click was sent; click that element to focus it.")
         else:
             return eff
         return dataclasses.replace(eff, summary=summary, evidence=(*eff.evidence, mark))
@@ -840,8 +851,8 @@ class BrowserBridge:
         if not found:
             return eff
         findings = "; and ".join(why for _, why in found)
-        if any(mark.startswith("click_") for mark in eff.evidence):
-            # a click that did not complete says that first; what was found afterwards follows it
+        if any(mark.startswith("click_") or mark == "focus_not_given" for mark in eff.evidence):
+            # what the click itself has to say comes first; what was found afterwards follows it
             summary = f"{eff.summary} When it returned, {findings}."
         else:
             summary = f"the {eff.operation} was delivered, but when it returned {findings}. {eff.summary}"

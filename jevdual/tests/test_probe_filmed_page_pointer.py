@@ -60,14 +60,16 @@ def _seen(t, event, target, rect=None, point=None):
             "detail": {"event": event, "trusted": False, "target": target, "x": x, "y": y, "rect": rect}}
 
 
-def _as_the_page_posts(records, *, offset, until):
+def _as_the_page_posts(records, *, offset, until, fence):
     """``records`` (times in the probe's clock) as the page's log file holds them: a beat twice a second
-    until ``until``, every record numbered from one in the order it was made, stamped with the page's
-    own time (the probe's less ``offset``) and the probe's time of receiving it, and the last beat
-    carrying the page's time of each answer."""
+    until ``until``, the fence the probe asked for made at ``fence``, every record numbered from one in
+    the order it was made, stamped with the page's own time (the probe's less ``offset``) and the
+    probe's time of receiving it, and the last beat carrying the page's time of each answer."""
     records = [dict(r, n=r.get("n", 10**9)) for r in records]
     beats, t = [], 999.5
     while t <= until:
+        if t - 0.5 < fence <= t:
+            beats.append({"t": fence, "n": 10**9, "type": "fence", "detail": {"asked_in_answer_to": 0}})
         beats.append({"t": t, "n": 10**9, "type": "beat", "detail": {"acks": []}})
         t += 0.5
     rows = sorted([*records, *beats], key=lambda r: r["n"])  # stable: beats after, in time order
@@ -147,7 +149,8 @@ def _run(tmp_path, change=None, record=None, *, offset=0.0, page=None):
         steps.append(step)
     if change is not None:
         change([step for step in steps if step.get("expect")], handlers, gestures)
-    run = {"gestures_at_start": 0, "steps": steps, "chrome_closed": True,
+    # the probe asks for the fence once the last step's interval (a second past its end) has closed
+    run = {"gestures_at_start": 0, "steps": steps, "chrome_closed": True, "fence_asked": steps[-1]["t_end"] + 1.1,
            "chrome_launch": {"pid": 4321, "incarnation": 5.5}} | (record or {})
     if "setup" in run:
         index, code = run.pop("setup")
@@ -156,7 +159,7 @@ def _run(tmp_path, change=None, record=None, *, offset=0.0, page=None):
     (out / "session/session.json").write_text(json.dumps({"filmed": {"content": CONTENT}}))
     made = [{"t": 999.0, "n": 0, "type": "loaded", "detail": handlers.loaded}, *handlers, *handlers.inputs,
             *handlers.moved, *handlers.pressed]
-    rows = _as_the_page_posts(made, offset=offset, until=steps[-1]["t_end"] + 2.0)
+    rows = _as_the_page_posts(made, offset=offset, until=steps[-1]["t_end"] + 2.0, fence=steps[-1]["t_end"] + 1.3)
     if page is not None:
         page(rows)
     (out / "page-events.jsonl").write_text("".join(json.dumps(event) + "\n" for event in rows))
@@ -207,11 +210,18 @@ def test_the_whole_log_is_accounted_for_and_the_clocks_are_related(tmp_path):
     """FP46: what a run that went as predicted says of its own log and clocks."""
     verdict = probe.analyze(_run(tmp_path))
     log, clock = verdict["page_log"], verdict["clock"]
-    assert log["held"] and log["numbered_without_gaps"] and log["one_load"] and log["a_record_after_the_last_step"]
-    assert log["unaccounted"] == [] and log["step_intervals_apart"] is True
+    assert log["held"] and log["numbered_without_gaps"] and log["one_load"] and log["fenced_after_the_last_step"]
+    assert log["unaccounted"] == [] and log["ambiguous"] == [] and log["step_intervals_apart"] is True
+    # the run says through where it is accounted for: the fence, asked for after the last interval closed
+    fence = next(row for row in probe._jsonl(tmp_path / "out/page-events.jsonl") if row["type"] == "fence")
+    assert log["accounted_through"] == {"record": fence["n"], "asked_at": 1174.1} and fence["received"] > 1174.1
+    # every record of something done to the page is placed by its own post: made at most 4 ms before it
+    # was received and answered, so within 4 ms
+    assert "untimed" not in clock and clock["widest_action_record_s"] == 0.004
     assert clock["held"] and (clock["low_s"], clock["high_s"], clock["width_s"]) == (-0.002, 0.002, 0.004)
     assert abs(clock["offset_s"]) < 1e-6 and clock["answers"] == log["records"] - 1
     assert "post('beat', {acks: acks.splice(0, 60)})" in probe.FIXTURE and "acks.push([n, now()])" in probe.FIXTURE
+    assert "if (body === 'fence' && !fenced) { fenced = true; post('fence', {asked_in_answer_to: n}); }" in probe.FIXTURE
     assert (probe.MAX_CLOCK_WIDTH_S, probe.ACTION_RECORDS) == (0.02, ("page_event", "click_handler", "input", "moved"))
 
 
@@ -260,14 +270,34 @@ def _a_page_loaded_twice(rows):
     rows.append(dict(rows[0], n=len(rows) + 1))
 
 
-def _no_record_after_the_last_step(rows):
-    last = max(row["t"] for row in rows if row["type"] != "beat")
-    kept = [row for row in rows if row["t"] <= last]
-    kept[-1].setdefault("detail", {})
-    rows[:] = [dict(row, n=n) for n, row in enumerate(kept, start=1)]
-    beat = {"t": last, "n": len(rows) + 1, "type": "beat", "received": last + UP_S,
-            "detail": {"acks": [[row["n"], row["t"] + UP_S + DOWN_S] for row in rows]}}
-    rows.append(beat)
+def _renumbered(rows, kept):
+    """``kept`` as a whole log of its own: numbered from one, the last beat carrying every answer."""
+    kept = [dict(row, n=n) for n, row in enumerate(kept, start=1)]
+    for row in kept:
+        if row["type"] == "beat":
+            row["detail"] = {"acks": []}
+    last = next(row for row in reversed(kept) if row["type"] == "beat")
+    last["detail"]["acks"] = [[row["n"], row["t"] + UP_S + DOWN_S] for row in kept if row is not last]
+    rows[:] = kept
+
+
+def _no_fence(rows):
+    """Sol round 9: the records stop arriving at shutdown. Everything up to a beat made after the last
+    step is in hand, numbered whole, and nothing shows that the page made nothing more."""
+    _renumbered(rows, [row for row in rows if row["type"] != "fence"])
+
+
+def _a_suffix_lost_from_before_the_fence(rows):
+    """The fence and everything the page made in the second before it never arrived."""
+    fence = next(row for row in rows if row["type"] == "fence")
+    _renumbered(rows, [row for row in rows if row["t"] < fence["t"] - 1.0])
+
+
+def _a_fence_the_page_made_unasked(rows):
+    """A fence record from before the probe asked: it shows nothing about the end of the run."""
+    fence = next(row for row in rows if row["type"] == "fence")
+    fence["t"] -= 5.0
+    fence["received"] -= 5.0
 
 
 def _an_unreadable_record(rows):
@@ -282,7 +312,9 @@ def _an_unreadable_record(rows):
     (_a_record_without_a_number, "page_log", "numbered_without_gaps"),
     (_an_unreadable_record, "page_log", "numbered_without_gaps"),
     (_a_page_loaded_twice, "page_log", "one_load"),
-    (_no_record_after_the_last_step, "page_log", "a_record_after_the_last_step"),
+    (_no_fence, "page_log", "fenced_after_the_last_step"),
+    (_a_suffix_lost_from_before_the_fence, "page_log", "fenced_after_the_last_step"),
+    (_a_fence_the_page_made_unasked, "page_log", "fenced_after_the_last_step"),
 ])
 def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(tmp_path, page, what, says):
     """FP46: every step as predicted, and the run still does not hold, for the one reason given."""
@@ -292,8 +324,131 @@ def test_a_log_that_is_incomplete_or_clocks_that_cannot_be_related_do_not_hold(t
         assert verdict["clock"]["held"] is False and says in verdict["clock"]["why"] and verdict["page_log"]["held"]
     else:
         assert verdict["page_log"][says] is False and verdict["clock"]["held"] is True
-        assert [name for name in ("numbered_without_gaps", "one_load", "a_record_after_the_last_step")
-                if verdict["page_log"][name] is False] == [says]
+        false = [name for name in ("numbered_without_gaps", "one_load", "fenced_after_the_last_step")
+                 if verdict["page_log"][name] is False]
+        # a number missing below the fence also leaves the fence showing nothing
+        assert says in false and set(false) <= {says, "fenced_after_the_last_step"}
+        assert verdict["page_log"]["accounted_through"] is None or says != "fenced_after_the_last_step"
+
+
+def test_a_fence_asked_for_before_the_last_step_ended_does_not_hold(tmp_path):
+    """The fence shows the log whole up to the moment it was asked for. Asked while the last step's
+    interval was still open, it says nothing of the rest of that interval."""
+    verdict = probe.analyze(_run(tmp_path, record={"fence_asked": 1173.9}))
+    assert verdict["held"] is False and verdict["page_log"]["fenced_after_the_last_step"] is False
+    assert all(v["held"] for v in verdict["steps"]) and verdict["clock"]["held"]
+    assert probe.analyze(_run(tmp_path / "unasked", record={"fence_asked": None}))["held"] is False
+
+
+def test_a_number_missing_before_the_fence_does_not_hold_and_one_lost_after_it_is_outside_the_run(tmp_path):
+    """What the fence claims and what it does not. A record the page made before the fence and the
+    probe never got leaves a hole below the fence's number. One made after the fence and lost at
+    shutdown leaves the log whole through the fence: the run holds, and says through where."""
+    def before(rows):
+        fence = next(i for i, row in enumerate(rows) if row["type"] == "fence")
+        del rows[fence - 3]
+
+    def after(rows):
+        fence = next(i for i, row in enumerate(rows) if row["type"] == "fence")
+        assert rows[-1]["n"] > rows[fence]["n"] + 1
+        kept = rows[:-1]
+        kept[-1]["detail"]["acks"] = rows[-1]["detail"]["acks"][:-1]
+        rows[:] = kept
+
+    holed = probe.analyze(_run(tmp_path / "before", page=before))
+    assert holed["held"] is False and holed["page_log"]["fenced_after_the_last_step"] is False
+    assert holed["page_log"]["numbered_without_gaps"] is False
+    lost = probe.analyze(_run(tmp_path / "after", page=after))
+    fence = next(row for row in probe._jsonl(tmp_path / "after/out/page-events.jsonl") if row["type"] == "fence")
+    assert lost["held"] is True and lost["page_log"]["accounted_through"]["record"] == fence["n"]
+
+
+def _at(seconds_into, label="Beta", expect="clicked", *, late=None, unanswered=False):
+    """Move the page's records of one step to ``seconds_into`` it (and answer them ``late``, or not at
+    all), leaving the pointer's samples on the control around that moment."""
+    def change(steps, handlers, gestures):
+        step = _step(steps, label, expect)
+        t0, t = step["t_start"], step["t_start"] + seconds_into
+        x, y, w, h = RECTS[label, expect]
+        there = [CONTENT[0] + x + w / 2, CONTENT[1] + y + h / 2]
+        mine = [e for e in [*handlers, *handlers.pressed] if (e["detail"].get("target") or e["detail"].get("button")) == label
+                and t0 <= e["t"] <= t0 + 3]
+        assert len(mine) == 6
+        for e in mine:
+            e["t"] = t
+            e["late"], e["unanswered"] = late, unanswered
+        handlers.samples += [[round(t - 0.6 + 0.005 * n, 4), *there] for n in range(240)]
+
+    return change
+
+
+def _answers(rows):
+    """Apply what ``_at`` asked of the answers: later, or never."""
+    answers = rows[-1]["detail"]["acks"]
+    for row in rows:
+        late, unanswered = row.pop("late", None), row.pop("unanswered", False)
+        if unanswered:
+            answers[:] = [a for a in answers if a[0] != row["n"]]
+        elif late is not None:
+            for a in answers:
+                if a[0] == row["n"]:
+                    a[1] = row["t"] + late
+
+
+@pytest.mark.parametrize(("seconds_into", "where"), [(4.001, "end"), (-0.001, "start")])
+def test_a_record_whose_time_reaches_across_a_steps_boundary_is_ambiguous(tmp_path, seconds_into, where):
+    """Sol round 9: a record's time in the probe's clock is an interval, here 4 ms wide. Its midpoint
+    would put it a millisecond inside or outside the step; the truth can be on either side, so the run
+    does not hold and names the records, and it is not counted as inside or as outside."""
+    verdict = probe.analyze(_run(tmp_path, _at(seconds_into), page=_answers))
+    log = verdict["page_log"]
+    assert verdict["held"] is False and log["held"] is False and log["unaccounted"] == []
+    assert len(log["ambiguous"]) == 6 and {r["on"] for r in log["ambiguous"]} == {"Beta"}, (where, log)
+    assert verdict["clock"]["held"] and log["numbered_without_gaps"] and log["fenced_after_the_last_step"]
+    # 5 ms further in, the whole interval is inside and the same run holds
+    inside = probe.analyze(_run(tmp_path / "inside", _at(3.995 if where == "end" else 0.005), page=_answers))
+    assert inside["page_log"]["ambiguous"] == [] and inside["page_log"]["held"] is True
+
+
+@pytest.mark.parametrize(("change", "width"), [(_at(2.2, late=0.030), 0.030), (_at(2.2, unanswered=True), 0.204)])
+def test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed(tmp_path, change, width):
+    """FP54 (u): the answers to one click's posts came 30 ms after them, or never. The run's common
+    bounds still agree, from all the other posts; these six records are not placed by them, because
+    that would assume the two clocks kept one difference. Each is bounded by its own post, 30 ms wide,
+    or, with no answer of its own, below by the last record before it that was answered: the beat
+    200 ms earlier."""
+    verdict = probe.analyze(_run(tmp_path, change, page=_answers))
+    clock = verdict["clock"]
+    assert verdict["held"] is False and clock["held"] is False and clock["width_s"] <= 0.02
+    assert [r["on"] for r in clock["untimed"]] == ["Beta"] * 6 and "not placed within 20 ms" in clock["why"]
+    assert {r["width_s"] for r in clock["untimed"]} == {width} and clock["widest_action_record_s"] == width
+    # nothing else is wrong with the run: the step is judged over the wider interval and holds there
+    assert verdict["page_log"]["held"] and all(v["held"] for v in verdict["steps"])
+
+
+def test_a_record_made_at_the_moment_of_one_answered_promptly_is_placed_by_it(tmp_path):
+    """The page's clock does not run backwards, so a record is no earlier than any made at or before
+    its own page time. Here the click's posts were never answered, and a beat made at the same page
+    time was: the click is placed by the beat."""
+    verdict = probe.analyze(_run(tmp_path, _at(2.0, unanswered=True), page=_answers))
+    assert verdict["held"] is True and verdict["clock"]["widest_action_record_s"] == 0.004
+
+
+def test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happened_in(tmp_path):
+    """Sol round 9: a sample off the control 251 ms before the latest moment an event can have happened
+    is outside the window around that moment and inside the window around the earliest. The answers
+    here came 12 ms after the posts, so the interval is 12 ms wide and the run timed; the sample counts."""
+    def off(at):
+        def change(steps, handlers, gestures):
+            _at(2.2, late=0.012)(steps, handlers, gestures)
+            handlers.samples.append([_step(steps, "Beta", "clicked")["t_start"] + 2.202 - at, 5.0, 5.0])
+        return change
+
+    inside = probe.analyze(_run(tmp_path / "in", off(0.255), page=_answers))
+    assert inside["clock"]["held"] and inside["clock"]["widest_action_record_s"] == 0.012
+    assert _of(inside, "Beta", "clicked")["held"] is False and _of(inside, "Beta", "clicked")["samples_off_control"] == 5
+    outside = probe.analyze(_run(tmp_path / "out", off(0.265), page=_answers))
+    assert _of(outside, "Beta", "clicked")["held"] is True and outside["held"] is True
 
 
 @pytest.mark.parametrize(("kind", "detail"), [
@@ -317,6 +472,7 @@ def test_a_record_outside_every_step_is_not_ignored(tmp_path, kind, detail, when
     assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict["page_log"]
     assert [(r["type"], r["event"]) for r in verdict["page_log"]["unaccounted"]] == [(kind, detail.get("event"))]
     assert verdict["page_log"]["numbered_without_gaps"] and verdict["clock"]["held"]
+    assert verdict["page_log"]["ambiguous"] == []
 
 
 def test_step_intervals_that_overlap_do_not_hold(tmp_path):

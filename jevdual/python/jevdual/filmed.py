@@ -33,9 +33,10 @@ HELD_TOLERANCE_PT = 0.01
 #: what the page bridge adds to the evidence of a filmed page action that was not refused, for the
 #: command to say (``BrowserBridge._incomplete_click`` and ``_after_delivery``). The ``click_`` marks
 #: are a click that did not complete: stopped during its hover events, stopped after its press, or
-#: interrupted with what was sent unknown. The other two are what was found when a delivery returned:
-#: the pointer, or the scene, elsewhere.
-PAGE_MARKS = ("click_stopped_before_press", "click_stopped_after_press", "click_interrupted",
+#: interrupted with what was sent unknown. ``focus_not_given`` is a click that completed whose press
+#: gave no focus, because the element a press would focus is a container of the control. The other
+#: two are what was found when a delivery returned: the pointer, or the scene, elsewhere.
+PAGE_MARKS = ("click_stopped_before_press", "click_stopped_after_press", "click_interrupted", "focus_not_given",
               "pointer_left_during_delivery", "scene_changed_during_delivery")
 
 

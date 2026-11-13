@@ -1,0 +1,16 @@
+{
+ "tree": "the click sequence pinned at 4fadb53 (locate8)",
+ "cells": 1178,
+ "cells_that_differ_from_the_rule": 320,
+ "cells_that_differ_by_where_the_focusable_element_is": {
+  "node": 100,
+  "self": 53,
+  "outside": 100,
+  "none": 67
+ },
+ "sent_to_an_element_not_under_the_pointer_or_not_in_the_node": {
+  "focus() to outer": 100
+ },
+ "cells_with_a_focus_given_to_the_container": 100,
+ "cells_with_the_container_focusable": 247
+}

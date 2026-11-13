@@ -36,11 +36,26 @@
  use super::types::BindingQuality;
  
  /// Register the complete browser surface against one shared engine. Platform
-@@ -201,10 +201,40 @@
+@@ -195,16 +195,54 @@
+         .expect("DOM click action record must satisfy the stable contract")
+ }
+ 
++/// Added to a completed filmed click's text when its press gave no focus.
++const DOM_CLICK_UNFOCUSED_NOTE: &str = ". The press moved no focus: the element a press would \
++     focus holds the ref's node and is not part of it. Click that element to focus it";
++
+ /// What a DOM click sequence's reply says about its delivery. Only a
+ /// well-formed receipt counts: an exception, a missing value or any other
+ /// shape is an interrupted click, never a completed or an undelivered one.
  #[derive(Debug, PartialEq)]
  enum DomClickReceipt {
-     Completed,
+-    Completed,
 -    Detached { count: u64, last: String },
++    /// `unfocused`: a filmed click completed without giving the focus a press
++    /// would give, because the element it would go to is outside the node.
++    Completed {
++        unfocused: bool,
++    },
 +    Detached {
 +        count: u64,
 +        last: String,
@@ -78,7 +93,7 @@
  fn dom_click_receipt(reply: &Value) -> DomClickReceipt {
      if reply.get("exceptionDetails").is_some() {
          return DomClickReceipt::Interrupted("the sequence threw");
-@@ -213,12 +243,38 @@
+@@ -213,12 +251,40 @@
          return DomClickReceipt::Interrupted("no completion receipt");
      };
      let count = value.get("count").and_then(Value::as_u64);
@@ -88,7 +103,10 @@
          value.get("stopped"),
          count,
      ) {
-         (Some(true), Some(Value::Null), Some(_)) => DomClickReceipt::Completed,
+-        (Some(true), Some(Value::Null), Some(_)) => DomClickReceipt::Completed,
++        (Some(true), Some(Value::Null), Some(_)) => DomClickReceipt::Completed {
++            unfocused: value.get("unfocused").and_then(Value::as_bool) == Some(true),
++        },
 +        (Some(false), Some(Value::String(stopped)), Some(0)) if stopped == "not_under_pointer" => {
 +            DomClickReceipt::Misplaced { hidden }
 +        }
@@ -117,7 +135,18 @@
          (Some(false), Some(Value::String(stopped)), Some(count)) if stopped == "detached" => {
              match value.get("last").and_then(Value::as_str) {
                  Some(last) if count == 0 || !last.is_empty() => DomClickReceipt::Detached {
-@@ -241,6 +297,20 @@
+@@ -235,12 +301,29 @@
+ /// What a DOM click does after its sequence call returns.
+ #[derive(Debug, PartialEq)]
+ enum DomClickNext {
+-    /// The sequence completed: read the target back.
+-    Readback,
++    /// The sequence completed: read the target back. `unfocused` as in the
++    /// receipt.
++    Readback {
++        unfocused: bool,
++    },
+     /// A page dialog interrupted the sequence or is blocking the page.
      Dialog(super::cdp_ws::CdpDialogState),
      /// The ref's node left its document before the first event.
      Refuse,
@@ -138,9 +167,12 @@
      Partial {
          count: u64,
          last: String,
-@@ -268,12 +338,24 @@
+@@ -266,14 +349,26 @@
+         return DomClickNext::Dialog(open);
+     }
      match dom_click_receipt(&reply) {
-         DomClickReceipt::Completed => DomClickNext::Readback,
+-        DomClickReceipt::Completed => DomClickNext::Readback,
++        DomClickReceipt::Completed { unfocused } => DomClickNext::Readback { unfocused },
          DomClickReceipt::Detached { count: 0, .. } => DomClickNext::Refuse,
 +        DomClickReceipt::Misplaced { hidden } => DomClickNext::Misplaced { hidden },
 +        DomClickReceipt::Left {
@@ -164,7 +196,7 @@
      ActionExecutionRecord::builder(
          ActionEffect::Unverifiable,
          ActionTransport::BrowserCdpRuntimeFunction,
-@@ -283,13 +365,12 @@
+@@ -283,13 +378,12 @@
      .evidence(ActionEvidence {
          kind: EvidenceKind::EventReceipt,
          detail: format!(
@@ -180,7 +212,7 @@
      })
      .build()
      .expect("DOM click action record must satisfy the stable contract")
-@@ -549,7 +630,12 @@
+@@ -549,7 +643,12 @@
                  semantic_v2 joins accessibility, DOM, layout, and viewport state; \
                  ranks visible content before retained/offscreen state; and returns a \
                  semantic outline, typed action refs, content refs, scoped reads, and \
@@ -194,7 +226,7 @@
                  attached yet refuses with browser_consent_required or \
                  browser_requires_setup, and detail.next_call names the browser_prepare call \
                  that attaches it. Use this route for any web page in Chrome, Edge or Brave; \
-@@ -580,6 +666,29 @@
+@@ -580,6 +679,29 @@
                          "type": "string",
                          "description": "Opaque continuation minted by an earlier semantic_v2 response."
                      },
@@ -224,7 +256,7 @@
                      "include_screenshot": {
                          "type": "boolean",
                          "default": false,
-@@ -646,6 +755,35 @@
+@@ -646,6 +768,35 @@
                      .to_tool_result()
                  }
              };
@@ -260,10 +292,11 @@
              let snapshot_format = args
                  .opt_str("snapshot_format")
                  .unwrap_or_else(|| "dom_refs_v1".into());
-@@ -1303,6 +1441,21 @@
+@@ -1302,6 +1453,21 @@
+                             when explicitly requested. Dispatch does not prove the \
                              control activated; refresh page state and verify the \
                              expected postcondition."
-                     },
++                    },
 +                    "filmed_point": {
 +                        "type": "object",
 +                        "description": "Where a filmed pointer is, in viewport CSS px. With \
@@ -278,25 +311,24 @@
 +                            "y": { "type": "number" }
 +                        },
 +                        "required": ["x", "y"]
-+                    },
+                     },
                  },
                  "required": ["target_id", "tab_id"],
-                 "additionalProperties": true
-@@ -1376,6 +1529,13 @@
+@@ -1375,6 +1541,13 @@
+         }
          if route == "dom_event" && ext_ref.is_none() {
              return ToolResult::error("input_route=dom_event requires a ref");
-         }
++        }
 +        let filmed_point = match point_arg(&args, "filmed_point") {
 +            Ok(point) => point,
 +            Err(error) => return error,
 +        };
 +        if filmed_point.is_some() && route != "dom_event" {
 +            return ToolResult::error("filmed_point requires input_route=dom_event and a ref");
-+        }
+         }
          let foreground = match parse_delivery_mode(&args) {
              Ok(f) => f,
-             Err(e) => return ToolResult::error(e),
-@@ -1494,14 +1654,29 @@
+@@ -1494,14 +1667,29 @@
          // dom_event route: explicit opt-in only.
          if route == "dom_event" {
              let backend = backend_node_id.expect("checked above");
@@ -334,7 +366,7 @@
                  Ok(v) => v,
                  Err(_) => {
                      return BrowserRefusal::new(
-@@ -1556,46 +1731,52 @@
+@@ -1556,52 +1744,58 @@
                  .to_tool_result();
              }
              // Cursor feedback is best-effort and visual-only. A missing box
@@ -423,7 +455,25 @@
              let ext = ext_ref.as_deref().unwrap_or("?");
              let outcome = call_until_dialog(conn, cdp_target_id, click).await;
              return match dom_click_next(outcome, || conn.dialog_state(cdp_target_id)) {
-@@ -1648,6 +1829,54 @@
+-                DomClickNext::Readback => {
++                DomClickNext::Readback { unfocused } => {
+                     let observation = observe_dom_click(conn, cdp, &object_id, before).await;
+-                    let text = match observation.effect {
++                    let mut text = match observation.effect {
+                         ActionEffect::Confirmed => format!(
+                             "dispatched synthetic DOM click on {ext} in {tab_id}; bounded semantic \
+                              readback confirmed a target-state change"
+@@ -1617,6 +1811,9 @@
+                              page state and verify the expected postcondition"
+                         ),
+                     };
++                    if unfocused {
++                        text.push_str(DOM_CLICK_UNFOCUSED_NOTE);
++                    }
+                     let action_record = dom_click_action_record(&observation);
+                     ToolResult::text(text).with_action_record(action_record)
+                 }
+@@ -1648,6 +1845,54 @@
                      "the ref's node left its document before the click's first event",
                  )
                  .to_tool_result(),
@@ -478,7 +528,7 @@
                  DomClickNext::Partial { count, last } => {
                      let text = format!(
                          "sent part of a synthetic DOM click on {ext} in {tab_id}: the ref's node \
-@@ -1655,8 +1884,11 @@
+@@ -1655,8 +1900,11 @@
                           sent; application effect is unverifiable. Refresh page state and \
                           verify the expected postcondition"
                      );
@@ -492,7 +542,7 @@
                  }
                  DomClickNext::Interrupted(reason) => {
                      let text = format!(
-@@ -1876,11 +2108,387 @@
+@@ -1876,11 +2124,387 @@
          "dialog_id": dialog_capability_id(dialog.generation),
          "resolvable": !dialog.detached,
      })
@@ -881,7 +931,12 @@
      if quad.len() < 8 {
          return None;
      }
-@@ -1922,26 +2530,90 @@
+@@ -1918,30 +2542,109 @@
+ /// target is also rechecked to still be inside the ref's node, so a descendant
+ /// a handler moves elsewhere gets no further events, and the focus candidate is
+ /// chosen after that check. It returns `{ complete, stopped, count, last,
+-/// retargeted }`, counted in local primitives rather than page-replaceable
++/// retargeted }` (and `unfocused` when filmed and complete), counted in local primitives rather than page-replaceable
  /// built-ins: whether it completed, `"detached"` when it stopped early, how
  /// many events it dispatched and the last one's type, and whether it moved to
  /// the ref's node. An exception that interrupts it leaves no such receipt.
@@ -890,32 +945,45 @@
 +/// With a filmed point (`px`, `py`, both numbers) the caller runs it on the
 +/// node resolved into the isolated world, where every method it calls is the
 +/// browser's own, and it acts at that point instead of the centre under one
-+/// invariant: every event it dispatches, and the focus it gives, goes to an
-+/// element that is under the pointer in the same turn of script, immediately
-+/// before. "Under the pointer" (`aim`, `under`) means the ref's node is in
++/// invariant: everything it does to the page goes to an element that is
++/// under the pointer in the same turn of script, immediately before. It does
++/// two things to the page: it dispatches events and it gives focus. "Under the pointer" (`aim`, `under`) means the ref's node is in
 +/// its document, the point lies inside the node's rectangle, the hit test at
 +/// the point finds something inside the node, the pointer shows there (no
 +/// pointer lock, and a computed `cursor` on the hit element that is a single
 +/// keyword other than `none`; an image cannot be shown to be visible), and
 +/// the receiving element is that hit or holds it and is the node or inside
-+/// it. The check is made in `send`, the one place an event is dispatched, so
-+/// no event can be sent without it; JavaScript runs to completion, so the
-+/// page cannot act between the check and its event.
++/// it. The check is made in `send`, the one place an event is dispatched,
++/// and on the element about to be focused, directly before its `focus()`;
++/// JavaScript runs to completion, so the page cannot act between a check and
++/// what follows it. What the browser or the page then does of its own accord
++/// (a label passing the click to its control, a form submitting, a listener
++/// focusing something else) is the page's, and is not checked here.
 +///
 +/// Which element receives each event follows what one pointer gives:
 +///
 +/// | events                                   | receiver                        |
 +/// |------------------------------------------|---------------------------------|
 +/// | the six hover and move events            | the hit when the sequence began |
-+/// | `pointerdown`, then `mousedown`, focus   | a fresh hit at the press        |
++/// | `pointerdown`, then `mousedown`          | a fresh hit at the press        |
++/// | the focus                                | the nearest focusable element holding the pressed one, when it is inside the node |
 +/// | `pointerup`, then `mouseup`              | a fresh hit at the release      |
 +/// | `click`                                  | the nearest ancestor holding the `pointerdown` and `pointerup` targets |
 +///
 +/// A pair is never split: `mousedown` goes to the `pointerdown` target or is
-+/// not sent. When the pressed element has left the ref's node by the time of
-+/// the click (an icon re-rendered by its own `mouseup` listener), no ancestor
-+/// of it is in the node, and the click goes to the node itself, as a browser
-+/// sends it to the surviving ancestor; the check applies to the node then. Before anything is sent a failed check returns `stopped:
++/// not sent. The focus goes where a press gives it only when that element is
++/// the node or inside it. For a control inside a focusable container the
++/// element a press would focus is the container, which the ref does not
++/// name: no focus is given, the sequence goes on, and the completed receipt
++/// says `unfocused: true`. A press where nothing focusable holds the pressed
++/// element gives no focus either, and unlike a pointer it does not take the
++/// focus from where it was; a shadow host that passes focus on focuses what
++/// the browser chooses. When the pressed element has left the ref's node by
++/// the time of the click (an icon re-rendered by its own `mouseup`
++/// listener), no ancestor of it is in the node, and the click goes to the
++/// node itself, under the same check; a browser would send it to the nearest
++/// surviving ancestor of the pressed element, which can be deeper than the
++/// node. Before anything is sent a failed check returns `stopped:
 +/// "not_under_pointer"`; after that it returns `stopped: "left_pointer"`
 +/// naming the last event sent, and `hidden` says the failure was the pointer
 +/// not showing. So a control that leaves the pointer is not pressed, or is
@@ -924,12 +992,14 @@
 +/// still go somewhere and whose click follows its release without another
 +/// hit test; a stopped sequence leaves the page with the events it names
 +/// and no more. The node leaving its document is reported as `"detached"`,
-+/// as without a point. `retargeted` stays false: a filmed sequence never
-+/// falls back to the ref's node when its target has gone.
++/// as without a point. `retargeted` stays false: that field says the
++/// sequence without a point moved its remaining events to the ref's node when
++/// their target left, which a filmed sequence does not do; its receivers are
++/// the ones in the table.
 +const DOM_EVENT_CLICK_SEQUENCE: &str = "function(px, py) { \
      const el = this; \
 -    let count = 0, last = '', retargeted = false; \
-+    let count = 0, last = '', retargeted = false, hidden = false; \
++    let count = 0, last = '', retargeted = false, hidden = false, unfocused = false; \
      if (!el.isConnected) return { complete: false, stopped: 'detached', count, last, retargeted }; \
      const doc = el.ownerDocument; \
      const view = doc.defaultView; \
@@ -977,7 +1047,7 @@
      const P = (type, buttons, extra) => send(type, new view.PointerEvent(type, \
          { ...base, buttons, pointerId: 1, pointerType: 'mouse', isPrimary: true, \
            width: 1, height: 1, pressure: buttons ? 0.5 : 0, ...extra })); \
-@@ -1951,17 +2623,27 @@
+@@ -1951,19 +2654,33 @@
          P('pointerover', 0); P('pointerenter', 0, { bubbles: false, cancelable: false }); \
          M('mouseover', 0); M('mouseenter', 0, { bubbles: false, cancelable: false }); \
          P('pointermove', 0); M('mousemove', 0); \
@@ -988,7 +1058,11 @@
 -            live(); \
 +            if (filmed) under(target); else live(); \
              const focusable = target.closest('a[href],button,input,select,textarea,summary,[tabindex],[contenteditable=\"\"],[contenteditable=\"true\"]'); \
-             if (focusable && focusable.isConnected && typeof focusable.focus === 'function') focusable.focus({ preventScroll: true }); \
+-            if (focusable && focusable.isConnected && typeof focusable.focus === 'function') focusable.focus({ preventScroll: true }); \
++            if (focusable && focusable.isConnected && typeof focusable.focus === 'function') { \
++                if (filmed && !el.contains(focusable)) unfocused = true; \
++                else { if (filmed) under(focusable); focusable.focus({ preventScroll: true }); } \
++            } \
          } \
 +        if (filmed) target = under(el); \
          P('pointerup', 0); \
@@ -1005,13 +1079,14 @@
 +        if (error === LEFT) return left('left_pointer'); \
          throw error; \
      } \
++    if (filmed) return { complete: true, stopped: null, count, last, retargeted, unfocused }; \
      return { complete: true, stopped: null, count, last, retargeted }; \
-@@ -1983,6 +2665,42 @@
-     return !this.disabled && !this.readOnly && \
-         !['button','checkbox','color','file','hidden','image','radio','range','reset','submit']\
+ }";
+ 
+@@ -1985,6 +2702,42 @@
          .includes((this.type || 'text').toLowerCase()); \
-+}";
-+
+ }";
+ 
 +/// The filmed insert, evaluated ON the ref's node resolved into the isolated
 +/// world, where every method it calls is the browser's own. In one turn of
 +/// script it requires the node to be in its document, the active element of
@@ -1046,10 +1121,12 @@
 +    if (!(typeof c === 'string' && /^[a-z-]+$/.test(c) && c !== 'none')) return { inserted: false, why: 'pointer_hidden' }; \
 +    const done = doc.execCommand('insertText', false, text) === true; \
 +    return { inserted: done, why: done ? null : 'command_refused' }; \
- }";
- 
++}";
++
  const FOCUS_EMULATION_READY_CHECK: &str = "function() { \
-@@ -2169,6 +2887,20 @@
+     const root = this.getRootNode(); \
+     const active = ('activeElement' in root) ? root.activeElement : null; \
+@@ -2169,6 +2922,20 @@
                              with an empty text this clears the field. Replacement goes \
                              through the selection, so beforeinput/input still fire and \
                              framework state stays consistent."
@@ -1070,7 +1147,7 @@
                      },
                  },
                  "required": ["target_id", "tab_id", "ref", "text"],
-@@ -2233,6 +2965,13 @@
+@@ -2233,6 +3000,13 @@
              ));
          }
          let replace = args.opt_bool("replace").unwrap_or(false);
@@ -1084,10 +1161,11 @@
  
          let _mutation = match self
              .engine
-@@ -2283,6 +3022,135 @@
+@@ -2282,6 +3056,135 @@
+         };
          let conn = &validated.conn;
          let cdp = cdp_session.as_str();
- 
++
 +        if let Some((x, y)) = filmed_point {
 +            // One turn of script in the isolated world checks the node and
 +            // inserts. Nothing is focused, scrolled, selected or drawn first,
@@ -1216,11 +1294,10 @@
 +                _ => unknown("a malformed receipt".to_owned()),
 +            };
 +        }
-+
+ 
          if let Err(_e) = conn
              .call(
-                 Some(cdp),
-@@ -3380,7 +4248,164 @@
+@@ -3380,7 +4283,164 @@
  #[cfg(test)]
  mod tests {
      use super::*;
@@ -1228,7 +1305,7 @@
 +    fn located(value: Value) -> Value {
 +        json!({ "result": { "value": value } })
 +    }
- 
++
 +    #[test]
 +    fn locate_value_reports_the_rectangle_its_centre_and_the_viewport() {
 +        let reply = located(
@@ -1245,7 +1322,7 @@
 +            json!({ "width": 800.0, "height": 600.0, "zoom": 1.25, "scale": 2.0 })
 +        );
 +    }
-+
+ 
 +    #[test]
 +    fn locate_value_leaves_unread_checks_null_for_the_caller_to_refuse_on() {
 +        let reply = located(
@@ -1385,6 +1462,31 @@
      fn dialog(generation: u64) -> super::super::cdp_ws::CdpDialogState {
          super::super::cdp_ws::CdpDialogState {
              generation,
+@@ -3405,8 +4465,23 @@
+         } } });
+         assert_eq!(
+             dom_click_next(Ok(Ok(completed.clone())), || None),
+-            DomClickNext::Readback
++            DomClickNext::Readback { unfocused: false }
+         );
++        // a filmed click says when its press gave no focus; only `true` counts
++        for (unfocused, expected) in [
++            (json!(true), true),
++            (json!(false), false),
++            (json!("yes"), false),
++        ] {
++            let mut receipt = completed.clone();
++            receipt["result"]["value"]["unfocused"] = unfocused;
++            assert_eq!(
++                dom_click_next(Ok(Ok(receipt)), || None),
++                DomClickNext::Readback {
++                    unfocused: expected
++                }
++            );
++        }
+         assert_eq!(
+             dom_click_next(Ok(Ok(completed)), || Some(dialog(4))),
+             DomClickNext::Dialog(dialog(4))
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs
 @@ -115,6 +115,13 @@
@@ -1457,15 +1559,10 @@
                      .is_some_and(|declaration| declaration.contains("HTMLSelectElement")) =>
              {
                  MockReply::ok(json!({ "result": { "value": st.select_outcome.clone() } }))
-@@ -863,6 +896,57 @@
-                 let mut reply = MockReply::ok(json!({ "result": { "value": value } }));
-                 reply.delay = st.dom_click_readback_delay;
-                 reply
-+            }
-+            "Runtime.callFunctionOn"
-+                if call.params["functionDeclaration"]
-+                    .as_str()
-+                    .is_some_and(|function| {
+@@ -868,6 +901,57 @@
+                 if call.params["functionDeclaration"]
+                     .as_str()
+                     .is_some_and(|function| {
 +                        function.contains("'descendant'") && !function.contains("'pointerdown'")
 +                    }) =>
 +            {
@@ -1512,13 +1609,19 @@
 +                        "point": point,
 +                    } } })
 +                }))
-             }
-             "Runtime.callFunctionOn"
-                 if call.params["functionDeclaration"]
-@@ -3405,9 +3489,991 @@
++            }
++            "Runtime.callFunctionOn"
++                if call.params["functionDeclaration"]
++                    .as_str()
++                    .is_some_and(|function| {
+                         function.contains("isConnected") && !function.contains("'pointerdown'")
+                     }) =>
+             {
+@@ -3404,10 +3488,1019 @@
+     assert!(!state.dom_click_focused);
      assert_eq!(state.dom_click_generation, 0);
      drop(state);
-     assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
++    assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
 +}
 +
 +/// The execution context the mock gives the locate's isolated world.
@@ -1603,7 +1706,7 @@
 +        "no cursor is drawn"
 +    );
 +    assert!(recorded_calls(&f, "DOM.focus").is_empty());
-+    assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
+     assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
 +}
 +
 +#[tokio::test]
@@ -1666,6 +1769,33 @@
 +        "{text}"
 +    );
 +    assert!(result.action_record.is_none(), "nothing was dispatched");
++}
++
++#[tokio::test]
++async fn filmed_click_that_gave_no_focus_says_so_and_one_that_did_does_not() {
++    let note = "The press moved no focus: the element a press would focus holds the ref's node \
++                and is not part of it. Click that element to focus it";
++    for (unfocused, said) in [(true, true), (false, false)] {
++        let f = fixture_with(move |state| {
++            state.dom_click_sequence_reply = Some(json!({ "result": { "value": {
++                "complete": true, "stopped": null, "count": 11, "last": "click",
++                "retargeted": false, "unfocused": unfocused,
++            } } }));
++        })
++        .await;
++        let (target, tab) = bind(&f).await;
++        let snap = snapshot(&f, &target, &tab).await;
++        let main_ref = ref_of(&snap, "main", "main-btn");
++
++        let result = filmed_click(&f, &target, &tab, &main_ref, json!({})).await;
++
++        assert_ne!(result.is_error, Some(true), "{}", result_text(&result));
++        let text = result_text(&result);
++        assert!(text.starts_with("dispatched synthetic DOM click"), "{text}");
++        assert_eq!(text.ends_with(note), said, "{text}");
++        assert_eq!(text.contains("moved no focus"), said, "{text}");
++        assert!(result.action_record.is_some(), "the click was dispatched");
++    }
 +}
 +
 +#[tokio::test]
@@ -2257,9 +2387,9 @@
 +    );
 +    assert!(!sent_any_event(&f), "a locate sends no event");
 +    assert!(recorded_calls(&f, "DOM.scrollIntoViewIfNeeded").is_empty());
-+}
-+
-+#[tokio::test]
+ }
+ 
+ #[tokio::test]
 +async fn locate_ref_without_a_point_passes_the_page_function_no_arguments() {
 +    let f = fixture().await;
 +    let (target, tab) = bind(&f).await;
@@ -2397,9 +2527,9 @@
 +    assert_eq!(found["point"].get("cursor"), Some(&Value::Null), "{found}");
 +    assert_eq!(found["focused"], true, "{found}");
 +    assert_eq!(found["page_focused"], true, "{found}");
- }
- 
- #[tokio::test]
++}
++
++#[tokio::test]
 +async fn locate_ref_reports_no_position_without_an_isolated_world() {
 +    let f = fixture_with(|state| state.isolated_world_unavailable = true).await;
 +    let (target, tab) = bind(&f).await;
@@ -2507,7 +2637,7 @@
  async fn dom_event_click_checks_its_node_is_connected_before_any_event() {
      let f = fixture().await;
      let (target, tab) = bind(&f).await;
-@@ -3560,7 +4626,13 @@
+@@ -3560,7 +4653,22 @@
      );
      assert!(!declaration.contains(".push("), "{declaration}");
      assert!(
@@ -2519,6 +2649,15 @@
 +            "const send = (type, event) => { if (filmed) under(target); else live(); \
 +             const kept = target.dispatchEvent(event); count += 1; last = type; return kept; };"
 +        ) && declaration.matches(".dispatchEvent(").count() == 1,
++        "{declaration}"
++    );
++    assert!(
++        // and the one place focus is given checks the element it is given to,
++        // which a filmed click focuses only inside the ref's node
++        declaration.contains(
++            "if (filmed && !el.contains(focusable)) unfocused = true; \
++             else { if (filmed) under(focusable); focusable.focus({ preventScroll: true }); }"
++        ) && declaration.matches(".focus(").count() == 1,
          "{declaration}"
      );
      assert!(result_text(&result).contains("dispatched synthetic DOM click"));

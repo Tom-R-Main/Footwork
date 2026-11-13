@@ -49,23 +49,34 @@ by their order. A clicked step needs the page to have seen exactly ``pointerdown
 ``pointerup``, ``mouseup``, ``click``, in that order, all on its control, each at a point inside the
 control's rectangle as it was at that event; a typed step exactly one ``input``; Dodge exactly
 ``pointerdown`` and ``mousedown``; Shy and every refused step none at all. For every one of those
-events, the probe's own samples from 250 ms before it to 250 ms after must all lie on that rectangle on
-screen, at least twenty of them, with no gap between consecutive samples or to either end of that window
-longer than 50 ms. The verdict needs a device pixel ratio of 2, the case in which page and screen units
+events, the probe's own samples from 250 ms before the earliest moment it can have happened to 250 ms
+after the latest must all lie on that rectangle on screen, at least twenty of them, with no gap between
+consecutive samples or to either end of that window longer than 50 ms. The verdict needs a device pixel ratio of 2, the case in which page and screen units
 could differ, and the page's own record that its replaced hit test answers Forged.
 
-Three things make that reading sound, and the run does not hold without them (FP46):
+Three things make that reading sound, and the run does not hold without them (FP46, FP54):
 
+- the page's clock and the probe's are two clocks, so a page record has no exact time in the probe's.
+  It has an interval. The probe received the record at a time of its own, R, so the record was made
+  before R; and the page reports, by its own clock, how long after making the record it had the answer,
+  d, so the record was made after R - d. Records made earlier by the page's clock bound it below too,
+  and later ones above (``_timer``). Nothing here assumes the two clocks keep a constant difference.
+  A record of something done to the page must be placed within 20 ms this way, and everything read
+  against it uses the whole interval: the samples must hold from 250 ms before its earliest moment to
+  250 ms after its latest. As a check on the run, the difference between the clocks is also bounded
+  from all the posts together (``_clock``); bounds that cross mean a clock was changed;
 - every press, release, insertion, click handler, input and move the page recorded, at any time in the
-  run, must lie inside the interval of exactly one tried step, where it is judged. A record between two
-  steps is not ignored;
+  run, must lie, by its whole interval, inside the interval of exactly one tried step, where it is
+  judged. A record between two steps is not ignored, and one whose interval reaches across the start or
+  the end of a step is ambiguous and the run does not hold. Each step judges every record that could
+  lie in it;
 - the page numbers every record it makes, and the numbers received must run from one with none missing
-  or repeated, from a single load, with a record made after the last step's interval ended, so nothing
-  the page made before that is missing;
-- the page's clock and the probe's are two clocks. Each of the page's posts was made at a page time,
-  received at a probe time, and answered at a later page time, which the page reports back; so the
-  difference between the clocks is bounded on both sides, and the bounds must agree within 20 ms
-  (``_clock``). Page times are converted by it before anything is matched to a step or to a sample.
+  or repeated, from a single load, through a fence. When the last step's interval has closed, the
+  probe's server answers the page's next post with a request for a fence; the page makes its fence
+  record only on reading that answer, so the fence was made after the interval closed whatever the
+  clocks say, and every record the page made before it has a lower number. The probe waits for the
+  fence before it closes Chrome. The run is accounted for through the fence; what the page did after
+  it, if anything, is outside the measurement and the verdict claims nothing about it.
 
 What the samples cannot show: where the pointer was between two of them. They are about 5 ms apart and
 at most 50; an excursion off a control and back inside one gap is not excluded by this probe.
@@ -89,8 +100,10 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import bisect
 import itertools
 import json
+import math
 import os
 import re
 import signal
@@ -165,6 +178,8 @@ SAMPLE_EVERY_S = 0.005
 #: the two bounds on the difference between the probe's clock and the page's must agree this closely
 #: for a page time to be read against the pointer samples (FP46)
 MAX_CLOCK_WIDTH_S = 0.02
+#: how long the probe waits for the page's fence record once it has asked for it
+FENCE_WAIT_S = 6.0
 #: the page's records of something done to it; each must fall in one tried step's interval
 ACTION_RECORDS = ("page_event", "click_handler", "input", "moved")
 
@@ -206,10 +221,16 @@ let seq = 0;
 // when each post was answered, by this page's clock: with the time it was made and the probe's time of
 // receiving it, that bounds the difference between the two clocks on both sides
 const acks = [];
+// the fence: the probe's server asks for it in an answer once the last step's interval has closed, and
+// the record is made here, on reading that answer, so it is later than the asking whatever the clocks
+// say, and every record made before it has a lower number
+let fenced = false;
 const post = (type, detail) => {
   const n = ++seq;
   fetch('/log', {method: 'POST', keepalive: true, body: JSON.stringify({t: now(), n, type, detail})})
-    .then(() => { acks.push([n, now()]); }, () => {});
+    .then((answer) => { acks.push([n, now()]); return answer.status === 200 ? answer.text() : ''; })
+    .then((body) => { if (body === 'fence' && !fenced) { fenced = true; post('fence', {asked_in_answer_to: n}); } },
+          () => {});
 };
 // a record twice a second whatever else happens: it carries the answers, and one made after the last
 // step shows that everything numbered before it has arrived
@@ -337,12 +358,16 @@ class _Joined:
             thread.join(timeout=timeout)
 
 
-def _bracket(samples, t: float, rect) -> dict:
-    """The probe's own pointer samples around page time ``t`` against screen rectangle ``rect``: how
-    many there are in the window, how many lie off the rectangle, and the longest stretch of the window
-    without one (between consecutive samples, or between an end of the window and the sample nearest
-    it). ``held`` needs enough of them, none off, and no such stretch longer than ``MAX_GAP_S``."""
-    low, high = t - DELIVERY_WINDOW_S, t + DELIVERY_WINDOW_S
+def _bracket(samples, earliest: float, latest: float, rect) -> dict:
+    """The probe's own pointer samples around a page record made between ``earliest`` and ``latest``
+    (probe time), against screen rectangle ``rect``: how many there are in the window, how many lie off
+    the rectangle, and the longest stretch of the window without one (between consecutive samples, or
+    between an end of the window and the sample nearest it). The window runs from ``DELIVERY_WINDOW_S``
+    before the earliest moment to as long after the latest. ``held`` needs enough samples, none off,
+    and no such stretch longer than ``MAX_GAP_S``; a record with no bounded time does not hold."""
+    if not (math.isfinite(earliest) and math.isfinite(latest)) or earliest > latest:
+        return {"samples": 0, "off_control": 0, "untimed": True, "held": False}
+    low, high = earliest - DELIVERY_WINDOW_S, latest + DELIVERY_WINDOW_S
     around = sorted(sample for sample in samples or [] if low <= sample[0] <= high)
     edges = [low, *(sample[0] for sample in around), high]
     gap = max(later - earlier for earlier, later in itertools.pairwise(edges))
@@ -359,8 +384,9 @@ def _clock(received: list[dict]) -> dict:
     ``t + offset <= received <= r + offset``, so every record bounds the offset above by
     ``received - t`` and every answered one bounds it below by ``received - r``. The page reports its
     answers in its ``beat`` records. ``held`` needs both bounds, not crossed (crossed bounds mean one of
-    the clocks was changed during the run), and within ``MAX_CLOCK_WIDTH_S`` of each other; the offset
-    used is their midpoint."""
+    the clocks was changed during the run), and within ``MAX_CLOCK_WIDTH_S`` of each other. This is a
+    check on the run and assumes one constant difference; no record's time is taken from it
+    (``_timer``). ``offset_s`` is the midpoint, for the reader."""
     made = {e["n"]: e for e in received if isinstance(e.get("n"), int)}
     highs, lows = [], []
     for e in received:
@@ -385,6 +411,48 @@ def _clock(received: list[dict]) -> dict:
     return {"low_s": round(low, 4), "high_s": round(high, 4), "width_s": round(width, 4),
             "offset_s": (low + high) / 2, "posts": len(highs), "answers": len(lows),
             "held": why is None, **({"why": why} if why else {})}
+
+
+def _timer(received: list[dict]):
+    """``bounds(page_t)``: the earliest and the latest probe time at which something that happened at
+    page time ``page_t`` can have happened, from the page's posts alone.
+
+    A record made at page time ``t`` was received at probe time ``R``, so it was made before ``R``.
+    If the page had its answer at page time ``r``, then ``r - t`` of page time passed between making
+    it and a moment after the probe received it, so it was made after ``R - (r - t)``. The page's
+    clock does not run backwards (one load, ``performance.now``), so anything at ``page_t`` is no
+    earlier than every record made at or before ``page_t`` and no later than every record made at or
+    after it. That gives the bounds, with no difference between the two clocks assumed constant: only
+    that both run at the same rate over the few milliseconds a post takes to be answered. Either bound
+    is infinite when no record gives it."""
+    answered: dict[int, float] = {}
+    for e in received:
+        answers = (e.get("detail") or {}).get("acks") if e.get("type") == "beat" else None
+        for answer in answers if isinstance(answers, list) else []:
+            try:
+                n, at = answer
+                answered.setdefault(int(n), float(at))
+            except (TypeError, ValueError):
+                pass
+    rows = []
+    for e in received:
+        try:
+            t, got = float(e["t"]), float(e["received"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        took = answered.get(e.get("n")) if isinstance(e.get("n"), int) else None
+        took = took - t if took is not None else None
+        rows.append((t, got - took if took is not None and took >= 0 else -math.inf, got))
+    rows.sort()
+    times = [row[0] for row in rows]
+    earliest = list(itertools.accumulate((row[1] for row in rows), max))
+    latest = list(itertools.accumulate((row[2] for row in reversed(rows)), min))[::-1]
+
+    def bounds(page_t: float) -> tuple[float, float]:
+        before, after = bisect.bisect_right(times, page_t), bisect.bisect_left(times, page_t)
+        return (earliest[before - 1] if before else -math.inf, latest[after] if after < len(rows) else math.inf)
+
+    return bounds
 
 
 def _rect(value) -> list[float] | None:
@@ -434,10 +502,13 @@ def analyze(out: Path) -> dict:
     numbers = [e.get("n") for e in received]
     numbered = (bool(numbers) and all(isinstance(n, int) for n in numbers)
                 and sorted(numbers) == list(range(1, len(numbers) + 1)))
-    # page times in the probe's clock from here on; a run whose clocks cannot be related is read as it
-    # stands and does not hold
-    offset = clock["offset_s"] if clock["held"] else 0.0
-    events = [e | {"t": e["t"] + offset} for e in received if isinstance(e.get("t"), (int, float))]
+    # each record with the interval of the probe's clock it was made in; "t" is the latest moment
+    bounds = _timer(received)
+    events = []
+    for e in received:
+        if isinstance(e.get("t"), (int, float)):
+            earliest, latest = bounds(e["t"])
+            events.append(e | {"page_t": e["t"], "t_lo": earliest, "t": latest})
     # in the order the page made them
     events.sort(key=lambda e: (not isinstance(e.get("n"), int), e.get("n") if isinstance(e.get("n"), int) else 0))
     handlers = [e for e in events if e.get("type") == "click_handler"]
@@ -457,7 +528,9 @@ def analyze(out: Path) -> dict:
         window = (step["t_start"], step["t_end"] + 1.0)
 
         def during(logged, key, window=window, label=label):
-            mine = [(e.get("detail") or {}) | {"t": e["t"]} for e in logged if window[0] <= e["t"] <= window[1]]
+            # every record that could lie in the step: its interval reaches into the step's
+            mine = [(e.get("detail") or {}) | {"t": e["t"], "t_lo": e["t_lo"], "page_t": e["page_t"]}
+                    for e in logged if e["t_lo"] <= window[1] and e["t"] >= window[0]]
             return mine, [e for e in mine if e.get(key) == label]
 
         clicks, my_clicks = during(handlers, "button")
@@ -501,7 +574,8 @@ def analyze(out: Path) -> dict:
                     not positioned or _inside((float(event["x"]), float(event["y"])), rect))
             except (KeyError, TypeError, ValueError):
                 inside = False
-            around = _bracket(samples, event["t"], on_screen(rect)) if rect is not None else {"held": False}
+            around = (_bracket(samples, event["t_lo"], event["t"], on_screen(rect)) if rect is not None
+                      else {"held": False})
             judged.append({"event": event.get("event"), "rect": rect, "inside": inside, **around})
         v["events"] = judged
         arrived = (len(new) == 1 and new[0].get("kind") == "approach" and new[0].get("label") == label
@@ -510,8 +584,13 @@ def analyze(out: Path) -> dict:
         if record is not None:
             pointer = record.get("last_trusted_pointer") or {}
             v["pointer_target"] = pointer.get("target")
-            # the pointer event's time is the page's own; the record's is already the probe's
-            v["pointer_during_step"] = bool(pointer.get("t") and window[0] <= pointer["t"] + offset <= record["t"])
+            # the pointer event is not a post: it is bounded by the posts made around it, and it came
+            # before the record by the page's own clock
+            try:
+                v["pointer_during_step"] = bool(window[0] <= bounds(float(pointer["t"]))[0]
+                                                and float(pointer["t"]) <= record["page_t"])
+            except (KeyError, TypeError, ValueError):
+                v["pointer_during_step"] = False
             try:
                 v["pointer_inside"] = rect is not None and _inside((float(pointer["x"]), float(pointer["y"])), rect)
             except (KeyError, TypeError, ValueError):
@@ -522,7 +601,7 @@ def analyze(out: Path) -> dict:
                 v["value"] = record.get("value")
             if expect not in DELIVERED and rect is not None:
                 # the pointer when the control's own listener moved it
-                v["moved"] = _bracket(samples, record["t"], on_screen(rect))
+                v["moved"] = _bracket(samples, record["t_lo"], record["t"], on_screen(rect))
         if rect is not None and arrived:
             v["control_screen_rect"] = on_screen(rect)
             v["gesture_end"] = new[0]["final_location"]
@@ -557,21 +636,47 @@ def analyze(out: Path) -> dict:
     loaded = next((e.get("detail") or {} for e in events if e.get("type") == "loaded"), {})
     # the Forged step tests something only if the page's replaced hit test does answer Forged there
     forgery = loaded.get("page_says_at_forged") == "Forged" and loaded.get("browser_says_at_forged") != "Forged"
-    # every record of something done to the page belongs to one tried step, whose verdict judged it
+    # every record of something done to the page belongs, by the whole interval it can have been made
+    # in, to one tried step, whose verdict judged it
     windows = [(step["t_start"], step["t_end"] + 1.0) for step in tried]
     apart = all(earlier[1] <= later[0] for earlier, later in itertools.pairwise(windows))
-    unaccounted = [{"type": e.get("type"), "event": (e.get("detail") or {}).get("event"),
-                    "on": next((e["detail"][key] for key in ("target", "button", "field", "control")
-                                if key in (e.get("detail") or {})), None), "t": round(e["t"], 3)}
-                   for e in events if e.get("type") in ACTION_RECORDS
-                   and not any(low <= e["t"] <= high for low, high in windows)]
-    # nothing the page made is missing: its numbers are whole, from one load, and a record made after
-    # the last step's interval has arrived
+
+    def named(e, **more):
+        when = [round(t, 3) if math.isfinite(t) else None for t in (e["t_lo"], e["t"])]
+        return {"type": e.get("type"), "event": (e.get("detail") or {}).get("event"), "n": e.get("n"),
+                "on": next((e["detail"][key] for key in ("target", "button", "field", "control")
+                            if key in (e.get("detail") or {})), None), "between": when, **more}
+
+    actions = [e for e in events if e.get("type") in ACTION_RECORDS]
+    unaccounted, ambiguous, untimed = [], [], []
+    for e in actions:
+        width = e["t"] - e["t_lo"]
+        if not 0 <= width <= MAX_CLOCK_WIDTH_S:
+            untimed.append(named(e, width_s=round(width, 4) if math.isfinite(width) else None))
+        if any(low <= e["t_lo"] and e["t"] <= high for low, high in windows):
+            continue
+        # not wholly inside a step: it reaches into one across its start or its end, or lies in none
+        (ambiguous if any(e["t_lo"] <= high and e["t"] >= low for low, high in windows) else unaccounted).append(named(e))
+    if untimed:
+        clock = clock | {"held": False, "untimed": untimed}
+        clock.setdefault("why", f"{len(untimed)} records of something done to the page are not placed within "
+                                f"{MAX_CLOCK_WIDTH_S * 1000:.0f} ms by their own posts")
+    widths = [e["t"] - e["t_lo"] for e in actions if math.isfinite(e["t"] - e["t_lo"])]
+    clock["widest_action_record_s"] = round(max(widths), 4) if widths else None
+    # nothing the page made is missing: its numbers are whole, from one load, through a fence the page
+    # made because the probe asked for it after the last step's interval had closed
     one_load = sum(1 for e in received if e.get("type") == "loaded") == 1
-    after_last = bool(windows) and any(e["t"] >= windows[-1][1] for e in events)
+    fence = next((e for e in received if e.get("type") == "fence"), None)
+    asked = run.get("fence_asked")
+    fenced = bool(windows and fence is not None and isinstance(fence.get("n"), int)
+                  and isinstance(asked, (int, float)) and asked >= windows[-1][1]
+                  and isinstance(fence.get("received"), (int, float)) and fence["received"] >= asked
+                  and set(range(1, fence["n"] + 1)) <= {n for n in numbers if isinstance(n, int)})
     log = {"records": len(received), "numbered_without_gaps": numbered, "one_load": one_load,
-           "a_record_after_the_last_step": after_last, "step_intervals_apart": apart, "unaccounted": unaccounted,
-           "held": numbered and one_load and after_last and apart and not unaccounted}
+           "fenced_after_the_last_step": fenced,
+           "accounted_through": {"record": fence.get("n"), "asked_at": asked} if fenced else None,
+           "step_intervals_apart": apart, "unaccounted": unaccounted, "ambiguous": ambiguous,
+           "held": numbered and one_load and fenced and apart and not unaccounted and not ambiguous}
     return {"steps": verdicts, "complete": complete, "gamma_clicked_after_scrolling": scrolled,
             "clock": clock, "page_log": log,
             "pointer_samples": None if samples is None else len(samples),
@@ -693,7 +798,8 @@ def main() -> None:
     session = out / "session"
     env = dict(os.environ)
     probe_page_effects.FIXTURE = FIXTURE
-    server, fixture_port = probe_page_effects._serve(out)
+    fence = threading.Event()
+    server, fixture_port = probe_page_effects._serve(out, answer=lambda _record: b"fence" if fence.is_set() else None)
     url = f"http://127.0.0.1:{fixture_port}/"
     record: dict = {"gate": _wait_idle(), "front_pid_at_start": _front_pid(), "fixture": url, "steps": []}
     steps: list[dict] = record["steps"]
@@ -744,9 +850,28 @@ def main() -> None:
                 time.sleep(1.0)  # let the page's log of this step arrive before the next one starts
                 done.update(label=label, op=op, expect=expect, gestures_after=_gestures(session))
                 steps.append(done)
-            time.sleep(1.5)  # for the page's next beat: a record made after the last step's interval
+            # the last step's interval closes a second after its command returned; then ask the page
+            # for its fence and wait for it, so that every record made up to here is in hand
+            closes = max((step["t_end"] for step in steps if step.get("expect")), default=time.time()) + 1.0
+            time.sleep(max(0.0, closes - time.time()) + 0.05)
+            record["fence_asked"] = time.time()
+            fence.set()
+            record["fence_received"] = _await_fence(out / "page-events.jsonl", FENCE_WAIT_S)
     finally:
         _finish(record, out, session, start_stdout, stop, sampler, server)
+
+
+def _await_fence(events: Path, wait_s: float) -> bool:
+    """Whether the page's fence record arrived within ``wait_s``."""
+    deadline = time.time() + wait_s
+    while time.time() < deadline:
+        try:
+            if any(e.get("type") == "fence" for e in _jsonl(events)):
+                return True
+        except OSError:
+            pass
+        time.sleep(0.1)
+    return False
 
 
 def _retire_holder(record: dict, session: Path) -> None:
