@@ -22,12 +22,15 @@ RECTS = {"Alpha": [40, 60, 140, 44], "Beta": [620, 330, 140, 44], "Jump down": [
          "Gamma": [240, 400, 140, 44]}
 
 
-def _run(tmp_path, change=None):
+def _run(tmp_path, change=None, record=None):
     """A composed run in which every step went as predicted, with ``change(steps, handlers, gestures)``
-    applied before it is written. Returns the output directory."""
+    applied to the click steps and ``record`` merged into the run record before it is written.
+    Returns the output directory."""
     out = tmp_path / "out"
     (out / "session").mkdir(parents=True)
-    steps, handlers, gestures = [], [], []
+    handlers, gestures = [], []
+    steps = [{"name": "00-start", "exit": 0, "t_start": 990.0, "t_end": 995.0},
+             {"name": "00-park", "exit": 0, "t_start": 996.0, "t_end": 998.0}]
     for i, (label, expect) in enumerate(probe.STEPS):
         t0 = 1000.0 + 10 * i
         step = {"name": f"{i + 1:02d}-click", "label": label, "expect": expect, "t_start": t0, "t_end": t0 + 3,
@@ -47,8 +50,13 @@ def _run(tmp_path, change=None):
         step["gestures_after"] = len(gestures)
         steps.append(step)
     if change is not None:
-        change(steps, handlers, gestures)
-    (out / "run.json").write_text(json.dumps({"gestures_at_start": 0, "steps": steps}))
+        change([step for step in steps if step.get("expect")], handlers, gestures)
+    run = {"gestures_at_start": 0, "steps": steps, "chrome_closed": True,
+           "chrome_launch": {"pid": 4321, "incarnation": 5.5}} | (record or {})
+    if "setup" in run:
+        index, code = run.pop("setup")
+        steps[index]["exit"] = code
+    (out / "run.json").write_text(json.dumps(run))
     (out / "session/session.json").write_text(json.dumps({"filmed": {"content": CONTENT}}))
     (out / "page-events.jsonl").write_text("".join(json.dumps(h) + "\n" for h in handlers))
     (out / "session/pointer-gestures.jsonl").write_text("".join(json.dumps(g) + "\n" for g in gestures))
@@ -129,6 +137,29 @@ def _gamma_clicked_without_scrolling(steps, handlers, gestures):
 def test_a_run_that_departs_from_the_prediction_does_not_hold(tmp_path, change):
     verdict = probe.analyze(_run(tmp_path, change))
     assert verdict["held"] is False, verdict
+
+
+def _a_clicked_step_without_a_ratio(steps, handlers, gestures):
+    del handlers[1]["detail"]["dpr"]
+
+
+def test_a_clicked_step_that_reported_no_device_pixel_ratio_does_not_hold(tmp_path):
+    verdict = probe.analyze(_run(tmp_path, _a_clicked_step_without_a_ratio))
+    assert verdict["held"] is False and verdict["scale_factor_tested"] is False, verdict
+
+
+@pytest.mark.parametrize("record", [
+    {"chrome_closed": False},
+    {"chrome_closed": None},
+    {"chrome_launch": None},
+    {"setup": (0, 2)},
+    {"setup": (1, 4)},
+])
+def test_a_run_whose_setup_or_cleanup_departs_from_the_prediction_does_not_hold(tmp_path, record):
+    """FP11 predicts the start and the park succeed and the run's own Chrome is closed; seven good
+    steps do not make the run hold without them."""
+    verdict = probe.analyze(_run(tmp_path, record=record))
+    assert verdict["held"] is False and all(v["held"] for v in verdict["steps"]), verdict
 
 
 def test_a_missing_directory_does_not_hold(tmp_path):

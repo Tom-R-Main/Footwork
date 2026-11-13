@@ -359,7 +359,7 @@ def test_a_cancelled_browser_start_releases_the_reservation_it_created(world, fw
     assert not (fw.session / "session.json").exists()
 
 
-def _browser_scene(monkeypatch, *, front=77, url=None, area=CONTENT):
+def _browser_scene(monkeypatch, *, front=77, url=None, area=CONTENT, over=(40335, True)):
     """What the accessibility interface and the window server say about the filmed browser window."""
     from jevdual import ax, posture
 
@@ -368,6 +368,7 @@ def _browser_scene(monkeypatch, *, front=77, url=None, area=CONTENT):
     monkeypatch.setattr(posture, "frontmost_pid", lambda: front)
     monkeypatch.setattr(ax, "is_main", lambda el: True)
     monkeypatch.setattr(ax, "web_area", lambda el: (ax.Frame(*area), url or URL))
+    monkeypatch.setattr(ax, "web_area_at", lambda x, y: over)
 
 
 def test_a_filmed_browser_click_travels_to_the_page_target_before_the_page_click(world, fw, filmed, monkeypatch):

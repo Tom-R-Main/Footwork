@@ -99,7 +99,7 @@ FOREGROUND_HELPTAG_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helpt
 FOREGROUND_CONNECTED_CUA_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4"
 #: the pinned release: connected4, plus a read-only locate of one page ref (get_browser_state locate_ref,
 #: with clipping, document visibility and an optional point to hit-test)
-FOREGROUND_LOCATE_CUA_VERSION = FOREGROUND_CONNECTED_CUA_VERSION + ".locate2"
+FOREGROUND_LOCATE_CUA_VERSION = FOREGROUND_CONNECTED_CUA_VERSION + ".locate3"
 FOREGROUND_WEB_TEXT_CUA_VERSIONS = frozenset({FOREGROUND_WEB_TEXT_CUA_VERSION, FOREGROUND_HELPTAG_CUA_VERSION,
                                              FOREGROUND_CONNECTED_CUA_VERSION, FOREGROUND_LOCATE_CUA_VERSION})
 _INVISIBLE = re.compile("[" + "\u200e\u200f\u202a-\u202e\u2066-\u2069" + "]")

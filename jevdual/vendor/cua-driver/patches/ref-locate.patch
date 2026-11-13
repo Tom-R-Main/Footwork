@@ -23,10 +23,11 @@
                  attached yet refuses with browser_consent_required or \
                  browser_requires_setup, and detail.next_call names the browser_prepare call \
                  that attaches it. Use this route for any web page in Chrome, Edge or Brave; \
-@@ -580,6 +585,26 @@
+@@ -579,7 +584,27 @@
+                     "continuation": {
                          "type": "string",
                          "description": "Opaque continuation minted by an earlier semantic_v2 response."
-                     },
++                    },
 +                    "locate_ref": {
 +                        "type": "string",
 +                        "description": "A current ref. Returns only `locate`: the element's \
@@ -38,7 +39,7 @@
 +                            document's). Read-only: nothing is scrolled, focused or \
 +                            dispatched, and no snapshot is taken. Unavailable for a ref in a \
 +                            child frame."
-+                    },
+                     },
 +                    "locate_point": {
 +                        "type": "object",
 +                        "properties": { "x": { "type": "number" }, "y": { "type": "number" } },
@@ -101,12 +102,10 @@
              let snapshot_format = args
                  .opt_str("snapshot_format")
                  .unwrap_or_else(|| "dom_refs_v1".into());
-@@ -1876,11 +1945,268 @@
-         "dialog_id": dialog_capability_id(dialog.generation),
-         "resolvable": !dialog.detached,
+@@ -1878,9 +1947,292 @@
      })
-+}
-+
+ }
+ 
 +/// Where one current ref's element is, for `get_browser_state`'s locate
 +/// mode. It proves the binding and the ref's document as a click does and
 +/// refuses a stale or removed node the same way, then only reads: the
@@ -223,8 +222,8 @@
 +        box_center,
 +        metrics.as_ref(),
 +    ))
- }
- 
++}
++
  /// Center of the content quad from a `DOM.getBoxModel` result.
  fn quad_center(box_model: &Value) -> Option<(f64, f64)> {
 -    let quad = box_model.get("model")?.get("content")?.as_array()?;
@@ -246,14 +245,18 @@
 +/// leaves part of the rectangle outside its padding box: such a node is
 +/// what `DOM.scrollIntoViewIfNeeded` and `focus()` scroll. The walk follows
 +/// the flat tree (an assigned slot, then the parent, then a shadow host). The
-+/// root element is skipped, and so is `body` when the root's overflow is
-+/// `visible`: their overflow applies to the viewport, which the rectangle and
-+/// `inner` already describe. Every other ancestor is tested whether or not
++/// root element is skipped: its overflow applies to the viewport, which the
++/// rectangle and `inner` already describe. `body` is skipped only when its
++/// overflow propagates to the viewport too, that is when the root's overflow
++/// is `visible` and neither element has containment; otherwise it is a
++/// scroller like any other. Every other ancestor is tested whether or not
 +/// it is the node's containing block, so a fixed or absolutely positioned
 +/// node outside a clipping ancestor's box reads as clipped: the error is on
 +/// the side of saying so. An ancestor's padding box is scaled by the ratio of
-+/// its bounding rectangle to its layout size; a rotated or skewed clipping
-+/// ancestor is not modelled.
++/// its bounding rectangle to its layout size, which is exact only for
++/// translation and scaling: `transformed` is true when the node or any
++/// ancestor is rotated, skewed or transformed in 3D, and the caller then
++/// reports no position at all.
 +const DOM_NODE_LOCATE: &str = "function(px, py) { \
 +    const node = this; \
 +    const doc = node.ownerDocument, view = doc.defaultView; \
@@ -266,11 +269,27 @@
 +    }; \
 +    const up = (el) => el.assignedSlot || el.parentElement || (el.getRootNode().host || null); \
 +    const shows = (style) => style.overflowX === 'visible' && style.overflowY === 'visible'; \
-+    let clipped = false; \
-+    for (let el = up(node); el && !clipped; el = up(el)) { \
-+        if (el === doc.documentElement) continue; \
-+        if (el === doc.body && shows(view.getComputedStyle(doc.documentElement))) continue; \
-+        if (shows(view.getComputedStyle(el))) continue; \
++    const free = (style) => (style.contain || 'none') === 'none' \
++        && (style.containerType || 'normal') === 'normal' \
++        && (style.contentVisibility || 'visible') === 'visible'; \
++    const turned = (style) => { \
++        if ((style.rotate || 'none') !== 'none') return true; \
++        const t = style.transform || 'none'; \
++        if (t === 'none') return false; \
++        if (!t.startsWith('matrix(')) return true; \
++        const m = t.slice(7, -1).split(',').map(Number); \
++        return !(Math.abs(m[1]) < 1e-6 && Math.abs(m[2]) < 1e-6); \
++    }; \
++    const rootStyle = view.getComputedStyle(doc.documentElement); \
++    const bodyIsViewport = !!doc.body && shows(rootStyle) && free(rootStyle) \
++        && free(view.getComputedStyle(doc.body)); \
++    let clipped = false, transformed = turned(view.getComputedStyle(node)); \
++    for (let el = up(node); el; el = up(el)) { \
++        const style = view.getComputedStyle(el); \
++        if (turned(style)) transformed = true; \
++        if (clipped || el === doc.documentElement) continue; \
++        if (el === doc.body && bodyIsViewport) continue; \
++        if (shows(style)) continue; \
 +        const b = el.getBoundingClientRect(); \
 +        let left = b.left, top = b.top, width = b.width, height = b.height; \
 +        if (typeof el.offsetWidth === 'number' && el.offsetWidth > 0 && el.offsetHeight > 0) { \
@@ -283,12 +302,14 @@
 +    } \
 +    const point = (typeof px === 'number' && typeof py === 'number') ? [px, py, probe(px, py)] : null; \
 +    return { rect: [r.left, r.top, r.width, r.height], hit: probe(x, y), \
-+        inner: [view.innerWidth, view.innerHeight], clipped, visibility: doc.visibilityState, point }; \
++        inner: [view.innerWidth, view.innerHeight], clipped, transformed, \
++        visibility: doc.visibilityState, point }; \
 +}";
 +
 +/// The `locate` block of `get_browser_state`'s locate mode from the locate
 +/// script's reply, the box model's centre and the layout metrics. Anything
-+/// but a well-formed reply with a positive-area rectangle is unavailable;
++/// but a well-formed reply with a positive-area rectangle is unavailable,
++/// and so is a node the script found under a rotation, skew or 3D transform;
 +/// the box-model centre, the viewport's zoom and scale, `clipped`,
 +/// `visibility_state` and `point` are `null` when they could not be read or
 +/// were not asked for, for the caller to refuse on.
@@ -325,6 +346,10 @@
 +    };
 +    if rect[2] <= 0.0 || rect[3] <= 0.0 {
 +        return unavailable("no_box");
++    }
++    if value.get("transformed").and_then(Value::as_bool) == Some(true) {
++        // the clip test's geometry holds only for translation and scaling
++        return unavailable("transformed");
 +    }
 +    let inner = numbers("inner", 2);
 +    let point = value
@@ -371,7 +396,7 @@
      if quad.len() < 8 {
          return None;
      }
-@@ -3380,7 +3706,115 @@
+@@ -3380,7 +3732,135 @@
  #[cfg(test)]
  mod tests {
      use super::*;
@@ -409,7 +434,7 @@
 +        assert!(value["clipped"].is_null() && value["visibility_state"].is_null());
 +        assert!(value["point"].is_null());
 +    }
- 
++
 +    #[test]
 +    fn locate_value_reports_clipping_visibility_and_the_asked_point() {
 +        let reply = located(json!({
@@ -426,6 +451,26 @@
 +        );
 +    }
 +
++    #[test]
++    fn locate_value_is_unavailable_under_a_rotation_or_skew() {
++        let turned = located(json!({
++            "rect": [10.0, 20.0, 100.0, 40.0], "hit": "target", "inner": [800.0, 600.0],
++            "clipped": false, "transformed": true, "visibility": "visible", "point": null,
++        }));
++        assert_eq!(
++            dom_locate_value(Some(&turned), Some((60.0, 40.0)), None),
++            json!({ "available": false, "reason": "transformed" })
++        );
++        let level = located(json!({
++            "rect": [10.0, 20.0, 100.0, 40.0], "hit": "target", "inner": [800.0, 600.0],
++            "clipped": false, "transformed": false, "visibility": "visible", "point": null,
++        }));
++        assert_eq!(
++            dom_locate_value(Some(&level), None, None)["available"],
++            true
++        );
++    }
+ 
 +    #[test]
 +    fn locate_value_reports_no_point_for_a_malformed_one() {
 +        for point in [
@@ -519,7 +564,7 @@
                  }
              })),
              "Runtime.evaluate"
-@@ -868,6 +875,36 @@
+@@ -868,6 +875,37 @@
                  if call.params["functionDeclaration"]
                      .as_str()
                      .is_some_and(|function| {
@@ -544,6 +589,7 @@
 +                        "hit": "target",
 +                        "inner": [800.0, 600.0],
 +                        "clipped": false,
++                        "transformed": false,
 +                        "visibility": "visible",
 +                        "point": point,
 +                    } } })
@@ -556,7 +602,7 @@
                          function.contains("isConnected") && !function.contains("'pointerdown'")
                      }) =>
              {
-@@ -3405,9 +3442,279 @@
+@@ -3405,9 +3443,301 @@
      assert_eq!(state.dom_click_generation, 0);
      drop(state);
      assert!(recorded_calls(&f, "Input.dispatchMouseEvent").is_empty());
@@ -650,9 +696,9 @@
 +        .await;
 +    assert_ne!(clicked.is_error, Some(true), "{}", result_text(&clicked));
 +    assert!(sent_any_event(&f));
- }
- 
- #[tokio::test]
++}
++
++#[tokio::test]
 +async fn locate_ref_passes_on_what_is_at_the_centre() {
 +    let f = fixture_with(|state| {
 +        state.dom_locate_reply = Some(json!({ "result": { "value": {
@@ -690,8 +736,8 @@
 +    assert_eq!(found["clipped"], true);
 +    assert_eq!(found["visibility_state"], "hidden");
 +    assert!(!sent_any_event(&f));
-+}
-+
+ }
+ 
 +async fn locate_at(f: &Fixture, target: &str, tab: &str, r: &str, point: Value) -> ToolResult {
 +    GetBrowserStateTool::new(f.engine.clone())
 +        .invoke(json!({
@@ -716,7 +762,7 @@
 +        .collect()
 +}
 +
-+#[tokio::test]
+ #[tokio::test]
 +async fn locate_ref_with_a_point_asks_the_page_what_is_at_that_point() {
 +    let f = fixture_with(|state| state.dom_locate_point_hit = "other").await;
 +    let (target, tab) = bind(&f).await;
@@ -781,6 +827,28 @@
 +        assert!(result_text(&result).contains("locate_point"), "{point}");
 +    }
 +    assert_eq!(locate_reads(&f), 0, "a refused locate reads nothing");
++}
++
++#[tokio::test]
++async fn locate_ref_reports_no_position_for_a_rotated_node() {
++    let f = fixture_with(|state| {
++        state.dom_locate_reply = Some(json!({ "result": { "value": {
++            "rect": [100.0, 100.0, 20.0, 10.0], "hit": "target", "inner": [800.0, 600.0],
++            "clipped": false, "transformed": true, "visibility": "visible", "point": null,
++        } } }))
++    })
++    .await;
++    let (target, tab) = bind(&f).await;
++    let snap = snapshot(&f, &target, &tab).await;
++    let main_ref = ref_of(&snap, "main", "main-btn");
++
++    let result = locate(&f, &target, &tab, &main_ref).await;
++
++    assert_eq!(
++        structured(&result)["locate"],
++        json!({ "available": false, "reason": "transformed" })
++    );
++    assert!(!sent_any_event(&f));
 +}
 +
 +#[tokio::test]

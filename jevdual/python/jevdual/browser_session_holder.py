@@ -585,8 +585,17 @@ class RemoteBrowserOperations:
         return await self._op("click", target_id=target_id, tab_id=tab_id, ref=ref, input_route=input_route)
 
     async def locate(self, *, target_id: str, tab_id: str | None, ref: str, point: Any = None) -> BrowserReply:
-        return await self._op("locate", target_id=target_id, tab_id=tab_id, ref=ref,
-                              point=None if point is None else [float(point[0]), float(point[1])])
+        reply = await self._op("locate", target_id=target_id, tab_id=tab_id, ref=ref,
+                               point=None if point is None else [float(point[0]), float(point[1])])
+        if reply.refusal is not None and reply.refusal.code == "holder_request_invalid":
+            # a holder checks a request's exact fields; one started by an older build knows no locate,
+            # or one without a point
+            message = ("this session's browser holder does not serve this locate request (an older build "
+                       "started it); start a new session")
+            return BrowserReply(status="refused", text=message, is_error=True, dispatched=False,
+                                refusal=BrowserRefusal(code="holder_request_invalid", message=message,
+                                                       detail={"delivery": "not_sent", "retryable": False}))
+        return reply
 
     async def type_text(self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool) -> BrowserReply:
         return await self._op("type_text", target_id=target_id, tab_id=tab_id, ref=ref, text=text, replace=replace)

@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate2`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate3`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 The six Python files are copied byte-for-byte from the exact release source. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -20,7 +20,7 @@ The six Python files are copied byte-for-byte from the exact release source. The
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `f9d8ab2e848a0a94b77d5548fc5b90c3a1399f7a669b493df25da1162e67d901` (6,417,335 bytes). It is the end of a five-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate1. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
+`native-source.tar.gz` SHA256: `34d08d9e7320da2166fbc78df3ac2ee5809d48e8fc6e064eed280e71db28be9d` (6,417,917 bytes). It is the end of a five-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate3. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -89,7 +89,7 @@ before. Two cua-driver-core browser files change (the tool and its mock-CDP test
 bindings and dependencies do not. connected1 (the guard alone), connected2 (without the receipt
 and containment checks) and connected3 (without the single dialog snapshot) were never released.
 
-## Ref locate patch (locate2)
+## Ref locate patch (locate3)
 
 `patches/ref-locate.patch` and its JSON manifest apply on top of the connected4 archive and produce
 the pinned archive. `get_browser_state` gains a third mode: with `target_id`, `tab_id` and
@@ -102,15 +102,18 @@ page-route click sequence's own geometry, in viewport CSS px), the border-box ce
 scrolls its overflow leaves part of the rectangle outside its padding box (the case in which the
 click's own `DOM.scrollIntoViewIfNeeded`, or a type's `DOM.focus`, would scroll the target), and
 `visibility_state`, the document's; with `locate_point` it also reports what `elementFromPoint`
-finds at that point, as `point`. The clip test follows the flat tree, skips the root element and a
-`body` whose overflow applies to the viewport, tests every other ancestor whether or not it is the
-node's containing block (so it errs toward reporting a clip), and does not model a rotated or skewed
-clipping ancestor. Nothing is scrolled, focused or dispatched and no snapshot is taken; a ref
+finds at that point, as `point`. The clip test follows the flat tree, skips the root element, skips
+`body` only when its overflow propagates to the viewport (the root's overflow is `visible` and
+neither element has containment), and tests every other ancestor whether or not it is the node's
+containing block (so it errs toward reporting a clip). Its geometry holds for translation and
+scaling only, so a node that is, or lies under, a rotated, skewed or 3D-transformed element is
+reported unavailable (`transformed`). Nothing is scrolled, focused or dispatched and no snapshot is taken; a ref
 in a child frame is reported unavailable. The block is geometry for moving a filmed pointer onto a
 target (Footwork notebook FP3, FP4), never an action authority. It is not taken from the semantic
 snapshot's layout bounds: those are in physical pixels while the viewport metrics are in CSS pixels
 (FP3), which also makes the unpatched snapshot's `visibility` unreliable at a device scale factor
 other than 1; that upstream behaviour is unchanged here. Two cua-driver-core browser files change
 (the tools and their mock-CDP tests); the generated bindings and dependencies do not. An earlier
-rects1 step (a rectangle on each snapshot ref) and locate1 (this step without the clip test, the
-visibility state and the point) were withdrawn before release.
+rects1 step (a rectangle on each snapshot ref), locate1 (this step without the clip test, the
+visibility state and the point) and locate2 (with a body always skipped and no transform check) were
+withdrawn before release.

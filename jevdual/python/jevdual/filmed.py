@@ -24,6 +24,8 @@ from jevdual.coordination import owned_thread
 
 Point = tuple[float, float]
 Rect = tuple[float, float, float, float]
+#: how far (points) the pointer may sit from the position that was hit-tested on a page target
+HELD_TOLERANCE_PT = 0.5
 
 
 class FilmedRefusal(Exception):
@@ -127,15 +129,33 @@ class Filmed:
                 f"({self.last_pointer[0]:.1f},{self.last_pointer[1]:.1f}): someone moved it; the take ended",
             )
 
-    def _hold(self) -> None:
+    def _where(self) -> Point:
         from jevdual import drag
 
         self.check()
-        self._continuity(drag.QuartzPoster().location())
+        here = drag.QuartzPoster().location()
+        self._continuity(here)
+        return here
 
-    async def held(self) -> None:
-        """Refuse, ending the take, unless the pointer is still where the last gesture left it."""
-        await owned_thread(self._hold)
+    async def pointer(self) -> Point:
+        """Where the pointer is now, in screen points, as the system reports it. Refuses, ending the
+        take, when that is not where the last gesture left it."""
+        return await owned_thread(self._where)
+
+    def _hold(self, at: Point | None) -> None:
+        here = self._where()
+        if at is not None and math.dist(here, at) > HELD_TOLERANCE_PT:
+            self.end_take("pointer_moved_idle")
+            raise FilmedRefusal(
+                "pointer_moved_idle",
+                f"the pointer is at {here[0]:.1f},{here[1]:.1f}, not at {at[0]:.1f},{at[1]:.1f} where it was "
+                "found on the target: someone moved it; the take ended",
+            )
+
+    async def held(self, at: Point | None = None) -> None:
+        """Refuse, ending the take, unless the pointer is still where the last gesture left it and,
+        with ``at`` (a position ``pointer`` read), still within half a point of that position."""
+        await owned_thread(self._hold, at)
 
     def _move(self, end: Point, kind: str, label: str) -> dict[str, Any]:
         from jevdual import drag
@@ -268,13 +288,17 @@ class Filmed:
 SCENE_TOLERANCE_PT = 0.5
 
 
-def browser_scene_change(pid: int, window_id: int, filmed: Filmed, url: str | None) -> str | None:
+def browser_scene_change(
+    pid: int, window_id: int, filmed: Filmed, url: str | None, point: Point | None = None
+) -> str | None:
     """Why a browser take's recorded scene no longer holds, or None when it does.
 
     A page position maps to a screen point only while the scene is the one the take recorded: the
     browser is the frontmost application, the scene window is its main window and where it was, the
     window's web area is where it was, and that web area shows the session's page (compared without
-    the fragment). Read through the accessibility interface; nothing is changed."""
+    the fragment). With ``point`` (screen points, where the pointer is), a system-wide hit test there
+    must also land inside a web area of the scene window: page hit-testing cannot see a native surface
+    lying over the page. Read through the accessibility interface; nothing is changed."""
     from jevdual import ax, posture
 
     front = posture.frontmost_pid()
@@ -307,4 +331,13 @@ def browser_scene_change(pid: int, window_id: int, filmed: Filmed, url: str | No
         return f"the page area is {spot(area[0])}; the take recorded {recorded(filmed.content)}"
     if not url or not area[1] or area[1].split("#", 1)[0] != url.split("#", 1)[0]:
         return f"the window shows {(area[1] or 'no address')[:120]!r}, not the session's page {(url or '')[:120]!r}"
+    if point is not None:
+        try:
+            over = ax.web_area_at(point[0], point[1])
+        except ax.AXError as exc:
+            return f"what is under the pointer could not be read ({exc})"
+        if over != (window_id, True):
+            return (f"the pointer at {point[0]:.1f},{point[1]:.1f} is not over the page of the scene window "
+                    + ("(another window is there)" if over[0] not in (None, window_id)
+                       else "(something that is not the page is there)"))
     return None

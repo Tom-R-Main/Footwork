@@ -216,6 +216,34 @@ def web_area_frame(win: Any, *, depth: int = 12) -> Frame | None:
     return found[0] if found else None
 
 
+def web_area_at(x: float, y: float) -> tuple[int | None, bool]:
+    """What a system-wide hit test finds at a screen point: the CGWindowID of the window the element
+    there belongs to (None when it has none or cannot be read), and whether that element is inside a
+    web area of that window. A native surface over a page (a browser's permission bubble, another
+    application's floating window) is not inside the page's web area."""
+    import objc
+    from ApplicationServices import AXUIElementCopyElementAtPosition, AXUIElementCreateSystemWide
+
+    err, node = AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), x, y, None)
+    if err != 0 or node is None:
+        return None, False
+    in_web = False
+    for _ in range(64):
+        role = _attr(node, "AXRole")
+        if role == "AXWebArea":
+            in_web = True
+        elif role in ("AXWindow", "AXSheet"):
+            number = ctypes.c_uint32(0)
+            found = _hi()(objc.pyobjc_id(node), ctypes.byref(number)) == 0
+            return (number.value if found else None), in_web
+        elif role == "AXApplication":
+            break
+        node = _attr(node, "AXParent")
+        if node is None:
+            break
+    return None, in_web
+
+
 def is_main(win: Any) -> bool | None:
     """Whether ``win`` is its application's main window (AXMain), or None when it does not say."""
     value = _attr(win, "AXMain")

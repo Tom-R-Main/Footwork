@@ -130,7 +130,8 @@ def analyze(out: Path) -> dict:
     pointer event must have happened during the step, unless the approach posted nothing because the
     pointer was already there. A refused step holds when the command reported ``target_unlocated``, the
     page ran no click handler of any button during the step, and the step added no gesture. The whole
-    run holds only at a device pixel ratio of 2."""
+    run holds only when the start and the park succeeded, every clicked step reported a device pixel
+    ratio of 2, and the run recorded the Chrome its start launched and that it closed."""
     try:
         run = json.loads((out / "run.json").read_text())
         content = json.loads((out / "session/session.json").read_text())["filmed"]["content"]
@@ -182,10 +183,16 @@ def analyze(out: Path) -> dict:
     last = verdicts[-1] if verdicts else {}
     scrolled = bool(last.get("label") == "Gamma" and (last.get("scroll") or [0, 0])[1] > 0)
     complete = [(v["label"], v["expect"]) for v in verdicts] == list(STEPS)
-    ratios = sorted({v["dpr"] for v in verdicts if v.get("dpr") is not None})
+    ratios = [v.get("dpr") for v in verdicts if v["expect"] == "clicked"]
+    scale = bool(ratios) and all(ratio == 2 for ratio in ratios)
+    setup = {name: next((s.get("exit") for s in run.get("steps", []) if s.get("name") == name), None)
+             for name in ("00-start", "00-park")}
+    owned = bool(run.get("chrome_launch")) and run.get("chrome_closed") is True
     return {"steps": verdicts, "complete": complete, "gamma_clicked_after_scrolling": scrolled,
-            "device_pixel_ratios": ratios, "scale_factor_tested": ratios == [2],
-            "held": complete and scrolled and ratios == [2] and all(v["held"] for v in verdicts)}
+            "device_pixel_ratios": ratios, "scale_factor_tested": scale,
+            "setup_exits": setup, "own_chrome_closed": owned,
+            "held": (complete and scrolled and scale and owned and all(code == 0 for code in setup.values())
+                     and all(v["held"] for v in verdicts))}
 
 
 def _port_open(port: int) -> bool:

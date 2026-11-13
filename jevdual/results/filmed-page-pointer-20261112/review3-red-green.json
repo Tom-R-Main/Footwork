@@ -1,0 +1,33 @@
+{
+  "prediction": "FP12",
+  "driver": {
+    "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
+    "red": {
+      "tree": "locate2 tools.rs with the locate3 mock-CDP tests (filter: locate_ref)",
+      "log": "review3-rust-red.txt",
+      "outcome": "1 failed (the rotated node), 9 passed"
+    },
+    "green": {
+      "tree": "locate3 (patches/ref-locate.patch)",
+      "summary": ["test result: ok. 1258 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.55s"],
+      "warnings": 0
+    },
+    "not_covered": "the page function itself (body overflow propagation, the transform test, the ancestor walk) runs in no test: the mock CDP supplies its result. Only a real page exercises it."
+  },
+  "footwork": {
+    "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_probe_filmed_page_pointer.py tests/test_filmed_session.py",
+    "red": {
+      "tree": "8dc9da9 python/ and scripts/ with the updated tests",
+      "log": "review3-python-red.txt (the tests that passed there, and the totals)",
+      "outcome": "33 failed, 33 errors, 77 passed",
+      "note": "the errors are the fixture replacing Filmed.pointer, which does not exist there; the 14 scene cases that predate this change fail there only because the helper now passes a point. No test of new behaviour is among the 77."
+    },
+    "green": {"outcome": "143 passed (the three files); offline suite 3639 passed, 52 skipped against the installed locate3 build"}
+  },
+  "chain": {
+    "command": "scripts/cua_source_chain.py --base <focus1 archive from 6e8bb5e>",
+    "outcome": "byte-identical to vendor/cua-driver/native-source.tar.gz",
+    "sha256": "34d08d9e7320da2166fbc78df3ac2ee5809d48e8fc6e064eed280e71db28be9d",
+    "bytes": 6417917
+  }
+}
