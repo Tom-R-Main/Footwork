@@ -1,0 +1,219 @@
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+..................................F...................FFFFFFFF.......F.. [ 31%]
+........................................................................ [ 41%]
+........................................................................ [ 52%]
+........................................................................ [ 62%]
+........................................................................ [ 73%]
+........................................................................ [ 83%]
+........................................................................ [ 94%]
+.......................................                                  [100%]
+=================================== FAILURES ===================================
+________ test_the_whole_log_is_accounted_for_and_the_clocks_are_related ________
+
+tmp_path = PosixPath('<tmp>/pytest-1075/test_the_whole_log_is_accounte0')
+
+    def test_the_whole_log_is_accounted_for_and_the_clocks_are_related(tmp_path):
+        """FP46: what a run that went as predicted says of its own log and clocks."""
+        verdict = probe.analyze(_run(tmp_path))
+        log, clock = verdict["page_log"], verdict["clock"]
+        assert log["held"] and log["numbered_without_gaps"] and log["one_load"] and log["fenced_after_the_last_step"]
+        assert log["unaccounted"] == [] and log["ambiguous"] == [] and log["step_intervals_apart"] is True
+        # the run says through where it is accounted for: the fence, asked for after the last interval closed
+        fence = next(row for row in probe._jsonl(tmp_path / "out/page-events.jsonl") if row["type"] == "fence")
+        assert log["accounted_through"] == {"record": fence["n"], "asked_at": 1174.1} and fence["received"] > 1174.1
+        # every record of something done to the page is placed by its own post: answered 4 ms after it was
+        # made by the page's clock, each of whose two readings is taken a grain off, so within 6 ms
+>       assert "untimed" not in clock and clock["widest_action_record_s"] == 0.006
+E       AssertionError: assert ('untimed' not in {'low_s': -0.003, 'high_s': 0.003, 'width_s': 0.006, 'offset_s': 0.0, ...} and 0.005 == 0.006)
+
+tests/test_probe_filmed_page_pointer.py:224: AssertionError
+_ test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed[change-0.032] _
+
+tmp_path = PosixPath('<tmp>/pytest-1075/test_a_record_of_an_action_tha0')
+change = <function _at.<locals>.change at 0x10787eac0>, width = 0.032
+
+    @pytest.mark.parametrize(("change", "width"), [(_at(2.2, late=0.030), 0.032), (_at(2.2, unanswered=True), 0.206)])
+    def test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed(tmp_path, change, width):
+        """FP54 (u): the answers to one click's posts came 30 ms after them, or never. The run's common
+        bounds still agree, from all the other posts; these six records are not placed by them, because
+        that would assume the two clocks kept one difference. Each is bounded by its own post, 30 ms wide
+        and two grains, or, with no answer of its own, below by the last record numbered before it that was
+        answered: the beat 200 ms earlier."""
+        verdict = probe.analyze(_run(tmp_path, change, page=_answers))
+        clock = verdict["clock"]
+        assert verdict["held"] is False and clock["held"] is False and clock["width_s"] <= 0.02
+        assert [r["on"] for r in clock["untimed"]] == ["Beta"] * 6 and "not placed within 20 ms" in clock["why"]
+>       assert {r["width_s"] for r in clock["untimed"]} == {width} and clock["widest_action_record_s"] == width
+E       assert ({0.031} == {0.032}
+E         
+E         Extra items in the left set:
+E         0.031
+E         Extra items in the right set:
+E         0.032
+E         Use -v to get more diff)
+
+tests/test_probe_filmed_page_pointer.py:476: AssertionError
+_ test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed[change-0.206] _
+
+tmp_path = PosixPath('<tmp>/pytest-1075/test_a_record_of_an_action_tha1')
+change = <function _at.<locals>.change at 0x10787eb60>, width = 0.206
+
+    @pytest.mark.parametrize(("change", "width"), [(_at(2.2, late=0.030), 0.032), (_at(2.2, unanswered=True), 0.206)])
+    def test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed(tmp_path, change, width):
+        """FP54 (u): the answers to one click's posts came 30 ms after them, or never. The run's common
+        bounds still agree, from all the other posts; these six records are not placed by them, because
+        that would assume the two clocks kept one difference. Each is bounded by its own post, 30 ms wide
+        and two grains, or, with no answer of its own, below by the last record numbered before it that was
+        answered: the beat 200 ms earlier."""
+        verdict = probe.analyze(_run(tmp_path, change, page=_answers))
+        clock = verdict["clock"]
+        assert verdict["held"] is False and clock["held"] is False and clock["width_s"] <= 0.02
+        assert [r["on"] for r in clock["untimed"]] == ["Beta"] * 6 and "not placed within 20 ms" in clock["why"]
+>       assert {r["width_s"] for r in clock["untimed"]} == {width} and clock["widest_action_record_s"] == width
+E       assert ({0.205} == {0.206}
+E         
+E         Extra items in the left set:
+E         0.205
+E         Extra items in the right set:
+E         0.206
+E         Use -v to get more diff)
+
+tests/test_probe_filmed_page_pointer.py:476: AssertionError
+_ test_a_record_is_bounded_by_the_ones_numbered_around_it_and_not_by_a_shared_timestamp _
+
+tmp_path = PosixPath('<tmp>/pytest-1075/test_a_record_is_bounded_by_th0')
+
+    def test_a_record_is_bounded_by_the_ones_numbered_around_it_and_not_by_a_shared_timestamp(tmp_path):
+        """Sol round 10: two records with one timestamp were not made at one moment. Here a click's posts
+        were never answered, and another record carries the same timestamp and was answered at once. Made
+        (numbered) before the click, it bounds the click from below and the click is placed. Made after
+        it, it shows nothing about how early the click was, and the click is untimed."""
+        def beside(numbered):
+            def change(steps, handlers, gestures):
+                _at(2.2, unanswered=True)(steps, handlers, gestures)
+                t = _step(steps, "Beta", "clicked")["t_start"] + 2.2
+                handlers.moved.append({"t": t, "n": numbered, "type": "scrolled", "detail": {"y": 0}})
+            return change
+    
+        before = probe.analyze(_run(tmp_path / "before", beside(-1), page=_answers))
+>       assert before["held"] is True and before["clock"]["widest_action_record_s"] == 0.006
+E       assert (True is True and 0.005 == 0.006)
+
+tests/test_probe_filmed_page_pointer.py:494: AssertionError
+_ test_two_records_with_one_coarse_timestamp_are_each_placed_around_their_own_true_time _
+
+    def test_two_records_with_one_coarse_timestamp_are_each_placed_around_their_own_true_time():
+        """Sol round 10's case. The page's clock reads in steps of 0.1 ms. A is made at probe time
+        100.00001 and B 80 microseconds later; both read 10.0000, and both answers read 10.0001. Ordered by
+        timestamp, each bounded the other and both were given an interval holding neither's true time.
+        Ordered by number, each interval holds its own."""
+        a = {"t": 10.0000, "n": 1, "type": "page_event", "received": 100.00008}
+        b = {"t": 10.0000, "n": 2, "type": "page_event", "received": 100.00015}
+        beat = {"t": 10.5, "n": 3, "type": "beat", "received": 100.5001, "detail": {"acks": [[1, 10.0001], [2, 10.0001]]}}
+        placed, after = probe._timer([a, b, beat])
+        (a_low, a_high), (b_low, b_high) = placed(a), placed(b)
+        assert a_low <= 100.00001 <= a_high and b_low <= 100.00009 <= b_high
+        # A is not bounded below by B, which was made after it, and B is bounded above by nothing but itself
+>       assert a_low == pytest.approx(100.00008 - probe._elapsed(0.0001)) and a_high == 100.00008
+                                                  ^^^^^^^^^^^^^^
+E       AttributeError: module 'probe_filmed_page_pointer' has no attribute '_elapsed'
+
+tests/test_probe_filmed_page_pointer.py:511: AttributeError
+_____ test_an_answer_time_that_reads_a_grain_early_still_bounds_its_record _____
+
+    def test_an_answer_time_that_reads_a_grain_early_still_bounds_its_record():
+        """The answer came 0.9 ms after the record by the page's true clock and reads the same coarse
+        time as the record. Taken as reported, the record would be placed after it was made."""
+        record = {"t": 10.000, "n": 1, "type": "page_event", "received": 100.0005}
+        beat = {"t": 10.5, "n": 2, "type": "beat", "received": 100.5, "detail": {"acks": [[1, 10.000]]}}
+        low, high = probe._timer([record, beat])[0](record)
+        true = 100.0005 - 0.0004  # made 0.4 ms before the probe received it
+>       assert low <= true <= high and low == pytest.approx(100.0005 - probe._elapsed(0.0))
+                                                                       ^^^^^^^^^^^^^^
+E       AttributeError: module 'probe_filmed_page_pointer' has no attribute '_elapsed'
+
+tests/test_probe_filmed_page_pointer.py:527: AttributeError
+_ test_a_record_read_late_and_its_answer_read_early_are_two_errors_and_both_are_allowed_for _
+
+    def test_a_record_read_late_and_its_answer_read_early_are_two_errors_and_both_are_allowed_for():
+        """Sol check 11's case. The time from a record to its answer is the difference of two readings. The
+        record, made at page time 10.0000, reads 10.0009; its answer, at 10.0018, reads 10.0009 too: both
+        within a grain of the truth, in opposite directions, and their difference reads zero where 1.8 ms
+        passed. With one grain allowed the record was placed from 0.5 ms after it was made."""
+        record = {"t": 10.0009, "n": 1, "type": "page_event", "received": 100.0015}
+        beat = {"t": 10.5, "n": 2, "type": "beat", "received": 100.5, "detail": {"acks": [[1, 10.0009]]}}
+        low, high = probe._timer([record, beat])[0](record)
+>       assert low <= 100.0000 <= high == 100.0015
+E       assert 100.00049999999999 <= 100.0
+
+tests/test_probe_filmed_page_pointer.py:538: AssertionError
+_ test_an_action_made_before_its_step_is_not_placed_inside_it_by_two_opposite_reading_errors _
+
+tmp_path = PosixPath('<tmp>/pytest-1075/test_an_action_made_before_its0')
+
+    def test_an_action_made_before_its_step_is_not_placed_inside_it_by_two_opposite_reading_errors(tmp_path):
+        """Sol check 11, as a whole run: a click made 0.4 ms before its step began. With one grain allowed
+        for the two readings its interval began 0.1 ms inside the step and the run held."""
+        verdict = probe.analyze(_run(tmp_path, _at(-0.0004), page=_beta_read_with_opposite_errors))
+        log = verdict["page_log"]
+>       assert verdict["held"] is False and len(log["ambiguous"]) == 6 and {r["on"] for r in log["ambiguous"]} == {"Beta"}
+E       assert (True is False)
+
+tests/test_probe_filmed_page_pointer.py:563: AssertionError
+_____ test_the_pointers_last_event_is_placed_by_the_record_that_carries_it _____
+
+tmp_path = PosixPath('<tmp>/pytest-1075/test_the_pointers_last_event_i0')
+
+    def test_the_pointers_last_event_is_placed_by_the_record_that_carries_it(tmp_path):
+        """Sol check 11: with no post between a step's start and the pointer's last move, nothing made
+        clearly before the move is inside the step, and a correct run failed for want of an anchor. The
+        record that carries the move was made after it by the time between their two readings, and its own
+        earliest moment is known; that places the move. One from before the step is still refused."""
+        def moved_at(seconds_into):
+            def change(steps, handlers, gestures):
+                step = _step(steps, "Alpha", "clicked")
+                handlers[0]["detail"]["last_trusted_pointer"]["t"] = step["t_start"] + seconds_into
+            return change
+    
+        def no_post_before_the_click(rows):
+            _renumbered(rows, [row for row in rows if not (row["type"] == "beat" and 1000.0 <= row["t"] < 1002.0)])
+    
+        # the only records of the step before the click are gone: the move at 1.999 s has no earlier anchor
+        alone = probe.analyze(_run(tmp_path / "alone", moved_at(1.999), page=no_post_before_the_click))
+>       assert alone["held"] is True and _of(alone, "Alpha", "clicked")["pointer_during_step"] is True
+E       assert (False is True)
+
+tests/test_probe_filmed_page_pointer.py:585: AssertionError
+_ test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happened_in _
+
+tmp_path = PosixPath('<tmp>/pytest-1075/test_the_samples_must_hold_ove0')
+
+    def test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happened_in(tmp_path):
+        """Sol round 9: a sample off the control 251 ms before the latest moment an event can have happened
+        is outside the window around that moment and inside the window around the earliest. The answers
+        here came 12 ms after the posts, so the interval is 14 ms wide with two grains and the run timed;
+        the sample counts."""
+        def off(at):
+            def change(steps, handlers, gestures):
+                _at(2.2, late=0.012)(steps, handlers, gestures)
+                handlers.samples.append([_step(steps, "Beta", "clicked")["t_start"] + 2.202 - at, 5.0, 5.0])
+            return change
+    
+        inside = probe.analyze(_run(tmp_path / "in", off(0.255), page=_answers))
+>       assert inside["clock"]["held"] and inside["clock"]["widest_action_record_s"] == 0.014
+E       assert (True and 0.013 == 0.014)
+
+tests/test_probe_filmed_page_pointer.py:638: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_probe_filmed_page_pointer.py::test_the_whole_log_is_accounted_for_and_the_clocks_are_related
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed[change-0.032]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_of_an_action_that_its_own_post_does_not_place_within_20_ms_is_untimed[change-0.206]
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_is_bounded_by_the_ones_numbered_around_it_and_not_by_a_shared_timestamp
+FAILED tests/test_probe_filmed_page_pointer.py::test_two_records_with_one_coarse_timestamp_are_each_placed_around_their_own_true_time
+FAILED tests/test_probe_filmed_page_pointer.py::test_an_answer_time_that_reads_a_grain_early_still_bounds_its_record
+FAILED tests/test_probe_filmed_page_pointer.py::test_a_record_read_late_and_its_answer_read_early_are_two_errors_and_both_are_allowed_for
+FAILED tests/test_probe_filmed_page_pointer.py::test_an_action_made_before_its_step_is_not_placed_inside_it_by_two_opposite_reading_errors
+FAILED tests/test_probe_filmed_page_pointer.py::test_the_pointers_last_event_is_placed_by_the_record_that_carries_it
+FAILED tests/test_probe_filmed_page_pointer.py::test_the_samples_must_hold_over_the_whole_interval_an_event_can_have_happened_in
+10 failed, 677 passed in 23.16s

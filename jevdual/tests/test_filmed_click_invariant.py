@@ -540,9 +540,10 @@ def _calls(text: str) -> Counter:
 
 def _audit(text: str, reads: set, acts: dict, named: dict) -> list[str]:
     """What is wrong with a function's text, if anything. It is a check of the text and not a parser:
-    it finds a method call written as one, any occurrence at all of the name of a method that acts, a
-    property assignment, and the call forms that hide a name (a computed member, a parenthesised
-    callee, an optional call, a template). It does not follow values."""
+    it finds a method call written as one, any occurrence at all of the name of a method that acts, an
+    assignment to a member written with a dot or with a bracket, an increment or a delete of one, and
+    the call forms that hide a name (a computed member, a parenthesised callee, an optional call, a
+    template). It does not follow values, and a member reached some other way is not seen."""
     wrong = []
     calls = _calls(text)
     if set(calls) != reads | set(acts):
@@ -554,8 +555,11 @@ def _audit(text: str, reads: set, acts: dict, named: dict) -> list[str]:
     for name in sorted(ACTING):
         if names[name] != named.get(name, 0):
             wrong.append(f"{name} occurs {names[name]} times, accounted for {named.get(name, 0)}")
-    if re.search(r"\.\s*[A-Za-z_$][\w$]*\s*(?:[-+*/|&]?=)(?![=>])", text):
-        wrong.append("a property is assigned")
+    assigned = r"\s*(?:(?:[-+*/%|&^]|\*\*|<<|>>>?|&&|\|\||\?\?)?=(?![=>])|\+\+|--)"
+    if re.search(r"\.\s*[A-Za-z_$][\w$]*" + assigned, text) or re.search(r"\]" + assigned, text):
+        wrong.append("a member is assigned or incremented")
+    if re.search(r"(?:\+\+|--)\s*[A-Za-z_$][\w$.]*[.\[]", text) or re.search(r"\bdelete\b", text):
+        wrong.append("a member is incremented or deleted")
     for form, what in ((r"\]\s*\(", "a computed member is called"), (r"\)\s*\(", "a parenthesised callee is called"),
                        (r"\?\.\s*\(", "an optional call"), (r"`", "a template")):
         if re.search(form, text):
@@ -590,6 +594,12 @@ def test_every_call_the_functions_make_is_a_read_or_a_checked_act(sources, name,
     "el.parentElement.dispatchEvent(new view.MouseEvent('click', base));",
     "el.parentElement[`fo${'cus'}`]();",
     "el.parentElement.tabIndex = 0;",
+    "el.parentElement['textContent'] = '';",  # Sol check 11: an assignment through a quoted name
+    "el.parentElement.tabIndex++;",
+    "++el.parentElement.tabIndex;",
+    "el.parentElement.scrollTop += 40;",
+    "el.parentElement['scrollTop'] ||= 40;",
+    "delete el.parentElement.dataset.state;",
     "view.setTimeout(() => {}, 0);",
 ])
 def test_the_audit_fails_on_an_act_added_any_of_these_ways(sources, added):

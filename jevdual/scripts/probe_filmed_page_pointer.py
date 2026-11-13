@@ -59,9 +59,12 @@ Three things make that reading sound, and the run does not hold without them (FP
 - the page's clock and the probe's are two clocks, so a page record has no exact time in the probe's.
   It has an interval. The probe received the record at a time of its own, R, so the record was made
   before R; and the page reports, by its own clock, how long after making the record it had the answer,
-  d, so the record was made after R - d. The page's clock is coarsened by the browser, so d is taken a
-  grain (1 ms) longer than reported, and the page measures and reports the step of its clock, which
-  must be within the grain. Records the page numbered earlier bound a record below too, and ones it
+  d, so the record was made after R - d. The page's clock is coarsened by the browser: each reading
+  is assumed to be within a grain (1 ms) of the true one, so d, the difference of two readings, is
+  taken two grains longer than reported, and a tenth of a percent longer again for any difference in
+  the two clocks' rates. The page measures the step of its clock when it loads and reports it. That
+  is a diagnostic of its resolution: a step coarser than the grain shows the assumption false and
+  the run does not hold; a fine one does not show it true. Records the page numbered earlier bound a record below too, and ones it
   numbered later above (``_timer``): by their numbers, which are an order with no ties, and never by
   comparing timestamps, since two records with one timestamp were not made at one moment. Nothing here
   assumes the two clocks keep a constant difference.
@@ -82,8 +85,9 @@ Three things make that reading sound, and the run does not hold without them (FP
   fence before it closes Chrome. The run is accounted for through the fence, and the fence is the
   cutoff for what must be whole: a number missing after it is reported and does not fail the run, and
   the verdict claims nothing about what the page did then. One thing is stricter than the cutoff
-  requires: a record of something done to the page that arrives after the fence still fails the run,
-  because nothing should be acting on the page by then.
+  requires: a record of something done to the page is judged by when it was made, wherever its number
+  falls, so one made after the last step fails the run when it is in hand, before the fence or after
+  it. Nothing should be acting on the page by then.
 
 What the samples cannot show: where the pointer was between two of them. They are about 5 ms apart and
 at most 50; an excursion off a control and back inside one gap is not excluded by this probe.
@@ -185,10 +189,14 @@ SAMPLE_EVERY_S = 0.005
 #: the two bounds on the difference between the probe's clock and the page's must agree this closely
 #: for a page time to be read against the pointer samples (FP46)
 MAX_CLOCK_WIDTH_S = 0.02
-#: how far a time the page reports is taken to be from the true reading of its clock. Chrome coarsens
-#: performance.now() to 0.1 ms (0.005 ms in an isolated context); the page measures the step of its
-#: own clock when it loads and the run does not hold unless that is within this.
+#: how far a time the page reports is assumed to be from the true reading of its clock. Chrome coarsens
+#: performance.now() to 0.1 ms (0.005 ms in an isolated context). The page measures the step of its
+#: own clock when it loads; one coarser than this shows the assumption false, and a finer one is only
+#: a diagnostic of resolution.
 PAGE_CLOCK_GRAIN_S = 0.001
+#: by how much the page's clock and the probe's may differ in rate: an elapsed page time is taken to be
+#: at most this fraction longer in the probe's clock. System clocks are slewed by far less.
+CLOCK_RATE_SLACK = 0.001
 #: how long the probe waits for the page's fence record once it has asked for it
 FENCE_WAIT_S = 6.0
 #: the page's records of something done to it; each must fall in one tried step's interval
@@ -438,6 +446,13 @@ def _clock(received: list[dict]) -> dict:
             "held": why is None, **({"why": why} if why else {})}
 
 
+def _elapsed(reported: float) -> float:
+    """The most probe time that can have passed between two readings of the page's clock that differ by
+    ``reported``: each reading may be a grain off, in opposite directions, and the clocks' rates may
+    differ by the slack."""
+    return (max(reported, 0.0) + 2 * PAGE_CLOCK_GRAIN_S) * (1 + CLOCK_RATE_SLACK)
+
+
 def _timer(received: list[dict]):
     """``placed(record)`` and ``after(page_t)``: when, in the probe's clock, a page record was made, and
     the earliest that something at a page time can have happened, from the page's posts alone.
@@ -445,8 +460,9 @@ def _timer(received: list[dict]):
     A record made at page time ``t`` was received at probe time ``R``, so it was made before ``R``. If
     the page had its answer at page time ``r``, then at most ``r - t`` of page time passed between
     making it and a moment after the probe received it, so it was made after ``R - (r - t)``. The
-    page's times are coarse, each within ``PAGE_CLOCK_GRAIN_S`` of the true reading, so that elapsed
-    time is taken a grain longer than reported.
+    page's times are coarse, each assumed within ``PAGE_CLOCK_GRAIN_S`` of the true reading, and
+    ``r - t`` is the difference of two of them, so the elapsed time is taken two grains longer than
+    reported (``_elapsed``), and ``CLOCK_RATE_SLACK`` longer again in the probe's clock.
 
     The page numbers its records in the order it makes them, and that order has no ties. So a record
     is no earlier than any record numbered before it, and no later than any numbered after it:
@@ -456,11 +472,11 @@ def _timer(received: list[dict]):
     number has only the receipt of its own post above it and nothing below.
 
     A page event that was not posted (the last trusted pointer event) has a timestamp and no number.
-    ``after`` bounds it below by the records whose timestamps are earlier than its own by more than
-    two grains, which were therefore made before it.
+    ``after`` bounds it below by the records whose timestamps are earlier than its own by two grains
+    or more, which were therefore made before it.
 
-    No difference between the two clocks is assumed constant: only that both run at the same rate over
-    the few milliseconds a post takes to be answered. A bound is infinite when no record gives it."""
+    No difference between the two clocks is assumed constant: only that their rates differ by no more
+    than ``CLOCK_RATE_SLACK``. A bound is infinite when no record gives it."""
     answered: dict[int, float] = {}
     for e in received:
         answers = (e.get("detail") or {}).get("acks") if e.get("type") == "beat" else None
@@ -479,9 +495,9 @@ def _timer(received: list[dict]):
             return None
         n = e.get("n")
         took = answered[n] - t if isinstance(n, int) and not isinstance(n, bool) and n in answered else None
-        if took is None or took < -PAGE_CLOCK_GRAIN_S:
+        if took is None or took < -2 * PAGE_CLOCK_GRAIN_S:
             return t, -math.inf, got
-        return t, got - (max(took, 0.0) + PAGE_CLOCK_GRAIN_S), got
+        return t, got - _elapsed(took), got
 
     rows = [(e, bound) for e in received if (bound := own(e)) is not None]
     numbered = sorted(((e["n"], bound) for e, bound in rows
@@ -645,10 +661,16 @@ def analyze(out: Path) -> dict:
         if record is not None:
             pointer = record.get("last_trusted_pointer") or {}
             v["pointer_target"] = pointer.get("target")
-            # the pointer event is not a post: it is bounded below by the records made clearly before
-            # it. The record carries it, so it came before the record.
+            # the pointer event is not a post. It is bounded below by the records made clearly before
+            # it, and by the record that carries it: that record was made after it, by no more than
+            # the time between the two readings, and the record's own earliest moment is known. A
+            # pointer reading later than the record that carries it is not one this can place.
             try:
-                v["pointer_during_step"] = bool(window[0] <= after(float(pointer["t"])))
+                at = float(pointer["t"])
+                since = record["page_t"] - at
+                earliest = max(after(at), record["t_lo"] - _elapsed(since)) if since >= -2 * PAGE_CLOCK_GRAIN_S \
+                    else -math.inf
+                v["pointer_during_step"] = bool(window[0] <= earliest)
             except (KeyError, TypeError, ValueError):
                 v["pointer_during_step"] = False
             try:
@@ -723,7 +745,9 @@ def analyze(out: Path) -> dict:
                                 f"{MAX_CLOCK_WIDTH_S * 1000:.0f} ms by their own posts")
     widths = [e["t"] - e["t_lo"] for e in actions if math.isfinite(e["t"] - e["t_lo"])]
     clock["widest_action_record_s"] = round(max(widths), 4) if widths else None
-    # the grain the bounds allow for is an assumption about the page's clock, which the page measured
+    # the grain the bounds allow for is an assumption about the page's clock. The page's measured step
+    # is a diagnostic of its resolution: a coarser one shows the assumption false; a finer one, or one
+    # that was fine at load, does not show it true
     step = loaded.get("clock_step_s")
     clock["page_clock_step_s"] = step
     if not (isinstance(step, (int, float)) and not isinstance(step, bool) and 0 < step <= PAGE_CLOCK_GRAIN_S):

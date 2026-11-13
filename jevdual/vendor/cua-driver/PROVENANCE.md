@@ -167,8 +167,9 @@ The sequence does two things to the page: it dispatches events, and it gives foc
 in one place in the function, directly after the check of the element it is done to. Every other
 call the function makes reads. Footwork's test holds the function's text to that. It is a check
 of the text and not a parser: it classifies every method call written as one, counts every
-occurrence of the name of a method that acts, and fails on a property assignment and on the call
-forms that hide a name. It covers the function texts this file declares and passes by name; it
+occurrence of the name of a method that acts, and fails on an assignment to a member written with
+a dot or a bracket, on an increment or a delete of one, and on the call forms that hide a name. A
+member reached some other way is not seen. It covers the function texts this file declares and passes by name; it
 does not show that no other part of the driver sends script to the page.
 
 "Under the pointer" means all of: the ref's node is in its document; the point lies inside the
