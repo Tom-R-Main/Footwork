@@ -1,4 +1,4 @@
-"""Headless check for notebook predictions FP22, FP27 and FP30: what the driver's locate page function reports
+"""Headless check for notebook predictions FP22, FP27, FP30 and FP36: what the driver's locate page function reports
 in a real Chrome, read in the page's own script world and in an isolated world, and whether its two
 filmed delivery functions act on a real page from the isolated world.
 
@@ -20,10 +20,11 @@ wrapper that moves a button 300 px when it is called on it (the sixth review's c
 counts every call of the methods it replaced. On that page it runs, with the text and the arguments
 the driver uses: the filmed click on the button from the isolated world, at its centre; the same click
 after the button has been moved away; the filmed click on a second button that moves itself 300 px when
-a pointer comes over it (FP30); the filmed insert into a focused field with the point off it, into a
+a pointer comes over it (FP30); on a button that moves on mousedown, on a container whose two children
+swap when hovered, and on buttons whose cursor is none or an image (FP36); the filmed insert into a focused field with the point off it, into a
 field without focus, and into the focused field at its centre; and last, as controls that the two
 counterexamples are real, the click sequence without a point on the page's own object, which is what
-the driver did before locate6, on each button.
+the driver did before the filmed delivery, on each button.
 
 Run from ``jevdual/``::
 
@@ -81,6 +82,13 @@ DELIVERY = """<!doctype html>
 <body style="font: 16px system-ui; margin: 0">
 <button type="button" id="mover" style="position: absolute; left: 40px; top: 60px; width: 140px; height: 44px">Mover</button>
 <button type="button" id="shy" style="position: absolute; left: 40px; top: 160px; width: 140px; height: 44px">Shy</button>
+<button type="button" id="dodge" style="position: absolute; left: 40px; top: 260px; width: 140px; height: 44px">Dodge</button>
+<div id="pair" role="button" style="position: absolute; left: 300px; top: 260px; width: 140px; height: 44px">
+  <span id="second" style="position: absolute; left: 0; top: 0; width: 140px; height: 44px; background: #cde">Second</span>
+  <span id="first" style="position: absolute; left: 0; top: 0; width: 140px; height: 44px; background: #edc">First</span>
+</div>
+<button type="button" id="ghost" style="position: absolute; left: 560px; top: 60px; width: 140px; height: 44px; cursor: none">Ghost</button>
+<button type="button" id="drawn" style="position: absolute; left: 560px; top: 160px; width: 140px; height: 44px; cursor: url('data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='), auto">Drawn</button>
 <input type="text" id="field" style="position: absolute; left: 300px; top: 60px; width: 140px; height: 30px; box-sizing: border-box">
 <input type="text" id="other" style="position: absolute; left: 300px; top: 160px; width: 140px; height: 30px; box-sizing: border-box">
 <script>
@@ -101,7 +109,13 @@ Document.prototype.execCommand = function (...a) { log.command_calls += 1; retur
 // Shy moves away whenever a pointer comes over it
 const shy = document.getElementById('shy');
 shy.addEventListener('pointerover', () => { shy.style.top = '460px'; });
-for (const type of ['pointerover', 'pointerdown', 'mousedown', 'mouseup', 'click', 'beforeinput', 'input'])
+// Dodge moves away when it is pressed
+const dodge = document.getElementById('dodge');
+dodge.addEventListener('mousedown', () => { dodge.style.top = '560px'; });
+// Pair keeps its place; when hovered its top child shrinks to the right quarter and bares the other
+const first = document.getElementById('first');
+document.getElementById('pair').addEventListener('pointerover', () => { first.style.left = '105px'; first.style.width = '35px'; });
+for (const type of ['pointerover', 'pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click', 'beforeinput', 'input'])
   document.addEventListener(type, (e) => log.events.push({type, target: e.target.id, trusted: e.isTrusted,
     x: 'clientX' in e ? e.clientX : null, y: 'clientY' in e ? e.clientY : null,
     top: e.target.style.top, data: 'data' in e ? e.data : null}), true);
@@ -109,7 +123,12 @@ for (const type of ['pointerover', 'pointerdown', 'mousedown', 'mouseup', 'click
 """
 MOVER_CENTRE = (110.0, 82.0)  # of (40, 60, 140, 44)
 SHY_CENTRE = (110.0, 182.0)  # of (40, 160, 140, 44)
+DODGE_CENTRE = (110.0, 282.0)  # of (40, 260, 140, 44)
+PAIR_CENTRE = (370.0, 282.0)  # of (300, 260, 140, 44): on First before the hover, on Second after it
+GHOST_CENTRE = (630.0, 82.0)
+DRAWN_CENTRE = (630.0, 182.0)
 PRESS = ("pointerdown", "mousedown", "mouseup", "click")
+WHOLE = ("pointerover", "pointerdown", "mousedown", "pointerup", "mouseup", "click")  # what the page logs of a click
 FIELD_CENTRE = (370.0, 75.0)  # of (300, 60, 140, 30)
 OTHER_CENTRE = (370.0, 175.0)
 INSERTED = "footwork"
@@ -177,7 +196,7 @@ async def deliver(cdp: Cdp, url: str) -> dict:
 
     async def state() -> dict:
         return await page("({...window.__log, events: window.__log.events.slice(), mover_top: mover.style.top, "
-                          "shy_top: shy.style.top, "
+                          "shy_top: shy.style.top, dodge_top: dodge.style.top, first_left: first.style.left, "
                           "field: document.getElementById('field').value, other: document.getElementById('other').value, "
                           "active: document.activeElement && document.activeElement.id, page_focused: document.hasFocus()})")
 
@@ -195,8 +214,25 @@ async def deliver(cdp: Cdp, url: str) -> dict:
     # run that listener; the press must not follow.
     shy_page, shy = await objects("shy")
     out["shy_click"] = {"receipt": await read(cdp, click, shy, *SHY_CENTRE), "after": await state()}
+    # 2c (FP36): pressed, it moves away: the press goes, the release and the click must not
+    dodge_page, dodge = await objects("dodge")
+    out["dodge_click"] = {"receipt": await read(cdp, click, dodge, *DODGE_CENTRE), "after": await state()}
+    # 2d: its top child leaves the point when hovered; the press goes to the child then under the point
+    pair_page, pair = await objects("pair")
+    out["pair_click"] = {"receipt": await read(cdp, click, pair, *PAIR_CENTRE), "after": await state()}
+    # 2e, 2f: the page hides the pointer, or replaces it with an image: nothing may be sent
+    locate = function_text()
+    out["cursors"] = {}
+    for control in ("mover", "field", "ghost", "drawn"):
+        _, isolated = await objects(control)
+        out["cursors"][control] = (await read(cdp, locate, isolated) or {}).get("cursor")
+    ghost_page, ghost = await objects("ghost")
+    out["ghost_click"] = {"receipt": await read(cdp, click, ghost, *GHOST_CENTRE), "after": await state()}
+    _, drawn = await objects("drawn")
+    out["drawn_click"] = {"receipt": await read(cdp, click, drawn, *DRAWN_CENTRE), "after": await state()}
     # 3: the filmed insert. The field is focused by the page; first with the point off it, ...
-    await page("mover.style.top = '60px'; shy.style.top = '160px'; document.getElementById('field').focus()")
+    await page("mover.style.top = '60px'; shy.style.top = '160px'; dodge.style.top = '260px'; "
+               "first.style.left = '0'; first.style.width = '140px'; document.getElementById('field').focus()")
     _, field = await objects("field")
     _, other = await objects("other")
     out["insert_off_point"] = {"receipt": await read(cdp, insert, field, 10.0, 10.0, INSERTED), "after": await state()}
@@ -204,13 +240,17 @@ async def deliver(cdp: Cdp, url: str) -> dict:
     out["insert_unfocused"] = {"receipt": await read(cdp, insert, other, *OTHER_CENTRE, INSERTED), "after": await state()}
     # ... then into the focused field at its centre
     out["insert"] = {"receipt": await read(cdp, insert, field, *FIELD_CENTRE, INSERTED), "after": await state()}
-    # 4: the control. Without a point, on the page's own object, as the driver clicked before locate6:
+    # 4: the control. Without a point, on the page's own object, as the driver clicked before the filmed delivery:
     # the page's wrapper answers the sequence's rectangle read and moves the button under it.
     out["page_world_click"] = {"before": await state(), "receipt": await read(cdp, click, mover_page),
                                "after": await state()}
     # and on the button that moves when hovered: without the check before the press it is pressed anyway
     out["page_world_shy_click"] = {"before": await state(), "receipt": await read(cdp, click, shy_page),
                                    "after": await state()}
+    # FP36's controls: each of these the sequence without a point still clicks
+    for name, mine in (("dodge", dodge_page), ("pair", pair_page), ("ghost", ghost_page)):
+        out[f"page_world_{name}_click"] = {"before": await state(), "receipt": await read(cdp, click, mine),
+                                           "after": await state()}
     await cdp.call("Target.closeTarget", {"targetId": target}, browser=True)
     return out
 
@@ -233,7 +273,18 @@ def delivery_verdict(found: dict) -> dict:
     typed = events("insert", "insert_unfocused")
     control = found["page_world_click"]
     control_clicks = [e for e in control["after"]["events"][len(control["before"]["events"]):] if e["type"] == "click"]
-    nothing = {"complete": False, "stopped": "not_under_pointer", "count": 0, "last": "", "retargeted": False}
+    nothing = {"complete": False, "stopped": "not_under_pointer", "count": 0, "last": "", "retargeted": False,
+               "hidden": False}
+    from jevdual.browser_driver import pointer_shown
+
+    def seen(step: str, since: str) -> list[tuple[str, str]]:
+        return [(e["type"], e["target"]) for e in events(step, since)]
+
+    def control_seen(name: str) -> list[tuple[str, str]]:
+        run = found[f"page_world_{name}_click"]
+        return [(e["type"], e["target"]) for e in run["after"]["events"][len(run["before"]["events"]):]]
+
+    cursors = found["cursors"]
     checks = {
         "the page's wrappers were in place and unused at load": found["loaded"]["rect_calls"] == 0,
         "the filmed click completed": (found["click"]["receipt"] or {}).get("complete") is True,
@@ -248,14 +299,34 @@ def delivery_verdict(found: dict) -> dict:
         # FP30
         "the click on the button that moves when hovered stopped before the press": (
             found["shy_click"]["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 6,
-                                              "last": "mousemove", "retargeted": False}),
+                                              "last": "mousemove", "retargeted": False, "hidden": False}),
         "it reached the page as hover events only, and the button had moved": (
             [(e["type"], e["target"]) for e in hovered] == [("pointerover", "shy")]
             and found["shy_click"]["after"]["shy_top"] == "460px" and untouched("shy_click")),
+        # FP36
+        "the button that moves when pressed was pressed and not released or clicked": (
+            found["dodge_click"]["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 8,
+                                                "last": "mousedown", "retargeted": False, "hidden": False}
+            and seen("dodge_click", "shy_click") == [("pointerover", "dodge"), ("pointerdown", "dodge"),
+                                                     ("mousedown", "dodge")]
+            and found["dodge_click"]["after"]["dodge_top"] == "560px" and untouched("dodge_click")),
+        "the press went to the child under the point after the hover bared it": (
+            (found["pair_click"]["receipt"] or {}).get("complete") is True
+            and seen("pair_click", "dodge_click") == [("pointerover", "first"), *((kind, "second") for kind in WHOLE[1:])]
+            and found["pair_click"]["after"]["first_left"] == "105px" and untouched("pair_click")),
+        "an ordinary button and field show the pointer by the rule": (
+            pointer_shown(cursors.get("mover")) and pointer_shown(cursors.get("field"))),
+        "the isolated world reads the page's hidden and replaced cursors": (
+            cursors.get("ghost") == "none" and "url(" in str(cursors.get("drawn"))
+            and not pointer_shown(cursors.get("drawn"))),
+        "nothing was sent under the hidden pointer or the replaced one": (
+            found["ghost_click"]["receipt"] == found["drawn_click"]["receipt"] == {**nothing, "hidden": True}
+            and not events("ghost_click", "pair_click") and not events("drawn_click", "ghost_click")
+            and untouched("drawn_click")),
         "the field had focus for the inserts": found["insert_off_point"]["after"]["active"] == "field",
         "the insert with the point off the field left it empty": (
             found["insert_off_point"]["receipt"] == {"inserted": False, "why": "not_under_pointer"}
-            and found["insert_off_point"]["after"]["field"] == "" and not events("insert_off_point", "shy_click")),
+            and found["insert_off_point"]["after"]["field"] == "" and not events("insert_off_point", "drawn_click")),
         "the insert into the field without focus left it empty": (
             found["insert_unfocused"]["receipt"] == {"inserted": False, "why": "not_focused"}
             and found["insert_unfocused"]["after"]["other"] == "" and found["insert_unfocused"]["after"]["field"] == ""
@@ -270,10 +341,17 @@ def delivery_verdict(found: dict) -> dict:
             len(control_clicks) == 1 and control_clicks[0]["target"] == "mover" and control_clicks[0]["top"] == "360px"
             and control_clicks[0]["y"] == MOVER_CENTRE[1] + 300),
         "control: without the check the button that moved when hovered is pressed and clicked": (
-            [e["type"] for e in shy_control_events if e["target"] == "shy"] == ["pointerover", *PRESS]
+            [e["type"] for e in shy_control_events if e["target"] == "shy"] == list(WHOLE)
             and shy_control["after"]["shy_top"] == "460px"),
+        "control: without a point the button that moved when pressed is released and clicked": (
+            control_seen("dodge") == [(kind, "dodge") for kind in WHOLE]
+            and found["page_world_dodge_click"]["after"]["dodge_top"] == "560px"),
+        "control: without a point the child that left is pressed where it no longer is": (
+            control_seen("pair") == [(kind, "first") for kind in WHOLE]),
+        "control: without a point the button under a hidden pointer is clicked": (
+            control_seen("ghost") == [(kind, "ghost") for kind in WHOLE]),
     }
-    return {"checks": checks, "held": all(checks.values()),
+    return {"checks": checks, "held": all(checks.values()), "cursors": cursors,
             "page_focused": found["insert"]["after"]["page_focused"],
             "input_events": [(e["type"], e["trusted"], e["data"]) for e in typed]}
 

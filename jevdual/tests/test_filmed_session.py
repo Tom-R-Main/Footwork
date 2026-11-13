@@ -467,6 +467,85 @@ def test_a_filmed_browser_click_in_a_changed_scene_sends_nothing_and_moves_nothi
     assert log == []
 
 
+def _filmed_page(monkeypatch, fw, log, **wire):
+    """A filmed browser session on the page fixture, whose driver answers a click with ``wire``."""
+    from jevdual import browser_driver, browser_target
+    from jevdual.browser_driver import BrowserBridge
+
+    from tests.test_filmed_page_pointer import URL, Wire
+
+    monkeypatch.setattr(browser_target, "_catalog", lambda pid: (
+        {"pid": pid, "incarnation": 1.0}, [{"type": "page", "id": "page-1", "url": URL}]))
+
+    async def browser(url, policy):
+        first = Wire(log)
+        return first, BrowserBridge(first, 77, 40335, policy=policy)
+
+    monkeypatch.setattr(browser_driver, "bind_footwork_chrome", browser)
+    monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: Wire(log, **wire))
+    _browser_scene(monkeypatch)
+    code, out, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                        "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 0, (out, err)
+    return str(_id(out, "Go"))
+
+
+def _did(fw) -> dict:
+    """The session log's record of the last do."""
+    import json
+
+    rows = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines() if line.strip()]
+    return [row for row in rows if row.get("kind") == "do"][-1]
+
+
+def test_a_click_that_stopped_after_its_press_is_said_by_the_command(world, fw, filmed, monkeypatch):
+    """FP38: the bridge's sentence and mark for a click whose press went and whose click event did not
+    reach the person, and the receipt does not call the outcome known."""
+    from tests.test_filmed_page_pointer import STOPPED
+
+    text = STOPPED.format(why="the ref's node left the filmed point", last="mousedown", count=8)
+    go = _filmed_page(monkeypatch, fw, [], action={"effect": "unverifiable", "summary": text}, action_text=text)
+    code, out, err = fw("do", "click", go, "--no-judge")
+    said = ("driver says unverifiable (click_stopped_after_press: the click stopped after mousedown and no click "
+            "event was sent: the ref's node left the filmed point. The press was sent;")
+    assert said in out, (code, out, err)
+    assert "input outcome unknown after error: click_stopped_after_press" in out and "not sent" not in out
+    assert _did(fw)["error"].startswith("click_stopped_after_press: the click stopped after mousedown")
+
+
+def test_a_click_refused_after_its_own_hover_events_is_said_by_the_command(world, fw, filmed, monkeypatch):
+    from tests.test_filmed_page_pointer import UNPRESSED
+
+    text = UNPRESSED.format(why="the ref's node left the filmed point", last="mousemove")
+    go = _filmed_page(monkeypatch, fw, [], action={"effect": "refused", "summary": text}, action_text=text)
+    code, out, err = fw("do", "click", go, "--no-judge")
+    assert "driver says unverifiable (input outcome unknown: browser_action_unavailable the pointer moved; " in out
+    assert "the click was then refused: no press or click was sent" in out, (code, out, err)
+
+
+def test_a_scene_found_changed_when_the_click_returned_is_said_by_the_command(world, fw, filmed, monkeypatch):
+    """FP38: the click went and the page's change decides its receipt; that the film may not show the
+    pointer on it is said on a line of its own and kept in the log."""
+    from jevdual import ax
+
+    log: list = []
+    go = _filmed_page(monkeypatch, fw, log)
+    monkeypatch.setattr(ax, "web_area_at", lambda x, y: (
+        (501, False) if any(entry[0] == "browser_click" for entry in log) else (40335, True)))
+    code, out, err = fw("do", "click", go, "--no-judge")
+    assert code == 0, (out, err)
+    note = "scene_changed_during_delivery: the click was delivered, but when it returned the pointer at "
+    assert f"filmed take: {note}" in out and "input outcome unknown" not in out, out
+    assert _did(fw)["filmed_note"].startswith(note) and _did(fw)["error"] is None
+
+
+def test_a_filmed_click_with_nothing_to_say_prints_no_note(world, fw, filmed, monkeypatch):
+    go = _filmed_page(monkeypatch, fw, [])
+    code, out, err = fw("do", "click", go, "--no-judge")
+    assert code == 0 and "filmed take:" not in out and "filmed_note" not in _did(fw), (out, err)
+    assert _did(fw)["error"] is None
+
+
 def test_a_filmed_browser_take_needs_a_web_area(world, fw, filmed, monkeypatch):
     """FP9: a page position maps to the screen from the web area's origin, so a browser take whose window
     shows no web area does not start (a native take still films from the window's frame)."""

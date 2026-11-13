@@ -2715,6 +2715,7 @@ async def cmd_do(args: Any) -> int:
         ended_at = None
         bridge_returned = False
         error = None
+        filmed_note = None
         eff = None
         dispatched = None  # a missing acknowledgement cannot establish no-send
         try:
@@ -2763,6 +2764,18 @@ async def cmd_do(args: Any) -> int:
                 error = f"input outcome unknown: {eff.error_code or ''} {eff.summary[:100]}".strip()
             elif eff.error_code:
                 error = f"{eff.error_code}: {eff.summary[:140]}"
+            elif getattr(bridge, "filmed", None) is not None:
+                # what a filmed take found about a page action that went: the session says it, because
+                # the effect word alone ("unverifiable", or whatever the page's change shows) does not
+                from jevdual.filmed import PAGE_MARKS
+
+                marks = [mark for mark in getattr(eff, "evidence", ()) if mark in PAGE_MARKS]
+                if "click_stopped_after_press" in marks:
+                    # the press went and no click event did; what the page did with the press is unknown
+                    driver_effect = "unverifiable"
+                    error = f"{', '.join(marks)}: {eff.summary[:400]}"
+                elif marks:
+                    filmed_note = f"{', '.join(marks)}: {eff.summary[:400]}"
         except (NativeBridgeError, RuntimeError) as exc:
             dispatched = getattr(exc, "dispatched", None)
             driver_effect = "not dispatched" if dispatched is False else "unverifiable"
@@ -2785,6 +2798,7 @@ async def cmd_do(args: Any) -> int:
             "driver_effect": driver_effect,
             "dispatched": dispatched,
             "error": error,
+            **({"filmed_note": filmed_note} if filmed_note else {}),
             "exec_ms": exec_ms,
             "op": op,
             "target_id": target.id if target is not None else None,
@@ -2874,6 +2888,9 @@ async def cmd_do(args: Any) -> int:
         print(
             f"dispatched {line}: driver says {driver_effect}{(' (' + error + ')') if error else ''} in {exec_ms / 1000:.1f}s"
         )
+        if filmed_note:
+            # the action went; the film may not show the pointer on it
+            print(f"filmed take: {filmed_note}")
         await asyncio.sleep(args.settle)
         baseline = state.last_snapshot
         try:

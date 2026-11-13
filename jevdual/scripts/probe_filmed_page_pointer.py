@@ -1,6 +1,6 @@
-"""Probe for notebook prediction FP28 (which revises FP20): does a filmed browser take put the real
-pointer on each page target, keep it there while the action is delivered, and refuse the ones it cannot
-verify?
+"""Probe for notebook prediction FP37 (which revises FP29, FP28 and FP20): does a filmed browser take put
+the real pointer on each page target, keep it there while every event of the action is delivered, and
+refuse or stop where it cannot?
 
 Starts a filmed ``start --browser`` session (``--mode exclusive_desktop --pointer-motion filmed``) on an
 owned local fixture in a Chrome that Footwork launches on a fresh profile and its own port, then runs
@@ -14,38 +14,45 @@ owned local fixture in a Chrome that Footwork launches on a fresh profile and it
    to answer with Forged anywhere on it: refused the same way, because the driver reads in an isolated
    world;
 6. click Edge, fixed half below the viewport: refused the same way;
-7. click Clipped, whose lower part a scrolling box hides though its centre shows: refused the same way,
-   because the page click would scroll the box after the pointer arrived;
+7. click Clipped, whose lower part a scrolling box hides though its centre shows: refused the same way;
 8. click Turned, inside a rotated box: refused the same way (the driver reports no position for it);
-9. type into Note, a text field without focus: refused (``target_unfocused``), no input, no pointer move;
-10. click Note: clicked; the press focuses it, and in a document that has focus its style then moves
-    it 40 px down;
-11. type into Note: the pointer goes to where the field now is and the text is inserted;
-12. type into Note again, which now holds text: refused (``replace_unfilmed``), no input, no pointer
+9. click Hidden, whose style hides the pointer (``cursor: none``): refused the same way, because the
+   film would show no pointer on it;
+10. click Shy, which moves 300 px away when an untrusted ``pointerover`` reaches it (the click's own
+    hover events; the real pointer's arrival does not move it): the pointer goes to it, the click's
+    hover events move it, and no press or click is sent;
+11. click Dodge, which moves 300 px away when it is pressed: the pointer goes to it, ``pointerdown`` and
+    ``mousedown`` are sent, and no release or click is, because it is no longer under the pointer;
+12. type into Note, a text field without focus: refused (``target_unfocused``), no input, no pointer move;
+13. click Note: clicked; the press focuses it;
+14. type into Note: the text is inserted with the pointer on the field;
+15. type into Note again, which now holds text: refused (``replace_unfilmed``), no input, no pointer
     move, because replacing selects the text after the pointer was verified;
-13. click Gamma, below the fold: refused, no click, no pointer move;
-14. click Jump down, in view: clicked; its handler scrolls Gamma into view;
-15. click Gamma again: clicked, with the pointer on it first, on the scrolled page.
+16. click Gamma, below the fold: refused, no click, no pointer move;
+17. click Jump down, in view: clicked; its handler scrolls Gamma into view;
+18. click Gamma again: clicked, with the pointer on it first, on the scrolled page.
 
 Before the steps it parks the pointer on an empty part of the page, so no step starts on its target by
 accident.
 
-The fixture logs every trusted ``mouseover``, and inside each click handler and each input the last
-trusted pointer event before it (move or over) with its client coordinates, the control's client
-rectangle (for a click, where it was when the press began), the scroll offset and the device pixel
-ratio. The session's pointer-gestures.jsonl records where each approach ended in screen points, and the
-probe counts its lines after every step. ``analyze`` reads each step against its own evidence: events
-are matched to a step by time, and gestures by their order. The verdict needs a device pixel ratio of 2,
-the case in which page and screen units could differ, and the page's own record that its replaced hit
-test answers Forged.
+The fixture logs every trusted ``mouseover``; inside each click handler, each input and each move of Shy
+or Dodge, the last trusted pointer event before it (move or over) with its client coordinates, the
+control's client rectangle, the scroll offset and the device pixel ratio; and every ``pointerdown``,
+``mousedown``, ``pointerup``, ``mouseup``, ``click``, ``beforeinput`` and ``input`` it sees anywhere,
+trusted or not, numbered in the order it saw them, each with its client coordinates and the rectangle of
+the control it was on at that moment. The session's pointer-gestures.jsonl records where each approach
+ended in screen points, and the probe counts its lines after every step. The probe also reads the system
+pointer itself about every 5 ms for the whole run (pointer-samples.jsonl, not the session's reading).
 
-Two more records show the pointer at delivery and a press that reached nothing (FP28). The probe reads
-the system pointer itself about every 5 ms for the whole run (pointer-samples.jsonl, not the session's
-reading): a delivered step holds only if every sample from 250 ms before the page's event to 250 ms
-after lies on the control's rectangle on screen, with at least twenty samples. And the page reports
-every ``pointerdown``, ``mousedown``, ``mouseup``, ``click``, ``beforeinput`` and ``input`` it sees
-anywhere, trusted or not: a refused step holds only if there was none during it, and a delivered step
-only if all of them were on its own control.
+``analyze`` reads each step against its own evidence: events are matched to a step by time, and gestures
+by their order. A clicked step needs the page to have seen exactly ``pointerdown``, ``mousedown``,
+``pointerup``, ``mouseup``, ``click``, in that order, all on its control, each at a point inside the
+control's rectangle as it was at that event; a typed step exactly one ``input``; Dodge exactly
+``pointerdown`` and ``mousedown``; Shy and every refused step none at all. For every one of those
+events, the probe's own samples from 250 ms before it to 250 ms after must all lie on that rectangle on
+screen, at least twenty of them, with no gap between consecutive samples or to either end of that window
+longer than 50 ms. The verdict needs a device pixel ratio of 2, the case in which page and screen units
+could differ, and the page's own record that its replaced hit test answers Forged.
 
 Waits for an unlocked screen and 10 s of idle, then checks again, immediately before launching, that
 the profile directory does not exist, the port is not Footwork's default or the sign-in test's and has
@@ -66,6 +73,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import itertools
 import json
 import os
 import re
@@ -82,9 +90,10 @@ from probe_browser_holder import _activate_pid, _cli, _front_pid, _sample_front,
 
 PROTECTED_PORTS = frozenset({9333, 9555})
 #: (label, operation, expectation) in order. The operation is "click", "trusted" (a click asked for by
-#: the trusted route) or "type"; the expectation is "clicked", "typed", or the code a refusal must
-#: carry. Gamma is refused until Jump down has scrolled it into view; Note until a click has focused it,
-#: and again once it holds text.
+#: the trusted route) or "type"; the expectation is "clicked", "typed", "unpressed" (approached, and
+#: stopped by the click's own hover events before any press), "pressed" (pressed, and stopped before the
+#: release), or the code a refusal before anything moved must carry. Gamma is refused until Jump down has
+#: scrolled it into view; Note until a click has focused it, and again once it holds text.
 STEPS = (
     ("Alpha", "click", "clicked"),
     ("Beta", "trusted", "route_unfilmed"),
@@ -94,6 +103,9 @@ STEPS = (
     ("Edge", "click", "target_unlocated"),
     ("Clipped", "click", "target_unlocated"),
     ("Turned", "click", "target_unlocated"),
+    ("Hidden", "click", "target_unlocated"),
+    ("Shy", "click", "unpressed"),
+    ("Dodge", "click", "pressed"),
     ("Note", "type", "target_unfocused"),
     ("Note", "click", "clicked"),
     ("Note", "type", "typed"),
@@ -103,10 +115,19 @@ STEPS = (
     ("Gamma", "click", "clicked"),
 )
 DELIVERED = ("clicked", "typed")
+#: what the page must see during each kind of step that reaches it: exactly these events, in this order,
+#: all on the step's control (FP37). Any other expectation is a refusal, during which it must see none.
+EXPECTED_EVENTS = {"clicked": ("pointerdown", "mousedown", "pointerup", "mouseup", "click"), "typed": ("input",),
+                   "pressed": ("pointerdown", "mousedown"), "unpressed": ()}
+#: what the command must say of a click that stopped part way
+SAID = {"unpressed": ("no press or click was sent",), "pressed": ("after mousedown", "no click event was sent")}
+#: the event that moves each control that moves, as the page records it
+MOVED_BY = {"Shy": "pointerover", "Dodge": "mousedown"}
 #: what a refused step's refusal must also say, where the prediction names the reason: by label, or by
 #: label and code where a control is refused more than one way
 REASONS = {"Covered": "another element is at its centre", "Forged": "another element is at its centre",
            "Clipped": "container hides part of it", "Turned": "(transformed)",
+           "Hidden": "hides or replaces the pointer",
            ("Note", "replace_unfilmed"): "types only into an empty field"}
 
 
@@ -117,10 +138,13 @@ TYPED = "footwork"
 
 #: viewport CSS px with no button, overlay or fixed element near it
 EMPTY_SPOT = (520, 200)
-#: the probe's own pointer samples from this long before a delivery's page event to this long after
-#: must all lie on the control, and there must be at least ``MIN_SAMPLES`` of them (FP28)
+#: the probe's own pointer samples from this long before each event the page saw to this long after
+#: must all lie on the control, at least ``MIN_SAMPLES`` of them (FP28), and no two consecutive ones, nor
+#: either end of that window and the sample nearest it, may be further apart than ``MAX_GAP_S`` (FP37):
+#: a sampler that stalled across the event saw nothing of it
 DELIVERY_WINDOW_S = 0.25
 MIN_SAMPLES = 20
+MAX_GAP_S = 0.05
 SAMPLE_EVERY_S = 0.005
 
 FIXTURE = """<!doctype html>
@@ -128,7 +152,6 @@ FIXTURE = """<!doctype html>
 <title>Footwork filmed page pointer fixture</title>
 <style>
   #note { position: absolute; left: 620px; top: 130px; width: 140px; height: 30px; box-sizing: border-box }
-  #note:focus { top: 170px }
 </style>
 <body style="font: 16px system-ui; margin: 0">
 <div style="position: relative; height: 2600px">
@@ -138,6 +161,9 @@ FIXTURE = """<!doctype html>
   <button type="button" id="jump" style="position: absolute; left: 300px; top: 60px; width: 140px; height: 44px">Jump down</button>
   <button type="button" id="gamma" style="position: absolute; left: 240px; top: 1900px; width: 140px; height: 44px">Gamma</button>
   <button type="button" id="forged" style="position: absolute; left: 620px; top: 60px; width: 140px; height: 44px">Forged</button>
+  <button type="button" id="hidden" style="position: absolute; left: 300px; top: 130px; width: 140px; height: 44px; cursor: none">Hidden</button>
+  <button type="button" id="shy" style="position: absolute; left: 40px; top: 130px; width: 140px; height: 44px">Shy</button>
+  <button type="button" id="dodge" style="position: absolute; left: 300px; top: 200px; width: 140px; height: 44px">Dodge</button>
   <input type="text" id="note" aria-label="Note">
   <div id="scroller" style="position: absolute; left: 40px; top: 300px; width: 200px; height: 60px; overflow: auto">
     <div style="position: relative; height: 300px">
@@ -153,8 +179,12 @@ FIXTURE = """<!doctype html>
 <button type="button" id="edge" style="position: fixed; left: 480px; bottom: -22px; width: 140px; height: 44px">Edge</button>
 <script>
 const now = () => (performance.timeOrigin + performance.now()) / 1000;
+// n numbers the records in the order the page made them: several events of one click can carry the
+// same time, and the posts need not arrive in order
+let seq = 0;
 const post = (type, detail) => fetch('/log', {method: 'POST', keepalive: true,
-  body: JSON.stringify({t: now(), type, detail})});
+  body: JSON.stringify({t: now(), n: ++seq, type, detail})});
+const box = (el) => { const r = el.getBoundingClientRect(); return [r.x, r.y, r.width, r.height]; };
 const control = (el) => (el && el.closest) ? el.closest('button, input') : null;
 const named = (c) => c.getAttribute('aria-label') || c.textContent;
 const label = (el) => control(el) ? named(control(el)) : (el && (el.id || el.tagName)) || null;
@@ -170,12 +200,6 @@ const state = () => ({scroll: [window.scrollX, window.scrollY], dpr: window.devi
   viewport: [window.innerWidth, window.innerHeight], page_focused: document.hasFocus(),
   pinch: window.visualViewport ? window.visualViewport.scale : null});
 let lastPointer = null;
-// where a control was when the press on it began: a field can move when the press focuses it
-let press = null;
-document.addEventListener('pointerdown', (e) => {
-  const c = control(e.target);
-  press = c ? {control: c, rect: c.getBoundingClientRect()} : null;
-}, true);
 for (const type of ['mousemove', 'mouseover']) document.addEventListener(type, (e) => {
   if (!e.isTrusted) return;
   lastPointer = {t: now(), type, target: label(e.target), x: e.clientX, y: e.clientY};
@@ -183,21 +207,40 @@ for (const type of ['mousemove', 'mouseover']) document.addEventListener(type, (
 }, true);
 for (const b of document.querySelectorAll('button, input')) {
   b.addEventListener('click', (e) => {
-    const r = (press && press.control === b) ? press.rect : b.getBoundingClientRect();
     post('click_handler', {button: named(b), trusted: e.isTrusted, last_trusted_pointer: lastPointer,
-      rect: [r.x, r.y, r.width, r.height], ...state()});
+      rect: box(b), ...state()});
     if (b.id === 'jump') window.scrollTo(0, 1500);
   });
 }
-// every press and insertion the page sees, anywhere, trusted or not: a refused step must show none,
-// and a delivered one only its own control's
-for (const type of ['pointerdown', 'mousedown', 'mouseup', 'click', 'beforeinput', 'input'])
+// every press, release and insertion the page sees, anywhere, trusted or not, with where the control it
+// is on was at that moment (read before any listener of the control's own can move it): a refused step
+// must show none, and a delivered one exactly its own control's, in order
+for (const type of ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click', 'beforeinput', 'input'])
   window.addEventListener(type, (e) => post('page_event', {event: type, trusted: e.isTrusted,
-    target: label(e.target), x: 'clientX' in e ? e.clientX : null, y: 'clientY' in e ? e.clientY : null}), true);
+    target: label(e.target), x: 'clientX' in e ? e.clientX : null, y: 'clientY' in e ? e.clientY : null,
+    rect: control(e.target) ? box(control(e.target)) : null}), true);
+// Shy leaves when the click's own hover events reach it. The real pointer's arrival is a trusted event
+// and does not move it, so the pointer can be put on it first.
+const shy = document.getElementById('shy');
+shy.addEventListener('pointerover', (e) => {
+  if (e.isTrusted) return;
+  const rect = box(shy);
+  shy.style.top = '430px';
+  post('moved', {control: 'Shy', by: 'pointerover', trusted: e.isTrusted, last_trusted_pointer: lastPointer,
+    rect, ...state()});
+});
+// Dodge leaves when it is pressed
+const dodge = document.getElementById('dodge');
+dodge.addEventListener('mousedown', (e) => {
+  const rect = box(dodge);
+  dodge.style.top = '500px';
+  post('moved', {control: 'Dodge', by: 'mousedown', trusted: e.isTrusted, last_trusted_pointer: lastPointer,
+    rect, ...state()});
+});
 document.getElementById('note').addEventListener('input', (e) => {
-  const b = e.target, r = b.getBoundingClientRect();
+  const b = e.target;
   post('input', {field: named(b), value: b.value, trusted: e.isTrusted, last_trusted_pointer: lastPointer,
-    rect: [r.x, r.y, r.width, r.height], ...state()});
+    rect: box(b), ...state()});
 });
 window.addEventListener('scroll', () => post('scrolled', {y: window.scrollY}), {passive: true});
 window.addEventListener('load', () => {
@@ -264,111 +307,173 @@ class _Joined:
             thread.join(timeout=timeout)
 
 
+def _bracket(samples, t: float, rect) -> dict:
+    """The probe's own pointer samples around page time ``t`` against screen rectangle ``rect``: how
+    many there are in the window, how many lie off the rectangle, and the longest stretch of the window
+    without one (between consecutive samples, or between an end of the window and the sample nearest
+    it). ``held`` needs enough of them, none off, and no such stretch longer than ``MAX_GAP_S``."""
+    low, high = t - DELIVERY_WINDOW_S, t + DELIVERY_WINDOW_S
+    around = sorted(sample for sample in samples or [] if low <= sample[0] <= high)
+    edges = [low, *(sample[0] for sample in around), high]
+    gap = max(later - earlier for earlier, later in itertools.pairwise(edges))
+    off = sum(1 for sample in around if not _inside(sample[1:], rect))
+    return {"samples": len(around), "off_control": off, "largest_gap_s": round(gap, 4),
+            "held": len(around) >= MIN_SAMPLES and off == 0 and gap <= MAX_GAP_S}
+
+
+def _rect(value) -> list[float] | None:
+    try:
+        x, y, w, h = (float(part) for part in value)
+    except (TypeError, ValueError):
+        return None
+    return [x, y, w, h]
+
+
 def analyze(out: Path) -> dict:
     """Each step's verdict from its own evidence.
 
-    A clicked step holds when its command succeeded; the only click handler the page ran during the
-    step was that control's, once, and nothing was typed; the last trusted pointer event before the
-    handler was on that control, at client coordinates inside its rectangle as it was when the press
-    began; and the step's one new gesture is an approach to that control that arrived inside that
-    rectangle. That pointer event must have happened during the step, unless the approach posted
-    nothing because the pointer was already there. A typed step holds the same way about the page's one
-    input event during the step, with no click handler run, the field's rectangle read at the input, and
-    the field then holding exactly the text sent. A delivered step also needs the probe's own pointer
-    samples from ``DELIVERY_WINDOW_S`` before that page event to as long after it to lie, every one, on
-    the control's rectangle on screen, at least ``MIN_SAMPLES`` of them, and every press or insertion
-    the page saw during the step to be on that control. A refused step holds when the command reported
-    the step's refusal code (and reason, where one is named), the page ran no click handler and saw no
-    input, press or insertion of any kind anywhere during the step, and the step added no gesture. The
-    whole run holds only when the start and the
-    park succeeded, every delivered step reported a device pixel ratio of 2 and a pinch scale of 1, the
-    page recorded that its own hit test answers Forged where the browser's does not, the run recorded
-    the Chrome its start launched and that it closed, and no cleanup step failed."""
+    A step that reaches the page (``EXPECTED_EVENTS``) holds when:
+
+    - the page saw, during the step, exactly the events its kind names, in that order, all on the step's
+      control: five for a click, one ``input`` for a type, ``pointerdown`` and ``mousedown`` for the
+      control that moves when pressed, none for the one that moves when hovered;
+    - each of those events that has a position was at a point inside the control's rectangle as it was
+      at that event, and the probe's own pointer samples around each of them hold (``_bracket``) on that
+      rectangle on screen;
+    - the page's one record of the step is the right one and nothing else ran: a click handler of that
+      control for a click, the field's input for a type (the field then holding exactly the text sent),
+      the control's own record that the named untrusted event moved it for the two that move (around
+      which the samples must hold too);
+    - the last trusted pointer event before that record was on the control, inside its rectangle, during
+      the step (unless the approach posted nothing because the pointer was already there);
+    - the step's one new gesture is an approach to that control that arrived inside that rectangle;
+    - a clicked or typed step's command succeeded, and a stopped one's says what ``SAID`` names (its exit
+      code is recorded and not judged).
+
+    A refused step holds when the command reported the step's refusal code (and reason, where one is
+    named), the page ran no click handler, saw no input, press, release or insertion of any kind
+    anywhere, moved no control, and the step added no gesture.
+
+    The whole run holds only when the start and the park succeeded, every step that reached the page
+    reported a device pixel ratio of 2 and a pinch scale of 1, the page recorded that its own hit test
+    answers Forged where the browser's does not, the run recorded the Chrome its start launched and that
+    it closed, and no cleanup step failed."""
     try:
         run = json.loads((out / "run.json").read_text())
         content = json.loads((out / "session/session.json").read_text())["filmed"]["content"]
     except (OSError, ValueError, KeyError, TypeError) as exc:
         return {"held": False, "unreadable": f"{type(exc).__name__}: {exc}"}
-    events = _jsonl(out / "page-events.jsonl")
+    # in the order the page made them, where it numbered them
+    events = sorted(_jsonl(out / "page-events.jsonl"), key=lambda e: (e.get("n") is None, e.get("n") or 0))
     handlers = [e for e in events if e.get("type") == "click_handler"]
     inputs = [e for e in events if e.get("type") == "input"]
+    moved = [e for e in events if e.get("type") == "moved"]
     seen_by_page = [e for e in events if e.get("type") == "page_event"]
     samples = _samples(out / "pointer-samples.jsonl")
     gestures = _jsonl(out / "session/pointer-gestures.jsonl")
     tried = [s for s in run.get("steps", []) if s.get("expect")]
     verdicts, seen = [], run.get("gestures_at_start", 0)
+
+    def on_screen(rect):
+        return (content[0] + rect[0], content[1] + rect[1], rect[2], rect[3])
+
     for step in tried:
         label, op, expect = step["label"], step.get("op"), step["expect"]
         window = (step["t_start"], step["t_end"] + 1.0)
 
         def during(logged, key, window=window, label=label):
-            mine = [e["detail"] | {"t": e["t"]} for e in logged if window[0] <= e["t"] <= window[1]]
+            mine = [(e.get("detail") or {}) | {"t": e["t"]} for e in logged if window[0] <= e["t"] <= window[1]]
             return mine, [e for e in mine if e.get(key) == label]
 
         clicks, my_clicks = during(handlers, "button")
         typed, my_typed = during(inputs, "field")
+        moves, my_moves = during(moved, "control")
         reached, on_control = during(seen_by_page, "target")
         new = gestures[seen:step.get("gestures_after", seen)]
         seen = step.get("gestures_after", seen)
+        said = step.get("stdout", "") + step.get("stderr", "")
         v: dict = {"label": label, "op": op, "expect": expect, "exit": step.get("exit"),
-                   "handlers": len(my_clicks), "inputs": len(my_typed),
+                   "handlers": len(my_clicks), "inputs": len(my_typed), "moves": len(my_moves),
                    "other_handlers": sorted({str(h.get("button")) for h in clicks if h.get("button") != label}),
-                   "page_events": len(reached),
+                   "page_events": len(reached), "sequence": [str(e.get("event")) for e in reached],
                    "page_events_elsewhere": sorted({f"{e.get('event')} on {e.get('target')}" for e in reached
                                                     if e.get("target") != label}),
                    "new_gestures": [(g.get("kind"), g.get("label"), g.get("outcome")) for g in new]}
-        if expect not in DELIVERED:
-            said = step.get("stdout", "") + step.get("stderr", "")
+        if expect not in EXPECTED_EVENTS:
             v["said_code"] = expect in said
             v["said_reason"] = reason(label, expect) in said
-            v["held"] = bool(v["said_code"] and v["said_reason"] and not clicks and not typed and not new
-                             and not reached)
+            v["held"] = bool(v["said_code"] and v["said_reason"] and not clicks and not typed and not moves
+                             and not new and not reached)
+            verdicts.append(v)
+            continue
+        # the page's one record of this step, and nothing else
+        if expect == "clicked":
+            record = my_clicks[0] if len(clicks) == 1 and len(my_clicks) == 1 and not typed and not moves else None
+        elif expect == "typed":
+            record = my_typed[0] if len(typed) == 1 and len(my_typed) == 1 and not clicks and not moves else None
         else:
-            if expect == "clicked":
-                event = my_clicks[0] if len(clicks) == 1 and len(my_clicks) == 1 and not typed else None
-            else:
-                event = my_typed[0] if len(typed) == 1 and len(my_typed) == 1 and not clicks else None
-            arrived = (len(new) == 1 and new[0].get("kind") == "approach" and new[0].get("label") == label
-                       and new[0].get("outcome") == "arrived" and new[0].get("final_location"))
-            if event is not None:
-                pointer = event.get("last_trusted_pointer") or {}
-                v["pointer_target"] = pointer.get("target")
-                v["pointer_during_step"] = bool(pointer.get("t") and window[0] <= pointer["t"] <= event["t"])
-                try:
-                    v["pointer_inside"] = _inside((float(pointer["x"]), float(pointer["y"])), event["rect"])
-                except (KeyError, TypeError, ValueError):
-                    v["pointer_inside"] = False
-                v["event_trusted"], v["scroll"], v["dpr"] = event.get("trusted"), event.get("scroll"), event.get("dpr")
-                v["pinch"], v["page_focused"], v["rect"] = event.get("pinch"), event.get("page_focused"), event.get("rect")
-                if expect == "typed":
-                    v["value"] = event.get("value")
-            if event is not None and arrived:
-                x, y, w, h = event["rect"]
-                v["control_screen_rect"] = (content[0] + x, content[1] + y, w, h)
-                v["gesture_end"] = new[0]["final_location"]
-                v["end_inside"] = _inside(new[0]["final_location"], v["control_screen_rect"])
-                # an approach that posted nothing started on its target: the page saw no new pointer event
-                v["already_there"] = new[0].get("posted_samples") == []
-                # the pointer at delivery, by the probe's own reading around the page's event
-                around = [s for s in samples or []
-                          if event["t"] - DELIVERY_WINDOW_S <= s[0] <= event["t"] + DELIVERY_WINDOW_S]
-                v["samples_around_delivery"] = len(around)
-                v["samples_off_control"] = sum(1 for s in around if not _inside(s[1:], v["control_screen_rect"]))
-                v["pointer_on_control_at_delivery"] = (len(around) >= MIN_SAMPLES and v["samples_off_control"] == 0)
-            v["held"] = bool(step.get("exit") == 0 and event is not None and arrived
-                             and v.get("pointer_on_control_at_delivery") and len(reached) == len(on_control) > 0
-                             and v.get("pointer_target") == label and v.get("pointer_inside")
-                             and (v.get("pointer_during_step") or v.get("already_there"))
-                             and v.get("end_inside")
-                             and (expect != "typed" or v.get("value") == TYPED))
+            record = (my_moves[0] if len(moves) == 1 and len(my_moves) == 1 and not clicks and not typed
+                      and my_moves[0].get("by") == MOVED_BY.get(label) and my_moves[0].get("trusted") is False
+                      else None)
+        v["in_order"] = v["sequence"] == list(EXPECTED_EVENTS[expect]) and len(on_control) == len(reached)
+        v["said"] = all(text in said for text in SAID.get(expect, ()))
+        judged = []
+        for event in reached:
+            rect = _rect(event.get("rect"))
+            positioned = event.get("event") != "input"
+            try:
+                inside = rect is not None and (
+                    not positioned or _inside((float(event["x"]), float(event["y"])), rect))
+            except (KeyError, TypeError, ValueError):
+                inside = False
+            around = _bracket(samples, event["t"], on_screen(rect)) if rect is not None else {"held": False}
+            judged.append({"event": event.get("event"), "rect": rect, "inside": inside, **around})
+        v["events"] = judged
+        arrived = (len(new) == 1 and new[0].get("kind") == "approach" and new[0].get("label") == label
+                   and new[0].get("outcome") == "arrived" and new[0].get("final_location"))
+        rect = _rect(record.get("rect")) if record is not None else None
+        if record is not None:
+            pointer = record.get("last_trusted_pointer") or {}
+            v["pointer_target"] = pointer.get("target")
+            v["pointer_during_step"] = bool(pointer.get("t") and window[0] <= pointer["t"] <= record["t"])
+            try:
+                v["pointer_inside"] = rect is not None and _inside((float(pointer["x"]), float(pointer["y"])), rect)
+            except (KeyError, TypeError, ValueError):
+                v["pointer_inside"] = False
+            v["event_trusted"], v["scroll"], v["dpr"] = record.get("trusted"), record.get("scroll"), record.get("dpr")
+            v["pinch"], v["page_focused"], v["rect"] = record.get("pinch"), record.get("page_focused"), rect
+            if expect == "typed":
+                v["value"] = record.get("value")
+            if expect not in DELIVERED and rect is not None:
+                # the pointer when the control's own listener moved it
+                v["moved"] = _bracket(samples, record["t"], on_screen(rect))
+        if rect is not None and arrived:
+            v["control_screen_rect"] = on_screen(rect)
+            v["gesture_end"] = new[0]["final_location"]
+            v["end_inside"] = _inside(new[0]["final_location"], v["control_screen_rect"])
+            # an approach that posted nothing started on its target: the page saw no new pointer event
+            v["already_there"] = new[0].get("posted_samples") == []
+        brackets = [*judged, *([v["moved"]] if "moved" in v else [])]
+        v["samples_around_delivery"] = min((b.get("samples", 0) for b in brackets), default=0)
+        v["samples_off_control"] = sum(b.get("off_control", 0) for b in brackets)
+        v["largest_sample_gap_s"] = max((b.get("largest_gap_s", DELIVERY_WINDOW_S * 2) for b in brackets), default=None)
+        v["pointer_on_control_at_delivery"] = bool(brackets) and all(b["held"] for b in brackets)
+        v["held"] = bool(record is not None and arrived and v["in_order"] and v["said"]
+                         and all(j["inside"] for j in judged) and v["pointer_on_control_at_delivery"]
+                         and (expect in DELIVERED or "moved" in v)
+                         and v.get("pointer_target") == label and v.get("pointer_inside")
+                         and (v.get("pointer_during_step") or v.get("already_there"))
+                         and v.get("end_inside")
+                         and (expect not in DELIVERED or step.get("exit") == 0)
+                         and (expect != "typed" or v.get("value") == TYPED))
         verdicts.append(v)
     last = verdicts[-1] if verdicts else {}
     scrolled = bool(last.get("label") == "Gamma" and (last.get("scroll") or [0, 0])[1] > 0)
     complete = [(v["label"], v["op"], v["expect"]) for v in verdicts] == list(STEPS)
-    delivered = [v for v in verdicts if v["expect"] in DELIVERED]
-    ratios = [v.get("dpr") for v in delivered]
+    reaching = [v for v in verdicts if v["expect"] in EXPECTED_EVENTS]
+    ratios = [v.get("dpr") for v in reaching]
     scale = bool(ratios) and all(ratio == 2 for ratio in ratios)
-    pinches = [v.get("pinch") for v in delivered]
+    pinches = [v.get("pinch") for v in reaching]
     unpinched = bool(pinches) and all(pinch == 1 for pinch in pinches)
     setup = {name: next((s.get("exit") for s in run.get("steps", []) if s.get("name") == name), None)
              for name in ("00-start", "00-park")}
@@ -376,11 +481,8 @@ def analyze(out: Path) -> dict:
     loaded = next((e.get("detail") or {} for e in events if e.get("type") == "loaded"), {})
     # the Forged step tests something only if the page's replaced hit test does answer Forged there
     forgery = loaded.get("page_says_at_forged") == "Forged" and loaded.get("browser_says_at_forged") != "Forged"
-    # for the record, not the verdict: the field moves on focus only in a document that has focus
-    note = {v["expect"]: v.get("rect") for v in verdicts if v["label"] == "Note" and v["expect"] in DELIVERED}
-    moved = bool(note.get("clicked") and note.get("typed") and note["clicked"] != note["typed"])
     return {"steps": verdicts, "complete": complete, "gamma_clicked_after_scrolling": scrolled,
-            "note_moved_when_focused": moved, "pointer_samples": None if samples is None else len(samples),
+            "pointer_samples": None if samples is None else len(samples),
             "pointer_sampler": run.get("pointer_sampler"),
             "device_pixel_ratios": ratios, "scale_factor_tested": scale, "pinch_scales": pinches,
             "setup_exits": setup, "own_chrome_closed": owned, "page_forges_its_hit_test": forgery,
@@ -603,7 +705,10 @@ def _finish(record: dict, out: Path, session: Path, start_stdout: str, stop, sam
     attempt("front", _restore_front, record)
     attempt("helpers", stop_helpers)
     for step in record.get("steps", []):
-        step["stdout"] = (step.get("stdout") or "")[-600:] if step.get("expect") else ""
+        # a tried step's first words say what the driver did, and its last what was refused; the whole
+        # output is in the step's own file
+        said = (step.get("stdout") or "") if step.get("expect") else ""
+        step["stdout"] = said if len(said) <= 2100 else said[:1500] + "\n[...]\n" + said[-600:]
         step["stderr"] = (step.get("stderr") or "")[-600:]
     (out / "run.json").write_text(json.dumps(record, indent=1, default=str))
     verdict = analyze(out)

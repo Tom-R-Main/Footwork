@@ -6,6 +6,7 @@ pointer.
 
 from __future__ import annotations
 
+import itertools
 import json
 import sys
 from pathlib import Path
@@ -18,26 +19,41 @@ sys.path.insert(0, str(ROOT / "scripts"))
 probe = pytest.importorskip("probe_filmed_page_pointer")
 
 CONTENT = [100.0, 180.0, 1200.0, 800.0]
-#: each delivered step's control rectangle as the page reports it for that step
+#: the control rectangle of each step that reaches the page, as the page reports it during that step
 RECTS = {("Alpha", "clicked"): [40, 60, 140, 44], ("Beta", "clicked"): [620, 330, 140, 44],
-         ("Note", "clicked"): [620, 130, 140, 30],  # where the field was when the press began
-         ("Note", "typed"): [620, 170, 140, 30],  # where its focus style then put it
+         ("Shy", "unpressed"): [40, 130, 140, 44], ("Dodge", "pressed"): [300, 200, 140, 44],
+         ("Note", "clicked"): [620, 130, 140, 30], ("Note", "typed"): [620, 130, 140, 30],
          ("Jump down", "clicked"): [300, 60, 140, 44], ("Gamma", "clicked"): [240, 400, 140, 44]}
+#: what the command prints for the two clicks that stop part way (the session's own lines)
+SAID = {"unpressed": ("dispatched click [10]: driver says unverifiable (input outcome unknown: "
+                      "browser_action_unavailable the pointer moved; the click was then refused: no press or click "
+                      "was sent: the ref's node left the fil) in 0.4s"),
+        "pressed": ("dispatched click [11]: driver says unverifiable (click_stopped_after_press: the click stopped "
+                    "after mousedown and no click event was sent: the ref's node left the filmed point. The press "
+                    "was sent; what it did is unverifiable, so observe before acting again.) in 0.4s")}
 
 
 class Events(list):
-    """The page's click handlers in order, with its ``inputs`` and its ``loaded`` record beside them,
-    every press and insertion it saw (``pressed``), and the probe's own pointer ``samples`` as
-    ``[t, x, y]`` in screen points (None: no record of them was written)."""
+    """The page's click handlers in order, with its ``inputs``, its ``moved`` records and its ``loaded``
+    record beside them, every press, release and insertion it saw (``pressed``), and the probe's own
+    pointer ``samples`` as ``[t, x, y]`` in screen points (None: no record of them was written)."""
 
     inputs: list
+    moved: list
     loaded: dict
     pressed: list
     samples: list | None
 
 
-def _seen(t, event, target):
-    return {"t": t, "type": "page_event", "detail": {"event": event, "trusted": False, "target": target}}
+_numbers = itertools.count(1)
+
+
+def _seen(t, event, target, rect=None, point=None):
+    """One press, release or insertion as the page logs it: numbered in the order it was made, at
+    ``point`` (None for an input) on a control that was at ``rect``."""
+    x, y = point or (None, None)
+    return {"t": t, "n": next(_numbers), "type": "page_event",
+            "detail": {"event": event, "trusted": False, "target": target, "x": x, "y": y, "rect": rect}}
 
 
 def _screen(label, expect):
@@ -49,6 +65,15 @@ def _step(steps, label, expect):
     return next(step for step in steps if (step["label"], step["expect"]) == (label, expect))
 
 
+def _events(handlers, label):
+    """The page events on ``label``, in order."""
+    return [e for e in handlers.pressed if e["detail"]["target"] == label]
+
+
+def _gesture(steps, gestures, label, expect):
+    return gestures[_step(steps, label, expect)["gestures_after"] - 1]
+
+
 def _run(tmp_path, change=None, record=None):
     """A composed run in which every step went as predicted, with ``change(steps, handlers, gestures)``
     applied to the tried steps and ``record`` merged into the run record before it is written.
@@ -56,31 +81,35 @@ def _run(tmp_path, change=None, record=None):
     out = tmp_path / "out"
     (out / "session").mkdir(parents=True)
     handlers, gestures = Events(), []
-    handlers.inputs, handlers.pressed, handlers.samples = [], [], []
+    handlers.inputs, handlers.pressed, handlers.moved, handlers.samples = [], [], [], []
     handlers.loaded = {"dpr": 2, "page_says_at_forged": "Forged", "browser_says_at_forged": "lid2"}
     steps = [{"name": "00-start", "exit": 0, "t_start": 990.0, "t_end": 995.0},
              {"name": "00-park", "exit": 0, "t_start": 996.0, "t_end": 998.0}]
     for i, (label, op, expect) in enumerate(probe.STEPS):
         t0 = 1000.0 + 10 * i
-        delivered = expect in probe.DELIVERED
+        reaches = expect in probe.EXPECTED_EVENTS
         step = {"name": f"{i + 1:02d}-{op}", "label": label, "op": op, "expect": expect, "t_start": t0,
-                "t_end": t0 + 3, "exit": 0 if delivered else 4,
-                "stdout": "" if delivered else f"not sent: {expect}: {label!r}: " + (
+                "t_end": t0 + 3, "exit": 0 if reaches else 4,
+                "stdout": SAID.get(expect, "") if reaches else f"not sent: {expect}: {label!r}: " + (
                     probe.reason(label, expect) or "why it could not be verified")}
-        if delivered:
+        if reaches:
             x, y, w, h = RECTS[label, expect]
             centre = [x + w / 2, y + h / 2]
             detail = {"trusted": False, "rect": [x, y, w, h], "dpr": 2, "pinch": 1,
                       "scroll": [0, 1500 if i == len(probe.STEPS) - 1 else 0],
                       "last_trusted_pointer": {"t": t0 + 1.5, "type": "mousemove", "target": label,
                                                "x": centre[0], "y": centre[1]}}
+            handlers.pressed += [_seen(t0 + 2, event, label, [x, y, w, h], None if event == "input" else centre)
+                                 for event in probe.EXPECTED_EVENTS[expect]]
             if expect == "clicked":
-                handlers.append({"t": t0 + 2, "type": "click_handler", "detail": detail | {"button": label}})
-                handlers.pressed += [_seen(t0 + 2, event, label) for event in ("pointerdown", "mousedown", "mouseup", "click")]
-            else:
-                handlers.inputs.append({"t": t0 + 2, "type": "input",
+                handlers.append({"t": t0 + 2, "n": next(_numbers), "type": "click_handler",
+                                 "detail": detail | {"button": label}})
+            elif expect == "typed":
+                handlers.inputs.append({"t": t0 + 2, "n": next(_numbers), "type": "input",
                                         "detail": detail | {"field": label, "value": probe.TYPED}})
-                handlers.pressed.append(_seen(t0 + 2, "input", label))
+            else:
+                handlers.moved.append({"t": t0 + 2, "n": next(_numbers), "type": "moved",
+                                       "detail": detail | {"control": label, "by": probe.MOVED_BY[label]}})
             # the pointer travels in from the parking spot, arrives 0.4 s before the delivery and stays
             there = [CONTENT[0] + centre[0], CONTENT[1] + centre[1]]
             handlers.samples += [[t0 + 1.0 + 0.005 * n, 620.0 + n, 380.0] for n in range(100)]
@@ -99,7 +128,8 @@ def _run(tmp_path, change=None, record=None):
         steps[index]["exit"] = code
     (out / "run.json").write_text(json.dumps(run))
     (out / "session/session.json").write_text(json.dumps({"filmed": {"content": CONTENT}}))
-    page = [{"t": 999.0, "type": "loaded", "detail": handlers.loaded}, *handlers, *handlers.inputs, *handlers.pressed]
+    page = [{"t": 999.0, "type": "loaded", "detail": handlers.loaded}, *handlers, *handlers.inputs,
+            *handlers.moved, *handlers.pressed]
     (out / "page-events.jsonl").write_text("".join(json.dumps(event) + "\n" for event in page))
     if handlers.samples is not None:
         (out / "pointer-samples.jsonl").write_text("".join(json.dumps(row) + "\n" for row in handlers.samples))
@@ -107,27 +137,59 @@ def _run(tmp_path, change=None, record=None):
     return out
 
 
+def _of(verdict, label, expect):
+    return next(v for v in verdict["steps"] if (v["label"], v["expect"]) == (label, expect))
+
+
 def test_a_run_that_went_as_predicted_holds(tmp_path):
     verdict = probe.analyze(_run(tmp_path))
     assert verdict["held"] is True and verdict["scale_factor_tested"] is True, verdict
-    assert [v["held"] for v in verdict["steps"]] == [True] * len(probe.STEPS)
+    assert [v["held"] for v in verdict["steps"]] == [True] * len(probe.STEPS) and len(probe.STEPS) == 18
     assert verdict["page_forges_its_hit_test"] is True
-    typed = verdict["steps"][10]
-    assert (typed["label"], typed["expect"], typed["value"], typed["inputs"]) == ("Note", "typed", probe.TYPED, 1)
-    assert verdict["note_moved_when_focused"] is True
-    # FP28: about a hundred of the probe's own samples around each delivery, all on the control
-    delivered = [v for v in verdict["steps"] if v["expect"] in probe.DELIVERED]
-    assert all(v["pointer_on_control_at_delivery"] and v["samples_off_control"] == 0 for v in delivered)
-    assert {v["samples_around_delivery"] for v in delivered} <= {100, 101} and typed["page_events"] == 1
-    assert [v["page_events"] for v in verdict["steps"] if v["expect"] not in probe.DELIVERED] == [0] * 9
+    typed = _of(verdict, "Note", "typed")
+    assert (typed["value"], typed["inputs"], typed["sequence"]) == (probe.TYPED, 1, ["input"])
+    # FP37: every event of every step that reached the page, in order, each with about a hundred of the
+    # probe's own samples around it, all on the control, none further apart than the sampling interval
+    reaching = [v for v in verdict["steps"] if v["expect"] in probe.EXPECTED_EVENTS]
+    assert [v["sequence"] for v in reaching if v["expect"] == "clicked"] == [
+        ["pointerdown", "mousedown", "pointerup", "mouseup", "click"]] * 5
+    assert all(v["pointer_on_control_at_delivery"] and v["samples_off_control"] == 0 for v in reaching)
+    assert {v["samples_around_delivery"] for v in reaching} <= {100, 101}
+    assert all(v["largest_sample_gap_s"] <= 0.0051 for v in reaching)
+    shy, dodge = _of(verdict, "Shy", "unpressed"), _of(verdict, "Dodge", "pressed")
+    assert (shy["sequence"], shy["moves"], shy["handlers"], shy["moved"]["held"]) == ([], 1, 0, True)
+    assert (dodge["sequence"], dodge["moves"], dodge["handlers"]) == (["pointerdown", "mousedown"], 1, 0)
+    assert [v["page_events"] for v in verdict["steps"] if v["expect"] not in probe.EXPECTED_EVENTS] == [0] * 10
 
 
-def test_the_fixture_reports_every_press_and_insertion_and_the_probe_samples_the_pointer_itself():
-    """FP28: the two records the sixth review found missing."""
-    for event in ("pointerdown", "mousedown", "mouseup", "click", "beforeinput", "input"):
-        assert f"'{event}'" in probe.FIXTURE.split("post('page_event'")[0].rsplit("for (const type of", 1)[1]
+def test_the_fixture_reports_every_press_release_and_insertion_and_the_probe_samples_the_pointer_itself():
+    """FP28 and FP37: the records the sixth and seventh reviews found missing."""
+    logged = probe.FIXTURE.split("post('page_event'")[0].rsplit("for (const type of", 1)[1]
+    assert [event for event in ("pointerdown", "mousedown", "pointerup", "mouseup", "click", "beforeinput", "input")
+            if f"'{event}'" in logged] == ["pointerdown", "mousedown", "pointerup", "mouseup", "click", "beforeinput",
+                                           "input"]
     assert "window.addEventListener(type, (e) => post('page_event'" in probe.FIXTURE
-    assert (probe.DELIVERY_WINDOW_S, probe.MIN_SAMPLES, probe.SAMPLE_EVERY_S) == (0.25, 20, 0.005)
+    # each with the control's rectangle at that moment, numbered in the order the page made them
+    assert "rect: control(e.target) ? box(control(e.target)) : null" in probe.FIXTURE and "n: ++seq" in probe.FIXTURE
+    assert (probe.DELIVERY_WINDOW_S, probe.MIN_SAMPLES, probe.MAX_GAP_S, probe.SAMPLE_EVERY_S) == (0.25, 20, 0.05, 0.005)
+
+
+def test_the_page_events_are_read_in_the_order_the_page_made_them(tmp_path):
+    """The posts of one click's events can arrive in any order and carry the same time."""
+    def arrived_backwards(steps, handlers, gestures):
+        handlers.pressed.reverse()
+
+    assert probe.analyze(_run(tmp_path, arrived_backwards))["held"] is True
+
+
+@pytest.mark.parametrize(("label", "expect", "code"), [("Shy", "unpressed", 1), ("Dodge", "pressed", 4)])
+def test_the_exit_code_of_a_click_that_stopped_part_way_is_recorded_and_not_judged(tmp_path, label, expect, code):
+    """FP37, alternative (r)."""
+    def exited(steps, handlers, gestures):
+        _step(steps, label, expect)["exit"] = code
+
+    verdict = probe.analyze(_run(tmp_path, exited))
+    assert verdict["held"] is True and _of(verdict, label, expect)["exit"] == code
 
 
 @pytest.mark.parametrize(("before", "holds"), [(0.26, True), (0.24, False), (-0.24, False), (-0.26, True)])
@@ -146,22 +208,8 @@ def _move_samples(handlers, step, to, *, after=1.55):
             row[1:] = to
 
 
-def test_a_field_that_did_not_move_on_focus_still_holds_and_is_recorded(tmp_path):
-    """FP21: in a document without focus the field's focus style does not apply; the text still goes in
-    with the pointer on the field, and the run says the move was not exercised."""
-    def unmoved(steps, handlers, gestures):
-        x, y, w, h = RECTS["Note", "clicked"]
-        handlers.inputs[0]["detail"]["rect"] = [x, y, w, h]
-        handlers.inputs[0]["detail"]["last_trusted_pointer"].update(x=x + w / 2, y=y + h / 2)
-        gestures[3]["final_location"] = [CONTENT[0] + x + w / 2, CONTENT[1] + y + h / 2]
-        _move_samples(handlers, _step(steps, "Note", "typed"), _screen("Note", "clicked"))
-
-    verdict = probe.analyze(_run(tmp_path, unmoved))
-    assert verdict["held"] is True and verdict["note_moved_when_focused"] is False, verdict
-
-
 def test_the_steps_are_the_ones_the_prediction_names():
-    """FP20: the three cases of the fifth review are each tried, the refusals before their remedies."""
+    """FP20, FP29 and FP37: each review's cases are tried, the refusals before their remedies."""
     order = [(label, op, expect) for label, op, expect in probe.STEPS]
     assert order.index(("Beta", "trusted", "route_unfilmed")) < order.index(("Beta", "click", "clicked"))
     assert ("Forged", "click", "target_unlocated") in order and probe.REASONS["Forged"] == probe.REASONS["Covered"]
@@ -173,9 +221,39 @@ def test_the_steps_are_the_ones_the_prediction_names():
     assert order.index(note[2]) == order.index(note[1]) + 1 and order.index(note[3]) == order.index(note[2]) + 1
     assert probe.reason("Note", "replace_unfilmed") == "types only into an empty field"
     assert probe.reason("Note", "target_unfocused") == "" and probe.reason("Covered", "target_unlocated")
-    # the fixture's page replaces its hit test for Forged and moves the field when it gains focus
+    # FP37: the seventh review's three, in this order straight after Turned
+    turned = order.index(("Turned", "click", "target_unlocated"))
+    assert order[turned + 1:turned + 4] == [("Hidden", "click", "target_unlocated"), ("Shy", "click", "unpressed"),
+                                            ("Dodge", "click", "pressed")]
+    assert probe.reason("Hidden", "target_unlocated") == "hides or replaces the pointer"
+    assert probe.EXPECTED_EVENTS["pressed"] == ("pointerdown", "mousedown") and probe.EXPECTED_EVENTS["unpressed"] == ()
+    assert probe.EXPECTED_EVENTS["clicked"] == ("pointerdown", "mousedown", "pointerup", "mouseup", "click")
+    assert probe.EXPECTED_EVENTS["typed"] == ("input",)
+
+
+def test_the_fixture_has_the_cases_the_prediction_names():
+    # the page replaces its hit test for Forged
     assert "Document.prototype.elementFromPoint = function" in probe.FIXTURE
-    assert "#note:focus { top: 170px }" in probe.FIXTURE
+    # FP37: the field no longer moves on focus; Hidden hides the pointer; Shy moves for an untrusted
+    # pointerover only; Dodge moves when pressed; and each move is recorded with where the control was
+    assert ":focus" not in probe.FIXTURE
+    assert 'id="hidden" style="position: absolute; left: 300px; top: 130px; width: 140px; height: 44px; cursor: none"' in probe.FIXTURE
+    shy = probe.FIXTURE.split("shy.addEventListener('pointerover', (e) => {")[1].split("});")[0]
+    assert shy.strip().startswith("if (e.isTrusted) return;") and "shy.style.top = '430px'" in shy
+    assert "post('moved', {control: 'Shy', by: 'pointerover'" in shy and shy.index("box(shy)") < shy.index("style.top")
+    dodge = probe.FIXTURE.split("dodge.addEventListener('mousedown', (e) => {")[1].split("});")[0]
+    assert "dodge.style.top = '500px'" in dodge and "post('moved', {control: 'Dodge', by: 'mousedown'" in dodge
+    assert dodge.index("box(dodge)") < dodge.index("style.top")
+    # no control of the page is at the parking spot or shares a place with another
+    import re
+    boxes = [tuple(int(n) for n in found) for found in re.findall(
+        r'id="(?:alpha|beta|covered|jump|forged|hidden|shy|dodge)" style="position: absolute; left: (\d+)px; '
+        r'top: (\d+)px; width: (\d+)px; height: (\d+)px', probe.FIXTURE)] + [(620, 130, 140, 30)]
+    assert len(boxes) == 9
+    for i, (x, y, w, h) in enumerate(boxes):
+        assert not probe._inside(probe.EMPTY_SPOT, (x - 20, y - 20, w + 40, h + 40))
+        for ox, oy, ow, oh in boxes[i + 1:]:
+            assert x + w <= ox or ox + ow <= x or y + h <= oy or oy + oh <= y, ((x, y), (ox, oy))
 
 
 def test_a_look_names_a_control_of_any_role():
@@ -230,11 +308,11 @@ def _two_inputs_in_the_typed_step(steps, handlers, gestures):
     handlers.inputs.append(json.loads(json.dumps(handlers.inputs[0])))
 
 
-def _typed_with_the_pointer_where_the_field_was(steps, handlers, gestures):
-    """The review's case: the field moved on focus and the text went in with the pointer left behind."""
-    x, y, w, h = RECTS["Note", "clicked"]
-    handlers.inputs[0]["detail"]["last_trusted_pointer"].update(x=x + w / 2, y=y + h / 2)
-    gestures[3]["final_location"] = [CONTENT[0] + x + w / 2, CONTENT[1] + y + h / 2]
+def _typed_with_the_pointer_beside_the_field(steps, handlers, gestures):
+    """The text went in with the pointer left 40 px below the field."""
+    x, y, w, h = RECTS["Note", "typed"]
+    handlers.inputs[0]["detail"]["last_trusted_pointer"].update(x=x + w / 2, y=y + h / 2 + 40)
+    _gesture(steps, gestures, "Note", "typed")["final_location"] = [CONTENT[0] + x + w / 2, CONTENT[1] + y + h / 2 + 40]
 
 
 # FP28: what only the pointer samples and the page's own press log can show
@@ -281,6 +359,149 @@ def _too_few_samples_around_a_delivery(steps, handlers, gestures):
     near = [row for row in handlers.samples if abs(row[0] - t) <= probe.DELIVERY_WINDOW_S]
     for row in near[probe.MIN_SAMPLES - 1:]:
         handlers.samples.remove(row)
+
+
+# FP37: what only the order of the events, the control's place at each, and unbroken sampling can show
+
+
+def _a_sampler_that_stalled_across_a_click(steps, handlers, gestures):
+    """Sol round 7: a hundred samples on the control and none for 80 ms around the click itself."""
+    t = steps[0]["t_start"] + 2
+    handlers.samples[:] = [row for row in handlers.samples if abs(row[0] - t) > 0.04]
+
+
+def _a_sampler_that_stopped_before_the_window_ended(steps, handlers, gestures):
+    t = _step(steps, "Gamma", "clicked")["t_start"] + 2
+    handlers.samples[:] = [row for row in handlers.samples if not t + 0.19 < row[0] < t + 9]
+
+
+def _a_sampler_that_started_inside_the_window(steps, handlers, gestures):
+    t = steps[0]["t_start"] + 2
+    handlers.samples[:] = [row for row in handlers.samples if not t - 9 < row[0] < t - 0.19]
+
+
+def _a_click_that_came_after_the_pointer_had_gone(steps, handlers, gestures):
+    """The press and the release with the pointer on the control; the click 0.6 s later, when it was not."""
+    _events(handlers, "Alpha")[-1]["t"] = steps[0]["t_start"] + 2.6
+    _move_samples(handlers, steps[0], [5.0, 5.0], after=2.3)
+
+
+def _a_press_sent_while_the_pointer_was_still_travelling(steps, handlers, gestures):
+    """The click and its handler with the pointer on the control; the press 0.8 s earlier, before it arrived."""
+    for event in _events(handlers, "Alpha")[:2]:
+        event["t"] = steps[0]["t_start"] + 1.2
+
+
+def _a_click_without_its_pointerup(steps, handlers, gestures):
+    handlers.pressed.remove(_events(handlers, "Alpha")[2])
+
+
+def _a_click_without_its_press(steps, handlers, gestures):
+    for event in _events(handlers, "Beta")[:2]:
+        handlers.pressed.remove(event)
+
+
+def _a_click_whose_events_came_in_another_order(steps, handlers, gestures):
+    events = _events(handlers, "Alpha")
+    events[3]["detail"]["event"], events[4]["detail"]["event"] = "click", "mouseup"
+
+
+def _a_second_click_event(steps, handlers, gestures):
+    x, y, w, h = RECTS["Alpha", "clicked"]
+    handlers.pressed.append(_seen(steps[0]["t_start"] + 2, "click", "Alpha", [x, y, w, h], [x + 70, y + 22]))
+
+
+def _a_release_outside_the_control(steps, handlers, gestures):
+    _events(handlers, "Alpha")[3]["detail"].update(x=10, y=10)
+
+
+def _an_event_without_a_position(steps, handlers, gestures):
+    del _events(handlers, "Alpha")[1]["detail"]["x"]
+
+
+def _a_click_on_a_control_that_had_moved_away(steps, handlers, gestures):
+    """The review's case: the click event went to the control where it had moved to, 300 px from the
+    pointer, at the old point."""
+    x, y, w, h = RECTS["Alpha", "clicked"]
+    _events(handlers, "Alpha")[4]["detail"]["rect"] = [x, y + 300, w, h]
+
+
+def _an_event_without_the_controls_rectangle(steps, handlers, gestures):
+    _events(handlers, "Alpha")[0]["detail"]["rect"] = None
+
+
+def _a_beforeinput_in_the_typed_step(steps, handlers, gestures):
+    x, y, w, h = RECTS["Note", "typed"]
+    handlers.pressed.append(_seen(_step(steps, "Note", "typed")["t_start"] + 2, "beforeinput", "Note", [x, y, w, h]))
+
+
+def _a_control_that_moved_in_a_clicked_step(steps, handlers, gestures):
+    handlers.moved.append({"t": steps[0]["t_start"] + 2, "type": "moved",
+                           "detail": {"control": "Dodge", "by": "mousedown", "trusted": False}})
+
+
+def _dodge(event):
+    def change(steps, handlers, gestures):
+        x, y, w, h = RECTS["Dodge", "pressed"]
+        handlers.pressed.append(_seen(_step(steps, "Dodge", "pressed")["t_start"] + 2, event, "Dodge",
+                                      [x, y + 300, w, h], [x + 70, y + 22]))
+
+    change.__name__ = f"a_{event}_on_dodge"
+    return change
+
+
+def _dodges_click_handler_ran(steps, handlers, gestures):
+    handlers.append({"t": _step(steps, "Dodge", "pressed")["t_start"] + 2, "type": "click_handler",
+                     "detail": {"button": "Dodge", "rect": RECTS["Dodge", "pressed"], "dpr": 2}})
+
+
+def _dodge_pressed_once_only(steps, handlers, gestures):
+    handlers.pressed.remove(_events(handlers, "Dodge")[1])
+
+
+def _dodge_pressed_with_the_pointer_elsewhere(steps, handlers, gestures):
+    _move_samples(handlers, _step(steps, "Dodge", "pressed"), [5.0, 5.0], after=1.9)
+
+
+def _a_press_on(label, expect):
+    def change(steps, handlers, gestures):
+        handlers.pressed.append(_seen(_step(steps, label, expect)["t_start"] + 2, "pointerdown", label,
+                                      [40, 130, 140, 44], [110, 152]))
+
+    change.__name__ = f"a_press_on_{label}"
+    return change
+
+
+def _moved(label, **detail):
+    def change(steps, handlers, gestures):
+        record = next(m for m in handlers.moved if m["detail"]["control"] == label)
+        if detail:
+            record["detail"].update(detail)
+        else:
+            handlers.moved.remove(record)
+
+    change.__name__ = f"{label}_moved_{'_'.join(f'{k}_{v}' for k, v in detail.items()) or 'not_at_all'}"
+    return change
+
+
+def _shy_approached_and_missed(steps, handlers, gestures):
+    _gesture(steps, gestures, "Shy", "unpressed")["final_location"] = [CONTENT[0] + 400, CONTENT[1] + 400]
+
+
+def _shy_hovered_with_the_pointer_elsewhere(steps, handlers, gestures):
+    _move_samples(handlers, _step(steps, "Shy", "unpressed"), [5.0, 5.0], after=1.9)
+
+
+def _said(label, expect, text):
+    def change(steps, handlers, gestures):
+        _step(steps, label, expect)["stdout"] = text
+
+    change.__name__ = f"{label}_said_{len(text)}"
+    return change
+
+
+def _hidden_refused_for_another_reason(steps, handlers, gestures):
+    _step(steps, "Hidden", "target_unlocated")["stdout"] = "not sent: target_unlocated: 'Hidden': not wholly in view"
 
 
 def _no_record_of_the_pointer(steps, handlers, gestures):
@@ -398,7 +619,8 @@ def _a_typed_step_that_was_refused(steps, handlers, gestures):
     typed = _step(steps, "Note", "typed")
     typed.update(exit=4, stdout="not sent: target_unfocused: 'Note': the page does not have the keyboard")
     handlers.inputs.clear()
-    del gestures[3]
+    handlers.pressed[:] = [e for e in handlers.pressed if e["detail"]["event"] != "input"]
+    del gestures[typed["gestures_after"] - 1]
     for step in steps[steps.index(typed):]:
         step["gestures_after"] -= 1
 
@@ -423,7 +645,7 @@ def _gamma_clicked_without_scrolling(steps, handlers, gestures):
     _text_inserted_into_the_unfocused_field, _a_gesture_in("Note", "target_unfocused"),
     _an_unfocused_field_refused_for_another_reason,
     _a_click_handler_in_the_typed_step, _the_field_holding_other_text, _two_inputs_in_the_typed_step,
-    _typed_with_the_pointer_where_the_field_was, _a_typed_step_at_a_ratio_of_one, _a_typed_step_that_was_refused,
+    _typed_with_the_pointer_beside_the_field, _a_typed_step_at_a_ratio_of_one, _a_typed_step_that_was_refused,
     # FP28: the sixth review's two gaps in the verdict
     _a_press_on_the_overlay_in_a_refused_step, _a_click_on_nothing_in_a_refused_step,
     _an_insertion_begun_in_the_unfocused_field, _a_press_elsewhere_in_a_delivered_step,
@@ -433,10 +655,91 @@ def _gamma_clicked_without_scrolling(steps, handlers, gestures):
     # FP29: the replacement
     _a_replacement_that_was_sent, _a_gesture_in("Note", "replace_unfilmed"),
     _a_replacement_refused_without_its_reason, _a_replacement_refused_as_unfocused,
+    # FP37: the seventh review's gaps in the verdict, and its three cases
+    _a_sampler_that_stalled_across_a_click, _a_sampler_that_stopped_before_the_window_ended,
+    _a_sampler_that_started_inside_the_window, _a_click_that_came_after_the_pointer_had_gone,
+    _a_press_sent_while_the_pointer_was_still_travelling, _a_click_without_its_pointerup, _a_click_without_its_press, _a_click_whose_events_came_in_another_order,
+    _a_second_click_event, _a_release_outside_the_control, _an_event_without_a_position,
+    _a_click_on_a_control_that_had_moved_away, _an_event_without_the_controls_rectangle,
+    _a_beforeinput_in_the_typed_step, _a_control_that_moved_in_a_clicked_step,
+    _dodge("pointerup"), _dodge("mouseup"), _dodge("click"), _dodges_click_handler_ran, _dodge_pressed_once_only,
+    _dodge_pressed_with_the_pointer_elsewhere, _moved("Dodge"), _moved("Dodge", by="pointerover"),
+    _moved("Dodge", trusted=True), _a_gesture_in("Dodge", "pressed"),
+    _said("Dodge", "pressed", SAID["pressed"].replace("after mousedown", "after pointerup")),
+    _said("Dodge", "pressed", SAID["pressed"].replace("no click event was sent", "the click was sent")),
+    _said("Dodge", "pressed", ""),
+    _a_press_on("Shy", "unpressed"), _moved("Shy"), _moved("Shy", trusted=True), _moved("Shy", by="mousedown"),
+    _shy_approached_and_missed, _shy_hovered_with_the_pointer_elsewhere, _a_gesture_in("Shy", "unpressed"),
+    _said("Shy", "unpressed", SAID["unpressed"].replace("no press or click was sent", "")),
+    _a_press_on("Hidden", "target_unlocated"), _a_gesture_in("Hidden", "target_unlocated"),
+    _hidden_refused_for_another_reason,
 ])
 def test_a_run_that_departs_from_the_prediction_does_not_hold(tmp_path, change):
     verdict = probe.analyze(_run(tmp_path, change))
     assert verdict["held"] is False, verdict
+
+
+@pytest.mark.parametrize(("change", "step", "why"), [
+    (_a_sampler_that_stalled_across_a_click, ("Alpha", "clicked"), "pointer_on_control_at_delivery"),
+    (_a_sampler_that_stopped_before_the_window_ended, ("Gamma", "clicked"), "pointer_on_control_at_delivery"),
+    (_a_sampler_that_started_inside_the_window, ("Alpha", "clicked"), "pointer_on_control_at_delivery"),
+    (_a_click_that_came_after_the_pointer_had_gone, ("Alpha", "clicked"), "pointer_on_control_at_delivery"),
+    (_a_press_sent_while_the_pointer_was_still_travelling, ("Alpha", "clicked"), "pointer_on_control_at_delivery"),
+    (_dodge_pressed_with_the_pointer_elsewhere, ("Dodge", "pressed"), "pointer_on_control_at_delivery"),
+    (_shy_hovered_with_the_pointer_elsewhere, ("Shy", "unpressed"), "pointer_on_control_at_delivery"),
+    (_a_click_without_its_pointerup, ("Alpha", "clicked"), "in_order"),
+    (_a_click_whose_events_came_in_another_order, ("Alpha", "clicked"), "in_order"),
+    (_a_second_click_event, ("Alpha", "clicked"), "in_order"),
+    (_a_beforeinput_in_the_typed_step, ("Note", "typed"), "in_order"),
+    # a release or a click on Dodge went to it where it had moved to, away from the pointer
+    (_dodge("pointerup"), ("Dodge", "pressed"), "in_order pointer_on_control_at_delivery"),
+    (_dodge("click"), ("Dodge", "pressed"), "in_order pointer_on_control_at_delivery"),
+    (_dodge_pressed_once_only, ("Dodge", "pressed"), "in_order"),
+    (_a_press_on("Shy", "unpressed"), ("Shy", "unpressed"), "in_order"),
+    (_said("Shy", "unpressed", SAID["unpressed"].replace("no press or click was sent", "")), ("Shy", "unpressed"), "said"),
+    (_said("Dodge", "pressed", SAID["pressed"].replace("after mousedown", "after pointerup")), ("Dodge", "pressed"), "said"),
+])
+def test_each_departure_fails_its_own_step_for_its_own_reason(tmp_path, change, step, why):
+    """Sol round 7: the verdict could hold without these; each now fails the one step it concerns, on
+    the one condition it breaks."""
+    verdict = probe.analyze(_run(tmp_path, change))
+    assert [(v["label"], v["expect"]) for v in verdict["steps"] if not v["held"]] == [step], verdict
+    mine = _of(verdict, *step)
+    conditions = {name: mine[name] for name in ("in_order", "said", "pointer_on_control_at_delivery")}
+    assert conditions == ({"in_order": True, "said": True, "pointer_on_control_at_delivery": True}
+                          | dict.fromkeys(why.split(), False))
+
+
+def test_a_stalled_sampler_is_caught_by_the_gap_and_by_nothing_else(tmp_path):
+    """Sol round 7: every sample on the control and enough of them; only the 80 ms without one around
+    the click shows that the probe did not see the pointer at it."""
+    alpha = probe.analyze(_run(tmp_path, _a_sampler_that_stalled_across_a_click))["steps"][0]
+    assert alpha["samples_off_control"] == 0 and alpha["samples_around_delivery"] >= probe.MIN_SAMPLES
+    assert 0.08 <= alpha["largest_sample_gap_s"] <= 0.09 and alpha["held"] is False
+    assert all(event["inside"] and event["held"] is False for event in alpha["events"])
+
+
+def test_a_click_event_on_a_control_that_had_moved_is_judged_where_the_control_then_was(tmp_path):
+    """Sol round 7: the old verdict read every event against the rectangle at the press."""
+    alpha = probe.analyze(_run(tmp_path, _a_click_on_a_control_that_had_moved_away))["steps"][0]
+    assert [event["inside"] for event in alpha["events"]] == [True, True, True, True, False]
+    assert [event["held"] for event in alpha["events"]] == [True, True, True, True, False] and alpha["held"] is False
+
+
+def test_the_run_record_keeps_the_first_and_the_last_words_of_a_long_output(tmp_path, monkeypatch):
+    """FP37: the line that says what the driver did comes first and a long observation follows it."""
+    out = _run(tmp_path)
+    record = json.loads((out / "run.json").read_text())
+    dodge = next(step for step in record["steps"] if step.get("label") == "Dodge")
+    dodge["stdout"] = SAID["pressed"] + "\n" + "  [  1] button 'Alpha'\n" * 300 + "the last line"
+    monkeypatch.setattr(probe, "_retire_holder", lambda record, session: None)
+    monkeypatch.setattr(probe, "_close_owned_chrome", lambda record, launch: record.update(chrome_closed=True))
+    monkeypatch.setattr(probe, "_restore_front", lambda record: None)
+    helper = type("Helper", (), {"join": lambda self, timeout=None: None, "shutdown": lambda self: None})()
+    verdict = probe._finish(record, out, out / "session", "", probe.threading.Event(), helper, helper)
+    kept = next(step for step in json.loads((out / "run.json").read_text())["steps"] if step.get("label") == "Dodge")
+    assert kept["stdout"].startswith(SAID["pressed"]) and kept["stdout"].endswith("the last line")
+    assert len(kept["stdout"]) < 2200 and verdict["held"] is True
 
 
 def _a_clicked_step_without_a_ratio(steps, handlers, gestures):

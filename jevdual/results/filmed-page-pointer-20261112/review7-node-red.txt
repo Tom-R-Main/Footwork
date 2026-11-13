@@ -1,0 +1,969 @@
+..FFFFFFFF..FFFFFFFFFFFFFF.........FFFFFFFFFFFF......................... [ 48%]
+FFF..................................................................... [ 97%]
+...                                                                      [100%]
+=================================== FAILURES ===================================
+__________ test_a_filmed_click_off_its_control_sends_nothing[covered] __________
+
+case = {'args': [70.5, 340.25], 'hit': 'other'}
+
+    @pytest.mark.parametrize("case", [
+        {"args": POINT, "hit": "other"},  # something else is on top at the point
+        {"args": POINT, "hit": "none"},  # nothing of the page is there
+        {"args": POINT, "blind": True},  # a root that cannot hit-test
+        {"args": [59.9, 340]},  # left of the rectangle, though the hit test names the control
+        {"args": [200.1, 340]},
+        {"args": [70, 329.9]},
+        {"args": [70, 374.1]},
+        {"args": POINT, "rect": [60, 630, 140, 44]},  # the control has moved from under the point
+    ], ids=["covered", "nothing-there", "no-hit-test", "left", "right", "above", "below", "moved"])
+    def test_a_filmed_click_off_its_control_sends_nothing(case):
+        """Sol round 6: with a point, the sequence never falls back to the control when its hit test finds
+        something else, and never acts anywhere but the point."""
+        (off,) = _click(case)
+>       assert off["receipt"] == NOTHING and off["sent"] == []
+E       AssertionError: assert ({'complete': ...ast': '', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:147: AssertionError
+_______ test_a_filmed_click_off_its_control_sends_nothing[nothing-there] _______
+
+case = {'args': [70.5, 340.25], 'hit': 'none'}
+
+    @pytest.mark.parametrize("case", [
+        {"args": POINT, "hit": "other"},  # something else is on top at the point
+        {"args": POINT, "hit": "none"},  # nothing of the page is there
+        {"args": POINT, "blind": True},  # a root that cannot hit-test
+        {"args": [59.9, 340]},  # left of the rectangle, though the hit test names the control
+        {"args": [200.1, 340]},
+        {"args": [70, 329.9]},
+        {"args": [70, 374.1]},
+        {"args": POINT, "rect": [60, 630, 140, 44]},  # the control has moved from under the point
+    ], ids=["covered", "nothing-there", "no-hit-test", "left", "right", "above", "below", "moved"])
+    def test_a_filmed_click_off_its_control_sends_nothing(case):
+        """Sol round 6: with a point, the sequence never falls back to the control when its hit test finds
+        something else, and never acts anywhere but the point."""
+        (off,) = _click(case)
+>       assert off["receipt"] == NOTHING and off["sent"] == []
+E       AssertionError: assert ({'complete': ...ast': '', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:147: AssertionError
+________ test_a_filmed_click_off_its_control_sends_nothing[no-hit-test] ________
+
+case = {'args': [70.5, 340.25], 'blind': True}
+
+    @pytest.mark.parametrize("case", [
+        {"args": POINT, "hit": "other"},  # something else is on top at the point
+        {"args": POINT, "hit": "none"},  # nothing of the page is there
+        {"args": POINT, "blind": True},  # a root that cannot hit-test
+        {"args": [59.9, 340]},  # left of the rectangle, though the hit test names the control
+        {"args": [200.1, 340]},
+        {"args": [70, 329.9]},
+        {"args": [70, 374.1]},
+        {"args": POINT, "rect": [60, 630, 140, 44]},  # the control has moved from under the point
+    ], ids=["covered", "nothing-there", "no-hit-test", "left", "right", "above", "below", "moved"])
+    def test_a_filmed_click_off_its_control_sends_nothing(case):
+        """Sol round 6: with a point, the sequence never falls back to the control when its hit test finds
+        something else, and never acts anywhere but the point."""
+        (off,) = _click(case)
+>       assert off["receipt"] == NOTHING and off["sent"] == []
+E       AssertionError: assert ({'complete': ...ast': '', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:147: AssertionError
+___________ test_a_filmed_click_off_its_control_sends_nothing[left] ____________
+
+case = {'args': [59.9, 340]}
+
+    @pytest.mark.parametrize("case", [
+        {"args": POINT, "hit": "other"},  # something else is on top at the point
+        {"args": POINT, "hit": "none"},  # nothing of the page is there
+        {"args": POINT, "blind": True},  # a root that cannot hit-test
+        {"args": [59.9, 340]},  # left of the rectangle, though the hit test names the control
+        {"args": [200.1, 340]},
+        {"args": [70, 329.9]},
+        {"args": [70, 374.1]},
+        {"args": POINT, "rect": [60, 630, 140, 44]},  # the control has moved from under the point
+    ], ids=["covered", "nothing-there", "no-hit-test", "left", "right", "above", "below", "moved"])
+    def test_a_filmed_click_off_its_control_sends_nothing(case):
+        """Sol round 6: with a point, the sequence never falls back to the control when its hit test finds
+        something else, and never acts anywhere but the point."""
+        (off,) = _click(case)
+>       assert off["receipt"] == NOTHING and off["sent"] == []
+E       AssertionError: assert ({'complete': ...ast': '', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:147: AssertionError
+___________ test_a_filmed_click_off_its_control_sends_nothing[right] ___________
+
+case = {'args': [200.1, 340]}
+
+    @pytest.mark.parametrize("case", [
+        {"args": POINT, "hit": "other"},  # something else is on top at the point
+        {"args": POINT, "hit": "none"},  # nothing of the page is there
+        {"args": POINT, "blind": True},  # a root that cannot hit-test
+        {"args": [59.9, 340]},  # left of the rectangle, though the hit test names the control
+        {"args": [200.1, 340]},
+        {"args": [70, 329.9]},
+        {"args": [70, 374.1]},
+        {"args": POINT, "rect": [60, 630, 140, 44]},  # the control has moved from under the point
+    ], ids=["covered", "nothing-there", "no-hit-test", "left", "right", "above", "below", "moved"])
+    def test_a_filmed_click_off_its_control_sends_nothing(case):
+        """Sol round 6: with a point, the sequence never falls back to the control when its hit test finds
+        something else, and never acts anywhere but the point."""
+        (off,) = _click(case)
+>       assert off["receipt"] == NOTHING and off["sent"] == []
+E       AssertionError: assert ({'complete': ...ast': '', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:147: AssertionError
+___________ test_a_filmed_click_off_its_control_sends_nothing[above] ___________
+
+case = {'args': [70, 329.9]}
+
+    @pytest.mark.parametrize("case", [
+        {"args": POINT, "hit": "other"},  # something else is on top at the point
+        {"args": POINT, "hit": "none"},  # nothing of the page is there
+        {"args": POINT, "blind": True},  # a root that cannot hit-test
+        {"args": [59.9, 340]},  # left of the rectangle, though the hit test names the control
+        {"args": [200.1, 340]},
+        {"args": [70, 329.9]},
+        {"args": [70, 374.1]},
+        {"args": POINT, "rect": [60, 630, 140, 44]},  # the control has moved from under the point
+    ], ids=["covered", "nothing-there", "no-hit-test", "left", "right", "above", "below", "moved"])
+    def test_a_filmed_click_off_its_control_sends_nothing(case):
+        """Sol round 6: with a point, the sequence never falls back to the control when its hit test finds
+        something else, and never acts anywhere but the point."""
+        (off,) = _click(case)
+>       assert off["receipt"] == NOTHING and off["sent"] == []
+E       AssertionError: assert ({'complete': ...ast': '', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:147: AssertionError
+___________ test_a_filmed_click_off_its_control_sends_nothing[below] ___________
+
+case = {'args': [70, 374.1]}
+
+    @pytest.mark.parametrize("case", [
+        {"args": POINT, "hit": "other"},  # something else is on top at the point
+        {"args": POINT, "hit": "none"},  # nothing of the page is there
+        {"args": POINT, "blind": True},  # a root that cannot hit-test
+        {"args": [59.9, 340]},  # left of the rectangle, though the hit test names the control
+        {"args": [200.1, 340]},
+        {"args": [70, 329.9]},
+        {"args": [70, 374.1]},
+        {"args": POINT, "rect": [60, 630, 140, 44]},  # the control has moved from under the point
+    ], ids=["covered", "nothing-there", "no-hit-test", "left", "right", "above", "below", "moved"])
+    def test_a_filmed_click_off_its_control_sends_nothing(case):
+        """Sol round 6: with a point, the sequence never falls back to the control when its hit test finds
+        something else, and never acts anywhere but the point."""
+        (off,) = _click(case)
+>       assert off["receipt"] == NOTHING and off["sent"] == []
+E       AssertionError: assert ({'complete': ...ast': '', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:147: AssertionError
+___________ test_a_filmed_click_off_its_control_sends_nothing[moved] ___________
+
+case = {'args': [70.5, 340.25], 'rect': [60, 630, 140, 44]}
+
+    @pytest.mark.parametrize("case", [
+        {"args": POINT, "hit": "other"},  # something else is on top at the point
+        {"args": POINT, "hit": "none"},  # nothing of the page is there
+        {"args": POINT, "blind": True},  # a root that cannot hit-test
+        {"args": [59.9, 340]},  # left of the rectangle, though the hit test names the control
+        {"args": [200.1, 340]},
+        {"args": [70, 329.9]},
+        {"args": [70, 374.1]},
+        {"args": POINT, "rect": [60, 630, 140, 44]},  # the control has moved from under the point
+    ], ids=["covered", "nothing-there", "no-hit-test", "left", "right", "above", "below", "moved"])
+    def test_a_filmed_click_off_its_control_sends_nothing(case):
+        """Sol round 6: with a point, the sequence never falls back to the control when its hit test finds
+        something else, and never acts anywhere but the point."""
+        (off,) = _click(case)
+>       assert off["receipt"] == NOTHING and off["sent"] == []
+E       AssertionError: assert ({'complete': ...ast': '', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:147: AssertionError
+_ test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[moved-on-pointerover] _
+
+on = {'event': 'pointerover', 'then': {'rect': [60, 630, 140, 44]}}
+
+    @pytest.mark.parametrize("on", [
+        {"event": "pointerover", "then": MOVED},
+        {"event": "mousemove", "then": MOVED},
+        {"event": "mouseenter", "then": {"hit": "other"}},
+        {"event": "pointermove", "then": {"hit": "none"}},
+    ], ids=["moved-on-pointerover", "moved-on-mousemove", "covered-on-mouseenter", "gone-from-under-on-pointermove"])
+    def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on):
+        """FP30: page listeners run on the six hover and move events; the point is checked again in the
+        same turn as the press. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, "on": on}, {"on": on})
+>       assert filmed["receipt"] == _left(6, "mousemove") and _types(filmed) == HOVER
+E       AssertionError: assert ({'complete': ...usemove', ...} == {'complete': ...usemove', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:184: AssertionError
+_ test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[moved-on-mousemove] _
+
+on = {'event': 'mousemove', 'then': {'rect': [60, 630, 140, 44]}}
+
+    @pytest.mark.parametrize("on", [
+        {"event": "pointerover", "then": MOVED},
+        {"event": "mousemove", "then": MOVED},
+        {"event": "mouseenter", "then": {"hit": "other"}},
+        {"event": "pointermove", "then": {"hit": "none"}},
+    ], ids=["moved-on-pointerover", "moved-on-mousemove", "covered-on-mouseenter", "gone-from-under-on-pointermove"])
+    def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on):
+        """FP30: page listeners run on the six hover and move events; the point is checked again in the
+        same turn as the press. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, "on": on}, {"on": on})
+>       assert filmed["receipt"] == _left(6, "mousemove") and _types(filmed) == HOVER
+E       AssertionError: assert ({'complete': ...usemove', ...} == {'complete': ...usemove', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:184: AssertionError
+_ test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[covered-on-mouseenter] _
+
+on = {'event': 'mouseenter', 'then': {'hit': 'other'}}
+
+    @pytest.mark.parametrize("on", [
+        {"event": "pointerover", "then": MOVED},
+        {"event": "mousemove", "then": MOVED},
+        {"event": "mouseenter", "then": {"hit": "other"}},
+        {"event": "pointermove", "then": {"hit": "none"}},
+    ], ids=["moved-on-pointerover", "moved-on-mousemove", "covered-on-mouseenter", "gone-from-under-on-pointermove"])
+    def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on):
+        """FP30: page listeners run on the six hover and move events; the point is checked again in the
+        same turn as the press. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, "on": on}, {"on": on})
+>       assert filmed["receipt"] == _left(6, "mousemove") and _types(filmed) == HOVER
+E       AssertionError: assert ({'complete': ...usemove', ...} == {'complete': ...usemove', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:184: AssertionError
+_ test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[gone-from-under-on-pointermove] _
+
+on = {'event': 'pointermove', 'then': {'hit': 'none'}}
+
+    @pytest.mark.parametrize("on", [
+        {"event": "pointerover", "then": MOVED},
+        {"event": "mousemove", "then": MOVED},
+        {"event": "mouseenter", "then": {"hit": "other"}},
+        {"event": "pointermove", "then": {"hit": "none"}},
+    ], ids=["moved-on-pointerover", "moved-on-mousemove", "covered-on-mouseenter", "gone-from-under-on-pointermove"])
+    def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on):
+        """FP30: page listeners run on the six hover and move events; the point is checked again in the
+        same turn as the press. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, "on": on}, {"on": on})
+>       assert filmed["receipt"] == _left(6, "mousemove") and _types(filmed) == HOVER
+E       AssertionError: assert ({'complete': ...usemove', ...} == {'complete': ...usemove', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:184: AssertionError
+_ test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[moved-on-pointerdown] _
+
+case = {'on': {'event': 'pointerdown', 'then': {'rect': [60, 630, 140, 44]}}}
+count = 7, last = 'pointerdown'
+
+    @pytest.mark.parametrize(("case", "count", "last"), [
+        ({"on": {"event": "pointerdown", "then": MOVED}}, 7, "pointerdown"),
+        ({"on": {"event": "pointerdown", "then": {"hit": "other"}}}, 7, "pointerdown"),
+        ({"on": {"event": "mousedown", "then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": {"rect": [60, 370, 140, 30]}}}, 8, "mousedown"),
+        ({"on": {"event": "pointerup", "then": MOVED}}, 9, "pointerup"),
+        ({"on": {"event": "mouseup", "then": MOVED}}, 10, "mouseup"),
+        ({"on": {"event": "mouseup", "then": {"hit": "other"}}}, 10, "mouseup"),
+    ], ids=["moved-on-pointerdown", "covered-on-pointerdown", "moved-on-mousedown", "moved-by-focus",
+            "a-field-40px-down-on-focus", "moved-on-pointerup", "moved-on-mouseup", "covered-on-mouseup"])
+    def test_a_control_that_leaves_the_point_once_pressed_is_not_clicked(case, count, last):
+        """Sol round 7: from the press on, every event is aimed again. A control that moves on mousedown,
+        or when the press focuses it, is pressed and not released or clicked, and the receipt names the
+        last event sent. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, **case}, case)
+>       assert filmed["receipt"] == _left(count, last)
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...terdown', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 7}
+E         {'last': 'click'} != {'last': 'pointerdown'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests/test_filmed_delivery_functions.py:204: AssertionError
+_ test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[covered-on-pointerdown] _
+
+case = {'on': {'event': 'pointerdown', 'then': {'hit': 'other'}}}, count = 7
+last = 'pointerdown'
+
+    @pytest.mark.parametrize(("case", "count", "last"), [
+        ({"on": {"event": "pointerdown", "then": MOVED}}, 7, "pointerdown"),
+        ({"on": {"event": "pointerdown", "then": {"hit": "other"}}}, 7, "pointerdown"),
+        ({"on": {"event": "mousedown", "then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": {"rect": [60, 370, 140, 30]}}}, 8, "mousedown"),
+        ({"on": {"event": "pointerup", "then": MOVED}}, 9, "pointerup"),
+        ({"on": {"event": "mouseup", "then": MOVED}}, 10, "mouseup"),
+        ({"on": {"event": "mouseup", "then": {"hit": "other"}}}, 10, "mouseup"),
+    ], ids=["moved-on-pointerdown", "covered-on-pointerdown", "moved-on-mousedown", "moved-by-focus",
+            "a-field-40px-down-on-focus", "moved-on-pointerup", "moved-on-mouseup", "covered-on-mouseup"])
+    def test_a_control_that_leaves_the_point_once_pressed_is_not_clicked(case, count, last):
+        """Sol round 7: from the press on, every event is aimed again. A control that moves on mousedown,
+        or when the press focuses it, is pressed and not released or clicked, and the receipt names the
+        last event sent. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, **case}, case)
+>       assert filmed["receipt"] == _left(count, last)
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...terdown', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 7}
+E         {'last': 'click'} != {'last': 'pointerdown'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests/test_filmed_delivery_functions.py:204: AssertionError
+_ test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[moved-on-mousedown] _
+
+case = {'on': {'event': 'mousedown', 'then': {'rect': [60, 630, 140, 44]}}}
+count = 8, last = 'mousedown'
+
+    @pytest.mark.parametrize(("case", "count", "last"), [
+        ({"on": {"event": "pointerdown", "then": MOVED}}, 7, "pointerdown"),
+        ({"on": {"event": "pointerdown", "then": {"hit": "other"}}}, 7, "pointerdown"),
+        ({"on": {"event": "mousedown", "then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": {"rect": [60, 370, 140, 30]}}}, 8, "mousedown"),
+        ({"on": {"event": "pointerup", "then": MOVED}}, 9, "pointerup"),
+        ({"on": {"event": "mouseup", "then": MOVED}}, 10, "mouseup"),
+        ({"on": {"event": "mouseup", "then": {"hit": "other"}}}, 10, "mouseup"),
+    ], ids=["moved-on-pointerdown", "covered-on-pointerdown", "moved-on-mousedown", "moved-by-focus",
+            "a-field-40px-down-on-focus", "moved-on-pointerup", "moved-on-mouseup", "covered-on-mouseup"])
+    def test_a_control_that_leaves_the_point_once_pressed_is_not_clicked(case, count, last):
+        """Sol round 7: from the press on, every event is aimed again. A control that moves on mousedown,
+        or when the press focuses it, is pressed and not released or clicked, and the receipt names the
+        last event sent. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, **case}, case)
+>       assert filmed["receipt"] == _left(count, last)
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...usedown', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 8}
+E         {'last': 'click'} != {'last': 'mousedown'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests/test_filmed_delivery_functions.py:204: AssertionError
+_ test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[moved-by-focus] _
+
+case = {'focus': {'then': {'rect': [60, 630, 140, 44]}}}, count = 8
+last = 'mousedown'
+
+    @pytest.mark.parametrize(("case", "count", "last"), [
+        ({"on": {"event": "pointerdown", "then": MOVED}}, 7, "pointerdown"),
+        ({"on": {"event": "pointerdown", "then": {"hit": "other"}}}, 7, "pointerdown"),
+        ({"on": {"event": "mousedown", "then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": {"rect": [60, 370, 140, 30]}}}, 8, "mousedown"),
+        ({"on": {"event": "pointerup", "then": MOVED}}, 9, "pointerup"),
+        ({"on": {"event": "mouseup", "then": MOVED}}, 10, "mouseup"),
+        ({"on": {"event": "mouseup", "then": {"hit": "other"}}}, 10, "mouseup"),
+    ], ids=["moved-on-pointerdown", "covered-on-pointerdown", "moved-on-mousedown", "moved-by-focus",
+            "a-field-40px-down-on-focus", "moved-on-pointerup", "moved-on-mouseup", "covered-on-mouseup"])
+    def test_a_control_that_leaves_the_point_once_pressed_is_not_clicked(case, count, last):
+        """Sol round 7: from the press on, every event is aimed again. A control that moves on mousedown,
+        or when the press focuses it, is pressed and not released or clicked, and the receipt names the
+        last event sent. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, **case}, case)
+>       assert filmed["receipt"] == _left(count, last)
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...usedown', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 8}
+E         {'last': 'click'} != {'last': 'mousedown'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests/test_filmed_delivery_functions.py:204: AssertionError
+_ test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[a-field-40px-down-on-focus] _
+
+case = {'focus': {'then': {'rect': [60, 370, 140, 30]}}}, count = 8
+last = 'mousedown'
+
+    @pytest.mark.parametrize(("case", "count", "last"), [
+        ({"on": {"event": "pointerdown", "then": MOVED}}, 7, "pointerdown"),
+        ({"on": {"event": "pointerdown", "then": {"hit": "other"}}}, 7, "pointerdown"),
+        ({"on": {"event": "mousedown", "then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": {"rect": [60, 370, 140, 30]}}}, 8, "mousedown"),
+        ({"on": {"event": "pointerup", "then": MOVED}}, 9, "pointerup"),
+        ({"on": {"event": "mouseup", "then": MOVED}}, 10, "mouseup"),
+        ({"on": {"event": "mouseup", "then": {"hit": "other"}}}, 10, "mouseup"),
+    ], ids=["moved-on-pointerdown", "covered-on-pointerdown", "moved-on-mousedown", "moved-by-focus",
+            "a-field-40px-down-on-focus", "moved-on-pointerup", "moved-on-mouseup", "covered-on-mouseup"])
+    def test_a_control_that_leaves_the_point_once_pressed_is_not_clicked(case, count, last):
+        """Sol round 7: from the press on, every event is aimed again. A control that moves on mousedown,
+        or when the press focuses it, is pressed and not released or clicked, and the receipt names the
+        last event sent. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, **case}, case)
+>       assert filmed["receipt"] == _left(count, last)
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...usedown', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 8}
+E         {'last': 'click'} != {'last': 'mousedown'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests/test_filmed_delivery_functions.py:204: AssertionError
+_ test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[moved-on-pointerup] _
+
+case = {'on': {'event': 'pointerup', 'then': {'rect': [60, 630, 140, 44]}}}
+count = 9, last = 'pointerup'
+
+    @pytest.mark.parametrize(("case", "count", "last"), [
+        ({"on": {"event": "pointerdown", "then": MOVED}}, 7, "pointerdown"),
+        ({"on": {"event": "pointerdown", "then": {"hit": "other"}}}, 7, "pointerdown"),
+        ({"on": {"event": "mousedown", "then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": {"rect": [60, 370, 140, 30]}}}, 8, "mousedown"),
+        ({"on": {"event": "pointerup", "then": MOVED}}, 9, "pointerup"),
+        ({"on": {"event": "mouseup", "then": MOVED}}, 10, "mouseup"),
+        ({"on": {"event": "mouseup", "then": {"hit": "other"}}}, 10, "mouseup"),
+    ], ids=["moved-on-pointerdown", "covered-on-pointerdown", "moved-on-mousedown", "moved-by-focus",
+            "a-field-40px-down-on-focus", "moved-on-pointerup", "moved-on-mouseup", "covered-on-mouseup"])
+    def test_a_control_that_leaves_the_point_once_pressed_is_not_clicked(case, count, last):
+        """Sol round 7: from the press on, every event is aimed again. A control that moves on mousedown,
+        or when the press focuses it, is pressed and not released or clicked, and the receipt names the
+        last event sent. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, **case}, case)
+>       assert filmed["receipt"] == _left(count, last)
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...interup', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 9}
+E         {'last': 'click'} != {'last': 'pointerup'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests/test_filmed_delivery_functions.py:204: AssertionError
+_ test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[moved-on-mouseup] _
+
+case = {'on': {'event': 'mouseup', 'then': {'rect': [60, 630, 140, 44]}}}
+count = 10, last = 'mouseup'
+
+    @pytest.mark.parametrize(("case", "count", "last"), [
+        ({"on": {"event": "pointerdown", "then": MOVED}}, 7, "pointerdown"),
+        ({"on": {"event": "pointerdown", "then": {"hit": "other"}}}, 7, "pointerdown"),
+        ({"on": {"event": "mousedown", "then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": {"rect": [60, 370, 140, 30]}}}, 8, "mousedown"),
+        ({"on": {"event": "pointerup", "then": MOVED}}, 9, "pointerup"),
+        ({"on": {"event": "mouseup", "then": MOVED}}, 10, "mouseup"),
+        ({"on": {"event": "mouseup", "then": {"hit": "other"}}}, 10, "mouseup"),
+    ], ids=["moved-on-pointerdown", "covered-on-pointerdown", "moved-on-mousedown", "moved-by-focus",
+            "a-field-40px-down-on-focus", "moved-on-pointerup", "moved-on-mouseup", "covered-on-mouseup"])
+    def test_a_control_that_leaves_the_point_once_pressed_is_not_clicked(case, count, last):
+        """Sol round 7: from the press on, every event is aimed again. A control that moves on mousedown,
+        or when the press focuses it, is pressed and not released or clicked, and the receipt names the
+        last event sent. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, **case}, case)
+>       assert filmed["receipt"] == _left(count, last)
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...mouseup', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 10}
+E         {'last': 'click'} != {'last': 'mouseup'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests/test_filmed_delivery_functions.py:204: AssertionError
+_ test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[covered-on-mouseup] _
+
+case = {'on': {'event': 'mouseup', 'then': {'hit': 'other'}}}, count = 10
+last = 'mouseup'
+
+    @pytest.mark.parametrize(("case", "count", "last"), [
+        ({"on": {"event": "pointerdown", "then": MOVED}}, 7, "pointerdown"),
+        ({"on": {"event": "pointerdown", "then": {"hit": "other"}}}, 7, "pointerdown"),
+        ({"on": {"event": "mousedown", "then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": MOVED}}, 8, "mousedown"),
+        ({"focus": {"then": {"rect": [60, 370, 140, 30]}}}, 8, "mousedown"),
+        ({"on": {"event": "pointerup", "then": MOVED}}, 9, "pointerup"),
+        ({"on": {"event": "mouseup", "then": MOVED}}, 10, "mouseup"),
+        ({"on": {"event": "mouseup", "then": {"hit": "other"}}}, 10, "mouseup"),
+    ], ids=["moved-on-pointerdown", "covered-on-pointerdown", "moved-on-mousedown", "moved-by-focus",
+            "a-field-40px-down-on-focus", "moved-on-pointerup", "moved-on-mouseup", "covered-on-mouseup"])
+    def test_a_control_that_leaves_the_point_once_pressed_is_not_clicked(case, count, last):
+        """Sol round 7: from the press on, every event is aimed again. A control that moves on mousedown,
+        or when the press focuses it, is pressed and not released or clicked, and the receipt names the
+        last event sent. Without a point the same page receives the whole sequence, as before."""
+        filmed, unfilmed = _click({"args": POINT, **case}, case)
+>       assert filmed["receipt"] == _left(count, last)
+E       AssertionError: assert {'complete': ... 'click', ...} == {'complete': ...mouseup', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 10}
+E         {'last': 'click'} != {'last': 'mouseup'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests/test_filmed_delivery_functions.py:204: AssertionError
+_ test_the_press_goes_to_what_is_under_the_point_when_the_hover_rearranged_the_control _
+
+    def test_the_press_goes_to_what_is_under_the_point_when_the_hover_rearranged_the_control():
+        """Sol round 7: a child that the hover moved inside an unchanged container is not pressed where it
+        no longer is; the press, the release and the click go to the child now under the point."""
+        swap = {"hit": "descendant", "on": {"event": "pointerover", "then": {"hit": "second"}}}
+        filmed, unfilmed = _click({"args": POINT, **swap}, swap)
+        assert filmed["receipt"] == COMPLETE
+>       assert [(e["type"], e["to"]) for e in filmed["sent"]] == [
+            *((kind, "icon") for kind in HOVER), *((kind, "label") for kind in SEQUENCE[6:])]
+E       AssertionError: assert [('pointerove... 'icon'), ...] == [('pointerove... 'icon'), ...]
+E         
+E         At index 6 diff: ('pointerdown', 'icon') != ('pointerdown', 'label')
+E         Use -v to get more diff
+
+tests/test_filmed_delivery_functions.py:215: AssertionError
+_______ test_a_press_and_a_release_on_two_children_click_what_holds_both _______
+
+    def test_a_press_and_a_release_on_two_children_click_what_holds_both():
+        """As a real click does: its target is the nearest common ancestor of what was pressed and what was
+        released."""
+        (run,) = _click({"args": POINT, "hit": "descendant", "on": {"event": "mousedown", "then": {"hit": "second"}}})
+        assert run["receipt"] == COMPLETE
+>       assert [(e["type"], e["to"]) for e in run["sent"]][6:] == [
+            ("pointerdown", "icon"), ("mousedown", "icon"), ("pointerup", "label"), ("mouseup", "label"),
+            ("click", "target")]
+E       AssertionError: assert [('pointerdow...ick', 'icon')] == [('pointerdow...k', 'target')]
+E         
+E         At index 2 diff: ('pointerup', 'icon') != ('pointerup', 'label')
+E         Use -v to get more diff
+
+tests/test_filmed_delivery_functions.py:226: AssertionError
+______ test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[none] ______
+
+cursor = 'none'
+
+    @pytest.mark.parametrize("cursor", HIDDEN)
+    def test_a_pointer_the_page_hides_or_replaces_is_not_acted_under(cursor):
+        """Sol round 7: with cursor none, or an image that may be empty, the pointer's position shows
+        nothing on screen. Nothing is sent, and the receipt says the pointer was hidden."""
+        click, unfilmed = _click({"args": POINT, "cursor": cursor}, {"cursor": cursor})
+>       assert click["receipt"] == {**NOTHING, "hidden": True} and click["sent"] == []
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 0}
+E         {'last': 'click'} != {'last': ''}
+E         {'stopped': None} != {'stopped': 'not_under_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:256: AssertionError
+_ test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[url("x.png") 4 4, auto] _
+
+cursor = 'url("x.png") 4 4, auto'
+
+    @pytest.mark.parametrize("cursor", HIDDEN)
+    def test_a_pointer_the_page_hides_or_replaces_is_not_acted_under(cursor):
+        """Sol round 7: with cursor none, or an image that may be empty, the pointer's position shows
+        nothing on screen. Nothing is sent, and the receipt says the pointer was hidden."""
+        click, unfilmed = _click({"args": POINT, "cursor": cursor}, {"cursor": cursor})
+>       assert click["receipt"] == {**NOTHING, "hidden": True} and click["sent"] == []
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 0}
+E         {'last': 'click'} != {'last': ''}
+E         {'stopped': None} != {'stopped': 'not_under_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:256: AssertionError
+_ test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[url(x.cur), pointer] _
+
+cursor = 'url(x.cur), pointer'
+
+    @pytest.mark.parametrize("cursor", HIDDEN)
+    def test_a_pointer_the_page_hides_or_replaces_is_not_acted_under(cursor):
+        """Sol round 7: with cursor none, or an image that may be empty, the pointer's position shows
+        nothing on screen. Nothing is sent, and the receipt says the pointer was hidden."""
+        click, unfilmed = _click({"args": POINT, "cursor": cursor}, {"cursor": cursor})
+>       assert click["receipt"] == {**NOTHING, "hidden": True} and click["sent"] == []
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 0}
+E         {'last': 'click'} != {'last': ''}
+E         {'stopped': None} != {'stopped': 'not_under_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:256: AssertionError
+________ test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[] ________
+
+cursor = ''
+
+    @pytest.mark.parametrize("cursor", HIDDEN)
+    def test_a_pointer_the_page_hides_or_replaces_is_not_acted_under(cursor):
+        """Sol round 7: with cursor none, or an image that may be empty, the pointer's position shows
+        nothing on screen. Nothing is sent, and the receipt says the pointer was hidden."""
+        click, unfilmed = _click({"args": POINT, "cursor": cursor}, {"cursor": cursor})
+>       assert click["receipt"] == {**NOTHING, "hidden": True} and click["sent"] == []
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 0}
+E         {'last': 'click'} != {'last': ''}
+E         {'stopped': None} != {'stopped': 'not_under_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:256: AssertionError
+____ test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[Pointer] _____
+
+cursor = 'Pointer'
+
+    @pytest.mark.parametrize("cursor", HIDDEN)
+    def test_a_pointer_the_page_hides_or_replaces_is_not_acted_under(cursor):
+        """Sol round 7: with cursor none, or an image that may be empty, the pointer's position shows
+        nothing on screen. Nothing is sent, and the receipt says the pointer was hidden."""
+        click, unfilmed = _click({"args": POINT, "cursor": cursor}, {"cursor": cursor})
+>       assert click["receipt"] == {**NOTHING, "hidden": True} and click["sent"] == []
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 0}
+E         {'last': 'click'} != {'last': ''}
+E         {'stopped': None} != {'stopped': 'not_under_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:256: AssertionError
+_ test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[pointer, auto] __
+
+cursor = 'pointer, auto'
+
+    @pytest.mark.parametrize("cursor", HIDDEN)
+    def test_a_pointer_the_page_hides_or_replaces_is_not_acted_under(cursor):
+        """Sol round 7: with cursor none, or an image that may be empty, the pointer's position shows
+        nothing on screen. Nothing is sent, and the receipt says the pointer was hidden."""
+        click, unfilmed = _click({"args": POINT, "cursor": cursor}, {"cursor": cursor})
+>       assert click["receipt"] == {**NOTHING, "hidden": True} and click["sent"] == []
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 0}
+E         {'last': 'click'} != {'last': ''}
+E         {'stopped': None} != {'stopped': 'not_under_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:256: AssertionError
+________ test_a_pointer_lock_hides_the_pointer_whatever_the_style_says _________
+
+    def test_a_pointer_lock_hides_the_pointer_whatever_the_style_says():
+        (click,) = _click({"args": POINT, "lock": True})
+        (insert,) = _insert({"args": [*POINT, "Ada"], "node": FIELD, "lock": True})
+>       assert click["receipt"] == {**NOTHING, "hidden": True} and click["sent"] == []
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 0}
+E         {'last': 'click'} != {'last': ''}
+E         {'stopped': None} != {'stopped': 'not_under_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:265: AssertionError
+_____ test_a_pointer_hidden_while_the_click_runs_stops_it[hidden-on-hover] _____
+
+case = {'on': {'event': 'pointerover', 'then': {'cursor': 'none'}}}
+receipt = {'complete': False, 'stopped': 'left_pointer', 'count': 6, 'last': 'mousemove', ...}
+
+    @pytest.mark.parametrize(("case", "receipt"), [
+        ({"on": {"event": "pointerover", "then": {"cursor": "none"}}}, _left(6, "mousemove", hidden=True)),
+        ({"on": {"event": "mousedown", "then": {"cursor": "none"}}}, _left(8, "mousedown", hidden=True)),
+        ({"on": {"event": "mouseup", "then": {"lock": True}}}, _left(10, "mouseup", hidden=True)),
+        ({"focus": {"then": {"cursor": 'url("blank.png"), auto'}}}, _left(8, "mousedown", hidden=True)),
+    ], ids=["hidden-on-hover", "hidden-on-press", "locked-on-release", "replaced-on-focus"])
+    def test_a_pointer_hidden_while_the_click_runs_stops_it(case, receipt):
+        (run,) = _click({"args": POINT, **case})
+>       assert run["receipt"] == receipt and _types(run) == SEQUENCE[:receipt["count"]]
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...usemove', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 6}
+E         {'last': 'click'} != {'last': 'mousemove'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:277: AssertionError
+_____ test_a_pointer_hidden_while_the_click_runs_stops_it[hidden-on-press] _____
+
+case = {'on': {'event': 'mousedown', 'then': {'cursor': 'none'}}}
+receipt = {'complete': False, 'stopped': 'left_pointer', 'count': 8, 'last': 'mousedown', ...}
+
+    @pytest.mark.parametrize(("case", "receipt"), [
+        ({"on": {"event": "pointerover", "then": {"cursor": "none"}}}, _left(6, "mousemove", hidden=True)),
+        ({"on": {"event": "mousedown", "then": {"cursor": "none"}}}, _left(8, "mousedown", hidden=True)),
+        ({"on": {"event": "mouseup", "then": {"lock": True}}}, _left(10, "mouseup", hidden=True)),
+        ({"focus": {"then": {"cursor": 'url("blank.png"), auto'}}}, _left(8, "mousedown", hidden=True)),
+    ], ids=["hidden-on-hover", "hidden-on-press", "locked-on-release", "replaced-on-focus"])
+    def test_a_pointer_hidden_while_the_click_runs_stops_it(case, receipt):
+        (run,) = _click({"args": POINT, **case})
+>       assert run["receipt"] == receipt and _types(run) == SEQUENCE[:receipt["count"]]
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...usedown', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 8}
+E         {'last': 'click'} != {'last': 'mousedown'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:277: AssertionError
+____ test_a_pointer_hidden_while_the_click_runs_stops_it[locked-on-release] ____
+
+case = {'on': {'event': 'mouseup', 'then': {'lock': True}}}
+receipt = {'complete': False, 'stopped': 'left_pointer', 'count': 10, 'last': 'mouseup', ...}
+
+    @pytest.mark.parametrize(("case", "receipt"), [
+        ({"on": {"event": "pointerover", "then": {"cursor": "none"}}}, _left(6, "mousemove", hidden=True)),
+        ({"on": {"event": "mousedown", "then": {"cursor": "none"}}}, _left(8, "mousedown", hidden=True)),
+        ({"on": {"event": "mouseup", "then": {"lock": True}}}, _left(10, "mouseup", hidden=True)),
+        ({"focus": {"then": {"cursor": 'url("blank.png"), auto'}}}, _left(8, "mousedown", hidden=True)),
+    ], ids=["hidden-on-hover", "hidden-on-press", "locked-on-release", "replaced-on-focus"])
+    def test_a_pointer_hidden_while_the_click_runs_stops_it(case, receipt):
+        (run,) = _click({"args": POINT, **case})
+>       assert run["receipt"] == receipt and _types(run) == SEQUENCE[:receipt["count"]]
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...mouseup', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 10}
+E         {'last': 'click'} != {'last': 'mouseup'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:277: AssertionError
+____ test_a_pointer_hidden_while_the_click_runs_stops_it[replaced-on-focus] ____
+
+case = {'focus': {'then': {'cursor': 'url("blank.png"), auto'}}}
+receipt = {'complete': False, 'stopped': 'left_pointer', 'count': 8, 'last': 'mousedown', ...}
+
+    @pytest.mark.parametrize(("case", "receipt"), [
+        ({"on": {"event": "pointerover", "then": {"cursor": "none"}}}, _left(6, "mousemove", hidden=True)),
+        ({"on": {"event": "mousedown", "then": {"cursor": "none"}}}, _left(8, "mousedown", hidden=True)),
+        ({"on": {"event": "mouseup", "then": {"lock": True}}}, _left(10, "mouseup", hidden=True)),
+        ({"focus": {"then": {"cursor": 'url("blank.png"), auto'}}}, _left(8, "mousedown", hidden=True)),
+    ], ids=["hidden-on-hover", "hidden-on-press", "locked-on-release", "replaced-on-focus"])
+    def test_a_pointer_hidden_while_the_click_runs_stops_it(case, receipt):
+        (run,) = _click({"args": POINT, **case})
+>       assert run["receipt"] == receipt and _types(run) == SEQUENCE[:receipt["count"]]
+E       AssertionError: assert ({'complete': ... 'click', ...} == {'complete': ...usedown', ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'complete': True} != {'complete': False}
+E         {'count': 11} != {'count': 8}
+E         {'last': 'click'} != {'last': 'mousedown'}
+E         {'stopped': None} != {'stopped': 'left_pointer'}...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show)
+
+tests/test_filmed_delivery_functions.py:277: AssertionError
+______ test_a_pointer_that_is_off_the_control_is_said_before_a_hidden_one ______
+
+    def test_a_pointer_that_is_off_the_control_is_said_before_a_hidden_one():
+        (click,) = _click({"args": POINT, "hit": "other", "cursor": "none"})
+        (insert,) = _insert({"args": [*POINT, "Ada"], "node": FIELD, "hit": "other", "cursor": "none"})
+>       assert click["receipt"] == NOTHING and insert["receipt"] == {"inserted": False, "why": "not_under_pointer"}
+E       AssertionError: assert ({'complete': ...ast': '', ...} == {'complete': ...ast': '', ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'hidden': False}
+E         Use -v to get more diff)
+
+tests/test_filmed_delivery_functions.py:283: AssertionError
+_ test_a_plain_button_is_located_with_its_rectangle_and_what_is_at_its_centre __
+
+    def test_a_plain_button_is_located_with_its_rectangle_and_what_is_at_its_centre():
+        plain, covered, inner = _locate(page(), page(hit="other"), page(hit="descendant"))
+>       assert plain == {"rect": [60, 330, 140, 44], "hit": "target", "inner": [800, 600], "clipped": False,
+                         "transformed": False, "visibility": "visible", "focus": [False, True], "point": None,
+                         "cursor": "auto"}
+E       AssertionError: assert {'rect': [60,...': False, ...} == {'rect': [60,...': False, ...}
+E         
+E         Omitting 8 identical items, use -vv to show
+E         Right contains 1 more item:
+E         {'cursor': 'auto'}
+E         Use -v to get more diff
+
+tests/test_locate_page_function.py:107: AssertionError
+_________ test_a_point_is_hit_tested_only_when_both_numbers_are_given __________
+
+    def test_a_point_is_hit_tested_only_when_both_numbers_are_given():
+        at = {"130,352": "target", "61.5,331": "other"}
+        with_point, half, without = _locate(page(point=[61.5, 331], at=at), page(point=[61.5], at=at), page(at=at))
+>       assert with_point["point"] == [61.5, 331, "other", None] and with_point["hit"] == "target"
+E       AssertionError: assert ([61.5, 331, 'other'] == [61.5, 331, 'other', None]
+E         
+E         Right contains one more item: None
+E         Use -v to get more diff)
+
+tests/test_locate_page_function.py:116: AssertionError
+____ test_the_cursor_of_what_is_at_the_centre_and_at_the_point_is_reported _____
+
+    def test_the_cursor_of_what_is_at_the_centre_and_at_the_point_is_reported():
+        """FP35: a page can hide the pointer over an element; its position then shows nothing. The function
+        reports the computed cursor of what is there, when that is the node or inside it, and the rule is
+        the caller's."""
+        hand = dict(BUTTON, style={"cursor": "pointer"})
+        gone = dict(BUTTON, style={"cursor": "none"})
+        image = dict(BUTTON, style={"cursor": 'url("x.png") 4 4, auto'})
+        at = [61.5, 331]
+        shown, hidden, drawn, covered, inner, locked = _locate(
+            page(button=hand, point=at), page(button=gone, point=at), page(button=image, point=at),
+            page(button=hand, point=at, hit="other"), page(button=gone, point=at, hit="descendant"),
+            page(button=hand, point=at, lock=True))
+>       assert (shown["cursor"], shown["point"]) == ("pointer", [61.5, 331, "target", "pointer"])
+                ^^^^^^^^^^^^^^^
+E       KeyError: 'cursor'
+
+tests/test_locate_page_function.py:132: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_filmed_delivery_functions.py::test_a_filmed_click_off_its_control_sends_nothing[covered]
+FAILED tests/test_filmed_delivery_functions.py::test_a_filmed_click_off_its_control_sends_nothing[nothing-there]
+FAILED tests/test_filmed_delivery_functions.py::test_a_filmed_click_off_its_control_sends_nothing[no-hit-test]
+FAILED tests/test_filmed_delivery_functions.py::test_a_filmed_click_off_its_control_sends_nothing[left]
+FAILED tests/test_filmed_delivery_functions.py::test_a_filmed_click_off_its_control_sends_nothing[right]
+FAILED tests/test_filmed_delivery_functions.py::test_a_filmed_click_off_its_control_sends_nothing[above]
+FAILED tests/test_filmed_delivery_functions.py::test_a_filmed_click_off_its_control_sends_nothing[below]
+FAILED tests/test_filmed_delivery_functions.py::test_a_filmed_click_off_its_control_sends_nothing[moved]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[moved-on-pointerover]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[moved-on-mousemove]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[covered-on-mouseenter]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_while_hovered_is_not_pressed[gone-from-under-on-pointermove]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[moved-on-pointerdown]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[covered-on-pointerdown]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[moved-on-mousedown]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[moved-by-focus]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[a-field-40px-down-on-focus]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[moved-on-pointerup]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[moved-on-mouseup]
+FAILED tests/test_filmed_delivery_functions.py::test_a_control_that_leaves_the_point_once_pressed_is_not_clicked[covered-on-mouseup]
+FAILED tests/test_filmed_delivery_functions.py::test_the_press_goes_to_what_is_under_the_point_when_the_hover_rearranged_the_control
+FAILED tests/test_filmed_delivery_functions.py::test_a_press_and_a_release_on_two_children_click_what_holds_both
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[none]
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[url("x.png") 4 4, auto]
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[url(x.cur), pointer]
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[]
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[Pointer]
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_the_page_hides_or_replaces_is_not_acted_under[pointer, auto]
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_lock_hides_the_pointer_whatever_the_style_says
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_hidden_while_the_click_runs_stops_it[hidden-on-hover]
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_hidden_while_the_click_runs_stops_it[hidden-on-press]
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_hidden_while_the_click_runs_stops_it[locked-on-release]
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_hidden_while_the_click_runs_stops_it[replaced-on-focus]
+FAILED tests/test_filmed_delivery_functions.py::test_a_pointer_that_is_off_the_control_is_said_before_a_hidden_one
+FAILED tests/test_locate_page_function.py::test_a_plain_button_is_located_with_its_rectangle_and_what_is_at_its_centre
+FAILED tests/test_locate_page_function.py::test_a_point_is_hit_tested_only_when_both_numbers_are_given
+FAILED tests/test_locate_page_function.py::test_the_cursor_of_what_is_at_the_centre_and_at_the_point_is_reported
+37 failed, 110 passed in 11.66s

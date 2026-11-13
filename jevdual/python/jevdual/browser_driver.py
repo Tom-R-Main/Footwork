@@ -22,6 +22,7 @@ import dataclasses
 import logging
 import math
 import os
+import re
 import shutil
 import signal
 import subprocess
@@ -266,6 +267,23 @@ DRIFT_TOLERANCE_PX = 0.5
 Rect = tuple[float, float, float, float]
 
 
+def pointer_shown(cursor: Any) -> bool:
+    """Whether the system pointer shows over an element whose computed ``cursor`` is this.
+
+    A page can hide the pointer over an element (``none``) or replace it with an image that may be
+    empty or transparent, and a pointer's position then shows nothing on film. Only a single keyword
+    other than ``none`` counts; the driver reports ``none`` under a pointer lock. The driver's two
+    filmed deliveries apply the same rule in the turn they act."""
+    return isinstance(cursor, str) and re.fullmatch(r"[a-z-]+", cursor) is not None and cursor != "none"
+
+
+def _hidden(cursor: Any, where: str) -> str:
+    if cursor is None:
+        return f"the driver did not say what the pointer looks like {where} (it needs cua-driver locate7)"
+    return (f"the page hides or replaces the pointer {where} (cursor: {str(cursor)[:40]}); "
+            "a filmed take needs the system pointer showing")
+
+
 def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple[Rect | None, str]:
     """A target's rectangle in viewport CSS px from the driver's ``locate`` block, when a filmed pointer
     can be put on it: ``(rect, "")``, or ``(None, why)``.
@@ -278,18 +296,19 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     which viewport CSS px are screen points from the content origin; wholly inside the viewport and
     inside every ancestor that clips or scrolls its overflow, so the film shows the whole of what is
     acted on (the filmed delivery scrolls nothing, so it does not depend on this); hit at its centre
-    (itself or something inside it); and where ``DOM.getBoxModel`` also puts it. With ``point`` (where
-    the pointer was sent), that point must lie inside the rectangle and hit the target too."""
+    (itself or something inside it), with the pointer showing there (``pointer_shown``); and where
+    ``DOM.getBoxModel`` also puts it. With ``point`` (where the pointer was sent), that point must lie
+    inside the rectangle and hit the target too, with the pointer showing there."""
     if not isinstance(locate, dict):
-        return None, "the driver reported no position (it needs cua-driver locate6)"
+        return None, "the driver reported no position (it needs cua-driver locate7)"
     if locate.get("available") is not True:
         return None, f"the driver could not locate it ({locate.get('reason') or 'no reason given'})"
     if locate.get("world") != "isolated":
         return None, ("the driver did not read the page out of reach of the page's own script "
-                      "(it needs cua-driver locate6)")
+                      "(it needs cua-driver locate7)")
     if locate.get("filmed_delivery") is not True:
         return None, ("the driver does not say it checks the pointer's position when it delivers "
-                      "(it needs cua-driver locate6)")
+                      "(it needs cua-driver locate7)")
 
     def numbers(value: Any, keys: tuple[str, ...]) -> tuple[float, ...] | None:
         if not isinstance(value, dict):
@@ -314,20 +333,22 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     shown = locate.get("visibility_state")
     if shown != "visible":
         if shown is None:
-            return None, "the driver did not say whether the page is showing (it needs cua-driver locate6)"
+            return None, "the driver did not say whether the page is showing (it needs cua-driver locate7)"
         return None, f"the page is not showing (its document is {str(shown)[:20]!r}); its tab is not the one on screen"
     x, y, w, h = rect
     if x < -0.5 or y < -0.5 or x + w > view[0] + 0.5 or y + h > view[1] + 0.5:
-        return None, "it is not wholly in view; the page click would scroll it after the pointer arrived"
+        return None, "it is not wholly in view; a filmed take acts only on a target the film shows whole"
     clipped = locate.get("clipped")
     if clipped is not False:
         if clipped is not True:
-            return None, "the driver did not say whether a container clips it (it needs cua-driver locate6)"
-        return None, ("a scrolling or clipping container hides part of it; the page click would scroll it "
-                      "after the pointer arrived")
+            return None, "the driver did not say whether a container clips it (it needs cua-driver locate7)"
+        return None, ("a scrolling or clipping container hides part of it; a filmed take acts only on a "
+                      "target the film shows whole")
     hit = locate.get("hit")
     if hit not in ("target", "descendant"):
         return None, ("another element is at its centre" if hit == "other" else "nothing is at its centre")
+    if not pointer_shown(locate.get("cursor")):
+        return None, _hidden(locate.get("cursor"), "over it")
     centre = (x + w / 2, y + h / 2)
     if box is None or math.dist(box, centre) > LOCATE_TOLERANCE_PX:
         return None, "its position could not be confirmed without page script"
@@ -341,6 +362,8 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
         if under not in ("target", "descendant"):
             return None, ("another element is under the pointer" if under == "other"
                           else "nothing of the page is under the pointer")
+        if not pointer_shown(locate["point"].get("cursor")):
+            return None, _hidden(locate["point"].get("cursor"), "where it landed")
     return rect, ""  # type: ignore[return-value]
 
 
@@ -351,7 +374,7 @@ def unfocused(locate: Any) -> str | None:
     field without focus is refused here, before the pointer moves. A filmed click on it gives it
     focus."""
     if not isinstance(locate, dict) or not isinstance(locate.get("focused"), bool):
-        return "the driver did not say whether it has focus (it needs cua-driver locate6)"
+        return "the driver did not say whether it has focus (it needs cua-driver locate7)"
     if not locate["focused"]:
         return "it does not have focus; click it first, then type"
     return None
@@ -646,7 +669,7 @@ class BrowserBridge:
             if refused is not None:
                 return refused
             out = await self.operations.click(**base, input_route=input_route, **self._filmed_point(at))
-            eff = self._after_approach(self._effect(out, operation, id, c.label), moved)
+            eff = self._after_approach(self._stopped_click(self._effect(out, operation, id, c.label), out), moved)
             eff = await self._after_delivery(eff, at, nm.menu.url)
             self.last = None
             return dataclasses.replace(eff, route=out.route or input_route)
@@ -720,6 +743,43 @@ class BrowserBridge:
         origin = self.filmed.viewport(0.0, 0.0)
         return {"filmed_point": (at[0] - origin[0], at[1] - origin[1])}
 
+    #: the driver's report of a filmed click that stopped after its press (cua-driver locate7)
+    _STOPPED_CLICK = re.compile(
+        r"^sent part of a synthetic DOM click .*?: (the ref's node left the filmed point|"
+        r"the page hid or replaced the pointer over the ref's node) after (\w+), so", re.DOTALL)
+
+    #: its refusal of one that stopped before the press, after the sequence's own hover events
+    _UNPRESSED_CLICK = re.compile(
+        r"^(the ref's node left the filmed point|the page hid or replaced the pointer over the ref's node) "
+        r"after (\w+), before the press: (\d+) hover and move events were sent and no press or click was sent")
+
+    def _stopped_click(self, eff: BrowserEffect, out: BrowserReply) -> BrowserEffect:
+        """A filmed click that stopped part way, in the bridge's own words.
+
+        The driver aims every event from the press on at what is under the pointer, and stops when the
+        control is no longer there (it moved when pressed, or when the press focused it) or the page
+        hid the pointer. It reports that as a partial click with an unverifiable effect, in a text
+        longer than a summary keeps. The press went and no click event did: say exactly that.
+
+        Stopped before the press (the sequence's own hover events moved the control, or hid the
+        pointer) it refuses instead. Hover events did reach the page, so this is not "not sent"; what
+        matters to the person is that no press or click went, so the summary begins with that."""
+        if self.filmed is None:
+            return eff
+        if eff.effect == "refused":
+            unpressed = self._UNPRESSED_CLICK.match(eff.summary)
+            if unpressed is None:
+                return eff
+            summary = (f"no press or click was sent: {unpressed[1]} after the click's own hover events "
+                       f"({unpressed[3]} sent, the last {unpressed[2]}).")
+            return dataclasses.replace(eff, summary=summary, evidence=(*eff.evidence, "click_stopped_before_press"))
+        said = self._STOPPED_CLICK.match(out.text or "")
+        if said is None:
+            return eff
+        summary = (f"the click stopped after {said[2]} and no click event was sent: {said[1]}. The press was "
+                   "sent; what it did is unverifiable, so observe before acting again.")
+        return dataclasses.replace(eff, summary=summary, evidence=(*eff.evidence, "click_stopped_after_press"))
+
     async def _after_delivery(
         self, eff: BrowserEffect, at: tuple[float, float] | None, url: str | None
     ) -> BrowserEffect:
@@ -727,13 +787,18 @@ class BrowserBridge:
         they were verified?
 
         The page side is checked inside the delivery itself, against the viewport point Footwork gave
-        it. What nothing in the page can see is the pointer leaving, or the window moving under it,
-        between the last check and the delivery, so both are read again here. A pointer that is not at
-        ``at`` ends the take (as ``Filmed.held`` does). Of the scene only the frames are read (where the
-        window and its page area are): the action's own effects may change the address, the frontmost
-        application or what lies over the pointer, and the next filmed action reads the whole scene
-        before it does anything. Either finding is added to the effect, which then says the action was
-        delivered without that proof; it is not turned into a refusal, because the action went."""
+        it. What nothing in the page can see is the pointer leaving, the window moving under it, or
+        something that is not the page lying over it, so all three are read again here, as they were
+        immediately before the delivery: the pointer (one that is not at ``at`` ends the take, as
+        ``Filmed.held`` does), the frames of the window and its page area, and what the system finds
+        under the pointer. The address, the main window and the frontmost application are not read:
+        the action's own effects may change them, and the next filmed action reads the whole scene
+        before it does anything. A finding is added to the effect, which then says the action was
+        delivered without that proof; it is not turned into a refusal, because the action went.
+
+        The two readings bracket the delivery and do not span it: a native surface that covers the
+        pointer only between them is seen by neither. No reader of state can exclude that; the film
+        is the record of it."""
         if at is None or self.filmed is None or eff.effect == "refused":
             return eff
         from jevdual.filmed import FilmedRefusal
@@ -745,12 +810,13 @@ class BrowserBridge:
             found.append(("pointer_left_during_delivery",
                           f"the pointer was not where it was verified ({refusal.code}); the take ended"))
         try:
-            await self._scene(url, frames_only=True)
+            await self._scene(url, at, delivered=True)
         except FilmedRefusal as refusal:
-            found.append(("scene_moved_during_delivery", refusal.reason))
+            found.append(("scene_changed_during_delivery", refusal.reason))
         if not found:
             return eff
-        lead = (f"the {eff.operation} was delivered, but when it returned "
+        went = "stopped part way" if "click_stopped_after_press" in eff.evidence else "was delivered"
+        lead = (f"the {eff.operation} {went}, but when it returned "
                 + "; and ".join(why for _, why in found) + ". ")
         return dataclasses.replace(eff, summary=(lead + eff.summary)[:400],
                                    evidence=(*eff.evidence, *(mark for mark, _ in found)))
@@ -779,19 +845,19 @@ class BrowserBridge:
         return (*located_rect(block, point), block)
 
     async def _scene(
-        self, url: str | None, point: tuple[float, float] | None = None, *, frames_only: bool = False
+        self, url: str | None, point: tuple[float, float] | None = None, *, delivered: bool = False
     ) -> None:
         """Refuse ``scene_changed`` unless the window on screen is still the take's recorded scene and,
         with ``point`` (screen points), the page of that window is what lies at that point.
-        ``frames_only`` asks only whether the window and its page area are where the take recorded
-        them (``jevdual.filmed.browser_scene_change``)."""
+        ``delivered`` is the reading for after a page action: the frames and the point only
+        (``jevdual.filmed.browser_scene_change``)."""
         from jevdual.filmed import FilmedRefusal
 
         if self.scene is None:
             raise FilmedRefusal("scene_changed", "this session has no way to check the filmed window")
         try:
             why = await asyncio.to_thread(self.scene, self.filmed, url, point,
-                                          **({"frames_only": True} if frames_only else {}))
+                                          **({"delivered": True} if delivered else {}))
         except Exception as exc:  # noqa: BLE001 - a scene that cannot be read is not a scene that holds
             why = f"the filmed window could not be read ({type(exc).__name__}: {str(exc)[:100]})"
         if why:
@@ -814,8 +880,11 @@ class BrowserBridge:
 
         These checks decide whether to send. The proof that the pointer is on the target at delivery
         is the driver's: the caller passes the verified point with the action (``_filmed_point``), and
-        the driver checks it against the element in the same turn of script as the action itself, in a
-        world the page's script cannot reach, scrolling and focusing nothing first.
+        the driver checks it against the element in the same turn of script as each event of the
+        action, in a world the page's script cannot reach, scrolling and focusing nothing first, and
+        stops when the element is no longer under that point or the page hides the pointer there.
+        What the driver cannot see (the pointer itself, the window, a surface over the page) is read
+        here immediately before the delivery and again immediately after it (``_after_delivery``).
 
         Three actions cannot be delivered that way and are refused before the pointer moves. A click by
         the trusted route is pressed at the content-box centre, not the point verified

@@ -34,12 +34,13 @@ const fn = eval('(' + input.source + ')');
 const out = input.cases.map((spec) => {
   const sent = [], commands = [];
   class Event { constructor(type, init) { this.type = type; Object.assign(this, init); } }
-  const view = { PointerEvent: class extends Event {}, MouseEvent: class extends Event {},
-                 screenX: 100, screenY: 50 };
-  const doc = { defaultView: view,
-                execCommand: (...args) => { commands.push(args); return spec.accepts !== false; } };
   // what a page listener can change while the sequence runs
-  const page = { rect: spec.rect || [60, 330, 140, 44], hit: spec.hit || 'target', connected: spec.connected !== false };
+  const page = { rect: spec.rect || [60, 330, 140, 44], hit: spec.hit || 'target', connected: spec.connected !== false,
+                 cursor: ('cursor' in spec) ? spec.cursor : 'pointer', lock: spec.lock === true };
+  const view = { PointerEvent: class extends Event {}, MouseEvent: class extends Event {},
+                 screenX: 100, screenY: 50, getComputedStyle: () => ({ cursor: page.cursor }) };
+  const doc = { defaultView: view, get pointerLockElement() { return page.lock ? {} : null; },
+                execCommand: (...args) => { commands.push(args); return spec.accepts !== false; } };
   const make = (name, parent, root, extra) => {
     const el = Object.assign({
       name, parentElement: parent, ownerDocument: doc,
@@ -57,7 +58,9 @@ const out = input.cases.map((spec) => {
         if (spec.on && spec.on.event === event.type) Object.assign(page, spec.on.then);
         return true;
       },
-      closest: () => null,
+      // the press focuses the control when the case says it is focusable, and focus can move it too
+      closest: () => spec.focus ? node : null,
+      focus: () => { sent.push({ to: name, type: 'focus()' }); Object.assign(page, spec.focus.then || {}); },
     }, extra || {});
     return el;
   };
@@ -65,8 +68,9 @@ const out = input.cases.map((spec) => {
   const root = spec.shadow ? {} : doc;
   const node = make('target', null, root, spec.node);
   const child = make('icon', node, root);
+  const second = make('label', node, root);
   const other = make('other', null, root);
-  const hits = { target: node, descendant: child, other, none: null };
+  const hits = { target: node, descendant: child, second, other, none: null };
   root.elementFromPoint = () => hits[page.hit];
   if (spec.blind) delete root.elementFromPoint;
   root.activeElement = hits[spec.active || 'target'];
@@ -106,7 +110,8 @@ def _insert(*cases: dict) -> list[dict]:
 
 SEQUENCE = ["pointerover", "pointerenter", "mouseover", "mouseenter", "pointermove", "mousemove", "pointerdown",
             "mousedown", "pointerup", "mouseup", "click"]
-NOTHING = {"complete": False, "stopped": "not_under_pointer", "count": 0, "last": "", "retargeted": False}
+NOTHING = {"complete": False, "stopped": "not_under_pointer", "count": 0, "last": "", "retargeted": False,
+           "hidden": False}
 
 
 def test_a_filmed_click_on_its_point_sends_the_whole_sequence_at_that_point():
@@ -154,46 +159,135 @@ def test_a_filmed_click_on_a_detached_control_says_detached_before_anything_else
 
 HOVER = SEQUENCE[:6]
 MOVED = {"rect": [60, 630, 140, 44]}
+COMPLETE = {"complete": True, "stopped": None, "count": 11, "last": "click", "retargeted": False}
 
 
-@pytest.mark.parametrize(("on", "left_after"), [
-    ({"event": "pointerover", "then": MOVED}, "mousemove"),
-    ({"event": "mousemove", "then": MOVED}, "mousemove"),
-    ({"event": "mouseenter", "then": {"hit": "other"}}, "mousemove"),
-    ({"event": "pointermove", "then": {"hit": "none"}}, "mousemove"),
+def _types(run: dict) -> list[str]:
+    return [e["type"] for e in run["sent"] if e["type"] != "focus()"]
+
+
+def _left(count: int, last: str, hidden: bool = False) -> dict:
+    return {"complete": False, "stopped": "left_pointer", "count": count, "last": last, "retargeted": False,
+            "hidden": hidden}
+
+
+@pytest.mark.parametrize("on", [
+    {"event": "pointerover", "then": MOVED},
+    {"event": "mousemove", "then": MOVED},
+    {"event": "mouseenter", "then": {"hit": "other"}},
+    {"event": "pointermove", "then": {"hit": "none"}},
 ], ids=["moved-on-pointerover", "moved-on-mousemove", "covered-on-mouseenter", "gone-from-under-on-pointermove"])
-def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on, left_after):
+def test_a_control_that_leaves_the_point_while_hovered_is_not_pressed(on):
     """FP30: page listeners run on the six hover and move events; the point is checked again in the
     same turn as the press. Without a point the same page receives the whole sequence, as before."""
     filmed, unfilmed = _click({"args": POINT, "on": on}, {"on": on})
-    assert filmed["receipt"] == {"complete": False, "stopped": "left_pointer", "count": 6, "last": left_after,
-                                 "retargeted": False}
-    assert [e["type"] for e in filmed["sent"]] == HOVER
-    assert unfilmed["receipt"]["complete"] is True and [e["type"] for e in unfilmed["sent"]] == SEQUENCE
+    assert filmed["receipt"] == _left(6, "mousemove") and _types(filmed) == HOVER
+    assert unfilmed["receipt"] == COMPLETE and _types(unfilmed) == SEQUENCE
 
 
-def test_a_control_removed_while_hovered_is_reported_detached_and_one_moved_by_the_press_is_still_released():
-    """FP30: removal keeps its own receipt, and from the press on the sequence follows the control, as
-    the press of a real pointer already has (a field that moves when the press focuses it)."""
-    removed, pressed, released = _click(
-        {"args": POINT, "on": {"event": "mouseover", "then": {"connected": False}}},
-        {"args": POINT, "on": {"event": "pointerdown", "then": MOVED}},
-        {"args": POINT, "on": {"event": "mouseup", "then": {"hit": "other"}}})
-    assert removed["receipt"] == {"complete": False, "stopped": "detached", "count": 3, "last": "mouseover",
+@pytest.mark.parametrize(("case", "count", "last"), [
+    ({"on": {"event": "pointerdown", "then": MOVED}}, 7, "pointerdown"),
+    ({"on": {"event": "pointerdown", "then": {"hit": "other"}}}, 7, "pointerdown"),
+    ({"on": {"event": "mousedown", "then": MOVED}}, 8, "mousedown"),
+    ({"focus": {"then": MOVED}}, 8, "mousedown"),
+    ({"focus": {"then": {"rect": [60, 370, 140, 30]}}}, 8, "mousedown"),
+    ({"on": {"event": "pointerup", "then": MOVED}}, 9, "pointerup"),
+    ({"on": {"event": "mouseup", "then": MOVED}}, 10, "mouseup"),
+    ({"on": {"event": "mouseup", "then": {"hit": "other"}}}, 10, "mouseup"),
+], ids=["moved-on-pointerdown", "covered-on-pointerdown", "moved-on-mousedown", "moved-by-focus",
+        "a-field-40px-down-on-focus", "moved-on-pointerup", "moved-on-mouseup", "covered-on-mouseup"])
+def test_a_control_that_leaves_the_point_once_pressed_is_not_clicked(case, count, last):
+    """Sol round 7: from the press on, every event is aimed again. A control that moves on mousedown,
+    or when the press focuses it, is pressed and not released or clicked, and the receipt names the
+    last event sent. Without a point the same page receives the whole sequence, as before."""
+    filmed, unfilmed = _click({"args": POINT, **case}, case)
+    assert filmed["receipt"] == _left(count, last)
+    assert _types(filmed) == SEQUENCE[:count] and "click" not in _types(filmed)
+    assert unfilmed["receipt"] == COMPLETE and _types(unfilmed) == SEQUENCE
+
+
+def test_the_press_goes_to_what_is_under_the_point_when_the_hover_rearranged_the_control():
+    """Sol round 7: a child that the hover moved inside an unchanged container is not pressed where it
+    no longer is; the press, the release and the click go to the child now under the point."""
+    swap = {"hit": "descendant", "on": {"event": "pointerover", "then": {"hit": "second"}}}
+    filmed, unfilmed = _click({"args": POINT, **swap}, swap)
+    assert filmed["receipt"] == COMPLETE
+    assert [(e["type"], e["to"]) for e in filmed["sent"]] == [
+        *((kind, "icon") for kind in HOVER), *((kind, "label") for kind in SEQUENCE[6:])]
+    # without a point the sequence keeps its first target, as it always has
+    assert unfilmed["receipt"] == COMPLETE and {e["to"] for e in unfilmed["sent"]} == {"icon"}
+
+
+def test_a_press_and_a_release_on_two_children_click_what_holds_both():
+    """As a real click does: its target is the nearest common ancestor of what was pressed and what was
+    released."""
+    (run,) = _click({"args": POINT, "hit": "descendant", "on": {"event": "mousedown", "then": {"hit": "second"}}})
+    assert run["receipt"] == COMPLETE
+    assert [(e["type"], e["to"]) for e in run["sent"]][6:] == [
+        ("pointerdown", "icon"), ("mousedown", "icon"), ("pointerup", "label"), ("mouseup", "label"),
+        ("click", "target")]
+
+
+def test_a_control_removed_while_hovered_or_pressed_is_reported_detached():
+    hovered, pressed = _click({"args": POINT, "on": {"event": "mouseover", "then": {"connected": False}}},
+                              {"args": POINT, "on": {"event": "mousedown", "then": {"connected": False}}})
+    assert hovered["receipt"] == {"complete": False, "stopped": "detached", "count": 3, "last": "mouseover",
                                   "retargeted": False}
-    assert "pointerdown" not in [e["type"] for e in removed["sent"]]
-    for run in (pressed, released):
-        assert run["receipt"]["complete"] is True and [e["type"] for e in run["sent"]] == SEQUENCE
-    # and the check before the press is what stops the first case of the test above, not the removal
-    (hovered,) = _click({"args": POINT, "on": {"event": "pointerover", "then": MOVED}})
-    assert hovered["receipt"]["stopped"] == "left_pointer"
+    assert pressed["receipt"]["stopped"] == "detached" and pressed["receipt"]["last"] == "mousedown"
+    assert "click" not in _types(pressed)
+
+
+SHOWN = ["auto", "default", "pointer", "text", "grab", "-webkit-grab", "not-allowed", "zoom-in"]
+HIDDEN = ["none", 'url("x.png") 4 4, auto', "url(x.cur), pointer", "", "Pointer", "pointer, auto"]
+
+
+@pytest.mark.parametrize("cursor", SHOWN)
+def test_a_keyword_cursor_shows_the_pointer(cursor):
+    click, insert = _click({"args": POINT, "cursor": cursor}), _insert({"args": [*POINT, "Ada"], "node": FIELD,
+                                                                           "cursor": cursor})
+    assert click[0]["receipt"] == COMPLETE and insert[0]["receipt"] == INSERTED
+
+
+@pytest.mark.parametrize("cursor", HIDDEN)
+def test_a_pointer_the_page_hides_or_replaces_is_not_acted_under(cursor):
+    """Sol round 7: with cursor none, or an image that may be empty, the pointer's position shows
+    nothing on screen. Nothing is sent, and the receipt says the pointer was hidden."""
+    click, unfilmed = _click({"args": POINT, "cursor": cursor}, {"cursor": cursor})
+    assert click["receipt"] == {**NOTHING, "hidden": True} and click["sent"] == []
+    assert unfilmed["receipt"] == COMPLETE
+    (insert,) = _insert({"args": [*POINT, "Ada"], "node": FIELD, "cursor": cursor})
+    assert insert["receipt"] == {"inserted": False, "why": "pointer_hidden"} and insert["commands"] == []
+
+
+def test_a_pointer_lock_hides_the_pointer_whatever_the_style_says():
+    (click,) = _click({"args": POINT, "lock": True})
+    (insert,) = _insert({"args": [*POINT, "Ada"], "node": FIELD, "lock": True})
+    assert click["receipt"] == {**NOTHING, "hidden": True} and click["sent"] == []
+    assert insert["receipt"] == {"inserted": False, "why": "pointer_hidden"} and insert["commands"] == []
+
+
+@pytest.mark.parametrize(("case", "receipt"), [
+    ({"on": {"event": "pointerover", "then": {"cursor": "none"}}}, _left(6, "mousemove", hidden=True)),
+    ({"on": {"event": "mousedown", "then": {"cursor": "none"}}}, _left(8, "mousedown", hidden=True)),
+    ({"on": {"event": "mouseup", "then": {"lock": True}}}, _left(10, "mouseup", hidden=True)),
+    ({"focus": {"then": {"cursor": 'url("blank.png"), auto'}}}, _left(8, "mousedown", hidden=True)),
+], ids=["hidden-on-hover", "hidden-on-press", "locked-on-release", "replaced-on-focus"])
+def test_a_pointer_hidden_while_the_click_runs_stops_it(case, receipt):
+    (run,) = _click({"args": POINT, **case})
+    assert run["receipt"] == receipt and _types(run) == SEQUENCE[:receipt["count"]]
+
+
+def test_a_pointer_that_is_off_the_control_is_said_before_a_hidden_one():
+    (click,) = _click({"args": POINT, "hit": "other", "cursor": "none"})
+    (insert,) = _insert({"args": [*POINT, "Ada"], "node": FIELD, "hit": "other", "cursor": "none"})
+    assert click["receipt"] == NOTHING and insert["receipt"] == {"inserted": False, "why": "not_under_pointer"}
 
 
 def test_an_unfilmed_click_acts_at_the_centre_and_falls_back_to_the_control_as_before():
     """The request without a point is the one this route has always sent (FP26, against)."""
     plain, covered, inner, half = _click({}, {"hit": "other"}, {"hit": "descendant"}, {"args": [70.5]})
     for run, to in ((plain, "target"), (covered, "target"), (inner, "icon"), (half, "target")):
-        assert run["receipt"] == {"complete": True, "stopped": None, "count": 11, "last": "click", "retargeted": False}
+        assert run["receipt"] == COMPLETE
         assert [e["type"] for e in run["sent"]] == SEQUENCE
         assert {e["to"] for e in run["sent"]} == {to} and {tuple(e["at"]) for e in run["sent"]} == {tuple(CENTRE)}
 

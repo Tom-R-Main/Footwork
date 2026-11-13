@@ -30,6 +30,12 @@ Rect = tuple[float, float, float, float]
 HELD_TOLERANCE_PT = 0.01
 
 
+#: what the page bridge adds to the evidence of a filmed page action that went, for the command to say
+#: (``BrowserBridge._stopped_click`` and ``_after_delivery``): the click stopped after its press, or the
+#: pointer or the scene was found elsewhere when the delivery returned
+PAGE_MARKS = ("click_stopped_after_press", "pointer_left_during_delivery", "scene_changed_during_delivery")
+
+
 class FilmedRefusal(Exception):
     """A filmed route refused before the action was delivered."""
 
@@ -294,7 +300,7 @@ SCENE_TOLERANCE_PT = 0.01
 
 def browser_scene_change(
     pid: int, window_id: int, filmed: Filmed, url: str | None, point: Point | None = None, *,
-    frames_only: bool = False,
+    delivered: bool = False,
 ) -> str | None:
     """Why a browser take's recorded scene no longer holds, or None when it does.
 
@@ -305,13 +311,16 @@ def browser_scene_change(
     must also land inside a web area of the scene window: page hit-testing cannot see a native surface
     lying over the page. Read through the accessibility interface; nothing is changed.
 
-    ``frames_only`` reads only where the scene window and its web area are, which is what maps a page
-    position to the screen. It is the reading for after a page action has been delivered: the action's
-    own effects may change the address, the main window, the frontmost application or what lies over
-    the pointer, and none of that says where the page was when the action went."""
+    ``delivered`` is the reading for after a page action has been delivered. It asks where the scene
+    window and its web area are, which is what maps a page position to the screen, and, with ``point``,
+    whether the page is still what the system finds under the pointer. It does not ask for the
+    address, the main window or the frontmost application: the action's own effects may change those,
+    and they do not say where the page was when the action went. Something that is not the page under
+    the pointer is reported even though the action itself may have put it there: the reader cannot
+    tell that from a surface that was over the pointer when the action went."""
     from jevdual import ax, posture
 
-    if not frames_only and (front := posture.frontmost_pid()) != pid:
+    if not delivered and (front := posture.frontmost_pid()) != pid:
         return f"the browser (pid {pid}) is not the frontmost application (pid {front} is)"
     try:
         win = ax.window_element(pid, window_id)
@@ -329,7 +338,7 @@ def browser_scene_change(
     def recorded(rect: Rect) -> str:
         return f"{rect[2]:.0f}x{rect[3]:.0f} at {rect[0]:.1f},{rect[1]:.1f}"
 
-    if main is not True and not frames_only:
+    if main is not True and not delivered:
         return "the scene window is not the browser's main window"
     if window is None or off(window, filmed.window):
         return (f"the scene window is {spot(window) if window else 'without a frame'}; "
@@ -338,9 +347,7 @@ def browser_scene_change(
         return "the scene window shows no web area"
     if off(area[0], filmed.content):
         return f"the page area is {spot(area[0])}; the take recorded {recorded(filmed.content)}"
-    if frames_only:
-        return None
-    if not url or not area[1] or area[1].split("#", 1)[0] != url.split("#", 1)[0]:
+    if not delivered and (not url or not area[1] or area[1].split("#", 1)[0] != url.split("#", 1)[0]):
         return f"the window shows {(area[1] or 'no address')[:120]!r}, not the session's page {(url or '')[:120]!r}"
     if point is not None:
         try:

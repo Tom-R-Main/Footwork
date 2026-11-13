@@ -29,13 +29,13 @@ const locate = eval('(' + input.source + ')');
 const out = input.cases.map((spec) => {
   const view = { innerWidth: spec.viewport[0], innerHeight: spec.viewport[1], getComputedStyle: (el) => el.style };
   const doc = { defaultView: view, visibilityState: spec.visibility || 'visible',
-                hasFocus: () => spec.page_focus !== false };
+                hasFocus: () => spec.page_focus !== false, pointerLockElement: spec.lock ? {} : null };
   const make = (item, parent, root) => {
     const [left, top, width, height] = item.rect;
     const layout = item.layout || {};
     const el = {
       name: item.name, parentElement: parent, assignedSlot: null, ownerDocument: doc,
-      style: Object.assign({ overflowX: 'visible', overflowY: 'visible' }, item.style || {}),
+      style: Object.assign({ overflowX: 'visible', overflowY: 'visible', cursor: 'auto' }, item.style || {}),
       offsetWidth: layout.offsetWidth ?? width, offsetHeight: layout.offsetHeight ?? height,
       clientLeft: layout.clientLeft ?? 0, clientTop: layout.clientTop ?? 0,
       clientWidth: layout.clientWidth ?? width, clientHeight: layout.clientHeight ?? height,
@@ -105,15 +105,39 @@ def page(*between: dict, button: dict = BUTTON, html: dict = HTML, body: dict = 
 def test_a_plain_button_is_located_with_its_rectangle_and_what_is_at_its_centre():
     plain, covered, inner = _locate(page(), page(hit="other"), page(hit="descendant"))
     assert plain == {"rect": [60, 330, 140, 44], "hit": "target", "inner": [800, 600], "clipped": False,
-                     "transformed": False, "visibility": "visible", "focus": [False, True], "point": None}
+                     "transformed": False, "visibility": "visible", "focus": [False, True], "point": None,
+                     "cursor": "auto"}
     assert (covered["hit"], inner["hit"]) == ("other", "descendant")
 
 
 def test_a_point_is_hit_tested_only_when_both_numbers_are_given():
     at = {"130,352": "target", "61.5,331": "other"}
     with_point, half, without = _locate(page(point=[61.5, 331], at=at), page(point=[61.5], at=at), page(at=at))
-    assert with_point["point"] == [61.5, 331, "other"] and with_point["hit"] == "target"
+    assert with_point["point"] == [61.5, 331, "other", None] and with_point["hit"] == "target"
     assert half["point"] is None and without["point"] is None
+
+
+def test_the_cursor_of_what_is_at_the_centre_and_at_the_point_is_reported():
+    """FP35: a page can hide the pointer over an element; its position then shows nothing. The function
+    reports the computed cursor of what is there, when that is the node or inside it, and the rule is
+    the caller's."""
+    hand = dict(BUTTON, style={"cursor": "pointer"})
+    gone = dict(BUTTON, style={"cursor": "none"})
+    image = dict(BUTTON, style={"cursor": 'url("x.png") 4 4, auto'})
+    at = [61.5, 331]
+    shown, hidden, drawn, covered, inner, locked = _locate(
+        page(button=hand, point=at), page(button=gone, point=at), page(button=image, point=at),
+        page(button=hand, point=at, hit="other"), page(button=gone, point=at, hit="descendant"),
+        page(button=hand, point=at, lock=True))
+    assert (shown["cursor"], shown["point"]) == ("pointer", [61.5, 331, "target", "pointer"])
+    assert (hidden["cursor"], hidden["point"][3]) == ("none", "none")
+    assert drawn["cursor"] == drawn["point"][3] == 'url("x.png") 4 4, auto'
+    # nothing of the node is there: no cursor to report
+    assert (covered["cursor"], covered["point"]) == (None, [61.5, 331, "other", None])
+    # what is inside the node has its own cursor, here the stand-in's default
+    assert (inner["cursor"], inner["point"][3]) == ("auto", "auto")
+    # a pointer lock hides the pointer whatever the style says
+    assert (locked["cursor"], locked["point"][3]) == ("none", "none")
 
 
 def test_a_hidden_document_is_reported():
