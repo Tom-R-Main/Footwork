@@ -796,6 +796,68 @@ def test_a_web_area_still_moving_is_read_until_two_readings_agree(world, fw, fil
     assert json.loads((fw.session / "session.json").read_text())["filmed"]["content"] == list(CONTENT)
 
 
+@pytest.mark.parametrize(("without_switch", "named"), [(True, True), (False, False), (None, False)])
+def test_a_refusal_for_no_web_area_names_a_browser_that_was_running_without_the_switch(
+        world, fw, filmed, monkeypatch, without_switch, named):
+    """FP90, FP91: Chrome shows a page's web area to an outside reader only when launched with the
+    switch, and a filmed start passes it only to a browser it launches. One that was already running,
+    launched by an unfilmed start, is refused after the whole wait; the refusal now says so and what to
+    do, when the browser's own command line shows it. A browser launched with the switch, or one whose
+    command cannot be read, gets the refusal as it was."""
+    from jevdual import session
+    from jevdual.coordination import Coordinator
+
+    _a_browser_start_reading(monkeypatch, [None] * 200, wait=0.05, refuses=True)
+    asked_of: list[int] = []
+    monkeypatch.setattr(session, "_launched_without_page_accessibility",
+                        lambda pid: asked_of.append(pid) or without_switch)
+    code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                      "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 2 and "shows no web area to film (" in err, err
+    cause = ("This browser was already running, launched without --force-renderer-accessibility, and Chrome shows "
+             "a page's web area only when launched with it: quit Footwork's Chrome and start again")
+    assert (cause in err) is named, err
+    assert asked_of == [77]  # the bound browser's own process, read once, at the refusal
+    assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
+    assert not (fw.session / "session.json").exists()
+
+
+def test_a_web_area_that_was_shown_and_did_not_settle_is_not_blamed_on_the_launch(world, fw, filmed, monkeypatch):
+    """The cause is named only for a window that never showed a web area: one that showed it and kept
+    changing its frame was launched to show it, whatever its command line says."""
+    from jevdual import ax, session
+
+    frames = iter(ax.Frame(420.0 + n, 330.0, 300.0, 450.0) for n in range(10_000))
+    _a_browser_start_reading(monkeypatch, [None], wait=0.05)
+    monkeypatch.setattr(ax, "web_area_frame", lambda el: next(frames))
+    monkeypatch.setattr(session, "_launched_without_page_accessibility", lambda pid: True)
+    code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
+                      "--pointer-motion", "filmed", "--rest", "20,40")
+    assert code == 2 and "did not keep one frame" in err and "already running" not in err, err
+
+
+def test_whether_a_browser_was_launched_without_the_switch_is_read_from_its_own_command(monkeypatch):
+    import psutil
+    from jevdual import browser_driver, session
+
+    commands = {1: ["chrome", "--user-data-dir=/p", browser_driver.ACCESSIBILITY_SWITCH, "about:blank"],
+                2: ["chrome", "--user-data-dir=/p", "about:blank"]}
+
+    class Process:
+        def __init__(self, pid):
+            if pid not in commands:
+                raise psutil.NoSuchProcess(pid)
+            self.pid = pid
+
+        def cmdline(self):
+            return commands[self.pid]
+
+    monkeypatch.setattr(psutil, "Process", Process)
+    assert session._launched_without_page_accessibility(1) is False
+    assert session._launched_without_page_accessibility(2) is True
+    assert session._launched_without_page_accessibility(3) is None
+
+
 def test_a_web_area_that_never_keeps_one_frame_does_not_start(world, fw, filmed, monkeypatch):
     from jevdual import ax
     from jevdual.coordination import Coordinator
