@@ -30,3 +30,10 @@ Test: as DGR2, except: (1) Desktop's glide arm moves the pointer about every 2.5
 Predicts: arm 3's start-refusal count and its mid-take interruption count each lie within what arm 1 and the drift block show (no more than two events above arm 1's count per twenty cycles); every park exits 0; no refusal line in arm 3 names a cause the other arms never show.
 Against: arm 3 exceeds both arm 1 and arm 2 by three or more events of either kind in twenty cycles, or a refusal line in arm 3 names a cause absent from the others. A smaller difference means extending the arm, as agreed with Desktop, not a conclusion.
 Refs: #dgr2; DemoGeek .local-reviews/application-film/sweep-2026-11-12 (run-sweep.zsh, sweep.zsh); scripts/recorder_sweep_arm3.py
+
+## DGR4 · update · 2026-11-12 20:06
+Observed: the sweep's first attempt did not run. The watcher (scripts/recorder_sweep_arm3.py at 174d375, installed copy sha256 a9a1463c…e73b1) was armed at 19:59:25 EST and read Desktop's go file at 20:03:31 (until 21:33). Desktop reports the screen was locked when Thomas's go arrived, so its runner recorded no take, stopped at 20:04:07 and removed the grant; no arm3-request was written. The watcher was stopped at 20:05:25 having started no session: its out folder holds only watch-began.json and watch-granted.json, and no Footwork, driver or holder process was left.
+Inferred: nothing about DGR3; no cycle of any arm ran. The grant of 20:03 is spent under the coordinator's terms, and a retry needs a fresh go and a newly armed watcher with a new out folder.
+Changes: none to the script. Desktop's launcher now refuses to write a grant while the screen is locked.
+Next: wait for Desktop's request to arm for the retry (out folder arm3-footwork-night2); DGR3 stays open.
+Refs: #dgr3; DemoGeek .local-reviews/application-film/sweep-2026-11-12/arm3-footwork-night
