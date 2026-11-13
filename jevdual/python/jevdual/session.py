@@ -1325,13 +1325,14 @@ def _web_area_when_shown(pid: int, window_id: int) -> tuple[Any, str, str | None
                 shows = f"nothing readable ({type(exc).__name__})"
             refusal = f"{why} ({how() + ', ' if asked else ''}waited {waited:.1f} s; the window shows {shows})"
             if not seen and _launched_without_page_accessibility(pid):
-                # the usual cause, and one the person can act on: a filmed start passes the switch only to
-                # a browser it launches itself, and this one was already running (FP90)
+                # the likely cause, and one the person can act on: a filmed start passes the switch only to
+                # a browser it launches itself, and this one was already running (FP90). Said as what was
+                # read of this process, not as a rule about Chrome: a browser without the switch has shown
+                # a web area before
                 from jevdual.browser_driver import ACCESSIBILITY_SWITCH
 
-                refusal += (f". This browser was already running, launched without {ACCESSIBILITY_SWITCH}, and "
-                            "Chrome shows a page's web area only when launched with it: quit Footwork's Chrome "
-                            "and start again, so that this start launches it")
+                refusal += (f". This browser was already running without {ACCESSIBILITY_SWITCH}. Quit Footwork's "
+                            "Chrome and start again so this start can launch it with page accessibility forced")
             return None, "", refusal
         if found is None and not accepted and waited - last_ask >= WEB_AREA_ASK_S:
             last_ask = waited

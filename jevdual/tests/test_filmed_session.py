@@ -814,8 +814,8 @@ def test_a_refusal_for_no_web_area_names_a_browser_that_was_running_without_the_
     code, _, err = fw("start", "Film the page", "--browser", "--mode", "exclusive_desktop",
                       "--pointer-motion", "filmed", "--rest", "20,40")
     assert code == 2 and "shows no web area to film (" in err, err
-    cause = ("This browser was already running, launched without --force-renderer-accessibility, and Chrome shows "
-             "a page's web area only when launched with it: quit Footwork's Chrome and start again")
+    cause = ("This browser was already running without --force-renderer-accessibility. Quit Footwork's Chrome and "
+             "start again so this start can launch it with page accessibility forced")
     assert (cause in err) is named, err
     assert asked_of == [77]  # the bound browser's own process, read once, at the refusal
     assert [r for r in Coordinator().status()["reservations"] if r["state"] == "active"] == []
