@@ -1,0 +1,17 @@
+# new v2_tests.rs against the locate5 tools.rs (FP26)
+test browser::v2_tests::a_not_under_pointer_receipt_that_counts_events_is_not_a_clean_refusal ... ok
+test browser::v2_tests::an_unfilmed_dom_click_is_sent_as_before ... ok
+test browser::v2_tests::filmed_click_is_refused_before_anything_runs_where_it_cannot_be_isolated ... FAILED
+test browser::v2_tests::filmed_click_off_its_point_sends_nothing_and_says_so ... FAILED
+test browser::v2_tests::filmed_click_runs_wholly_in_the_isolated_world_and_scrolls_nothing ... FAILED
+test browser::v2_tests::filmed_insert_is_one_function_in_the_isolated_world ... FAILED
+test browser::v2_tests::filmed_insert_reports_each_refusal_of_its_function ... FAILED
+test browser::v2_tests::filmed_insert_is_refused_before_anything_runs_where_it_cannot_be_made ... FAILED
+test result: FAILED. 1264 passed; 6 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.62s
+exit 101
+
+# new v2_tests.rs against the tools.rs the first headless run used (FP30)
+test browser::v2_tests::filmed_click_whose_node_left_its_point_before_the_press_says_no_press_was_sent ... FAILED
+test browser::v2_tests::locate_ref_reports_where_the_element_is_and_changes_nothing ... FAILED
+test result: FAILED. 1269 passed; 2 failed; 2 ignored; 0 measured; 0 filtered out; finished in 16.53s
+exit 101

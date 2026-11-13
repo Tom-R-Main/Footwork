@@ -62,6 +62,12 @@ OPERATIONS: dict[str, frozenset[str]] = {
     "type_text": frozenset({"target_id", "tab_id", "ref", "text", "replace"}),
     "navigate": frozenset({"target_id", "tab_id", "url"}),
 }
+#: fields a request may carry beyond its operation's own. A request without them is the request an
+#: older holder already serves; one with them is rejected by a holder started before they existed.
+OPTIONAL: dict[str, frozenset[str]] = {
+    "click": frozenset({"filmed_point"}),
+    "type_text": frozenset({"filmed_point"}),
+}
 #: operations that may have reached the page; a lost response to one of these is unknown, not unsent
 SENDING = frozenset({"click", "type_text", "navigate"})
 CONTROL = frozenset({"status", "stop"})
@@ -301,7 +307,8 @@ class Holder:
             if method == "stop":
                 self.stopping.set()
             return {"ok": True, "status": self.status()}
-        if method not in OPERATIONS or not isinstance(args, dict) or set(args) != OPERATIONS[method]:
+        if method not in OPERATIONS or not isinstance(args, dict) or not (
+                OPERATIONS[method] <= set(args) <= OPERATIONS[method] | OPTIONAL.get(method, frozenset())):
             return {"ok": False, "code": "holder_request_invalid"}
         self.last_request = time.monotonic()
         async with self.lock:
@@ -581,24 +588,43 @@ class RemoteBrowserOperations:
     async def snapshot(self, *, target_id: str, tab_id: str | None) -> BrowserReply:
         return await self._op("snapshot", target_id=target_id, tab_id=tab_id)
 
-    async def click(self, *, target_id: str, tab_id: str | None, ref: str, input_route: str) -> BrowserReply:
-        return await self._op("click", target_id=target_id, tab_id=tab_id, ref=ref, input_route=input_route)
+    @staticmethod
+    def _older_holder(reply: BrowserReply, what: str) -> BrowserReply:
+        """A holder checks a request's exact fields; one started by an older build does not know a
+        field added since. Say so, and that nothing was sent."""
+        if reply.refusal is None or reply.refusal.code != "holder_request_invalid":
+            return reply
+        message = (f"this session's browser holder does not serve this {what} request (an older build "
+                   "started it); start a new session")
+        return BrowserReply(status="refused", text=message, is_error=True, dispatched=False,
+                            refusal=BrowserRefusal(code="holder_request_invalid", message=message,
+                                                   detail={"delivery": "not_sent", "retryable": False}))
+
+    @staticmethod
+    def _filmed(filmed_point: Any) -> dict[str, Any]:
+        """The optional field, only when there is a point: an unfilmed request stays the one every
+        holder serves."""
+        return {} if filmed_point is None else {"filmed_point": [float(filmed_point[0]), float(filmed_point[1])]}
+
+    async def click(
+        self, *, target_id: str, tab_id: str | None, ref: str, input_route: str, filmed_point: Any = None
+    ) -> BrowserReply:
+        reply = await self._op("click", target_id=target_id, tab_id=tab_id, ref=ref, input_route=input_route,
+                               **self._filmed(filmed_point))
+        return reply if filmed_point is None else self._older_holder(reply, "filmed click")
 
     async def locate(self, *, target_id: str, tab_id: str | None, ref: str, point: Any = None) -> BrowserReply:
         reply = await self._op("locate", target_id=target_id, tab_id=tab_id, ref=ref,
                                point=None if point is None else [float(point[0]), float(point[1])])
-        if reply.refusal is not None and reply.refusal.code == "holder_request_invalid":
-            # a holder checks a request's exact fields; one started by an older build knows no locate,
-            # or one without a point
-            message = ("this session's browser holder does not serve this locate request (an older build "
-                       "started it); start a new session")
-            return BrowserReply(status="refused", text=message, is_error=True, dispatched=False,
-                                refusal=BrowserRefusal(code="holder_request_invalid", message=message,
-                                                       detail={"delivery": "not_sent", "retryable": False}))
-        return reply
+        # an older holder knows no locate, or one without a point
+        return self._older_holder(reply, "locate")
 
-    async def type_text(self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool) -> BrowserReply:
-        return await self._op("type_text", target_id=target_id, tab_id=tab_id, ref=ref, text=text, replace=replace)
+    async def type_text(
+        self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool, filmed_point: Any = None
+    ) -> BrowserReply:
+        reply = await self._op("type_text", target_id=target_id, tab_id=tab_id, ref=ref, text=text, replace=replace,
+                               **self._filmed(filmed_point))
+        return reply if filmed_point is None else self._older_holder(reply, "filmed type")
 
     async def navigate(self, *, target_id: str, tab_id: str | None, url: str) -> BrowserReply:
         return await self._op("navigate", target_id=target_id, tab_id=tab_id, url=url)

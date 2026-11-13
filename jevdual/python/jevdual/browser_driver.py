@@ -271,20 +271,25 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     can be put on it: ``(rect, "")``, or ``(None, why)``.
 
     The driver must have read the page in an isolated world, where the page's own script cannot answer
-    for it. The target must be in the tab's own frame, in a document the browser is showing; at 100%
-    page zoom and pinch scale 1, the only case in which viewport CSS px are screen points from the
-    content origin;
-    wholly inside the viewport and inside every ancestor that clips or scrolls its overflow, because the
-    page click scrolls a partly hidden target after the pointer has arrived; hit at its centre (itself
-    or something inside it); and where ``DOM.getBoxModel`` also puts it. With ``point`` (where the
-    pointer was sent), that point must lie inside the rectangle and hit the target too."""
+    for it, and must say it checks a filmed pointer's position inside the delivery itself
+    (``filmed_delivery``): an older driver accepts the position with a click or a type and ignores it,
+    and the driver that answers this is the one that will deliver. The target must be in the tab's own
+    frame, in a document the browser is showing; at 100% page zoom and pinch scale 1, the only case in
+    which viewport CSS px are screen points from the content origin; wholly inside the viewport and
+    inside every ancestor that clips or scrolls its overflow, so the film shows the whole of what is
+    acted on (the filmed delivery scrolls nothing, so it does not depend on this); hit at its centre
+    (itself or something inside it); and where ``DOM.getBoxModel`` also puts it. With ``point`` (where
+    the pointer was sent), that point must lie inside the rectangle and hit the target too."""
     if not isinstance(locate, dict):
-        return None, "the driver reported no position (it needs cua-driver locate5)"
+        return None, "the driver reported no position (it needs cua-driver locate6)"
     if locate.get("available") is not True:
         return None, f"the driver could not locate it ({locate.get('reason') or 'no reason given'})"
     if locate.get("world") != "isolated":
         return None, ("the driver did not read the page out of reach of the page's own script "
-                      "(it needs cua-driver locate5)")
+                      "(it needs cua-driver locate6)")
+    if locate.get("filmed_delivery") is not True:
+        return None, ("the driver does not say it checks the pointer's position when it delivers "
+                      "(it needs cua-driver locate6)")
 
     def numbers(value: Any, keys: tuple[str, ...]) -> tuple[float, ...] | None:
         if not isinstance(value, dict):
@@ -309,7 +314,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     shown = locate.get("visibility_state")
     if shown != "visible":
         if shown is None:
-            return None, "the driver did not say whether the page is showing (it needs cua-driver locate5)"
+            return None, "the driver did not say whether the page is showing (it needs cua-driver locate6)"
         return None, f"the page is not showing (its document is {str(shown)[:20]!r}); its tab is not the one on screen"
     x, y, w, h = rect
     if x < -0.5 or y < -0.5 or x + w > view[0] + 0.5 or y + h > view[1] + 0.5:
@@ -317,7 +322,7 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     clipped = locate.get("clipped")
     if clipped is not False:
         if clipped is not True:
-            return None, "the driver did not say whether a container clips it (it needs cua-driver locate5)"
+            return None, "the driver did not say whether a container clips it (it needs cua-driver locate6)"
         return None, ("a scrolling or clipping container hides part of it; the page click would scroll it "
                       "after the pointer arrived")
     hit = locate.get("hit")
@@ -339,23 +344,16 @@ def located_rect(locate: Any, point: tuple[float, float] | None = None) -> tuple
     return rect, ""  # type: ignore[return-value]
 
 
-def unfocused(locate: Any, *, replacing: bool = False) -> str | None:
-    """Why typing into a located target would first change focus in the page, or None when it would
-    not, so nothing styled or scripted on focus can move the field after the pointer has been verified
-    on it.
-
-    The target must be the active element of its root: the driver's own focus call then changes
-    nothing. ``replacing`` held text also needs the document to have focus, because the driver enters
-    focus emulation for it, which gives a document without focus the appearance of it. Inserting into
-    an empty field does not: a document without focus matches no focus style before or after."""
-    if not isinstance(locate, dict) or not isinstance(locate.get("focused"), bool) \
-            or not isinstance(locate.get("page_focused"), bool):
-        return "the driver did not say whether it has focus (it needs cua-driver locate5)"
+def unfocused(locate: Any) -> str | None:
+    """Why a located target cannot be typed into in a filmed take, or None when it can: it must already
+    be the active element of its root. The filmed insert focuses nothing (a field can move when it
+    gains focus, after the pointer was verified on it) and inserts only into the active element, so a
+    field without focus is refused here, before the pointer moves. A filmed click on it gives it
+    focus."""
+    if not isinstance(locate, dict) or not isinstance(locate.get("focused"), bool):
+        return "the driver did not say whether it has focus (it needs cua-driver locate6)"
     if not locate["focused"]:
         return "it does not have focus; click it first, then type"
-    if replacing and not locate["page_focused"]:
-        return ("it is the page's active element but the page does not have the keyboard (another part "
-                "of the browser does), and replacing the text it holds would give the page focus")
     return None
 
 
@@ -644,11 +642,12 @@ class BrowserBridge:
             # successes); the DOM route did all of them. DOM is the default; the receipt proves the
             # outcome either way, and --route trusted is there for controls that ignore synthetic clicks.
             input_route = route or "dom_event"
-            refused, moved = await self._filmed_approach(operation, id, c, ref, nm.menu.url, route=input_route)
+            refused, moved, at = await self._filmed_approach(operation, id, c, ref, nm.menu.url, route=input_route)
             if refused is not None:
                 return refused
-            out = await self.operations.click(**base, input_route=input_route)
+            out = await self.operations.click(**base, input_route=input_route, **self._filmed_point(at))
             eff = self._after_approach(self._effect(out, operation, id, c.label), moved)
+            eff = await self._after_delivery(eff, at, nm.menu.url)
             self.last = None
             return dataclasses.replace(eff, route=out.route or input_route)
         elif operation in ("type", "append"):
@@ -674,7 +673,9 @@ class BrowserBridge:
                               "Type the whole intended value instead (a foreground step).",
                 )
             needs_replace = operation == "type" and bool(holds)
-            if needs_replace:
+            # a filmed take refuses a replacement outright (replace_unfilmed, in _filmed_approach), so
+            # asking the posture for it would only advise a step that is then refused
+            if needs_replace and self.filmed is None:
                 refusal = self.policy.permits(
                     "foreground",
                     why=f"replacing the text {c.label!r} holds selects its tab for ~100 ms",
@@ -691,11 +692,12 @@ class BrowserBridge:
                         error_code=refusal.code,
                         dispatched=False,
                     )
-            refused, moved = await self._filmed_approach(operation, id, c, ref, nm.menu.url,
-                                                         replacing=needs_replace)
+            refused, moved, at = await self._filmed_approach(operation, id, c, ref, nm.menu.url,
+                                                             replacing=needs_replace)
             if refused is not None:
                 return refused
-            out = await self.operations.type_text(**base, text=text or "", replace=needs_replace)
+            out = await self.operations.type_text(**base, text=text or "", replace=needs_replace,
+                                                  **self._filmed_point(at))
         else:
             hint = (
                 "; content beyond this observation cannot be scrolled into view here, so an answer from "
@@ -707,7 +709,51 @@ class BrowserBridge:
                 f"browser mode has no {operation!r} operation (click, type, append, navigate){hint}"
             )
         self.last = None
-        return self._after_approach(self._effect(out, operation, id, c.label), moved)
+        eff = self._after_approach(self._effect(out, operation, id, c.label), moved)
+        return await self._after_delivery(eff, at, nm.menu.url)
+
+    def _filmed_point(self, at: tuple[float, float] | None) -> dict[str, Any]:
+        """The driver's ``filmed_point`` for a pointer verified at screen point ``at``: the same point in
+        viewport CSS px. Nothing when the take is not filmed, so an unfilmed call is unchanged."""
+        if at is None or self.filmed is None:
+            return {}
+        origin = self.filmed.viewport(0.0, 0.0)
+        return {"filmed_point": (at[0] - origin[0], at[1] - origin[1])}
+
+    async def _after_delivery(
+        self, eff: BrowserEffect, at: tuple[float, float] | None, url: str | None
+    ) -> BrowserEffect:
+        """After a filmed page action that was not refused: were the pointer and the page still where
+        they were verified?
+
+        The page side is checked inside the delivery itself, against the viewport point Footwork gave
+        it. What nothing in the page can see is the pointer leaving, or the window moving under it,
+        between the last check and the delivery, so both are read again here. A pointer that is not at
+        ``at`` ends the take (as ``Filmed.held`` does). Of the scene only the frames are read (where the
+        window and its page area are): the action's own effects may change the address, the frontmost
+        application or what lies over the pointer, and the next filmed action reads the whole scene
+        before it does anything. Either finding is added to the effect, which then says the action was
+        delivered without that proof; it is not turned into a refusal, because the action went."""
+        if at is None or self.filmed is None or eff.effect == "refused":
+            return eff
+        from jevdual.filmed import FilmedRefusal
+
+        found: list[tuple[str, str]] = []
+        try:
+            await self.filmed.held(at)
+        except FilmedRefusal as refusal:
+            found.append(("pointer_left_during_delivery",
+                          f"the pointer was not where it was verified ({refusal.code}); the take ended"))
+        try:
+            await self._scene(url, frames_only=True)
+        except FilmedRefusal as refusal:
+            found.append(("scene_moved_during_delivery", refusal.reason))
+        if not found:
+            return eff
+        lead = (f"the {eff.operation} was delivered, but when it returned "
+                + "; and ".join(why for _, why in found) + ". ")
+        return dataclasses.replace(eff, summary=(lead + eff.summary)[:400],
+                                   evidence=(*eff.evidence, *(mark for mark, _ in found)))
 
     @staticmethod
     def _after_approach(eff: BrowserEffect, moved: bool) -> BrowserEffect:
@@ -732,15 +778,20 @@ class BrowserBridge:
         block = reply.payload.get("locate")
         return (*located_rect(block, point), block)
 
-    async def _scene(self, url: str | None, point: tuple[float, float] | None = None) -> None:
+    async def _scene(
+        self, url: str | None, point: tuple[float, float] | None = None, *, frames_only: bool = False
+    ) -> None:
         """Refuse ``scene_changed`` unless the window on screen is still the take's recorded scene and,
-        with ``point`` (screen points), the page of that window is what lies at that point."""
+        with ``point`` (screen points), the page of that window is what lies at that point.
+        ``frames_only`` asks only whether the window and its page area are where the take recorded
+        them (``jevdual.filmed.browser_scene_change``)."""
         from jevdual.filmed import FilmedRefusal
 
         if self.scene is None:
             raise FilmedRefusal("scene_changed", "this session has no way to check the filmed window")
         try:
-            why = await asyncio.to_thread(self.scene, self.filmed, url, point)
+            why = await asyncio.to_thread(self.scene, self.filmed, url, point,
+                                          **({"frames_only": True} if frames_only else {}))
         except Exception as exc:  # noqa: BLE001 - a scene that cannot be read is not a scene that holds
             why = f"the filmed window could not be read ({type(exc).__name__}: {str(exc)[:100]})"
         if why:
@@ -749,26 +800,32 @@ class BrowserBridge:
     async def _filmed_approach(
         self, operation: str, id: int, c: Candidate, ref: str, url: str | None, *,
         route: str | None = None, replacing: bool = False,
-    ) -> tuple[BrowserEffect | None, bool]:
+    ) -> tuple[BrowserEffect | None, bool, tuple[float, float] | None]:
         """In a filmed take, put the real pointer on the target before the page action.
 
         The scene is checked (``_scene``), the driver reads where the element is now
         (``located_rect``), the pointer travels there, and the driver reads it again, asked about the
         point the pointer is at as the system reports it: the action goes ahead only if that point is
         on the element, the element has not moved, the scene still holds with the page under that
-        point, and the pointer is still there. Returns the refusal, if any, and whether the approach
-        posted pointer events. Any refusal withholds the page action; when events had been posted, the
-        refusal says so instead of claiming nothing happened.
+        point, and the pointer is still there. Returns the refusal, if any, whether the approach
+        posted pointer events, and the screen point the pointer was verified at. Any refusal withholds
+        the page action; when events had been posted, the refusal says so instead of claiming nothing
+        happened.
 
-        Two actions would change the page between that verification and their delivery, and are refused
-        before the pointer moves. A click by the trusted route is pressed at the content-box centre,
-        which is not the point verified (``route_unfilmed``, before anything is read). Typing focuses
-        its field, and a field can move when it gains focus, so only a field that already has focus is
-        typed into (``target_unfocused``, by ``unfocused``, read with the first locate and again after
-        the approach): a filmed click on the field is what focuses it. ``replacing`` is whether the
-        type replaces held text."""
+        These checks decide whether to send. The proof that the pointer is on the target at delivery
+        is the driver's: the caller passes the verified point with the action (``_filmed_point``), and
+        the driver checks it against the element in the same turn of script as the action itself, in a
+        world the page's script cannot reach, scrolling and focusing nothing first.
+
+        Three actions cannot be delivered that way and are refused before the pointer moves. A click by
+        the trusted route is pressed at the content-box centre, not the point verified
+        (``route_unfilmed``); a type that replaces held text selects it first (``replace_unfilmed``);
+        both before anything is read. A filmed insert focuses nothing, so a field that is not already
+        the active element is refused (``target_unfocused``, by ``unfocused``, read with the first
+        locate and again after the approach): a filmed click on the field gives it focus.
+        ``replacing`` is whether the type replaces held text."""
         if self.filmed is None:
-            return None, False
+            return None, False, None
         from jevdual.filmed import FilmedRefusal
 
         gestures = len(self.filmed.gestures)
@@ -781,11 +838,16 @@ class BrowserBridge:
                     f"{c.label!r}: a filmed click goes by the DOM route. The trusted route presses at the "
                     "centre of the content box, which is not the point the pointer is verified on; "
                     "leave out --route trusted")
+            if replacing:
+                raise FilmedRefusal(
+                    "replace_unfilmed",
+                    f"{c.label!r} holds text, and replacing it selects that text first, after the pointer "
+                    "was verified; a filmed take types only into an empty field")
             await self._scene(url)
             rect, why, block = await self._locate(ref)
             if rect is None:
                 raise FilmedRefusal("target_unlocated", f"{c.label!r}: {why}")
-            if typing and (gap := unfocused(block, replacing=replacing)):
+            if typing and (gap := unfocused(block)):
                 raise FilmedRefusal("target_unfocused", f"{c.label!r}: {gap}")
             centre = (rect[0] + rect[2] / 2, rect[1] + rect[3] / 2)
             x, y = self.filmed.viewport(rect[0], rect[1])
@@ -799,7 +861,7 @@ class BrowserBridge:
             drift = math.dist((again[0] + again[2] / 2, again[1] + again[3] / 2), centre)
             if drift > DRIFT_TOLERANCE_PX:
                 raise FilmedRefusal("target_moved", f"{c.label!r} moved {drift:.1f} px while the pointer travelled")
-            if typing and (gap := unfocused(block, replacing=replacing)):
+            if typing and (gap := unfocused(block)):
                 raise FilmedRefusal("target_unfocused", f"{c.label!r} lost focus while the pointer travelled: {gap}")
             await self._scene(url, here)
             await self.filmed.held(here)
@@ -809,8 +871,8 @@ class BrowserBridge:
             lead = f"the pointer moved but the {operation} was not sent: " if moved else ""
             return BrowserEffect(operation, id, c.label, "refused", route="desktop", dispatched=False,
                                  error_code=refusal.code, summary=(lead + refusal.reason)[:300],
-                                 evidence=("pointer_moved",) if moved else ()), moved
-        return None, self._posted(gestures)
+                                 evidence=("pointer_moved",) if moved else ()), moved, None
+        return None, self._posted(gestures), here
 
     def _posted(self, since: int) -> bool:
         """Whether a gesture of this take after index ``since`` posted pointer events."""

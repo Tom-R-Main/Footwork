@@ -41,10 +41,13 @@ NAME = (10.0, 200.0, 200.0, 24.0)
 NAME_CENTRE = (110.0, 212.0)
 NAME_SCREEN = (530.0, 542.0)
 # what a filmed click on Go does, in order, when nothing refuses: the second locate is asked about the
-# pointer's own position, and the second scene read and the pointer check are about that position too
+# pointer's own position, the second scene read and the pointer check are about that position too, the
+# click carries it to the driver (FP26), and when the click returns the pointer is checked once more
+# and the window's and the page area's frames are read again
 GO_STEPS = [("scene", URL), ("locate", "snap-1:1"), ("approach", (460.0, 430.0, 80.0, 30.0), "Go"),
             ("locate", "snap-1:1", GO_CENTRE), ("scene", URL, GO_SCREEN), ("held", GO_SCREEN),
-            ("browser_click", "snap-1:1")]
+            ("browser_click", "snap-1:1"), ("held", GO_SCREEN), ("frames",)]
+SENT = 7  # how many of a filmed act's steps end with the page action
 
 
 def at(box=GO, **changes):
@@ -60,6 +63,7 @@ def at(box=GO, **changes):
         "visibility_state": "visible",
         "clipped": False,
         "world": "isolated",
+        "filmed_delivery": True,
         "focused": False,
         "page_focused": True,
     }
@@ -107,6 +111,8 @@ class Wire:
                 self.log.append((name, args.get("ref") or args.get("url")))
             if name == "browser_click" and hasattr(self.log, "routes"):
                 self.log.routes.append(args.get("input_route"))
+            if name in ("browser_click", "browser_type") and hasattr(self.log, "sent"):
+                self.log.sent.append(args)
             reply = {"status": "ok", "target_id": args.get("target_id"), "tab_id": args.get("tab_id")}
             if self.action is not None and name in ("browser_click", "browser_type"):
                 reply = self.action
@@ -120,16 +126,19 @@ class Take(list):
     """The log of one filmed act, and what its stand-ins answer."""
 
     scenes: list  # one answer per scene read: None (the scene holds), a reason, or an exception
+    frames = None  # the answer to the frames-only read after a delivery: None, a reason, or an exception
     posted = 12  # pointer events the approach posts; 0 when the pointer was already on the target
     lands = None  # where the pointer is read after the approach (screen points); default: the centre
-    left = False  # the pointer is found away from where it was read
+    left = False  # the pointer is found away from where it was read: True (at the first check) or the
+    #               number of the check that finds it so (2 is the one after the delivery)
     routes: list  # the input route of each click that reached the driver
+    sent: list  # the arguments of each click and type that reached the driver
 
 
 @pytest.fixture
 def take(monkeypatch):
     log = Take()
-    log.scenes, log.routes = [], []
+    log.scenes, log.routes, log.sent = [], [], []
 
     async def approach(self, frame, label):
         self.check()
@@ -144,7 +153,7 @@ def take(monkeypatch):
 
     async def held(self, at=None):
         log.append(("held", at))
-        if log.left:
+        if log.left and _kinds(log).count("held") >= int(log.left):
             self.end_take("pointer_moved_idle")
             raise FilmedRefusal("pointer_moved_idle", "someone moved it; the take ended")
 
@@ -155,11 +164,16 @@ def take(monkeypatch):
 
 
 def _act(log, operation, label, text=None, *, locates=None, filmed=True, take_ended=None, scene=True,
-         action=None, route=None):
-    def read_scene(filmed, url, point=None):
+         action=None, route=None, session=None):
+    def read_scene(filmed, url, point=None, *, frames_only=False):
         assert isinstance(filmed, Filmed)
-        log.append(("scene", url, *((point,) if point else ())))
-        answer = log.scenes.pop(0) if log.scenes else None
+        if frames_only:
+            assert point is None
+            log.append(("frames",))
+            answer = getattr(log, "frames", None)
+        else:
+            log.append(("scene", url, *((point,) if point else ())))
+            answer = log.scenes.pop(0) if log.scenes else None
         if isinstance(answer, Exception):
             raise answer
         return answer
@@ -167,7 +181,7 @@ def _act(log, operation, label, text=None, *, locates=None, filmed=True, take_en
     async def run():
         bridge = BrowserBridge(Wire(log, locates, action), 42, 7, policy=ExecutionPolicy("exclusive_desktop"))
         if filmed:
-            bridge.filmed = Filmed(window=WINDOW, content=CONTENT, take_ended=take_ended)
+            bridge.filmed = session or Filmed(window=WINDOW, content=CONTENT, take_ended=take_ended)
             if scene:
                 bridge.scene = read_scene
         await bridge.attach()
@@ -192,7 +206,7 @@ def test_a_filmed_click_checks_locates_travels_and_checks_again_before_the_page_
 
 NAME_STEPS = [("scene", URL), ("locate", "snap-1:2"), ("approach", (430.0, 530.0, 200.0, 24.0), "Name"),
               ("locate", "snap-1:2", NAME_CENTRE), ("scene", URL, NAME_SCREEN), ("held", NAME_SCREEN),
-              ("browser_type", "snap-1:2")]
+              ("browser_type", "snap-1:2"), ("held", NAME_SCREEN), ("frames",)]
 
 
 @pytest.mark.parametrize("operation", ["type", "append"])
@@ -211,19 +225,90 @@ def test_an_empty_field_that_is_active_in_a_page_without_the_keyboard_is_typed_i
     assert take == NAME_STEPS
 
 
-def test_held_text_is_replaced_only_when_the_page_has_the_keyboard(take):
-    """FP21: replacing enters focus emulation, which gives a page without focus the appearance of it."""
-    eff = _act(take, "type", "City", "Rome", locates=[focused(page_focused=False)])
-    assert (eff.effect, eff.dispatched, eff.error_code, eff.evidence) == ("refused", False, "target_unfocused", ())
-    assert "replacing the text it holds would give the page focus" in eff.summary
-    assert take == [("scene", URL), ("locate", "snap-1:3")]
-    del take[:]
-    eff = _act(take, "type", "City", "Rome", locates=[focused(), focused()])
-    assert eff.dispatched is not False and _kinds(take)[-1] == "browser_type"
-    del take[:]
-    eff = _act(take, "type", "City", "Rome", locates=[focused(), focused(page_focused=False)])
-    assert (eff.dispatched, eff.error_code, eff.evidence) == (False, "target_unfocused", ("pointer_moved",))
-    assert _kinds(take)[-1] == "locate"
+@pytest.mark.parametrize("page_focused", [True, False])
+def test_a_filmed_take_does_not_replace_held_text(take, page_focused):
+    """Sol round 6: a replacement focuses and selects after the last check, so the pointer's place on
+    the field is no longer what was verified. Refused before anything is read or moved."""
+    eff = _act(take, "type", "City", "Rome", locates=[focused(page_focused=page_focused)])
+    assert (eff.effect, eff.dispatched, eff.error_code, eff.evidence) == ("refused", False, "replace_unfilmed", ())
+    assert "types only into an empty field" in eff.summary and "pointer moved" not in eff.summary
+    assert take == [] and take.sent == []
+
+
+def test_an_unfilmed_session_still_replaces_held_text(take):
+    _act(take, "type", "City", "Rome", filmed=False)
+    assert take == [("browser_type", "snap-1:3")]
+    assert take.sent[0]["replace"] is True and "filmed_point" not in take.sent[0]
+
+
+def test_a_filmed_click_carries_the_pointers_verified_place_to_the_driver(take):
+    """FP26: the driver checks that point against the element in the same turn as the click itself."""
+    take.lands = (GO_SCREEN[0] + 20.0, GO_SCREEN[1] - 5.0)
+    _act(take, "click", "Go")
+    assert [(args["input_route"], args["filmed_point"]) for args in take.sent] == [("dom_event", {"x": 100.0, "y": 110.0})]
+
+
+def test_a_filmed_type_carries_the_pointers_verified_place_and_inserts_without_replacing(take):
+    _act(take, "type", "Name", "Ada", locates=[focused(), focused()])
+    (args,) = take.sent
+    assert (args["filmed_point"], args["mode"], args["replace"], args["text"]) == (
+        {"x": NAME_CENTRE[0], "y": NAME_CENTRE[1]}, "insert_text", False, "Ada")
+
+
+@pytest.mark.parametrize(("operation", "label", "text"), [("click", "Go", None), ("type", "Name", "Ada")])
+def test_an_unfilmed_action_carries_no_point(take, operation, label, text):
+    _act(take, operation, label, text, filmed=False)
+    assert len(take.sent) == 1 and "filmed_point" not in take.sent[0]
+
+
+@pytest.mark.parametrize(("operation", "label", "text", "steps"), [
+    ("click", "Go", None, GO_STEPS), ("type", "Name", "Ada", NAME_STEPS)])
+def test_a_pointer_found_elsewhere_when_the_delivery_returns_ends_the_take_and_says_so(
+        take, operation, label, text, steps):
+    """FP26: nothing on the page can see the pointer leave between the last check and the delivery, so
+    it is read again afterwards; the action went, and the effect must not read as filmed proof."""
+    take.left = 2
+    box = GO if label == "Go" else NAME
+    filmed_take = Filmed(window=WINDOW, content=CONTENT)
+    eff = _act(take, operation, label, text, locates=[focused(box), focused(box)], session=filmed_take)
+    assert eff.effect != "refused" and eff.dispatched is not False
+    assert eff.summary.startswith(
+        f"the {operation} was delivered, but when it returned the pointer was not where it was verified")
+    assert "pointer_moved_idle" in eff.summary and "the take ended" in eff.summary
+    assert eff.evidence[-1] == "pointer_left_during_delivery"
+    assert take == steps and filmed_take.take_ended == "pointer_moved_idle"
+
+
+@pytest.mark.parametrize(("operation", "label", "text", "steps"), [
+    ("click", "Go", None, GO_STEPS), ("type", "Name", "Ada", NAME_STEPS)])
+@pytest.mark.parametrize("answer", ["the page area is 300x450 at 420.0,360.0; the take recorded 300x450 at 420.0,330.0",
+                                    OSError("no window server")])
+def test_a_window_found_elsewhere_when_the_delivery_returns_is_said_and_the_take_goes_on(
+        take, operation, label, text, steps, answer):
+    """FP26: the driver checks the viewport point Footwork gave it; a window that moved under a still
+    pointer makes that point another place on screen, which only the frames can show."""
+    take.frames = answer
+    box = GO if label == "Go" else NAME
+    filmed_take = Filmed(window=WINDOW, content=CONTENT)
+    eff = _act(take, operation, label, text, locates=[focused(box), focused(box)], session=filmed_take)
+    assert eff.effect != "refused" and eff.dispatched is not False
+    assert eff.summary.startswith(f"the {operation} was delivered, but when it returned the ")
+    assert ("the take recorded 300x450 at 420.0,330.0" in eff.summary) or ("could not be read (OSError" in eff.summary)
+    assert eff.evidence[-1] == "scene_moved_during_delivery" and "pointer_left_during_delivery" not in eff.evidence
+    assert take == steps and filmed_take.take_ended is None
+
+
+def test_both_findings_after_a_delivery_are_said(take):
+    take.left, take.frames = 2, "the scene window is 300x480 at 400.0,300.0; the take recorded 300x480 at 420.0,300.0"
+    eff = _act(take, "click", "Go")
+    assert eff.evidence[-2:] == ("pointer_left_during_delivery", "scene_moved_during_delivery")
+    assert "the take ended; and the scene window is 300x480 at 400.0,300.0" in eff.summary
+    assert take == GO_STEPS
+
+
+def test_a_page_action_the_driver_refused_is_not_followed_by_a_pointer_check(take):
+    eff = _act(take, "click", "Go", action=REFUSED)
+    assert eff.effect == "refused" and take == GO_STEPS[:SENT]
 
 
 @pytest.mark.parametrize("operation", ["type", "append"])
@@ -231,7 +316,6 @@ def test_held_text_is_replaced_only_when_the_page_has_the_keyboard(take):
     (at(NAME), "does not have focus; click it first"),
     (at(NAME, page_focused=False), "does not have focus; click it first"),
     (at(NAME, focused=None), "did not say whether it has focus"),
-    (focused(page_focused=None), "did not say whether it has focus"),
     ({k: v for k, v in at(NAME).items() if k not in ("focused", "page_focused")}, "did not say whether it has focus"),
 ])
 def test_a_field_without_focus_is_not_typed_into_and_nothing_moves(take, operation, first, says):
@@ -247,7 +331,7 @@ def test_a_field_that_lost_focus_during_the_approach_is_not_typed_into(take):
     eff = _act(take, "type", "Name", "Ada", locates=[focused(), at(NAME)])
     assert (eff.dispatched, eff.error_code, eff.evidence) == (False, "target_unfocused", ("pointer_moved",))
     assert eff.summary.startswith("the pointer moved but the type was not sent: 'Name' lost focus while the pointer")
-    assert take == NAME_STEPS[:4]
+    assert take == NAME_STEPS[:4] and take.sent == []
 
 
 def test_a_click_does_not_need_its_target_focused(take):
@@ -272,6 +356,24 @@ def test_a_filmed_click_by_the_dom_route_named_outright_goes_as_the_default_does
 def test_an_unfilmed_session_still_sends_a_trusted_click(take):
     _act(take, "click", "Go", filmed=False, route="trusted")
     assert take == [("browser_click", "snap-1:1")] and take.routes == ["trusted"]
+
+
+@pytest.mark.parametrize("marker", [None, False, "true", 1, "absent"])
+def test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves(take, marker):
+    """FP30: an older driver takes the pointer's position with a click and ignores it."""
+    block = at(filmed_delivery=marker)
+    if marker == "absent":
+        del block["filmed_delivery"]
+    eff = _act(take, "click", "Go", locates=[block])
+    assert (eff.effect, eff.dispatched, eff.error_code, eff.evidence) == ("refused", False, "target_unlocated", ())
+    assert "does not say it checks the pointer's position when it delivers" in eff.summary
+    assert take == GO_STEPS[:2] and take.sent == []
+    del take[:]
+    eff = _act(take, "type", "Name", "Ada", locates=[focused(), {**block, "rect": focused()["rect"],
+                                                                 "center": focused()["center"],
+                                                                 "box_center": focused()["box_center"], "focused": True}])
+    assert (eff.dispatched, eff.error_code, eff.evidence) == (False, "target_moved", ("pointer_moved",))
+    assert take == NAME_STEPS[:4] and take.sent == []
 
 
 @pytest.mark.parametrize("world", [None, "main", True])
@@ -344,6 +446,7 @@ def test_a_pointer_read_off_centre_but_on_the_target_is_checked_there(take):
     eff = _act(take, "click", "Go")
     assert eff.dispatched is not False
     assert take[3:6] == [("locate", "snap-1:1", (100.0, 110.0)), ("scene", URL, take.lands), ("held", take.lands)]
+    assert take[-2:] == [("held", take.lands), ("frames",)]
 
 
 @pytest.mark.parametrize(("operation", "label", "text"), [("click", "Go", None), ("type", "Name", "Ada")])
@@ -358,7 +461,7 @@ def test_a_page_action_refused_after_the_approach_says_whether_the_pointer_moved
     assert "the ref's node is gone" in eff.summary
     assert eff.summary.startswith(f"the pointer moved; the {operation} was then refused: ") is bool(posted)
     assert ("pointer_moved" in eff.evidence) is bool(posted)
-    assert _kinds(take)[-1] in ("browser_click", "browser_type")
+    assert _kinds(take)[-1] in ("browser_click", "browser_type")  # no pointer check after a refusal
 
 
 def test_a_refusal_after_an_approach_that_posted_nothing_does_not_say_the_pointer_moved(take):
@@ -403,7 +506,7 @@ def test_a_pointer_that_left_its_landing_point_ends_the_take_and_withholds_the_a
     take.left = True
     eff = _act(take, "click", "Go")
     assert (eff.dispatched, eff.error_code, eff.evidence) == (False, "pointer_moved_idle", ("pointer_moved",))
-    assert take == GO_STEPS[:6]
+    assert take == GO_STEPS[:6] and take.sent == []
 
 
 def test_an_ended_take_refuses_without_asking_the_page_anything(take):
@@ -464,6 +567,9 @@ def test_a_reachable_target_gives_its_rectangle():
     (at(world=None), "out of reach of the page's own script"),
     (at(world="main"), "out of reach of the page's own script"),
     ({k: v for k, v in at().items() if k != "world"}, "out of reach of the page's own script"),
+    (at(filmed_delivery=None), "checks the pointer's position when it delivers"),
+    (at(filmed_delivery="yes"), "checks the pointer's position when it delivers"),
+    ({k: v for k, v in at().items() if k != "filmed_delivery"}, "checks the pointer's position when it delivers"),
 ])
 def test_a_target_a_pointer_cannot_be_put_on_gives_no_rectangle_and_says_why(locate, why):
     rect, reason = browser_driver.located_rect(locate)
@@ -486,14 +592,15 @@ def test_a_landing_point_that_is_not_on_the_target_gives_no_rectangle_and_says_w
     assert rect is None and why in reason, reason
 
 
-def test_focus_is_the_fields_and_for_a_replacement_its_pages_too():
+def test_focus_is_the_fields_own():
+    """FP26: the filmed insert focuses nothing and inserts only into the active element, so the page
+    having the keyboard no longer matters, and the driver need not report it."""
     assert browser_driver.unfocused(focused()) is None
-    assert browser_driver.unfocused(focused(), replacing=True) is None
     assert browser_driver.unfocused(focused(page_focused=False)) is None
-    assert "would give the page focus" in browser_driver.unfocused(focused(page_focused=False), replacing=True)
-    for block in (at(), at(page_focused=False), at(focused="yes"), at(focused=1, page_focused=1),
-                  focused(page_focused=None), None, {}):
-        assert browser_driver.unfocused(block) and browser_driver.unfocused(block, replacing=True)
+    assert browser_driver.unfocused(focused(page_focused=None)) is None
+    for block in (at(), at(page_focused=False), at(focused="yes"), at(focused=1, page_focused=1), at(focused=None),
+                  None, {}):
+        assert browser_driver.unfocused(block)
 
 
 def test_the_locate_operation_is_a_read_of_one_ref_and_optionally_one_point():
@@ -545,11 +652,75 @@ def test_the_held_route_carries_the_point_to_the_holder():
     assert "an older build started it" in old.refusal.message and "start a new session" in old.text
 
 
+def test_the_held_route_carries_a_filmed_point_only_when_there_is_one():
+    """FP26: an unfilmed click or type is the request every holder serves; a filmed one adds a field,
+    which a holder started by an older build rejects, and that is said with nothing sent."""
+    from jevdual.browser_session_holder import OPERATIONS, OPTIONAL, RemoteBrowserOperations
+    from jevdual.effectors.base import BrowserRefusal, BrowserReply
+
+    sent: list = []
+    stale = BrowserReply(status="refused", text="holder_request_invalid", is_error=True, dispatched=False,
+                         refusal=BrowserRefusal(code="holder_request_invalid", message="holder_request_invalid"))
+    answers: list = []
+
+    async def op(self, method, **args):
+        sent.append((method, args))
+        return answers.pop(0) if answers else BrowserReply(status="ok", text="", is_error=False)
+
+    operations = RemoteBrowserOperations.__new__(RemoteBrowserOperations)
+    operations._op = op.__get__(operations)
+    click = {"target_id": "t", "tab_id": "b", "ref": "r", "input_route": "dom_event"}
+    kind = {"target_id": "t", "tab_id": "b", "ref": "r", "text": "Ada", "replace": False}
+    asyncio.run(operations.click(**click))
+    asyncio.run(operations.type_text(**kind))
+    asyncio.run(operations.click(**click, filmed_point=(80, 115.5)))
+    asyncio.run(operations.type_text(**kind, filmed_point=(110, 212)))
+    assert sent == [("click", click), ("type_text", kind),
+                    ("click", {**click, "filmed_point": [80.0, 115.5]}),
+                    ("type_text", {**kind, "filmed_point": [110.0, 212.0]})]
+    assert set(sent[0][1]) == OPERATIONS["click"] and set(sent[1][1]) == OPERATIONS["type_text"]
+    assert OPTIONAL == {"click": {"filmed_point"}, "type_text": {"filmed_point"}}
+    for call, what in ((operations.click(**click, filmed_point=(80, 115.5)), "filmed click"),
+                       (operations.type_text(**kind, filmed_point=(110, 212)), "filmed type")):
+        answers.append(stale)
+        old = asyncio.run(call)
+        assert old.refused and old.dispatched is False and old.refusal.code == "holder_request_invalid"
+        assert f"does not serve this {what} request (an older build started it)" in old.refusal.message
+        assert old.refusal.detail["delivery"] == "not_sent"
+    # the same code on an unfilmed request is the holder's own word and is passed on as it came
+    answers.append(stale)
+    assert asyncio.run(operations.click(**click)) is stale
+
+
+def test_the_driver_is_sent_the_point_as_x_and_y_only_when_filmed():
+    from jevdual.effectors.cua import CuaBrowserOperations
+
+    calls: list = []
+
+    class Driver:
+        async def call_tool(self, name, args_json):
+            calls.append((name, json.loads(args_json)))
+            return SimpleNamespace(structured_json=json.dumps({"status": "ok"}), text="", is_error=False)
+
+    operations = CuaBrowserOperations(Driver(), session="s")
+    base = {"session": "s", "target_id": "t", "tab_id": "b", "ref": "r"}
+    asyncio.run(operations.click(target_id="t", tab_id="b", ref="r", input_route="dom_event"))
+    asyncio.run(operations.click(target_id="t", tab_id="b", ref="r", input_route="dom_event", filmed_point=[80, 115.5]))
+    asyncio.run(operations.type_text(target_id="t", tab_id="b", ref="r", text="Ada", replace=False))
+    asyncio.run(operations.type_text(target_id="t", tab_id="b", ref="r", text="Ada", replace=False,
+                                     filmed_point=(110, 212)))
+    typed = {**base, "text": "Ada", "mode": "insert_text", "replace": False}
+    assert calls == [("browser_click", {**base, "input_route": "dom_event"}),
+                     ("browser_click", {**base, "input_route": "dom_event", "filmed_point": {"x": 80.0, "y": 115.5}}),
+                     ("browser_type", typed),
+                     ("browser_type", {**typed, "filmed_point": {"x": 110.0, "y": 212.0}})]
+
+
 # ---- the scene reader
 
 
 def _scene(monkeypatch, *, front=42, main=True, window=WINDOW, area=(CONTENT, URL), error=False, url=URL,
-           point=None, over=(7, True)):
+           point=None, over=(7, True), frames_only=False):
     from jevdual import ax, posture
     from jevdual.filmed import browser_scene_change
 
@@ -571,7 +742,21 @@ def _scene(monkeypatch, *, front=42, main=True, window=WINDOW, area=(CONTENT, UR
         return over
 
     monkeypatch.setattr(ax, "web_area_at", at_point)
-    return browser_scene_change(42, 7, Filmed(window=WINDOW, content=CONTENT), url, point)
+    return browser_scene_change(42, 7, Filmed(window=WINDOW, content=CONTENT), url, point, frames_only=frames_only)
+
+
+def test_the_frames_only_reading_looks_at_where_the_window_and_its_page_are_and_nothing_else(monkeypatch):
+    """FP26: after a delivery the action's own effects may have changed everything but these."""
+    after_a_click = {"front": 99, "main": False, "area": (CONTENT, URL + "/next"), "url": URL, "frames_only": True}
+    assert _scene(monkeypatch, **after_a_click) is None
+    assert _scene(monkeypatch, front=99, main=False, area=(CONTENT, None), url=None, frames_only=True) is None
+    moved = (WINDOW[0] - 20.0, *WINDOW[1:])
+    assert "the scene window is 300x480 at 400.0,300.0" in _scene(monkeypatch, **after_a_click | {"window": moved})
+    shifted = ((CONTENT[0], CONTENT[1] + 30.0, *CONTENT[2:]), URL)
+    assert "the page area is 300x450 at 420.0,360.0" in _scene(monkeypatch, **after_a_click | {"area": shifted})
+    assert "shows no web area" in _scene(monkeypatch, **after_a_click | {"area": None})
+    assert "could not be read" in _scene(monkeypatch, error=True, frames_only=True)
+    assert "without a frame" in _scene(monkeypatch, window=None, frames_only=True)
 
 
 def test_the_recorded_scene_holds_while_nothing_changed(monkeypatch):

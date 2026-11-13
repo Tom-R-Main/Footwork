@@ -1,5 +1,6 @@
-"""Probe for notebook prediction FP20: does a filmed browser take put the real pointer on each page
-target, and refuse the ones it cannot verify?
+"""Probe for notebook prediction FP28 (which revises FP20): does a filmed browser take put the real
+pointer on each page target, keep it there while the action is delivered, and refuse the ones it cannot
+verify?
 
 Starts a filmed ``start --browser`` session (``--mode exclusive_desktop --pointer-motion filmed``) on an
 owned local fixture in a Chrome that Footwork launches on a fresh profile and its own port, then runs
@@ -20,9 +21,11 @@ owned local fixture in a Chrome that Footwork launches on a fresh profile and it
 10. click Note: clicked; the press focuses it, and in a document that has focus its style then moves
     it 40 px down;
 11. type into Note: the pointer goes to where the field now is and the text is inserted;
-12. click Gamma, below the fold: refused, no click, no pointer move;
-13. click Jump down, in view: clicked; its handler scrolls Gamma into view;
-14. click Gamma again: clicked, with the pointer on it first, on the scrolled page.
+12. type into Note again, which now holds text: refused (``replace_unfilmed``), no input, no pointer
+    move, because replacing selects the text after the pointer was verified;
+13. click Gamma, below the fold: refused, no click, no pointer move;
+14. click Jump down, in view: clicked; its handler scrolls Gamma into view;
+15. click Gamma again: clicked, with the pointer on it first, on the scrolled page.
 
 Before the steps it parks the pointer on an empty part of the page, so no step starts on its target by
 accident.
@@ -35,6 +38,14 @@ probe counts its lines after every step. ``analyze`` reads each step against its
 are matched to a step by time, and gestures by their order. The verdict needs a device pixel ratio of 2,
 the case in which page and screen units could differ, and the page's own record that its replaced hit
 test answers Forged.
+
+Two more records show the pointer at delivery and a press that reached nothing (FP28). The probe reads
+the system pointer itself about every 5 ms for the whole run (pointer-samples.jsonl, not the session's
+reading): a delivered step holds only if every sample from 250 ms before the page's event to 250 ms
+after lies on the control's rectangle on screen, with at least twenty samples. And the page reports
+every ``pointerdown``, ``mousedown``, ``mouseup``, ``click``, ``beforeinput`` and ``input`` it sees
+anywhere, trusted or not: a refused step holds only if there was none during it, and a delivered step
+only if all of them were on its own control.
 
 Waits for an unlocked screen and 10 s of idle, then checks again, immediately before launching, that
 the profile directory does not exist, the port is not Footwork's default or the sign-in test's and has
@@ -72,7 +83,8 @@ from probe_browser_holder import _activate_pid, _cli, _front_pid, _sample_front,
 PROTECTED_PORTS = frozenset({9333, 9555})
 #: (label, operation, expectation) in order. The operation is "click", "trusted" (a click asked for by
 #: the trusted route) or "type"; the expectation is "clicked", "typed", or the code a refusal must
-#: carry. Gamma is refused until Jump down has scrolled it into view; Note until a click has focused it.
+#: carry. Gamma is refused until Jump down has scrolled it into view; Note until a click has focused it,
+#: and again once it holds text.
 STEPS = (
     ("Alpha", "click", "clicked"),
     ("Beta", "trusted", "route_unfilmed"),
@@ -85,19 +97,31 @@ STEPS = (
     ("Note", "type", "target_unfocused"),
     ("Note", "click", "clicked"),
     ("Note", "type", "typed"),
+    ("Note", "type", "replace_unfilmed"),
     ("Gamma", "click", "target_unlocated"),
     ("Jump down", "click", "clicked"),
     ("Gamma", "click", "clicked"),
 )
 DELIVERED = ("clicked", "typed")
-#: what a refused step's refusal must also say, where the prediction names the reason
+#: what a refused step's refusal must also say, where the prediction names the reason: by label, or by
+#: label and code where a control is refused more than one way
 REASONS = {"Covered": "another element is at its centre", "Forged": "another element is at its centre",
-           "Clipped": "container hides part of it", "Turned": "(transformed)"}
+           "Clipped": "container hides part of it", "Turned": "(transformed)",
+           ("Note", "replace_unfilmed"): "types only into an empty field"}
+
+
+def reason(label: str, expect: str) -> str:
+    return REASONS.get((label, expect)) or REASONS.get(label, "")
 #: what the type steps send; one word, so the command line carries it as one argument
 TYPED = "footwork"
 
 #: viewport CSS px with no button, overlay or fixed element near it
 EMPTY_SPOT = (520, 200)
+#: the probe's own pointer samples from this long before a delivery's page event to this long after
+#: must all lie on the control, and there must be at least ``MIN_SAMPLES`` of them (FP28)
+DELIVERY_WINDOW_S = 0.25
+MIN_SAMPLES = 20
+SAMPLE_EVERY_S = 0.005
 
 FIXTURE = """<!doctype html>
 <meta charset="utf-8">
@@ -165,6 +189,11 @@ for (const b of document.querySelectorAll('button, input')) {
     if (b.id === 'jump') window.scrollTo(0, 1500);
   });
 }
+// every press and insertion the page sees, anywhere, trusted or not: a refused step must show none,
+// and a delivered one only its own control's
+for (const type of ['pointerdown', 'mousedown', 'mouseup', 'click', 'beforeinput', 'input'])
+  window.addEventListener(type, (e) => post('page_event', {event: type, trusted: e.isTrusted,
+    target: label(e.target), x: 'clientX' in e ? e.clientX : null, y: 'clientY' in e ? e.clientY : null}), true);
 document.getElementById('note').addEventListener('input', (e) => {
   const b = e.target, r = b.getBoundingClientRect();
   post('input', {field: named(b), value: b.value, trusted: e.isTrusted, last_trusted_pointer: lastPointer,
@@ -198,6 +227,43 @@ def _inside(point, rect) -> bool:
     return rx <= x <= rx + rw and ry <= y <= ry + rh
 
 
+def _samples(path: Path) -> list[tuple[float, float, float]] | None:
+    """The probe's pointer samples as (time, x, y) in screen points, or None when there is no readable
+    record of them."""
+    try:
+        rows = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+        return [(float(t), float(x), float(y)) for t, x, y in rows]
+    except (OSError, ValueError, TypeError):
+        return None
+
+
+def _sample_pointer(out: Path, stop: threading.Event, stats: dict) -> None:
+    """The system pointer's position about every 5 ms as ``[t, x, y]`` rows, read by this process from
+    the window server and not through the session, with the count and the largest gap in ``stats``."""
+    import Quartz
+
+    count, largest_gap, previous = 0, 0.0, time.time()
+    with (out / "pointer-samples.jsonl").open("a") as stream:
+        while not stop.is_set():
+            at = Quartz.CGEventGetLocation(Quartz.CGEventCreate(None))
+            now = time.time()
+            stream.write(f"[{now:.4f}, {at.x:.2f}, {at.y:.2f}]\n")
+            count, largest_gap, previous = count + 1, max(largest_gap, now - previous), now
+            stop.wait(SAMPLE_EVERY_S)
+    stats.update(samples=count, largest_gap_s=round(largest_gap, 4))
+
+
+class _Joined:
+    """Several threads joined as one."""
+
+    def __init__(self, *threads: threading.Thread) -> None:
+        self.threads = threads
+
+    def join(self, timeout: float | None = None) -> None:
+        for thread in self.threads:
+            thread.join(timeout=timeout)
+
+
 def analyze(out: Path) -> dict:
     """Each step's verdict from its own evidence.
 
@@ -208,9 +274,13 @@ def analyze(out: Path) -> dict:
     rectangle. That pointer event must have happened during the step, unless the approach posted
     nothing because the pointer was already there. A typed step holds the same way about the page's one
     input event during the step, with no click handler run, the field's rectangle read at the input, and
-    the field then holding exactly the text sent. A refused step holds when the command reported the
-    step's refusal code (and reason, where one is named), the page ran no click handler and saw no input
-    during the step, and the step added no gesture. The whole run holds only when the start and the
+    the field then holding exactly the text sent. A delivered step also needs the probe's own pointer
+    samples from ``DELIVERY_WINDOW_S`` before that page event to as long after it to lie, every one, on
+    the control's rectangle on screen, at least ``MIN_SAMPLES`` of them, and every press or insertion
+    the page saw during the step to be on that control. A refused step holds when the command reported
+    the step's refusal code (and reason, where one is named), the page ran no click handler and saw no
+    input, press or insertion of any kind anywhere during the step, and the step added no gesture. The
+    whole run holds only when the start and the
     park succeeded, every delivered step reported a device pixel ratio of 2 and a pinch scale of 1, the
     page recorded that its own hit test answers Forged where the browser's does not, the run recorded
     the Chrome its start launched and that it closed, and no cleanup step failed."""
@@ -222,6 +292,8 @@ def analyze(out: Path) -> dict:
     events = _jsonl(out / "page-events.jsonl")
     handlers = [e for e in events if e.get("type") == "click_handler"]
     inputs = [e for e in events if e.get("type") == "input"]
+    seen_by_page = [e for e in events if e.get("type") == "page_event"]
+    samples = _samples(out / "pointer-samples.jsonl")
     gestures = _jsonl(out / "session/pointer-gestures.jsonl")
     tried = [s for s in run.get("steps", []) if s.get("expect")]
     verdicts, seen = [], run.get("gestures_at_start", 0)
@@ -235,17 +307,22 @@ def analyze(out: Path) -> dict:
 
         clicks, my_clicks = during(handlers, "button")
         typed, my_typed = during(inputs, "field")
+        reached, on_control = during(seen_by_page, "target")
         new = gestures[seen:step.get("gestures_after", seen)]
         seen = step.get("gestures_after", seen)
         v: dict = {"label": label, "op": op, "expect": expect, "exit": step.get("exit"),
                    "handlers": len(my_clicks), "inputs": len(my_typed),
                    "other_handlers": sorted({str(h.get("button")) for h in clicks if h.get("button") != label}),
+                   "page_events": len(reached),
+                   "page_events_elsewhere": sorted({f"{e.get('event')} on {e.get('target')}" for e in reached
+                                                    if e.get("target") != label}),
                    "new_gestures": [(g.get("kind"), g.get("label"), g.get("outcome")) for g in new]}
         if expect not in DELIVERED:
             said = step.get("stdout", "") + step.get("stderr", "")
             v["said_code"] = expect in said
-            v["said_reason"] = REASONS.get(label, "") in said
-            v["held"] = bool(v["said_code"] and v["said_reason"] and not clicks and not typed and not new)
+            v["said_reason"] = reason(label, expect) in said
+            v["held"] = bool(v["said_code"] and v["said_reason"] and not clicks and not typed and not new
+                             and not reached)
         else:
             if expect == "clicked":
                 event = my_clicks[0] if len(clicks) == 1 and len(my_clicks) == 1 and not typed else None
@@ -272,7 +349,14 @@ def analyze(out: Path) -> dict:
                 v["end_inside"] = _inside(new[0]["final_location"], v["control_screen_rect"])
                 # an approach that posted nothing started on its target: the page saw no new pointer event
                 v["already_there"] = new[0].get("posted_samples") == []
+                # the pointer at delivery, by the probe's own reading around the page's event
+                around = [s for s in samples or []
+                          if event["t"] - DELIVERY_WINDOW_S <= s[0] <= event["t"] + DELIVERY_WINDOW_S]
+                v["samples_around_delivery"] = len(around)
+                v["samples_off_control"] = sum(1 for s in around if not _inside(s[1:], v["control_screen_rect"]))
+                v["pointer_on_control_at_delivery"] = (len(around) >= MIN_SAMPLES and v["samples_off_control"] == 0)
             v["held"] = bool(step.get("exit") == 0 and event is not None and arrived
+                             and v.get("pointer_on_control_at_delivery") and len(reached) == len(on_control) > 0
                              and v.get("pointer_target") == label and v.get("pointer_inside")
                              and (v.get("pointer_during_step") or v.get("already_there"))
                              and v.get("end_inside")
@@ -296,7 +380,8 @@ def analyze(out: Path) -> dict:
     note = {v["expect"]: v.get("rect") for v in verdicts if v["label"] == "Note" and v["expect"] in DELIVERED}
     moved = bool(note.get("clicked") and note.get("typed") and note["clicked"] != note["typed"])
     return {"steps": verdicts, "complete": complete, "gamma_clicked_after_scrolling": scrolled,
-            "note_moved_when_focused": moved,
+            "note_moved_when_focused": moved, "pointer_samples": None if samples is None else len(samples),
+            "pointer_sampler": run.get("pointer_sampler"),
             "device_pixel_ratios": ratios, "scale_factor_tested": scale, "pinch_scales": pinches,
             "setup_exits": setup, "own_chrome_closed": owned, "page_forges_its_hit_test": forgery,
             "held": (complete and scrolled and scale and unpinched and owned and forgery
@@ -418,8 +503,12 @@ def main() -> None:
     record: dict = {"gate": _wait_idle(), "front_pid_at_start": _front_pid(), "fixture": url, "steps": []}
     steps: list[dict] = record["steps"]
     stop = threading.Event()
-    sampler = threading.Thread(target=_sample_front, args=(out, stop), daemon=True)
-    sampler.start()
+    record["pointer_sampler"] = {}
+    front = threading.Thread(target=_sample_front, args=(out, stop), daemon=True)
+    pointer = threading.Thread(target=_sample_pointer, args=(out, stop, record["pointer_sampler"]), daemon=True)
+    front.start()
+    pointer.start()
+    sampler = _Joined(front, pointer)
     start_stdout = ""
     try:
         # the idle gate can wait a long time: read the launch conditions again, right before the launch

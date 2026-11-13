@@ -206,16 +206,22 @@ class CuaBrowserOperations:
             "get_browser_state", {"target_id": target_id, "tab_id": tab_id, "snapshot_format": "semantic_v2"}
         )
 
-    async def click(self, *, target_id: str, tab_id: str | None, ref: str, input_route: str) -> BrowserReply:
-        return await self._call(
-            "browser_click", {"target_id": target_id, "tab_id": tab_id, "ref": ref, "input_route": input_route}
-        )
+    async def click(
+        self, *, target_id: str, tab_id: str | None, ref: str, input_route: str, filmed_point: Any = None
+    ) -> BrowserReply:
+        """``filmed_point`` (x, y in viewport CSS px, where a filmed pointer is) makes the page-route
+        click one isolated-world turn that is sent only if that point is on the ref's element, and
+        scrolls nothing first (cua-driver locate6)."""
+        args: dict[str, Any] = {"target_id": target_id, "tab_id": tab_id, "ref": ref, "input_route": input_route}
+        if filmed_point is not None:
+            args["filmed_point"] = {"x": float(filmed_point[0]), "y": float(filmed_point[1])}
+        return await self._call("browser_click", args)
 
     async def locate(
         self, *, target_id: str, tab_id: str | None, ref: str, point: Any = None
     ) -> BrowserReply:
         """Where one current ref's element is in the viewport (get_browser_state's locate mode,
-        cua-driver locate5). Read-only: nothing is scrolled, focused or dispatched. ``point`` (x, y in
+        cua-driver locate6). Read-only: nothing is scrolled, focused or dispatched. ``point`` (x, y in
         viewport CSS px) also asks what is at that point."""
         args: dict[str, Any] = {"target_id": target_id, "tab_id": tab_id, "locate_ref": ref}
         if point is not None:
@@ -223,14 +229,16 @@ class CuaBrowserOperations:
         return await self._call("get_browser_state", args)
 
     async def type_text(
-        self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool
+        self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool, filmed_point: Any = None
     ) -> BrowserReply:
+        """``filmed_point`` makes the insertion one isolated-world turn that checks the ref's element is
+        the focused editable under that point and inserts; the driver refuses it with ``replace``."""
         # insert_text only: keystroke mode is never used (browser_driver.BrowserBridge.act)
-        return await self._call(
-            "browser_type",
-            {"target_id": target_id, "tab_id": tab_id, "ref": ref, "text": text, "mode": "insert_text",
-             "replace": replace},
-        )
+        args: dict[str, Any] = {"target_id": target_id, "tab_id": tab_id, "ref": ref, "text": text,
+                                "mode": "insert_text", "replace": replace}
+        if filmed_point is not None:
+            args["filmed_point"] = {"x": float(filmed_point[0]), "y": float(filmed_point[1])}
+        return await self._call("browser_type", args)
 
     async def navigate(self, *, target_id: str, tab_id: str | None, url: str) -> BrowserReply:
         return await self._call("browser_navigate", {"target_id": target_id, "tab_id": tab_id, "url": url})

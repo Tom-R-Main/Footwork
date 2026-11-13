@@ -1,0 +1,234 @@
+................................FFFFF................................... [ 51%]
+..........................FFF.......................................     [100%]
+=================================== FAILURES ===================================
+_ test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves[None] _
+
+take = [('scene', 'https://example.invalid/film'), ('locate', 'snap-1:1'), ('approach', (460.0, 430.0, 80.0, 30.0), 'Go'), ('...film', (500.0, 445.0)), ('held', (500.0, 445.0)), ('browser_click', 'snap-1:1'), ('held', (500.0, 445.0)), ('frames',)]
+marker = None
+
+    @pytest.mark.parametrize("marker", [None, False, "true", 1, "absent"])
+    def test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves(take, marker):
+        """FP30: an older driver takes the pointer's position with a click and ignores it."""
+        block = at(filmed_delivery=marker)
+        if marker == "absent":
+            del block["filmed_delivery"]
+        eff = _act(take, "click", "Go", locates=[block])
+>       assert (eff.effect, eff.dispatched, eff.error_code, eff.evidence) == ("refused", False, "target_unlocated", ())
+E       AssertionError: assert ('unverifiabl...rue, None, ()) == ('refused', F...nlocated', ())
+E         
+E         At index 0 diff: 'unverifiable' != 'refused'
+E         Use -v to get more diff
+
+tests/test_filmed_page_pointer.py:368: AssertionError
+_ test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves[False] _
+
+take = [('scene', 'https://example.invalid/film'), ('locate', 'snap-1:1'), ('approach', (460.0, 430.0, 80.0, 30.0), 'Go'), ('...film', (500.0, 445.0)), ('held', (500.0, 445.0)), ('browser_click', 'snap-1:1'), ('held', (500.0, 445.0)), ('frames',)]
+marker = False
+
+    @pytest.mark.parametrize("marker", [None, False, "true", 1, "absent"])
+    def test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves(take, marker):
+        """FP30: an older driver takes the pointer's position with a click and ignores it."""
+        block = at(filmed_delivery=marker)
+        if marker == "absent":
+            del block["filmed_delivery"]
+        eff = _act(take, "click", "Go", locates=[block])
+>       assert (eff.effect, eff.dispatched, eff.error_code, eff.evidence) == ("refused", False, "target_unlocated", ())
+E       AssertionError: assert ('unverifiabl...rue, None, ()) == ('refused', F...nlocated', ())
+E         
+E         At index 0 diff: 'unverifiable' != 'refused'
+E         Use -v to get more diff
+
+tests/test_filmed_page_pointer.py:368: AssertionError
+_ test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves[true] _
+
+take = [('scene', 'https://example.invalid/film'), ('locate', 'snap-1:1'), ('approach', (460.0, 430.0, 80.0, 30.0), 'Go'), ('...film', (500.0, 445.0)), ('held', (500.0, 445.0)), ('browser_click', 'snap-1:1'), ('held', (500.0, 445.0)), ('frames',)]
+marker = 'true'
+
+    @pytest.mark.parametrize("marker", [None, False, "true", 1, "absent"])
+    def test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves(take, marker):
+        """FP30: an older driver takes the pointer's position with a click and ignores it."""
+        block = at(filmed_delivery=marker)
+        if marker == "absent":
+            del block["filmed_delivery"]
+        eff = _act(take, "click", "Go", locates=[block])
+>       assert (eff.effect, eff.dispatched, eff.error_code, eff.evidence) == ("refused", False, "target_unlocated", ())
+E       AssertionError: assert ('unverifiabl...rue, None, ()) == ('refused', F...nlocated', ())
+E         
+E         At index 0 diff: 'unverifiable' != 'refused'
+E         Use -v to get more diff
+
+tests/test_filmed_page_pointer.py:368: AssertionError
+_ test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves[1] _
+
+take = [('scene', 'https://example.invalid/film'), ('locate', 'snap-1:1'), ('approach', (460.0, 430.0, 80.0, 30.0), 'Go'), ('...film', (500.0, 445.0)), ('held', (500.0, 445.0)), ('browser_click', 'snap-1:1'), ('held', (500.0, 445.0)), ('frames',)]
+marker = 1
+
+    @pytest.mark.parametrize("marker", [None, False, "true", 1, "absent"])
+    def test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves(take, marker):
+        """FP30: an older driver takes the pointer's position with a click and ignores it."""
+        block = at(filmed_delivery=marker)
+        if marker == "absent":
+            del block["filmed_delivery"]
+        eff = _act(take, "click", "Go", locates=[block])
+>       assert (eff.effect, eff.dispatched, eff.error_code, eff.evidence) == ("refused", False, "target_unlocated", ())
+E       AssertionError: assert ('unverifiabl...rue, None, ()) == ('refused', F...nlocated', ())
+E         
+E         At index 0 diff: 'unverifiable' != 'refused'
+E         Use -v to get more diff
+
+tests/test_filmed_page_pointer.py:368: AssertionError
+_ test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves[absent] _
+
+take = [('scene', 'https://example.invalid/film'), ('locate', 'snap-1:1'), ('approach', (460.0, 430.0, 80.0, 30.0), 'Go'), ('...film', (500.0, 445.0)), ('held', (500.0, 445.0)), ('browser_click', 'snap-1:1'), ('held', (500.0, 445.0)), ('frames',)]
+marker = 'absent'
+
+    @pytest.mark.parametrize("marker", [None, False, "true", 1, "absent"])
+    def test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves(take, marker):
+        """FP30: an older driver takes the pointer's position with a click and ignores it."""
+        block = at(filmed_delivery=marker)
+        if marker == "absent":
+            del block["filmed_delivery"]
+        eff = _act(take, "click", "Go", locates=[block])
+>       assert (eff.effect, eff.dispatched, eff.error_code, eff.evidence) == ("refused", False, "target_unlocated", ())
+E       AssertionError: assert ('unverifiabl...rue, None, ()) == ('refused', F...nlocated', ())
+E         
+E         At index 0 diff: 'unverifiable' != 'refused'
+E         Use -v to get more diff
+
+tests/test_filmed_page_pointer.py:368: AssertionError
+_ test_a_target_a_pointer_cannot_be_put_on_gives_no_rectangle_and_says_why[locate25-checks the pointer's position when it delivers] _
+
+locate = {'available': True, 'rect': {'x': 40.0, 'y': 100.0, 'width': 80.0, 'height': 30.0}, 'center': {'x': 80.0, 'y': 115.0}, 'hit': 'target', ...}
+why = "checks the pointer's position when it delivers"
+
+    @pytest.mark.parametrize(("locate", "why"), [
+        (None, "no position"),
+        ({"available": False, "reason": "child_frame"}, "child_frame"),
+        (at(viewport={"width": 300.0, "height": 450.0, "zoom": 1.25, "scale": 1.0}), "zoom 1.25"),
+        (at(viewport={"width": 300.0, "height": 450.0, "zoom": 1.0, "scale": 2.0}), "pinch scale 2"),
+        (at(viewport={"width": 300.0, "height": 450.0, "zoom": None, "scale": None}), "did not report"),
+        (at(viewport=None), "did not report"),
+        (at((40.0, 440.0, 80.0, 30.0)), "not wholly in view"),
+        (at((-10.0, 100.0, 80.0, 30.0)), "not wholly in view"),
+        (at(hit="other"), "another element"),
+        (at(hit="none"), "nothing is at its centre"),
+        (at(box_center=None), "without page script"),
+        (at(box_center={"x": 85.0, "y": 115.0}), "without page script"),
+        (at(rect={"x": 40.0, "y": 100.0, "width": 0.0, "height": 30.0}), "no usable rectangle"),
+        (at(rect={"x": "a", "y": 100.0, "width": 80.0, "height": 30.0}), "no usable rectangle"),
+        (at(rect={"x": float("nan"), "y": 100.0, "width": 80.0, "height": 30.0}), "no usable rectangle"),
+        (at(rect={"x": True, "y": 100.0, "width": 80.0, "height": 30.0}), "no usable rectangle"),
+        (at(visibility_state="hidden"), "not showing"),
+        (at(visibility_state="prerender"), "not showing"),
+        (at(visibility_state=None), "whether the page is showing"),
+        (at(clipped=True), "container hides part of it"),
+        (at(clipped=None), "whether a container clips it"),
+        (at(clipped="no"), "whether a container clips it"),
+        (at(world=None), "out of reach of the page's own script"),
+        (at(world="main"), "out of reach of the page's own script"),
+        ({k: v for k, v in at().items() if k != "world"}, "out of reach of the page's own script"),
+        (at(filmed_delivery=None), "checks the pointer's position when it delivers"),
+        (at(filmed_delivery="yes"), "checks the pointer's position when it delivers"),
+        ({k: v for k, v in at().items() if k != "filmed_delivery"}, "checks the pointer's position when it delivers"),
+    ])
+    def test_a_target_a_pointer_cannot_be_put_on_gives_no_rectangle_and_says_why(locate, why):
+        rect, reason = browser_driver.located_rect(locate)
+>       assert rect is None and why in reason, reason
+E       AssertionError: 
+E       assert ((40.0, 100.0, 80.0, 30.0) is None)
+
+tests/test_filmed_page_pointer.py:576: AssertionError
+_ test_a_target_a_pointer_cannot_be_put_on_gives_no_rectangle_and_says_why[locate26-checks the pointer's position when it delivers] _
+
+locate = {'available': True, 'rect': {'x': 40.0, 'y': 100.0, 'width': 80.0, 'height': 30.0}, 'center': {'x': 80.0, 'y': 115.0}, 'hit': 'target', ...}
+why = "checks the pointer's position when it delivers"
+
+    @pytest.mark.parametrize(("locate", "why"), [
+        (None, "no position"),
+        ({"available": False, "reason": "child_frame"}, "child_frame"),
+        (at(viewport={"width": 300.0, "height": 450.0, "zoom": 1.25, "scale": 1.0}), "zoom 1.25"),
+        (at(viewport={"width": 300.0, "height": 450.0, "zoom": 1.0, "scale": 2.0}), "pinch scale 2"),
+        (at(viewport={"width": 300.0, "height": 450.0, "zoom": None, "scale": None}), "did not report"),
+        (at(viewport=None), "did not report"),
+        (at((40.0, 440.0, 80.0, 30.0)), "not wholly in view"),
+        (at((-10.0, 100.0, 80.0, 30.0)), "not wholly in view"),
+        (at(hit="other"), "another element"),
+        (at(hit="none"), "nothing is at its centre"),
+        (at(box_center=None), "without page script"),
+        (at(box_center={"x": 85.0, "y": 115.0}), "without page script"),
+        (at(rect={"x": 40.0, "y": 100.0, "width": 0.0, "height": 30.0}), "no usable rectangle"),
+        (at(rect={"x": "a", "y": 100.0, "width": 80.0, "height": 30.0}), "no usable rectangle"),
+        (at(rect={"x": float("nan"), "y": 100.0, "width": 80.0, "height": 30.0}), "no usable rectangle"),
+        (at(rect={"x": True, "y": 100.0, "width": 80.0, "height": 30.0}), "no usable rectangle"),
+        (at(visibility_state="hidden"), "not showing"),
+        (at(visibility_state="prerender"), "not showing"),
+        (at(visibility_state=None), "whether the page is showing"),
+        (at(clipped=True), "container hides part of it"),
+        (at(clipped=None), "whether a container clips it"),
+        (at(clipped="no"), "whether a container clips it"),
+        (at(world=None), "out of reach of the page's own script"),
+        (at(world="main"), "out of reach of the page's own script"),
+        ({k: v for k, v in at().items() if k != "world"}, "out of reach of the page's own script"),
+        (at(filmed_delivery=None), "checks the pointer's position when it delivers"),
+        (at(filmed_delivery="yes"), "checks the pointer's position when it delivers"),
+        ({k: v for k, v in at().items() if k != "filmed_delivery"}, "checks the pointer's position when it delivers"),
+    ])
+    def test_a_target_a_pointer_cannot_be_put_on_gives_no_rectangle_and_says_why(locate, why):
+        rect, reason = browser_driver.located_rect(locate)
+>       assert rect is None and why in reason, reason
+E       AssertionError: 
+E       assert ((40.0, 100.0, 80.0, 30.0) is None)
+
+tests/test_filmed_page_pointer.py:576: AssertionError
+_ test_a_target_a_pointer_cannot_be_put_on_gives_no_rectangle_and_says_why[locate27-checks the pointer's position when it delivers] _
+
+locate = {'available': True, 'rect': {'x': 40.0, 'y': 100.0, 'width': 80.0, 'height': 30.0}, 'center': {'x': 80.0, 'y': 115.0}, 'hit': 'target', ...}
+why = "checks the pointer's position when it delivers"
+
+    @pytest.mark.parametrize(("locate", "why"), [
+        (None, "no position"),
+        ({"available": False, "reason": "child_frame"}, "child_frame"),
+        (at(viewport={"width": 300.0, "height": 450.0, "zoom": 1.25, "scale": 1.0}), "zoom 1.25"),
+        (at(viewport={"width": 300.0, "height": 450.0, "zoom": 1.0, "scale": 2.0}), "pinch scale 2"),
+        (at(viewport={"width": 300.0, "height": 450.0, "zoom": None, "scale": None}), "did not report"),
+        (at(viewport=None), "did not report"),
+        (at((40.0, 440.0, 80.0, 30.0)), "not wholly in view"),
+        (at((-10.0, 100.0, 80.0, 30.0)), "not wholly in view"),
+        (at(hit="other"), "another element"),
+        (at(hit="none"), "nothing is at its centre"),
+        (at(box_center=None), "without page script"),
+        (at(box_center={"x": 85.0, "y": 115.0}), "without page script"),
+        (at(rect={"x": 40.0, "y": 100.0, "width": 0.0, "height": 30.0}), "no usable rectangle"),
+        (at(rect={"x": "a", "y": 100.0, "width": 80.0, "height": 30.0}), "no usable rectangle"),
+        (at(rect={"x": float("nan"), "y": 100.0, "width": 80.0, "height": 30.0}), "no usable rectangle"),
+        (at(rect={"x": True, "y": 100.0, "width": 80.0, "height": 30.0}), "no usable rectangle"),
+        (at(visibility_state="hidden"), "not showing"),
+        (at(visibility_state="prerender"), "not showing"),
+        (at(visibility_state=None), "whether the page is showing"),
+        (at(clipped=True), "container hides part of it"),
+        (at(clipped=None), "whether a container clips it"),
+        (at(clipped="no"), "whether a container clips it"),
+        (at(world=None), "out of reach of the page's own script"),
+        (at(world="main"), "out of reach of the page's own script"),
+        ({k: v for k, v in at().items() if k != "world"}, "out of reach of the page's own script"),
+        (at(filmed_delivery=None), "checks the pointer's position when it delivers"),
+        (at(filmed_delivery="yes"), "checks the pointer's position when it delivers"),
+        ({k: v for k, v in at().items() if k != "filmed_delivery"}, "checks the pointer's position when it delivers"),
+    ])
+    def test_a_target_a_pointer_cannot_be_put_on_gives_no_rectangle_and_says_why(locate, why):
+        rect, reason = browser_driver.located_rect(locate)
+>       assert rect is None and why in reason, reason
+E       AssertionError: 
+E       assert ((40.0, 100.0, 80.0, 30.0) is None)
+
+tests/test_filmed_page_pointer.py:576: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_filmed_page_pointer.py::test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves[None]
+FAILED tests/test_filmed_page_pointer.py::test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves[False]
+FAILED tests/test_filmed_page_pointer.py::test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves[true]
+FAILED tests/test_filmed_page_pointer.py::test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves[1]
+FAILED tests/test_filmed_page_pointer.py::test_a_driver_that_does_not_say_it_checks_the_pointer_at_delivery_is_refused_before_anything_moves[absent]
+FAILED tests/test_filmed_page_pointer.py::test_a_target_a_pointer_cannot_be_put_on_gives_no_rectangle_and_says_why[locate25-checks the pointer's position when it delivers]
+FAILED tests/test_filmed_page_pointer.py::test_a_target_a_pointer_cannot_be_put_on_gives_no_rectangle_and_says_why[locate26-checks the pointer's position when it delivers]
+FAILED tests/test_filmed_page_pointer.py::test_a_target_a_pointer_cannot_be_put_on_gives_no_rectangle_and_says_why[locate27-checks the pointer's position when it delivers]
+8 failed, 132 passed in 0.98s

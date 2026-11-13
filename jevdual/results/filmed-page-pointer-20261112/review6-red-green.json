@@ -1,0 +1,91 @@
+{
+ "predictions": [
+  "FP26",
+  "FP27",
+  "FP30"
+ ],
+ "footwork": {
+  "command": "PYTHONPATH=python .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_filmed_page_pointer.py tests/test_probe_filmed_page_pointer.py tests/test_filmed_session.py tests/test_locate_page_function.py tests/test_filmed_delivery_functions.py tests/test_browser_session_holder.py",
+  "red": [
+   {
+    "tree": "dbcf1d2 python/, scripts/ and pinned locate5 archive, with the test files as they stood after FP26's change (before the probe's replacement step and FP30)",
+    "log": "review6-python-red.txt",
+    "outcome": "95 failed, 299 passed. Failing by behaviour: the carried point, the refused replacement, the checks after delivery, the holder's optional field, the driver's arguments, 34 of the 37 delivery-function cases (the insert function does not exist in locate5 and its click sequence ignores a point), and the probe's 15 tests of the pointer samples and the press log. 22 of the failures say nothing about behaviour: the scene reader's test helper passes the new frames_only keyword, which the old reader does not take (test_a_changed_scene_is_named x21, test_the_recorded_scene_holds_while_nothing_changed)."
+   },
+   {
+    "tree": "dbcf1d2, with the final test files",
+    "log": "review6-python-red-final.txt",
+    "outcome": "160 failed, 251 passed. The 65 more than above are mostly the probe's composed runs, which the final test file builds with probe.reason, a function the old probe does not have; they are not evidence of behaviour. The Footwork marker tests and the hover cases fail here too."
+   },
+   {
+    "tree": "the working tree with the three lines of the marker check removed from located_rect",
+    "log": "review6-marker-red.txt",
+    "outcome": "8 failed, 132 passed in tests/test_filmed_page_pointer.py: the five marker cases and the three located_rect cases (FP30a)"
+   },
+   {
+    "tree": "tests/test_filmed_delivery_functions.py against the click sequence the first headless run used (before the check ahead of the press)",
+    "log": "review6-node-red.txt",
+    "outcome": "5 failed, 37 passed: the four hover cases and the test that ends on one (FP30b)"
+   }
+  ],
+  "passing_before_by_design": [
+   "test_an_unfilmed_session_still_replaces_held_text",
+   "test_an_unfilmed_action_carries_no_point",
+   "test_a_page_action_the_driver_refused_is_not_followed_by_a_pointer_check (nothing was checked after any action before)",
+   "test_a_filmed_click_on_the_rectangles_edge_is_on_it (the old sequence clicks at the centre whatever the point)",
+   "test_a_filmed_click_on_a_detached_control_says_detached_before_anything_else",
+   "test_an_unfilmed_click_acts_at_the_centre_and_falls_back_to_the_control_as_before",
+   "inside the FP30 hover tests: the unfilmed half of each case, and the cases of a control moved by the press or covered at the release"
+  ],
+  "tests_changed_with_the_rule": [
+   "test_held_text_is_replaced_only_when_the_page_has_the_keyboard became test_a_filmed_take_does_not_replace_held_text: a filmed replacement is now refused always, where it was allowed in a page with the keyboard",
+   "test_focus_is_the_fields_and_for_a_replacement_its_pages_too became test_focus_is_the_fields_own, and the case of a locate without page_focused left the unfocused-field test: the insert no longer depends on the page having the keyboard, because the driver checks the active element in the turn it inserts",
+   "GO_STEPS and NAME_STEPS gained the pointer check and the frames read after the delivery"
+  ],
+  "green": {
+   "outcome": "411 passed in those six files (475 with tests/test_cua_driver_build.py, tests/test_cua_source_chain.py and tests/contract/test_cua_driver_seams.py); offline suite 3861 passed, 52 skipped against the installed locate6 build (3775 at dbcf1d2); ruff clean"
+  }
+ },
+ "driver": {
+  "command": "cargo +1.97.1 test --locked -p cua-driver-core --lib",
+  "red": {
+   "log": "review6-rust-red.txt",
+   "outcome": "new v2_tests.rs against the locate5 tools.rs: 6 failed, 1264 passed (every filmed click and filmed insert test). Against the tools.rs the first headless run used: 2 failed, 1269 passed (the left-the-pointer refusal and the locate test that reads the marker)."
+  },
+  "passing_before_by_design": [
+   "an_unfilmed_dom_click_is_sent_as_before (its request has no arguments field, as before; an earlier draft of the change added an empty one and this test caught it)",
+   "a_not_under_pointer_receipt_that_counts_events_is_not_a_clean_refusal (the old source knew no such receipt and called every one malformed)"
+  ],
+  "green": {
+   "outcome": "1271 passed, 0 failed, 2 ignored on the final source, no warnings, rustfmt clean. One earlier run of the suite, on a comment-only change, failed one upstream test this patch does not touch (batch_tools::tests::pauses_between_steps_but_not_after_the_last, a wall-clock bound of 240 ms that read 960 ms while other builds ran on the machine); the next two runs passed whole."
+  }
+ },
+ "headless": {
+  "command": "PYTHONPATH=python .venv/bin/python scripts/probe_locate_world_headless.py --out <fresh dir>",
+  "browser": "Chrome/157.0.8103.52, headless, temporary profile, port chosen by Chrome",
+  "runs": [
+   {
+    "log": "review6-headless.json",
+    "prediction": "FP27",
+    "outcome": "FP22's 16 checks and FP27's 15 held; frontmost application unchanged; Chrome exited 0 and its profile was removed. The insert fired one trusted input event and no beforeinput.",
+    "function_text": "click sequence sha256 4aee812e153c..., insert f4d79c9c3521..., locate 257296f77177...; a comment-only change to tools.rs after this run left all three texts unchanged"
+   },
+   {
+    "log": "review6-headless-2.json",
+    "prediction": "FP30",
+    "outcome": "the 16 and, with the hover button, 18 checks held; frontmost application unchanged; Chrome exited 0 and its profile was removed",
+    "function_text": "click sequence sha256 864889985e9f... (with the check before the press), insert and locate unchanged; these are the pinned archive's"
+   }
+  ]
+ },
+ "chain": {
+  "command": "PYTHONPATH=python .venv/bin/python scripts/cua_source_chain.py --base <focus1 archive from 6e8bb5e> --output <file>",
+  "outcome": "reproduces vendor/cua-driver/native-source.tar.gz byte for byte",
+  "archive_sha256": "25937ed85d4241bb59425970ecc9e9b82f7088808392b9d13dfb14e49545dcb6",
+  "archive_bytes": 6425714,
+  "patch_sha256": "6b13fcccdae2f3c02888207fc119ea6805af7e15fbd9f198b8ddbb06563ca3d8",
+  "regenerated": "three times under the one version name before anything was committed or pushed: the first archive (d7bdf37f...), a comment corrected after FP27's run (5ba43852...), and FP30's change (25937ed8...)"
+ },
+ "installed": "cua-driver 0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate6; the installed binary and SDK library each carry not_under_pointer, left_pointer, filmed_delivery, execCommand and the world name",
+ "not_run": "no live or screen run: FP29's probe needs a granted window"
+}
