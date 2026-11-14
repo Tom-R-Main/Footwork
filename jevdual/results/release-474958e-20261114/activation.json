@@ -1,0 +1,27 @@
+{
+  "source_commit": "474958e48c0db404ffbe3b302bacef0df101c3d5",
+  "source_merged": true,
+  "pull_request": "https://github.com/Tom-R-Main/Footwork/pull/32",
+  "active_release": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5",
+  "previous_release": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "previous_release_kept": true,
+  "kept_releases": [
+    "474958e48c0db404ffbe3b302bacef0df101c3d5",
+    "6d571a1ed7c7bf77576279a01053f77fc20ce469",
+    "eded45c48d550b6867e1ce1314de64c41cbcfae8"
+  ],
+  "launcher_unchanged": true,
+  "selected_at": "2026-11-14T16:12:03.699596+00:00",
+  "qualification": {
+    "installed_bytes": "passed",
+    "installed_discovery": "passed",
+    "live_release_probe": "passed",
+    "live_filmed_page_pointer": "passed",
+    "live_drag_points": "passed (6/6)",
+    "release_probe_criteria": "20/20",
+    "qualified_at": "2026-11-14T16:12:03.698426+00:00",
+    "evidence": "/Users/thomasmain/projects/footwork/.claude/worktrees/point-drag/jevdual/results/release-474958e-20261114/live",
+    "note": "protected-port readings in release-live.json are renderer processes (notebook RDP4)"
+  },
+  "rollback": "ln -s /Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469 <tmp> && mv -h <tmp> /Users/thomasmain/.local/share/footwork/current (atomic repoint)"
+}
