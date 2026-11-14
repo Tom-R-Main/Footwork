@@ -624,12 +624,45 @@ def test_a_hit_test_that_cannot_be_read_is_refused(desk, capsys):
     assert Coordinator().status()["requests"] == []
 
 
-@pytest.mark.parametrize(("named", "found"), [("canvas app", "Canvas App"), ("Chrome", "Google Chrome")])
-def test_the_application_is_matched_as_the_registry_names_it(desk, capsys, named, found):
+@pytest.mark.parametrize(("named", "found"), [("canvas app", "Canvas App"), (" Canvas App ", "Canvas App"),
+                                              ("Chrome", "Google Chrome"), ("Google Chrome", "chrome")])
+def test_the_application_is_matched_by_its_name_whatever_the_case(desk, capsys, named, found):
     HIT["answer"] = lambda point, call: found
     code, said, err = _run(capsys, *_points("--app", named))
     assert code == 0, (said, err)
     assert HIT["calls"] == [START, END, START, END]  # before anything is posted, and again before the press
+
+
+@pytest.mark.parametrize(("named", "found"), [("Google Chrome", "Chromium"), ("Chrome", "Chromium"),
+                                              ("Canvas App", "Canvas App (Footwork)"),
+                                              ("Canvas App (Footwork)", "Canvas App"), ("Canvas", "Canvas App")])
+def test_another_application_the_registry_would_take_for_the_same_is_refused(desk, capsys, named, found):
+    """PTD18: the names were compared as the registry compares resources, which makes Chromium and Google
+    Chrome one resource and drops a suffix, so a press could go ahead on an application nobody named."""
+    from jevdual.point_drag import EXIT_REFUSED
+
+    HIT["answer"] = lambda point, call: found
+    code, said, err = _run(capsys, *_points("--app", named))
+    assert code == EXIT_REFUSED and said["code"] == "point_covered" and desk.events == [], (said, err)
+    assert found in said["reason"] and named in said["reason"]
+
+
+@pytest.mark.parametrize(("answer", "outcome"), [
+    (lambda point, call: "UserNotificationCenter" if call > 2 and point == END else "Canvas App",
+     "approach_aborted:point_covered"),
+    (lambda point, call: 1 / 0 if call > 2 else "Canvas App", "approach_aborted:recipient_unreadable"),
+])
+def test_the_second_reading_stops_the_press_for_the_end_and_for_a_reading_that_fails(desk, capsys, answer, outcome):
+    """PTD18: the second reading was tested for the start alone."""
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_APPROACH
+
+    taken = {number: signal.getsignal(number) for number in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)}
+    HIT["answer"] = answer
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_APPROACH and _kinds(desk.events) == ["move"] and said["outcome"] == outcome, (said, err)
+    assert said["pressed"] is False and said["claim_kept"] is None and Coordinator().status()["requests"] == []
+    assert {number: signal.getsignal(number) for number in taken} == taken  # the stop signals are given back
 
 
 STAND_IN = r'''

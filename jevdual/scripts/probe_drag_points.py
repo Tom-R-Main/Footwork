@@ -103,8 +103,10 @@ def _near(got: list[float] | None, want: tuple[float, float]) -> bool:
     return got is not None and math.dist(got, want) <= NEAR_PX
 
 
-def judge_drag(before: dict, after: dict, said: dict, exit_code: int) -> dict:
-    """PTD2's first live prediction: one trusted press and release at the points, held all the way."""
+def judge_drag(before: dict, after: dict, said: dict, exit_code: int, app: str | None = None) -> dict:
+    """PTD2's first live prediction: one trusted press and release at the points, held all the way.
+    ``app``: the browser the run named, which the command must report as what it claimed (None for a
+    record kept from before the command reported it)."""
     checks = {
         "exit_0_and_dropped": exit_code == 0 and said.get("outcome") == "dropped",
         "one_press_one_release": after["downs"] - before["downs"] == 1 and after["ups"] - before["ups"] == 1
@@ -117,11 +119,14 @@ def judge_drag(before: dict, after: dict, said: dict, exit_code: int) -> dict:
         "no_gap_over_the_limit": after["max_move_gap_ms"] <= GAP_LIMIT_MS,
         "button_reads_up": said.get("button_up") is True,
     }
+    if app is not None:
+        checks["claimed_the_browser_named"] = said.get("app") == app
     return {"checks": checks, "held": all(checks.values())}
 
 
 def judge_abort(before: dict, after: dict, said: dict, exit_code: int, exit_aborted: int,
-                origin: tuple[float, float], cause: str = "aborted:pointer_contended:key_down") -> dict:
+                origin: tuple[float, float], cause: str = "aborted:pointer_contended:key_down",
+                app: str | None = None) -> dict:
     """A drag stopped while the button was down: one press and one release reached the page, the
     release where the command says it posted it, with the button held on every move before it.
 
@@ -146,14 +151,16 @@ def judge_abort(before: dict, after: dict, said: dict, exit_code: int, exit_abor
         "all_on_the_canvas": after["off_canvas"] == 0,
         "button_reads_up": said.get("button_up") is True,
     }
+    if app is not None:
+        checks["claimed_the_browser_named"] = said.get("app") == app
     return {"checks": checks, "held": all(checks.values())}
 
 
 def judge_stop(before: dict, after: dict, said: dict, exit_code: int, exit_aborted: int,
-               origin: tuple[float, float]) -> dict:
+               origin: tuple[float, float], app: str | None = None) -> dict:
     """PTD10: told to stop by SIGTERM with the button down, the command ends as an interrupted drag
     does, says what stopped it, and leaves nothing claimed."""
-    verdict = judge_abort(before, after, said, exit_code, exit_aborted, origin, cause="aborted:cancelled")
+    verdict = judge_abort(before, after, said, exit_code, exit_aborted, origin, cause="aborted:cancelled", app=app)
     verdict["checks"]["says_what_stopped_it"] = said.get("stopped_by") == "SIGTERM"
     verdict["checks"]["claim_given_up"] = said.get("claim_kept") is None
     verdict["held"] = all(verdict["checks"].values())
@@ -164,18 +171,20 @@ def rejudge(record: dict, exit_aborted: int, exit_refused: int) -> dict:
     """A kept run's record, judged by the present rules from what it stored. Runs it has none of are
     left out; nothing is posted or read from a screen."""
     runs, origin, first = record["runs"], record["content"][:2], record["page_at_start"]
+    app = record.get("app")  # absent from a record kept before the command reported what it claimed
     order = [name for name in ("drag", "slow", "interrupted", "stopped", "short", "wrong_app") if name in runs]
     out, before = {}, first
     for name in order:
         run = runs[name]
         if name in ("drag", "slow"):
-            verdict = judge_drag(before, run["page"], run["said"], run["exit"])
+            verdict = judge_drag(before, run["page"], run["said"], run["exit"], app=app)
         elif name == "interrupted":
-            verdict = judge_abort(before, run["page"], run["said"], run["exit"], exit_aborted, origin)
+            verdict = judge_abort(before, run["page"], run["said"], run["exit"], exit_aborted, origin, app=app)
         elif name == "stopped":
-            verdict = judge_stop(before, run["page"], run["said"], run["exit"], exit_aborted, origin)
+            verdict = judge_stop(before, run["page"], run["said"], run["exit"], exit_aborted, origin, app=app)
         elif name == "wrong_app":
-            verdict = judge_wrong_app(before, run["page"], run["said"], run["exit"], exit_refused, WRONG_APP)
+            verdict = judge_wrong_app(before, run.get("page_read"), run["said"], run["exit"], exit_refused,
+                                      WRONG_APP, app or "")
         else:
             verdict = judge_short(before, run["page"], run["said"], run["exit"], exit_refused)
         out[name] = {"held": verdict["held"], "failed": [k for k, v in verdict["checks"].items() if not v],
@@ -193,14 +202,23 @@ def judge_short(before: dict, after: dict, said: dict, exit_code: int, exit_refu
     return {"checks": checks, "held": all(checks.values())}
 
 
-def judge_wrong_app(before: dict, after: dict, said: dict, exit_code: int, exit_refused: int, named: str) -> dict:
-    """PTD16: a drag over the page that names another application is refused for what the hit test
-    found there, and the page sees nothing."""
+def judge_wrong_app(before: dict, after: dict | None, said: dict, exit_code: int, exit_refused: int,
+                    named: str, browser: str) -> dict:
+    """PTD16: a drag over the page that names another application is refused because the hit test found
+    the browser there, the command says it posted nothing, and the page, read afresh, saw nothing.
+
+    PTD18: the first form held for a refusal that named something else than the browser, for a report
+    that contradicted the refusal, and with the earlier summary standing in for one that was not read."""
+    reason = str(said.get("reason", ""))
+    start = reason.partition("the start point ")[2]
     checks = {
         "refused_as_covered": exit_code == exit_refused and said.get("code") == "point_covered",
-        "says_what_it_found_and_what_was_named": named in str(said.get("reason", ""))
-        and "the start point" in str(said.get("reason", "")),
-        "the_page_saw_nothing": all(after[k] == before[k] for k in ("downs", "ups", "cancels", "keydowns")),
+        "found_the_browser_at_the_start": f" is on {browser}, not {named}" in start,
+        "says_nothing_was_posted": said.get("pressed") is False and said.get("approach_moves") == 0
+        and said.get("drags") == 0 and said.get("releases_posted") == 0,
+        "a_fresh_summary_was_read": after is not None,
+        "the_page_saw_nothing": after is not None
+        and all(after[k] == before[k] for k in ("downs", "ups", "cancels", "keydowns")),
     }
     return {"checks": checks, "held": all(checks.values())}
 
@@ -328,11 +346,13 @@ def main() -> None:
 
         code, said = _command(out, "1-drag", ends, app, "--record", str(out / "gestures.jsonl"))
         after = _summary(process.pid, until=lambda s: s["ups"] > first["ups"]) or first
-        record["runs"]["drag"] = {"exit": code, "said": said, "page": after, **judge_drag(first, after, said, code)}
+        record["runs"]["drag"] = {"exit": code, "said": said, "page": after,
+                                  **judge_drag(first, after, said, code, app=app)}
 
         code, said = _command(out, "2-slow", ends, app, "--duration", "3", "--record", str(out / "gestures.jsonl"))
         slow = _summary(process.pid, until=lambda s: s["ups"] > after["ups"]) or after
-        record["runs"]["slow"] = {"exit": code, "said": said, "page": slow, **judge_drag(after, slow, said, code)}
+        record["runs"]["slow"] = {"exit": code, "said": said, "page": slow,
+                                  **judge_drag(after, slow, said, code, app=app)}
 
         def once_pressed(since: dict, act) -> None:
             # once the page has seen the press and half a second of held moves
@@ -347,7 +367,7 @@ def main() -> None:
         code, said = _command(out, "3-interrupted", ends, app, "--duration", "2.5", during=interrupt)
         later = _summary(process.pid, until=lambda s: s["ups"] + s["cancels"] > slow["ups"] + slow["cancels"]) or slow
         record["runs"]["interrupted"] = {"exit": code, "said": said, "page": later,
-                                         **judge_abort(slow, later, said, code, EXIT_ABORTED, origin[:2])}
+                                         **judge_abort(slow, later, said, code, EXIT_ABORTED, origin[:2], app=app)}
 
         def stop(command_process) -> None:
             once_pressed(later, lambda: command_process.send_signal(signal.SIGTERM))
@@ -355,7 +375,7 @@ def main() -> None:
         code, said = _command(out, "4-stopped", ends, app, "--duration", "2.5", during=stop)
         ended = _summary(process.pid, until=lambda s: s["ups"] + s["cancels"] > later["ups"] + later["cancels"]) or later
         record["runs"]["stopped"] = {"exit": code, "said": said, "page": ended,
-                                     **judge_stop(later, ended, said, code, EXIT_ABORTED, origin[:2])}
+                                     **judge_stop(later, ended, said, code, EXIT_ABORTED, origin[:2], app=app)}
 
         near = (ends[0], ends[1], ends[0] + 3.0, ends[1] + 2.0)
         code, said = _command(out, "5-short", near, app)
@@ -366,9 +386,9 @@ def main() -> None:
 
         code, said = _command(out, "6-wrong-app", ends, WRONG_APP)
         time.sleep(0.5)
-        final = _summary(process.pid) or last
-        record["runs"]["wrong_app"] = {"exit": code, "said": said, "page": final,
-                                       **judge_wrong_app(last, final, said, code, EXIT_REFUSED, WRONG_APP)}
+        read = _summary(process.pid)  # None when the page's summary could not be read: no stand-in for it
+        record["runs"]["wrong_app"] = {"exit": code, "said": said, "page": read or last, "page_read": read,
+                                       **judge_wrong_app(last, read, said, code, EXIT_REFUSED, WRONG_APP, app)}
     finally:
         process.terminate()
         try:

@@ -139,15 +139,43 @@ def test_a_refused_short_drag_holds_only_when_the_page_saw_nothing():
     assert not probe.judge_short(page, page, {"outcome": "dropped"}, 0, 4)["held"]
 
 
+WRONG = {"outcome": "refused", "code": "point_covered", "pressed": False, "approach_moves": 0, "drags": 0,
+         "releases_posted": 0,
+         "reason": "the start point 322,442 is on Google Chrome, not Finder: a hit test there finds another application"}
+
+
 def test_a_drag_naming_another_application_holds_only_when_refused_for_what_was_found():
     """PTD16: the run that shows the hit test refusing at a real page."""
     page = _page(DRAGGED)
-    said = {"outcome": "refused", "code": "point_covered",
-            "reason": "the start point 322,442 is on Google Chrome, not Finder: a press there would not go where it was meant"}
-    assert probe.judge_wrong_app(page, page, said, 4, 4, "Finder")["held"]
-    for change, code, title, fails in (
-            ({"code": "app_busy"}, 4, DRAGGED, "refused_as_covered"), ({}, 0, DRAGGED, "refused_as_covered"),
-            ({"reason": "the end point is on Google Chrome, not Finder"}, 4, DRAGGED, "says_what_it_found_and_what_was_named"),
-            ({}, 4, DRAGGED.replace("n1", "n2"), "the_page_saw_nothing")):
-        verdict = probe.judge_wrong_app(page, _page(title), {**said, **change}, code, 4, "Finder")
-        assert [k for k, v in verdict["checks"].items() if not v] == [fails]
+    assert probe.judge_wrong_app(page, page, WRONG, 4, 4, "Finder", "Google Chrome")["held"]
+
+
+@pytest.mark.parametrize(("change", "code", "title", "fails"), [
+    ({"code": "app_busy"}, 4, DRAGGED, "refused_as_covered"),
+    ({}, 0, DRAGGED, "refused_as_covered"),
+    ({"reason": "the end point 542,582 is on Google Chrome, not Finder"}, 4, DRAGGED, "found_the_browser_at_the_start"),
+    # PTD18: each of these held under the first form of the judgment
+    ({"reason": "the start point 322,442 is on UserNotificationCenter, not Finder"}, 4, DRAGGED,
+     "found_the_browser_at_the_start"),
+    ({"pressed": True}, 4, DRAGGED, "says_nothing_was_posted"),
+    ({"approach_moves": 3}, 4, DRAGGED, "says_nothing_was_posted"),
+    ({"releases_posted": 1}, 4, DRAGGED, "says_nothing_was_posted"),
+    ({}, 4, None, "a_fresh_summary_was_read"),
+    ({}, 4, DRAGGED.replace("n1", "n2"), "the_page_saw_nothing"),
+])
+def test_each_way_the_wrong_application_run_can_fall_short_fails_its_own_check(change, code, title, fails):
+    after = _page(title) if title else None
+    verdict = probe.judge_wrong_app(_page(DRAGGED), after, {**WRONG, **change}, code, 4, "Finder", "Google Chrome")
+    failed = [k for k, v in verdict["checks"].items() if not v]
+    assert not verdict["held"] and failed[0] == fails and (len(failed) == 1 or title is None)
+
+
+def test_a_run_that_drags_checks_the_application_the_command_claimed():
+    """PTD18: the runs that drag did not check that the command claimed the browser they named."""
+    said = {**SAID, "app": "Google Chrome"}
+    assert probe.judge_drag(_page(START), _page(DRAGGED), said, 0, app="Google Chrome")["held"]
+    verdict = probe.judge_drag(_page(START), _page(DRAGGED), {**SAID, "app": "Finder"}, 0, app="Google Chrome")
+    assert [k for k, v in verdict["checks"].items() if not v] == ["claimed_the_browser_named"]
+    stopped = {**SAID_STOPPED, "app": "Chromium"}
+    verdict = probe.judge_abort(_page(DRAGGED), _page(INTERRUPTED), stopped, 6, 6, ORIGIN, app="Google Chrome")
+    assert [k for k, v in verdict["checks"].items() if not v] == ["claimed_the_browser_named"]

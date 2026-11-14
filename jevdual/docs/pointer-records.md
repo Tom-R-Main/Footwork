@@ -112,7 +112,9 @@ immediately before the press.
 
 What this does and does not establish:
 
-- It refuses a press that would land on a system prompt or on another application.
+- It refuses a press where the hit test finds a system prompt or another application at
+  either end. The names are compared as names (case apart; "Chrome" is taken for "Google
+  Chrome"), not as the registry compares resources: Chromium is not Google Chrome.
 - It does not refuse for a window that only overlaps a point and passes input through
   (a dictation or recording overlay): the hit test does not find such a window.
 - It is accessibility's answer at two points at two moments. It is not the event
@@ -121,8 +123,8 @@ What this does and does not establish:
 - It establishes the application, not what inside it is at the point. A menu, a popover
   or a dialog of the same application passes. That is the caller's to know.
 
-A caller filming a take should still look at the screen before it starts. The command no
-longer depends on that for the press itself.
+A caller filming a take should still look at the screen before it starts. The command's
+own check narrows what that look has to catch at the two points; it does not replace it.
 
 SIGINT, SIGTERM and SIGHUP stop a drag the way foreign input does (Escape, then one
 release where the drag had got to), and the command still prints its JSON; `stopped_by`

@@ -144,3 +144,10 @@ Test: composed: a hit test that finds Chromium, or the named application with a 
 Predicts: each new test fails at ff0405f and passes with the change; live, nothing differs from what PTD16 predicted except that the sixth run's judgment is stricter.
 Against: a test of the earlier rule changing its outcome.
 Refs: #ptd16; #ptd17; python/jevdual/point_drag.py; scripts/probe_drag_points.py; docs/pointer-records.md
+
+## PTD19 · update · 2026-11-14 01:48
+Observed: the three changes PTD18 registered are made. Sixteen tests fail against the source at 1ca949d and pass with the change (kept); the offline suite passes; the two kept live runs are judged as before. One thing is not as PTD18 said: the two tests of the second reading (an end found elsewhere, a reading that fails) pass at the old source too. They add coverage the review found missing for behaviour that was already right.
+Inferred: built and checked offline at this head. The comparison of names is now narrower than the registry's, so the one direction in which the rule can still be wrong on names is refusal: an application whose accessibility owner reports a name the caller did not type is refused, with nothing pressed. Whether a browser's page reports the browser's own name is still unread; the live run's first drag reads it.
+Changes: python/jevdual/point_drag.py (`same_app`); scripts/probe_drag_points.py (the wrong-application run requires a fresh summary, the browser named as found and a report of nothing posted; the runs that drag check the application claimed); docs/pointer-records.md; tests.
+Next: the live run at this head, which resolves PTD10, PTD13, PTD16 and PTD18.
+Refs: #ptd18; results/point-drag-20261114/python-red-at-1ca949d.txt; tests/test_drag_points.py; tests/test_probe_drag_points.py

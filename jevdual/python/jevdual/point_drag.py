@@ -105,6 +105,18 @@ def app_at(point: Point) -> str:
     return name
 
 
+def same_app(found: str, named: str) -> bool:
+    """Whether the application a hit test found is the one the caller named: the names themselves,
+    case and surrounding space apart, and "Chrome" for "Google Chrome". Not the registry's
+    normalisation, which makes two spellings of one resource conflict and so also takes Chromium for
+    Google Chrome and drops a suffix: right for a claim, wrong for where a press may go (PTD18)."""
+    def plain(name: str) -> str:
+        name = name.strip().casefold()
+        return "google chrome" if name == "chrome" else name
+
+    return plain(found) == plain(named)
+
+
 def add_parser(sub: Any) -> None:
     dp = sub.add_parser(
         "drag-points",
@@ -240,9 +252,9 @@ async def cmd_drag_points(args: Any) -> int:
             except Exception as exc:  # noqa: BLE001 - not knowing what is there is not knowing the application is
                 return "recipient_unreadable", (f"what is at the {name} point {point[0]:g},{point[1]:g} could not "
                                                 f"be read ({type(exc).__name__}: {str(exc)[:80]})")
-            if app_resource(found) != app_resource(app):
+            if not same_app(found, app):
                 return "point_covered", (f"the {name} point {point[0]:g},{point[1]:g} is on {found}, not {app}: "
-                                         "a press there would not go where it was meant")
+                                         "a hit test there finds another application")
         return None
 
     if getattr(args, "mode", None) != "exclusive_desktop":
