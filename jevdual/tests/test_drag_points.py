@@ -565,6 +565,30 @@ async def test_the_named_application_is_claimed_with_the_desktop(desk, capsys, t
     assert registry.status()["requests"] == []
 
 
+@pytest.mark.parametrize("named", [" Canvas App ", "CANVAS APP", "\tcanvas app"])
+async def test_a_name_the_hit_test_accepts_claims_the_resource_a_session_holds(desk, capsys, tmp_path, named):
+    """Codex review of PR #32: the hit test took the name with its surrounding spaces stripped, the claim
+    did not, so ' Canvas App ' passed the hit test and claimed a resource no session holds."""
+    from jevdual import point_drag
+    from jevdual.coordination import Coordinator, app_resource
+    from jevdual.point_drag import EXIT_REFUSED
+
+    registry = Coordinator()
+    args = point_drag.arguments(*_points("--owner", str(tmp_path / "caller"), "--app", named))
+    async with registry.claim(str(tmp_path / "session"), [app_resource("Canvas App")]):
+        assert await point_drag.cmd_drag_points(args) == EXIT_REFUSED
+        said = json.loads(capsys.readouterr().out.strip().splitlines()[-1])
+        assert said["code"] == "app_busy" and desk.events == [], said
+        assert said["claimed"] == ["app/canvas%20app", "desktop"]
+
+
+def test_a_name_of_only_spaces_is_no_name(desk, capsys):
+    from jevdual.point_drag import EXIT_REFUSED
+
+    code, said, _ = _run(capsys, *_points("--app", "   "))
+    assert code == EXIT_REFUSED and said["code"] == "app_required" and desk.events == [] and HIT["calls"] == []
+
+
 def test_the_application_has_to_be_named(desk, capsys):
     """PTD15: the command used to work out the application from the window list, which named an owner
     of a window and not what would take the press. The caller says which application it means."""

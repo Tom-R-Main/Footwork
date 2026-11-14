@@ -211,3 +211,10 @@ Established: `footwork drag-points X0 Y0 X1 Y1 --mode exclusive_desktop --app NA
 Uncertain: the paths that keep the claim (exit 8), which only composed tests reach; a pass-through overlay or a prompt over a drag point with the command run; a second display or another scale; a recorder recording; whether Excalidraw takes these drags as it takes a hand's; why a stopped drag's release needed the wait (PTD24's account fits and is not proven); a session's `do drag` exits 0 when its release could not be posted, its claim kept and its receipt naming the token (PTD14).
 Decision: merge, then build and qualify one installed release before the Excalidraw film's rehearsal.
 Refs: #ptd2; #ptd8; #ptd15; #ptd22; #ptd26; docs/pointer-records.md; results/point-drag-20261114/
+
+## PTD28 · update · 2026-11-14 10:41
+Observed: the automated review run on the pull request when it left draft, at 4ce33a4, found one fault, rated P2: the hit test compares the named application with its surrounding space stripped, and the registry's key was built from the name as typed. So `--app ' Canvas App '` passed both hit tests and claimed `app/%20canvas%20app%20`, which conflicts with nothing a session holds. Three of four new tests fail against 4ce33a4 and pass with the name stripped once and used for both (kept); the fourth, a name differing only in case, already passed, the key ignoring case. A name of only spaces is now `app_required`. The offline suite passes.
+Inferred: right, and the kind PTD18 fixed in the other direction: two readings of one name that had to agree and did not. The live acceptance at 8792517 named the browser exactly and is not affected: the change is to how a name is read before anything is posted, which no live run exercised with stray spaces.
+Changes: python/jevdual/point_drag.py; tests/test_drag_points.py.
+Next: merge once CI is green on the new head.
+Refs: #ptd18; #ptd27; results/point-drag-20261114/python-red-at-4ce33a4.txt

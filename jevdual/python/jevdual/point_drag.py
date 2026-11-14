@@ -283,7 +283,8 @@ async def cmd_drag_points(args: Any) -> int:
     report.update(planned_motion_s=round(plan.samples[-1].t, 4), press_hold_s=settings.press_hold_s,
                   settle_s=settings.settle_s)
 
-    app = getattr(args, "app", None)
+    # one name for both uses: the hit test strips surrounding space, and so must the registry's key
+    app = (getattr(args, "app", None) or "").strip()
     if not app:
         return refused("app_required", "name the application both points are in with --app; the command "
                        "presses only where a hit test finds it")
