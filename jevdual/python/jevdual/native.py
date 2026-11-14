@@ -2875,7 +2875,18 @@ class NativeBridge:
                 if trace is not None:
                     trace.finish(poster, result.outcome if result else "exception", result)
 
-        result = await owned_thread(play)
+        try:
+            result = await owned_thread(play)
+        except d.ButtonMayBeDown as exc:
+            # the desktop is not given back with the button possibly down (PTD12): the registry holds
+            # it until someone has looked and recovers this command's request by its token
+            from jevdual.coordination import abandon_current
+
+            token = abandon_current()
+            # short, and the command first: a receipt keeps only the start of an error
+            said = (f"left button may be down; desktop stays claimed until: footwork control recover {token} "
+                    f"--input-cleaned ({exc})" if token else str(exc))
+            raise d.ButtonMayBeDown(said, exc.release_error) from exc
         if self.filmed is not None:
             self.filmed.last_pointer = result.released_at
             if result.outcome != "dropped":

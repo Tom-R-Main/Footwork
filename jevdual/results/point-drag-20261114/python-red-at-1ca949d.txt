@@ -1,0 +1,18 @@
+# tests/test_drag_points.py and tests/test_probe_drag_points.py as committed with the fix, against the source at 1ca949d:
+FAILED tests/test_drag_points.py::test_the_application_is_matched_by_its_name_whatever_the_case[ Canvas App -Canvas App]
+FAILED tests/test_drag_points.py::test_another_application_the_registry_would_take_for_the_same_is_refused[Google Chrome-Chromium]
+FAILED tests/test_drag_points.py::test_another_application_the_registry_would_take_for_the_same_is_refused[Chrome-Chromium]
+FAILED tests/test_drag_points.py::test_another_application_the_registry_would_take_for_the_same_is_refused[Canvas App-Canvas App (Footwork)]
+FAILED tests/test_drag_points.py::test_another_application_the_registry_would_take_for_the_same_is_refused[Canvas App (Footwork)-Canvas App]
+FAILED tests/test_probe_drag_points.py::test_a_drag_naming_another_application_holds_only_when_refused_for_what_was_found
+FAILED tests/test_probe_drag_points.py::test_each_way_the_wrong_application_run_can_fall_short_fails_its_own_check[change0-4-PD n1 u1 x0 h71 l0 o0 t0 g17 k0 d300,300 r520,440 - Google Chrome-refused_a
+FAILED tests/test_probe_drag_points.py::test_each_way_the_wrong_application_run_can_fall_short_fails_its_own_check[change1-0-PD n1 u1 x0 h71 l0 o0 t0 g17 k0 d300,300 r520,440 - Google Chrome-refused_a
+FAILED tests/test_probe_drag_points.py::test_each_way_the_wrong_application_run_can_fall_short_fails_its_own_check[change2-4-PD n1 u1 x0 h71 l0 o0 t0 g17 k0 d300,300 r520,440 - Google Chrome-found_the
+FAILED tests/test_probe_drag_points.py::test_each_way_the_wrong_application_run_can_fall_short_fails_its_own_check[change3-4-PD n1 u1 x0 h71 l0 o0 t0 g17 k0 d300,300 r520,440 - Google Chrome-found_the
+FAILED tests/test_probe_drag_points.py::test_each_way_the_wrong_application_run_can_fall_short_fails_its_own_check[change4-4-PD n1 u1 x0 h71 l0 o0 t0 g17 k0 d300,300 r520,440 - Google Chrome-says_noth
+FAILED tests/test_probe_drag_points.py::test_each_way_the_wrong_application_run_can_fall_short_fails_its_own_check[change5-4-PD n1 u1 x0 h71 l0 o0 t0 g17 k0 d300,300 r520,440 - Google Chrome-says_noth
+FAILED tests/test_probe_drag_points.py::test_each_way_the_wrong_application_run_can_fall_short_fails_its_own_check[change6-4-PD n1 u1 x0 h71 l0 o0 t0 g17 k0 d300,300 r520,440 - Google Chrome-says_noth
+FAILED tests/test_probe_drag_points.py::test_each_way_the_wrong_application_run_can_fall_short_fails_its_own_check[change7-4-None-a_fresh_summary_was_read]
+FAILED tests/test_probe_drag_points.py::test_each_way_the_wrong_application_run_can_fall_short_fails_its_own_check[change8-4-PD n2 u1 x0 h71 l0 o0 t0 g17 k0 d300,300 r520,440 - Google Chrome-the_page_
+FAILED tests/test_probe_drag_points.py::test_a_run_that_drags_checks_the_application_the_command_claimed
+16 failed, 92 passed in 6.71s

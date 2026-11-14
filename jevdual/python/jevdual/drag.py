@@ -83,6 +83,12 @@ class DragResult:
     stall_gap_s: float | None = None
     max_post_s: float = 0.0
     max_ack_s: float = 0.0
+    #: the press was handed to the poster (whether or not its post returned)
+    press_attempted: bool = False
+    #: a release's post returned; False with ``press_attempted`` means the button may still be down
+    release_posted: bool = False
+    #: the type of the last exception a release's post raised, if any did
+    release_error: str | None = None
 
 
 class DragRefused(ValueError):
@@ -93,7 +99,20 @@ class DragRefused(ValueError):
         self.code = code
 
 
+class ButtonMayBeDown(RuntimeError):
+    """A press was posted and neither post of its release returned. Whoever holds the desktop for the
+    drag must not give it back as if the button were up (PTD12)."""
+
+    def __init__(self, reason: str, release_error: str | None = None) -> None:
+        super().__init__(reason)
+        self.release_error = release_error
+
+
 class Poster(Protocol):
+    """``down`` may raise ``CoordinationError`` only before it posts (QuartzPoster checks ownership first):
+    the player takes that to mean nothing was pressed. Any other exception from ``down`` or ``up`` leaves
+    it unknown whether the post happened, and the player then releases."""
+
     def move(self, x: float, y: float) -> None: ...
     def down(self, x: float, y: float) -> None: ...
     def drag(self, x: float, y: float) -> None: ...
@@ -263,25 +282,53 @@ def play_drag(
     cancelled: Callable[[], bool] = lambda: False,
     trace: Any = None,
 ) -> DragResult:
-    """Press at the start, play the samples, release. Every exit after the press releases exactly once."""
+    """Press at the start, play the samples, release. Every exit after the press releases exactly once.
+
+    The press is inside the block that guarantees the release, and a release counts as done only when
+    its post returns: an exception after the press still lets go, and a release whose post raised is
+    posted once more (PTD9). When the second raises too, ``ButtonMayBeDown`` leaves this function,
+    with no release posted: the caller has to deal with it. A cancel the caller already asked for is
+    found here, before the press, and presses nothing (PTD12)."""
     tolerance = 1.5 * plan.max_step_pt + 2.0
     result = DragResult("aborted:unknown")
     last = plan.start
     released = False
+    tries = 0
 
     def release(at: tuple[float, float]) -> None:
-        nonlocal released
-        if not released:
+        nonlocal released, tries
+        while not released and tries < 2:
+            tries += 1
+            try:
+                poster.up(*at)
+            except Exception as exc:
+                result.release_error = type(exc).__name__
+                if tries >= 2:
+                    raise ButtonMayBeDown(
+                        f"the release at {at[0]:.1f},{at[1]:.1f} could not be posted ({type(exc).__name__}, "
+                        "twice); the left button may still be down", type(exc).__name__) from exc
+                continue
             released = True
-            poster.up(*at)
             result.released_at = at
+            result.release_posted = True
 
     def check() -> None:
         _check_pointer(poster, last, tolerance, cancelled)
 
     checkpoint()
-    poster.down(*plan.start)
+    if cancelled():
+        result.outcome = "aborted:cancelled"
+        result.causes.append("cancelled")
+        return result
     try:
+        result.press_attempted = True
+        try:
+            poster.down(*plan.start)
+        except CoordinationError:
+            # the poster checks ownership before it posts: nothing is down, so nothing is released
+            result.press_attempted = False
+            released = True
+            raise
         t0 = clock.now() + settings.press_hold_s
         if trace is not None:
             trace.started(t0, clock)
@@ -309,7 +356,7 @@ def play_drag(
     except (_Abort, CoordinationError) as abort:
         result.outcome = f"aborted:{getattr(abort, 'cause', 'cancelled')}"
         result.causes.append(getattr(abort, "cause", "cancelled"))
-        if settings.cancel_with_escape:
+        if settings.cancel_with_escape and result.press_attempted:
             poster.escape()
             result.escape_sent = True
         release(last)

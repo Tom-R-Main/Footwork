@@ -176,6 +176,7 @@ class Claim:
         self.reservation, self.timeout = reservation, timeout
         self.desktop, self.token = desktop_id(), uuid.uuid4().hex
         self.lock = None
+        self.abandoned = False
 
     def _check(self, db):
         _check_ownership(db, self.token, self.owner, self.reservation, self.desktop)
@@ -238,6 +239,8 @@ class Claim:
             raise
 
     def close(self):
+        if self.abandoned:
+            return
         try:
             with self.registry.db() as db:
                 db.execute("DELETE FROM requests WHERE token=?", (self.token,))
@@ -246,6 +249,17 @@ class Claim:
                 self.lock.close()
                 self.lock = None
             (self.registry.locks / self.token).unlink(missing_ok=True)
+
+    def abandon(self):
+        """Stop holding the request without giving its resources up: the row stays, and once this
+        process's lock is gone the registry marks a desktop owner's row orphaned, which blocks every
+        other owner until ``footwork control recover TOKEN --input-cleaned``. For an owner that cannot
+        say it let go of the input it held. Closing the claim afterwards changes nothing: no caller
+        has to remember not to."""
+        self.abandoned = True
+        if self.lock is not None:
+            self.lock.close()
+            self.lock = None
 
     async def __aexit__(self, *exc):
         self.close()
@@ -264,6 +278,16 @@ def checkpoint() -> None:
     claim = _CURRENT.get()
     if claim is not None:
         claim.check()
+
+
+def abandon_current() -> str | None:
+    """Abandon the claim the running command acts under (see ``Claim.abandon``); its token, or None
+    when the command acts under none."""
+    claim = _CURRENT.get()
+    if claim is None:
+        return None
+    claim.abandon()
+    return claim.token
 
 
 def cancelled() -> bool:

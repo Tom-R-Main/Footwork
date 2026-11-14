@@ -165,6 +165,106 @@ def test_an_exception_mid_drag_still_releases_the_button_once():
     assert [e[0] for e in poster.events].count("up") == 1 and poster.events[-1][0] == "up"
 
 
+def test_a_press_that_raises_after_posting_is_released(monkeypatch):
+    """PTD9: the press was posted before the block that guarantees the release, so a press whose post
+    went and then raised left the button down. Whether it went is not known: it is released."""
+    plan, poster, clock = _plan(), FakePoster(), FakeClock()
+    press = poster.down
+
+    def down(x, y):
+        press(x, y)
+        raise RuntimeError("the post did not return")
+
+    monkeypatch.setattr(poster, "down", down)
+    with pytest.raises(RuntimeError):
+        play_drag(plan, poster, clock)
+    assert poster.events == [("down", *START), ("up", *START)]
+
+
+def test_a_press_refused_for_ownership_posts_nothing_and_releases_nothing(monkeypatch):
+    """The real poster checks ownership before it posts a press: nothing is down, so the one-release
+    rule has nothing to release, and no Escape is sent into whatever has the keyboard."""
+    from jevdual.coordination import CoordinationError
+
+    plan, poster, clock = _plan(), FakePoster(), FakeClock()
+
+    def down(x, y):
+        raise CoordinationError("ownership revoked; no further input is admitted")
+
+    monkeypatch.setattr(poster, "down", down)
+    result = play_drag(plan, poster, clock)
+    assert poster.events == [] and result.outcome == "aborted:cancelled"
+    assert result.press_attempted is False and result.release_posted is False and result.escape_sent is False
+
+
+@pytest.mark.parametrize("cancel", [False, True])
+def test_a_release_whose_post_raises_is_posted_once_more(monkeypatch, cancel):
+    """PTD9: a release was marked done before its post returned, so one that raised was never tried
+    again, on the drop or on a cancel."""
+    plan, poster, clock = _plan(), FakePoster(), FakeClock()
+    release, failures = poster.up, [RuntimeError("the post failed")]
+
+    def up(x, y):
+        if failures:
+            raise failures.pop()
+        release(x, y)
+
+    monkeypatch.setattr(poster, "up", up)
+    if cancel:
+        poster.foreign, poster.foreign_after = "key_down", 10
+    result = play_drag(plan, poster, clock)
+    assert [e[0] for e in poster.events].count("up") == 1 and poster.events[-1][0] == "up"
+    assert result.release_posted is True and result.release_error == "RuntimeError"
+    assert result.outcome == ("aborted:pointer_contended:key_down" if cancel else "dropped")
+    assert result.released_at == poster.events[-1][1:]
+
+
+def test_a_release_that_fails_twice_is_raised_and_not_tried_a_third_time(monkeypatch):
+    """Two posts, then the caller is told: the button may be down, and that is not this function's to hide."""
+    plan, poster, clock = _plan(), FakePoster(), FakeClock()
+    tried = []
+
+    def up(x, y):
+        tried.append((x, y))
+        raise RuntimeError("the post failed")
+
+    monkeypatch.setattr(poster, "up", up)
+    with pytest.raises(RuntimeError):
+        play_drag(plan, poster, clock)
+    assert tried == [END, END]
+
+
+def test_a_cancel_already_asked_for_presses_nothing():
+    """PTD12: ownership was checked before the press and the caller's cancel only after it, so a stop
+    that arrived before the worker ran still pressed, held 120 ms, and released."""
+    plan, poster, clock = _plan(), FakePoster(), FakeClock()
+    result = play_drag(plan, poster, clock, cancelled=lambda: True)
+    assert poster.events == [] and result.outcome == "aborted:cancelled"
+    assert result.press_attempted is False and result.escape_sent is False and result.released_at is None
+
+
+def test_two_failed_releases_raise_an_error_that_says_the_button_may_be_down(monkeypatch):
+    """PTD12: the other caller of the engine could not tell this from any other failure."""
+    from jevdual.drag import ButtonMayBeDown
+
+    plan, poster, clock = _plan(), FakePoster(), FakeClock()
+
+    def up(x, y):
+        raise OSError("the post failed")
+
+    monkeypatch.setattr(poster, "up", up)
+    with pytest.raises(ButtonMayBeDown) as raised:
+        play_drag(plan, poster, clock)
+    assert raised.value.release_error == "OSError" and isinstance(raised.value.__cause__, OSError)
+
+
+def test_a_completed_drag_reports_its_press_and_one_posted_release():
+    plan, poster, clock = _plan(), FakePoster(), FakeClock()
+    result = play_drag(plan, poster, clock)
+    assert result.press_attempted and result.release_posted and result.release_error is None
+    assert [e[0] for e in poster.events].count("up") == 1
+
+
 def test_a_schedule_with_a_long_interval_is_refused_at_planning():
     class Planner:
         """Stands in for cua_driver with a trajectory that has one 80 ms interval."""
