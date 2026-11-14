@@ -51,3 +51,19 @@ Inferred: the composed part of PTD5 holds. Whether timing was the cause of PTD4'
 Changes: python/jevdual/point_drag.py (the bounded reading and the message), tests/test_drag_points.py.
 Next: one rerun of scripts/probe_drag_points.py with no other session dispatching input.
 Refs: #ptd5; results/point-drag-20261114/python-red-at-c01f258.txt
+
+## PTD7 · update · 2026-11-14 00:38
+Observed: the probe was rerun once at 4ada115, 00:38:02 to 00:38:08, on a screen-free handoff given after the session that had overlapped the first run confirmed it would open no DevTools connection, and with no DevTools client read on any of the three other browsers' ports. All three runs held. Plain drag: exit 0; one pointerdown at 300,300 and one pointerup at 520,440, forty moves all with the button held, nothing off the canvas or untrusted, 30 ms the page's longest time between moves; 77 drags posted, 9.2 ms the longest gap; the button read up at the first reading, about 0.65 ms after the release was posted. Interrupted drag: stopped by the probe's key press with pointer_contended:key_down after 13 drags, Escape sent, released at 338.3,449.5, exit 6; the page counted one more pointerdown and one more pointerup, at that point less the content origin; the button was reported up after 2.26 ms, that is, down at the first reading and up at the second. Too short: exit 4, the page's counts unchanged. Afterwards, read separately: the probe's Chrome gone, its profile removed, the registry empty, the button up, the front application restored.
+Inferred: PTD5 holds: with the bounded wait the command reports the button correctly, and the time it reports for the interrupted drag, above zero and a hundredth of the limit, is the lag PTD4 supposed. With nothing else dispatching input the first reading after that release was still "down", so the first run's report is explained by timing alone; this run gives no sign that the other session's DevTools events had a part, and does not show that they could not. Two runs now put the lag between 0.2 ms (down, twice) and 2.4 ms (up); the plain drag's first reading at about 0.65 ms was already up.
+Changes: results/point-drag-20261114/pd-live2/ (the run's records).
+Next: resolve PTD2 on the two runs together.
+Resolves: PTD5 = held
+Refs: #ptd5; #ptd4; results/point-drag-20261114/pd-live2/run.json
+
+## PTD8 · update · 2026-11-14 00:38
+Observed: taking the two live runs together against what PTD2 predicted of a real page: in both, the plain drag was one trusted pointerdown and one pointerup exactly at the points asked for (0 px off, against the 1 px allowed), every pointermove between them with the button held and on the canvas, the longest time between moves 26 and 30 ms against 50; in both, the interrupted drag was one pointerdown and one release where the command said, after Escape; in both, the too-short drag reached the page as nothing; and after each run the button read up. The one failure across the two runs was the command's report of the button in the first, which was the command's own (PTD4, PTD5, PTD7). Nothing PTD2 named against itself occurred in either run.
+Inferred: PTD2 holds, on two runs of each case on one machine, one display and one Chrome build, at page zoom 1 with the window on the main display. Not shown by them: a drag with the recorder recording, which is first seen in a rehearsal; a display at another scale or a second display; an approach interrupted before the press against a real pointer; a desktop reserved by another owner against a real registry entry (composed only); and anything about what an application does with the drag.
+Changes: none.
+Next: a narrow review of the change, then the pull request out of draft.
+Resolves: PTD2 = held
+Refs: #ptd2; #ptd7; #ptd4; results/point-drag-20261114/pd-live1/run.json; results/point-drag-20261114/pd-live2/run.json
