@@ -137,3 +137,17 @@ def test_a_refused_short_drag_holds_only_when_the_page_saw_nothing():
     assert probe.judge_short(page, page, said, 4, 4)["held"]
     assert not probe.judge_short(page, _page(DRAGGED.replace("n1", "n2")), said, 4, 4)["held"]
     assert not probe.judge_short(page, page, {"outcome": "dropped"}, 0, 4)["held"]
+
+
+def test_a_drag_naming_another_application_holds_only_when_refused_for_what_was_found():
+    """PTD16: the run that shows the hit test refusing at a real page."""
+    page = _page(DRAGGED)
+    said = {"outcome": "refused", "code": "point_covered",
+            "reason": "the start point 322,442 is on Google Chrome, not Finder: a press there would not go where it was meant"}
+    assert probe.judge_wrong_app(page, page, said, 4, 4, "Finder")["held"]
+    for change, code, title, fails in (
+            ({"code": "app_busy"}, 4, DRAGGED, "refused_as_covered"), ({}, 0, DRAGGED, "refused_as_covered"),
+            ({"reason": "the end point is on Google Chrome, not Finder"}, 4, DRAGGED, "says_what_it_found_and_what_was_named"),
+            ({}, 4, DRAGGED.replace("n1", "n2"), "the_page_saw_nothing")):
+        verdict = probe.judge_wrong_app(page, _page(title), {**said, **change}, code, 4, "Finder")
+        assert [k for k, v in verdict["checks"].items() if not v] == [fails]

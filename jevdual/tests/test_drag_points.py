@@ -134,8 +134,19 @@ def desk(monkeypatch):
     monkeypatch.setattr(drag, "QuartzPoster", Poster)
     monkeypatch.setattr(drag, "MonotonicClock", Clock)
     monkeypatch.setattr(point_drag, "display_bounds", lambda: [DISPLAY])
-    monkeypatch.setattr(point_drag, "app_under", lambda point: "Canvas App")
+    HIT.update(calls=[], answer=lambda point, call: "Canvas App")
+    monkeypatch.setattr(point_drag, "app_at", _app_at)
     return Poster
+
+
+#: what the accessibility hit test is stood in for with: every point asked about, and what it finds there
+#: (``answer(point, call)``, the call counted from 1; raise to make the reading fail)
+HIT: dict[str, Any] = {"calls": [], "answer": lambda point, call: "Canvas App"}
+
+
+def _app_at(point):
+    HIT["calls"].append(point)
+    return HIT["answer"](point, len(HIT["calls"]))
 
 
 def _revoke_own_claim():
@@ -156,7 +167,7 @@ def _run(capsys, *argv):
 
 
 def _points(*extra):
-    return (*(str(v) for v in (*START, *END)), "--mode", "exclusive_desktop", *extra)
+    return (*(str(v) for v in (*START, *END)), "--mode", "exclusive_desktop", "--app", "Canvas App", *extra)
 
 
 def _kinds(events):
@@ -534,7 +545,7 @@ def test_a_claim_revoked_during_the_drag_cancels_it_and_releases_once(desk, caps
     assert _kinds(desk.events) == ["down", "drag", "escape", "up"] and said["releases_posted"] == 1
 
 
-async def test_the_application_under_the_start_is_claimed_with_the_desktop(desk, capsys, tmp_path):
+async def test_the_named_application_is_claimed_with_the_desktop(desk, capsys, tmp_path):
     """PTD9: the command claimed the desktop and nothing else, so a session that owned the application
     under the pointer, with no claim on the desktop, was no obstacle to a drag across its window."""
     from jevdual import point_drag
@@ -548,37 +559,77 @@ async def test_the_application_under_the_start_is_claimed_with_the_desktop(desk,
         said = json.loads(capsys.readouterr().out.strip().splitlines()[-1])
         assert said["code"] == "app_busy" and "Canvas App" in said["reason"] and desk.events == []
         assert said["app"] == "Canvas App" and said["claimed"] == ["app/canvas%20app", "desktop"]
-        other = point_drag.arguments(*_points("--owner", str(tmp_path / "caller"), "--app", "Elsewhere"))
-        assert await point_drag.cmd_drag_points(other) == 0  # the caller names the application it drags on
-        assert json.loads(capsys.readouterr().out.strip().splitlines()[-1])["claimed"] == ["app/elsewhere", "desktop"]
     assert await point_drag.cmd_drag_points(args) == 0
     assert registry.status()["requests"] == []
 
 
-def test_a_start_point_over_no_window_claims_the_desktop_alone(desk, capsys, monkeypatch):
-    from jevdual import point_drag
+def test_the_application_has_to_be_named(desk, capsys):
+    """PTD15: the command used to work out the application from the window list, which named an owner
+    of a window and not what would take the press. The caller says which application it means."""
+    from jevdual.point_drag import EXIT_REFUSED
 
-    monkeypatch.setattr(point_drag, "app_under", lambda point: None)
-    code, said, _ = _run(capsys, *_points())
-    assert code == 0 and said["app"] is None and said["claimed"] == ["desktop"]
+    code, said, _ = _run(capsys, *(str(v) for v in (*START, *END)), "--mode", "exclusive_desktop")
+    assert code == EXIT_REFUSED and said["code"] == "app_required" and desk.events == [] and HIT["calls"] == []
 
 
-def test_a_window_list_that_cannot_be_read_is_refused_unless_the_application_is_named(desk, capsys, monkeypatch):
-    """PTD12: an unreadable list fell back to the desktop alone, the gap the application claim closes.
-    Not knowing what is under the start point is not the same as knowing nothing is."""
-    from jevdual import point_drag
+@pytest.mark.parametrize(("covered", "name"), [(START, "start"), (END, "end")])
+def test_an_end_that_lands_on_another_application_is_refused_with_nothing_posted(desk, capsys, covered, name):
+    """PTD15: a system prompt sat over the screen while a live run waited, and the command would have
+    pressed on it: it looked only at ordinary windows. Both ends are hit-tested, and a press that would
+    land on anything but the named application is not posted."""
     from jevdual.coordination import Coordinator
     from jevdual.point_drag import EXIT_REFUSED
 
-    def unreadable(point):
-        raise RuntimeError("no window list")
-
-    monkeypatch.setattr(point_drag, "app_under", unreadable)
+    HIT["answer"] = lambda point, call: "UserNotificationCenter" if point == covered else "Canvas App"
     code, said, err = _run(capsys, *_points())
-    assert code == EXIT_REFUSED and said["code"] == "app_unreadable" and desk.events == [], (said, err)
-    assert "--app" in said["reason"] and Coordinator().status()["requests"] == []
-    code, said, _ = _run(capsys, *_points("--app", "Canvas App"))
-    assert code == 0 and said["claimed"] == ["app/canvas%20app", "desktop"]
+    assert code == EXIT_REFUSED and said["code"] == "point_covered" and desk.events == [], (said, err)
+    assert "UserNotificationCenter" in said["reason"] and f"the {name} point" in said["reason"]
+    assert "Canvas App" in said["reason"] and Coordinator().status()["requests"] == []
+
+
+def test_a_start_covered_after_the_approach_is_not_pressed(desk, capsys):
+    """The reading before anything is posted can be out of date by the time the pointer arrives: it is
+    taken again immediately before the press."""
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_APPROACH
+
+    HIT["answer"] = lambda point, call: "UserNotificationCenter" if call > 2 and point == START else "Canvas App"
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_APPROACH and _kinds(desk.events) == ["move"], (said, err)
+    assert said["outcome"] == "approach_aborted:point_covered" and said["pressed"] is False
+    assert "UserNotificationCenter" in said["reason"] and HIT["calls"] == [START, END, START]
+    assert Coordinator().status()["requests"] == []
+
+
+def test_a_start_covered_just_before_the_press_with_no_approach_posts_nothing(desk, capsys):
+    from jevdual.point_drag import EXIT_REFUSED
+
+    desk.pointer = START
+    HIT["answer"] = lambda point, call: "UserNotificationCenter" if call > 2 else "Canvas App"
+    code, said, _ = _run(capsys, *_points())
+    assert code == EXIT_REFUSED and said["code"] == "point_covered" and desk.events == []
+
+
+def test_a_hit_test_that_cannot_be_read_is_refused(desk, capsys):
+    """Not knowing what is at a point is not the same as knowing the named application is."""
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_REFUSED
+
+    def unreadable(point, call):
+        raise LookupError("accessibility error -25204")
+
+    HIT["answer"] = unreadable
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_REFUSED and said["code"] == "recipient_unreadable" and desk.events == [], (said, err)
+    assert Coordinator().status()["requests"] == []
+
+
+@pytest.mark.parametrize(("named", "found"), [("canvas app", "Canvas App"), ("Chrome", "Google Chrome")])
+def test_the_application_is_matched_as_the_registry_names_it(desk, capsys, named, found):
+    HIT["answer"] = lambda point, call: found
+    code, said, err = _run(capsys, *_points("--app", named))
+    assert code == 0, (said, err)
+    assert HIT["calls"] == [START, END, START, END]  # before anything is posted, and again before the press
 
 
 STAND_IN = r'''
@@ -610,7 +661,7 @@ original = Coordinator.__init__
 Coordinator.__init__ = lambda self, path=None: original(self, path or registry)
 drag.QuartzPoster = Poster
 point_drag.display_bounds = lambda: [(0.0, 0.0, 1728.0, 1117.0)]
-point_drag.app_under = lambda point: None
+point_drag.app_at = lambda point: "Canvas App"
 sys.exit(main(["drag-points", *sys.argv[3:]]))
 '''
 
@@ -714,7 +765,7 @@ def test_the_command_is_listed_and_takes_points_left_of_the_main_display(desk, c
 
     monkeypatch.setattr(point_drag, "display_bounds", lambda: [(-1920.0, 0.0, 1920.0, 1080.0), DISPLAY])
     desk.pointer = (-900.0, 500.0)
-    code, said, err = _run(capsys, "-800", "400", "-600", "440", "--mode", "exclusive_desktop")
+    code, said, err = _run(capsys, "-800", "400", "-600", "440", "--mode", "exclusive_desktop", "--app", "Canvas App")
     assert code == 0 and said["released_at"] == [-600.0, 440.0], (said, err)
 
 

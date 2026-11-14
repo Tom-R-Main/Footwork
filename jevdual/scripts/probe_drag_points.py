@@ -3,13 +3,14 @@
 One bare Chrome on a fresh temporary profile, with no debugging port, on a page that is one canvas
 filling the viewport. The page counts its own pointer events and writes a short summary into its title,
 which this script reads through accessibility: nothing connects to DevTools, as the command's caller
-requires. Five runs of the command against that page:
+requires. Six runs of the command against that page:
 
 1. one drag between two viewport points;
 2. the same drag over three seconds (PTD10: a slow drag posts as often as a fast one);
 3. one slow drag, interrupted by a key press this script posts while the button is down;
 4. one slow drag, told to stop with SIGTERM while the button is down (PTD10);
-5. one drag too short to be a drag.
+5. one drag too short to be a drag;
+6. the first drag again, naming an application the page is not in (PTD16): refused, nothing posted.
 
 It moves the real pointer and presses its left button over its own Chrome window, and posts one F13
 key press. It waits for an unlocked screen and 10 s of idle, brings the application that was in front
@@ -45,6 +46,8 @@ NEAR_PX = 1.0
 #: the engine's own limit on the time between two posts, which the page's moves are held to as well
 GAP_LIMIT_MS = 50.0
 F13 = 105  # a key press no page and no default system shortcut acts on
+#: an application that is running and that the probe's page is not in
+WRONG_APP = "Finder"
 
 PAGE = """<!doctype html><meta charset=utf-8><title>PD starting</title>
 <style>html,body{margin:0;height:100%;overflow:hidden}canvas{display:block;width:100vw;height:100vh;background:#f4f1ea}</style>
@@ -161,7 +164,7 @@ def rejudge(record: dict, exit_aborted: int, exit_refused: int) -> dict:
     """A kept run's record, judged by the present rules from what it stored. Runs it has none of are
     left out; nothing is posted or read from a screen."""
     runs, origin, first = record["runs"], record["content"][:2], record["page_at_start"]
-    order = [name for name in ("drag", "slow", "interrupted", "stopped", "short") if name in runs]
+    order = [name for name in ("drag", "slow", "interrupted", "stopped", "short", "wrong_app") if name in runs]
     out, before = {}, first
     for name in order:
         run = runs[name]
@@ -171,6 +174,8 @@ def rejudge(record: dict, exit_aborted: int, exit_refused: int) -> dict:
             verdict = judge_abort(before, run["page"], run["said"], run["exit"], exit_aborted, origin)
         elif name == "stopped":
             verdict = judge_stop(before, run["page"], run["said"], run["exit"], exit_aborted, origin)
+        elif name == "wrong_app":
+            verdict = judge_wrong_app(before, run["page"], run["said"], run["exit"], exit_refused, WRONG_APP)
         else:
             verdict = judge_short(before, run["page"], run["said"], run["exit"], exit_refused)
         out[name] = {"held": verdict["held"], "failed": [k for k, v in verdict["checks"].items() if not v],
@@ -183,6 +188,18 @@ def judge_short(before: dict, after: dict, said: dict, exit_code: int, exit_refu
     """PTD2's third: a drag too short is refused and the page sees nothing."""
     checks = {
         "refused_too_short": exit_code == exit_refused and said.get("code") == "drag_too_short",
+        "the_page_saw_nothing": all(after[k] == before[k] for k in ("downs", "ups", "cancels", "keydowns")),
+    }
+    return {"checks": checks, "held": all(checks.values())}
+
+
+def judge_wrong_app(before: dict, after: dict, said: dict, exit_code: int, exit_refused: int, named: str) -> dict:
+    """PTD16: a drag over the page that names another application is refused for what the hit test
+    found there, and the page sees nothing."""
+    checks = {
+        "refused_as_covered": exit_code == exit_refused and said.get("code") == "point_covered",
+        "says_what_it_found_and_what_was_named": named in str(said.get("reason", ""))
+        and "the start point" in str(said.get("reason", "")),
         "the_page_saw_nothing": all(after[k] == before[k] for k in ("downs", "ups", "cancels", "keydowns")),
     }
     return {"checks": checks, "held": all(checks.values())}
@@ -236,11 +253,11 @@ def _press_f13() -> None:
         Quartz.CGEventPost(Quartz.kCGHIDEventTap, Quartz.CGEventCreateKeyboardEvent(None, F13, down))
 
 
-def _command(out: Path, name: str, points: tuple[float, float, float, float], *extra: str,
+def _command(out: Path, name: str, points: tuple[float, float, float, float], app: str, *extra: str,
              during=None) -> tuple[int, dict]:
     """One run of the command; ``during`` is called beside it with its process."""
     argv = [sys.executable, "-m", "jevdual.cli", "drag-points", *(repr(float(v)) for v in points),
-            "--mode", "exclusive_desktop", "--owner", str(out), *extra]
+            "--mode", "exclusive_desktop", "--app", app, "--owner", str(out), *extra]
     process = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     worker = None
     if during is not None:
@@ -299,12 +316,21 @@ def main() -> None:
 
         ends = (*screen(FROM), *screen(TO))
         record["screen_points"] = list(ends)
+        # the name the system gives this Chrome, which is what the command's hit test will be held to
+        import AppKit
 
-        code, said = _command(out, "1-drag", ends, "--record", str(out / "gestures.jsonl"))
+        running = AppKit.NSRunningApplication.runningApplicationWithProcessIdentifier_(process.pid)
+        app = str(running.localizedName() or "") if running is not None else ""
+        record["app"] = app
+        if not app or app == WRONG_APP:
+            record["stopped"] = f"this Chrome's application name could not be read ({app!r}); nothing was posted"
+            return
+
+        code, said = _command(out, "1-drag", ends, app, "--record", str(out / "gestures.jsonl"))
         after = _summary(process.pid, until=lambda s: s["ups"] > first["ups"]) or first
         record["runs"]["drag"] = {"exit": code, "said": said, "page": after, **judge_drag(first, after, said, code)}
 
-        code, said = _command(out, "2-slow", ends, "--duration", "3", "--record", str(out / "gestures.jsonl"))
+        code, said = _command(out, "2-slow", ends, app, "--duration", "3", "--record", str(out / "gestures.jsonl"))
         slow = _summary(process.pid, until=lambda s: s["ups"] > after["ups"]) or after
         record["runs"]["slow"] = {"exit": code, "said": said, "page": slow, **judge_drag(after, slow, said, code)}
 
@@ -318,7 +344,7 @@ def main() -> None:
         def interrupt(_command_process) -> None:
             once_pressed(slow, _press_f13)  # one key press the command did not post
 
-        code, said = _command(out, "3-interrupted", ends, "--duration", "2.5", during=interrupt)
+        code, said = _command(out, "3-interrupted", ends, app, "--duration", "2.5", during=interrupt)
         later = _summary(process.pid, until=lambda s: s["ups"] + s["cancels"] > slow["ups"] + slow["cancels"]) or slow
         record["runs"]["interrupted"] = {"exit": code, "said": said, "page": later,
                                          **judge_abort(slow, later, said, code, EXIT_ABORTED, origin[:2])}
@@ -326,17 +352,23 @@ def main() -> None:
         def stop(command_process) -> None:
             once_pressed(later, lambda: command_process.send_signal(signal.SIGTERM))
 
-        code, said = _command(out, "4-stopped", ends, "--duration", "2.5", during=stop)
+        code, said = _command(out, "4-stopped", ends, app, "--duration", "2.5", during=stop)
         ended = _summary(process.pid, until=lambda s: s["ups"] + s["cancels"] > later["ups"] + later["cancels"]) or later
         record["runs"]["stopped"] = {"exit": code, "said": said, "page": ended,
                                      **judge_stop(later, ended, said, code, EXIT_ABORTED, origin[:2])}
 
         near = (ends[0], ends[1], ends[0] + 3.0, ends[1] + 2.0)
-        code, said = _command(out, "5-short", near)
+        code, said = _command(out, "5-short", near, app)
         time.sleep(0.5)
         last = _summary(process.pid) or ended
         record["runs"]["short"] = {"exit": code, "said": said, "page": last,
                                    **judge_short(ended, last, said, code, EXIT_REFUSED)}
+
+        code, said = _command(out, "6-wrong-app", ends, WRONG_APP)
+        time.sleep(0.5)
+        final = _summary(process.pid) or last
+        record["runs"]["wrong_app"] = {"exit": code, "said": said, "page": final,
+                                       **judge_wrong_app(last, final, said, code, EXIT_REFUSED, WRONG_APP)}
     finally:
         process.terminate()
         try:
@@ -365,7 +397,7 @@ def main() -> None:
         except Exception as exc:  # noqa: BLE001 - the closing readings are reported, never raised
             record["closing_readings_error"] = f"{type(exc).__name__}: {str(exc)[:120]}"
         runs = record["runs"]
-        record["held"] = (len(runs) == 5 and all(run["held"] for run in runs.values())
+        record["held"] = (len(runs) == 6 and all(run["held"] for run in runs.values())
                           and record["chrome_closed"] and record.get("left_button_down_at_end") is False
                           and record.get("registry_at_end", {}).get("requests") == 0)
         (out / "run.json").write_text(json.dumps(record, indent=1))

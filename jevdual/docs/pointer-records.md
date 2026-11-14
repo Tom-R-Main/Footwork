@@ -94,9 +94,35 @@ A session's `footwork do drag` uses the same engine. When neither post of its re
 returns, its command's claim is kept in the same way, and the receipt's error begins
 with the recover command and the token.
 
-Two refusals (exit 4) exist to keep those promises: `no_stop_signals`, when the command
-cannot take the stop signals (it is not on its process's main thread), and
-`app_unreadable`, when the window list cannot be read and no `--app` was given.
+`no_stop_signals` (exit 4) is refused for the same reason: the command cannot take the
+stop signals when it is not on its process's main thread.
+
+### Where the press goes
+
+`--app NAME` is required. It names the application both points are in. The command
+presses only when a system-wide accessibility hit test at the start point and at the end
+point both find that application. It reads them before anything is posted and again
+immediately before the press.
+
+| Refusal | When |
+|---|---|
+| `app_required` (exit 4) | No `--app`. |
+| `point_covered` (exit 4; exit 5 as `approach_aborted:point_covered` after an approach) | A hit test at one end found another application: a system prompt, an alert, another application's window. `reason` names the end, what was found and what was named. |
+| `recipient_unreadable` (exit 4 or 5) | The hit test could not be read. |
+
+What this does and does not establish:
+
+- It refuses a press that would land on a system prompt or on another application.
+- It does not refuse for a window that only overlaps a point and passes input through
+  (a dictation or recording overlay): the hit test does not find such a window.
+- It is accessibility's answer at two points at two moments. It is not the event
+  system's own routing, it does not cover the path between the points, and a window that
+  appears after the second reading is not seen.
+- It establishes the application, not what inside it is at the point. A menu, a popover
+  or a dialog of the same application passes. That is the caller's to know.
+
+A caller filming a take should still look at the screen before it starts. The command no
+longer depends on that for the press itself.
 
 SIGINT, SIGTERM and SIGHUP stop a drag the way foreign input does (Escape, then one
 release where the drag had got to), and the command still prints its JSON; `stopped_by`
@@ -104,7 +130,6 @@ names the signal. SIGKILL cannot be handled: the registry then marks the request
 orphaned, and the button is whatever it was.
 
 `button_up_ms_after_release` is the time from the return of the release's post to the
-reading that said the button was up. `claimed` lists what was claimed: the desktop, and
-the application whose window is under the start point (`app`) or the one named with
-`--app`. `--duration` takes at most 30 s, and a slower drag has more posts along the same
+reading that said the button was up. `claimed` lists what was claimed: the desktop and
+the application named with `--app`. `--duration` takes at most 30 s, and a slower drag has more posts along the same
 path, none planned further apart than the plain drag's.

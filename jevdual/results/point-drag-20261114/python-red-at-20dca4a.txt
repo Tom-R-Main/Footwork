@@ -1,0 +1,11 @@
+# tests/test_drag_points.py as committed with the fix, against the source at 20dca4a. One change for this run only:
+# the fixture's patch of point_drag.app_at (absent at 20dca4a) is given raising=False, so each test reaches its own assertion.
+FAILED tests/test_drag_points.py::test_the_application_has_to_be_named
+FAILED tests/test_drag_points.py::test_an_end_that_lands_on_another_application_is_refused_with_nothing_posted[covered0-start]
+FAILED tests/test_drag_points.py::test_an_end_that_lands_on_another_application_is_refused_with_nothing_posted[covered1-end]
+FAILED tests/test_drag_points.py::test_a_start_covered_after_the_approach_is_not_pressed
+FAILED tests/test_drag_points.py::test_a_start_covered_just_before_the_press_with_no_approach_posts_nothing
+FAILED tests/test_drag_points.py::test_a_hit_test_that_cannot_be_read_is_refused
+FAILED tests/test_drag_points.py::test_the_application_is_matched_as_the_registry_names_it[canvas app-Canvas App]
+FAILED tests/test_drag_points.py::test_the_application_is_matched_as_the_registry_names_it[Chrome-Google Chrome]
+8 failed, 47 passed in 6.72s

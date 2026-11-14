@@ -9,8 +9,14 @@ It belongs to no session. A browser session cannot share a browser with another 
 a filmed session's take ends when anything else moves the pointer between its commands; the caller
 this is for does both. So the command makes no DevTools connection and reads no window's contents.
 What a session's command gets from its entrypoint it takes itself: the desktop and the application
-whose window is under the start point, claimed in the coordination registry for as long as it runs
-and refused at once when another owner holds either.
+the caller names, claimed in the coordination registry for as long as it runs and refused at once
+when another owner holds either.
+
+The caller names the application (``--app``) and the command checks it: an accessibility hit test at
+each end of the drag has to find that application, before anything is posted and again immediately
+before the press (PTD15, PTD16). A system prompt over a drag point is refused; a window that only
+overlaps one is not. This is a reading by accessibility of what is at two points at two moments. It
+is not the event system's own routing, and it says nothing of what inside the application is there.
 
 The button is the thing it must not get wrong (PTD9, PTD10). Told to stop (SIGINT, SIGTERM, SIGHUP)
 it stops the drag as foreign input does, with Escape and a release, and reports before it exits. A
@@ -74,22 +80,29 @@ def _on_a_display(point: Point, displays: list[Rect]) -> bool:
     return any(x <= point[0] < x + w and y <= point[1] < y + h for x, y, w, h in displays)
 
 
-def app_under(point: Point) -> str | None:
-    """The application that owns the frontmost ordinary window containing ``point``, by the window
-    server's list (front to back, owner names only: no window is opened or read). None over none."""
-    import Quartz
+def app_at(point: Point) -> str:
+    """The application a system-wide accessibility hit test finds at a screen point: the nearest thing
+    to "what would take a press here" that can be read without posting one. It is not the window
+    server's list: a window that only overlaps the point and passes input through is not found, and a
+    system prompt in front of everything is (PTD15). Raises ``LookupError`` when it cannot say."""
+    import AppKit
+    from ApplicationServices import (
+        AXUIElementCopyElementAtPosition,
+        AXUIElementCreateSystemWide,
+        AXUIElementGetPid,
+    )
 
-    listed = Quartz.CGWindowListCopyWindowInfo(
-        Quartz.kCGWindowListOptionOnScreenOnly | Quartz.kCGWindowListExcludeDesktopElements,
-        Quartz.kCGNullWindowID) or ()
-    for window in listed:
-        bounds = window.get("kCGWindowBounds") or {}
-        if window.get("kCGWindowLayer", 0) != 0 or not window.get("kCGWindowAlpha", 1):
-            continue
-        x, y = bounds.get("X", 0.0), bounds.get("Y", 0.0)
-        if x <= point[0] < x + bounds.get("Width", 0.0) and y <= point[1] < y + bounds.get("Height", 0.0):
-            return str(window.get("kCGWindowOwnerName") or "") or None
-    return None
+    error, element = AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), point[0], point[1], None)
+    if error != 0 or element is None:
+        raise LookupError(f"accessibility error {error} at {point[0]:g},{point[1]:g}")
+    error, pid = AXUIElementGetPid(element, None)
+    if error != 0:
+        raise LookupError(f"accessibility error {error} reading the owner at {point[0]:g},{point[1]:g}")
+    running = AppKit.NSRunningApplication.runningApplicationWithProcessIdentifier_(pid)
+    name = str(running.localizedName() or "") if running is not None else ""
+    if not name:
+        raise LookupError(f"process {pid} at {point[0]:g},{point[1]:g} has no application name")
+    return name
 
 
 def add_parser(sub: Any) -> None:
@@ -97,7 +110,8 @@ def add_parser(sub: Any) -> None:
         "drag-points",
         help="drag the real pointer from one screen point to another (no session, no browser connection)",
         description="Move the real pointer to X0 Y0 with no button, press, drag to X1 Y1 and release. Global "
-        "screen points, origin top left. Prints one JSON object. Exit 0: released at the end point. "
+        "screen points, origin top left, both in the application named with --app. Prints one JSON "
+        "object. Exit 0: released at the end point. "
         f"{EXIT_REFUSED}: nothing posted. {EXIT_APPROACH}: the pointer was moved and the button never "
         f"pressed. {EXIT_ABORTED}: pressed, and released otherwise than asked (it says where and why). "
         f"{EXIT_HELD}: pressed, and the button cannot be said to be up; the desktop stays claimed.",
@@ -109,8 +123,8 @@ def add_parser(sub: Any) -> None:
                     help="must be exclusive_desktop: the command moves the real pointer and holds its button")
     dp.add_argument("--owner", help="who the desktop is claimed for in the coordination registry "
                     "(default: this process)")
-    dp.add_argument("--app", metavar="NAME", help="the application to claim with the desktop (default: "
-                    "the one whose window is under the start point)")
+    dp.add_argument("--app", metavar="NAME", help="required: the application both points are in. It is "
+                    "claimed with the desktop, and the drag is refused unless a hit test at each end finds it")
     dp.add_argument("--duration", type=float, metavar="SECONDS",
                     help="how long the drag's motion takes, press hold and settle apart (default: the "
                     f"planner's, about 0.6 s for a short drag); not shorter than that, at most {MAX_DURATION_S:g}")
@@ -205,16 +219,31 @@ async def cmd_drag_points(args: Any) -> int:
         report.update(outcome="refused", code=code, reason=reason, stopped_by=stop["by"])
         return _say(report, EXIT_REFUSED, f"not dragged: {code}: {reason}")
 
-    def not_pressed(cause: str, moves: int | None) -> int:
+    def not_pressed(cause: str, moves: int | None, reason: str = "") -> int:
         """An exit before the press: exit 4 when nothing was posted, 5 when the pointer was moved."""
         if moves == 0:
-            return refused(cause.partition(":")[0], f"stopped before anything was posted ({cause})")
+            return refused(cause.partition(":")[0], reason or f"stopped before anything was posted ({cause})")
         report.update(outcome=f"approach_aborted:{cause}", pointer_after=list(poster.location()),
                       button_up=not poster.left_button_down(), stopped_by=stop["by"])
+        if reason:
+            report["reason"] = reason
         return _say(report, EXIT_APPROACH,
-                    f"not dragged: stopped ({cause}) after "
+                    f"not dragged: stopped ({reason or cause}) after "
                     + ("an unknown number of" if moves is None else str(moves))
                     + " moves; the button was never pressed")
+
+    def elsewhere() -> tuple[str, str] | None:
+        """A refusal code and reason when either end does not hit the named application; None when both do."""
+        for name, point in (("start", start), ("end", end)):
+            try:
+                found = app_at(point)
+            except Exception as exc:  # noqa: BLE001 - not knowing what is there is not knowing the application is
+                return "recipient_unreadable", (f"what is at the {name} point {point[0]:g},{point[1]:g} could not "
+                                                f"be read ({type(exc).__name__}: {str(exc)[:80]})")
+            if app_resource(found) != app_resource(app):
+                return "point_covered", (f"the {name} point {point[0]:g},{point[1]:g} is on {found}, not {app}: "
+                                         "a press there would not go where it was meant")
+        return None
 
     if getattr(args, "mode", None) != "exclusive_desktop":
         return refused("requires_desktop", "drag-points moves the real pointer and holds its button; "
@@ -244,13 +273,13 @@ async def cmd_drag_points(args: Any) -> int:
 
     app = getattr(args, "app", None)
     if not app:
-        try:
-            app = app_under(start)
-        except Exception as exc:  # noqa: BLE001 - not knowing what is under the start is not knowing nothing is
-            return refused("app_unreadable", f"the window list could not be read ({type(exc).__name__}), so the "
-                           "application under the start point is unknown; name it with --app")
-    resources = ["desktop", *([app_resource(app)] if app else [])]
-    report.update(app=app or None, claimed=sorted(resources))
+        return refused("app_required", "name the application both points are in with --app; the command "
+                       "presses only where a hit test finds it")
+    found_elsewhere = elsewhere()
+    if found_elsewhere is not None:
+        return refused(*found_elsewhere)
+    resources = ["desktop", app_resource(app)]
+    report.update(app=app, claimed=sorted(resources))
     owner = getattr(args, "owner", None) or f"drag-points:{os.getpid()}"
     registry = Coordinator()
     # the signals are taken before the desktop is, and given back after it: a process ended by one while
@@ -280,7 +309,7 @@ async def cmd_drag_points(args: Any) -> int:
             held = registry.status()
             others = [row["resources"] for row in held["requests"] if row["state"] != "waiting"]
             others += [row["resources"] for row in held["reservations"] if row["state"] == "active"]
-            if app and not any(conflicts(["desktop"], other) for other in others):
+            if not any(conflicts(["desktop"], other) for other in others):
                 return refused("app_busy", f"another owner holds {app} in footwork's registry ({exc})")
             return refused("desktop_busy", f"another owner holds this desktop in footwork's registry ({exc})")
         if stopped():
@@ -313,6 +342,10 @@ async def cmd_drag_points(args: Any) -> int:
                     return not_pressed(approach.outcome.removeprefix("aborted:"), approach.posted_drags)
             if stopped():
                 return not_pressed("cancelled", report["approach_moves"])
+            # read again where the pointer now is: what was true before the approach may not be now
+            found_elsewhere = elsewhere()
+            if found_elsewhere is not None:
+                return not_pressed(*found_elsewhere[:1], report["approach_moves"], found_elsewhere[1])
 
             trace = GestureTrace(SimpleNamespace(trace_path=getattr(args, "record", None) or None,
                                                  window=(None, None), content=(None, None)),
