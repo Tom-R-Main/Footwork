@@ -1,0 +1,44 @@
+# tests/test_drag_points.py as committed with the fix, run against the source at a4a0524.
+# One change for this run only: the fixture's patch of point_drag.app_under (absent at a4a0524) is given raising=False,
+# so each test reaches its own assertion instead of failing in the fixture.
+FAILED tests/test_drag_points.py::test_a_duration_slows_the_drag_along_the_same_path_and_posts_as_often[1.5]
+FAILED tests/test_drag_points.py::test_a_duration_slows_the_drag_along_the_same_path_and_posts_as_often[5]
+FAILED tests/test_drag_points.py::test_a_duration_slows_the_drag_along_the_same_path_and_posts_as_often[30]
+FAILED tests/test_drag_points.py::test_a_duration_that_cannot_be_kept_is_refused_with_nothing_posted[nan-duration_invalid]
+FAILED tests/test_drag_points.py::test_a_duration_that_cannot_be_kept_is_refused_with_nothing_posted[inf-duration_invalid]
+FAILED tests/test_drag_points.py::test_a_duration_that_cannot_be_kept_is_refused_with_nothing_posted[-inf-duration_invalid]
+FAILED tests/test_drag_points.py::test_a_duration_that_cannot_be_kept_is_refused_with_nothing_posted[0-duration_invalid]
+FAILED tests/test_drag_points.py::test_a_duration_that_cannot_be_kept_is_refused_with_nothing_posted[-2-duration_invalid]
+FAILED tests/test_drag_points.py::test_a_release_the_system_has_not_yet_shown_is_waited_for_and_reported_up[False]
+FAILED tests/test_drag_points.py::test_a_release_the_system_has_not_yet_shown_is_waited_for_and_reported_up[True]
+FAILED tests/test_drag_points.py::test_a_button_that_reads_down_after_the_wait_gets_one_more_release
+FAILED tests/test_drag_points.py::test_a_button_that_never_reads_up_keeps_the_desktop_claimed_and_says_how_to_clear_it
+FAILED tests/test_drag_points.py::test_a_press_whose_post_fails_is_still_released_and_reported
+FAILED tests/test_drag_points.py::test_a_drag_post_that_fails_releases_where_the_drag_had_got_to
+FAILED tests/test_drag_points.py::test_a_release_whose_post_fails_once_is_posted_again
+FAILED tests/test_drag_points.py::test_a_release_that_cannot_be_posted_keeps_the_desktop_claimed
+FAILED tests/test_drag_points.py::test_a_claim_revoked_before_anything_is_posted_reports_nothing_posted[True]
+FAILED tests/test_drag_points.py::test_a_claim_revoked_before_anything_is_posted_reports_nothing_posted[False]
+FAILED tests/test_drag_points.py::test_a_claim_revoked_during_the_drag_cancels_it_and_releases_once
+FAILED tests/test_drag_points.py::test_the_application_under_the_start_is_claimed_with_the_desktop
+FAILED tests/test_drag_points.py::test_a_start_point_over_no_window_claims_the_desktop_alone
+FAILED tests/test_drag_points.py::test_a_command_told_to_stop_while_the_button_is_down_releases_it_and_reports[15]
+FAILED tests/test_drag_points.py::test_a_command_told_to_stop_while_the_button_is_down_releases_it_and_reports[1]
+FAILED tests/test_drag_points.py::test_a_command_told_to_stop_while_the_button_is_down_releases_it_and_reports[2]
+FAILED tests/test_drag_points.py::test_a_command_told_to_stop_during_the_approach_never_presses
+FAILED tests/test_drag_points.py::test_the_command_is_one_the_launcher_lists
+26 failed, 19 passed in 1.64s
+
+# tests/test_drag.py as committed with the fix, against the engine at a4a0524 (no change to the test file for this run):
+        release, failures = poster.up, [RuntimeError("the post failed")]
+E           RuntimeError: the post failed
+        release, failures = poster.up, [RuntimeError("the post failed")]
+E           RuntimeError: the post failed
+            raise RuntimeError("the post failed")
+FAILED tests/test_drag.py::test_a_press_that_raises_after_posting_is_released
+FAILED tests/test_drag.py::test_a_press_refused_for_ownership_posts_nothing_and_releases_nothing
+FAILED tests/test_drag.py::test_a_release_whose_post_raises_is_posted_once_more[False]
+FAILED tests/test_drag.py::test_a_release_whose_post_raises_is_posted_once_more[True]
+FAILED tests/test_drag.py::test_a_release_that_fails_twice_is_raised_and_not_tried_a_third_time
+FAILED tests/test_drag.py::test_a_completed_drag_reports_its_press_and_one_posted_release
+6 failed, 14 passed in 0.16s

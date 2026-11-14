@@ -1,0 +1,1 @@
+{"outcome": "refused", "start": [322.0, 442.0], "end": [325.0, 444.0], "pressed": false, "pressed_at": null, "pressed_ns": null, "released_at": null, "released_ns": null, "clock": "CLOCK_UPTIME_RAW", "approach_moves": 0, "drags": 0, "escape_sent": false, "code": "drag_too_short", "reason": "3.6 pt is under 6.0 pt"}

@@ -1,0 +1,249 @@
+{
+ "gate": {
+  "polls": 1,
+  "idle_s": 491.8,
+  "waited_s": 0.0
+ },
+ "front_pid_at_start": 45451,
+ "runs": {
+  "drag": {
+   "exit": 0,
+   "said": {
+    "outcome": "dropped",
+    "start": [
+     322.0,
+     442.0
+    ],
+    "end": [
+     542.0,
+     582.0
+    ],
+    "pressed": true,
+    "pressed_at": [
+     322.0,
+     442.0
+    ],
+    "pressed_ns": 1602004967657166,
+    "released_at": [
+     542.0,
+     582.0
+    ],
+    "released_ns": 1602005879047541,
+    "clock": "CLOCK_UPTIME_RAW",
+    "approach_moves": 86,
+    "drags": 77,
+    "escape_sent": false,
+    "planned_motion_s": 0.6361,
+    "press_hold_s": 0.12,
+    "settle_s": 0.15,
+    "pointer_before": [
+     623.50390625,
+     713.16796875
+    ],
+    "max_gap_ms": 12.86,
+    "pointer_after": [
+     542.0,
+     582.0
+    ],
+    "button_up": true,
+    "clock_pair": {
+     "ns": 1602005891554874,
+     "unix_s": 1794634267.4135191
+    }
+   },
+   "page": {
+    "downs": 1,
+    "ups": 1,
+    "cancels": 0,
+    "held_moves": 40,
+    "loose_moves": 0,
+    "off_canvas": 0,
+    "untrusted": 0,
+    "max_move_gap_ms": 26,
+    "keydowns": 0,
+    "down_at": [
+     300.0,
+     300.0
+    ],
+    "up_at": [
+     520.0,
+     440.0
+    ]
+   },
+   "checks": {
+    "exit_0_and_dropped": true,
+    "one_press_one_release": true,
+    "all_trusted": true,
+    "all_on_the_canvas": true,
+    "pressed_within_1px": true,
+    "released_within_1px": true,
+    "button_held_through_every_move": true,
+    "no_gap_over_the_limit": true,
+    "button_reads_up": true
+   },
+   "held": true
+  },
+  "interrupted": {
+   "exit": 6,
+   "said": {
+    "outcome": "aborted:pointer_contended:key_down",
+    "start": [
+     322.0,
+     442.0
+    ],
+    "end": [
+     542.0,
+     582.0
+    ],
+    "pressed": true,
+    "pressed_at": [
+     322.0,
+     442.0
+    ],
+    "pressed_ns": 1602006783738958,
+    "released_at": [
+     340.8725948333261,
+     450.6774867006095
+    ],
+    "released_ns": 1602007393294208,
+    "clock": "CLOCK_UPTIME_RAW",
+    "approach_moves": 77,
+    "drags": 14,
+    "escape_sent": true,
+    "planned_motion_s": 2.5,
+    "press_hold_s": 0.12,
+    "settle_s": 0.15,
+    "pointer_before": [
+     542.0,
+     582.0
+    ],
+    "max_gap_ms": 34.76,
+    "pointer_after": [
+     340.8725891113281,
+     450.677490234375
+    ],
+    "button_up": false,
+    "clock_pair": {
+     "ns": 1602007393497395,
+     "unix_s": 1794634268.915477
+    }
+   },
+   "page": {
+    "downs": 2,
+    "ups": 2,
+    "cancels": 0,
+    "held_moves": 14,
+    "loose_moves": 0,
+    "off_canvas": 0,
+    "untrusted": 0,
+    "max_move_gap_ms": 38,
+    "keydowns": 2,
+    "down_at": [
+     300.0,
+     300.0
+    ],
+    "up_at": [
+     318.9,
+     308.7
+    ]
+   },
+   "checks": {
+    "exit_says_pressed_then_aborted": true,
+    "one_press": true,
+    "one_release_or_cancel": true,
+    "escape_was_sent": true,
+    "released_short_of_the_end": true,
+    "all_trusted": true,
+    "all_on_the_canvas": true,
+    "button_reads_up": false
+   },
+   "held": false
+  },
+  "short": {
+   "exit": 4,
+   "said": {
+    "outcome": "refused",
+    "start": [
+     322.0,
+     442.0
+    ],
+    "end": [
+     325.0,
+     444.0
+    ],
+    "pressed": false,
+    "pressed_at": null,
+    "pressed_ns": null,
+    "released_at": null,
+    "released_ns": null,
+    "clock": "CLOCK_UPTIME_RAW",
+    "approach_moves": 0,
+    "drags": 0,
+    "escape_sent": false,
+    "code": "drag_too_short",
+    "reason": "3.6 pt is under 6.0 pt"
+   },
+   "page": {
+    "downs": 2,
+    "ups": 2,
+    "cancels": 0,
+    "held_moves": 14,
+    "loose_moves": 0,
+    "off_canvas": 0,
+    "untrusted": 0,
+    "max_move_gap_ms": 38,
+    "keydowns": 2,
+    "down_at": [
+     300.0,
+     300.0
+    ],
+    "up_at": [
+     318.9,
+     308.7
+    ]
+   },
+   "checks": {
+    "refused_too_short": true,
+    "the_page_saw_nothing": true
+   },
+   "held": true
+  }
+ },
+ "chrome_pid": 68423,
+ "content": [
+  22.0,
+  142.0,
+  1200.0,
+  813.0
+ ],
+ "content_shown_s": 0.83,
+ "page_at_start": {
+  "downs": 0,
+  "ups": 0,
+  "cancels": 0,
+  "held_moves": 0,
+  "loose_moves": 0,
+  "off_canvas": 0,
+  "untrusted": 0,
+  "max_move_gap_ms": 0,
+  "keydowns": 0,
+  "down_at": null,
+  "up_at": null
+ },
+ "screen_points": [
+  322.0,
+  442.0,
+  542.0,
+  582.0
+ ],
+ "interrupted_at": 1794634268.882634,
+ "chrome_closed": true,
+ "profile_removed": true,
+ "front_pid_at_end": 45451,
+ "left_button_down_at_end": false,
+ "registry_at_end": {
+  "requests": 0,
+  "active_reservations": 0
+ },
+ "held": false
+}

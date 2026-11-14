@@ -1,0 +1,54 @@
+{
+ "held": false,
+ "stopped": null,
+ "runs": {
+  "drag": {
+   "exit": 0,
+   "held": true,
+   "failed": []
+  },
+  "slow": {
+   "exit": 0,
+   "held": true,
+   "failed": []
+  },
+  "interrupted": {
+   "exit": 6,
+   "held": false,
+   "failed": [
+    "button_held_through_every_move"
+   ]
+  },
+  "stopped": {
+   "exit": 6,
+   "held": false,
+   "failed": [
+    "button_held_through_every_move"
+   ]
+  },
+  "short": {
+   "exit": 4,
+   "held": true,
+   "failed": []
+  },
+  "wrong_app": {
+   "exit": 4,
+   "held": true,
+   "failed": []
+  }
+ },
+ "chrome": [
+  17307,
+  true
+ ],
+ "front": [
+  45451,
+  45451
+ ],
+ "button_down": false,
+ "registry": {
+  "requests": 0,
+  "orphaned": [],
+  "active_reservations": 0
+ }
+}

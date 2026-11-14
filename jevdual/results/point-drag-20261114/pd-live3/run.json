@@ -1,0 +1,535 @@
+{
+ "gate": {
+  "polls": 3,
+  "idle_s": 10.2,
+  "waited_s": 10.1
+ },
+ "front_pid_at_start": 45451,
+ "runs": {
+  "drag": {
+   "exit": 0,
+   "said": {
+    "outcome": "dropped",
+    "start": [
+     322.0,
+     442.0
+    ],
+    "end": [
+     542.0,
+     582.0
+    ],
+    "pressed": true,
+    "pressed_at": [
+     322.0,
+     442.0
+    ],
+    "pressed_ns": 1633934373424125,
+    "released_at": [
+     542.0,
+     582.0
+    ],
+    "released_ns": 1633935289754708,
+    "clock": "CLOCK_UPTIME_RAW",
+    "approach_moves": 90,
+    "drags": 77,
+    "escape_sent": false,
+    "releases_posted": 1,
+    "stopped_by": null,
+    "claim_kept": null,
+    "planned_motion_s": 0.6361,
+    "press_hold_s": 0.12,
+    "settle_s": 0.15,
+    "app": "Google Chrome",
+    "claimed": [
+     "app/google%20chrome",
+     "desktop"
+    ],
+    "pointer_before": [
+     405.01953125,
+     919.69140625
+    ],
+    "max_gap_ms": 9.14,
+    "pointer_after": [
+     542.0,
+     582.0
+    ],
+    "button_up": true,
+    "button_up_ms_after_release": 0.16,
+    "clock_pair": {
+     "ns": 1633935289941250,
+     "unix_s": 1794666196.853514
+    }
+   },
+   "page": {
+    "downs": 1,
+    "ups": 1,
+    "cancels": 0,
+    "held_moves": 40,
+    "loose_moves": 0,
+    "off_canvas": 0,
+    "untrusted": 0,
+    "max_move_gap_ms": 26,
+    "keydowns": 0,
+    "down_at": [
+     300.0,
+     300.0
+    ],
+    "up_at": [
+     520.0,
+     440.0
+    ]
+   },
+   "checks": {
+    "exit_0_and_dropped": true,
+    "one_press_one_release": true,
+    "all_trusted": true,
+    "all_on_the_canvas": true,
+    "pressed_within_1px": true,
+    "released_within_1px": true,
+    "button_held_through_every_move": true,
+    "no_gap_over_the_limit": true,
+    "button_reads_up": true,
+    "claimed_the_browser_named": true
+   },
+   "held": true
+  },
+  "slow": {
+   "exit": 0,
+   "said": {
+    "outcome": "dropped",
+    "start": [
+     322.0,
+     442.0
+    ],
+    "end": [
+     542.0,
+     582.0
+    ],
+    "pressed": true,
+    "pressed_at": [
+     322.0,
+     442.0
+    ],
+    "pressed_ns": 1633936239779125,
+    "released_at": [
+     542.0,
+     582.0
+    ],
+    "released_ns": 1633939511192333,
+    "clock": "CLOCK_UPTIME_RAW",
+    "approach_moves": 77,
+    "drags": 385,
+    "escape_sent": false,
+    "releases_posted": 1,
+    "stopped_by": null,
+    "claim_kept": null,
+    "planned_motion_s": 3.0,
+    "press_hold_s": 0.12,
+    "settle_s": 0.15,
+    "app": "Google Chrome",
+    "claimed": [
+     "app/google%20chrome",
+     "desktop"
+    ],
+    "pointer_before": [
+     542.0,
+     582.0
+    ],
+    "max_gap_ms": 10.81,
+    "pointer_after": [
+     542.0,
+     582.0
+    ],
+    "button_up": true,
+    "button_up_ms_after_release": 0.27,
+    "clock_pair": {
+     "ns": 1633939511518166,
+     "unix_s": 1794666201.075073
+    }
+   },
+   "page": {
+    "downs": 2,
+    "ups": 2,
+    "cancels": 0,
+    "held_moves": 182,
+    "loose_moves": 0,
+    "off_canvas": 0,
+    "untrusted": 0,
+    "max_move_gap_ms": 24,
+    "keydowns": 0,
+    "down_at": [
+     300.0,
+     300.0
+    ],
+    "up_at": [
+     520.0,
+     440.0
+    ]
+   },
+   "checks": {
+    "exit_0_and_dropped": true,
+    "one_press_one_release": true,
+    "all_trusted": true,
+    "all_on_the_canvas": true,
+    "pressed_within_1px": true,
+    "released_within_1px": true,
+    "button_held_through_every_move": true,
+    "no_gap_over_the_limit": true,
+    "button_reads_up": true,
+    "claimed_the_browser_named": true
+   },
+   "held": true
+  },
+  "interrupted": {
+   "exit": 6,
+   "said": {
+    "outcome": "aborted:pointer_contended:key_down",
+    "start": [
+     322.0,
+     442.0
+    ],
+    "end": [
+     542.0,
+     582.0
+    ],
+    "pressed": true,
+    "pressed_at": [
+     322.0,
+     442.0
+    ],
+    "pressed_ns": 1633940620294916,
+    "released_at": [
+     341.54375563652263,
+     450.99938082814424
+    ],
+    "released_ns": 1633941211533041,
+    "clock": "CLOCK_UPTIME_RAW",
+    "approach_moves": 77,
+    "drags": 57,
+    "escape_sent": true,
+    "releases_posted": 1,
+    "stopped_by": null,
+    "claim_kept": null,
+    "planned_motion_s": 2.5,
+    "press_hold_s": 0.12,
+    "settle_s": 0.15,
+    "app": "Google Chrome",
+    "claimed": [
+     "app/google%20chrome",
+     "desktop"
+    ],
+    "pointer_before": [
+     542.0,
+     582.0
+    ],
+    "max_gap_ms": 8.99,
+    "pointer_after": [
+     341.54376220703125,
+     450.9993896484375
+    ],
+    "button_up": true,
+    "button_up_ms_after_release": 11.41,
+    "clock_pair": {
+     "ns": 1633941222966187,
+     "unix_s": 1794666202.7865129
+    }
+   },
+   "page": {
+    "downs": 3,
+    "ups": 3,
+    "cancels": 0,
+    "held_moves": 29,
+    "loose_moves": 1,
+    "off_canvas": 0,
+    "untrusted": 0,
+    "max_move_gap_ms": 23,
+    "keydowns": 2,
+    "down_at": [
+     300.0,
+     300.0
+    ],
+    "up_at": [
+     319.5,
+     309.0
+    ]
+   },
+   "checks": {
+    "exit_says_pressed_then_stopped": true,
+    "one_press": true,
+    "one_release_and_no_cancel": true,
+    "pressed_within_1px": true,
+    "released_where_it_said": true,
+    "released_short_of_the_end": true,
+    "button_held_through_every_move": false,
+    "no_gap_over_the_limit": true,
+    "escape_was_sent": true,
+    "no_second_release": true,
+    "all_trusted": true,
+    "all_on_the_canvas": true,
+    "button_reads_up": true,
+    "claimed_the_browser_named": true
+   },
+   "held": false
+  },
+  "stopped": {
+   "exit": 6,
+   "said": {
+    "outcome": "aborted:cancelled",
+    "start": [
+     322.0,
+     442.0
+    ],
+    "end": [
+     542.0,
+     582.0
+    ],
+    "pressed": true,
+    "pressed_at": [
+     322.0,
+     442.0
+    ],
+    "pressed_ns": 1633942174116083,
+    "released_at": [
+     337.75922951191603,
+     449.2013246914312
+    ],
+    "released_ns": 1633942717436000,
+    "clock": "CLOCK_UPTIME_RAW",
+    "approach_moves": 72,
+    "drags": 51,
+    "escape_sent": true,
+    "releases_posted": 1,
+    "stopped_by": "SIGTERM",
+    "claim_kept": null,
+    "planned_motion_s": 2.5,
+    "press_hold_s": 0.12,
+    "settle_s": 0.15,
+    "app": "Google Chrome",
+    "claimed": [
+     "app/google%20chrome",
+     "desktop"
+    ],
+    "pointer_before": [
+     341.54376220703125,
+     450.9993896484375
+    ],
+    "max_gap_ms": 8.87,
+    "pointer_after": [
+     337.75921630859375,
+     449.2013244628906
+    ],
+    "button_up": true,
+    "button_up_ms_after_release": 6.98,
+    "clock_pair": {
+     "ns": 1633942724441583,
+     "unix_s": 1794666204.287982
+    }
+   },
+   "page": {
+    "downs": 4,
+    "ups": 4,
+    "cancels": 0,
+    "held_moves": 26,
+    "loose_moves": 1,
+    "off_canvas": 0,
+    "untrusted": 0,
+    "max_move_gap_ms": 32,
+    "keydowns": 3,
+    "down_at": [
+     300.0,
+     300.0
+    ],
+    "up_at": [
+     315.8,
+     307.2
+    ]
+   },
+   "checks": {
+    "exit_says_pressed_then_stopped": true,
+    "one_press": true,
+    "one_release_and_no_cancel": true,
+    "pressed_within_1px": true,
+    "released_where_it_said": true,
+    "released_short_of_the_end": true,
+    "button_held_through_every_move": false,
+    "no_gap_over_the_limit": true,
+    "escape_was_sent": true,
+    "no_second_release": true,
+    "all_trusted": true,
+    "all_on_the_canvas": true,
+    "button_reads_up": true,
+    "claimed_the_browser_named": true,
+    "says_what_stopped_it": true,
+    "claim_given_up": true
+   },
+   "held": false
+  },
+  "short": {
+   "exit": 4,
+   "said": {
+    "outcome": "refused",
+    "start": [
+     322.0,
+     442.0
+    ],
+    "end": [
+     325.0,
+     444.0
+    ],
+    "pressed": false,
+    "pressed_at": null,
+    "pressed_ns": null,
+    "released_at": null,
+    "released_ns": null,
+    "clock": "CLOCK_UPTIME_RAW",
+    "approach_moves": 0,
+    "drags": 0,
+    "escape_sent": false,
+    "releases_posted": 0,
+    "stopped_by": null,
+    "claim_kept": null,
+    "code": "drag_too_short",
+    "reason": "3.6 pt is under 6.0 pt"
+   },
+   "page": {
+    "downs": 4,
+    "ups": 4,
+    "cancels": 0,
+    "held_moves": 26,
+    "loose_moves": 1,
+    "off_canvas": 0,
+    "untrusted": 0,
+    "max_move_gap_ms": 32,
+    "keydowns": 3,
+    "down_at": [
+     300.0,
+     300.0
+    ],
+    "up_at": [
+     315.8,
+     307.2
+    ]
+   },
+   "checks": {
+    "refused_too_short": true,
+    "the_page_saw_nothing": true
+   },
+   "held": true
+  },
+  "wrong_app": {
+   "exit": 4,
+   "said": {
+    "outcome": "refused",
+    "start": [
+     322.0,
+     442.0
+    ],
+    "end": [
+     542.0,
+     582.0
+    ],
+    "pressed": false,
+    "pressed_at": null,
+    "pressed_ns": null,
+    "released_at": null,
+    "released_ns": null,
+    "clock": "CLOCK_UPTIME_RAW",
+    "approach_moves": 0,
+    "drags": 0,
+    "escape_sent": false,
+    "releases_posted": 0,
+    "stopped_by": null,
+    "claim_kept": null,
+    "planned_motion_s": 0.6361,
+    "press_hold_s": 0.12,
+    "settle_s": 0.15,
+    "code": "point_covered",
+    "reason": "the start point 322,442 is on Google Chrome, not Finder: a hit test there finds another application"
+   },
+   "page": {
+    "downs": 4,
+    "ups": 4,
+    "cancels": 0,
+    "held_moves": 26,
+    "loose_moves": 1,
+    "off_canvas": 0,
+    "untrusted": 0,
+    "max_move_gap_ms": 32,
+    "keydowns": 3,
+    "down_at": [
+     300.0,
+     300.0
+    ],
+    "up_at": [
+     315.8,
+     307.2
+    ]
+   },
+   "page_read": {
+    "downs": 4,
+    "ups": 4,
+    "cancels": 0,
+    "held_moves": 26,
+    "loose_moves": 1,
+    "off_canvas": 0,
+    "untrusted": 0,
+    "max_move_gap_ms": 32,
+    "keydowns": 3,
+    "down_at": [
+     300.0,
+     300.0
+    ],
+    "up_at": [
+     315.8,
+     307.2
+    ]
+   },
+   "checks": {
+    "refused_as_covered": true,
+    "found_the_browser_at_the_start": true,
+    "says_nothing_was_posted": true,
+    "a_fresh_summary_was_read": true,
+    "the_page_saw_nothing": true
+   },
+   "held": true
+  }
+ },
+ "chrome_pid": 17307,
+ "content": [
+  22.0,
+  142.0,
+  1200.0,
+  813.0
+ ],
+ "content_shown_s": 1.41,
+ "page_at_start": {
+  "downs": 0,
+  "ups": 0,
+  "cancels": 0,
+  "held_moves": 0,
+  "loose_moves": 0,
+  "off_canvas": 0,
+  "untrusted": 0,
+  "max_move_gap_ms": 0,
+  "keydowns": 0,
+  "down_at": null,
+  "up_at": null
+ },
+ "screen_points": [
+  322.0,
+  442.0,
+  542.0,
+  582.0
+ ],
+ "app": "Google Chrome",
+ "chrome_closed": true,
+ "profile_removed": true,
+ "front_pid_at_end": 45451,
+ "left_button_down_at_end": false,
+ "registry_at_end": {
+  "requests": 0,
+  "orphaned": [],
+  "active_reservations": 0
+ },
+ "held": false
+}

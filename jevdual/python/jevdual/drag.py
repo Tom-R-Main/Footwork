@@ -48,6 +48,10 @@ class DragSettings:
     arc_size: float = 0.1
     #: post Escape before releasing on an abort
     cancel_with_escape: bool = True
+    #: on an abort, the release is held until this long after the last drag post, so an application
+    #: takes that event while the button is still down. Live, a release posted straight behind the last
+    #: drag post reached a browser's page as a move with no button and then the release (PTD20, PTD24)
+    abort_settle_s: float = 0.05
 
 
 DEFAULT = DragSettings()
@@ -83,6 +87,14 @@ class DragResult:
     stall_gap_s: float | None = None
     max_post_s: float = 0.0
     max_ack_s: float = 0.0
+    #: the press was handed to the poster (whether or not its post returned)
+    press_attempted: bool = False
+    #: a release's post returned; False with ``press_attempted`` means the button may still be down
+    release_posted: bool = False
+    #: the type of the last exception a release's post raised, if any did
+    release_error: str | None = None
+    #: seconds from the last drag post to the release's post (None when no drag event was posted)
+    release_after_last_post_s: float | None = None
 
 
 class DragRefused(ValueError):
@@ -93,7 +105,20 @@ class DragRefused(ValueError):
         self.code = code
 
 
+class ButtonMayBeDown(RuntimeError):
+    """A press was posted and neither post of its release returned. Whoever holds the desktop for the
+    drag must not give it back as if the button were up (PTD12)."""
+
+    def __init__(self, reason: str, release_error: str | None = None) -> None:
+        super().__init__(reason)
+        self.release_error = release_error
+
+
 class Poster(Protocol):
+    """``down`` may raise ``CoordinationError`` only before it posts (QuartzPoster checks ownership first):
+    the player takes that to mean nothing was pressed. Any other exception from ``down`` or ``up`` leaves
+    it unknown whether the post happened, and the player then releases."""
+
     def move(self, x: float, y: float) -> None: ...
     def down(self, x: float, y: float) -> None: ...
     def drag(self, x: float, y: float) -> None: ...
@@ -263,25 +288,56 @@ def play_drag(
     cancelled: Callable[[], bool] = lambda: False,
     trace: Any = None,
 ) -> DragResult:
-    """Press at the start, play the samples, release. Every exit after the press releases exactly once."""
+    """Press at the start, play the samples, release. Every exit after the press releases exactly once.
+
+    The press is inside the block that guarantees the release, and a release counts as done only when
+    its post returns: an exception after the press still lets go, and a release whose post raised is
+    posted once more (PTD9). When the second raises too, ``ButtonMayBeDown`` leaves this function,
+    with no release posted: the caller has to deal with it. A cancel the caller already asked for is
+    found here, before the press, and presses nothing (PTD12)."""
     tolerance = 1.5 * plan.max_step_pt + 2.0
     result = DragResult("aborted:unknown")
     last = plan.start
+    last_drag: float | None = None
     released = False
+    tries = 0
 
     def release(at: tuple[float, float]) -> None:
-        nonlocal released
-        if not released:
+        nonlocal released, tries
+        while not released and tries < 2:
+            tries += 1
+            if last_drag is not None:
+                result.release_after_last_post_s = clock.now() - last_drag
+            try:
+                poster.up(*at)
+            except Exception as exc:
+                result.release_error = type(exc).__name__
+                if tries >= 2:
+                    raise ButtonMayBeDown(
+                        f"the release at {at[0]:.1f},{at[1]:.1f} could not be posted ({type(exc).__name__}, "
+                        "twice); the left button may still be down", type(exc).__name__) from exc
+                continue
             released = True
-            poster.up(*at)
             result.released_at = at
+            result.release_posted = True
 
     def check() -> None:
         _check_pointer(poster, last, tolerance, cancelled)
 
     checkpoint()
-    poster.down(*plan.start)
+    if cancelled():
+        result.outcome = "aborted:cancelled"
+        result.causes.append("cancelled")
+        return result
     try:
+        result.press_attempted = True
+        try:
+            poster.down(*plan.start)
+        except CoordinationError:
+            # the poster checks ownership before it posts: nothing is down, so nothing is released
+            result.press_attempted = False
+            released = True
+            raise
         t0 = clock.now() + settings.press_hold_s
         if trace is not None:
             trace.started(t0, clock)
@@ -300,7 +356,7 @@ def play_drag(
             result.lateness_s.append(now - due)
             result.max_gap_s = max(result.max_gap_s, now - last_post)
             result.posted_drags += 1
-            last, last_post = (s.x, s.y), now
+            last, last_post, last_drag = (s.x, s.y), now, now
             _acknowledge(poster, clock, last, tolerance, now, settings, result, cancelled)
         clock.sleep_until(clock.now() + settings.settle_s)
         check()
@@ -309,9 +365,11 @@ def play_drag(
     except (_Abort, CoordinationError) as abort:
         result.outcome = f"aborted:{getattr(abort, 'cause', 'cancelled')}"
         result.causes.append(getattr(abort, "cause", "cancelled"))
-        if settings.cancel_with_escape:
+        if settings.cancel_with_escape and result.press_attempted:
             poster.escape()
             result.escape_sent = True
+        if last_drag is not None:
+            clock.sleep_until(last_drag + settings.abort_settle_s)
         release(last)
     finally:
         release(last)  # an exception from the poster or clock still lets go of the button

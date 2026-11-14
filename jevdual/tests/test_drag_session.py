@@ -120,3 +120,22 @@ def test_a_drag_needs_two_targets(world, fw, poster):
     assert code != 0, (code, out, err)
     assert "drag needs a source and a destination" in out + err
     assert poster.events == []
+
+
+def test_a_drag_whose_release_cannot_be_posted_keeps_the_desktop_claimed(world, fw, poster, monkeypatch):
+    """PTD12: when both posts of the release failed, the session's command gave its claim back like any
+    other error, with the button possibly down. It abandons the claim instead: the registry holds the
+    desktop until someone recovers it by the token the error names."""
+    from jevdual.coordination import Coordinator
+
+    def up(self, x, y):
+        raise OSError("the release's post failed")
+
+    _, out, _ = fw("start", "Drag a key", "--app", "Calculator", "--mode", "exclusive_desktop")
+    monkeypatch.setattr(Poster, "up", up)
+    code, out, err = fw("do", "drag", str(_id(out, "7")), str(_id(out, "8")), "--no-judge")
+    assert not [e for e in poster.events if e[0] == "up"] and "unverifiable" in out, (code, out[:300], err)
+    held = [row for row in Coordinator().status()["requests"] if "desktop" in row["resources"]]
+    assert len(held) == 1 and held[0]["state"] == "orphaned", Coordinator().status()["requests"]
+    # the receipt keeps only the start of an error, so the command to run comes first in it
+    assert f"footwork control recover {held[0]['token']} --input-cleaned" in out

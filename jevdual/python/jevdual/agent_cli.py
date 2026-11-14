@@ -32,6 +32,7 @@ LEGACY = (
     "grant",
     "snapshot-file",
     "status",
+    "drag-points",
 )
 SESSION = {
     "look",
