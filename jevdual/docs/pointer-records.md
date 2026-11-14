@@ -58,3 +58,13 @@ Recording failures print `pointer recording failed` on stderr and do not change
 the pointer action's existing outcome. No success should be inferred for a
 missing or incomplete artifact. The JSONL may hold page labels and geometry;
 it belongs with private take traces rather than published source fixtures.
+
+## A drag between two points, with no session
+
+`footwork drag-points X0 Y0 X1 Y1 --mode exclusive_desktop --record FILE` appends the
+same `pointer_gesture/1` line to `FILE`, with `kind: "drag"` and `label: "drag-points"`.
+The command has no window, so `window_origin` and `content_origin` are `[null, null]`;
+its points are already global screen points. Only the drag is recorded (`down`, the
+`drag` posts, `up`); the approach to the start, when there is one, is not. The command's
+own JSON on stdout gives the press and release points and the raw-uptime time of the
+call that posted each (`pressed_ns`, `released_ns`), which are post times, not delivery.

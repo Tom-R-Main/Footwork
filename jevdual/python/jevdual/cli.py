@@ -605,7 +605,9 @@ def build_parser() -> argparse.ArgumentParser:
     common(stt)
     stt.set_defaults(fn=S.cmd_status)
     from jevdual.coordination_cli import add_parser
+    from jevdual.point_drag import add_parser as add_drag_points
 
+    add_drag_points(sub)
     add_parser(sub)
     return ap
 
