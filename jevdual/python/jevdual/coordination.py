@@ -247,6 +247,15 @@ class Claim:
                 self.lock = None
             (self.registry.locks / self.token).unlink(missing_ok=True)
 
+    def abandon(self):
+        """Stop holding the request without giving its resources up: the row stays, and once this
+        process's lock is gone the registry marks a desktop owner's row orphaned, which blocks every
+        other owner until ``footwork control recover TOKEN --input-cleaned``. For an owner that cannot
+        say it let go of the input it held."""
+        if self.lock is not None:
+            self.lock.close()
+            self.lock = None
+
     async def __aexit__(self, *exc):
         self.close()
 

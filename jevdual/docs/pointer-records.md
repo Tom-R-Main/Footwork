@@ -68,3 +68,32 @@ its points are already global screen points. Only the drag is recorded (`down`, 
 `drag` posts, `up`); the approach to the start, when there is one, is not. The command's
 own JSON on stdout gives the press and release points and the raw-uptime time of the
 call that posted each (`pressed_ns`, `released_ns`), which are post times, not delivery.
+A drag stopped before the press writes its line with `outcome: "not_pressed"` and no
+posted samples.
+
+The command's exit says how far it got, and the JSON says the rest:
+
+| Exit | Meaning | In the JSON |
+|---|---|---|
+| 0 | Pressed at the start, released at the end, the button reads up. | `outcome: "dropped"` |
+| 4 | Nothing was posted. | `outcome: "refused"`, `code`, `reason` |
+| 5 | The pointer was moved; the button was never pressed. | `outcome: "approach_aborted:<cause>"` |
+| 6 | Pressed, and released otherwise than asked; the button reads up. | `outcome`, `released_at`, `escape_sent`, `stopped_by`, `error`, `extra_release` |
+| 8 | Pressed, and the command cannot say the button is up. | `claim_kept` (the registry token), `button_up`, `releases_posted` |
+
+After exit 8 the desktop stays claimed in the coordination registry, and every other
+owner of it is refused, until someone has looked at the button and run
+`footwork control recover TOKEN --input-cleaned`. The command comes to exit 8 only after
+posting a second release where the pointer is: when no release's post returned, or when
+the button still read down 250 ms after one did.
+
+SIGINT, SIGTERM and SIGHUP stop a drag the way foreign input does (Escape, then one
+release where the drag had got to), and the command still prints its JSON; `stopped_by`
+names the signal. SIGKILL cannot be handled: the registry then marks the request
+orphaned, and the button is whatever it was.
+
+`button_up_ms_after_release` is the time from the return of the release's post to the
+reading that said the button was up. `claimed` lists what was claimed: the desktop, and
+the application whose window is under the start point (`app`) or the one named with
+`--app`. `--duration` takes at most 30 s, and a slower drag has more posts along the same
+path, none planned further apart than the plain drag's.

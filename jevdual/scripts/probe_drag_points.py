@@ -3,17 +3,21 @@
 One bare Chrome on a fresh temporary profile, with no debugging port, on a page that is one canvas
 filling the viewport. The page counts its own pointer events and writes a short summary into its title,
 which this script reads through accessibility: nothing connects to DevTools, as the command's caller
-requires. Three runs of the command against that page:
+requires. Five runs of the command against that page:
 
 1. one drag between two viewport points;
-2. one slower drag, interrupted by a key press this script posts while the button is down;
-3. one drag too short to be a drag.
+2. the same drag over three seconds (PTD10: a slow drag posts as often as a fast one);
+3. one slow drag, interrupted by a key press this script posts while the button is down;
+4. one slow drag, told to stop with SIGTERM while the button is down (PTD10);
+5. one drag too short to be a drag.
 
 It moves the real pointer and presses its left button over its own Chrome window, and posts one F13
 key press. It waits for an unlocked screen and 10 s of idle, brings the application that was in front
 back at the end, closes its Chrome and removes the profile.
 
     PYTHONPATH=python .venv/bin/python scripts/probe_drag_points.py --out /abs/fresh/out/dir
+
+``--rejudge RUN_JSON`` posts nothing: it judges a kept run's record again by the present rules.
 """
 
 from __future__ import annotations
@@ -24,6 +28,7 @@ import json
 import math
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -112,20 +117,66 @@ def judge_drag(before: dict, after: dict, said: dict, exit_code: int) -> dict:
     return {"checks": checks, "held": all(checks.values())}
 
 
-def judge_abort(before: dict, after: dict, said: dict, exit_code: int, exit_aborted: int) -> dict:
-    """PTD2's second: an interrupted drag lets go once, says where, and leaves the button up."""
+def judge_abort(before: dict, after: dict, said: dict, exit_code: int, exit_aborted: int,
+                origin: tuple[float, float], cause: str = "aborted:pointer_contended:key_down") -> dict:
+    """A drag stopped while the button was down: one press and one release reached the page, the
+    release where the command says it posted it, with the button held on every move before it.
+
+    PTD9: the first form of this took a release or a cancel, anywhere, after any moves, so a drag whose
+    button had come up early, or whose release went somewhere the command did not say, held. ``origin``
+    is the screen point of the page's 0,0, which takes the command's screen points to the page's."""
+    released = said.get("released_at")
+    where = (released[0] - origin[0], released[1] - origin[1]) if released else None
     checks = {
-        "exit_says_pressed_then_aborted": exit_code == exit_aborted and str(said.get("outcome", "")).startswith(
-            "aborted:pointer_contended:key_down") and said.get("pressed") is True,
+        "exit_says_pressed_then_stopped": exit_code == exit_aborted and str(said.get("outcome", "")).startswith(cause)
+        and said.get("pressed") is True,
         "one_press": after["downs"] - before["downs"] == 1,
-        "one_release_or_cancel": (after["ups"] - before["ups"]) + (after["cancels"] - before["cancels"]) == 1,
+        "one_release_and_no_cancel": after["ups"] - before["ups"] == 1 and after["cancels"] == before["cancels"],
+        "pressed_within_1px": _near(after["down_at"], FROM),
+        "released_where_it_said": where is not None and _near(after["up_at"], where),
+        "released_short_of_the_end": released is not None and released != said.get("end"),
+        "button_held_through_every_move": after["held_moves"] > 0 and after["loose_moves"] == 0,
+        "no_gap_over_the_limit": after["max_move_gap_ms"] <= GAP_LIMIT_MS,
         "escape_was_sent": said.get("escape_sent") is True,
-        "released_short_of_the_end": said.get("released_at") is not None and said["released_at"] != said.get("end"),
+        "no_second_release": "extra_release" not in said,
         "all_trusted": after["untrusted"] == 0,
         "all_on_the_canvas": after["off_canvas"] == 0,
         "button_reads_up": said.get("button_up") is True,
     }
     return {"checks": checks, "held": all(checks.values())}
+
+
+def judge_stop(before: dict, after: dict, said: dict, exit_code: int, exit_aborted: int,
+               origin: tuple[float, float]) -> dict:
+    """PTD10: told to stop by SIGTERM with the button down, the command ends as an interrupted drag
+    does, says what stopped it, and leaves nothing claimed."""
+    verdict = judge_abort(before, after, said, exit_code, exit_aborted, origin, cause="aborted:cancelled")
+    verdict["checks"]["says_what_stopped_it"] = said.get("stopped_by") == "SIGTERM"
+    verdict["checks"]["claim_given_up"] = said.get("claim_kept") is None
+    verdict["held"] = all(verdict["checks"].values())
+    return verdict
+
+
+def rejudge(record: dict, exit_aborted: int, exit_refused: int) -> dict:
+    """A kept run's record, judged by the present rules from what it stored. Runs it has none of are
+    left out; nothing is posted or read from a screen."""
+    runs, origin, first = record["runs"], record["content"][:2], record["page_at_start"]
+    order = [name for name in ("drag", "slow", "interrupted", "stopped", "short") if name in runs]
+    out, before = {}, first
+    for name in order:
+        run = runs[name]
+        if name in ("drag", "slow"):
+            verdict = judge_drag(before, run["page"], run["said"], run["exit"])
+        elif name == "interrupted":
+            verdict = judge_abort(before, run["page"], run["said"], run["exit"], exit_aborted, origin)
+        elif name == "stopped":
+            verdict = judge_stop(before, run["page"], run["said"], run["exit"], exit_aborted, origin)
+        else:
+            verdict = judge_short(before, run["page"], run["said"], run["exit"], exit_refused)
+        out[name] = {"held": verdict["held"], "failed": [k for k, v in verdict["checks"].items() if not v],
+                     "held_when_run": run["held"]}
+        before = run["page"]
+    return out
 
 
 def judge_short(before: dict, after: dict, said: dict, exit_code: int, exit_refused: int) -> dict:
@@ -187,12 +238,13 @@ def _press_f13() -> None:
 
 def _command(out: Path, name: str, points: tuple[float, float, float, float], *extra: str,
              during=None) -> tuple[int, dict]:
+    """One run of the command; ``during`` is called beside it with its process."""
     argv = [sys.executable, "-m", "jevdual.cli", "drag-points", *(repr(float(v)) for v in points),
             "--mode", "exclusive_desktop", "--owner", str(out), *extra]
     process = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     worker = None
     if during is not None:
-        worker = threading.Thread(target=during, daemon=True)
+        worker = threading.Thread(target=during, args=(process,), daemon=True)
         worker.start()
     stdout, stderr = process.communicate(timeout=60)
     if worker is not None:
@@ -213,9 +265,15 @@ def main() -> None:
     from probe_browser_holder import _activate_pid, _front_pid, _wait_idle
 
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    parser.add_argument("--out", required=True)
+    parser.add_argument("--out")
     parser.add_argument("--gate-limit", type=float, default=60.0, help="seconds to wait for idle before giving up")
+    parser.add_argument("--rejudge", metavar="RUN_JSON", help="judge a kept run again; posts nothing")
     args = parser.parse_args()
+    if args.rejudge:
+        print(json.dumps(rejudge(json.loads(Path(args.rejudge).read_text()), EXIT_ABORTED, EXIT_REFUSED), indent=1))
+        return
+    if not args.out:
+        raise SystemExit("--out or --rejudge is required")
     out = Path(args.out)
     if not out.is_absolute() or out.exists():
         raise SystemExit("--out must be an absolute path that does not exist yet")
@@ -246,25 +304,39 @@ def main() -> None:
         after = _summary(process.pid, until=lambda s: s["ups"] > first["ups"]) or first
         record["runs"]["drag"] = {"exit": code, "said": said, "page": after, **judge_drag(first, after, said, code)}
 
-        def interrupt() -> None:
-            # once the page has seen the press and some held moves, one key press the command did not post
-            seen = _summary(process.pid, wait_s=6.0, until=lambda s: s["downs"] > after["downs"])
-            if seen is not None and seen["downs"] > after["downs"]:
-                time.sleep(0.5)
-                _press_f13()
-                record["interrupted_at"] = time.time()
+        code, said = _command(out, "2-slow", ends, "--duration", "3", "--record", str(out / "gestures.jsonl"))
+        slow = _summary(process.pid, until=lambda s: s["ups"] > after["ups"]) or after
+        record["runs"]["slow"] = {"exit": code, "said": said, "page": slow, **judge_drag(after, slow, said, code)}
 
-        code, said = _command(out, "2-interrupted", ends, "--duration", "2.5", during=interrupt)
-        later = _summary(process.pid, until=lambda s: s["ups"] + s["cancels"] > after["ups"] + after["cancels"]) or after
+        def once_pressed(since: dict, act) -> None:
+            # once the page has seen the press and half a second of held moves
+            seen = _summary(process.pid, wait_s=6.0, until=lambda s: s["downs"] > since["downs"])
+            if seen is not None and seen["downs"] > since["downs"]:
+                time.sleep(0.5)
+                act()
+
+        def interrupt(_command_process) -> None:
+            once_pressed(slow, _press_f13)  # one key press the command did not post
+
+        code, said = _command(out, "3-interrupted", ends, "--duration", "2.5", during=interrupt)
+        later = _summary(process.pid, until=lambda s: s["ups"] + s["cancels"] > slow["ups"] + slow["cancels"]) or slow
         record["runs"]["interrupted"] = {"exit": code, "said": said, "page": later,
-                                         **judge_abort(after, later, said, code, EXIT_ABORTED)}
+                                         **judge_abort(slow, later, said, code, EXIT_ABORTED, origin[:2])}
+
+        def stop(command_process) -> None:
+            once_pressed(later, lambda: command_process.send_signal(signal.SIGTERM))
+
+        code, said = _command(out, "4-stopped", ends, "--duration", "2.5", during=stop)
+        ended = _summary(process.pid, until=lambda s: s["ups"] + s["cancels"] > later["ups"] + later["cancels"]) or later
+        record["runs"]["stopped"] = {"exit": code, "said": said, "page": ended,
+                                     **judge_stop(later, ended, said, code, EXIT_ABORTED, origin[:2])}
 
         near = (ends[0], ends[1], ends[0] + 3.0, ends[1] + 2.0)
-        code, said = _command(out, "3-short", near)
+        code, said = _command(out, "5-short", near)
         time.sleep(0.5)
-        last = _summary(process.pid) or later
+        last = _summary(process.pid) or ended
         record["runs"]["short"] = {"exit": code, "said": said, "page": last,
-                                   **judge_short(later, last, said, code, EXIT_REFUSED)}
+                                   **judge_short(ended, last, said, code, EXIT_REFUSED)}
     finally:
         process.terminate()
         try:
@@ -288,12 +360,14 @@ def main() -> None:
             status = Coordinator().status()
             record["registry_at_end"] = {
                 "requests": len(status["requests"]),
+                "orphaned": [r["token"] for r in status["requests"] if r["state"] == "orphaned"],
                 "active_reservations": sum(1 for r in status["reservations"] if r["state"] == "active")}
         except Exception as exc:  # noqa: BLE001 - the closing readings are reported, never raised
             record["closing_readings_error"] = f"{type(exc).__name__}: {str(exc)[:120]}"
         runs = record["runs"]
-        record["held"] = (len(runs) == 3 and all(run["held"] for run in runs.values())
-                          and record["chrome_closed"] and record.get("left_button_down_at_end") is False)
+        record["held"] = (len(runs) == 5 and all(run["held"] for run in runs.values())
+                          and record["chrome_closed"] and record.get("left_button_down_at_end") is False
+                          and record.get("registry_at_end", {}).get("requests") == 0)
         (out / "run.json").write_text(json.dumps(record, indent=1))
         print(json.dumps({"held": record["held"], "stopped": record.get("stopped"),
                           "runs": {name: {"exit": run["exit"], "held": run["held"],

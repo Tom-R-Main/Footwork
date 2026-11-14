@@ -1,12 +1,18 @@
-"""PTD2: footwork drag-points, a real-pointer drag between two screen points with no session. The
-poster and the clock are stood in for; nothing here posts an event or reads a display."""
+"""PTD2, PTD10: footwork drag-points, a real-pointer drag between two screen points with no session.
+The poster and the clock are stood in for; nothing here posts an event or reads a display."""
 
 from __future__ import annotations
 
 import itertools
 import json
 import math
-from typing import ClassVar
+import os
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+from typing import Any, ClassVar
 
 import pytest
 
@@ -28,26 +34,54 @@ class Poster:
     #: how many readings after a release still say the button is down (None: every one of them)
     lag_reads: ClassVar[int | None] = 0
     lagging: ClassVar[int | None] = 0
+    #: the button reads down until this many releases have been posted
+    ups_needed: ClassVar[int] = 1
+    #: a post of this kind raises this many times (None: every time). ``down`` posts first, then raises:
+    #: the case where it is unknown whether the press went; the others raise with nothing posted
+    failing: ClassVar[dict[str, int | None]] = {}
+    #: called once, at the first reading of the button (before anything is posted) or after N moves
+    at_first_read: ClassVar[Any] = None
+    after_moves: ClassVar[tuple[int, Any] | None] = None
 
     def _count(self, kind: str) -> int:
         return sum(1 for e in Poster.events if e[0] == kind)
+
+    def _fails(self, kind: str) -> bool:
+        if kind not in Poster.failing:
+            return False
+        left = Poster.failing[kind]
+        if left is None:
+            return True
+        Poster.failing[kind] = left - 1
+        if left <= 1:
+            del Poster.failing[kind]
+        return True
 
     def move(self, x, y):
         Poster.events.append(("move", x, y))
         if Poster.stall_after is None or self._count("move") <= Poster.stall_after:
             Poster.pointer = (x, y)
+        if Poster.after_moves is not None and self._count("move") == Poster.after_moves[0]:
+            Poster.after_moves[1]()
 
     def down(self, x, y):
         Poster.events.append(("down", x, y))
         Poster.button = True
+        if self._fails("down"):
+            raise OSError("the press's post did not return")
 
     def drag(self, x, y):
+        if self._fails("drag"):
+            raise OSError("a drag's post failed")
         Poster.events.append(("drag", x, y))
         Poster.pointer = (x, y)
 
     def up(self, x, y):
+        if self._fails("up"):
+            raise OSError("the release's post failed")
         Poster.events.append(("up", x, y))
-        Poster.button = False
+        if self._count("up") >= Poster.ups_needed:
+            Poster.button = False
         Poster.lagging = Poster.lag_reads
 
     def escape(self):
@@ -62,6 +96,9 @@ class Poster:
         return None
 
     def left_button_down(self):
+        if Poster.at_first_read is not None:
+            hook, Poster.at_first_read = Poster.at_first_read, None
+            hook()
         if Poster.lagging is None:
             return True
         if Poster.lagging > 0:
@@ -88,10 +125,20 @@ def desk(monkeypatch):
     Poster.events, Poster.pointer, Poster.button = [], (900.0, 700.0), False
     Poster.foreign_after = Poster.stall_after = None
     Poster.lag_reads = Poster.lagging = 0
+    Poster.ups_needed, Poster.failing, Poster.at_first_read, Poster.after_moves = 1, {}, None, None
     monkeypatch.setattr(drag, "QuartzPoster", Poster)
     monkeypatch.setattr(drag, "MonotonicClock", Clock)
     monkeypatch.setattr(point_drag, "display_bounds", lambda: [DISPLAY])
+    monkeypatch.setattr(point_drag, "app_under", lambda point: "Canvas App")
     return Poster
+
+
+def _revoke_own_claim():
+    """What a coordinator's ``control cancel`` does to the command's request, from inside its run."""
+    from jevdual.coordination import Coordinator
+
+    registry = Coordinator()
+    registry.revoke(registry.status()["requests"][0]["token"])
 
 
 def _run(capsys, *argv):
@@ -154,28 +201,50 @@ def test_a_pointer_two_points_away_is_brought_to_the_start(desk, capsys):
     assert code == 0 and _kinds(desk.events)[0] == "move" and said["approach_moves"] >= 1
 
 
-def test_a_duration_stretches_the_planned_drag_and_keeps_its_path(desk, capsys):
-    """A box drawn as fast as the planner's default reads quick on film. --duration plays the same
-    path over a longer time; the press hold and the settle are apart from it."""
-    _run(capsys, *_points())
-    plain = [e for e in desk.events if e[0] == "drag"]
+def _on_the_path(point, path) -> bool:
+    return any(math.dist(a, point) + math.dist(point, b) - math.dist(a, b) < 1e-6
+               for a, b in itertools.pairwise(path))
+
+
+@pytest.mark.parametrize("seconds", ["1.5", "5", "30"])
+def test_a_duration_slows_the_drag_along_the_same_path_and_posts_as_often(desk, capsys, tmp_path, seconds):
+    """A box drawn as fast as the planner's default reads quick on film. --duration plays the same path
+    over a longer time. PTD9: spreading the same samples out put a slow drag's posts up to the engine's
+    50 ms limit apart, where one late post stops it mid-drag. A slower drag has more posts instead:
+    every one on the plain drag's path, none planned further apart in time than the plain drag's widest."""
+    plain_record, slow_record = tmp_path / "plain.jsonl", tmp_path / "slow.jsonl"
+    _run(capsys, *_points("--record", str(plain_record)))
+    plain = [(x, y) for kind, x, y in desk.events if kind == "drag"]
     desk.events.clear()
     desk.pointer = (900.0, 700.0)
-    code, said, err = _run(capsys, *_points("--duration", "1.5"))
+    code, said, err = _run(capsys, *_points("--duration", seconds, "--record", str(slow_record)))
     assert code == 0, (said, err)
-    assert said["planned_motion_s"] == 1.5 and [e for e in desk.events if e[0] == "drag"] == plain
+    slow = [(x, y) for kind, x, y in desk.events if kind == "drag"]
+    assert said["planned_motion_s"] == float(seconds) and slow[-1] == END and len(slow) > len(plain)
+    assert [p for p in slow if p in plain] == plain  # every point of the plain drag, in its order
+    assert all(_on_the_path(p, [START, *plain]) for p in slow)
+
+    def widest(record) -> float:
+        times = [s["t_ns"] for s in json.loads(record.read_text())["planned_samples"]]
+        return max(b - a for a, b in itertools.pairwise(times)) / 1e9
+
+    assert widest(slow_record) <= widest(plain_record) + 1e-6 < 0.05
 
 
-@pytest.mark.parametrize("seconds", ["0.1", "30"])
-def test_a_duration_the_engine_cannot_keep_is_refused_with_nothing_posted(desk, capsys, seconds):
-    """Shorter than the planner's is faster than a hand; too long leaves posts further apart than the
-    engine's 50 ms limit, which it would stop on mid-drag with the button down."""
+@pytest.mark.parametrize(("seconds", "code_said"), [
+    ("0.1", "duration_unreachable"), ("30.5", "duration_unreachable"), ("nan", "duration_invalid"),
+    ("inf", "duration_invalid"), ("-inf", "duration_invalid"), ("0", "duration_invalid"), ("-2", "duration_invalid"),
+])
+def test_a_duration_that_cannot_be_kept_is_refused_with_nothing_posted(desk, capsys, seconds, code_said):
+    """Shorter than the planner's is faster than a hand. PTD9: ``nan`` passed every comparison and was
+    played as a drag with no times at all; and a duration with no upper end held the desktop and the
+    button for as long as it said."""
+    from jevdual.coordination import Coordinator
     from jevdual.point_drag import EXIT_REFUSED
 
-    code, said, err = _run(capsys, *_points("--duration", seconds))
-    assert code == EXIT_REFUSED and said["code"] == "duration_unreachable" and desk.events == [], (said, err)
-    assert ("shorter than the planned" in said["reason"]) is (seconds == "0.1")
-    assert ("the longest this path takes is" in said["reason"]) is (seconds == "30")
+    code, said, err = _run(capsys, *_points(f"--duration={seconds}"))
+    assert code == EXIT_REFUSED and said["code"] == code_said and desk.events == [], (said, err)
+    assert Coordinator().status()["requests"] == []
 
 
 @pytest.mark.parametrize(("argv", "code_said"), [
@@ -259,21 +328,295 @@ def test_a_release_the_system_has_not_yet_shown_is_waited_for_and_reported_up(de
     if interrupted:
         desk.foreign_after = 5
     code, said, err = _run(capsys, *_points())
-    assert said["button_up"] is True and said["button_up_after_ms"] > 0, (said, err)
-    assert code == (6 if interrupted else 0) and "STILL READS DOWN" not in err
+    assert said["button_up"] is True and said["button_up_ms_after_release"] > 0, (said, err)
+    assert code == (6 if interrupted else 0) and "BUTTON" not in err
+    assert "extra_release" not in said and said["releases_posted"] == 1 and said["claim_kept"] is None
 
 
-def test_a_button_that_never_reads_up_is_reported_down_after_the_wait(desk, capsys, monkeypatch):
-    """The reading is the only check that the button was not left down, so a wait that runs out is said."""
+def test_a_button_that_reads_down_after_the_wait_gets_one_more_release(desk, capsys, monkeypatch):
+    """PTD10: the reading is the only check that the button was not left down. When it still says down
+    after the wait, one more release is posted where the pointer is; here that one lets go."""
     from jevdual import point_drag
+    from jevdual.coordination import Coordinator
     from jevdual.point_drag import EXIT_ABORTED
+
+    monkeypatch.setattr(point_drag, "BUTTON_UP_WAIT_S", 0.05)
+    desk.ups_needed = 2
+    code, said, err = _run(capsys, *_points())
+    ups = [e for e in desk.events if e[0] == "up"]
+    assert ups == [("up", *END), ("up", *END)] and desk.events[-1][0] == "up", desk.events[-3:]
+    assert code == EXIT_ABORTED and said["outcome"] == "dropped", (said, err)  # released at the end, and yet
+    assert said["button_up"] is True and said["releases_posted"] == 2 and said["claim_kept"] is None
+    assert said["extra_release"] == {"posted": True, "at": list(END)}
+    assert "a second release was posted before the button read up" in err
+    assert Coordinator().status()["requests"] == []
+
+
+def test_a_button_that_never_reads_up_keeps_the_desktop_claimed_and_says_how_to_clear_it(desk, capsys, monkeypatch):
+    """PTD10: a command that cannot say the button is up does not give the desktop back as if it could.
+    Its request stays in the registry, which marks it orphaned once the process is gone and refuses
+    every other owner of the desktop until someone has looked and recovers it by its token."""
+    from jevdual import point_drag
+    from jevdual.coordination import CoordinationError, Coordinator
+    from jevdual.point_drag import EXIT_HELD, EXIT_REFUSED
 
     monkeypatch.setattr(point_drag, "BUTTON_UP_WAIT_S", 0.05)
     desk.lag_reads = None
     code, said, err = _run(capsys, *_points())
-    assert code == EXIT_ABORTED and said["outcome"] == "dropped", (said, err)  # released at the end, and yet
-    assert said["button_up"] is False and said["button_up_after_ms"] is None
-    assert "THE LEFT BUTTON STILL READS DOWN after 50 ms" in err
+    assert code == EXIT_HELD and said["button_up"] is False and said["button_up_ms_after_release"] is None
+    assert len([e for e in desk.events if e[0] == "up"]) == 2 and said["releases_posted"] == 2
+    token = said["claim_kept"]
+    assert "THE LEFT BUTTON MAY STILL BE DOWN" in err and "it reads down 50 ms after 2 releases" in err
+    assert f"footwork control recover {token} --input-cleaned" in err
+    registry = Coordinator()
+    held, = registry.status()["requests"]
+    assert held["token"] == token and held["state"] == "orphaned" and "desktop" in held["resources"]
+    desk.events.clear()
+    desk.lag_reads = desk.lagging = 0
+    desk.button = False
+    code, said, _ = _run(capsys, *_points())
+    assert code == EXIT_REFUSED and said["code"] == "desktop_busy" and desk.events == []
+    with pytest.raises(CoordinationError):
+        registry.recover("not-the-token")
+    registry.recover(token)
+    assert _run(capsys, *_points())[0] == 0
+
+
+def test_a_press_whose_post_fails_is_still_released_and_reported(desk, capsys):
+    """PTD9: the press was posted outside the block that guarantees the release, so a press that was
+    posted and then raised left the button down with nothing to let it go. Whether such a press went
+    is not known; it is released as if it had, and the command reports instead of dying."""
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_ABORTED
+
+    desk.failing = {"down": 1}
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_ABORTED, (said, err)
+    assert _kinds(desk.events) == ["move", "down", "up"] and desk.events[-1] == ("up", *START)
+    assert said["outcome"] == "error:OSError" and said["error"] == "OSError" and said["press_post_failed"] is True
+    assert said["pressed"] is True and said["pressed_at"] == list(START) and said["released_at"] == list(START)
+    assert said["button_up"] is True and said["releases_posted"] == 1 and said["claim_kept"] is None
+    assert Coordinator().status()["requests"] == []
+
+
+def test_a_drag_post_that_fails_releases_where_the_drag_had_got_to(desk, capsys):
+    from jevdual.point_drag import EXIT_ABORTED
+
+    desk.failing = {"drag": None}
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_ABORTED and said["outcome"] == "error:OSError", (said, err)
+    assert _kinds(desk.events) == ["move", "down", "up"] and said["releases_posted"] == 1 and said["button_up"] is True
+
+
+def test_a_release_whose_post_fails_once_is_posted_again(desk, capsys):
+    """PTD9: a release was marked done before its post returned, so one that raised was never posted
+    again. It is posted once more, and the drag ends where it was asked to."""
+    desk.failing = {"up": 1}
+    code, said, err = _run(capsys, *_points())
+    assert code == 0 and said["outcome"] == "dropped" and said["release_error"] == "OSError", (said, err)
+    assert [e for e in desk.events if e[0] == "up"] == [("up", *END)] and said["releases_posted"] == 1
+    assert said["button_up"] is True and "extra_release" not in said
+
+
+def test_a_release_that_cannot_be_posted_keeps_the_desktop_claimed(desk, capsys):
+    """PTD10: two failed posts in the engine and one more by the command, and then nothing has let go
+    of the button: the desktop stays claimed whatever the button reads."""
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_HELD
+
+    desk.failing = {"up": None}
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_HELD, (said, err)
+    assert not [e for e in desk.events if e[0] == "up"] and said["releases_posted"] == 0
+    assert said["outcome"] == "error:OSError" and said["released_at"] is None and said["button_up"] is False
+    assert said["extra_release"] == {"posted": False, "at": list(END), "error": "OSError"}
+    assert "no release could be posted" in err and f"recover {said['claim_kept']} --input-cleaned" in err
+    held, = Coordinator().status()["requests"]
+    assert held["token"] == said["claim_kept"] and held["state"] == "orphaned"
+
+
+@pytest.mark.parametrize("pointer_at_start", [True, False])
+def test_a_claim_revoked_before_anything_is_posted_reports_nothing_posted(desk, capsys, pointer_at_start):
+    """PTD9: a revocation before the press raised out of the command through a record that could not be
+    written with no posts in it. It is an exit like the others: nothing posted, exit 4."""
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_REFUSED
+
+    if pointer_at_start:
+        desk.pointer = START
+    desk.at_first_read = _revoke_own_claim
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_REFUSED and desk.events == [], (said, err)
+    assert said["outcome"] == "refused" and said["code"] == "cancelled" and said["pressed"] is False
+    assert Coordinator().status()["requests"] == []
+
+
+def test_a_claim_revoked_during_the_approach_reports_the_pointer_moved_and_no_press(desk, capsys):
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_APPROACH
+
+    desk.after_moves = (3, _revoke_own_claim)
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_APPROACH and _kinds(desk.events) == ["move"], (said, err)
+    assert said["outcome"] == "approach_aborted:cancelled" and said["approach_moves"] == 3 and said["pressed"] is False
+    assert Coordinator().status()["requests"] == []
+
+
+def test_a_claim_revoked_during_the_drag_cancels_it_and_releases_once(desk, capsys):
+    from jevdual.point_drag import EXIT_ABORTED
+
+    desk.pointer = START
+    original = desk.drag
+
+    def drag(self, x, y):
+        original(self, x, y)
+        if self._count("drag") == 4:
+            _revoke_own_claim()
+
+    desk.drag = drag
+    try:
+        code, said, err = _run(capsys, *_points())
+    finally:
+        desk.drag = original
+    assert code == EXIT_ABORTED and said["outcome"] == "aborted:cancelled", (said, err)
+    assert _kinds(desk.events) == ["down", "drag", "escape", "up"] and said["releases_posted"] == 1
+
+
+async def test_the_application_under_the_start_is_claimed_with_the_desktop(desk, capsys, tmp_path):
+    """PTD9: the command claimed the desktop and nothing else, so a session that owned the application
+    under the pointer, with no claim on the desktop, was no obstacle to a drag across its window."""
+    from jevdual import point_drag
+    from jevdual.coordination import Coordinator, app_resource
+    from jevdual.point_drag import EXIT_REFUSED
+
+    registry = Coordinator()
+    args = point_drag.arguments(*_points("--owner", str(tmp_path / "caller")))
+    async with registry.claim(str(tmp_path / "session"), [app_resource("Canvas App")]):
+        assert await point_drag.cmd_drag_points(args) == EXIT_REFUSED
+        said = json.loads(capsys.readouterr().out.strip().splitlines()[-1])
+        assert said["code"] == "app_busy" and "Canvas App" in said["reason"] and desk.events == []
+        assert said["app"] == "Canvas App" and said["claimed"] == ["app/canvas%20app", "desktop"]
+        other = point_drag.arguments(*_points("--owner", str(tmp_path / "caller"), "--app", "Elsewhere"))
+        assert await point_drag.cmd_drag_points(other) == 0  # the caller names the application it drags on
+        assert json.loads(capsys.readouterr().out.strip().splitlines()[-1])["claimed"] == ["app/elsewhere", "desktop"]
+    assert await point_drag.cmd_drag_points(args) == 0
+    assert registry.status()["requests"] == []
+
+
+def test_a_start_point_over_no_window_claims_the_desktop_alone(desk, capsys, monkeypatch):
+    from jevdual import point_drag
+
+    def unreadable(point):
+        raise RuntimeError("no window list")
+
+    for found, extra in ((lambda point: None, {}), (unreadable, {"app_unread": "RuntimeError"})):
+        desk.events.clear()
+        desk.pointer = (900.0, 700.0)
+        monkeypatch.setattr(point_drag, "app_under", found)
+        code, said, _ = _run(capsys, *_points())
+        assert code == 0 and said["app"] is None and said["claimed"] == ["desktop"]
+        assert {k: said[k] for k in extra} == extra
+
+
+STAND_IN = r'''
+"""drag-points with a stand-in poster on the real clock, so a signal can arrive while the button is down."""
+import json, sys
+from pathlib import Path
+from jevdual import drag, point_drag
+from jevdual.cli import main
+from jevdual.coordination import Coordinator
+
+log, registry = Path(sys.argv[1]), Path(sys.argv[2])
+state = {"pointer": (900.0, 700.0), "button": False}
+
+def note(kind, x=0.0, y=0.0):
+    with log.open("a") as stream:
+        stream.write(json.dumps([kind, x, y]) + "\n")
+
+class Poster:
+    def move(self, x, y): note("move", x, y); state["pointer"] = (x, y)
+    def down(self, x, y): note("down", x, y); state["button"] = True
+    def drag(self, x, y): note("drag", x, y); state["pointer"] = (x, y)
+    def up(self, x, y): note("up", x, y); state["button"] = False
+    def escape(self): note("escape")
+    def location(self): return state["pointer"]
+    def foreign_input(self): return None
+    def left_button_down(self): return state["button"]
+
+original = Coordinator.__init__
+Coordinator.__init__ = lambda self, path=None: original(self, path or registry)
+drag.QuartzPoster = Poster
+point_drag.display_bounds = lambda: [(0.0, 0.0, 1728.0, 1117.0)]
+point_drag.app_under = lambda point: None
+sys.exit(main(["drag-points", *sys.argv[3:]]))
+'''
+
+
+def _events(log: Path) -> list[list]:
+    return [json.loads(line) for line in log.read_text().splitlines()] if log.exists() else []
+
+
+def _stand_in(tmp_path, *extra) -> tuple[subprocess.Popen, Path, Path]:
+    script, log, registry = tmp_path / "stand_in.py", tmp_path / "events.jsonl", tmp_path / "registry.sqlite"
+    script.write_text(STAND_IN)
+    process = subprocess.Popen(
+        [sys.executable, str(script), str(log), str(registry), *_points(*extra)],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        env={**os.environ, "PYTHONPATH": str(Path(__file__).resolve().parent.parent / "python")})
+    return process, log, registry
+
+
+def _wait_for(log: Path, kind: str, count: int, process: subprocess.Popen) -> None:
+    deadline = time.time() + 20
+    while sum(1 for e in _events(log) if e[0] == kind) < count:
+        assert process.poll() is None and time.time() < deadline, (process.poll(), _events(log)[-3:])
+        time.sleep(0.01)
+
+
+@pytest.mark.parametrize("told", [signal.SIGTERM, signal.SIGHUP, signal.SIGINT])
+def test_a_command_told_to_stop_while_the_button_is_down_releases_it_and_reports(tmp_path, told):
+    """PTD9: SIGTERM ended the process where it stood, with the button down and nothing to release it;
+    the registry held the desktop afterwards and the button stayed pressed. Told to stop, the command
+    stops as foreign input stops it (Escape, then one release where the drag had got to) and prints
+    what it did before it exits."""
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_ABORTED
+
+    process, log, registry = _stand_in(tmp_path, "--duration", "8")
+    try:
+        _wait_for(log, "drag", 5, process)
+        process.send_signal(told)
+        out, err = process.communicate(timeout=20)
+    finally:
+        if process.poll() is None:
+            process.kill()
+    said = json.loads(out.strip().splitlines()[-1])
+    events = _events(log)
+    assert process.returncode == EXIT_ABORTED, (process.returncode, said, err)
+    assert [e[0] for e in events].count("up") == 1 and [e[0] for e in events[-2:]] == ["escape", "up"]
+    assert said["outcome"] == "aborted:cancelled" and said["stopped_by"] == told.name
+    assert said["button_up"] is True and said["releases_posted"] == 1 and said["claim_kept"] is None
+    assert said["released_at"] == events[-3][1:] != list(END) and f"stopped by {told.name}" in err
+    assert Coordinator(registry).status()["requests"] == []
+
+
+def test_a_command_told_to_stop_during_the_approach_never_presses(tmp_path):
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_APPROACH
+
+    process, log, registry = _stand_in(tmp_path)
+    try:
+        _wait_for(log, "move", 2, process)
+        process.send_signal(signal.SIGTERM)
+        out, err = process.communicate(timeout=20)
+    finally:
+        if process.poll() is None:
+            process.kill()
+    said = json.loads(out.strip().splitlines()[-1])
+    assert process.returncode == EXIT_APPROACH, (process.returncode, said, err)
+    assert {e[0] for e in _events(log)} == {"move"} and said["pressed"] is False
+    assert said["outcome"] == "approach_aborted:cancelled" and said["stopped_by"] == "SIGTERM"
+    assert Coordinator(registry).status()["requests"] == []
 
 
 def test_an_approach_that_does_not_arrive_never_presses(desk, capsys):
@@ -310,3 +653,13 @@ def test_the_command_is_listed_and_takes_points_left_of_the_main_display(desk, c
     desk.pointer = (-900.0, 500.0)
     code, said, err = _run(capsys, "-800", "400", "-600", "440", "--mode", "exclusive_desktop")
     assert code == 0 and said["released_at"] == [-600.0, 440.0], (said, err)
+
+
+def test_the_command_is_one_the_launcher_lists(capsys):
+    """PTD9: the launcher's help and catalog listed every command but this one."""
+    from jevdual.agent_cli import LEGACY
+    from jevdual.cli import main
+
+    assert "drag-points" in LEGACY
+    assert main(["--help"]) == 0 and "drag-points" in capsys.readouterr().out
+    assert main(["--json", "tools"]) == 0 and "drag-points" in json.loads(capsys.readouterr().out)["data"]["commands"]

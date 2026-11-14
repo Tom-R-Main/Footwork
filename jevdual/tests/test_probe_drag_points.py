@@ -66,21 +66,69 @@ def test_each_way_a_drag_can_fall_short_fails_its_own_check(title, said, code, f
     assert not verdict["held"] and [k for k, v in verdict["checks"].items() if not v] == [fails]
 
 
-def test_an_interrupted_drag_holds_only_when_it_let_go_once_and_said_where():
-    before = _page(DRAGGED)
-    after = _page("PD n2 u2 x0 h22 l0 o0 t0 g12 k2 d300,300 r371,345")
-    said = {"outcome": "aborted:pointer_contended:key_down", "pressed": True, "escape_sent": True,
-            "released_at": [393.0, 487.0], "end": [542.0, 582.0], "button_up": True}
-    assert probe.judge_abort(before, after, said, 6, 6)["held"]
-    cancelled = _page("PD n2 u1 x1 h22 l0 o0 t0 g12 k2 d300,300 r520,440")
-    assert probe.judge_abort(before, cancelled, said, 6, 6)["held"]  # a release the page saw as a cancel
-    for change, fails in (({"escape_sent": False}, "escape_was_sent"), ({"button_up": False}, "button_reads_up"),
-                          ({"released_at": [542.0, 582.0]}, "released_short_of_the_end"),
-                          ({"outcome": "dropped"}, "exit_says_pressed_then_aborted")):
-        verdict = probe.judge_abort(before, after, {**said, **change}, 6, 6)
+ORIGIN = (22.0, 142.0)  # the screen point of the page's 0,0
+INTERRUPTED = "PD n2 u2 x0 h22 l0 o0 t0 g12 k2 d300,300 r371,345"
+SAID_STOPPED = {"outcome": "aborted:pointer_contended:key_down", "pressed": True, "escape_sent": True,
+                "released_at": [393.4, 487.2], "end": [542.0, 582.0], "button_up": True}
+
+
+def test_an_interrupted_drag_holds_when_the_page_saw_one_held_drag_end_where_the_command_said():
+    verdict = probe.judge_abort(_page(DRAGGED), _page(INTERRUPTED), SAID_STOPPED, 6, 6, ORIGIN)
+    assert verdict["held"] and all(verdict["checks"].values())
+
+
+@pytest.mark.parametrize(("title", "change", "code", "fails"), [
+    (INTERRUPTED, {"escape_sent": False}, 6, "escape_was_sent"),
+    (INTERRUPTED, {"button_up": False}, 6, "button_reads_up"),
+    (INTERRUPTED, {"outcome": "dropped"}, 6, "exit_says_pressed_then_stopped"),
+    (INTERRUPTED, {}, 0, "exit_says_pressed_then_stopped"),
+    (INTERRUPTED, {"extra_release": {"posted": True}}, 6, "no_second_release"),
+    # PTD9: each of these held under the first form of the judgment
+    (INTERRUPTED.replace("u2 x0", "u1 x1"), {}, 6, "one_release_and_no_cancel"),  # a cancel, not a release
+    (INTERRUPTED.replace("u2", "u3"), {}, 6, "one_release_and_no_cancel"),
+    (INTERRUPTED.replace("r371,345", "r380,345"), {}, 6, "released_where_it_said"),
+    (INTERRUPTED.replace("h22 l0", "h22 l4"), {}, 6, "button_held_through_every_move"),  # the button came up early
+    (INTERRUPTED.replace("h22", "h0"), {}, 6, "button_held_through_every_move"),
+    (INTERRUPTED.replace("g12", "g71"), {}, 6, "no_gap_over_the_limit"),
+    (INTERRUPTED.replace("d300,300", "d304,300"), {}, 6, "pressed_within_1px"),
+    (INTERRUPTED.replace("t0", "t1"), {}, 6, "all_trusted"),
+    (INTERRUPTED.replace("o0", "o2"), {}, 6, "all_on_the_canvas"),
+])
+def test_each_way_an_interrupted_drag_can_fall_short_fails_its_own_check(title, change, code, fails):
+    verdict = probe.judge_abort(_page(DRAGGED), _page(title), {**SAID_STOPPED, **change}, code, 6, ORIGIN)
+    assert not verdict["held"] and [k for k, v in verdict["checks"].items() if not v] == [fails]
+
+
+def test_a_drag_released_at_its_end_point_or_nowhere_is_not_an_interrupted_one():
+    for released in ([542.0, 582.0], None):
+        said = {**SAID_STOPPED, "released_at": released}
+        failed = [k for k, v in probe.judge_abort(_page(DRAGGED), _page(INTERRUPTED), said, 6, 6, ORIGIN)["checks"].items()
+                  if not v]
+        assert "released_short_of_the_end" in failed and "released_where_it_said" in failed
+
+
+def test_a_drag_stopped_by_sigterm_holds_only_when_it_says_so_and_gives_up_its_claim():
+    """PTD10: the same page-side judgment as an interrupted drag, and the command's own account."""
+    said = {**SAID_STOPPED, "outcome": "aborted:cancelled", "stopped_by": "SIGTERM", "claim_kept": None}
+    assert probe.judge_stop(_page(DRAGGED), _page(INTERRUPTED), said, 6, 6, ORIGIN)["held"]
+    for change, fails in (({"stopped_by": None}, "says_what_stopped_it"), ({"claim_kept": "abc"}, "claim_given_up"),
+                          ({"outcome": "aborted:pointer_contended:key_down"}, "exit_says_pressed_then_stopped")):
+        verdict = probe.judge_stop(_page(DRAGGED), _page(INTERRUPTED), {**said, **change}, 6, 6, ORIGIN)
         assert [k for k, v in verdict["checks"].items() if not v] == [fails]
-    held_down = _page("PD n2 u1 x0 h22 l0 o0 t0 g12 k2 d300,300 r520,440")
-    assert not probe.judge_abort(before, held_down, said, 6, 6)["checks"]["one_release_or_cancel"]
+
+
+def test_a_kept_record_is_judged_again_from_what_it_stored():
+    """The stricter judgment is applied to the two live runs already kept, without running anything."""
+    record = {"content": [*ORIGIN, 1200.0, 780.0], "page_at_start": _page(START), "runs": {
+        "drag": {"exit": 0, "said": SAID, "page": _page(DRAGGED), "held": True},
+        "interrupted": {"exit": 6, "said": SAID_STOPPED, "page": _page(INTERRUPTED), "held": True},
+        "short": {"exit": 4, "said": {"outcome": "refused", "code": "drag_too_short"}, "page": _page(INTERRUPTED),
+                  "held": True}}}
+    assert probe.rejudge(record, 6, 4) == {name: {"held": True, "failed": [], "held_when_run": True}
+                                           for name in ("drag", "interrupted", "short")}
+    record["runs"]["interrupted"]["page"] = _page(INTERRUPTED.replace("r371,345", "r390,345"))
+    assert probe.rejudge(record, 6, 4)["interrupted"] == {"held": False, "failed": ["released_where_it_said"],
+                                                          "held_when_run": True}
 
 
 def test_a_refused_short_drag_holds_only_when_the_page_saw_nothing():

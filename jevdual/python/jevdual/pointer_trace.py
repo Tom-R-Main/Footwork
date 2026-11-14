@@ -124,7 +124,7 @@ class GestureTrace:
         self.record['outcome'] = outcome
         if 'final_measured_ns' not in self.record and 'final_measurement_error' not in self.record:
             self.measure_final(poster)
-        if self.plan is not None:
+        if self.plan is not None and self.record['t0_ns'] is not None:  # no t0: stopped before any post
             self.record['planned_samples'] = [
                 {'t_ns': self.record['t0_ns'] + round(s.t * 1e9), 'x': s.x, 'y': s.y}
                 for s in self.plan.samples]
