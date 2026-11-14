@@ -1,0 +1,16 @@
+Google Chrome: 'Footwork macOS coordination fixture'  [elements_incomplete 1]
+note: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown
+11 elements:
+  [   4] combobox   'View site information'
+  [   8] combobox   'Chrome'
+  [  13] combobox   'Tab search'
+  [   5] textbox    'Address and search bar' = '127.0.0.1:56864'
+  [   3] button     'Reload'
+  [   6] button     'Bookmark this tab'
+  [   7] button     'Sign In to Chrome?'
+  [  12] button     'Coordination target' dom_id='target' document='http://127.0.0.1:56864/'
+  [  14] radio      'Footwork macOS coordination fixture - Memory usage - 17.0 MB' checked=True selected
+  [  15] button     'Close'
+  [  16] button     'New Tab'
+page text (15 chars):
+127.0.0.1:56864

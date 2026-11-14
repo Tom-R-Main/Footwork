@@ -1,0 +1,896 @@
+{
+  "target": "474958e48c0db404ffbe3b302bacef0df101c3d5",
+  "release": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5",
+  "current_at_start": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469",
+  "python": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5/bin/python",
+  "source": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5/lib/python3.12/site-packages/jevdual/__init__.py",
+  "cua_source": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5/lib/python3.12/site-packages/cua_driver/__init__.py",
+  "sdk": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
+  "criteria": {
+    "background_native_start": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "subject_native_start": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "filmed_native_start": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "persistent_desktop_subject_reservation": {
+      "passed": true
+    },
+    "saved_observe_only": {
+      "passed": true
+    },
+    "pointer_setup": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "filmed_point": {
+      "passed": true,
+      "exit": 0,
+      "error": ""
+    },
+    "independent_native_append": {
+      "passed": true,
+      "exit": 0,
+      "actual": "Owned background baseline\nBackground concurrency marker",
+      "error": ""
+    },
+    "pointer_readback": {
+      "passed": true,
+      "expected": [
+        550.0,
+        477.0
+      ],
+      "observed": [
+        550.0,
+        477.0
+      ],
+      "gestures": [
+        {
+          "kind": "place",
+          "label": "setup",
+          "from": [
+            914.05078125,
+            454.58984375
+          ],
+          "to": [
+            200.0,
+            287.0
+          ],
+          "samples": 1,
+          "outcome": "arrived"
+        },
+        {
+          "kind": "approach",
+          "label": "Coordination target",
+          "from": [
+            200.0,
+            287.0
+          ],
+          "to": [
+            550.0,
+            477.0
+          ],
+          "samples": 87,
+          "duration_s": 0.896437356998477,
+          "posted": 86,
+          "max_gap_ms": 24.9,
+          "stall_gap_ms": null,
+          "max_post_ms": 12.2,
+          "max_ack_ms": 12.6,
+          "outcome": "arrived"
+        }
+      ]
+    },
+    "background_did_not_steal_front": {
+      "passed": true,
+      "before": 28369,
+      "after": 28369
+    },
+    "independent_page_hover": {
+      "passed": true,
+      "events": [
+        {
+          "event": "pointerenter"
+        }
+      ]
+    },
+    "pointer_record_complete": {
+      "passed": true,
+      "completeness": "complete",
+      "geometry_complete": true,
+      "posted_basis": "CGEventPost call entry/return; not OS delivery"
+    },
+    "recorded_posts_equal_moving_samples": {
+      "passed": true,
+      "recorded_posts": 86,
+      "moving_samples": 86,
+      "player_posted": 86,
+      "record_posted": 86,
+      "planned": 87
+    },
+    "posting_gap_under_unchanged_limit": {
+      "passed": true,
+      "max_gap_ms": 24.9,
+      "stall_gap_ms": null,
+      "limit_ms": 50.0,
+      "max_post_ms": 12.2,
+      "max_ack_ms": 12.6,
+      "recorder_max_post_call_ms": 11.695,
+      "recorder_median_post_call_ms": 0.013
+    },
+    "record_endpoint_matches_readback": {
+      "passed": true,
+      "requested": [
+        550.0,
+        477.0
+      ],
+      "last_posted": [
+        550.0,
+        477.0
+      ],
+      "record_final": [
+        550.0,
+        477.0
+      ],
+      "independent": [
+        550.0,
+        477.0
+      ]
+    },
+    "reserved_owner_continues_with_waiter": {
+      "passed": true,
+      "requests": [
+        {
+          "seq": 1408,
+          "token": "94800cd8462041458f4c74f25a29d429",
+          "owner": "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/subject",
+          "desktop": "console",
+          "resources": [
+            "session/%2Fprivate%2Ftmp%2Fclaude-501%2F-Users-thomasmain-projects-footwork%2F11a6d1b7-010c-448c-8d59-ce79ec3c24b4%2Fscratchpad%2Fqual1%2Frelease%2Fsubject"
+          ],
+          "state": "active",
+          "reservation": "",
+          "pid": 28965
+        },
+        {
+          "seq": 1409,
+          "token": "4d17be189b0747c7a96ed5516287c8a2",
+          "owner": "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/subject",
+          "desktop": "console",
+          "resources": [
+            "app/google%20chrome"
+          ],
+          "state": "waiting",
+          "reservation": "",
+          "pid": 28965
+        }
+      ]
+    },
+    "owner_completed_before_competitor_handoff": {
+      "passed": true,
+      "exit": 0
+    },
+    "revocation_fences_pointer": {
+      "passed": true,
+      "exit": 7,
+      "error": "stopped: coordination_refused: reservation unavailable; explicit handoff required\n"
+    },
+    "revoked_point_records_no_posts": {
+      "passed": true,
+      "new_lines": 0
+    },
+    "stale_yield_preserves_new_owner": {
+      "passed": true
+    }
+  },
+  "commands": [
+    {
+      "name": "00-background-start",
+      "args": [
+        "start",
+        "Append only to owned background fixture",
+        "--app",
+        "TextEdit",
+        "--pid",
+        "28503",
+        "--window",
+        "independent.txt",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/other"
+      ],
+      "pid": 28570,
+      "started": 1794672472.219191,
+      "exit": 0,
+      "elapsed": 1.003
+    },
+    {
+      "name": "01-subject-start",
+      "args": [
+        "start",
+        "Observe owned subject",
+        "--app",
+        "Google Chrome",
+        "--pid",
+        "28369",
+        "--window",
+        "Footwork macOS coordination fixture",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/subject"
+      ],
+      "pid": 28630,
+      "started": 1794672473.2249851,
+      "exit": 0,
+      "elapsed": 0.962
+    },
+    {
+      "name": "02-film-start",
+      "args": [
+        "start",
+        "Film owned pointer rehearsal",
+        "--app",
+        "Google Chrome",
+        "--pid",
+        "28369",
+        "--window",
+        "Footwork macOS coordination fixture",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/film",
+        "--mode",
+        "exclusive_desktop",
+        "--pointer-motion",
+        "filmed",
+        "--rest",
+        "100,100"
+      ],
+      "pid": 28696,
+      "started": 1794672474.189157,
+      "exit": 0,
+      "elapsed": 0.684
+    },
+    {
+      "name": "03-observe-only",
+      "args": [
+        "control",
+        "observe",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/film"
+      ],
+      "pid": 28754,
+      "started": 1794672474.8768692,
+      "exit": 0,
+      "elapsed": 0.077
+    },
+    {
+      "name": "04-park-place",
+      "args": [
+        "park",
+        "--place",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/film"
+      ],
+      "pid": 28755,
+      "started": 1794672474.9575832,
+      "exit": 0,
+      "elapsed": 0.22
+    },
+    {
+      "name": "05-filmed-point",
+      "args": [
+        "point",
+        "Coordination target",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/film"
+      ],
+      "pid": 28760,
+      "started": 1794672475.219102,
+      "exit": 0,
+      "elapsed": 1.665
+    },
+    {
+      "name": "05-background-append",
+      "args": [
+        "do",
+        "append",
+        "1",
+        "Background concurrency marker",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/other"
+      ],
+      "pid": 28761,
+      "started": 1794672475.2191622,
+      "exit": 0,
+      "elapsed": 2.02
+    },
+    {
+      "name": "07-competing-look",
+      "args": [
+        "look",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/subject"
+      ],
+      "pid": 28965,
+      "started": 1794672477.526297,
+      "exit": 7
+    },
+    {
+      "name": "08-owner-look",
+      "args": [
+        "look",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/film"
+      ],
+      "pid": 28966,
+      "started": 1794672477.615582,
+      "exit": 0
+    },
+    {
+      "name": "09-cancel-waiter",
+      "args": [
+        "control",
+        "cancel",
+        "4d17be189b0747c7a96ed5516287c8a2"
+      ],
+      "pid": 28975,
+      "started": 1794672478.260478,
+      "exit": 0,
+      "elapsed": 0.082
+    },
+    {
+      "name": "10-cancel-reservation",
+      "args": [
+        "control",
+        "cancel",
+        "69079cbf645e425aac8f289af8298cc3"
+      ],
+      "pid": 28979,
+      "started": 1794672478.3539221,
+      "exit": 0,
+      "elapsed": 0.08
+    },
+    {
+      "name": "11-revoked-point",
+      "args": [
+        "point",
+        "Coordination target",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/film"
+      ],
+      "pid": 28982,
+      "started": 1794672478.436606,
+      "exit": 7,
+      "elapsed": 0.099
+    },
+    {
+      "name": "12-explicit-handoff",
+      "args": [
+        "control",
+        "reserve",
+        "--session",
+        "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/film"
+      ],
+      "pid": 29062,
+      "started": 1794672478.539458,
+      "exit": 0,
+      "elapsed": 0.083
+    },
+    {
+      "name": "13-stale-yield",
+      "args": [
+        "control",
+        "yield",
+        "69079cbf645e425aac8f289af8298cc3"
+      ],
+      "pid": 29063,
+      "started": 1794672478.625314,
+      "exit": 0,
+      "elapsed": 0.075
+    },
+    {
+      "name": "14-yield-new-owner",
+      "args": [
+        "control",
+        "yield",
+        "9be599fd43b848668ed67055e05b250b"
+      ],
+      "pid": 29064,
+      "started": 1794672478.704153,
+      "exit": 0,
+      "elapsed": 0.077
+    }
+  ],
+  "protected_chrome_before": {
+    "9444": {
+      "pid": 76915,
+      "start": 1794671797.336325
+    },
+    "9555": {
+      "pid": 34796,
+      "start": 1794449161.570709
+    },
+    "9333": {
+      "pid": 81411,
+      "start": 1794437934.417619
+    }
+  },
+  "idle_gate": {
+    "required_idle_s": 10.0,
+    "polls": [
+      {
+        "at": 1794672469.378315,
+        "screen_locked": false,
+        "idle_seconds": 27.454658834
+      }
+    ],
+    "passed": true
+  },
+  "initial": {
+    "screen_locked": false,
+    "idle_seconds": 27.45489125,
+    "front_pid": 74505,
+    "pointer": [
+      914.05078125,
+      454.58984375
+    ],
+    "existing_active_owners": 0
+  },
+  "owned_chrome": {
+    "pid": 28369,
+    "start": 1794672469.441264
+  },
+  "owned_textedit": {
+    "pid": 28503,
+    "windows": {
+      "independent.txt": 503044
+    }
+  },
+  "film_binding": {
+    "pid": 28369,
+    "window_id": 503036,
+    "token": "69079cbf645e425aac8f289af8298cc3",
+    "geometry": {
+      "window": [
+        100.0,
+        100.0,
+        900.0,
+        650.0
+      ],
+      "content": [
+        100.0,
+        187.0,
+        900.0,
+        563.0
+      ],
+      "keep_out": null,
+      "rest": [
+        200.0,
+        287.0
+      ],
+      "margin_pt": 4.0,
+      "arcs": [
+        0.18,
+        0.1,
+        0.05,
+        0.0
+      ],
+      "timing": "DELIBERATE",
+      "dwell_s": 0.18,
+      "type_delay_ms": 65,
+      "continuity_pt": 2.0,
+      "take_ended": null,
+      "last_pointer": null,
+      "gestures": [],
+      "trace_path": null
+    }
+  },
+  "point_record_summary": [
+    {
+      "kind": "approach",
+      "label": "Coordination target",
+      "outcome": "arrived",
+      "completeness": "complete",
+      "posted_basis": "CGEventPost call entry/return; not OS delivery",
+      "posted": 86,
+      "planned": 87,
+      "posted_samples": 86
+    }
+  ],
+  "video": {
+    "exit": 0,
+    "path": "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/rehearsal.mov",
+    "exists": true
+  },
+  "cleanup_registry": {
+    "requests": [],
+    "reservations": [
+      {
+        "token": "1e7441ee6f8a46e8b796328aba6949cc",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111/native-live/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "477d870e504c4f0fa1d8580adc51bfa0",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111/native-live/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "9ac829e884a44a1185b5d0b02843cb8c",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-diagnosis/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "1ea01fb265a246b5a68a63247c74f474",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-diagnosis/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "68701585694f4f59a91b8bdc25c53321",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-final/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "523b4dbeacf24d05a1e0db6a3bfd4a86",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/macos-coordination-20261111-fix/native-final/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "1cd3316b5f864f8da699627a4b1eddf8",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "df84d06a221448debfddec80f577da04",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "257244274d154d71b205f2419e8f2236",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native-warm-capture/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "b03aead5c2b249428bf7c91b9948c940",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/installed-coordination-20261111/native-warm-capture/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "55fa888d56f946f380874675f28143da",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "ee3de9f95f3a46989a7eb9032d23bc4f",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-diagnostic/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "750d6c808d164208ad5ef00451201770",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-installed-final/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "e6652e08473d4b10ab733023b14d88de",
+        "owner": "/Users/thomasmain/projects/footwork/.local-reviews/macos-coordination/jevdual/output/pointer-startup-20261111/native-installed-final/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "d0a22176721f4b978dc0fee189c74b14",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/best-edit/takes-004",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "42b5f480b78f4df3ae6d10980aa172b4",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/best-edit/takes-005",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "38749585d1bb4ee5a66ee2f1215119e7",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/best-edit/takes-006",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "f411f1200cea450eaf0dc28eabf00756",
+        "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "7eae81a7109240ebafc843950eff3e15",
+        "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/live/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "8347ff560ce94779ace832ad78667641",
+        "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/repeat-1/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "43cedcab27124578b6584fc11eb81f0b",
+        "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/repeat-1/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "18032d5c92b54bbb9a46d204cc66c369",
+        "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/repeat-2/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "9196205f6cb54446a2662bdc6862b647",
+        "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/repeat-2/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "476a11643ddc4498bcd6534561a4c26a",
+        "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/repeat-3/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "93af9d8a5bda4ffba26686ed512ef3a1",
+        "owner": "/Users/thomasmain/projects/footwork/jevdual/output/converge-release-20261111/repeat-3/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "95be51e70ea64aa78cb2ae58be415516",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/best-edit/snips-002",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "2f3f8bb06c584581bbffa3ad94b251ae",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/best-edit/takes-007",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "2883bca24c2d47b8a8d99194860f23de",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/best-edit/takes-008",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "69b5cc2484c44e9891f8d0723bab7ddb",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/best-edit/snips-003/fw",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "68d23ad1399249518a3af3b449c5f1eb",
+        "owner": "/Users/thomasmain/projects/demogeek/.local-reviews/application-film/sweep-2026-11-12/arm3-footwork-night3/session",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "194718ca7a1e4770a3d955d99f51f649",
+        "owner": "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/fp67-live2/out/session",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "3a4449f152994d769c2f91cdea137e42",
+        "owner": "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/fp88-slot1/out/session",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "8fe86294cc86481e9185054d6a615e6c",
+        "owner": "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/sn-live2/out/session",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "69079cbf645e425aac8f289af8298cc3",
+        "owner": "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/film",
+        "desktop": "console",
+        "resources": [
+          "app/google%20chrome",
+          "desktop"
+        ],
+        "state": "revoked"
+      },
+      {
+        "token": "9be599fd43b848668ed67055e05b250b",
+        "owner": "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/film",
+        "desktop": "console",
+        "resources": [
+          "desktop",
+          "app/google%20chrome"
+        ],
+        "state": "revoked"
+      }
+    ]
+  },
+  "owned_chrome_exited": true,
+  "events": [
+    {
+      "event": "pointerenter"
+    }
+  ],
+  "final_pointer": [
+    550.0,
+    477.0
+  ],
+  "owned_tokens": [
+    "69079cbf645e425aac8f289af8298cc3",
+    "9be599fd43b848668ed67055e05b250b"
+  ],
+  "protected_chrome_after": {
+    "9444": {
+      "pid": 76915,
+      "start": 1794671797.336325
+    },
+    "9555": {
+      "pid": 34796,
+      "start": 1794449161.570709
+    },
+    "9333": {
+      "pid": 81411,
+      "start": 1794437934.417619
+    }
+  },
+  "current_at_end": "/Users/thomasmain/.local/share/footwork/releases/6d571a1ed7c7bf77576279a01053f77fc20ce469"
+}

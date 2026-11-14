@@ -1,0 +1,208 @@
+{"t": 1794672488.3387997, "n": 1, "doc": "mwglnukm-gox3ovedwhs", "type": "loaded", "detail": {"dpr": 2, "viewport": [1200, 813], "clock_step_s": 9.999990463256836e-05, "page_says_at_forged": "Forged", "browser_says_at_forged": "lid2"}, "received": 1794672488.3399339}
+{"t": 1794672488.3457, "n": 2, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672488.3457, "type": "mouseover", "target": "DIV", "x": 528, "y": 335}, "received": 1794672488.346623}
+{"t": 1794672488.8282998, "n": 3, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[1, 1794672488.3409], [2, 1794672488.3495998]]}, "received": 1794672488.829556}
+{"t": 1794672489.3272998, "n": 4, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[3, 1794672488.8300998]]}, "received": 1794672489.328473}
+{"t": 1794672489.8275, "n": 5, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[4, 1794672489.329]]}, "received": 1794672489.8284001}
+{"t": 1794672490.3284, "n": 6, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[5, 1794672489.8298]]}, "received": 1794672490.32981}
+{"t": 1794672490.8277, "n": 7, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[6, 1794672490.3305]]}, "received": 1794672490.8285928}
+{"t": 1794672491.3281999, "n": 8, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[7, 1794672490.829]]}, "received": 1794672491.329563}
+{"t": 1794672491.8282998, "n": 9, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[8, 1794672491.3300998]]}, "received": 1794672491.829622}
+{"t": 1794672492.3282998, "n": 10, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[9, 1794672491.8300998]]}, "received": 1794672492.3293571}
+{"t": 1794672492.8275, "n": 11, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[10, 1794672492.3298998]]}, "received": 1794672492.8294752}
+{"t": 1794672493.327, "n": 12, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[11, 1794672492.8300998]]}, "received": 1794672493.3283882}
+{"t": 1794672493.8270998, "n": 13, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[12, 1794672493.329]]}, "received": 1794672493.828088}
+{"t": 1794672494.3277, "n": 14, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[13, 1794672493.8285]]}, "received": 1794672494.329068}
+{"t": 1794672494.8277998, "n": 15, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[14, 1794672494.3297]]}, "received": 1794672494.828804}
+{"t": 1794672495.3286, "n": 16, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[15, 1794672494.8292997]]}, "received": 1794672495.3296971}
+{"t": 1794672495.8269, "n": 17, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[16, 1794672495.3300998]]}, "received": 1794672495.828127}
+{"t": 1794672495.9042997, "n": 18, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672495.9042997, "type": "mouseover", "target": "Hidden", "x": 439, "y": 157}, "received": 1794672495.906063}
+{"t": 1794672496.0042, "n": 19, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672496.0042, "type": "mouseover", "target": "DIV", "x": 361, "y": 126}, "received": 1794672496.006179}
+{"t": 1794672496.2375998, "n": 20, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672496.2375998, "type": "mouseover", "target": "Alpha", "x": 174, "y": 84}, "received": 1794672496.239372}
+{"t": 1794672496.327, "n": 21, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[17, 1794672495.8286], [18, 1794672495.9065998], [19, 1794672496.0068998], [20, 1794672496.2401]]}, "received": 1794672496.328786}
+{"t": 1794672496.8275, "n": 22, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[21, 1794672496.3295]]}, "received": 1794672496.8291981}
+{"t": 1794672496.9678998, "n": 23, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Alpha", "x": 110, "y": 82, "rect": [40, 60, 140, 44]}, "received": 1794672496.96947}
+{"t": 1794672496.9682, "n": 24, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Alpha", "x": 110, "y": 82, "rect": [40, 60, 140, 44]}, "received": 1794672496.9697988}
+{"t": 1794672496.9687998, "n": 25, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerup", "trusted": false, "target": "Alpha", "x": 110, "y": 82, "rect": [40, 60, 140, 44]}, "received": 1794672496.970069}
+{"t": 1794672496.969, "n": 27, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "click", "trusted": false, "target": "Alpha", "x": 110, "y": 82, "rect": [40, 60, 140, 44]}, "received": 1794672496.970953}
+{"t": 1794672496.9694, "n": 28, "doc": "mwglnukm-gox3ovedwhs", "type": "click_handler", "detail": {"button": "Alpha", "trusted": false, "last_trusted_pointer": {"t": 1794672496.5209, "type": "mousemove", "target": "Alpha", "x": 110, "y": 82}, "rect": [40, 60, 140, 44], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": false, "pinch": 1}, "received": 1794672496.971298}
+{"t": 1794672496.9689, "n": 26, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mouseup", "trusted": false, "target": "Alpha", "x": 110, "y": 82, "rect": [40, 60, 140, 44]}, "received": 1794672496.970752}
+{"t": 1794672497.3275998, "n": 29, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[22, 1794672496.8297], [23, 1794672496.9701], [24, 1794672496.971], [27, 1794672496.9712], [25, 1794672496.9715], [28, 1794672496.9715998], [26, 1794672496.9717]]}, "received": 1794672497.328942}
+{"t": 1794672497.8274, "n": 30, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[29, 1794672497.3295]]}, "received": 1794672497.828746}
+{"t": 1794672498.3274, "n": 31, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[30, 1794672497.8297]]}, "received": 1794672498.329504}
+{"t": 1794672498.8277, "n": 32, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[31, 1794672498.3300998]]}, "received": 1794672498.8289652}
+{"t": 1794672499.3285, "n": 33, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[32, 1794672498.8293998]]}, "received": 1794672499.3298}
+{"t": 1794672499.8281, "n": 34, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[33, 1794672499.3300998]]}, "received": 1794672499.829519}
+{"t": 1794672500.3285, "n": 35, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[34, 1794672499.83]]}, "received": 1794672500.3295739}
+{"t": 1794672500.8281999, "n": 36, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[35, 1794672500.33]]}, "received": 1794672500.829891}
+{"t": 1794672501.3277, "n": 37, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[36, 1794672500.8305]]}, "received": 1794672501.328964}
+{"t": 1794672501.828, "n": 38, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[37, 1794672501.3307998]]}, "received": 1794672501.829686}
+{"t": 1794672502.3277, "n": 39, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[38, 1794672501.8302999]]}, "received": 1794672502.3294258}
+{"t": 1794672502.828, "n": 40, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[39, 1794672502.3298]]}, "received": 1794672502.829464}
+{"t": 1794672503.3275998, "n": 41, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[40, 1794672502.83]]}, "received": 1794672503.3288178}
+{"t": 1794672503.7092, "n": 42, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672503.7092, "type": "mouseover", "target": "DIV", "x": 182, "y": 97}, "received": 1794672503.710592}
+{"t": 1794672503.827, "n": 43, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[41, 1794672503.3291], [42, 1794672503.7110999]]}, "received": 1794672503.829132}
+{"t": 1794672503.8425999, "n": 44, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672503.8425999, "type": "mouseover", "target": "Hidden", "x": 304, "y": 133}, "received": 1794672503.846155}
+{"t": 1794672503.9427, "n": 45, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672503.9427, "type": "mouseover", "target": "DIV", "x": 418, "y": 179}, "received": 1794672503.944575}
+{"t": 1794672504.2375, "n": 46, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672504.2375, "type": "mouseover", "target": "Beta", "x": 664, "y": 329}, "received": 1794672504.2390158}
+{"t": 1794672504.3269, "n": 47, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[43, 1794672503.8295999], [44, 1794672503.8486], [45, 1794672503.945], [46, 1794672504.2396]]}, "received": 1794672504.3282108}
+{"t": 1794672504.8279, "n": 48, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[47, 1794672504.3295]]}, "received": 1794672504.829249}
+{"t": 1794672504.8774, "n": 50, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Beta", "x": 690, "y": 352, "rect": [620, 330, 140, 44]}, "received": 1794672504.878827}
+{"t": 1794672504.8772, "n": 49, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Beta", "x": 690, "y": 352, "rect": [620, 330, 140, 44]}, "received": 1794672504.878399}
+{"t": 1794672504.8779, "n": 52, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mouseup", "trusted": false, "target": "Beta", "x": 690, "y": 352, "rect": [620, 330, 140, 44]}, "received": 1794672504.882931}
+{"t": 1794672504.8777997, "n": 51, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerup", "trusted": false, "target": "Beta", "x": 690, "y": 352, "rect": [620, 330, 140, 44]}, "received": 1794672504.882678}
+{"t": 1794672504.8779, "n": 53, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "click", "trusted": false, "target": "Beta", "x": 690, "y": 352, "rect": [620, 330, 140, 44]}, "received": 1794672504.883279}
+{"t": 1794672504.878, "n": 54, "doc": "mwglnukm-gox3ovedwhs", "type": "click_handler", "detail": {"button": "Beta", "trusted": false, "last_trusted_pointer": {"t": 1794672504.4366999, "type": "mousemove", "target": "Beta", "x": 690, "y": 352}, "rect": [620, 330, 140, 44], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": false, "pinch": 1}, "received": 1794672504.883586}
+{"t": 1794672505.3281999, "n": 55, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[48, 1794672504.8293998], [50, 1794672504.8817997], [49, 1794672504.8827], [52, 1794672504.8830998], [51, 1794672504.8832998], [53, 1794672504.8835998], [54, 1794672504.8837]]}, "received": 1794672505.32948}
+{"t": 1794672505.8275998, "n": 56, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[55, 1794672505.3298]]}, "received": 1794672505.830059}
+{"t": 1794672506.3287997, "n": 57, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[56, 1794672505.8305998]]}, "received": 1794672506.330849}
+{"t": 1794672506.827, "n": 58, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[57, 1794672506.3312998]]}, "received": 1794672506.8283079}
+{"t": 1794672507.3272, "n": 59, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[58, 1794672506.8285]]}, "received": 1794672507.3295412}
+{"t": 1794672507.8282998, "n": 60, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[59, 1794672507.3298998]]}, "received": 1794672507.82992}
+{"t": 1794672508.3282998, "n": 61, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[60, 1794672507.8316]]}, "received": 1794672508.3295329}
+{"t": 1794672508.828, "n": 62, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[61, 1794672508.3298]]}, "received": 1794672508.8293371}
+{"t": 1794672509.328, "n": 63, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[62, 1794672508.8307998]]}, "received": 1794672509.329466}
+{"t": 1794672509.8277998, "n": 64, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[63, 1794672509.3298998]]}, "received": 1794672509.828992}
+{"t": 1794672510.3284, "n": 65, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[64, 1794672509.8292997]]}, "received": 1794672510.329857}
+{"t": 1794672510.8279, "n": 66, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[65, 1794672510.3300998]]}, "received": 1794672510.829512}
+{"t": 1794672511.3279, "n": 67, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[66, 1794672510.8298]]}, "received": 1794672511.329228}
+{"t": 1794672511.8284, "n": 68, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[67, 1794672511.3295]]}, "received": 1794672511.829637}
+{"t": 1794672512.328, "n": 69, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[68, 1794672511.8298]]}, "received": 1794672512.329845}
+{"t": 1794672512.8285, "n": 70, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[69, 1794672512.3300998]]}, "received": 1794672512.8298519}
+{"t": 1794672513.328, "n": 71, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[70, 1794672512.8300998]]}, "received": 1794672513.329411}
+{"t": 1794672513.828, "n": 72, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[71, 1794672513.3298]]}, "received": 1794672513.829447}
+{"t": 1794672514.3282998, "n": 73, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[72, 1794672513.8295999]]}, "received": 1794672514.329748}
+{"t": 1794672514.8284, "n": 74, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[73, 1794672514.3310997]]}, "received": 1794672514.8297029}
+{"t": 1794672515.3275998, "n": 75, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[74, 1794672514.8298998]]}, "received": 1794672515.329172}
+{"t": 1794672515.8287, "n": 76, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[75, 1794672515.3293998]]}, "received": 1794672515.830035}
+{"t": 1794672516.3285, "n": 77, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[76, 1794672515.8302]]}, "received": 1794672516.32977}
+{"t": 1794672516.8279, "n": 78, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[77, 1794672516.3298998]]}, "received": 1794672516.829719}
+{"t": 1794672517.3281, "n": 79, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[78, 1794672516.83]]}, "received": 1794672517.32967}
+{"t": 1794672517.8285, "n": 80, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[79, 1794672517.3298998]]}, "received": 1794672517.829723}
+{"t": 1794672518.3281, "n": 81, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[80, 1794672517.8298998]]}, "received": 1794672518.3295748}
+{"t": 1794672518.8286, "n": 82, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[81, 1794672518.3298]]}, "received": 1794672518.829946}
+{"t": 1794672519.328, "n": 83, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[82, 1794672518.8302]]}, "received": 1794672519.329659}
+{"t": 1794672519.8281999, "n": 84, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[83, 1794672519.33]]}, "received": 1794672519.8301172}
+{"t": 1794672520.3286, "n": 85, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[84, 1794672519.8304]]}, "received": 1794672520.3300228}
+{"t": 1794672520.8277998, "n": 86, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[85, 1794672520.3302]]}, "received": 1794672520.829192}
+{"t": 1794672521.3284, "n": 87, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[86, 1794672520.8292997]]}, "received": 1794672521.3301508}
+{"t": 1794672521.8281, "n": 88, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[87, 1794672521.3304]]}, "received": 1794672521.829843}
+{"t": 1794672522.3281999, "n": 89, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[88, 1794672521.8300998]]}, "received": 1794672522.329707}
+{"t": 1794672522.828, "n": 90, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[89, 1794672522.3298]]}, "received": 1794672522.829616}
+{"t": 1794672523.3267, "n": 91, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[90, 1794672522.8307998]]}, "received": 1794672523.328135}
+{"t": 1794672523.8284, "n": 92, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[91, 1794672523.3293998]]}, "received": 1794672523.83083}
+{"t": 1794672524.3281999, "n": 93, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[92, 1794672523.8310997]]}, "received": 1794672524.3299332}
+{"t": 1794672524.8281999, "n": 94, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[93, 1794672524.33]]}, "received": 1794672524.829977}
+{"t": 1794672525.3277998, "n": 95, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[94, 1794672524.8312]]}, "received": 1794672525.329328}
+{"t": 1794672525.8286, "n": 96, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[95, 1794672525.3304]]}, "received": 1794672525.830443}
+{"t": 1794672526.3277998, "n": 97, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[96, 1794672525.8305]]}, "received": 1794672526.329234}
+{"t": 1794672526.828, "n": 98, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[97, 1794672526.3292997]]}, "received": 1794672526.830065}
+{"t": 1794672527.327, "n": 99, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[98, 1794672526.8302]]}, "received": 1794672527.3295481}
+{"t": 1794672527.4385, "n": 100, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672527.4385, "type": "mouseover", "target": "DIV", "x": 650, "y": 326}, "received": 1794672527.44014}
+{"t": 1794672527.6876, "n": 101, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672527.6876, "type": "mouseover", "target": "Dodge", "x": 429, "y": 220}, "received": 1794672527.689517}
+{"t": 1794672527.7540998, "n": 102, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672527.7540998, "type": "mouseover", "target": "DIV", "x": 359, "y": 196}, "received": 1794672527.7557602}
+{"t": 1794672527.8269, "n": 103, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[99, 1794672527.3300998], [100, 1794672527.4419], [101, 1794672527.6897], [102, 1794672527.7559]]}, "received": 1794672527.8283038}
+{"t": 1794672527.9376, "n": 104, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672527.9376, "type": "mouseover", "target": "Shy", "x": 176, "y": 157}, "received": 1794672527.940089}
+{"t": 1794672528.3275998, "n": 105, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[103, 1794672527.8282998], [104, 1794672527.9402997]]}, "received": 1794672528.3291662}
+{"t": 1794672528.6612, "n": 106, "doc": "mwglnukm-gox3ovedwhs", "type": "moved", "detail": {"control": "Shy", "by": "pointerover", "trusted": false, "last_trusted_pointer": {"t": 1794672528.1875, "type": "mousemove", "target": "Shy", "x": 110, "y": 152}, "rect": [40, 130, 140, 44], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": false, "pinch": 1}, "received": 1794672528.663894}
+{"t": 1794672528.8279, "n": 107, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[105, 1794672528.3292], [106, 1794672528.6639]]}, "received": 1794672528.829609}
+{"t": 1794672529.3279, "n": 108, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[107, 1794672528.8297]]}, "received": 1794672529.329549}
+{"t": 1794672529.8279, "n": 109, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[108, 1794672529.3295]]}, "received": 1794672529.829515}
+{"t": 1794672530.3287, "n": 110, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[109, 1794672529.8304]]}, "received": 1794672530.330529}
+{"t": 1794672530.8285, "n": 111, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[110, 1794672530.3307]]}, "received": 1794672530.830039}
+{"t": 1794672531.3286, "n": 112, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[111, 1794672530.8300998]]}, "received": 1794672531.330676}
+{"t": 1794672531.8274, "n": 113, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[112, 1794672531.3307]]}, "received": 1794672531.829031}
+{"t": 1794672531.9092999, "n": 114, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672531.9092999, "type": "mouseover", "target": "DIV", "x": 110, "y": 151}, "received": 1794672531.9125628}
+{"t": 1794672532.3270998, "n": 115, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[113, 1794672531.829], [114, 1794672531.913]]}, "received": 1794672532.328938}
+{"t": 1794672532.4592, "n": 116, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672532.4592, "type": "mouseover", "target": "Dodge", "x": 334, "y": 202}, "received": 1794672532.46124}
+{"t": 1794672532.8284, "n": 117, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[115, 1794672532.3292], [116, 1794672532.4613998]]}, "received": 1794672532.830067}
+{"t": 1794672533.1699, "n": 118, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Dodge", "x": 370, "y": 222, "rect": [300, 200, 140, 44]}, "received": 1794672533.171471}
+{"t": 1794672533.1701999, "n": 120, "doc": "mwglnukm-gox3ovedwhs", "type": "moved", "detail": {"control": "Dodge", "by": "mousedown", "trusted": false, "last_trusted_pointer": {"t": 1794672532.7092, "type": "mousemove", "target": "Dodge", "x": 370, "y": 222}, "rect": [300, 200, 140, 44], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": false, "pinch": 1}, "received": 1794672533.1720371}
+{"t": 1794672533.17, "n": 119, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Dodge", "x": 370, "y": 222, "rect": [300, 200, 140, 44]}, "received": 1794672533.171764}
+{"t": 1794672533.3287, "n": 121, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[117, 1794672532.8310997], [118, 1794672533.1718], [120, 1794672533.1718998], [119, 1794672533.1720998]]}, "received": 1794672533.3301702}
+{"t": 1794672533.8287997, "n": 122, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[121, 1794672533.3312]]}, "received": 1794672533.830432}
+{"t": 1794672534.328, "n": 123, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[122, 1794672533.8302999]]}, "received": 1794672534.330008}
+{"t": 1794672534.8282998, "n": 124, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[123, 1794672534.33]]}, "received": 1794672534.830954}
+{"t": 1794672535.3279, "n": 125, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[124, 1794672534.8310997]]}, "received": 1794672535.329788}
+{"t": 1794672535.828, "n": 126, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[125, 1794672535.3297]]}, "received": 1794672535.829694}
+{"t": 1794672536.3281, "n": 127, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[126, 1794672535.8295999]]}, "received": 1794672536.330132}
+{"t": 1794672536.8281999, "n": 128, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[127, 1794672536.3302999]]}, "received": 1794672536.829932}
+{"t": 1794672537.328, "n": 129, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[128, 1794672536.8298]]}, "received": 1794672537.3304598}
+{"t": 1794672537.828, "n": 130, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[129, 1794672537.3305]]}, "received": 1794672537.830048}
+{"t": 1794672538.3282998, "n": 131, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[130, 1794672537.83]]}, "received": 1794672538.330202}
+{"t": 1794672538.8285, "n": 132, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[131, 1794672538.3300998]]}, "received": 1794672538.8302069}
+{"t": 1794672539.3281, "n": 133, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[132, 1794672538.8300998]]}, "received": 1794672539.329725}
+{"t": 1794672539.4259, "n": 134, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672539.4259, "type": "mouseover", "target": "DIV", "x": 370, "y": 221}, "received": 1794672539.427985}
+{"t": 1794672539.827, "n": 135, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[133, 1794672539.3295999], [134, 1794672539.4295]]}, "received": 1794672539.829953}
+{"t": 1794672539.9759, "n": 136, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672539.9759, "type": "mouseover", "target": "Note", "x": 625, "y": 146}, "received": 1794672539.9779031}
+{"t": 1794672540.3281, "n": 137, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[135, 1794672539.83], [136, 1794672539.978]]}, "received": 1794672540.330751}
+{"t": 1794672540.7106, "n": 138, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Note", "x": 690, "y": 145, "rect": [620, 130, 140, 30]}, "received": 1794672540.712726}
+{"t": 1794672540.7107997, "n": 139, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Note", "x": 690, "y": 145, "rect": [620, 130, 140, 30]}, "received": 1794672540.7129211}
+{"t": 1794672540.711, "n": 140, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerup", "trusted": false, "target": "Note", "x": 690, "y": 145, "rect": [620, 130, 140, 30]}, "received": 1794672540.7131789}
+{"t": 1794672540.7110999, "n": 141, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mouseup", "trusted": false, "target": "Note", "x": 690, "y": 145, "rect": [620, 130, 140, 30]}, "received": 1794672540.713558}
+{"t": 1794672540.7110999, "n": 142, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "click", "trusted": false, "target": "Note", "x": 690, "y": 145, "rect": [620, 130, 140, 30]}, "received": 1794672540.713789}
+{"t": 1794672540.7112, "n": 143, "doc": "mwglnukm-gox3ovedwhs", "type": "click_handler", "detail": {"button": "Note", "trusted": false, "last_trusted_pointer": {"t": 1794672540.2591, "type": "mousemove", "target": "Note", "x": 690, "y": 145}, "rect": [620, 130, 140, 30], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": false, "pinch": 1}, "received": 1794672540.713993}
+{"t": 1794672540.8282998, "n": 144, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[137, 1794672540.3309], [138, 1794672540.7127998], [139, 1794672540.7129], [140, 1794672540.7131], [141, 1794672540.7132998], [142, 1794672540.7136], [143, 1794672540.7136]]}, "received": 1794672540.830606}
+{"t": 1794672541.3287, "n": 145, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[144, 1794672540.8307]]}, "received": 1794672541.330336}
+{"t": 1794672541.8285, "n": 146, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[145, 1794672541.3300998]]}, "received": 1794672541.830362}
+{"t": 1794672542.3281, "n": 147, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[146, 1794672541.8302]]}, "received": 1794672542.330789}
+{"t": 1794672542.8275, "n": 148, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[147, 1794672542.3309]]}, "received": 1794672542.8292842}
+{"t": 1794672543.3284, "n": 149, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[148, 1794672542.8291]]}, "received": 1794672543.331545}
+{"t": 1794672543.8281, "n": 150, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[149, 1794672543.3315]]}, "received": 1794672543.8309162}
+{"t": 1794672544.3281, "n": 151, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[150, 1794672543.8310997]]}, "received": 1794672544.330092}
+{"t": 1794672544.5795, "n": 152, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "input", "trusted": true, "target": "Note", "x": null, "y": null, "rect": [620, 130, 140, 30]}, "received": 1794672544.581528}
+{"t": 1794672544.5797, "n": 153, "doc": "mwglnukm-gox3ovedwhs", "type": "input", "detail": {"field": "Note", "value": "footwork", "trusted": true, "last_trusted_pointer": {"t": 1794672540.2591, "type": "mousemove", "target": "Note", "x": 690, "y": 145}, "rect": [620, 130, 140, 30], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": false, "pinch": 1}, "received": 1794672544.581695}
+{"t": 1794672544.8287, "n": 154, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[151, 1794672544.3298998], [153, 1794672544.5815], [152, 1794672544.5847998]]}, "received": 1794672544.830326}
+{"t": 1794672545.328, "n": 155, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[154, 1794672544.8300998]]}, "received": 1794672545.329747}
+{"t": 1794672545.8284, "n": 156, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[155, 1794672545.3295999]]}, "received": 1794672545.830407}
+{"t": 1794672546.3282998, "n": 157, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[156, 1794672545.8302]]}, "received": 1794672546.330493}
+{"t": 1794672546.8270998, "n": 158, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[157, 1794672546.3304]]}, "received": 1794672546.829887}
+{"t": 1794672547.328, "n": 159, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[158, 1794672546.8297]]}, "received": 1794672547.330179}
+{"t": 1794672547.828, "n": 160, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[159, 1794672547.3300998]]}, "received": 1794672547.8297338}
+{"t": 1794672548.3275, "n": 161, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[160, 1794672547.8295]]}, "received": 1794672548.3295622}
+{"t": 1794672548.8282998, "n": 162, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[161, 1794672548.3293998]]}, "received": 1794672548.83043}
+{"t": 1794672549.3272998, "n": 163, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[162, 1794672548.8302]]}, "received": 1794672549.328983}
+{"t": 1794672549.8284, "n": 164, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[163, 1794672549.3288999]]}, "received": 1794672549.830208}
+{"t": 1794672550.3277, "n": 165, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[164, 1794672549.8312]]}, "received": 1794672550.329891}
+{"t": 1794672550.8277998, "n": 166, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[165, 1794672550.3297]]}, "received": 1794672550.82965}
+{"t": 1794672551.3277, "n": 167, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[166, 1794672550.8305]]}, "received": 1794672551.329709}
+{"t": 1794672551.8284, "n": 168, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[167, 1794672551.3293998]]}, "received": 1794672551.830694}
+{"t": 1794672552.3279, "n": 169, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[168, 1794672551.8305]]}, "received": 1794672552.329885}
+{"t": 1794672552.8274, "n": 170, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[169, 1794672552.3295999]]}, "received": 1794672552.829458}
+{"t": 1794672553.3279, "n": 171, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[170, 1794672552.8293998]]}, "received": 1794672553.329681}
+{"t": 1794672553.828, "n": 172, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[171, 1794672553.3293998]]}, "received": 1794672553.830507}
+{"t": 1794672554.0709, "n": 173, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672554.0709, "type": "mouseover", "target": "DIV", "x": 652, "y": 128}, "received": 1794672554.074688}
+{"t": 1794672554.328, "n": 174, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[172, 1794672553.8302999], [173, 1794672554.0746999]]}, "received": 1794672554.331716}
+{"t": 1794672554.4211, "n": 175, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672554.4211, "type": "mouseover", "target": "Jump down", "x": 427, "y": 80}, "received": 1794672554.4232278}
+{"t": 1794672554.8285, "n": 176, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[174, 1794672554.3316998], [175, 1794672554.4265997]]}, "received": 1794672554.830337}
+{"t": 1794672555.1608999, "n": 177, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Jump down", "x": 370, "y": 82, "rect": [300, 60, 140, 44]}, "received": 1794672555.1627772}
+{"t": 1794672555.1611, "n": 178, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Jump down", "x": 370, "y": 82, "rect": [300, 60, 140, 44]}, "received": 1794672555.163018}
+{"t": 1794672555.1612997, "n": 179, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerup", "trusted": false, "target": "Jump down", "x": 370, "y": 82, "rect": [300, 60, 140, 44]}, "received": 1794672555.163349}
+{"t": 1794672555.1612997, "n": 180, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mouseup", "trusted": false, "target": "Jump down", "x": 370, "y": 82, "rect": [300, 60, 140, 44]}, "received": 1794672555.163734}
+{"t": 1794672555.1612997, "n": 182, "doc": "mwglnukm-gox3ovedwhs", "type": "click_handler", "detail": {"button": "Jump down", "trusted": false, "last_trusted_pointer": {"t": 1794672554.7035, "type": "mousemove", "target": "Jump down", "x": 370, "y": 82}, "rect": [300, 60, 140, 44], "scroll": [0, 0], "dpr": 2, "viewport": [1200, 813], "page_focused": false, "pinch": 1}, "received": 1794672555.164116}
+{"t": 1794672555.1612997, "n": 181, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "click", "trusted": false, "target": "Jump down", "x": 370, "y": 82, "rect": [300, 60, 140, 44]}, "received": 1794672555.16391}
+{"t": 1794672555.1708999, "n": 183, "doc": "mwglnukm-gox3ovedwhs", "type": "scrolled", "detail": {"y": 1500}, "received": 1794672555.172759}
+{"t": 1794672555.3275, "n": 184, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[176, 1794672554.8300998], [177, 1794672555.1635], [178, 1794672555.1636], [179, 1794672555.1636], [180, 1794672555.1636], [181, 1794672555.165], [182, 1794672555.1650999], [183, 1794672555.1722999]]}, "received": 1794672555.329233}
+{"t": 1794672555.828, "n": 185, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[184, 1794672555.3288999]]}, "received": 1794672555.8356469}
+{"t": 1794672556.328, "n": 186, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[185, 1794672555.8360999]]}, "received": 1794672556.3302882}
+{"t": 1794672556.8281999, "n": 187, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[186, 1794672556.3302]]}, "received": 1794672556.830064}
+{"t": 1794672557.328, "n": 188, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[187, 1794672556.8298]]}, "received": 1794672557.330134}
+{"t": 1794672557.8275998, "n": 189, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[188, 1794672557.3298]]}, "received": 1794672557.829691}
+{"t": 1794672558.3284, "n": 190, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[189, 1794672557.8292997]]}, "received": 1794672558.331318}
+{"t": 1794672558.8285, "n": 191, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[190, 1794672558.3310997]]}, "received": 1794672558.830623}
+{"t": 1794672558.8558998, "n": 192, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672558.8558998, "type": "mouseover", "target": "DIV", "x": 369, "y": 82}, "received": 1794672558.8594189}
+{"t": 1794672559.3279, "n": 193, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[191, 1794672558.8302999], [192, 1794672558.8592]]}, "received": 1794672559.3298318}
+{"t": 1794672559.5209, "n": 194, "doc": "mwglnukm-gox3ovedwhs", "type": "trusted_mouseover", "detail": {"t": 1794672559.5209, "type": "mouseover", "target": "Gamma", "x": 308, "y": 403}, "received": 1794672559.52296}
+{"t": 1794672559.8281, "n": 195, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[193, 1794672559.3293998], [194, 1794672559.5245]]}, "received": 1794672559.8302898}
+{"t": 1794672560.1555, "n": 196, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerdown", "trusted": false, "target": "Gamma", "x": 310, "y": 422, "rect": [240, 400, 140, 44]}, "received": 1794672560.1577442}
+{"t": 1794672560.1555998, "n": 197, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mousedown", "trusted": false, "target": "Gamma", "x": 310, "y": 422, "rect": [240, 400, 140, 44]}, "received": 1794672560.157995}
+{"t": 1794672560.1557999, "n": 198, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "pointerup", "trusted": false, "target": "Gamma", "x": 310, "y": 422, "rect": [240, 400, 140, 44]}, "received": 1794672560.158159}
+{"t": 1794672560.1557999, "n": 199, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "mouseup", "trusted": false, "target": "Gamma", "x": 310, "y": 422, "rect": [240, 400, 140, 44]}, "received": 1794672560.158368}
+{"t": 1794672560.1559, "n": 200, "doc": "mwglnukm-gox3ovedwhs", "type": "page_event", "detail": {"event": "click", "trusted": false, "target": "Gamma", "x": 310, "y": 422, "rect": [240, 400, 140, 44]}, "received": 1794672560.158576}
+{"t": 1794672560.156, "n": 201, "doc": "mwglnukm-gox3ovedwhs", "type": "click_handler", "detail": {"button": "Gamma", "trusted": false, "last_trusted_pointer": {"t": 1794672559.7208998, "type": "mousemove", "target": "Gamma", "x": 310, "y": 422}, "rect": [240, 400, 140, 44], "scroll": [0, 1500], "dpr": 2, "viewport": [1200, 813], "page_focused": false, "pinch": 1}, "received": 1794672560.159106}
+{"t": 1794672560.3277998, "n": 202, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[195, 1794672559.83], [196, 1794672560.158], [198, 1794672560.1581], [197, 1794672560.1582], [200, 1794672560.1583], [199, 1794672560.1583998], [201, 1794672560.1585999]]}, "received": 1794672560.329602}
+{"t": 1794672560.8285, "n": 203, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[202, 1794672560.3291]]}, "received": 1794672560.830623}
+{"t": 1794672561.3282998, "n": 204, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[203, 1794672560.8302999]]}, "received": 1794672561.330881}
+{"t": 1794672561.8286, "n": 205, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[204, 1794672561.3305998]]}, "received": 1794672561.831064}
+{"t": 1794672562.3282998, "n": 206, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[205, 1794672561.831]]}, "received": 1794672562.330218}
+{"t": 1794672562.8279, "n": 207, "doc": "mwglnukm-gox3ovedwhs", "type": "beat", "detail": {"acks": [[206, 1794672562.3298998]]}, "received": 1794672562.8314612}
+{"t": 1794672562.8314, "n": 208, "doc": "mwglnukm-gox3ovedwhs", "type": "fence", "detail": {"asked_in_answer_to": 207}, "received": 1794672562.832911}

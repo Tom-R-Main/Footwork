@@ -1,0 +1,22 @@
+judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+dispatched click(Edge): driver says not sent (target_unlocated: 'Edge': it is not wholly in view; a filmed take acts only on a target the film shows whole) in 0.3s
+receipt: Receipt for click(Edge): refused (not applied: target_unlocated: 'Edge': it is not wholly in view; a filmed take acts only on a target the film shows whole; page unchanged).
+Google Chrome (footwork): 'Footwork filmed page pointer fixture'
+15 elements:
+  [   0] button     'Beta'
+  [   1] button     'Alpha'
+  [   2] button     'Covered'
+  [   3] button     'Jump down'
+  [   4] button     'Hidden'
+  [   5] button     'Shy'
+  [   6] button     'Dodge'
+  [   7] generic    'generic'
+  [   8] button     'Clipped'
+  [   9] button     'Turned'
+  [  15] button     'Forged'
+  [  16] textbox    'Note'
+  [  17] button     'Edge'
+  [  19] generic    'generic'
+  [  20] button     'Gamma'
+page text (0 chars):
+

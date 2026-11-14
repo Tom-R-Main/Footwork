@@ -1,0 +1,31 @@
+{
+  "checks": {
+    "background_native_start": true,
+    "subject_native_start": true,
+    "filmed_native_start": true,
+    "persistent_desktop_subject_reservation": true,
+    "saved_observe_only": true,
+    "pointer_setup": true,
+    "filmed_point": true,
+    "independent_native_append": true,
+    "pointer_readback": true,
+    "background_did_not_steal_front": true,
+    "independent_page_hover": true,
+    "pointer_record_complete": true,
+    "recorded_posts_equal_moving_samples": true,
+    "posting_gap_under_unchanged_limit": true,
+    "record_endpoint_matches_readback": true,
+    "reserved_owner_continues_with_waiter": true,
+    "owner_completed_before_competitor_handoff": true,
+    "revocation_fences_pointer": true,
+    "revoked_point_records_no_posts": true,
+    "stale_yield_preserves_new_owner": true
+  },
+  "error": null,
+  "report": "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/release-live.json",
+  "video": {
+    "exit": 0,
+    "path": "/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/rehearsal.mov",
+    "exists": true
+  }
+}

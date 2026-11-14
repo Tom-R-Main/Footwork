@@ -1,0 +1,4 @@
+{"t": 1794672474.613303, "step": 0, "kind": "start", "task": "Film owned pointer rehearsal", "requirements": [], "app": "Google Chrome"}
+{"t": 1794672475.160491, "step": 0, "kind": "place", "label": "setup", "from": [914.05078125, 454.58984375], "to": [200.0, 287.0], "samples": 1, "outcome": "arrived"}
+{"t": 1794672476.855125, "step": 0, "kind": "approach", "role": "AXButton", "label": "Coordination target", "from": [200.0, 287.0], "to": [550.0, 477.0], "samples": 87, "duration_s": 0.896437356998477, "posted": 86, "max_gap_ms": 24.9, "stall_gap_ms": null, "max_post_ms": 12.2, "max_ack_ms": 12.6, "outcome": "arrived"}
+{"t": 1794672478.5258722, "kind": "stopped", "reason": "coordination_refused", "message": "reservation unavailable; explicit handoff required"}

@@ -1,0 +1,9 @@
+bound TextEdit window 503044 'independent.txt' (background_only)
+TextEdit: 'independent.txt'  [elements_incomplete 1]
+note: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown
+1 elements:
+  [   1] textbox    'text area' = 'Owned background baseline'
+page text (25 chars):
+Owned background baseline
+
+session: /private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/other  (export FOOTWORK_SESSION=/private/tmp/claude-501/-Users-thomasmain-projects-footwork/11a6d1b7-010c-448c-8d59-ce79ec3c24b4/scratchpad/qual1/release/other to omit --session)

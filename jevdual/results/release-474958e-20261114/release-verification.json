@@ -1,0 +1,76 @@
+{
+  "prefix": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5",
+  "python": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5/bin/python",
+  "bundle": "/Users/thomasmain/.local/share/footwork/bundles/474958e48c0db404ffbe3b302bacef0df101c3d5",
+  "host": "/Users/thomasmain/.local/share/footwork/qualification/release-474958e-20261114/host",
+  "wheel_checks": {
+    "jevdual": {
+      "version": "0.0.1",
+      "checked_files": 221,
+      "location": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5/lib/python3.12/site-packages"
+    },
+    "cua-driver": {
+      "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
+      "checked_files": 8,
+      "location": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5/lib/python3.12/site-packages"
+    }
+  },
+  "commands": [
+    {
+      "args": [
+        "--json",
+        "tools"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "/Users/thomasmain/projects/footwork/.claude/worktrees/point-drag/jevdual/results/release-474958e-20261114/release-verification-tools.stdout"
+    },
+    {
+      "args": [
+        "--json",
+        "doctor"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "/Users/thomasmain/projects/footwork/.claude/worktrees/point-drag/jevdual/results/release-474958e-20261114/release-verification-doctor.stdout"
+    },
+    {
+      "args": [
+        "--json",
+        "schema",
+        "desktop",
+        "control"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "/Users/thomasmain/projects/footwork/.claude/worktrees/point-drag/jevdual/results/release-474958e-20261114/release-verification-control.stdout"
+    },
+    {
+      "args": [
+        "control",
+        "status"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "/Users/thomasmain/projects/footwork/.claude/worktrees/point-drag/jevdual/results/release-474958e-20261114/release-verification-status.stdout",
+      "active_requests": 0,
+      "active_reservations": 0
+    },
+    {
+      "args": [
+        "--json",
+        "drag-points",
+        "--help"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "/Users/thomasmain/projects/footwork/.claude/worktrees/point-drag/jevdual/results/release-474958e-20261114/release-verification---help.stdout"
+    }
+  ],
+  "failures": [],
+  "imports": {
+    "jevdual": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5/lib/python3.12/site-packages/jevdual/__init__.py",
+    "cua_driver": "/Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5/lib/python3.12/site-packages/cua_driver/__init__.py"
+  },
+  "passed": true
+}
