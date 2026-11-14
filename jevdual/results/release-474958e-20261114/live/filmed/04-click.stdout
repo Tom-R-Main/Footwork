@@ -1,0 +1,22 @@
+judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+dispatched click(Covered): driver says not sent (target_unlocated: 'Covered': another element is at its centre) in 0.3s
+receipt: Receipt for click(Covered): refused (not applied: target_unlocated: 'Covered': another element is at its centre; page unchanged).
+Google Chrome (footwork): 'Footwork filmed page pointer fixture'
+15 elements:
+  [   0] button     'Beta'
+  [   1] button     'Alpha'
+  [   2] button     'Covered'
+  [   3] button     'Jump down'
+  [   4] button     'Hidden'
+  [   5] button     'Shy'
+  [   6] button     'Dodge'
+  [   7] generic    'generic'
+  [   8] button     'Clipped'
+  [   9] button     'Turned'
+  [  15] button     'Forged'
+  [  16] textbox    'Note'
+  [  17] button     'Edge'
+  [  19] generic    'generic'
+  [  20] button     'Gamma'
+page text (0 chars):
+

@@ -1,0 +1,8 @@
+start 11:07:48 probes-from 325a105fa0a7fed23dd5d48e4e21adc9b326adc7 release 474958e python /Users/thomasmain/.local/share/footwork/releases/474958e48c0db404ffbe3b302bacef0df101c3d5/bin/python driver 0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10
+--- 1 release_probe 11:07:49
+release_probe exit=0 11:08:01
+--- 2 filmed page 11:08:01
+filmed exit=0 held=true 11:09:24
+--- 3 drag-points 11:09:24
+drag exit=0 held=true 11:09:40
+end 11:09:40

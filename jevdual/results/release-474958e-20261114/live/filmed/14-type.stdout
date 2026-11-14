@@ -1,0 +1,23 @@
+judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+dispatched type(Note) text='footwork': driver says unverifiable in 0.6s
+receipt: Receipt for type(Note) text='footwork': confirmed ('Note' now holds 'footwork').
+Google Chrome (footwork): 'Footwork filmed page pointer fixture'
+16 elements:
+  [   0] textbox    'Note' = 'footwork'
+  [   1] button     'Alpha'
+  [   2] button     'Covered'
+  [   3] button     'Jump down'
+  [   4] button     'Hidden'
+  [   5] generic    'generic'
+  [   6] button     'Clipped'
+  [   7] button     'Turned'
+  [  13] button     'Beta'
+  [  14] button     'Forged'
+  [  15] button     'Shy'
+  [  16] button     'Dodge'
+  [  17] button     'Edge'
+  [  19] generic    'generic'
+  [  20] statictext 'footwork'
+  [  21] button     'Gamma'
+page text (8 chars):
+footwork

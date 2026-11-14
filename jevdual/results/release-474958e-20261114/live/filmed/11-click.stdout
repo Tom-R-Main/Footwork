@@ -1,0 +1,22 @@
+judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+dispatched click(Dodge): driver says unverifiable (click_stopped_after_press: the click stopped after mousedown and no click event was sent: the ref's node left the filmed point. The press was sent; what it did is unverifiable, so observe before acting again.) in 1.7s
+receipt: Receipt for click(Dodge): unverifiable (input outcome unknown after error: click_stopped_after_press: the click stopped after mousedown and no click event was sent: the ref's node left the filmed point. The press was sent; what it did is unverifiable, so observe before acting again.).
+Google Chrome (footwork): 'Footwork filmed page pointer fixture'
+15 elements:
+  [   0] button     'Beta'
+  [   1] button     'Alpha'
+  [   2] button     'Covered'
+  [   3] button     'Jump down'
+  [   4] button     'Hidden'
+  [   5] generic    'generic'
+  [   6] button     'Clipped'
+  [   7] button     'Turned'
+  [  13] button     'Forged'
+  [  14] button     'Shy'
+  [  15] button     'Dodge'
+  [  16] textbox    'Note'
+  [  17] button     'Edge'
+  [  19] generic    'generic'
+  [  20] button     'Gamma'
+page text (0 chars):
+

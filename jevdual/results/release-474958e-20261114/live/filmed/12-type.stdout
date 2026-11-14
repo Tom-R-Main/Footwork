@@ -1,0 +1,22 @@
+judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+dispatched type(Note) text='footwork': driver says not sent (target_unfocused: 'Note': it does not have focus; click it first, then type) in 0.3s
+receipt: Receipt for type(Note) text='footwork': refused (not applied: target_unfocused: 'Note': it does not have focus; click it first, then type).
+Google Chrome (footwork): 'Footwork filmed page pointer fixture'
+15 elements:
+  [   0] button     'Beta'
+  [   1] button     'Alpha'
+  [   2] button     'Covered'
+  [   3] button     'Jump down'
+  [   4] button     'Hidden'
+  [   5] generic    'generic'
+  [   6] button     'Clipped'
+  [   7] button     'Turned'
+  [  13] button     'Forged'
+  [  14] button     'Shy'
+  [  15] button     'Dodge'
+  [  16] textbox    'Note'
+  [  17] button     'Edge'
+  [  19] generic    'generic'
+  [  20] button     'Gamma'
+page text (0 chars):
+

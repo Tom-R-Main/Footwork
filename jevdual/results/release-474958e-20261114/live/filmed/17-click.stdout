@@ -1,0 +1,23 @@
+judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+dispatched click(Jump down): driver says unverifiable in 2.1s
+receipt: Receipt for click(Jump down): suspected no-op (no change: same URL /, no elements added, removed or changed, text unchanged).
+Google Chrome (footwork): 'Footwork filmed page pointer fixture'
+16 elements:
+  [   0] button     'Jump down'
+  [   3] button     'Beta'
+  [   4] button     'Shy'
+  [   5] button     'Dodge'
+  [   6] generic    'generic'
+  [   7] button     'Clipped'
+  [   8] button     'Turned'
+  [  11] generic    'generic'
+  [  12] statictext 'footwork'
+  [  13] button     'Alpha'
+  [  14] button     'Covered'
+  [  15] button     'Gamma'
+  [  16] button     'Forged'
+  [  17] button     'Hidden'
+  [  18] textbox    'Note' = 'footwork'
+  [  19] button     'Edge'
+page text (8 chars):
+footwork

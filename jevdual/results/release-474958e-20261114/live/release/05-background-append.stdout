@@ -1,0 +1,9 @@
+dispatched append(text area) text='Background concurrency marker': driver says confirmed in 0.1s
+receipt: Receipt for append(text area) text='Background concurrency marker': confirmed ('text area' now holds 'Owned background baseline\nBackground concurrency marker').
+TextEdit: 'independent.txt'  [elements_incomplete 1]
+note: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown
+1 elements:
+  [   1] textbox    'text area' = 'Owned background baseline\nBackground concurrency marker'
+page text (55 chars):
+Owned background baseline
+Background concurrency marker

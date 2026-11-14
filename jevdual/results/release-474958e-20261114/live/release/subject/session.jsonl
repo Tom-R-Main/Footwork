@@ -1,0 +1,2 @@
+{"t": 1794672473.919488, "step": 0, "kind": "start", "task": "Observe owned subject", "requirements": [], "app": "Google Chrome"}
+{"t": 1794672478.3413079, "kind": "stopped", "reason": "coordination_refused", "message": "waiting request canceled"}
