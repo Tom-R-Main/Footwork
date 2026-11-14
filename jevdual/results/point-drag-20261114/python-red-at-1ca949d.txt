@@ -1,3 +1,4 @@
+# tests/test_drag_points.py and tests/test_probe_drag_points.py as committed with the fix, against the source at 1ca949d:
 FAILED tests/test_drag_points.py::test_the_application_is_matched_by_its_name_whatever_the_case[ Canvas App -Canvas App]
 FAILED tests/test_drag_points.py::test_another_application_the_registry_would_take_for_the_same_is_refused[Google Chrome-Chromium]
 FAILED tests/test_drag_points.py::test_another_application_the_registry_would_take_for_the_same_is_refused[Chrome-Chromium]
