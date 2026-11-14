@@ -25,6 +25,9 @@ class Poster:
     button: ClassVar[bool] = False
     foreign_after: ClassVar[int | None] = None
     stall_after: ClassVar[int | None] = None
+    #: how many readings after a release still say the button is down (None: every one of them)
+    lag_reads: ClassVar[int | None] = 0
+    lagging: ClassVar[int | None] = 0
 
     def _count(self, kind: str) -> int:
         return sum(1 for e in Poster.events if e[0] == kind)
@@ -45,6 +48,7 @@ class Poster:
     def up(self, x, y):
         Poster.events.append(("up", x, y))
         Poster.button = False
+        Poster.lagging = Poster.lag_reads
 
     def escape(self):
         Poster.events.append(("escape", 0.0, 0.0))
@@ -58,6 +62,11 @@ class Poster:
         return None
 
     def left_button_down(self):
+        if Poster.lagging is None:
+            return True
+        if Poster.lagging > 0:
+            Poster.lagging -= 1
+            return True
         return Poster.button
 
 
@@ -78,6 +87,7 @@ def desk(monkeypatch):
 
     Poster.events, Poster.pointer, Poster.button = [], (900.0, 700.0), False
     Poster.foreign_after = Poster.stall_after = None
+    Poster.lag_reads = Poster.lagging = 0
     monkeypatch.setattr(drag, "QuartzPoster", Poster)
     monkeypatch.setattr(drag, "MonotonicClock", Clock)
     monkeypatch.setattr(point_drag, "display_bounds", lambda: [DISPLAY])
@@ -238,6 +248,32 @@ def test_foreign_input_during_the_drag_cancels_it_and_releases_once(desk, capsys
     assert said["released_at"] == list(last_drag[1:]) and said["escape_sent"] is True
     assert said["pressed"] is True and said["button_up"] is True
     assert "released at" in err and "not at the end point" in err
+
+
+@pytest.mark.parametrize("interrupted", [False, True])
+def test_a_release_the_system_has_not_yet_shown_is_waited_for_and_reported_up(desk, capsys, interrupted):
+    """PTD4: the one live interrupted drag read the button 0.2 ms after posting its release, was told it
+    was still down, and said so; the page had the release and the button read up afterwards. The command
+    reads until the button is up, for a bounded time, and says how long that took."""
+    desk.lag_reads = 3
+    if interrupted:
+        desk.foreign_after = 5
+    code, said, err = _run(capsys, *_points())
+    assert said["button_up"] is True and said["button_up_after_ms"] > 0, (said, err)
+    assert code == (6 if interrupted else 0) and "STILL READS DOWN" not in err
+
+
+def test_a_button_that_never_reads_up_is_reported_down_after_the_wait(desk, capsys, monkeypatch):
+    """The reading is the only check that the button was not left down, so a wait that runs out is said."""
+    from jevdual import point_drag
+    from jevdual.point_drag import EXIT_ABORTED
+
+    monkeypatch.setattr(point_drag, "BUTTON_UP_WAIT_S", 0.05)
+    desk.lag_reads = None
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_ABORTED and said["outcome"] == "dropped", (said, err)  # released at the end, and yet
+    assert said["button_up"] is False and said["button_up_after_ms"] is None
+    assert "THE LEFT BUTTON STILL READS DOWN after 50 ms" in err
 
 
 def test_an_approach_that_does_not_arrive_never_presses(desk, capsys):

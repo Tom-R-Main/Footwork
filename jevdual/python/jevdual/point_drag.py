@@ -37,6 +37,10 @@ EXIT_ABORTED = 6
 
 #: a pointer this near the start (points) is not moved first; the press is posted at the start itself
 AT_START_PT = 2.0
+#: how long the button is read for after a release before it is reported still down. The system shows a
+#: posted release in the button's state a little after the post returns: the first live interrupted drag
+#: read it 0.2 ms after posting, was told "down", and reported a stuck button that was not (PTD4)
+BUTTON_UP_WAIT_S = 0.25
 
 Point = tuple[float, float]
 Rect = tuple[float, float, float, float]
@@ -82,6 +86,18 @@ def arguments(*argv: str) -> argparse.Namespace:
     add_parser(sub := parser.add_subparsers(dest="cmd"))
     del sub
     return parser.parse_args(["drag-points", *argv])
+
+
+def _button_up(poster: Any) -> tuple[bool, float | None]:
+    """Whether the left button reads up within ``BUTTON_UP_WAIT_S``, and after how many milliseconds."""
+    began = time.monotonic()
+    while True:
+        waited = time.monotonic() - began
+        if not poster.left_button_down():
+            return True, round(waited * 1000, 2)
+        if waited >= BUTTON_UP_WAIT_S:
+            return False, None
+        time.sleep(0.002)
 
 
 def _say(report: dict[str, Any], code: int, note: str = "") -> int:
@@ -196,6 +212,7 @@ async def cmd_drag_points(args: Any) -> int:
                     trace.finish(poster, result.outcome if result else "exception", result)
 
             result = await owned_thread(play)
+            up, up_after_ms = _button_up(poster)
             before, wall, after = uptime_raw_ns(), time.time(), uptime_raw_ns()
             posts = {event: (began, x, y) for began, _ended, x, y, event in trace.posts if event in ("down", "up")}
             for event, name in (("down", "pressed"), ("up", "released")):
@@ -204,7 +221,7 @@ async def cmd_drag_points(args: Any) -> int:
             report.update(
                 outcome=result.outcome, pressed="down" in posts, drags=result.posted_drags,
                 escape_sent=result.escape_sent, max_gap_ms=round(result.max_gap_s * 1000, 2),
-                pointer_after=list(poster.location()), button_up=not poster.left_button_down(),
+                pointer_after=list(poster.location()), button_up=up, button_up_after_ms=up_after_ms,
                 # one reading of both clocks, so a caller can put the two times beside a wall-clock log
                 clock_pair={"ns": (before + after) // 2, "unix_s": wall},
             )
@@ -212,10 +229,11 @@ async def cmd_drag_points(args: Any) -> int:
                 report["released_at"] = list(result.released_at)
             if result.outcome == "dropped" and report["button_up"]:
                 return _say(report, 0)
-            where = (f"released at {result.released_at[0]:.1f},{result.released_at[1]:.1f}, not at the end point"
+            where = (f"released at {result.released_at[0]:.1f},{result.released_at[1]:.1f}"
+                     + ("" if result.outcome == "dropped" else ", not at the end point")
                      if result.released_at else "no release was posted")
             if not report["button_up"]:
-                where += "; THE LEFT BUTTON STILL READS DOWN"
+                where += f"; THE LEFT BUTTON STILL READS DOWN after {BUTTON_UP_WAIT_S * 1000:.0f} ms"
             return _say(report, EXIT_ABORTED,
                         f"drag {result.outcome}: pressed at {start[0]:.1f},{start[1]:.1f}, {where}"
                         + ("; Escape was sent first" if result.escape_sent else ""))

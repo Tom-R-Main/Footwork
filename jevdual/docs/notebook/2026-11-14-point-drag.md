@@ -44,3 +44,10 @@ Test: composed: a stand-in whose button reads down for the first few readings af
 Predicts: composed, the first new test fails at 30e06c4 (reported down) and passes with the change. Live: all three runs of the probe hold, and the interrupted drag reports the button up after a time above zero and well under the limit.
 Against: live, the button still reported down after the wait, or reported up only at the limit; any of the page's counts differing from PTD4's in kind (a missing release, a move with the button up).
 Refs: #ptd4; python/jevdual/point_drag.py; tests/test_drag_points.py
+
+## PTD6 · update · 2026-11-14 00:36
+Observed: the change is made as PTD5 registers: after a drag that pressed, the command reads the button every 2 ms until it reads up or 250 ms pass, and reports button_up and button_up_after_ms; the drag is not touched. Composed, three new cases: a button that reads down for three readings after the release is reported up with a time above zero, for a drag that completes and for one interrupted; one that never reads up is reported down after the wait, exits 6 and says so. All three fail at c01f258. The wording of that last message was also wrong for a completed drag (it said the release was "not at the end point" whenever the exit was not 0) and now says so only for a drag that did not complete. Offline suite 4281 passed, 52 skipped; lint clean; no existing test changed.
+Inferred: the composed part of PTD5 holds. Whether timing was the cause of PTD4's reading is not shown by this: a stand-in was told to lag. The rerun shows it, by the time the interrupted drag reports.
+Changes: python/jevdual/point_drag.py (the bounded reading and the message), tests/test_drag_points.py.
+Next: one rerun of scripts/probe_drag_points.py with no other session dispatching input.
+Refs: #ptd5; results/point-drag-20261114/python-red-at-c01f258.txt
