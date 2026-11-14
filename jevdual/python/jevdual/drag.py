@@ -99,6 +99,15 @@ class DragRefused(ValueError):
         self.code = code
 
 
+class ButtonMayBeDown(RuntimeError):
+    """A press was posted and neither post of its release returned. Whoever holds the desktop for the
+    drag must not give it back as if the button were up (PTD12)."""
+
+    def __init__(self, reason: str, release_error: str | None = None) -> None:
+        super().__init__(reason)
+        self.release_error = release_error
+
+
 class Poster(Protocol):
     """``down`` may raise ``CoordinationError`` only before it posts (QuartzPoster checks ownership first):
     the player takes that to mean nothing was pressed. Any other exception from ``down`` or ``up`` leaves
@@ -277,8 +286,9 @@ def play_drag(
 
     The press is inside the block that guarantees the release, and a release counts as done only when
     its post returns: an exception after the press still lets go, and a release whose post raised is
-    posted once more (PTD9). When the second raises too, that exception leaves this function, with no
-    release posted and the button possibly down: the caller has to deal with it."""
+    posted once more (PTD9). When the second raises too, ``ButtonMayBeDown`` leaves this function,
+    with no release posted: the caller has to deal with it. A cancel the caller already asked for is
+    found here, before the press, and presses nothing (PTD12)."""
     tolerance = 1.5 * plan.max_step_pt + 2.0
     result = DragResult("aborted:unknown")
     last = plan.start
@@ -294,7 +304,9 @@ def play_drag(
             except Exception as exc:
                 result.release_error = type(exc).__name__
                 if tries >= 2:
-                    raise
+                    raise ButtonMayBeDown(
+                        f"the release at {at[0]:.1f},{at[1]:.1f} could not be posted ({type(exc).__name__}, "
+                        "twice); the left button may still be down", type(exc).__name__) from exc
                 continue
             released = True
             result.released_at = at
@@ -304,6 +316,10 @@ def play_drag(
         _check_pointer(poster, last, tolerance, cancelled)
 
     checkpoint()
+    if cancelled():
+        result.outcome = "aborted:cancelled"
+        result.causes.append("cancelled")
+        return result
     try:
         result.press_attempted = True
         try:

@@ -84,8 +84,19 @@ The command's exit says how far it got, and the JSON says the rest:
 After exit 8 the desktop stays claimed in the coordination registry, and every other
 owner of it is refused, until someone has looked at the button and run
 `footwork control recover TOKEN --input-cleaned`. The command comes to exit 8 only after
-posting a second release where the pointer is: when no release's post returned, or when
-the button still read down 250 ms after one did.
+posting a second release where the pointer is: when no release's post returned, when
+the button still read down 250 ms after one did, or when the button could not be read
+(`button_read_error`). From the moment the press is dispatched the claim is kept unless
+the command knows that nothing was pressed or that the button reads up after a posted
+release.
+
+A session's `footwork do drag` uses the same engine. When neither post of its release
+returns, its command's claim is kept in the same way, and the receipt's error begins
+with the recover command and the token.
+
+Two refusals (exit 4) exist to keep those promises: `no_stop_signals`, when the command
+cannot take the stop signals (it is not on its process's main thread), and
+`app_unreadable`, when the window list cannot be read and no `--app` was given.
 
 SIGINT, SIGTERM and SIGHUP stop a drag the way foreign input does (Escape, then one
 release where the drag had got to), and the command still prints its JSON; `stopped_by`

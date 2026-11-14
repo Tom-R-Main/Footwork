@@ -42,6 +42,8 @@ class Poster:
     #: called once, at the first reading of the button (before anything is posted) or after N moves
     at_first_read: ClassVar[Any] = None
     after_moves: ClassVar[tuple[int, Any] | None] = None
+    #: once a press has been posted, reading the button raises
+    unreadable_after_press: ClassVar[bool] = False
 
     def _count(self, kind: str) -> int:
         return sum(1 for e in Poster.events if e[0] == kind)
@@ -99,6 +101,8 @@ class Poster:
         if Poster.at_first_read is not None:
             hook, Poster.at_first_read = Poster.at_first_read, None
             hook()
+        if Poster.unreadable_after_press and self._count("down"):
+            raise OSError("the button could not be read")
         if Poster.lagging is None:
             return True
         if Poster.lagging > 0:
@@ -126,6 +130,7 @@ def desk(monkeypatch):
     Poster.foreign_after = Poster.stall_after = None
     Poster.lag_reads = Poster.lagging = 0
     Poster.ups_needed, Poster.failing, Poster.at_first_read, Poster.after_moves = 1, {}, None, None
+    Poster.unreadable_after_press = False
     monkeypatch.setattr(drag, "QuartzPoster", Poster)
     monkeypatch.setattr(drag, "MonotonicClock", Clock)
     monkeypatch.setattr(point_drag, "display_bounds", lambda: [DISPLAY])
@@ -428,11 +433,58 @@ def test_a_release_that_cannot_be_posted_keeps_the_desktop_claimed(desk, capsys)
     code, said, err = _run(capsys, *_points())
     assert code == EXIT_HELD, (said, err)
     assert not [e for e in desk.events if e[0] == "up"] and said["releases_posted"] == 0
-    assert said["outcome"] == "error:OSError" and said["released_at"] is None and said["button_up"] is False
+    assert said["outcome"] == "error:ButtonMayBeDown" and said["release_error"] == "OSError"
+    assert said["released_at"] is None and said["button_up"] is False
     assert said["extra_release"] == {"posted": False, "at": list(END), "error": "OSError"}
     assert "no release could be posted" in err and f"recover {said['claim_kept']} --input-cleaned" in err
     held, = Coordinator().status()["requests"]
     assert held["token"] == said["claim_kept"] and held["state"] == "orphaned"
+
+
+def test_a_button_that_cannot_be_read_after_a_press_keeps_the_desktop_claimed(desk, capsys):
+    """PTD12: the reading was outside any handler and before the claim was marked kept, so a reading
+    that raised gave the desktop back and printed nothing. A check that fails counts as the thing it
+    checks having failed: the button is not known to be up, so the claim stays and the report says why."""
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_HELD
+
+    desk.unreadable_after_press = True
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_HELD, (said, err)
+    assert said["outcome"] == "dropped" and said["button_up"] is False and said["button_read_error"] == "OSError"
+    assert said["releases_posted"] == 2 and said["extra_release"]["posted"] is True
+    assert f"recover {said['claim_kept']} --input-cleaned" in err
+    held, = Coordinator().status()["requests"]
+    assert held["token"] == said["claim_kept"] and held["state"] == "orphaned" and "desktop" in held["resources"]
+
+
+def test_the_time_to_the_button_reading_up_is_counted_from_the_releases_post(desk, capsys):
+    """PTD12: nothing held the number to the release. It lies between the release's post and the
+    command's own later reading of the clock, and covers the readings that still said down."""
+    desk.lag_reads = 3
+    code, said, _ = _run(capsys, *_points())
+    since_release_ms = (said["clock_pair"]["ns"] - said["released_ns"]) / 1e6
+    assert code == 0 and 3 * 2.0 <= said["button_up_ms_after_release"] <= since_release_ms
+
+
+def test_a_command_that_cannot_take_the_stop_signals_posts_nothing(desk, capsys):
+    """PTD12: off the main thread the handlers cannot be installed, and the command went on without
+    the protection it promises. It refuses instead."""
+    import asyncio
+    import threading
+
+    from jevdual import point_drag
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_REFUSED
+
+    codes: list[int] = []
+    worker = threading.Thread(target=lambda: codes.append(asyncio.run(
+        point_drag.cmd_drag_points(point_drag.arguments(*_points())))))
+    worker.start()
+    worker.join(timeout=20)
+    said = json.loads(capsys.readouterr().out.strip().splitlines()[-1])
+    assert codes == [EXIT_REFUSED] and said["code"] == "no_stop_signals" and desk.events == [], said
+    assert Coordinator().status()["requests"] == []
 
 
 @pytest.mark.parametrize("pointer_at_start", [True, False])
@@ -506,16 +558,27 @@ async def test_the_application_under_the_start_is_claimed_with_the_desktop(desk,
 def test_a_start_point_over_no_window_claims_the_desktop_alone(desk, capsys, monkeypatch):
     from jevdual import point_drag
 
+    monkeypatch.setattr(point_drag, "app_under", lambda point: None)
+    code, said, _ = _run(capsys, *_points())
+    assert code == 0 and said["app"] is None and said["claimed"] == ["desktop"]
+
+
+def test_a_window_list_that_cannot_be_read_is_refused_unless_the_application_is_named(desk, capsys, monkeypatch):
+    """PTD12: an unreadable list fell back to the desktop alone, the gap the application claim closes.
+    Not knowing what is under the start point is not the same as knowing nothing is."""
+    from jevdual import point_drag
+    from jevdual.coordination import Coordinator
+    from jevdual.point_drag import EXIT_REFUSED
+
     def unreadable(point):
         raise RuntimeError("no window list")
 
-    for found, extra in ((lambda point: None, {}), (unreadable, {"app_unread": "RuntimeError"})):
-        desk.events.clear()
-        desk.pointer = (900.0, 700.0)
-        monkeypatch.setattr(point_drag, "app_under", found)
-        code, said, _ = _run(capsys, *_points())
-        assert code == 0 and said["app"] is None and said["claimed"] == ["desktop"]
-        assert {k: said[k] for k in extra} == extra
+    monkeypatch.setattr(point_drag, "app_under", unreadable)
+    code, said, err = _run(capsys, *_points())
+    assert code == EXIT_REFUSED and said["code"] == "app_unreadable" and desk.events == [], (said, err)
+    assert "--app" in said["reason"] and Coordinator().status()["requests"] == []
+    code, said, _ = _run(capsys, *_points("--app", "Canvas App"))
+    assert code == 0 and said["claimed"] == ["app/canvas%20app", "desktop"]
 
 
 STAND_IN = r'''

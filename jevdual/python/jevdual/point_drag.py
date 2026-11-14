@@ -246,8 +246,9 @@ async def cmd_drag_points(args: Any) -> int:
     if not app:
         try:
             app = app_under(start)
-        except Exception as exc:  # noqa: BLE001 - an unreadable window list is said, and only the desktop claimed
-            report["app_unread"] = type(exc).__name__
+        except Exception as exc:  # noqa: BLE001 - not knowing what is under the start is not knowing nothing is
+            return refused("app_unreadable", f"the window list could not be read ({type(exc).__name__}), so the "
+                           "application under the start point is unknown; name it with --app")
     resources = ["desktop", *([app_resource(app)] if app else [])]
     report.update(app=app or None, claimed=sorted(resources))
     owner = getattr(args, "owner", None) or f"drag-points:{os.getpid()}"
@@ -261,8 +262,13 @@ async def cmd_drag_points(args: Any) -> int:
         try:
             loop.add_signal_handler(number, told)
             handled.append(number)
-        except (ValueError, RuntimeError, NotImplementedError):  # not the main thread: the caller's to handle
-            pass
+        except (ValueError, RuntimeError, NotImplementedError) as exc:  # not on the main thread
+            for taken in handled:
+                loop.remove_signal_handler(taken)
+            return refused("no_stop_signals", f"{number.name} cannot be taken here ({type(exc).__name__}): told "
+                           "to stop with the button down, the command could not let go of it")
+    # ``kept``: the claim is abandoned, not given up. True from the dispatch of the press until the
+    # command knows that nothing was pressed or that the button reads up after a posted release
     claim, kept = None, False
     try:
         try:
@@ -313,6 +319,7 @@ async def cmd_drag_points(args: Any) -> int:
                                  "drag", "drag-points", start, end, plan)
             recording = trace.poster(poster)
             result, failure = None, None
+            kept = True
             try:
                 try:
                     result = await owned_thread(d.play_drag, plan, recording, clock, settings,
@@ -324,6 +331,7 @@ async def cmd_drag_points(args: Any) -> int:
                 # the poster checks that before it posts
                 unsure = [e for e in trace.errors if e["event"] == "down" and e["error"] != "CoordinationError"]
                 if not downs and not unsure:
+                    kept = False
                     if failure is not None and not isinstance(failure, (Exception, asyncio.CancelledError)):
                         raise failure
                     if failure is not None and not isinstance(failure, (CoordinationError, asyncio.CancelledError)):
@@ -339,7 +347,20 @@ async def cmd_drag_points(args: Any) -> int:
                 def releases() -> list[Any]:
                     return [post for post in trace.posts if post[4] == "up"]
 
-                up, after_ms = _button_up(poster, releases()[-1][1] if releases() else None)
+                def read() -> tuple[bool, float | None, str | None]:
+                    """A reading that fails is a button not known to be up."""
+                    try:
+                        return (*_button_up(poster, releases()[-1][1] if releases() else None), None)
+                    except Exception as exc:  # noqa: BLE001 - reported; the claim is kept below
+                        return False, None, type(exc).__name__
+
+                def pointer() -> list[float] | None:
+                    try:
+                        return list(poster.location())
+                    except Exception:  # noqa: BLE001 - the report goes out without it
+                        return None
+
+                up, after_ms, unread = read()
                 if not releases() or not up:
                     # no release was posted, or one was and the button still reads down: one more, where
                     # the pointer is. A release nothing needed is a smaller thing than a held button
@@ -352,9 +373,11 @@ async def cmd_drag_points(args: Any) -> int:
                     except Exception as exc:  # noqa: BLE001 - reported; the claim is kept below
                         extra["error"] = type(exc).__name__
                     report["extra_release"] = extra
-                    up, after_ms = _button_up(poster, releases()[-1][1] if releases() else None)
+                    up, after_ms, unread = read()
                 posted = releases()
                 kept = not up or not posted
+                if unread is not None:
+                    report["button_read_error"] = unread
                 before, wall, after = uptime_raw_ns(), time.time(), uptime_raw_ns()
                 if downs:
                     report["pressed_at"], report["pressed_ns"] = [downs[0][2], downs[0][3]], downs[0][0]
@@ -369,7 +392,7 @@ async def cmd_drag_points(args: Any) -> int:
                     drags=sum(1 for post in trace.posts if post[4] == "drag"),
                     escape_sent=bool(result is not None and result.escape_sent),
                     max_gap_ms=round(result.max_gap_s * 1000, 2) if result is not None else None,
-                    pointer_after=list(poster.location()), button_up=up,
+                    pointer_after=pointer(), button_up=up,
                     # from the return of the last release's post to the reading that said the button was up
                     button_up_ms_after_release=after_ms,
                     # one reading of both clocks, so a caller can put the two times beside a wall-clock log
@@ -377,15 +400,17 @@ async def cmd_drag_points(args: Any) -> int:
                 )
                 if failure is not None:
                     report["error"] = type(failure).__name__
-                if result is not None and result.release_error:
-                    report["release_error"] = result.release_error
+                release_error = getattr(result if result is not None else failure, "release_error", None)
+                if release_error:
+                    report["release_error"] = release_error
                 if kept:
                     claim.abandon()
                     report["claim_kept"] = claim.token
                     code = _say(report, EXIT_HELD,
                                 f"drag {outcome}: THE LEFT BUTTON MAY STILL BE DOWN ("
-                                + (f"it reads down {BUTTON_UP_WAIT_S * 1000:.0f} ms after {len(posted)} releases"
-                                   if posted else "no release could be posted")
+                                + ("no release could be posted" if not posted
+                                   else f"the button could not be read ({unread})" if unread is not None
+                                   else f"it reads down {BUTTON_UP_WAIT_S * 1000:.0f} ms after {len(posted)} releases")
                                 + f"). This desktop stays claimed in footwork's registry. Look at the button, "
                                 f"then: footwork control recover {claim.token} --input-cleaned")
                 elif outcome == "dropped" and "extra_release" not in report:
@@ -406,7 +431,9 @@ async def cmd_drag_points(args: Any) -> int:
             finally:
                 trace.finish(poster, report["outcome"] if report["pressed"] else "not_pressed", result)
     finally:
-        if claim is not None and not kept:
+        if claim is not None:
+            if kept:
+                claim.abandon()  # also when something above raised before it could say so
             await claim.__aexit__(None, None, None)
         for number in handled:
             loop.remove_signal_handler(number)

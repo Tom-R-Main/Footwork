@@ -234,6 +234,30 @@ def test_a_release_that_fails_twice_is_raised_and_not_tried_a_third_time(monkeyp
     assert tried == [END, END]
 
 
+def test_a_cancel_already_asked_for_presses_nothing():
+    """PTD12: ownership was checked before the press and the caller's cancel only after it, so a stop
+    that arrived before the worker ran still pressed, held 120 ms, and released."""
+    plan, poster, clock = _plan(), FakePoster(), FakeClock()
+    result = play_drag(plan, poster, clock, cancelled=lambda: True)
+    assert poster.events == [] and result.outcome == "aborted:cancelled"
+    assert result.press_attempted is False and result.escape_sent is False and result.released_at is None
+
+
+def test_two_failed_releases_raise_an_error_that_says_the_button_may_be_down(monkeypatch):
+    """PTD12: the other caller of the engine could not tell this from any other failure."""
+    from jevdual.drag import ButtonMayBeDown
+
+    plan, poster, clock = _plan(), FakePoster(), FakeClock()
+
+    def up(x, y):
+        raise OSError("the post failed")
+
+    monkeypatch.setattr(poster, "up", up)
+    with pytest.raises(ButtonMayBeDown) as raised:
+        play_drag(plan, poster, clock)
+    assert raised.value.release_error == "OSError" and isinstance(raised.value.__cause__, OSError)
+
+
 def test_a_completed_drag_reports_its_press_and_one_posted_release():
     plan, poster, clock = _plan(), FakePoster(), FakeClock()
     result = play_drag(plan, poster, clock)
