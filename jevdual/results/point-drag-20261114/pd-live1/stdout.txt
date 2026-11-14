@@ -1,0 +1,36 @@
+{
+ "held": false,
+ "stopped": null,
+ "runs": {
+  "drag": {
+   "exit": 0,
+   "held": true,
+   "failed": []
+  },
+  "interrupted": {
+   "exit": 6,
+   "held": false,
+   "failed": [
+    "button_reads_up"
+   ]
+  },
+  "short": {
+   "exit": 4,
+   "held": true,
+   "failed": []
+  }
+ },
+ "chrome": [
+  68423,
+  true
+ ],
+ "front": [
+  45451,
+  45451
+ ],
+ "button_down": false,
+ "registry": {
+  "requests": 0,
+  "active_reservations": 0
+ }
+}
