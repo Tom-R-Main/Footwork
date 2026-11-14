@@ -1,0 +1,11 @@
+# tests/test_drag_points.py, tests/test_probe_drag_points.py and tests/test_drag.py as committed with the fix, against the source at 41432b9:
+        """A stall is found because more than the limit has already passed since the last post."""
+FAILED tests/test_drag_points.py::test_a_drag_between_two_points_approaches_presses_drags_and_releases_once
+FAILED tests/test_drag_points.py::test_foreign_input_during_the_drag_cancels_it_and_releases_once
+FAILED tests/test_probe_drag_points.py::test_the_pages_summary_is_read_from_a_window_title_and_nothing_else_is
+FAILED tests/test_probe_drag_points.py::test_the_page_keeps_the_first_move_it_saw_with_no_button
+FAILED tests/test_drag.py::test_a_stopped_drag_holds_its_release_until_the_last_drag_event_has_been_taken
+FAILED tests/test_drag.py::test_a_stalled_drag_is_not_held_back_further - Att...
+FAILED tests/test_drag.py::test_a_drag_stopped_before_its_first_drag_event_releases_at_once
+FAILED tests/test_drag.py::test_a_completed_drag_still_rests_before_its_release
+8 failed, 127 passed in 7.01s

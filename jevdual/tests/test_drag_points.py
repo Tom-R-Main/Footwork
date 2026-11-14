@@ -199,6 +199,7 @@ def test_a_drag_between_two_points_approaches_presses_drags_and_releases_once(de
     assert isinstance(said["pressed_ns"], int) and isinstance(said["released_ns"], int)
     assert said["pressed_ns"] < said["released_ns"] <= said["clock_pair"]["ns"] and said["clock_pair"]["unix_s"] > 0
     assert said["planned_motion_s"] > 0.3 and said["press_hold_s"] == 0.12 and said["settle_s"] == 0.15
+    assert said["release_after_last_drag_ms"] == pytest.approx(150.0)
 
 
 @pytest.mark.parametrize("off", [0.0, 1.5])
@@ -333,6 +334,7 @@ def test_foreign_input_during_the_drag_cancels_it_and_releases_once(desk, capsys
     assert said["released_at"] == list(last_drag[1:]) and said["escape_sent"] is True
     assert said["pressed"] is True and said["button_up"] is True
     assert "released at" in err and "not at the end point" in err
+    assert said["release_after_last_drag_ms"] == pytest.approx(50.0)  # PTD24: held back, and said
 
 
 @pytest.mark.parametrize("interrupted", [False, True])

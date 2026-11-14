@@ -437,6 +437,10 @@ async def cmd_drag_points(args: Any) -> int:
                     drags=sum(1 for post in trace.posts if post[4] == "drag"),
                     escape_sent=bool(result is not None and result.escape_sent),
                     max_gap_ms=round(result.max_gap_s * 1000, 2) if result is not None else None,
+                    # on the engine's clock, from the last drag post to the release's post
+                    release_after_last_drag_ms=(
+                        round(result.release_after_last_post_s * 1000, 2)
+                        if result is not None and result.release_after_last_post_s is not None else None),
                     pointer_after=pointer(), button_up=up,
                     # from the return of the last release's post to the reading that said the button was up
                     button_up_ms_after_release=after_ms,

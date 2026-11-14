@@ -27,7 +27,7 @@ def test_the_pages_summary_is_read_from_a_window_title_and_nothing_else_is():
     assert probe.parse("about:blank - Google Chrome") is None and probe.parse("") is None
     assert _page(START) == {"downs": 0, "ups": 0, "cancels": 0, "held_moves": 0, "loose_moves": 0,
                             "off_canvas": 0, "untrusted": 0, "max_move_gap_ms": 0, "keydowns": 0,
-                            "down_at": None, "up_at": None}
+                            "down_at": None, "up_at": None, "first_loose": None}
     page = _page(DRAGGED)
     assert page["down_at"] == [300.0, 300.0] and page["up_at"] == [520.0, 440.0] and page["held_moves"] == 71
 
@@ -179,3 +179,14 @@ def test_a_run_that_drags_checks_the_application_the_command_claimed():
     stopped = {**SAID_STOPPED, "app": "Chromium"}
     verdict = probe.judge_abort(_page(DRAGGED), _page(INTERRUPTED), stopped, 6, 6, ORIGIN, app="Google Chrome")
     assert [k for k, v in verdict["checks"].items() if not v] == ["claimed_the_browser_named"]
+
+
+def test_the_page_keeps_the_first_move_it_saw_with_no_button():
+    """PTD24: a count of such moves could not say what one was. The page keeps the first: its buttons
+    value, where it was, and how long after the last move that had the button."""
+    for needle in ("lm = [e.buttons, e.clientX, e.clientY", "lastHeld = e.timeStamp", "lm = null"):
+        assert needle in probe.PAGE, needle
+    assert _page("PD n3 u3 x0 h29 l0 o0 t0 g23 k2 d300,300 r319.5,309 m- - Google Chrome")["first_loose"] is None
+    page = _page("PD n3 u3 x0 h29 l1 o0 t0 g23 k2 d300,300 r319.5,309 m0@319.5,309+7 - Google Chrome")
+    assert page["first_loose"] == {"buttons": 0, "at": [319.5, 309.0], "ms_after_last_held": 7}
+    assert page["loose_moves"] == 1 and page["up_at"] == [319.5, 309.0]

@@ -48,6 +48,10 @@ class DragSettings:
     arc_size: float = 0.1
     #: post Escape before releasing on an abort
     cancel_with_escape: bool = True
+    #: on an abort, the release is held until this long after the last drag post, so an application
+    #: takes that event while the button is still down. Live, a release posted straight behind the last
+    #: drag post reached a browser's page as a move with no button and then the release (PTD20, PTD24)
+    abort_settle_s: float = 0.05
 
 
 DEFAULT = DragSettings()
@@ -89,6 +93,8 @@ class DragResult:
     release_posted: bool = False
     #: the type of the last exception a release's post raised, if any did
     release_error: str | None = None
+    #: seconds from the last drag post to the release's post (None when no drag event was posted)
+    release_after_last_post_s: float | None = None
 
 
 class DragRefused(ValueError):
@@ -292,6 +298,7 @@ def play_drag(
     tolerance = 1.5 * plan.max_step_pt + 2.0
     result = DragResult("aborted:unknown")
     last = plan.start
+    last_drag: float | None = None
     released = False
     tries = 0
 
@@ -299,6 +306,8 @@ def play_drag(
         nonlocal released, tries
         while not released and tries < 2:
             tries += 1
+            if last_drag is not None:
+                result.release_after_last_post_s = clock.now() - last_drag
             try:
                 poster.up(*at)
             except Exception as exc:
@@ -347,7 +356,7 @@ def play_drag(
             result.lateness_s.append(now - due)
             result.max_gap_s = max(result.max_gap_s, now - last_post)
             result.posted_drags += 1
-            last, last_post = (s.x, s.y), now
+            last, last_post, last_drag = (s.x, s.y), now, now
             _acknowledge(poster, clock, last, tolerance, now, settings, result, cancelled)
         clock.sleep_until(clock.now() + settings.settle_s)
         check()
@@ -359,6 +368,8 @@ def play_drag(
         if settings.cancel_with_escape and result.press_attempted:
             poster.escape()
             result.escape_sent = True
+        if last_drag is not None:
+            clock.sleep_until(last_drag + settings.abort_settle_s)
         release(last)
     finally:
         release(last)  # an exception from the poster or clock still lets go of the button

@@ -55,19 +55,22 @@ PAGE = """<!doctype html><meta charset=utf-8><title>PD starting</title>
 const c = document.getElementById('c');
 let downs = 0, ups = 0, cancels = 0, keys = 0, off = 0, untrusted = 0;
 let held = 0, loose = 0, gap = 0, last = null, inside = false, d = null, r = null;
+let lm = null, lastHeld = null;  // the first move with no button in this drag, and when the last held move was
 function say() {
   const p = v => v ? Math.round(v[0] * 10) / 10 + ',' + Math.round(v[1] * 10) / 10 : '-';
-  document.title = `PD n${downs} u${ups} x${cancels} h${held} l${loose} o${off} t${untrusted} g${Math.ceil(gap)} k${keys} d${p(d)} r${p(r)}`;
+  const m = lm ? lm[0] + '@' + p(lm.slice(1, 3)) + '+' + Math.round(lm[3]) : '-';
+  document.title = `PD n${downs} u${ups} x${cancels} h${held} l${loose} o${off} t${untrusted} g${Math.ceil(gap)} k${keys} d${p(d)} r${p(r)} m${m}`;
 }
 function seen(e) {
   if (!e.isTrusted) untrusted++;
   if (e.type !== 'keydown' && e.target !== c) off++;
 }
-addEventListener('pointerdown', e => { seen(e); downs++; inside = true; held = loose = gap = 0; last = null; d = [e.clientX, e.clientY]; r = null; say(); }, true);
+addEventListener('pointerdown', e => { seen(e); downs++; inside = true; held = loose = gap = 0; last = null; lm = null; lastHeld = null; d = [e.clientX, e.clientY]; r = null; say(); }, true);
 addEventListener('pointermove', e => {
   if (!inside) return;
   seen(e);
-  if (e.buttons === 1) held++; else loose++;
+  if (e.buttons === 1) { held++; lastHeld = e.timeStamp; }
+  else { loose++; if (!lm) lm = [e.buttons, e.clientX, e.clientY, lastHeld === null ? -1 : e.timeStamp - lastHeld]; }
   if (last !== null) gap = Math.max(gap, e.timeStamp - last);
   last = e.timeStamp;
 }, true);
@@ -77,7 +80,8 @@ addEventListener('keydown', e => { seen(e); keys++; say(); }, true);
 say();
 </script>"""
 
-SUMMARY = re.compile(r"PD n(\d+) u(\d+) x(\d+) h(\d+) l(\d+) o(\d+) t(\d+) g(\d+) k(\d+) d(\S+) r(\S+)")
+SUMMARY = re.compile(r"PD n(\d+) u(\d+) x(\d+) h(\d+) l(\d+) o(\d+) t(\d+) g(\d+) k(\d+) d(\S+) r(\S+)(?: m(\S+))?")
+LOOSE = re.compile(r"(\d+)@(-?[\d.]+),(-?[\d.]+)\+(-?\d+)")
 
 
 def page_url() -> str:
@@ -94,9 +98,14 @@ def parse(title: str) -> dict | None:
         return None if text == "-" else [float(v) for v in text.split(",")]
 
     downs, ups, cancels, held, loose, off, untrusted, gap, keys = (int(v) for v in match.groups()[:9])
+    first = LOOSE.fullmatch(match.group(12) or "")
     return {"downs": downs, "ups": ups, "cancels": cancels, "held_moves": held, "loose_moves": loose,
             "off_canvas": off, "untrusted": untrusted, "max_move_gap_ms": gap, "keydowns": keys,
-            "down_at": point(match.group(10)), "up_at": point(match.group(11))}
+            "down_at": point(match.group(10)), "up_at": point(match.group(11)),
+            # the first move of the last drag that had no button: what it was, where, and how long after
+            # the last move that had it (PTD24)
+            "first_loose": {"buttons": int(first.group(1)), "at": [float(first.group(2)), float(first.group(3))],
+                            "ms_after_last_held": int(first.group(4))} if first else None}
 
 
 def _near(got: list[float] | None, want: tuple[float, float]) -> bool:
@@ -364,7 +373,8 @@ def main() -> None:
         def interrupt(_command_process) -> None:
             once_pressed(slow, _press_f13)  # one key press the command did not post
 
-        code, said = _command(out, "3-interrupted", ends, app, "--duration", "2.5", during=interrupt)
+        code, said = _command(out, "3-interrupted", ends, app, "--duration", "2.5",
+                              "--record", str(out / "gestures.jsonl"), during=interrupt)
         later = _summary(process.pid, until=lambda s: s["ups"] + s["cancels"] > slow["ups"] + slow["cancels"]) or slow
         record["runs"]["interrupted"] = {"exit": code, "said": said, "page": later,
                                          **judge_abort(slow, later, said, code, EXIT_ABORTED, origin[:2], app=app)}
@@ -372,7 +382,8 @@ def main() -> None:
         def stop(command_process) -> None:
             once_pressed(later, lambda: command_process.send_signal(signal.SIGTERM))
 
-        code, said = _command(out, "4-stopped", ends, app, "--duration", "2.5", during=stop)
+        code, said = _command(out, "4-stopped", ends, app, "--duration", "2.5",
+                              "--record", str(out / "gestures.jsonl"), during=stop)
         ended = _summary(process.pid, until=lambda s: s["ups"] + s["cancels"] > later["ups"] + later["cancels"]) or later
         record["runs"]["stopped"] = {"exit": code, "said": said, "page": ended,
                                      **judge_stop(later, ended, said, code, EXIT_ABORTED, origin[:2], app=app)}

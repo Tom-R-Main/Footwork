@@ -128,7 +128,12 @@ own check narrows what that look has to catch at the two points; it does not rep
 
 SIGINT, SIGTERM and SIGHUP stop a drag the way foreign input does (Escape, then one
 release where the drag had got to), and the command still prints its JSON; `stopped_by`
-names the signal. SIGKILL cannot be handled: the registry then marks the request
+names the signal. On any such stop Escape is posted at once and the release is held until
+50 ms after the last drag post, so the application takes that last event while the button
+is still down: a browser reads the button's state when it handles a move, not when the
+move was posted, and showed a page a move with no button when the release came straight
+behind. `release_after_last_drag_ms` reports the interval (about 150 for a completed
+drag, which rests before its release). SIGKILL cannot be handled: the registry then marks the request
 orphaned, and the button is whatever it was.
 
 `button_up_ms_after_release` is the time from the return of the release's post to the

@@ -70,6 +70,7 @@ class DelayedPoster:
 
     def escape(self):
         self.events.append(('escape', 0., 0.))
+        self.escaped_at = self.clock.now()
 
     def moves(self):
         return sum(kind == 'move' for kind, *_ in self.events)
@@ -121,11 +122,15 @@ def test_outside_tolerance_foreign_motion_refuses_immediately_during_delivery(pl
     result = player(plan(), poster, clock)
     assert result.outcome.startswith('aborted:pointer_contended:pointer_moved')
     assert poster.moves() == 1
-    # No grace period permits an out-of-region pointer to return unnoticed.
+    # No grace period permits an out-of-region pointer to return unnoticed. A drag acts on the abort
+    # with Escape at once; its release then waits for the last drag event to be taken (PTD24), so the
+    # player's return is not when the abort was found.
     moving_start = 100.12 if player is play_drag else 100.
-    assert clock.now() - moving_start < .02
+    acted = poster.escaped_at if player is play_drag else clock.now()
+    assert acted - moving_start < .02
     if player is play_drag:
         assert sum(kind == 'up' for kind, *_ in poster.events) == 1
+        assert result.release_after_last_post_s == pytest.approx(.05)
 
 
 @pytest.mark.parametrize('player', [play_move, play_drag])

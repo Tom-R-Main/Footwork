@@ -234,6 +234,70 @@ def test_a_release_that_fails_twice_is_raised_and_not_tried_a_third_time(monkeyp
     assert tried == [END, END]
 
 
+class TimedPoster(FakePoster):
+    """Also keeps the clock's time at each post."""
+
+    def __init__(self, clock: FakeClock) -> None:
+        super().__init__()
+        self.clock, self.times = clock, []
+
+    def drag(self, x, y):
+        super().drag(x, y)
+        self.times.append(("drag", self.clock.t))
+
+    def up(self, x, y):
+        super().up(x, y)
+        self.times.append(("up", self.clock.t))
+
+    def escape(self):
+        super().escape()
+        self.times.append(("escape", self.clock.t))
+
+
+def test_a_stopped_drag_holds_its_release_until_the_last_drag_event_has_been_taken():
+    """PTD24: live, a stopped drag's release was posted straight behind its last drag post, and the page
+    saw a move with no button before the release. Escape goes at once; the release waits 50 ms after
+    the last drag post, so an application takes that event while the button is still down."""
+    clock = FakeClock()
+    plan, poster = _plan(), TimedPoster(clock)
+    result = play_drag(plan, poster, clock, cancelled=lambda: poster.drags() >= 10)
+    last_drag = [t for kind, t in poster.times if kind == "drag"][-1]
+    assert [kind for kind, _ in poster.times[-2:]] == ["escape", "up"]
+    assert dict(poster.times)["escape"] == last_drag  # nothing waits to say stop
+    assert dict(poster.times)["up"] - last_drag == pytest.approx(0.05)
+    assert result.outcome == "aborted:cancelled" and result.release_after_last_post_s == pytest.approx(0.05)
+
+
+def test_a_stalled_drag_is_not_held_back_further():
+    """A stall is found because more than the limit has already passed since the last post."""
+    clock = FakeClock()
+    plan, poster = _plan(), TimedPoster(clock)
+    clock.oversleep[20] = 0.2
+    result = play_drag(plan, poster, clock)
+    assert result.outcome == "aborted:playback_stall" and result.release_after_last_post_s > 0.05
+    assert dict(poster.times)["up"] == dict(poster.times)["escape"]
+
+
+def test_a_drag_stopped_before_its_first_drag_event_releases_at_once():
+    clock, asked = FakeClock(), []
+    plan, poster = _plan(), TimedPoster(clock)
+
+    def cancelled() -> bool:
+        asked.append(1)
+        return len(asked) > 1  # not before the press; at the first check after it
+
+    result = play_drag(plan, poster, clock, cancelled=cancelled)
+    assert poster.kinds() == ["down", "escape", "up"] and result.release_after_last_post_s is None
+    assert dict(poster.times)["up"] == dict(poster.times)["escape"]
+
+
+def test_a_completed_drag_still_rests_before_its_release():
+    clock = FakeClock()
+    plan, poster = _plan(), TimedPoster(clock)
+    result = play_drag(plan, poster, clock)
+    assert result.outcome == "dropped" and result.release_after_last_post_s == pytest.approx(0.15)
+
+
 def test_a_cancel_already_asked_for_presses_nothing():
     """PTD12: ownership was checked before the press and the caller's cancel only after it, so a stop
     that arrived before the worker ran still pressed, held 120 ms, and released."""
