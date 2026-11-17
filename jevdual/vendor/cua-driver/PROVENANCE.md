@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2.parent1`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 Three Python files remain byte-for-byte from the exact release source. The contract UniFFI module carries the row2 ABI; the SDK UniFFI module preserves exact landed fdbf48f callback ownership/drop hardening after regeneration. __init__.py additionally exports ExpectedRow and RowReceipt. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -20,7 +20,7 @@ Three Python files remain byte-for-byte from the exact release source. The contr
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `5333d385bd6da0a75671fe990c224196e73d303d9f3ead4d385929582123b3b1` (6,448,145 bytes). It is the end of a six-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10, row4. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
+`native-source.tar.gz` SHA256: `f46ad7db9b8b8b60870d41db46a9b6b709240effe83f7b19bb97998267f62fde` (6,451,126 bytes). It is the end of a six-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10, row4. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 

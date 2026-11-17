@@ -1,6 +1,6 @@
 {
   "base_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
-  "patch_sha256": "55e0557284839f268c9fba497276c959fe12ecdd71e02b0d0d3ca37ff4bdf7c5",
+  "patch_sha256": "28f06a12e4484b9c3f06ffba3678f4db9c409392a6b4d81ff7b08a65b9266728",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs": {
       "before": null,
@@ -50,7 +50,7 @@
     },
     "libs/cua-driver/rust/crates/platform-macos/src/ax/row_guard.rs": {
       "before": null,
-      "after": "9a744d51b823478020feffbad90cbe1caf7e1d6123b0e6cc58bd3952768138e2",
+      "after": "44f3dd69a68262c4fcf3d480f72278cd8b48fa46d03f871f2837cb488b20782b",
       "mode": 420
     },
     "libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs": {
@@ -77,12 +77,12 @@
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/row_window.rs": {
       "before": null,
-      "after": "217f84f56f29eb45cd5829ada840f273f99587603191771995eee23da137dbca",
+      "after": "cd704024aae00d9794c2d52c9693c7e3bcb54dc0f9554a2e8faccd9da9109265",
       "mode": 420
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_parent_probe.rs": {
       "before": null,
-      "after": "2a121216d3ad9f7ed6bfcef0d031671229065fe4ac61e0a15e32a5b3884c734e",
+      "after": "efc7e5a206e1dc492f65d11403fe96e14f71a6c8bf91e8e4cfddbae06691bfce",
       "mode": 420
     }
   },
@@ -91,8 +91,8 @@
   ],
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
-  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2",
-  "patched_archive_sha256": "5333d385bd6da0a75671fe990c224196e73d303d9f3ead4d385929582123b3b1",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2.parent1",
+  "patched_archive_sha256": "f46ad7db9b8b8b60870d41db46a9b6b709240effe83f7b19bb97998267f62fde",
   "abi": "ExpectedRow version2 unchanged; optional row_trace_url input and row_trace_json output; callback overlay unchanged",
   "toolchain": "1.97.1"
 }
