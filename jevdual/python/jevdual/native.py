@@ -2250,11 +2250,7 @@ class NativeBridge:
         if self.filmed is not None:
             return self._not_sent("click", id, cand.label, "cross_window",
                                   "fullscreen preparation must be outside a filmed take", "foreground")
-        # Requalify before even bringing a window forward; a stale decision must not cause input.
-        _, initial_id = await self._live(nm, id, "click")
-        initial_refs = self._fullscreen_refs.get(initial_id)
-        if initial_refs is None:
-            raise NativeBridgeError("target_changed", "fullscreen reference is unavailable")
+        initial_refs = None
         before_window = None
         attempted = False
 
@@ -2287,18 +2283,27 @@ class NativeBridge:
                 self.dispatches += 1
                 attempted = True
 
-            try:
-                await owned_thread(self.ax.press_fullscreen, self.pid, self.window_id, expected,
-                                   (win, button), check_ready=check_ready, on_dispatch=on_dispatch)
-            except self.ax.AXError as exc:
-                if not attempted:
-                    raise NativeBridgeError(exc.reason, str(exc)) from exc
-                raise
+            await owned_thread(self.ax.press_fullscreen, self.pid, self.window_id, expected,
+                               (win, button), check_ready=check_ready, on_dispatch=on_dispatch)
             return _PRESSED
 
-        effect = await self._foreground("click", id, cand.label, call, why="native window fullscreen preparation")
+        try:
+            # Requalify before even bringing a window forward; a stale decision must not cause input.
+            _, initial_id = await self._live(nm, id, "click")
+            initial_refs = self._fullscreen_refs.get(initial_id)
+            if initial_refs is None:
+                raise NativeBridgeError("target_changed", "fullscreen reference is unavailable")
+            effect = await self._foreground("click", id, cand.label, call, why="native window fullscreen preparation")
+        except Exception as exc:  # noqa: BLE001 - the fixed action's dispatch marker decides delivery, never retry
+            effect = self._effect("click", id, cand.label, exc, "foreground")
         if not attempted:
-            return effect
+            # Unlike a generic SDK call, this route has exactly one input site,
+            # marked immediately before AXPress. Census/preemption errors cannot
+            # imply that input was attempted merely because _effect defaults so.
+            return dataclasses.replace(
+                effect, effect="refused", dispatched=False, delivery_basis="qualified_gate", delivered_count=0,
+                summary="fullscreen AXPress not attempted; " + effect.summary,
+            )
         acknowledged = effect.delivered_count == 1 and effect.error_code is None
         readback: dict[str, Any] = {
             "schema_version": 1, "producer": "footwork.ax.fullscreen",

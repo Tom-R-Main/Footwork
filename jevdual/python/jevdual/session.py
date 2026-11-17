@@ -678,7 +678,7 @@ def receipt_for(
     )
     r = _field_receipt(r, state.pending, nm, prev=prev, secret_value=secret_value)
     r = _save_receipt(r, state.pending)
-    r = _outside_receipt(r, state.pending)
+    r = _outside_receipt(r, state.pending, pid=state.pid, window_id=state.window_id)
     if state.pending.get("error") and state.pending.get("dispatched", False) is not False:
         # A failed acknowledgement is not evidence of non-delivery. The diff
         # receipt's error handling historically called every error a refusal.
@@ -703,7 +703,7 @@ def receipt_for(
     return out
 
 
-def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
+def _outside_receipt(r: Any, pending: dict[str, Any], *, pid: int | None = None, window_id: int | None = None) -> Any:
     """Q13a: two effects that happen outside the observed window. A menu item's effect (File > Open) may
     land in another app, so the window's own change cannot confirm it; a save is the exception, confirmed
     by its readback. A browser navigation Chrome ends with ERR_ABORTED is what a navigation that becomes a
@@ -719,9 +719,7 @@ def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
         effect_basis = basis if execution else delivery.get("delivery_basis")
         effect_word = execution.get("effect") if execution else pending.get("driver_effect")
         try:
-            control_binding = window_control if isinstance(window_control, dict) else {}
-            read_effect = fullscreen_readback_effect(proof, window_control,
-                                                    control_binding.get("pid"), control_binding.get("window_id"))
+            read_effect = fullscreen_readback_effect(proof, window_control, pid, window_id)
         except EvidenceError:
             read_effect = "unverifiable"
         confirmed = (effect_word == "confirmed" and effect_basis == "ax_fullscreen_state_readback"
