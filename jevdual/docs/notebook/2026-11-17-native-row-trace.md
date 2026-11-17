@@ -44,3 +44,9 @@ Test: reproduce the exact native sdk_trace_oversize fallback without inner snaps
 Predicts: only the true-marker regression fails before correction; all cases pass afterward with unchanged binding refusals and input decisions.
 Against: any unbound content becomes retained, malformed truthy values imply truncation, or other classification changes.
 Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/sol-review-db09d2f/REVIEW.md F3.
+
+## RT8 · update · 2026-11-17 11:23
+Resolves: RT7 = held
+Observed: actual native fallback shape fails only the true truncation case before correction (1 failed, 4 passed). One-line strict boolean propagation passes the eight-file packaged selection (199 passed); ruff and diff checks pass. Missing snapshot still withholds all graph/proof/candidate data. The initial red command used a wrong relative test path and collected no matching case; it is retained separately and is not red evidence.
+Next: independent db09d2f review closes F1/F2 with no safety/input blocker. Its F3 recommendation is applied exactly here; F4 count correction is already checked. CI and rollback-preserving delivery remain, followed by one authorized observation; no input or live qualification is claimed.
+Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/sol-review-db09d2f/REVIEW.md; /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/{truncation-red-valid.txt,truncation-green.txt,ci-provenance-green.txt}.

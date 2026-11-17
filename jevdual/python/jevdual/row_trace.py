@@ -67,7 +67,7 @@ def retain(path, request, snapshot, candidates):
                     raise ValueError('trace envelope identity mismatch')
                 snapshot_id, trace_id = get(snapshot, 'snapshot_id'), sdk.get('snapshot_id')
                 if not isinstance(snapshot_id, str) or not snapshot_id or not isinstance(trace_id, str) or not trace_id:
-                    result.update(status='snapshot_unproven', sdk=None,
+                    result.update(status='snapshot_unproven', sdk=None, truncated=sdk.get('truncated') is True,
                                   unbound_summary={k: sdk[k] for k in ('status', 'error', 'node', 'role', 'budget', 'references', 'comparisons', 'reads') if k in sdk})
                     raise _SnapshotUnproven('missing snapshot binding')
                 if snapshot_id != trace_id:
