@@ -1,4 +1,5 @@
 """Fixed-purpose native infobar action through the real public operator CLI."""
+import copy
 import json
 import sys
 
@@ -261,3 +262,115 @@ def test_infobar_ordinary_receipt_requires_one_acknowledged_dispatch(count):
     # A generic visible diff must not confirm this fixed-purpose action.
     base = Receipt(1, ('click',), 'confirmed', 'generic visible diff')
     assert _outside_receipt(base, pending, pid=77, window_id=12).effect == 'unverifiable'
+
+
+@pytest.mark.parametrize('durable', [False, True])
+@pytest.mark.parametrize('selector', ['Dismiss browser infobar', 'button:Dismiss browser infobar',
+                                      'label:Dismiss browser infobar', 'Dismiss browser',
+                                      'button:Dismiss browser'])
+def test_stale_infobar_selector_never_falls_through_to_sdk(world, fw, monkeypatch, tmp_path, selector, durable):
+    from tests.fixtures.native_world import World
+    _win, container, _alert, _close, _tab, _tab_close, attempts = infobar_world(world, monkeypatch)
+    sdk_calls = []
+    async def click(inp):
+        sdk_calls.append(inp.position.element_token)
+        return await World.click(world, inp)
+    monkeypatch.setattr(world, 'click', click)
+    if durable:
+        from jevdual.session import SessionState
+        _durable_start(fw, monkeypatch, tmp_path)
+        state = SessionState.load(fw.session); state.posture = 'exclusive_desktop'; state.save()
+    else:
+        assert fw('start', 'Dismiss', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    assert any(c['id'] == -3 for c in _state(fw)['last_candidates'])
+    container['AXChildren'] = []
+    world.base['elements'].append({'element_index': 555, 'role': 'AXButton',
+        'label': 'Dismiss browser infobar', 'enabled': True, 'actions': ['AXPress'], 'parent_index': 0})
+    code, out, err = fw('do', 'click', selector, *(['--token', 'stale-alias'] if durable else []))
+    assert not attempts
+    assert not sdk_calls, json.dumps({'selector': selector, 'durable': durable, 'exit': code,
+        'sdk_tokens': sdk_calls, 'presses': world.presses, 'stdout': out, 'stderr': err})
+
+
+@pytest.mark.parametrize('drop', ['identity', 'identity_and_readback'])
+def test_ordinary_reserved_target_cannot_downgrade_to_generic_receipt(drop):
+    from jevdual.receipts import Receipt
+    from jevdual.session import _outside_receipt
+    _op, execution = infobar_execution()
+    pending = copy.deepcopy(execution['projection'])
+    pending['native_readback']['transition_observed'] = False
+    pending['native_readback']['after']['infobar_absent'] = False
+    pending.pop('target_identity')
+    if drop == 'identity_and_readback':
+        pending.pop('native_readback')
+    pending['native_delivery'] = {'delivery_basis': 'sdk_delivery_count', 'delivered_count': 1}
+    result = _outside_receipt(Receipt(1, ('click',), 'confirmed', 'generic visible diff'),
+                              pending, pid=77, window_id=12)
+    assert result.effect != 'confirmed', repr(result)
+
+
+
+
+@pytest.mark.parametrize('phase', ['not_sent', 'ambiguous'])
+def test_durable_positive_press_proof_cannot_be_relabelled_no_send_or_unknown(phase):
+    from jevdual.operator_evidence import EvidenceError, validate_execution
+    from tests.test_operator_evidence import BINDING
+    op, record = infobar_execution()
+    no_send = phase == 'not_sent'
+    record.update(phase=phase, dispatched=False if no_send else None,
+                  effect='refused' if no_send else 'unverifiable')
+    record['projection'].update(dispatched=record['dispatched'], driver_effect=record['effect'])
+    record['producer'].update(delivery_basis='qualified_gate' if no_send else 'unknown',
+                              delivered_count=0 if no_send else None)
+    with pytest.raises(EvidenceError):
+        validate_execution(record, op, binding=BINDING)
+
+
+@pytest.mark.parametrize('durable', [False, True])
+def test_real_nsarray_children_offer_and_press_only_native_infobar(world, fw, monkeypatch, tmp_path, durable):
+    Foundation = pytest.importorskip('Foundation')
+    *_, attempts = infobar_world(world, monkeypatch)
+    services = sys.modules['ApplicationServices']
+    original = services.AXUIElementCopyAttributeValue
+    def read(el, key, result):
+        error, value = original(el, key, result)
+        if key == 'AXChildren' and not error and value is not None:
+            value = Foundation.NSArray.arrayWithArray_(value)
+            assert not isinstance(value, (list, tuple))
+        return error, value
+    monkeypatch.setattr(services, 'AXUIElementCopyAttributeValue', read)
+    if durable:
+        from jevdual.session import SessionState
+        _durable_start(fw, monkeypatch, tmp_path)
+        state = SessionState.load(fw.session); state.posture = 'exclusive_desktop'; state.save()
+    else:
+        assert fw('start', 'Dismiss', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    assert any(c['id'] == -3 for c in _state(fw)['last_candidates'])
+    assert fw('do', 'click', '-3', *(['--token', 'nsarray'] if durable else []))[0] == 0
+    assert len(attempts) == 1 and receipt(fw)['effect'] == 'confirmed'
+
+
+@pytest.mark.parametrize('collisions', [False, True])
+def test_census_equality_work_is_bounded_without_trusting_hashes(world, monkeypatch, collisions):
+    from jevdual import ax
+    win, *_ = infobar_world(world, monkeypatch)
+    win['AXChildren'] = [dict(AXRole='AXStaticText', AXParent=win, AXWindow=win,
+                             _pid=77, _hash=10000 + (0 if collisions else i)) for i in range(2000)]
+    comparisons = []
+    original = ax.same_element
+    def same(a, b):
+        comparisons.append(1)
+        return original(a, b)
+    monkeypatch.setattr(ax, 'same_element', same)
+    with pytest.raises(ax.AXError):
+        ax.infobar_control(77, 40335)
+    assert len(comparisons) < 10000
+
+
+def test_infobar_observation_names_native_not_dom_identity(world, fw, monkeypatch):
+    infobar_world(world, monkeypatch)
+    assert fw('start', 'Dismiss', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    code, out, err = fw('look')
+    assert code == 0, err
+    line = next(line for line in out.splitlines() if 'Dismiss browser infobar' in line)
+    assert 'native_infobar=' in line and 'dom_id=' not in line
