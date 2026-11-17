@@ -73,6 +73,7 @@ _CAND_FIELDS = (
     "native_control_opaque",
     "native_window_control",
     "native_row_control",
+    "native_infobar_control",
     "numeric",
 )
 
@@ -721,6 +722,31 @@ def _outside_receipt(r: Any, pending: dict[str, Any], *, pid: int | None = None,
         return dataclasses.replace(r, effect=effect, evidence=(
             "qualified row input not sent" if effect == "refused" else
             "row input/application outcome unverified; generic page change is not recipient evidence"))
+    # Reserved intent wins before any other family can return a confirmation.
+    identity = pending.get("target_identity")
+    native_proof = pending.get("native_readback")
+    native_delivery = pending.get("native_delivery")
+    execution_hint = pending.get("execution_receipt")
+    producer_hint = execution_hint.get("producer") if isinstance(execution_hint, dict) else None
+    infobar_intent = (
+        pending.get("target_id") in (-3, "-3")
+        or isinstance(identity, dict) and "native_infobar_control" in identity
+        or isinstance(native_proof, dict) and native_proof.get("predicate") == "native_infobar_disappearance"
+        or isinstance(native_delivery, dict) and native_delivery.get("delivery_basis") == "ax_infobar_disappearance_readback"
+        or isinstance(producer_hint, dict) and producer_hint.get("delivery_basis") == "ax_infobar_disappearance_readback"
+    )
+    if infobar_intent:
+        from jevdual.operator_evidence import EvidenceError, infobar_projection_effect
+
+        try:
+            effect = infobar_projection_effect(pending, pid, window_id)
+        except (EvidenceError, TypeError, ValueError):
+            effect = "unverifiable"
+        return dataclasses.replace(r, effect=effect, evidence={
+            "confirmed": "qualified infobar state transition",
+            "refused": "qualified infobar AXPress not attempted",
+            "unverifiable": "infobar action or transition was not independently verified",
+        }[effect])
     execution = pending.get("execution_receipt") or {}
     proof = pending.get("native_readback") or {}
     basis = (execution.get("producer") or {}).get("delivery_basis")
@@ -1065,6 +1091,8 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
             extra += " native_row=" + json.dumps(c.native_row_control, sort_keys=True)
         elif c.native_window_control is not None:
             extra += " native_window=" + json.dumps(c.native_window_control, sort_keys=True)
+        elif c.native_infobar_control is not None:
+            extra += " native_infobar=" + json.dumps(c.native_infobar_control, sort_keys=True)
         elif qualified_control_identity(c) is not None:
             extra += f" dom_id={c.native_dom_id!r} document={c.native_document_url!r}"
         if c.native_control_opaque:
@@ -2594,18 +2622,24 @@ async def cmd_do(args: Any) -> int:
         # A selector chosen from a native window action must not fall through to
         # an ordinary SDK control when fresh AX qualification disappears. The
         # caller must observe and select the different control separately.
+        prior_hits = []
+        if state.mode == "native" and before is not None:
+            if isinstance(cid, int):
+                previous = before.candidate(cid)
+                prior_hits = [previous] if previous is not None else []
+            elif isinstance(cid, str):
+                prior_hits, _ = _selector_candidates(before, cid)
         selected_window_controls = [
-            c for c in chosen_cands
-            if c.get("native_window_control") and str(requested_selector).strip().casefold()
-            in {str(c["id"]), c["label"].casefold(), "button:" + c["label"].casefold()}
-        ] if state.mode == "native" else []
+            c for c in prior_hits
+            if c.native_window_control is not None or c.native_infobar_control is not None
+        ]
         if selected_window_controls:
             previous_control = selected_window_controls[0]
-            current_control = nm.menu.candidate(previous_control["id"])
-            if (len(selected_window_controls) != 1 or current_control is None
-                    or current_control.native_window_control is None
+            current_control = nm.menu.candidate(previous_control.id)
+            if (len(prior_hits) != 1 or len(selected_window_controls) != 1 or current_control is None
+                    or (current_control.native_window_control is None and current_control.native_infobar_control is None)
                     or qualified_control_identity(previous_control) != qualified_control_identity(current_control)):
-                return targeting_refused("target_changed", "fullscreen control lost qualification since look; observe again")
+                return targeting_refused("target_changed", "native fixed control lost qualification since look; observe again")
         if isinstance(cid, str):
             if cid.startswith("file:"):
                 file_target, rid = _file_target(state, nm, cid)
@@ -2615,7 +2649,7 @@ async def cmd_do(args: Any) -> int:
             if rid is None:
                 print(why, file=sys.stderr)
                 return targeting_refused(_selector_failure_code(nm, why), "selector did not resolve uniquely")
-            if selected_window_controls and rid != selected_window_controls[0]["id"]:
+            if selected_window_controls and rid != selected_window_controls[0].id:
                 return targeting_refused("target_changed", "fullscreen selector changed control kind since look; observe again")
             if selected_row is not None and rid != selected_row.id:
                 return targeting_refused("target_changed", "row selector changed recipient since look")
@@ -2701,14 +2735,14 @@ async def cmd_do(args: Any) -> int:
             if (op != "click" or len(args.words) != 2 or getattr(args, "route", None)
                     or web_text_delivery or click_delivery or web_text_range is not None):
                 return targeting_refused("row_operator_only", "row controls require ordinary do click without delivery overrides")
-        if target is not None and target.native_window_control is not None:
+        if target is not None and (target.native_window_control is not None or target.native_infobar_control is not None):
             selector = str(requested_selector).strip().casefold()
             if (op != "click" or len(args.words) != 2
                     or selector not in {str(target.id), target.label.casefold(), "button:" + target.label.casefold()}):
-                return targeting_refused("fullscreen_operator_only", "fullscreen requires do click with its exact label or observed ID")
-            previous = [c for c in chosen_cands if c.get("label") == target.label and c.get("native_window_control")]
+                return targeting_refused("fullscreen_operator_only", "native fixed control requires do click with its exact label or observed ID")
+            previous = [c for c in chosen_cands if c.get("label") == target.label and (c.get("native_window_control") or c.get("native_infobar_control"))]
             if len(previous) != 1 or qualified_control_identity(previous[0]) != qualified_control_identity(target):
-                return targeting_refused("target_changed", "fullscreen control identity changed since look; observe again")
+                return targeting_refused("target_changed", "native fixed control identity changed since look; observe again")
 
         if op == "drag":
             if state.mode != "native" or not callable(getattr(bridge, "drag", None)):
@@ -2721,7 +2755,7 @@ async def cmd_do(args: Any) -> int:
                     _selector_failure_code(nm, why.removeprefix("destination: ")),
                     "drag destination did not resolve uniquely", destination=text or "",
                 )
-            if destination.native_window_control is not None:
+            if destination.native_window_control is not None or destination.native_infobar_control is not None:
                 return targeting_refused("fullscreen_operator_only", "native window controls cannot be drag endpoints")
             known = chosen_from.get(destination.id)
             if state.mode == "native" and (text or "").lstrip("-").isdigit() and known is not None and (
@@ -2940,6 +2974,7 @@ async def cmd_do(args: Any) -> int:
         filmed_note = None
         eff = None
         dispatched = None  # a missing acknowledgement cannot establish no-send
+        infobar_dispatches = getattr(bridge, "dispatches", None)
         try:
             if file_target is not None:
                 if op not in ("type", "move"):
@@ -2961,7 +2996,7 @@ async def cmd_do(args: Any) -> int:
             else:
                 assert target is not None
                 route_arg = getattr(args, "route", None)
-                if target.native_window_control is not None or target.native_row_control is not None:
+                if target.native_window_control is not None or target.native_row_control is not None or target.native_infobar_control is not None:
                     eff = await bridge.act(nm, op, target.id, text, operator_window_control=True)
                 elif route_arg and state.mode == "browser":
                     eff = await bridge.act(
@@ -3009,6 +3044,16 @@ async def cmd_do(args: Any) -> int:
                     dispatched = None
                 elif current_dispatches > row_dispatches:
                     dispatched = True
+            if target is not None and target.native_infobar_control is not None and dispatched is False:
+                after_dispatches = getattr(bridge, "dispatches", None)
+                # This fixed action increments at its sole AXPress site. A
+                # default exception flag cannot erase a marker already observed.
+                if type(infobar_dispatches) is not int or type(after_dispatches) is not int:
+                    dispatched = None
+                elif after_dispatches > infobar_dispatches:
+                    dispatched = True
+                elif after_dispatches != infobar_dispatches:
+                    dispatched = None
             driver_effect = "not dispatched" if dispatched is False else "unverifiable"
             error = f"{getattr(exc, 'reason', 'error')}: {exc}"[:160]
         except BaseException:
@@ -3053,7 +3098,7 @@ async def cmd_do(args: Any) -> int:
                         "delivery", "driver_delivery", "dispatched", "delivered_count", "delivery_basis", "route"
                     )
                 },
-            } if web_text_delivery or click_delivery or (target is not None and (target.native_window_control is not None or target.native_row_control is not None)) else {}),
+            } if web_text_delivery or click_delivery or (target is not None and (target.native_window_control is not None or target.native_row_control is not None or target.native_infobar_control is not None)) else {}),
         }
         if state.row_intent is not None and eff is None:
             state.pending["native_delivery"] = {
@@ -3061,6 +3106,14 @@ async def cmd_do(args: Any) -> int:
                 "dispatched": dispatched, "delivered_count": 0 if dispatched is False else None,
                 "delivery_basis": "qualified_gate" if dispatched is False else "unknown",
             }
+        # A bridge exception explicitly marked before dispatch is a producer
+        # zero-send fact. Preserve it here instead of asking consumers to infer
+        # absence from an empty delivery object. Unknown exceptions stay unknown.
+        if (eff is None and dispatched is False and target is not None
+                and target.native_infobar_control is not None):
+            state.pending["native_delivery"].update(
+                dispatched=False, delivery_basis="qualified_gate", delivered_count=0,
+            )
         if getattr(eff, "readback", None) is not None:
             state.pending["save_readback"] = eff.readback
         if getattr(eff, "native_readback", None) is not None:
@@ -3721,6 +3774,7 @@ def _target_identity(target: Any) -> dict[str, Any]:
     return {
         **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
         **({"native_row_control": target.native_row_control} if getattr(target, "native_row_control", None) is not None else {}),
+        **({"native_infobar_control": target.native_infobar_control} if getattr(target, "native_infobar_control", None) is not None else {}),
         **({"native_window_control": target.native_window_control} if getattr(target, "native_window_control", None) is not None else {}),
         **({"native_control_opaque": True} if getattr(target, "native_control_opaque", None) is True else {}),
         **({"href": target.href, "href_qualified": True} if qualified_link_href(target) is not None else {}),

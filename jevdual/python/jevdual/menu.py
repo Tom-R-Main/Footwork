@@ -77,6 +77,7 @@ class Candidate:
     native_window_control: dict[str, Any] | None = None
     #: SDK-qualified table/key/document predicate tied to its actual held token.
     native_row_control: dict[str, Any] | None = None
+    native_infobar_control: dict[str, Any] | None = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
@@ -88,7 +89,7 @@ class Candidate:
         }
         for key in (
             "value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section", "placeholder",
-            "value_truncated", "href_qualified", "native_dom_id", "native_document_url", "native_control_qualified", "native_control_opaque", "native_window_control", "native_row_control",
+            "value_truncated", "href_qualified", "native_dom_id", "native_document_url", "native_control_qualified", "native_control_opaque", "native_window_control", "native_row_control", "native_infobar_control",
         ):
             val = getattr(self, key)
             if val is not None:
@@ -132,6 +133,18 @@ def qualified_control_identity(candidate: Any) -> tuple[Any, ...] | None:
                 and window["pid"] > 0 and window["window_id"] > 0
                 and type(window.get("fullscreen")) is bool):
             return ("native_window", *(window[key] for key in fields), window["subrole"], window["fullscreen"])
+        return None
+    infobar = get("native_infobar_control")
+    if infobar is not None:
+        fields = ("pid", "window_id", "window_hash", "button_hash", "alert_hash")
+        tabs = infobar.get("tab_hashes") if isinstance(infobar, dict) else None
+        if (isinstance(infobar, dict) and set(infobar) == {*fields, "tab_hashes", "kind"}
+                and get("role") == "button" and infobar.get("kind") == "native_infobar_close"
+                and all(type(infobar.get(k)) is int and infobar[k] >= 0 for k in fields)
+                and infobar["pid"] > 0 and infobar["window_id"] > 0
+                and isinstance(tabs, list) and 0 < len(tabs) <= 64
+                and all(type(t) is int and t >= 0 for t in tabs)):
+            return ("native_infobar", *(infobar[k] for k in fields), tuple(tabs))
         return None
     identifier, document = get("native_dom_id"), get("native_document_url")
     if (get("native_control_qualified") is True and get("role") in ("button", "combobox")
