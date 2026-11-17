@@ -1201,6 +1201,9 @@ class NativeBridge:
         # Scope must be checked before retaining pixels. This bounded route uses
         # AX observations only rather than capture a possibly changed page.
         capture_path = screenshot_path if self.observation_guard is None else None
+        from jevdual.row_trace import configuration, retain
+
+        trace = configuration(self.pid, self.window_id) if self.window_controls else None
         snap = await self.driver.get_window_state(
             window_state_input(
                 pid=self.pid,
@@ -1217,6 +1220,7 @@ class NativeBridge:
                 # Compact SDK defaults omit the structured elements and static-text detail.
                 full_output=True,
                 **(row_snapshot_options() if self.window_controls else {}),
+                **({"row_trace_url": trace[1]} if trace else {}),
             )
         )
         self.last = None
@@ -1315,6 +1319,10 @@ class NativeBridge:
             observed = dataclasses.replace(observed, visual_capture=capture, visual_capture_error=error)
         elif screenshot_path is not None:
             observed = dataclasses.replace(observed, visual_capture_error="scope_guard_withheld_pixels")
+        if trace:
+            retain(trace[0], {"pid": self.pid, "window_id": self.window_id, "row_trace_url": trace[1],
+                              "qualify_rows": True, "full_output": True, "include_accessibility_tree": True,
+                              "max_elements": max_elements, "query": query}, snap, observed.menu.candidates)
         self.last = observed
         return self.last
 

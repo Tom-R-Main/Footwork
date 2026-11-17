@@ -1,6 +1,6 @@
 {
   "base_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
-  "patch_sha256": "cb58b96f5bae297000ab4f29f0b26cdec577fa3c4c62f8f68ea5b18e89514785",
+  "patch_sha256": "ac9cb4294390cccbe1fd3cb40f8af97ce54db19dd75f5e46dcc1d0e771653d3c",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs": {
       "before": null,
@@ -21,12 +21,12 @@
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs": {
       "before": null,
-      "after": "c994cd1c0dbf5b33136f7f938965988180fdd0e13fecd5eb4dc82e2876bd5ec1",
+      "after": "035a854b7476451568990e402b6543fba01dab49dd247e2c5c4b7a2290afbc73",
       "mode": 420
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs": {
       "before": "7d119f50cfbc83d0d02d8e278835195de97694c0593e7f1fcda4d85ab0281d68",
-      "after": "1c457a60d6dc9146938774fa5e0ec88c5a38d3e38e8d2dc541533197fe7a0a1d"
+      "after": "c3f9c312e12c95025bec788848025346ca6397ee9f8b8cd19c6fe9679cf4ac9b"
     },
     "libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs": {
       "before": "5f39eca0bce322cf74262d6d4d36aa37402fd8d432c51ea47c377fcfe0e13686",
@@ -46,11 +46,11 @@
     },
     "libs/cua-driver/rust/crates/platform-macos/src/ax/mod.rs": {
       "before": "d646cf0ff1fc6454130206484574d646205a9d9b2964416b9364d186418c381a",
-      "after": "05851f3175b4f1df9e3c9394196241dea8618c140965ac84dde80620b3cc068f"
+      "after": "41519f784cd401fb4b13b3753bf47d0b8aec6efa6c52501559a7874b650b1620"
     },
     "libs/cua-driver/rust/crates/platform-macos/src/ax/row_guard.rs": {
       "before": null,
-      "after": "5424983d3efb02afbe5c8acf0a8726f4600c12196c76b414cc621765587e778b",
+      "after": "abe7100e3b9ea21f64adc3aa54008b9d110e7ae63afc2fe2ebfe50476a507f9c",
       "mode": 420
     },
     "libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs": {
@@ -63,7 +63,17 @@
     },
     "libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs": {
       "before": "6a2659ace6595ba002a105a7a8f209221d58067b51106fa221872f64ca8c9c25",
-      "after": "67b74f56f30ce3dc9cacd96899fb9d1b4eef9a6ff75c5df64e8aef04b53984f7"
+      "after": "24a9567365ba996ddda32f40891e4dc5c3e716f6a6fbdda97f9218453b57aa0e"
+    },
+    "libs/cua-driver/rust/crates/platform-macos/src/ax/row_trace.rs": {
+      "before": null,
+      "after": "ba2f072183828ed2de453048c1faa211d423fa763345409676aa2d8fc77ef704",
+      "mode": 420
+    },
+    "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_trace_probe.rs": {
+      "before": null,
+      "after": "8034c5f399b687fa106a4cf8ed977c0d4ecf53236e6f2f7187a15817452b0e28",
+      "mode": 420
     }
   },
   "added_directories": [
@@ -71,8 +81,8 @@
   ],
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
-  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4",
-  "patched_archive_sha256": "c9ca9cd7d71779f33dc031f4bf38e1ad48518fce940fd1a06d79e8a7f56ae7ba",
-  "abi": "ExpectedRow version2 requires full row_values; held row_cells; regenerated native/Python bindings together",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace1",
+  "patched_archive_sha256": "87479dabc9a278fe4d4e925d4d36a52aaeefad80ca022a16c9aa1a882f537e20",
+  "abi": "ExpectedRow version2 unchanged; optional row_trace_url input and row_trace_json output; callback overlay unchanged",
   "toolchain": "1.97.1"
 }

@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace1`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 Three Python files remain byte-for-byte from the exact release source. The contract UniFFI module carries the row2 ABI; the SDK UniFFI module preserves exact landed fdbf48f callback ownership/drop hardening after regeneration. __init__.py additionally exports ExpectedRow and RowReceipt. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -15,12 +15,12 @@ Three Python files remain byte-for-byte from the exact release source. The contr
 | `__main__.py` | `bcb78a6283dc6da69f3338879ae34a0f2dbeea3b444e4c3dd43f170d2922a387` |
 | `_daemon.py` | `f6ce97a08ab5c124ba0210b00e44bd652b41cca5a9ae20a511a6409093e8f01e` |
 | `_native.py` | `8bb3927dd6579d94468eb5c08b1700230359813074cd1959c2e226c318dd4828` |
-| `_native_contract.py` | `2fabf55da93f67899246918e76516b8e8427340649d9fa1b6da152fc2862ec0f` |
+| `_native_contract.py` | `0ab0c2376276f42ae1c7649c28a7de60c505733405f1993af1be9fe533e55cbc` |
 | `wrapper.py` | `cfd7abe6215aab7c1d8f66f2c15e6cd6ab7f150918de7b301b73c253e90a61d6` |
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `c9ca9cd7d71779f33dc031f4bf38e1ad48518fce940fd1a06d79e8a7f56ae7ba` (6,444,769 bytes). It is the end of a six-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10, row4. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
+`native-source.tar.gz` SHA256: `87479dabc9a278fe4d4e925d4d36a52aaeefad80ca022a16c9aa1a882f537e20` (6,447,253 bytes). It is the end of a six-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10, row4. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -331,3 +331,8 @@ ExpectedRow version2 requires complete selected-row values aligned to explicitly
 Regeneration must preserve the landed fdbf48f foreign-future drop and remote-channel owning-loop implementation. `patches/python-callback-owner.patch` restores those exact bytes on the generated `_native.py`; its JSON manifest binds the generated, patch and restored hashes. From this vendor directory, after verifying the generated hash, apply `patch --batch --forward -p1 -i patches/python-callback-owner.patch` and verify the restored hash. Unexpected generator drift refuses this overlay rather than silently dropping it. `_native_contract.py` retains the independently generated row ABI.
 
 The packaged SDK module is byte-identical to fdbf48f. Tests execute the actual callback from another thread on an owned debug asyncio loop, test closed/absent loops and both remote object converters' owner-loop guard, and verify reversible overlay reconstruction against the packaged bytes. No Driver or OS input is created.
+
+
+## Observation-only row trace
+
+The optional typed `row_trace_url` request and `row_trace_json` response carry bounded diagnostics through the existing observation. No new AX traversal or input endpoint is added. Existing census budget constants, recipient predicates and foreground checks remain unchanged. Diagnostic bookkeeping has CPU cost and cannot guarantee identical deadline behavior near a time limit. `_native.py` and its callback-ownership overlay are byte-identical; `_native_contract.py` is regenerated from the compiled trace ABI. See docs/native-row-trace.md for scope, retention and evidence limits.

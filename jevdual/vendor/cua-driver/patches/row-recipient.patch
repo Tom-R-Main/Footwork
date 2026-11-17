@@ -178,7 +178,7 @@
 +                "row_receipt",
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs
-@@ -0,0 +1,684 @@
+@@ -0,0 +1,697 @@
 +//! Bounded row-recipient predicates. Graphs are SDK-owned observations, never public tool inputs.
 +use schemars::JsonSchema;
 +use serde::{Deserialize, Serialize};
@@ -760,6 +760,12 @@
 +    window: u64,
 +    recipient: u64,
 +) -> Result<RowBinding, String> {
++    discover_row_traced(graph, pid, window, recipient, None)
++}
++pub fn discover_row_traced(
++    graph: &RowGraph, pid: u32, window: u64, recipient: u64,
++    mut trace: Option<&mut Vec<serde_json::Value>>,
++) -> Result<RowBinding, String> {
 +    let c = Census::new(graph, pid, window)?;
 +    let table = c
 +        .ancestors(recipient)?
@@ -768,9 +774,16 @@
 +        .ok_or("not a table action")?;
 +    for header in c.table(table)?.1 {
 +        if !header.is_empty() {
-+            if let Ok(binding) = c.qualify(recipient, &header) {
-+                return Ok(binding);
++            let result = c.qualify(recipient, &header);
++            if let Some(events) = trace.as_deref_mut() {
++                if events.len() < 128 {
++                    events.push(serde_json::json!({"recipient": recipient, "key": header,
++                        "error": result.as_ref().err(), "qualified": result.is_ok()}));
++                } else if events.len() == 128 {
++                    events.push(serde_json::json!({"truncated": true}));
++                }
 +            }
++            if let Ok(binding) = result { return Ok(binding); }
 +        }
 +    }
 +    Err("no unambiguous named key column".into())
@@ -865,16 +878,39 @@
 +}
 --- a/libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs
-@@ -128,0 +129,5 @@
+@@ -128,0 +129,9 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
 +    /// Row predicates are enforced by foreground left AXPress click only.
 +    /// Other token tools do not enforce this predicate; unavailable proof is omitted.
 +    pub qualify_rows: Option<bool>,
-@@ -291,0 +297,3 @@
++    /// Private observation diagnostics, scoped to an exact numeric-loopback document.
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    #[uniffi(default = None)]
++    pub row_trace_url: Option<String>,
+@@ -291,0 +301,3 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
 +    pub expected_row: Option<crate::ExpectedRow>,
+@@ -301,0 +314,3 @@
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    #[uniffi(default = None)]
++    pub row_trace_json: Option<String>,
+@@ -517,0 +533,14 @@
++
++#[cfg(test)]
++mod row_trace_tests {
++    use super::*;
++    #[test]
++    fn row_trace_typed_fields_survive_wire() {
++        let request = serde_json::json!({"pid":77,"window_id":9,"qualify_rows":true,"row_trace_url":"http://127.0.0.1:5176/tasks"});
++        let typed: GetWindowStateInput = serde_json::from_value(request.clone()).unwrap();
++        assert_eq!(serde_json::to_value(typed).unwrap()["row_trace_url"], request["row_trace_url"]);
++        let reply = serde_json::json!({"pid":77,"window_id":9,"row_trace_json":"{\"status\":\"capture_refused\"}"});
++        let typed: WindowStateOutput = serde_json::from_value(reply.clone()).unwrap();
++        assert_eq!(serde_json::to_value(typed).unwrap()["row_trace_json"],reply["row_trace_json"]);
++    }
++}
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs
 @@ -350,0 +351 @@
@@ -936,11 +972,12 @@
 +                        rows: Default::default(),
 --- a/libs/cua-driver/rust/crates/platform-macos/src/ax/mod.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/mod.rs
-@@ -29,0 +30 @@
+@@ -29,0 +30,2 @@
 +pub(crate) mod row_guard;
++pub(crate) mod row_trace;
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/row_guard.rs
-@@ -0,0 +1,425 @@
+@@ -0,0 +1,454 @@
 +//! SDK-owned row census and actual-token press. No public raw AX entry point.
 +use super::bindings::*;
 +use core_foundation::{
@@ -951,7 +988,7 @@
 +    url::CFURL,
 +};
 +use cua_driver_contract::row::{
-+    discover_row, dispatch_row, RowBinding, RowGraph, RowNode, RowReceipt,
++    discover_row_traced, dispatch_row, RowBinding, RowGraph, RowNode, RowReceipt,
 +};
 +use cua_driver_contract::ExpectedRow;
 +use std::collections::{BTreeMap, BTreeSet};
@@ -988,6 +1025,8 @@
 +    buckets: BTreeMap<u64, Vec<usize>>,
 +    comparisons: usize,
 +    deadline: Instant,
++    current_node: Option<u64>,
++    current_role: String,
 +}
 +impl Capture {
 +    fn new(seed: &[OwnedAx]) -> Self {
@@ -996,6 +1035,8 @@
 +            buckets: BTreeMap::new(),
 +            comparisons: 0,
 +            deadline: Instant::now() + Duration::from_secs(2),
++            current_node: None,
++            current_role: String::new(),
 +        };
 +        for (i, el) in c.objects.iter().enumerate() {
 +            c.buckets
@@ -1093,12 +1134,15 @@
 +            if nodes.len() >= 2048 || Instant::now() > self.deadline {
 +                return Err("row census incomplete".into());
 +            }
++            self.current_node = Some(id);
++            self.current_role.clear();
 +            let el = self.objects[id as usize].ptr();
 +            let mut owner = 0;
 +            if unsafe { AXUIElementGetPid(el, &mut owner) } != 0 || owner as u32 != pid {
 +                return Err("row peer PID mismatch".into());
 +            }
 +            let role = text(el, "AXRole", false)?.ok_or("row peer role missing")?;
++            self.current_role = role.clone();
 +            let parent = if id == root {
 +                None
 +            } else {
@@ -1188,6 +1232,7 @@
 +    let mut value = std::ptr::null();
 +    let error =
 +        unsafe { AXUIElementCopyAttributeValue(el, key_cf.as_concrete_TypeRef(), &mut value) };
++    super::row_trace::read(key, (error != 0 && !(optional && (error == kAXErrorNoValue || error == kAXErrorAttributeUnsupported))).then_some(error));
 +    if error != 0 {
 +        if !value.is_null() {
 +            unsafe { CFRelease(value) };
@@ -1232,6 +1277,7 @@
 +fn actions(el: AXUIElementRef) -> Result<Vec<String>, String> {
 +    let mut names = std::ptr::null();
 +    let error = unsafe { AXUIElementCopyActionNames(el, &mut names) };
++    super::row_trace::read("AXActions", (error != 0 || names.is_null()).then_some(error));
 +    if error != 0 || names.is_null() {
 +        if !names.is_null() {
 +            unsafe { CFRelease(names as _) };
@@ -1257,52 +1303,72 @@
 +}
 +
 +pub fn qualify_snapshot(
-+    nodes: &[super::tree::AXNode],
-+    pid: u32,
-+    window_id: u64,
-+) -> BTreeMap<usize, Arc<QualifiedRow>> {
-+    let mut qualified = BTreeMap::new();
-+    let Some(first) = nodes.iter().find(|n| {
-+        n.element_index.is_some()
-+            && n.in_web_content
-+            && matches!(n.role.as_str(), "AXButton" | "AXPopUpButton")
-+    }) else {
-+        return qualified;
-+    };
-+    let Ok(Some(win)) = read(first.element_ptr as AXUIElementRef, "AXWindow", false) else {
-+        return qualified;
-+    };
-+    if win.type_of() != unsafe { AXUIElementGetTypeID() } {
-+        return qualified;
-+    }
-+    let mut capture = Capture::new(&[]);
-+    let Ok(graph) = capture.graph(win.as_CFTypeRef() as AXUIElementRef, pid, window_id) else {
-+        return qualified;
-+    };
-+    let mut bindings = Vec::new();
-+    for n in nodes.iter().filter(|n| {
-+        n.element_index.is_some()
-+            && n.in_web_content
-+            && matches!(n.role.as_str(), "AXButton" | "AXPopUpButton")
-+    }) {
-+        let Ok(id) = capture.intern(n.element_ptr as AXUIElementRef) else {
-+            return BTreeMap::new();
++    nodes: &[super::tree::AXNode], pid: u32, window_id: u64, trace_url: Option<&str>,
++) -> (BTreeMap<usize, Arc<QualifiedRow>>, Option<serde_json::Value>) {
++    use serde_json::json;
++    let mut report = json!({"version":1,"pid":pid,"window_id":window_id,"scope_url":trace_url,
++        "scope_matched":false,"truncated":false,"status":"no_eligible_node",
++        "budget":{"seconds":2,"nodes":2048,"references":4096,"comparisons":500000}});
++    super::row_trace::begin(trace_url.is_some());
++    let result = (|| {
++        let mut qualified = BTreeMap::new();
++        let Some(first) = nodes.iter().find(|n| n.element_index.is_some() && n.in_web_content
++            && matches!(n.role.as_str(), "AXButton" | "AXPopUpButton")) else { return qualified; };
++        let win = match read(first.element_ptr as AXUIElementRef, "AXWindow", false) {
++            Ok(Some(win)) => win,
++            other => { report["status"] = json!("window_read_refused");
++                report["error"] = json!(other.err().unwrap_or_else(|| "missing window".into())); return qualified; }
 +        };
-+        if let Ok(binding) = discover_row(&graph, pid, window_id, id) {
-+            bindings.push((n.element_index.unwrap(), binding));
++        if win.type_of() != unsafe { AXUIElementGetTypeID() } {
++            report["status"] = json!("window_type_refused"); return qualified;
 +        }
-+    }
-+    let objects = Arc::new(capture.objects);
-+    for (id, binding) in bindings {
-+        qualified.insert(
-+            id,
-+            Arc::new(QualifiedRow {
-+                binding,
-+                objects: objects.clone(),
-+            }),
-+        );
-+    }
-+    qualified
++        let mut capture = Capture::new(&[]);
++        let graph = match capture.graph(win.as_CFTypeRef() as AXUIElementRef, pid, window_id) {
++            Ok(graph) => graph,
++            Err(error) => { report["status"] = json!("capture_refused"); report["error"] = json!(error);
++                report["node"] = json!(capture.current_node); report["role"] = json!(capture.current_role);
++                report["references"] = json!(capture.objects.len()); report["comparisons"] = json!(capture.comparisons);
++                return qualified; }
++        };
++        let urls: Vec<_> = graph.nodes.iter().filter(|n| n.role == "AXWebArea").map(|n| n.url.as_deref()).collect();
++        let scoped = trace_url.is_some() && urls.len() == 1 && urls[0] == trace_url;
++        let mut events = Vec::new();
++        let mut results = Vec::new();
++        let mut bindings = Vec::new();
++        for n in nodes.iter().filter(|n| n.element_index.is_some() && n.in_web_content
++            && matches!(n.role.as_str(), "AXButton" | "AXPopUpButton")) {
++            let id = match capture.intern(n.element_ptr as AXUIElementRef) {
++                Ok(id) => id,
++                Err(error) => { report["status"] = json!("intern_refused"); report["error"] = json!(error); return BTreeMap::new(); }
++            };
++            let result = discover_row_traced(&graph, pid, window_id, id, scoped.then_some(&mut events));
++            if scoped {
++                if results.len() < 128 { results.push(json!({"index":n.element_index,"recipient":id,"error":result.as_ref().err(),"qualified":result.is_ok()})); }
++                else { report["truncated"] = json!(true); }
++            }
++            if let Ok(binding) = result { bindings.push((n.element_index.unwrap(), binding)); }
++        }
++        // All AX reads and reference admissions above are complete before serialization.
++        if trace_url.is_some() {
++            report["scope_matched"] = json!(scoped);
++            report["status"] = json!(if bindings.is_empty() { "discovery_refused" } else { "qualified" });
++            report["references"] = json!(capture.objects.len()); report["comparisons"] = json!(capture.comparisons);
++            if scoped {
++                match super::row_trace::limited(&graph, 2 * 1024 * 1024) {
++                    Some(graph) => report["graph"] = serde_json::from_str(&graph).unwrap(),
++                    None => { report["graph"] = serde_json::Value::Null; report["truncated"] = json!(true); }
++                }
++                if events.len() > 128 { report["truncated"] = json!(true); }
++                report["keys"] = json!(events); report["results"] = json!(results);
++            }
++        }
++        let objects = Arc::new(capture.objects);
++        for (id, binding) in bindings { qualified.insert(id, Arc::new(QualifiedRow { binding, objects: objects.clone() })); }
++        qualified
++    })();
++    let metrics = super::row_trace::finish();
++    if trace_url.is_some() { report["reads"] = metrics; }
++    (result, trace_url.map(|_| report))
 +}
 +
 +pub fn press(
@@ -1456,23 +1522,46 @@
 +        }
 --- a/libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs
-@@ -73,0 +74 @@
+@@ -73,0 +74,2 @@
++                "row_trace_url": { "type": "string", "description": "Bounded observation diagnostics for this exact numeric-loopback document only; no input authority." },
 +                "qualify_rows": { "type": "boolean", "description": "Opt in to SDK-owned row recipient predicates enforced by foreground left AXPress click only. Other token tools are not qualified by this option; unavailable proof is omitted." },
-@@ -362,0 +364 @@
+@@ -363 +365,5 @@
+-        let (tree_result, prepared_snapshot) = if want_tree {
 +        let qualify_rows = args.get("qualify_rows").and_then(Value::as_bool) == Some(true);
-@@ -379 +381,4 @@
++        let trace_url = args.get("row_trace_url").and_then(Value::as_str)
++            .filter(|s| s.starts_with("http://127.0.0.1:") && s.len() <= 2048).map(str::to_owned);
++        let collect_trace = trace_url.clone();
++        let (tree_result, prepared_snapshot, mut row_trace) = if want_tree {
+@@ -379,2 +385,6 @@
 -                let payload = crate::ax::snapshot::AxSnapshot::from_nodes(&tree.nodes);
+-                (tree, payload)
 +                let mut payload = crate::ax::snapshot::AxSnapshot::from_nodes(&tree.nodes);
++                let mut trace = None;
 +                if qualify_rows && !observation_only {
-+                    payload.rows = crate::ax::row_guard::qualify_snapshot(&tree.nodes, pid as u32, u64::from(window_id));
++                    (payload.rows, trace) = crate::ax::row_guard::qualify_snapshot(&tree.nodes, pid as u32, u64::from(window_id), collect_trace.as_deref());
 +                }
-@@ -402,0 +408,2 @@
++                (tree, payload, trace)
+@@ -387 +397 @@
+-                Ok(Ok((tree, payload))) => (Some(tree), Some(payload)),
++                Ok(Ok((tree, payload, trace))) => (Some(tree), Some(payload), trace),
+@@ -400 +410 @@
+-            (None, None)
++            (None, None, None)
+@@ -402 +412,9 @@
+-
++        if let Some(url) = trace_url.as_ref() {
++            if row_trace.is_none() { row_trace = Some(serde_json::json!({"version":1,"pid":pid,"window_id":window_id,"scope_url":url,
++                "scope_matched":false,"truncated":false,"status":"qualification_not_run"})); }
++            if let Some(trace) = row_trace.as_mut() { trace["request"] = serde_json::json!({"qualify_rows":qualify_rows,
++                "observation_only":observation_only,"want_tree":want_tree,"max_elements":max_elements,"max_depth":max_depth,"timeout_ms":timeout_ms}); }
++        }
++
 +        let row_predicates: std::collections::BTreeMap<usize, _> = prepared_snapshot.as_ref()
 +            .map(|p| p.rows.iter().map(|(i, q)| (*i, q.binding.predicate.clone())).collect()).unwrap_or_default();
-@@ -671 +678 @@
+@@ -671 +689 @@
 -        let elements_json: Vec<serde_json::Value> = match (snapshot_id, tree_result.as_ref()) {
 +        let mut elements_json: Vec<serde_json::Value> = match (snapshot_id, tree_result.as_ref()) {
-@@ -678,0 +686,7 @@
+@@ -678,0 +697,18 @@
 +        for entry in &mut elements_json {
 +            if entry.get("element_token").and_then(Value::as_str).is_some() {
 +                if let Some(proof) = entry.get("element_index").and_then(Value::as_u64).and_then(|i| row_predicates.get(&(i as usize))) {
@@ -1480,3 +1569,163 @@
 +                }
 +            }
 +        }
++        if let Some(trace) = row_trace.as_mut() {
++            if trace["scope_matched"] == true {
++                let attachment: Vec<_> = elements_json.iter().take(2048).map(|e| serde_json::json!({
++                    "index":e.get("element_index"),"token_present":e.get("element_token").and_then(Value::as_str).is_some(),
++                    "proof_present":e.get("expected_row").is_some(),
++                    "generated_proof_present":e.get("element_index").and_then(Value::as_u64).is_some_and(|i|row_predicates.contains_key(&(i as usize)))
++                })).collect();
++                if elements_json.len() > 2048 { trace["truncated"] = serde_json::json!(true); }
++                trace["attachment"] = serde_json::json!(attachment);
++            }
++        }
+@@ -716,0 +753,7 @@
++        if let Some(trace) = row_trace.as_mut() {
++            trace["snapshot_id"] = serde_json::json!(snapshot_id.map(cua_driver_core::element_token::format_snapshot_id));
++            let encoded = crate::ax::row_trace::limited(trace, 3 * 1024 * 1024).unwrap_or_else(|| serde_json::json!({
++                "version":1,"pid":pid,"window_id":window_id,"scope_url":trace_url,"scope_matched":false,
++                "truncated":true,"status":"sdk_trace_oversize"}).to_string());
++            structured["row_trace_json"] = serde_json::json!(encoded);
++        }
+--- /dev/null
++++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/row_trace.rs
+@@ -0,0 +1,43 @@
++//! Bounded diagnostic bookkeeping only: no AX calls, input or qualification decisions.
++use serde::Serialize;
++use serde_json::{json, Value};
++use std::cell::RefCell;
++use std::io::{self, Write};
++
++thread_local! { static READS: RefCell<Option<(usize, Option<Value>)>> = const { RefCell::new(None) }; }
++pub fn begin(enabled: bool) { READS.with(|r| *r.borrow_mut() = enabled.then_some((0, None))); }
++pub fn read(attribute: &str, refused_status: Option<i32>) {
++    READS.with(|r| { if let Some((count, failure)) = r.borrow_mut().as_mut() {
++        *count += 1;
++        if failure.is_none() { if let Some(status) = refused_status {
++            *failure = Some(json!({"attribute": attribute, "status": status}));
++        }}
++    }});
++}
++pub fn finish() -> Value { READS.with(|r| match r.borrow_mut().take() {
++    Some((count, failure)) => json!({"attribute_action_reads": count, "first_read_refusal": failure}),
++    None => Value::Null,
++}) }
++struct Bounded { bytes: Vec<u8>, limit: usize }
++impl Write for Bounded {
++    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
++        if self.bytes.len() + bytes.len() > self.limit { return Err(io::Error::other("trace size limit")); }
++        self.bytes.extend_from_slice(bytes); Ok(bytes.len())
++    }
++    fn flush(&mut self) -> io::Result<()> { Ok(()) }
++}
++pub fn limited<T: Serialize>(value: &T, limit: usize) -> Option<String> {
++    let mut writer = Bounded { bytes: Vec::new(), limit };
++    serde_json::to_writer(&mut writer, value).ok()?;
++    String::from_utf8(writer.bytes).ok()
++}
++#[cfg(test)] mod tests {
++    use super::*;
++    #[test] fn bookkeeping_has_explicit_failure_and_limit() {
++        begin(true); read("AXChildren", None); read("AXHeader", Some(-25212));
++        let value = finish(); assert_eq!(value["attribute_action_reads"], 2); assert_eq!(value["first_read_refusal"]["attribute"], "AXHeader");
++        begin(false); read("AXHeader", Some(-25212)); assert_eq!(finish(), Value::Null);
++        assert!(limited(&vec!["abcdefgh"; 100], 32).is_none());
++        assert_eq!(limited(&true, 4).unwrap(), "true");
++    }
++}
+--- /dev/null
++++ b/libs/cua-driver/rust/crates/cua-driver-contract/examples/row_trace_probe.rs
+@@ -0,0 +1,92 @@
++//! Offline AX-provider adapter: production schema and recipient validator, no OS input.
++use cua_driver_contract::row::{discover_row, discover_row_traced, dispatch_row, RowBinding, RowGraph};
++use cua_driver_contract::{ActionTarget, ClickInput, ToolInput};
++use std::io::{self, Read};
++fn main() {
++    let mut text = String::new();
++    io::stdin().read_to_string(&mut text).unwrap();
++    let input: serde_json::Value = serde_json::from_str(&text).unwrap();
++    if input["mode"] == "trace" {
++        let graph: RowGraph = serde_json::from_value(input["graph"].clone()).unwrap();
++        let pid = input["pid"].as_u64().unwrap() as u32;
++        let window = input["window_id"].as_u64().unwrap();
++        let recipient = input["recipient"].as_u64().unwrap();
++        let off = discover_row(&graph, pid, window, recipient);
++        let mut events = Vec::new();
++        let on = discover_row_traced(&graph, pid, window, recipient, Some(&mut events));
++        println!("{}", serde_json::json!({"off": off, "on": on, "keys": events}));
++        return;
++    }
++    if input["mode"] == "discover" {
++        let graph: RowGraph = serde_json::from_value(input["graph"].clone()).unwrap();
++        let result = discover_row(
++            &graph,
++            input["pid"].as_u64().unwrap() as u32,
++            input["window_id"].as_u64().unwrap(),
++            input["recipient"].as_u64().unwrap(),
++        );
++        println!(
++            "{}",
++            match result {
++                Ok(binding) => serde_json::json!({"binding":binding}),
++                Err(error) => serde_json::json!({"binding":null,"error":error}),
++            }
++        );
++        return;
++    }
++    let parsed = serde_json::from_value::<ClickInput>(input["click"].clone())
++        .map_err(|e| e.to_string())
++        .and_then(|i| {
++            i.validate()?;
++            Ok(i)
++        });
++    let click = match parsed {
++        Ok(click) => click,
++        Err(error) => {
++            println!(
++                "{}",
++                serde_json::json!({"schema_valid":false,"error":error,"presses":[]})
++            );
++            return;
++        }
++    };
++    if input["mode"] != "dispatch" {
++        println!("{}", serde_json::json!({"schema_valid":true}));
++        return;
++    }
++    let binding: RowBinding = serde_json::from_value(input["binding"].clone()).unwrap();
++    let graph =
++        serde_json::from_value::<RowGraph>(input["graph"].clone()).map_err(|e| e.to_string());
++    let ActionTarget::Window { pid, window_id } = click.target else {
++        panic!("fixture requires window")
++    };
++    let recipient = input["recipient"].as_u64().unwrap();
++    let mut presses = Vec::new();
++    let receipt = dispatch_row(
++        graph,
++        &binding,
++        click.expected_row.as_ref(),
++        pid,
++        window_id,
++        recipient,
++        || {
++            if input["admission_error"] == true {
++                Err("fixture focus lost before press".into())
++            } else {
++                Ok(())
++            }
++        },
++        || {
++            presses.push(recipient);
++            if input["press_error"] == true {
++                Err("fixture AXPress response lost".into())
++            } else {
++                Ok(())
++            }
++        },
++    );
++    println!(
++        "{}",
++        serde_json::json!({"schema_valid":true,"receipt":receipt,"presses":presses})
++    );
++}

@@ -17,7 +17,7 @@ import pytest
 
 cd = pytest.importorskip("cua_driver")
 
-PINNED_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4"
+PINNED_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace1"
 
 
 def _params(cls) -> set[str]:
@@ -256,3 +256,21 @@ def test_row_recipient_records_match_native_abi():
     assert "expected_row" in _params(cd.WindowElement)
     assert "row_receipt" in _params(cd.ActionResult)
     assert "qualify_rows" in _params(cd.GetWindowStateInput)
+
+
+def test_row_trace_records_match_native_abi_without_driver():
+    from cua_driver import _native_contract as native
+    from jevdual.effectors.cua import window_state_input
+    request_fields = {name: None for name, p in inspect.signature(cd.GetWindowStateInput).parameters.items()
+                      if p.default is inspect.Parameter.empty}
+    request_fields.update(pid=77, window_id=9, qualify_rows=True, row_trace_url='http://127.0.0.1:5176/tasks')
+    request = window_state_input(**request_fields)
+    converter = native._UniffiFfiConverterTypeGetWindowStateInput
+    assert converter.lift(converter.lower(request)) == request
+    fields = {name: None for name, p in inspect.signature(cd.WindowStateOutput).parameters.items()
+              if p.default is inspect.Parameter.empty}
+    fields.update(pid=77, window_id=9, snapshot_id='s00000001', images=[],
+                  row_trace_json='{"status":"capture_refused","error":"AXHeader unreadable"}')
+    response = cd.WindowStateOutput(**fields)
+    converter = native._UniffiFfiConverterTypeWindowStateOutput
+    assert converter.lift(converter.lower(response)) == response
