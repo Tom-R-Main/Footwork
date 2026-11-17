@@ -25,3 +25,19 @@ AX has no atomic application-side compare-and-press. Holding/checking actual ref
 Record red public-CLI cases for complete/flattened SDK rows; tokenless stays refused. Exercise actual Rust schema/validation/dispatch adapter through a fixture AX provider and assert ordinary/durable evidence. Include wrong PID/window/document/table/key/recipient, duplicate and unreadable/hidden peers, reorder without identity drift, replacement/key-control swaps, stale selector variants, metadata loss, contradictory dispatch and acknowledgement-only outcomes. Preserve existing named-section/DOM-ID controls and unchanged unrelated routes.
 
 This is built and checked offline, not a delivered or live-qualified capability. If AX cannot expose an explicit column/key relationship or the SDK seam cannot retain required binding with bounded work, stop and report the precise unsupported contract. Do not infer a broader primitive or live discovery authority.
+
+## Recipient-description consumer agreement
+
+`target_label` must be present and equal to the admitted identity label and expected-row name. `native_row.admission` checks the sibling label; `projection_effect` checks the independent admitted predicate and recursively checks any attached execution projection. Both projections explicitly agree on the label. Missing, null, wrongly typed or different labels are evidence errors, even when the effect was already unverifiable.
+
+| Boundary | Shared check | Label regression |
+| --- | --- | --- |
+| Prepared admission | `native_row.admission` | valid controls and damaged admission copies |
+| Producer result to durable retention | `record_execution` → `validate_execution` → `projection_effect` | producer injection before record construction; no corrupt capsule retained |
+| Retained historical read | `_retained_execution` / `qualified_receipt` → `validate_execution` | corrupt stored body with matching digest refuses |
+| Settlement / reconciliation | `finish_from_execution` / `_reconcile_execution` → retained validation | corrupt no-send cannot release unknown custody |
+| Ordinary presentation | `_outside_receipt` → `projection_effect` | direct validator rejection plus unverified ordinary output |
+| Attached execution presentation | recursive `projection_effect` | inner and outer corruption independently reject |
+| Same-token replay | existing operation projection and ordinary consumer; no new dispatch | producer/retained faults stay unknown, presentation faults stay unverified, no second press |
+
+These cases run across acknowledged delivery, SDK refusal, pre-input error and lost RPC reply using the production Rust row adapter with simulated AX/input. They do not claim application-effect confirmation or authenticate arbitrary external files. Replay does not independently authenticate every historical file: retained reads use the durable validator, while ordinary replay checks the projected copies. No SDK/AX dispatch code changes are needed for this agreement check.

@@ -76,3 +76,9 @@ Test: in a separate correction worktree preserve frozen2734be1 for Opus; commit 
 Predicts: baseline accepts contradictory labels; the narrow shared check rejects them at each applicable boundary, retains valid labels and existing classifications, and replay never sends twice. SDK archive/wheel and dispatch files remain unchanged.
 Against: any consumer bypasses the check, valid natural records lose their classification, a negative dispatches again, or the test only observes unchanged unverifiable effect without proving rejection. No SDK scope expansion, installation or live input; final reviews wait for reconciliation of the frozen Opus result.
 Refs: /Volumes/External SSD/Footwork-native-row-evidence-20261117/sol-review-2734be1/review-sol.md
+
+## RW13 · update · 2026-11-17 10:16
+Observed: committed label matrix fe9ebf7 fails84 cases on unchanged production source, then passes84 with the narrow admission/copy-agreement fix. Public CLI reaches actual Rust recipient guard; acknowledged and lost-reply cases press940 once, SDK/pre-input refusals press none. Producer corruption is not retained; matched-digest stored corruption refuses historical read and settlement; ordinary and attached checks explicitly raise before unverified presentation. Valid admission/retention and no-send classifications remain intact; token replay adds no press. Ruff found only import grouping, corrected mechanically after the measured run.
+Resolves: RW12 = held
+Next: run integrated checks on named correction, reconcile still-frozen Opus2734be1 review, then obtain both final-source reviews. Original review checkout and SDK archive/wheel remain unchanged; no installation/live input. Original unknown SDK omission, real AX exposure and app-side races remain unproven.
+Refs: /Volumes/External SSD/Footwork-native-row-evidence-20261117/labels-red.txt; /Volumes/External SSD/Footwork-native-row-evidence-20261117/labels-green.txt; docs/native-row-contract.md

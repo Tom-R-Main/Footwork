@@ -3,10 +3,10 @@ import copy
 import hashlib
 
 import pytest
-
 from jevdual import native_row, operator_evidence, session
 from jevdual.operator_evidence import EvidenceError, canonical
 from jevdual.session_operations import SessionOperations
+
 from tests import test_native_row_sdk_cli as cli
 from tests.test_native_row_sdk import node
 

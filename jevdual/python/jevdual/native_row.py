@@ -102,7 +102,10 @@ def admission(projection: Any) -> dict[str, Any] | None:
     identity = projection.get('target_identity')
     if not isinstance(identity, dict) or identity.get('native_row_control') is None:
         return None
-    return intent({**identity, 'id': projection.get('target_id')}, operation=projection.get('op'))
+    admitted = intent({**identity, 'id': projection.get('target_id')}, operation=projection.get('op'))
+    if not same(projection.get('target_label'), admitted['target_label']):
+        raise ValueError('row target label differs from admitted identity')
+    return admitted
 
 
 def has_row(projection: Any) -> bool:
@@ -180,7 +183,7 @@ def projection_effect(projection: Any, admitted: Any, pid: int, window_id: int,
             raise ValueError('row execution contradicts projection')
         inner = envelope.get('projection')
         projection_effect(inner, admitted, pid, window_id, attached=False)
-        for key in ('target_identity', 'native_readback', 'native_delivery', 'dispatched', 'driver_effect'):
+        for key in ('target_label', 'target_identity', 'native_readback', 'native_delivery', 'dispatched', 'driver_effect'):
             if not same(inner.get(key), projection.get(key)):
                 raise ValueError('row retained projection copies disagree')
         copies = [projection, envelope, inner]
