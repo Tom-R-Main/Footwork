@@ -170,3 +170,25 @@ from tests import test_session_scenarios as scenarios
 
 fw = scenarios.fw
 world = scenarios.world
+
+
+@pytest.mark.parametrize('fault', ['sdk_id', 'envelope_id', 'pid', 'window', 'missing_sdk_id', 'missing_envelope_id', 'matching'])
+def test_review_trace_envelope_binding(tmp_path, fault):
+    from jevdual.row_trace import retain
+    trace = {'version': 1, 'pid': 77, 'window_id': 9, 'scope_url': 'http://127.0.0.1:5176/tasks',
+             'status': 'qualified', 'scope_matched': True, 'truncated': False, 'snapshot_id': 's00000001'}
+    snap = {'pid': 77, 'window_id': 9, 'snapshot_id': 's00000001', 'elements': []}
+    if fault == 'sdk_id': trace['snapshot_id'] = 's00000002'
+    if fault == 'envelope_id': snap['snapshot_id'] = 's00000002'
+    if fault == 'pid': snap['pid'] = 88
+    if fault == 'window': snap['window_id'] = 10
+    if fault == 'missing_sdk_id': trace.pop('snapshot_id')
+    if fault == 'missing_envelope_id': snap['snapshot_id'] = None
+    snap['row_trace_json'] = json.dumps(trace)
+    path = tmp_path / 'trace.json'
+    retain(path, {'pid': 77, 'window_id': 9, 'row_trace_url': trace['scope_url']}, snap, [])
+    data = json.loads(path.read_text())
+    expected = 'retained' if fault == 'matching' else 'snapshot_unproven' if fault.startswith('missing') else 'invalid_sdk_trace'
+    assert data['status'] == expected
+    if expected != 'retained':
+        assert not data.get('sdk') and 'typed_elements' not in data and 'candidates' not in data
