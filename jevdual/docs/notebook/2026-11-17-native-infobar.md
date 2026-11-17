@@ -1,0 +1,8 @@
+# Qualified native infobar dismissal
+
+## IB1 · prediction · 2026-11-17 06:23
+Hypothesis: an independently qualified fixed-purpose infobar action can distinguish native browser notification Close from tab/window Close without weakening the generic SDK candidate projection.
+Test: first retain a failing real public-CLI fixture on52da with native Infobar alert/container ancestry, tab Close and window Close; then implement bounded PID/window census, persisted semantic proof, within-dispatch actual reference checks, AXPress marker and exact disappearance/tab-window-retention readback. Ordinary and durable public CLI negatives cover duplicate/unreadable/missing/disabled/replaced/wrong-bound controls, frame/token swaps, preemption, dropped metadata/basis and acknowledgement without effect. No GUI/input/install during offline work; two independent Sol/Opus final-source reviews before integration/delivery.
+Predicts: unchanged approved infobar yields exactly one press of that actual object and truthful verified disappearance; tab/window controls receive zero presses in every adversarial case; missing proof refuses and acknowledgement alone remains unverified.
+Against: wrong-object dispatch, failure to preserve errors/ambiguity, dispatch reported before marker, or confirmation without the exact retained window/tabs and disappeared infobar disproves the mechanism. CFHash is only an extra discriminator, cross-command continuity is not claimed, and app-side read/press races remain unverified with no retry.
+Refs: /Volumes/External SSD/demoApps/demo/films/showcase-2026-11-17/workspace/capture/infobar-diagnosis-001/DIAGNOSIS.md; /Volumes/External SSD/demoApps/demo/films/showcase-2026-11-17/workspace/capture/window-prep-008/RESULT.json
