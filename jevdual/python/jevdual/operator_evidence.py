@@ -20,6 +20,7 @@ BASES = frozenset(
         "ax_insert_ack",
         "ax_menu_press_ack",
         "ax_menu_effect_readback",
+        "ax_fullscreen_state_readback",
         "ax_finder_rename_readback",
         "ax_finder_move_readback",
         "qualified_gate",
@@ -67,6 +68,75 @@ def validate_binding(value: Any) -> dict[str, Any]:
     if any(type(value[k]) is not int or value[k] <= 0 for k in ("pid", "window_id")):
         raise EvidenceError("invalid native binding")
     return value
+
+
+def fullscreen_readback_effect(proof: Any, control: Any, pid: Any, window_id: Any) -> str:
+    """Validate a fixed fullscreen predicate, independently of generic visible UI changes."""
+    required = {"schema_version", "producer", "predicate", "before", "after", "press_acknowledged", "transition_observed"}
+    if (not isinstance(proof, dict) or set(proof) not in (required, required | {"error"})
+            or type(proof.get("schema_version")) is not int or proof["schema_version"] != 1
+            or proof.get("producer") != "footwork.ax.fullscreen"
+            or proof.get("predicate") != "native_fullscreen_state_transition"
+            or type(proof.get("press_acknowledged")) is not bool
+            or type(proof.get("transition_observed")) is not bool
+            or ("error" in proof and (not isinstance(proof["error"], str) or not proof["error"]))):
+        raise EvidenceError("unsupported fullscreen readback")
+    before = proof["before"]
+    fields = {"pid", "window_id", "window_hash", "button_hash", "subrole", "fullscreen"}
+    if (not isinstance(before, dict) or set(before) != fields or not isinstance(control, dict)
+            or set(control) != fields or before != control
+            or any(type(control[key]) is not type(before[key]) for key in fields)
+            or any(type(before[key]) is not int or before[key] < 0 for key in fields - {"subrole", "fullscreen"})
+            or type(pid) is not int or pid <= 0 or type(window_id) is not int or window_id <= 0
+            or before["pid"] != pid or before["window_id"] != window_id
+            or before["subrole"] != "AXFullScreenButton" or type(before["fullscreen"]) is not bool):
+        raise EvidenceError("fullscreen target differs from admitted binding")
+    after = proof["after"]
+    transition = False
+    if after is not None:
+        if (not isinstance(after, dict) or set(after) != {"pid", "window_id", "fullscreen", "bounds"}
+                or type(after["pid"]) is not int or type(after["window_id"]) is not int
+                or after["pid"] != pid or after["window_id"] != window_id
+                or type(after["fullscreen"]) is not bool):
+            raise EvidenceError("fullscreen after-state differs from bound window")
+        frame = after["bounds"]
+        if frame is not None and (not isinstance(frame, dict) or set(frame) != {"x", "y", "w", "h"}
+                or any(type(v) not in (int, float) or not math.isfinite(v) for v in frame.values())
+                or frame["w"] <= 0 or frame["h"] <= 0):
+            raise EvidenceError("invalid fullscreen window bounds")
+        transition = after["fullscreen"] is not before["fullscreen"]
+    if proof["transition_observed"] != transition or (transition and "error" in proof):
+        raise EvidenceError("contradictory fullscreen transition")
+    return "confirmed" if proof["press_acknowledged"] and transition else "unverifiable"
+
+
+def _validate_fullscreen_execution(proof: Any, binding: dict[str, Any], effect: str,
+                                   op: Any, projection: dict[str, Any], basis: str, count: Any) -> None:
+    identity = projection.get("target_identity")
+    if not isinstance(identity, dict):
+        raise EvidenceError("missing fullscreen target identity")
+    control = identity.get("native_window_control")
+    expected = fullscreen_readback_effect(proof, control, binding["pid"], binding["window_id"])
+    label = "Exit Full Screen" if control["fullscreen"] else "Enter Full Screen"
+    arguments = getattr(op, "args", {})
+    if not isinstance(arguments, dict):
+        raise EvidenceError("missing fullscreen admission arguments")
+    words = arguments.get("words", [])
+    if (op.move != "click" or op.target != "-2" or projection.get("op") != "click"
+            or type(projection.get("target_id")) is not int or projection["target_id"] != -2
+            or identity.get("role") != "button" or identity.get("section") != "Native window"
+            or identity.get("label") != label or projection.get("target_label") != label
+            or not isinstance(words, list) or len(words) != 2 or words[0] != "click"
+            or not isinstance(words[1], str)
+            or words[1].strip().casefold() not in {"-2", label.casefold(), "button:" + label.casefold()}
+            or effect != expected or projection.get("driver_effect") != effect
+            or projection.get("dispatched") is not True):
+        raise EvidenceError("fullscreen proof differs from admitted click or effect")
+    if proof["press_acknowledged"]:
+        if basis != "ax_fullscreen_state_readback" or type(count) is not int or count != 1:
+            raise EvidenceError("fullscreen acknowledgement lacks exact delivery evidence")
+    elif basis != "unknown" or count is not None or effect != "unverifiable":
+        raise EvidenceError("unacknowledged fullscreen press cannot confirm delivery")
 
 
 def _validate_native_readback(
@@ -408,6 +478,7 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
                 "ax_insert_ack",
                 "ax_menu_press_ack",
                 "ax_menu_effect_readback",
+                "ax_fullscreen_state_readback",
                 "ax_finder_rename_readback",
                 "ax_finder_move_readback",
             }
@@ -425,6 +496,16 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
     ):
         raise EvidenceError("invalid execution projection/error")
     projection = record["projection"]
+    identity = projection.get("target_identity")
+    fullscreen = identity.get("native_window_control") if isinstance(identity, dict) else None
+    # The admitted reserved target carries semantic intent even if a producer
+    # omits its optional projection or relabels the delivery basis. No-send and
+    # interrupted unknown-dispatch receipts do not claim an observed effect.
+    fullscreen_target = op.target == "-2" or fullscreen is not None
+    if basis == "ax_fullscreen_state_readback" or (
+        fullscreen_target and (dispatched is True or effect in {"confirmed", "partial"})
+    ):
+        _validate_fullscreen_execution(projection.get("native_readback"), binding, effect, op, projection, basis, count)
     if basis in {"ax_menu_effect_readback", "ax_finder_rename_readback", "ax_finder_move_readback"}:
         _validate_native_readback(projection.get("native_readback"), basis, binding, effect, op, projection)
         if (

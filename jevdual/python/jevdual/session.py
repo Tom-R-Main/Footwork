@@ -71,6 +71,7 @@ _CAND_FIELDS = (
     "native_document_url",
     "native_control_qualified",
     "native_control_opaque",
+    "native_window_control",
     "numeric",
 )
 
@@ -677,7 +678,7 @@ def receipt_for(
     )
     r = _field_receipt(r, state.pending, nm, prev=prev, secret_value=secret_value)
     r = _save_receipt(r, state.pending)
-    r = _outside_receipt(r, state.pending)
+    r = _outside_receipt(r, state.pending, pid=state.pid, window_id=state.window_id)
     if state.pending.get("error") and state.pending.get("dispatched", False) is not False:
         # A failed acknowledgement is not evidence of non-delivery. The diff
         # receipt's error handling historically called every error a refusal.
@@ -702,7 +703,7 @@ def receipt_for(
     return out
 
 
-def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
+def _outside_receipt(r: Any, pending: dict[str, Any], *, pid: int | None = None, window_id: int | None = None) -> Any:
     """Q13a: two effects that happen outside the observed window. A menu item's effect (File > Open) may
     land in another app, so the window's own change cannot confirm it; a save is the exception, confirmed
     by its readback. A browser navigation Chrome ends with ERR_ABORTED is what a navigation that becomes a
@@ -710,6 +711,23 @@ def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
     execution = pending.get("execution_receipt") or {}
     proof = pending.get("native_readback") or {}
     basis = (execution.get("producer") or {}).get("delivery_basis")
+    window_control = (pending.get("target_identity") or {}).get("native_window_control")
+    if window_control is not None and pending.get("dispatched") is not False:
+        from jevdual.operator_evidence import EvidenceError, fullscreen_readback_effect
+
+        delivery = pending.get("native_delivery") or {}
+        effect_basis = basis if execution else delivery.get("delivery_basis")
+        effect_word = execution.get("effect") if execution else pending.get("driver_effect")
+        try:
+            read_effect = fullscreen_readback_effect(proof, window_control, pid, window_id)
+        except EvidenceError:
+            read_effect = "unverifiable"
+        confirmed = (effect_word == "confirmed" and effect_basis == "ax_fullscreen_state_readback"
+                     and read_effect == "confirmed")
+        return dataclasses.replace(
+            r, effect="confirmed" if confirmed else "unverifiable",
+            evidence="qualified fullscreen state transition" if confirmed else "fullscreen transition was not independently verified",
+        )
     if execution.get("effect") == "confirmed" and basis in {
         "ax_finder_rename_readback",
         "ax_finder_move_readback",
@@ -1030,7 +1048,9 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
             extra += " numeric=" + json.dumps(c.numeric, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
         if qualified_link_href(c) is not None:
             extra += f" href={c.href!r}"
-        if qualified_control_identity(c) is not None:
+        if c.native_window_control is not None:
+            extra += " native_window=" + json.dumps(c.native_window_control, sort_keys=True)
+        elif qualified_control_identity(c) is not None:
             extra += f" dom_id={c.native_dom_id!r} document={c.native_document_url!r}"
         if c.native_control_opaque:
             extra += " [opaque identifier; accessible name empty]"
@@ -1180,6 +1200,7 @@ def _native_bridge(
         wid,
         policy=ExecutionPolicy(posture),
         live_check=True,
+        window_controls=True,
         observation_guard=_native_scope_guard(native_scope) if native_scope else None,
         **({"finder_scope": finder_scope} if finder_scope else {}),
     )  # type: ignore[arg-type]
@@ -2542,6 +2563,21 @@ async def cmd_do(args: Any) -> int:
                 )
         target = None
         file_target = None
+        # A selector chosen from a native window action must not fall through to
+        # an ordinary SDK control when fresh AX qualification disappears. The
+        # caller must observe and select the different control separately.
+        selected_window_controls = [
+            c for c in chosen_cands
+            if c.get("native_window_control") and str(requested_selector).strip().casefold()
+            in {str(c["id"]), c["label"].casefold(), "button:" + c["label"].casefold()}
+        ] if state.mode == "native" else []
+        if selected_window_controls:
+            previous_control = selected_window_controls[0]
+            current_control = nm.menu.candidate(previous_control["id"])
+            if (len(selected_window_controls) != 1 or current_control is None
+                    or current_control.native_window_control is None
+                    or qualified_control_identity(previous_control) != qualified_control_identity(current_control)):
+                return targeting_refused("target_changed", "fullscreen control lost qualification since look; observe again")
         if isinstance(cid, str):
             if cid.startswith("file:"):
                 file_target, rid = _file_target(state, nm, cid)
@@ -2551,6 +2587,8 @@ async def cmd_do(args: Any) -> int:
             if rid is None:
                 print(why, file=sys.stderr)
                 return targeting_refused(_selector_failure_code(nm, why), "selector did not resolve uniquely")
+            if selected_window_controls and rid != selected_window_controls[0]["id"]:
+                return targeting_refused("target_changed", "fullscreen selector changed control kind since look; observe again")
             cid = rid
             chosen_from = {}  # a label is resolved on the fresh observation; nothing to compare
         if cid is not None:
@@ -2627,6 +2665,15 @@ async def cmd_do(args: Any) -> int:
         if op == "move" and file_target is None:
             raise NativeBridgeError("file_scope_missing", "move requires a manifest-owned file:/ selector")
         destination = None
+        if target is not None and target.native_window_control is not None:
+            selector = str(requested_selector).strip().casefold()
+            if (op != "click" or len(args.words) != 2
+                    or selector not in {str(target.id), target.label.casefold(), "button:" + target.label.casefold()}):
+                return targeting_refused("fullscreen_operator_only", "fullscreen requires do click with its exact label or observed ID")
+            previous = [c for c in chosen_cands if c.get("label") == target.label and c.get("native_window_control")]
+            if len(previous) != 1 or qualified_control_identity(previous[0]) != qualified_control_identity(target):
+                return targeting_refused("target_changed", "fullscreen control identity changed since look; observe again")
+
         if op == "drag":
             if state.mode != "native" or not callable(getattr(bridge, "drag", None)):
                 print("not admitted: drag is a native route (footwork start --app ...)", file=sys.stderr)
@@ -2638,6 +2685,8 @@ async def cmd_do(args: Any) -> int:
                     _selector_failure_code(nm, why.removeprefix("destination: ")),
                     "drag destination did not resolve uniquely", destination=text or "",
                 )
+            if destination.native_window_control is not None:
+                return targeting_refused("fullscreen_operator_only", "native window controls cannot be drag endpoints")
             known = chosen_from.get(destination.id)
             if state.mode == "native" and (text or "").lstrip("-").isdigit() and known is not None and (
                 chosen_ambiguity is None or destination.id in chosen_ambiguity
@@ -2872,7 +2921,9 @@ async def cmd_do(args: Any) -> int:
             else:
                 assert target is not None
                 route_arg = getattr(args, "route", None)
-                if route_arg and state.mode == "browser":
+                if target.native_window_control is not None:
+                    eff = await bridge.act(nm, op, target.id, text, operator_window_control=True)
+                elif route_arg and state.mode == "browser":
                     eff = await bridge.act(
                         nm, op, target.id, text, route="dom_event" if route_arg == "dom" else "trusted"
                     )
@@ -2956,7 +3007,7 @@ async def cmd_do(args: Any) -> int:
                         "delivery", "driver_delivery", "dispatched", "delivered_count", "delivery_basis", "route"
                     )
                 },
-            } if web_text_delivery or click_delivery else {}),
+            } if web_text_delivery or click_delivery or (target is not None and target.native_window_control is not None) else {}),
         }
         if getattr(eff, "readback", None) is not None:
             state.pending["save_readback"] = eff.readback
@@ -3073,6 +3124,7 @@ async def cmd_s1(args: Any) -> int:
         _check_native_binding(state)
     driver, bridge = await bind(state)
     try:
+        bridge.window_controls = False
         nm, receipt = await observe(state, bridge)
         if receipt:
             print(f"receipt (previous action): {receipt['text']}")
@@ -3090,6 +3142,9 @@ async def cmd_s1(args: Any) -> int:
             ms = (time.perf_counter() - t0) * 1000
     finally:
         await driver.shutdown()
+    if decision.target == -2:
+        print("fullscreen_operator_only: use an explicit operator look/do click", file=sys.stderr)
+        return 2
     tgt = ""
     if decision.target is not None:
         c = nm.menu.candidate(decision.target)
@@ -3612,6 +3667,7 @@ def _proposal(
 def _target_identity(target: Any) -> dict[str, Any]:
     return {
         **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
+        **({"native_window_control": target.native_window_control} if getattr(target, "native_window_control", None) is not None else {}),
         **({"native_control_opaque": True} if getattr(target, "native_control_opaque", None) is True else {}),
         **({"href": target.href, "href_qualified": True} if qualified_link_href(target) is not None else {}),
         **({key: getattr(target, key) for key in ("native_dom_id", "native_document_url", "native_control_qualified")}
