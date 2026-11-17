@@ -40,3 +40,10 @@ Observed: committed regression set fails15/passes70 before corrections; afterwar
 Resolves: IB6 = held
 Next: freeze corrected source for fresh Sol/Opus review. No GUI/live timing/install established. Record exact affected command for reproducibility: PYTHONPATH=python python -m pytest -q tests/test_native_infobar.py tests/test_native.py tests/test_menu.py tests/test_session_scenarios.py tests/test_operator_evidence.py tests/test_native_receipts.py tests/test_session_operations.py tests/test_session_evidence.py tests/test_session.py tests/test_ax_semantics.py.
 Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/review-corrections-red-002.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/review-corrections-affected.txt
+
+## IB8 · prediction · 2026-11-17 07:26
+Hypothesis: the remaining ordinary receipt failures share one mechanism: family-specific checks occur after another family can return, and validate readback without a complete action/delivery agreement check. A single infobar consumer validator before all other family returns can preserve genuine no-send while rejecting contradictory projections.
+Test: retain Sol757ea8c fault-injected public CLI cases, metadata substitutions and positive-delivery/no-send contradictions as red tests; share exact action identity checks with durable validation, then test ordinary/durable unchanged success/refusal/unknown and existing fullscreen controls. Also refuse previously ambiguous fixed selectors and None before CFHash.
+Predicts: inconsistent family/op/target/role/label/section/nested dispatch cannot confirm or report no attempt; valid exact records retain their effects.
+Against: contradictory ordinary records still claim confirmation/no-send, valid durable records break, or independent control dispatch changes. Both independent reviews run again on final exact source.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/sol-review-757ea8c/review-sol.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/opus-review-757ea8c/review-opus.md
