@@ -197,6 +197,36 @@ def infobar_action_identity(projection: Any, pid: Any, window_id: Any) -> Any:
     return control
 
 
+def _infobar_delivery_agreement(projection: dict[str, Any], *, dispatched: Any,
+                                effect: str, basis: Any, count: Any) -> None:
+    """Check every retained copy against one execution outcome, including no-send/unknown.
+
+    Older/minimal execution projections can omit optional delivery metadata. If
+    retained, its three delivery facts must all be present, strictly typed and
+    agree; absent facts are never treated as zero or as acknowledgement.
+    """
+    if type(dispatched) not in (bool, type(None)):
+        raise EvidenceError("invalid infobar dispatch type")
+    if not isinstance(basis, str) or basis not in BASES or (count is not None and type(count) is not int):
+        raise EvidenceError("invalid infobar delivery facts")
+    if "dispatched" in projection and (
+        type(projection["dispatched"]) is not type(dispatched) or projection["dispatched"] != dispatched
+    ):
+        raise EvidenceError("infobar projection dispatch differs")
+    if "driver_effect" in projection:
+        word = projection["driver_effect"]
+        normalized = "refused" if word in ("not sent", "not dispatched") else word
+        if normalized != effect:
+            raise EvidenceError("infobar projection effect differs")
+    if "native_delivery" in projection:
+        delivery = projection["native_delivery"]
+        if not isinstance(delivery, dict):
+            raise EvidenceError("invalid retained infobar delivery")
+        for key, expected in (("dispatched", dispatched), ("delivery_basis", basis), ("delivered_count", count)):
+            if key not in delivery or type(delivery[key]) is not type(expected) or delivery[key] != expected:
+                raise EvidenceError("infobar nested delivery contradicts execution")
+
+
 def infobar_projection_effect(projection: Any, pid: Any, window_id: Any) -> str:
     """Validate all retained delivery claims before ordinary effect/no-send reporting."""
     control = infobar_action_identity(projection, pid, window_id)
@@ -207,8 +237,7 @@ def infobar_projection_effect(projection: Any, pid: Any, window_id: Any) -> str:
     raw_effect = projection.get("driver_effect")
     effect = "refused" if raw_effect in ("not sent", "not dispatched") else raw_effect
     basis, count = delivery.get("delivery_basis"), delivery.get("delivered_count")
-    if type(delivery.get("dispatched")) is not type(dispatched) or delivery.get("dispatched") != dispatched:
-        raise EvidenceError("infobar nested dispatch contradicts projection")
+    _infobar_delivery_agreement(projection, dispatched=dispatched, effect=effect, basis=basis, count=count)
     execution = projection.get("execution_receipt")
     if execution is not None:
         if not isinstance(execution, dict) or not isinstance(execution.get("producer"), dict):
@@ -223,6 +252,9 @@ def infobar_projection_effect(projection: Any, pid: Any, window_id: Any) -> str:
             "op", "target_id", "target_label", "target_identity", "native_readback", "dispatched", "driver_effect"
         )):
             raise EvidenceError("infobar execution action differs")
+        _infobar_delivery_agreement(inner, dispatched=dispatched, effect=effect, basis=basis, count=count)
+        if "execution_receipt" in inner:
+            raise EvidenceError("nested infobar execution envelope unsupported")
     proof = projection.get("native_readback")
     if dispatched is False:
         if (proof is not None or effect != "refused" or basis != "qualified_gate"
@@ -644,6 +676,12 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
     native_proof = projection.get("native_readback")
     infobar_intent = op.target == "-3" or infobar is not None
     infobar_proof = isinstance(native_proof, dict) and native_proof.get("predicate") == "native_infobar_disappearance"
+    nested_delivery = projection.get("native_delivery")
+    nested_infobar = isinstance(nested_delivery, dict) and nested_delivery.get("delivery_basis") == "ax_infobar_disappearance_readback"
+    if infobar_intent or infobar_proof or nested_infobar or basis == "ax_infobar_disappearance_readback":
+        _infobar_delivery_agreement(projection, dispatched=dispatched, effect=effect, basis=basis, count=count)
+        if "execution_receipt" in projection:
+            raise EvidenceError("nested infobar execution envelope unsupported")
     if basis == "ax_infobar_disappearance_readback" or infobar_proof or (
         infobar_intent and (dispatched is True or effect in {"confirmed", "partial"} or native_proof is not None)
     ):

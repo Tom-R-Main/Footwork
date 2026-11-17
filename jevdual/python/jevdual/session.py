@@ -3042,6 +3042,14 @@ async def cmd_do(args: Any) -> int:
                 },
             } if web_text_delivery or click_delivery or (target is not None and (target.native_window_control is not None or target.native_infobar_control is not None)) else {}),
         }
+        # A bridge exception explicitly marked before dispatch is a producer
+        # zero-send fact. Preserve it here instead of asking consumers to infer
+        # absence from an empty delivery object. Unknown exceptions stay unknown.
+        if (eff is None and dispatched is False and target is not None
+                and target.native_infobar_control is not None):
+            state.pending["native_delivery"].update(
+                dispatched=False, delivery_basis="qualified_gate", delivered_count=0,
+            )
         if getattr(eff, "readback", None) is not None:
             state.pending["save_readback"] = eff.readback
         if getattr(eff, "native_readback", None) is not None:

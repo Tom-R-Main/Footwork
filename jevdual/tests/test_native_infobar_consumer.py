@@ -1,13 +1,12 @@
 """Independent final infobar consumer controls; synthetic input only."""
 import copy
-import json
 
 import pytest
 from jevdual.operator_evidence import EvidenceError, validate_execution
 
+from tests import test_session_scenarios as scenarios
 from tests.test_native_infobar import infobar_execution, infobar_world, ordinary_pending, outside, receipt
 from tests.test_operator_evidence import BINDING
-from tests import test_session_scenarios as scenarios
 from tests.test_session_scenarios import _durable_start
 
 fw = scenarios.fw
@@ -123,15 +122,18 @@ def test_public_durable_cannot_settle_against_retained_nested_delivery(world, fw
         return rec
     monkeypatch.setattr(operator_evidence, 'execution_record', corrupt)
     try:
-        fw('do', 'click', '-3', '--token', 'contract-' + state)
+        code, _out, err = fw('do', 'click', '-3', '--token', 'contract-' + state)
     except EvidenceError:
         assert len(attempts) == 1
         return
     with SessionOperations(authority) as ops:
         rows = ops.status()
         result = ops.receipt(rows[-1])
+        assert ops._retained_execution(rows[-1]) is None
     assert len(attempts) == 1
-    pytest.fail('contradictory execution accepted: ' + json.dumps({k: result[k] for k in ('state', 'disposition', 'phase', 'reservation')}))
+    assert code != 0 and 'infobar nested delivery contradicts execution' in err
+    assert result['state'] == 'unknown' and result['disposition'] == 'unknown'
+    assert result['phase'] == 'ambiguous'
 
 @pytest.mark.parametrize('state', ['confirmed', 'no_send'])
 def test_public_ordinary_checks_retained_inner_delivery(world, fw, monkeypatch, state):
@@ -149,7 +151,7 @@ def test_public_ordinary_checks_retained_inner_delivery(world, fw, monkeypatch, 
                 pending.pop('native_readback')
                 pending.update(dispatched=False, driver_effect='not sent')
                 pending['native_delivery'].update(dispatched=False, delivery_basis='qualified_gate', delivered_count=0)
-            _op, execution = infobar_execution()
+            _op, execution = copy.deepcopy(infobar_execution())
             execution.update(dispatched=pending['dispatched'], effect='confirmed' if state == 'confirmed' else 'refused', phase='sent' if state == 'confirmed' else 'not_sent')
             execution['binding']['window_id'] = kwargs['window_id']
             execution['producer'].update(**{k: pending['native_delivery'][k] for k in ('delivery_basis', 'delivered_count')})
@@ -161,7 +163,7 @@ def test_public_ordinary_checks_retained_inner_delivery(world, fw, monkeypatch, 
     assert fw('do', 'click', '-3')[0] == 0
     result = receipt(fw)
     assert len(attempts) == 1
-    assert result['effect'] == 'unverifiable', json.dumps({'effect': result['effect'], 'evidence': result['evidence']})
+    assert result['effect'] == 'unverifiable', result
 
 @pytest.mark.parametrize('durable', [False, True])
 @pytest.mark.parametrize('selector', ['Dismiss browser infobar', 'button:Dismiss browser infobar', 'label:Dismiss browser', 'section:Native browser::Dismiss'])

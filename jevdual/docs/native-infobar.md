@@ -33,3 +33,11 @@ The census reads at most 2,048 native nodes, excluding web subtrees. CFHash buck
 only accelerate actual object-equality checks; collisions do not prove identity.
 Excessive collision work refuses. Full census AX reads still cost linear work on
 operator observations; this has not been measured as live end-to-end latency.
+
+Receipt consumers compare all retained dispatch, count and basis facts, including
+the execution projection, before reporting an effect or no attempt. Contradictory
+durable capsules are rejected before retention and settlement; the attempt stays
+unknown with no automatic retry. A bridge exception explicitly marked before
+dispatch writes zero-send facts at the producer. Empty or missing facts alone do
+not establish no-send. Older optional projection metadata may be absent; any
+retained delivery object must contain the complete, agreeing delivery facts.
