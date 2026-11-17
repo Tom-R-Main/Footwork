@@ -57,6 +57,9 @@ from jevdual.menu import (
 
 log = logging.getLogger("jevdual.native")
 
+# Separate semantic window action, never an SDK element index or token.
+FULLSCREEN_CONTROL_ID = -2
+
 #: AX role -> (menu role, operations). Roles absent here fall back to ``click`` when the element
 #: advertises AXPress, and are skipped otherwise.
 ROLE_MAP: dict[str, tuple[str, tuple[Operation, ...]]] = {
@@ -551,10 +554,6 @@ def menu_from_snapshot(
         if linux_role and role in ("checkbox", "radio"):
             checked = _get(el, "selected")
         frame = _get(el, "frame")
-        fullscreen = (mac_fullscreen or {}).get(int(idx))
-        if fullscreen is not None:
-            label = "Exit Full Screen" if fullscreen["fullscreen"] else "Enter Full Screen"
-            ops = ("click",)
         cand = Candidate(
             id=int(idx),
             label=label,
@@ -570,7 +569,6 @@ def menu_from_snapshot(
             placeholder=placeholder,
             value_truncated=value_truncated,
             numeric=numeric,
-            native_window_control=fullscreen,
             href=(mac_links or {}).get(int(idx)) if ax_role == "AXLink" else None,
             native_dom_id=(mac_controls or {}).get(int(idx), (None, None))[0]
             if ax_role in ("AXButton", "AXPopUpButton") else None,
@@ -590,6 +588,16 @@ def menu_from_snapshot(
             fx, fy, fw, fh = (_get(frame, k) for k in ("x", "y", "w", "h"))
             if None not in (fx, fy, fw, fh):
                 frames[cand.id] = (float(fx), float(fy), float(fw), float(fh))
+
+    if mac_fullscreen and FULLSCREEN_CONTROL_ID not in by_index:
+        proof = mac_fullscreen[FULLSCREEN_CONTROL_ID]
+        candidates.append(Candidate(
+            id=FULLSCREEN_CONTROL_ID, role="button", operations=("click",),
+            label="Exit Full Screen" if proof["fullscreen"] else "Enter Full Screen",
+            section="Native window", native_window_control=proof,
+        ))
+        by_index[FULLSCREEN_CONTROL_ID] = {"element_index": FULLSCREEN_CONTROL_ID, "role": "AXButton"}
+        ax_roles[FULLSCREEN_CONTROL_ID] = "AXButton"
 
     scope_address_bars = tuple(
         (candidate.id, values.get(candidate.id))
@@ -1108,6 +1116,7 @@ class NativeBridge:
         session: str | None = None,
         policy: Any = None,
         live_check: bool = False,
+        window_controls: bool = False,
         ax: Any = None,
         observation_guard: Callable[[NativeMenu], None] | None = None,
         finder_scope: dict[str, Any] | None = None,
@@ -1123,6 +1132,7 @@ class NativeBridge:
         self.session = session or f"footwork-native-{uuid.uuid4().hex}"
         self.policy = policy if policy is not None else ExecutionPolicy("background_only")
         self.live_check = live_check
+        self.window_controls = window_controls
         self.observation_guard = observation_guard
         #: filmed pointer mode (``jevdual.filmed``): the pointer travels to each target before an action
         self.filmed: Any = None
@@ -1279,37 +1289,17 @@ class NativeBridge:
         return self.last
 
     def _fullscreen_identity(self, snapshot: Any) -> dict[int, dict[str, Any]]:
-        """Join independent window semantics to exactly one fresh driver row; frames alone are not identity."""
-        if (_get(snapshot, "pid") != self.pid or _get(snapshot, "window_id") != self.window_id
-                or _get(snapshot, "truncated") or _get(snapshot, "degraded")):
+        """Project independent native window semantics, never infer a cached SDK token by geometry."""
+        if (not self.window_controls or _get(snapshot, "pid") != self.pid or _get(snapshot, "window_id") != self.window_id
+                or _get(snapshot, "truncated") or _get(snapshot, "degraded")
+                or any(_get(row, "element_index") == FULLSCREEN_CONTROL_ID
+                       for row in _get(snapshot, "elements") or [])):
             return {}
         try:
             win, button, proof = self.ax.fullscreen_control(self.pid, self.window_id)
-            frame = self.ax.frame_of(button)
-            if frame is None:
-                return {}
-            rows = []
-            for row in _get(snapshot, "elements") or []:
-                raw = _get(row, "frame")
-                if _get(row, "role") != "AXButton" or raw is None:
-                    continue
-                values = [_get(raw, key) for key in ("x", "y", "w", "h")]
-                if None not in values and frame.near(self.ax.Frame(*values)):
-                    rows.append(row)
-            if len(rows) != 1:
-                return {}
-            row = rows[0]
-            index = _get(row, "element_index")
-            if (index is None or not _get(row, "element_token") or _get(row, "enabled") is not True
-                    or _get(row, "in_web_content") or "AXPress" not in (_get(row, "actions") or ())):
-                return {}
-            # Resolve the row through the same native window; never trust a frame-only cross-window match.
-            resolved = self.ax.resolve(self.pid, self.window_id, "AXButton", frame)
-            if not self.ax.same_element(resolved, button):
-                return {}
-            self._fullscreen_refs[int(index)] = (win, button)
-            return {int(index): proof}
-        except Exception:  # noqa: BLE001 - unreadable native semantics must never expose a new control
+            self._fullscreen_refs[FULLSCREEN_CONTROL_ID] = (win, button)
+            return {FULLSCREEN_CONTROL_ID: proof}
+        except Exception:  # noqa: BLE001 - unreadable native semantics never expose a new control
             return {}
 
     def _web_text_attributes(self, snapshot: Any) -> dict[int, dict[str, Any]]:
@@ -1540,6 +1530,9 @@ class NativeBridge:
             )
         cand = nm.menu.candidate(id)
         token = nm.token(id)
+        if (cand is not None and id == FULLSCREEN_CONTROL_ID and cand.native_window_control is not None
+                and qualified_control_identity(cand) is not None):
+            return cand, ""  # native semantic action; never passed to the SDK
         if cand is None or token is None:
             raise NativeBridgeError("target_missing", f"id {id} is not on the menu from {nm.snapshot_id}")
         return cand, token
@@ -2272,7 +2265,7 @@ class NativeBridge:
                     or self.ax.focused_window_id(self.pid) != self.window_id):
                 raise NativeBridgeError("not_key", "the exact fullscreen window is not front/key; no click fallback")
             current, target_id = await self._live(nm, id, "click")
-            _, token = self._require_fresh(current, target_id)
+            self._require_fresh(current, target_id)
             refs = self._fullscreen_refs.get(target_id)
             win, button, proof = self.ax.fullscreen_control(self.pid, self.window_id)
             if (proof != expected or refs is None or not self.ax.same_element(win, refs[0])
@@ -2280,25 +2273,38 @@ class NativeBridge:
                     or not self.ax.same_element(win, initial_refs[0])
                     or not self.ax.same_element(button, initial_refs[1])):
                 raise NativeBridgeError("target_changed", "fullscreen control changed before dispatch")
-            frame = current.frames.get(target_id)
-            resolved = self.ax.resolve(self.pid, self.window_id, "AXButton", self.ax.Frame(*frame) if frame else None)
-            if not self.ax.same_element(resolved, button):
-                raise NativeBridgeError("target_changed", "driver row no longer names the fullscreen control")
-            checkpoint()
-            if (self.policy._activity().frontmost_pid() != self.pid
-                    or self.ax.focused_window_id(self.pid) != self.window_id):
-                raise NativeBridgeError("not_key", "fullscreen window lost front/key ownership before dispatch")
             before_window = win
-            self.last = None
-            self.dispatches += 1
-            attempted = True
-            # The existing SDK accessibility click invokes AXPress; no raw action endpoint or pointer fallback.
-            return await self._click_token(token)
+
+            def check_ready() -> None:
+                checkpoint()
+                if (self.policy._activity().frontmost_pid() != self.pid
+                        or self.ax.focused_window_id(self.pid) != self.window_id):
+                    raise NativeBridgeError("not_key", "fullscreen window lost front/key ownership before dispatch")
+
+            def on_dispatch() -> None:
+                nonlocal attempted
+                self.last = None
+                self.dispatches += 1
+                attempted = True
+
+            try:
+                await owned_thread(self.ax.press_fullscreen, self.pid, self.window_id, expected,
+                                   (win, button), check_ready=check_ready, on_dispatch=on_dispatch)
+            except self.ax.AXError as exc:
+                if not attempted:
+                    raise NativeBridgeError(exc.reason, str(exc)) from exc
+                raise
+            return _PRESSED
 
         effect = await self._foreground("click", id, cand.label, call, why="native window fullscreen preparation")
         if not attempted:
             return effect
-        readback: dict[str, Any] = {"predicate": "native_fullscreen_state_transition", "before": expected, "after": None, "transition_observed": False}
+        acknowledged = effect.delivered_count == 1 and effect.error_code is None
+        readback: dict[str, Any] = {
+            "schema_version": 1, "producer": "footwork.ax.fullscreen",
+            "predicate": "native_fullscreen_state_transition", "before": expected, "after": None,
+            "press_acknowledged": acknowledged, "transition_observed": False,
+        }
         deadline = asyncio.get_running_loop().time() + 2.0
         while True:
             try:
@@ -2311,10 +2317,11 @@ class NativeBridge:
             if readback["transition_observed"] or asyncio.get_running_loop().time() >= deadline:
                 break
             await asyncio.sleep(0.05)
-        confirmed = readback["transition_observed"]
+        confirmed = acknowledged and readback["transition_observed"]
         return dataclasses.replace(
             effect, effect="confirmed" if confirmed else "unverifiable", dispatched=True,
-            delivery_basis="ax_fullscreen_state_readback" if confirmed else "unknown",
+            delivery_basis="ax_fullscreen_state_readback" if acknowledged else "unknown",
+            delivered_count=1 if acknowledged else None,
             native_readback=readback,
             summary="native fullscreen state changed" if confirmed else "fullscreen click attempted; transition unverified",
         )
@@ -2929,6 +2936,8 @@ class NativeBridge:
 
         src, _ = self._require_fresh(nm, source)
         dst, _ = self._require_fresh(nm, destination)
+        if src.native_window_control is not None or dst.native_window_control is not None:
+            raise NativeBridgeError("fullscreen_operator_only", "native window controls cannot be drag endpoints")
         label = f"{src.label} -> {dst.label}"
         if source == destination:
             raise NativeBridgeError("drag_same_target", f"[{source}] {src.label!r} is both ends of the drag")
@@ -3029,6 +3038,7 @@ class NativeBridge:
         web_text_delivery: str | None = None,
         web_text_range: tuple[int, int] | None = None,
         click_delivery: str | None = None,
+        operator_window_control: bool = False,
     ) -> NativeEffect:
         """Dispatch exactly one operation. The caller must reobserve afterwards; ``self.last`` is
         cleared so a second act on the same snapshot is refused as stale."""
@@ -3038,6 +3048,8 @@ class NativeBridge:
             )
         cand, token = self._require_fresh(nm, id)
         if cand.native_window_control is not None:
+            if not self.window_controls or not operator_window_control:
+                raise NativeBridgeError("fullscreen_operator_only", "fullscreen requires explicit operator do click")
             if operation != "click" or web_text_delivery is not None or web_text_range is not None:
                 raise NativeBridgeError("unknown_operation", "native fullscreen control only supports click")
             return await self._click_fullscreen(nm, id, cand)

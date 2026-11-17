@@ -713,13 +713,19 @@ def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
     basis = (execution.get("producer") or {}).get("delivery_basis")
     window_control = (pending.get("target_identity") or {}).get("native_window_control")
     if window_control is not None and pending.get("dispatched") is not False:
-        after = proof.get("after") or {}
-        confirmed = (execution.get("effect") == "confirmed" and basis == "ax_fullscreen_state_readback"
-                     and proof.get("transition_observed") is True and proof.get("before") == window_control
-                     and after.get("pid") == window_control.get("pid")
-                     and after.get("window_id") == window_control.get("window_id")
-                     and type(after.get("fullscreen")) is bool
-                     and after["fullscreen"] is not window_control.get("fullscreen"))
+        from jevdual.operator_evidence import EvidenceError, fullscreen_readback_effect
+
+        delivery = pending.get("native_delivery") or {}
+        effect_basis = basis if execution else delivery.get("delivery_basis")
+        effect_word = execution.get("effect") if execution else pending.get("driver_effect")
+        try:
+            control_binding = window_control if isinstance(window_control, dict) else {}
+            read_effect = fullscreen_readback_effect(proof, window_control,
+                                                    control_binding.get("pid"), control_binding.get("window_id"))
+        except EvidenceError:
+            read_effect = "unverifiable"
+        confirmed = (effect_word == "confirmed" and effect_basis == "ax_fullscreen_state_readback"
+                     and read_effect == "confirmed")
         return dataclasses.replace(
             r, effect="confirmed" if confirmed else "unverifiable",
             evidence="qualified fullscreen state transition" if confirmed else "fullscreen transition was not independently verified",
@@ -1196,6 +1202,7 @@ def _native_bridge(
         wid,
         policy=ExecutionPolicy(posture),
         live_check=True,
+        window_controls=True,
         observation_guard=_native_scope_guard(native_scope) if native_scope else None,
         **({"finder_scope": finder_scope} if finder_scope else {}),
     )  # type: ignore[arg-type]
@@ -2644,6 +2651,10 @@ async def cmd_do(args: Any) -> int:
             raise NativeBridgeError("file_scope_missing", "move requires a manifest-owned file:/ selector")
         destination = None
         if target is not None and target.native_window_control is not None:
+            selector = str(requested_selector).strip().casefold()
+            if (op != "click" or len(args.words) != 2
+                    or selector not in {str(target.id), target.label.casefold(), "button:" + target.label.casefold()}):
+                return targeting_refused("fullscreen_operator_only", "fullscreen requires do click with its exact label or observed ID")
             previous = [c for c in chosen_cands if c.get("label") == target.label and c.get("native_window_control")]
             if len(previous) != 1 or qualified_control_identity(previous[0]) != qualified_control_identity(target):
                 return targeting_refused("target_changed", "fullscreen control identity changed since look; observe again")
@@ -2659,6 +2670,8 @@ async def cmd_do(args: Any) -> int:
                     _selector_failure_code(nm, why.removeprefix("destination: ")),
                     "drag destination did not resolve uniquely", destination=text or "",
                 )
+            if destination.native_window_control is not None:
+                return targeting_refused("fullscreen_operator_only", "native window controls cannot be drag endpoints")
             known = chosen_from.get(destination.id)
             if state.mode == "native" and (text or "").lstrip("-").isdigit() and known is not None and (
                 chosen_ambiguity is None or destination.id in chosen_ambiguity
@@ -2893,7 +2906,9 @@ async def cmd_do(args: Any) -> int:
             else:
                 assert target is not None
                 route_arg = getattr(args, "route", None)
-                if route_arg and state.mode == "browser":
+                if target.native_window_control is not None:
+                    eff = await bridge.act(nm, op, target.id, text, operator_window_control=True)
+                elif route_arg and state.mode == "browser":
                     eff = await bridge.act(
                         nm, op, target.id, text, route="dom_event" if route_arg == "dom" else "trusted"
                     )
@@ -2977,7 +2992,7 @@ async def cmd_do(args: Any) -> int:
                         "delivery", "driver_delivery", "dispatched", "delivered_count", "delivery_basis", "route"
                     )
                 },
-            } if web_text_delivery or click_delivery else {}),
+            } if web_text_delivery or click_delivery or (target is not None and target.native_window_control is not None) else {}),
         }
         if getattr(eff, "readback", None) is not None:
             state.pending["save_readback"] = eff.readback
@@ -3094,6 +3109,7 @@ async def cmd_s1(args: Any) -> int:
         _check_native_binding(state)
     driver, bridge = await bind(state)
     try:
+        bridge.window_controls = False
         nm, receipt = await observe(state, bridge)
         if receipt:
             print(f"receipt (previous action): {receipt['text']}")
@@ -3111,6 +3127,9 @@ async def cmd_s1(args: Any) -> int:
             ms = (time.perf_counter() - t0) * 1000
     finally:
         await driver.shutdown()
+    if decision.target == -2:
+        print("fullscreen_operator_only: use an explicit operator look/do click", file=sys.stderr)
+        return 2
     tgt = ""
     if decision.target is not None:
         c = nm.menu.candidate(decision.target)

@@ -192,6 +192,18 @@ def resolve(pid: int, window_id: int, role: str, frame: Frame | None) -> Any:
     return hits[0]
 
 
+def _fullscreen_attr(element: Any, name: str, *, optional: bool = False) -> Any:
+    """Retain AX error status: absence is distinct from an unreadable census peer."""
+    from ApplicationServices import AXUIElementCopyAttributeValue
+
+    error, value = AXUIElementCopyAttributeValue(element, name, None)
+    if optional and error in (-25205, -25212):  # attribute unsupported / no value
+        return None
+    if error:
+        raise AXError("fullscreen_unqualified", f"{name} is unreadable ({error})")
+    return value
+
+
 def fullscreen_control(pid: int, window_id: int) -> tuple[Any, Any, dict[str, Any]]:
     """Qualify only the bound native window's direct fullscreen button, never a page control.
 
@@ -202,31 +214,58 @@ def fullscreen_control(pid: int, window_id: int) -> tuple[Any, Any, dict[str, An
     from CoreFoundation import CFHash
 
     win = window_element(pid, window_id)
-    if win is None or _attr(win, "AXRole") != "AXWindow":
+    read = _fullscreen_attr
+    if win is None or read(win, "AXRole") != "AXWindow":
         raise AXError("fullscreen_unqualified", "the bound native window is unavailable")
     error, owner = AXUIElementGetPid(win, None)
     if error or owner != pid:
         raise AXError("fullscreen_unqualified", "window process does not match the binding")
-    state = _attr(win, "AXFullScreen")
+    state = read(win, "AXFullScreen")
     if type(state) is not bool:
         raise AXError("fullscreen_unqualified", "fullscreen state is not observable")
-    children = list(_attr(win, "AXChildren") or ())
-    if len(children) > 256:
-        raise AXError("fullscreen_unqualified", "title-bar census exceeded its bound")
-    matches = [child for child in children if _attr(child, "AXSubrole") == "AXFullScreenButton"]
-    button = _attr(win, "AXFullScreenButton")
+    children = read(win, "AXChildren")
+    if children is None or len(children) > 256:
+        raise AXError("fullscreen_unqualified", "title-bar census is unavailable or exceeded its bound")
+    matches = []
+    for child in children:
+        role = read(child, "AXRole")
+        if not isinstance(role, str) or not role:
+            raise AXError("fullscreen_unqualified", "title-bar peer role is unavailable")
+        if role == "AXButton" and read(child, "AXSubrole", optional=True) == "AXFullScreenButton":
+            matches.append(child)
+    button = read(win, "AXFullScreenButton")
     if len(matches) != 1 or button is None or not same_element(button, matches[0]):
         raise AXError("fullscreen_unqualified", "fullscreen button is missing or ambiguous")
     error, owner = AXUIElementGetPid(button, None)
     action_error, actions = AXUIElementCopyActionNames(button, None)
-    if (error or owner != pid or _attr(button, "AXRole") != "AXButton"
-            or _attr(button, "AXEnabled") is not True or action_error or "AXPress" not in (actions or ())
-            or not same_element(_attr(button, "AXParent"), win)
-            or not same_element(_attr(button, "AXWindow"), win)):
+    if (error or owner != pid or read(button, "AXRole") != "AXButton"
+            or read(button, "AXEnabled") is not True or action_error or "AXPress" not in (actions or ())
+            or not same_element(read(button, "AXParent"), win)
+            or not same_element(read(button, "AXWindow"), win)):
         raise AXError("fullscreen_unqualified", "fullscreen button ownership or AXPress is unqualified")
     proof = {"pid": pid, "window_id": window_id, "subrole": "AXFullScreenButton",
              "window_hash": int(CFHash(win)), "button_hash": int(CFHash(button)), "fullscreen": state}
     return win, button, proof
+
+
+def press_fullscreen(pid: int, window_id: int, expected: dict[str, Any],
+                     refs: tuple[Any, Any], *, check_ready: Any, on_dispatch: Any) -> None:
+    """Fixed-purpose internal AXPress, never a generic element/action endpoint or SDK token route."""
+    from ApplicationServices import AXUIElementPerformAction
+
+    checkpoint()
+    win, button, proof = fullscreen_control(pid, window_id)
+    if proof != expected or not same_element(win, refs[0]) or not same_element(button, refs[1]):
+        raise AXError("fullscreen_changed", "fullscreen identity changed at the press boundary")
+    check_ready()
+    # Final state read occurs after the complete census/reference checks. AX has no atomic
+    # compare-and-toggle primitive: an app-side change after this read remains a documented race.
+    if _fullscreen_attr(win, "AXFullScreen") is not expected["fullscreen"]:
+        raise AXError("fullscreen_changed", "fullscreen state changed at the press boundary")
+    on_dispatch()
+    error = AXUIElementPerformAction(button, "AXPress")
+    if error:
+        raise AXError("fullscreen_press_unverified", f"fullscreen AXPress returned {error}; do not retry")
 
 
 def fullscreen_readback(pid: int, window_id: int, expected_window: Any) -> dict[str, Any]:
