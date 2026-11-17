@@ -21,6 +21,7 @@ BASES = frozenset(
         "ax_menu_press_ack",
         "ax_menu_effect_readback",
         "ax_fullscreen_state_readback",
+        "ax_infobar_disappearance_readback",
         "ax_finder_rename_readback",
         "ax_finder_move_readback",
         "qualified_gate",
@@ -137,6 +138,225 @@ def _validate_fullscreen_execution(proof: Any, binding: dict[str, Any], effect: 
             raise EvidenceError("fullscreen acknowledgement lacks exact delivery evidence")
     elif basis != "unknown" or count is not None or effect != "unverifiable":
         raise EvidenceError("unacknowledged fullscreen press cannot confirm delivery")
+
+
+def infobar_readback_effect(proof: Any, control: Any, pid: Any, window_id: Any) -> str:
+    """Validate a fixed infobar predicate, independently of generic visible UI changes."""
+    required = {"schema_version", "producer", "predicate", "before", "after", "press_acknowledged", "transition_observed"}
+    if (not isinstance(proof, dict) or set(proof) not in (required, required | {"error"})
+            or type(proof.get("schema_version")) is not int or proof["schema_version"] != 1
+            or proof.get("producer") != "footwork.ax.infobar"
+            or proof.get("predicate") != "native_infobar_disappearance"
+            or type(proof.get("press_acknowledged")) is not bool
+            or type(proof.get("transition_observed")) is not bool
+            or ("error" in proof and (not isinstance(proof["error"], str) or not proof["error"]))):
+        raise EvidenceError("unsupported infobar readback")
+    before = proof["before"]
+    from jevdual.menu import qualified_control_identity
+
+    if (qualified_control_identity({"role": "button", "native_infobar_control": before}) is None
+            or qualified_control_identity({"role": "button", "native_infobar_control": control}) is None
+            or canonical(before) != canonical(control)
+            or type(pid) is not int or pid <= 0 or type(window_id) is not int or window_id <= 0
+            or before["pid"] != pid or before["window_id"] != window_id):
+        raise EvidenceError("infobar target differs from admitted binding")
+    after = proof["after"]
+    transition = False
+    if after is not None:
+        fields = {"pid", "window_id", "window_hash", "tab_hashes", "infobar_absent", "window_retained", "tabs_retained"}
+        if (not isinstance(after, dict) or set(after) != fields
+                or any(type(after[k]) is not int or after[k] != before[k] for k in ("pid", "window_id", "window_hash"))
+                or canonical(after["tab_hashes"]) != canonical(before["tab_hashes"])
+                or any(type(after[k]) is not bool for k in ("infobar_absent", "window_retained", "tabs_retained"))):
+            raise EvidenceError("infobar after-state differs from bound window/tabs")
+        transition = after["infobar_absent"] and after["window_retained"] and after["tabs_retained"]
+    if proof["transition_observed"] != transition or (transition and "error" in proof):
+        raise EvidenceError("contradictory infobar transition")
+    return "confirmed" if proof["press_acknowledged"] and transition else "unverifiable"
+
+
+def infobar_action_identity(projection: Any, pid: Any, window_id: Any) -> Any:
+    """One action-family binding shared by ordinary and durable consumers."""
+    from jevdual.menu import qualified_control_identity
+
+    if not isinstance(projection, dict):
+        raise EvidenceError("missing infobar projection")
+    identity = projection.get("target_identity")
+    label = "Dismiss browser infobar"
+    if (not isinstance(identity, dict) or projection.get("op") != "click"
+            or type(projection.get("target_id")) is not int or projection["target_id"] != -3
+            or projection.get("target_label") != label or identity.get("label") != label
+            or identity.get("role") != "button" or identity.get("section") != "Native browser"
+            or identity.get("native_window_control") is not None):
+        raise EvidenceError("infobar action identity inconsistent")
+    control = identity.get("native_infobar_control")
+    if (qualified_control_identity(identity) is None or not isinstance(control, dict)
+            or type(pid) is not int or type(window_id) is not int
+            or control.get("pid") != pid or control.get("window_id") != window_id):
+        raise EvidenceError("infobar action binding missing or different")
+    return control
+
+
+def _infobar_delivery_agreement(projection: dict[str, Any], *, dispatched: Any,
+                                effect: str, basis: Any, count: Any) -> None:
+    """Check every retained copy against one execution outcome, including no-send/unknown.
+
+    Older/minimal execution projections can omit optional delivery metadata. If
+    retained, its three delivery facts must all be present, strictly typed and
+    agree; absent facts are never treated as zero or as acknowledgement.
+    """
+    if type(dispatched) not in (bool, type(None)):
+        raise EvidenceError("invalid infobar dispatch type")
+    if not isinstance(basis, str) or basis not in BASES or (count is not None and type(count) is not int):
+        raise EvidenceError("invalid infobar delivery facts")
+    if "dispatched" in projection and (
+        type(projection["dispatched"]) is not type(dispatched) or projection["dispatched"] != dispatched
+    ):
+        raise EvidenceError("infobar projection dispatch differs")
+    if "driver_effect" in projection:
+        word = projection["driver_effect"]
+        normalized = "refused" if word in ("not sent", "not dispatched") else word
+        if normalized != effect:
+            raise EvidenceError("infobar projection effect differs")
+    if "native_delivery" in projection:
+        delivery = projection["native_delivery"]
+        if not isinstance(delivery, dict) or not set(delivery) <= {
+            "dispatched", "delivery_basis", "delivered_count", "delivery", "driver_delivery", "route"
+        }:
+            raise EvidenceError("invalid retained infobar delivery")
+        # These are the only route/posture facts the fixed AX producer can
+        # emit. Historical records may omit optional fields, but a retained
+        # invalid value is never treated as absence.
+        acknowledged = basis == "ax_infobar_disappearance_readback"
+        permitted = {
+            "delivery": ("foreground",) if acknowledged else (None, "foreground"),
+            "driver_delivery": (None,),
+            "route": ("accessibility",) if acknowledged else ((None,) if dispatched is False else (None, "accessibility")),
+        }
+        for key, allowed in permitted.items():
+            if key in delivery and not any(type(delivery[key]) is type(value) and delivery[key] == value for value in allowed):
+                raise EvidenceError("infobar delivery route/posture contradicts fixed AX producer")
+        for key, expected in (("dispatched", dispatched), ("delivery_basis", basis), ("delivered_count", count)):
+            if key not in delivery or type(delivery[key]) is not type(expected) or delivery[key] != expected:
+                raise EvidenceError("infobar nested delivery contradicts execution")
+
+
+def _infobar_provenance_agreement(copies: list[dict[str, Any]], pid: int, window_id: int) -> None:
+    """Present provenance is typed and agrees; omitted historical copies add no claim.
+
+    This compares cooperative retained records, not authenticated external input.
+    A lone session/incarnation value cannot establish history absent another copy.
+    """
+    for key in ("binding", "operation_id", "observation", "session_id", "error"):
+        retained = []
+        for record in copies:
+            if key not in record:
+                continue
+            value = record[key]
+            if key == "binding":
+                bound = validate_binding(value)
+                if bound["pid"] != pid or bound["window_id"] != window_id:
+                    raise EvidenceError("infobar provenance belongs to another binding")
+            elif key == "error":
+                if value is not None and not isinstance(value, str):
+                    raise EvidenceError("invalid infobar provenance error")
+            else:
+                _text(value, "infobar " + key)
+            retained.append(canonical(value))
+        if retained and any(value != retained[0] for value in retained[1:]):
+            raise EvidenceError("infobar retained provenance copies differ: " + key)
+
+
+def infobar_projection_effect(projection: Any, pid: Any, window_id: Any) -> str:
+    """Validate all retained delivery claims before ordinary effect/no-send reporting."""
+    control = infobar_action_identity(projection, pid, window_id)
+    _infobar_provenance_agreement([projection], pid, window_id)
+    delivery = projection.get("native_delivery")
+    if not isinstance(delivery, dict):
+        raise EvidenceError("missing infobar delivery")
+    dispatched = projection.get("dispatched")
+    raw_effect = projection.get("driver_effect")
+    effect = "refused" if raw_effect in ("not sent", "not dispatched") else raw_effect
+    basis, count = delivery.get("delivery_basis"), delivery.get("delivered_count")
+    _infobar_delivery_agreement(projection, dispatched=dispatched, effect=effect, basis=basis, count=count)
+    execution = projection.get("execution_receipt")
+    if execution is not None:
+        if not isinstance(execution, dict) or not isinstance(execution.get("producer"), dict):
+            raise EvidenceError("invalid infobar execution receipt")
+        expected_envelope = {"schema_version": VERSION, "kind": "execution", "protocol": 1,
+                             "custody": "returned", "move": "click", "target": "-3"}
+        if any(canonical(execution.get(k)) != canonical(value) for k, value in expected_envelope.items()):
+            raise EvidenceError("infobar execution provenance or operation differs")
+        producer = execution["producer"]
+        if (set(producer) != {"name", "version", "delivery_basis", "delivered_count"}
+                or producer.get("name") != "footwork.native"
+                or type(producer.get("version")) is not int or producer["version"] != 1):
+            raise EvidenceError("unsupported attached infobar producer")
+        if (type(execution.get("dispatched")) is not type(dispatched) or execution.get("dispatched") != dispatched
+                or execution.get("effect") != effect or execution["producer"].get("delivery_basis") != basis
+                or type(execution["producer"].get("delivered_count")) is not type(count)
+                or execution["producer"].get("delivered_count") != count):
+            raise EvidenceError("infobar execution contradicts projection")
+        inner = execution.get("projection")
+        if not isinstance(inner, dict) or any(canonical(inner.get(k)) != canonical(projection.get(k)) for k in (
+            "op", "target_id", "target_label", "target_identity", "native_readback", "dispatched", "driver_effect"
+        )):
+            raise EvidenceError("infobar execution action differs")
+        _infobar_delivery_agreement(inner, dispatched=dispatched, effect=effect, basis=basis, count=count)
+        if "native_delivery" in inner:
+            for key in inner["native_delivery"].keys() & delivery.keys():
+                if canonical(inner["native_delivery"][key]) != canonical(delivery[key]):
+                    raise EvidenceError("infobar retained delivery copies differ")
+        _infobar_provenance_agreement([projection, execution, inner], pid, window_id)
+        if "execution_receipt" in inner:
+            raise EvidenceError("nested infobar execution envelope unsupported")
+    proof = projection.get("native_readback")
+    if dispatched is False:
+        if (proof is not None or effect != "refused" or basis != "qualified_gate"
+                or type(count) is not int or count != 0
+                or (execution is not None and execution.get("phase") != "not_sent")):
+            raise EvidenceError("infobar no-send contradicts retained delivery evidence")
+        return "refused"
+    if dispatched is not True:
+        raise EvidenceError("infobar dispatch unknown")
+    observed = infobar_readback_effect(proof, control, pid, window_id)
+    if effect != observed:
+        raise EvidenceError("infobar effect contradicts readback")
+    if proof["press_acknowledged"]:
+        if (basis != "ax_infobar_disappearance_readback" or type(count) is not int or count != 1
+                or (execution is not None and execution.get("phase") != "sent")):
+            raise EvidenceError("infobar acknowledgement lacks delivery agreement")
+    elif (basis != "unknown" or count is not None
+          or (execution is not None and execution.get("phase") != "ambiguous")):
+        raise EvidenceError("unacknowledged infobar delivery inconsistent")
+    return observed
+
+
+def _validate_infobar_execution(proof: Any, binding: dict[str, Any], effect: str,
+                                   op: Any, projection: dict[str, Any], basis: str, count: Any) -> None:
+    control = infobar_action_identity(projection, binding["pid"], binding["window_id"])
+    identity = projection["target_identity"]
+    expected = infobar_readback_effect(proof, control, binding["pid"], binding["window_id"])
+    label = "Dismiss browser infobar"
+    arguments = getattr(op, "args", {})
+    if not isinstance(arguments, dict):
+        raise EvidenceError("missing infobar admission arguments")
+    words = arguments.get("words", [])
+    if (op.move != "click" or op.target != "-3" or projection.get("op") != "click"
+            or type(projection.get("target_id")) is not int or projection["target_id"] != -3
+            or identity.get("role") != "button" or identity.get("section") != "Native browser"
+            or identity.get("label") != label or projection.get("target_label") != label
+            or not isinstance(words, list) or len(words) != 2 or words[0] != "click"
+            or not isinstance(words[1], str)
+            or words[1].strip().casefold() not in {"-3", label.casefold(), "button:" + label.casefold()}
+            or effect != expected or projection.get("driver_effect") != effect
+            or projection.get("dispatched") is not True):
+        raise EvidenceError("infobar proof differs from admitted click or effect")
+    if proof["press_acknowledged"]:
+        if basis != "ax_infobar_disappearance_readback" or type(count) is not int or count != 1:
+            raise EvidenceError("infobar acknowledgement lacks exact delivery evidence")
+    elif basis != "unknown" or count is not None or effect != "unverifiable":
+        raise EvidenceError("unacknowledged infobar press cannot confirm delivery")
 
 
 def _validate_native_readback(
@@ -479,6 +699,7 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
                 "ax_menu_press_ack",
                 "ax_menu_effect_readback",
                 "ax_fullscreen_state_readback",
+                "ax_infobar_disappearance_readback",
                 "ax_finder_rename_readback",
                 "ax_finder_move_readback",
             }
@@ -506,6 +727,21 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
         fullscreen_target and (dispatched is True or effect in {"confirmed", "partial"})
     ):
         _validate_fullscreen_execution(projection.get("native_readback"), binding, effect, op, projection, basis, count)
+    infobar = identity.get("native_infobar_control") if isinstance(identity, dict) else None
+    native_proof = projection.get("native_readback")
+    infobar_intent = op.target == "-3" or infobar is not None
+    infobar_proof = isinstance(native_proof, dict) and native_proof.get("predicate") == "native_infobar_disappearance"
+    nested_delivery = projection.get("native_delivery")
+    nested_infobar = isinstance(nested_delivery, dict) and nested_delivery.get("delivery_basis") == "ax_infobar_disappearance_readback"
+    if infobar_intent or infobar_proof or nested_infobar or basis == "ax_infobar_disappearance_readback":
+        _infobar_delivery_agreement(projection, dispatched=dispatched, effect=effect, basis=basis, count=count)
+        _infobar_provenance_agreement([record, projection], binding["pid"], binding["window_id"])
+        if "execution_receipt" in projection:
+            raise EvidenceError("nested infobar execution envelope unsupported")
+    if basis == "ax_infobar_disappearance_readback" or infobar_proof or (
+        infobar_intent and (dispatched is True or effect in {"confirmed", "partial"} or native_proof is not None)
+    ):
+        _validate_infobar_execution(projection.get("native_readback"), binding, effect, op, projection, basis, count)
     if basis in {"ax_menu_effect_readback", "ax_finder_rename_readback", "ax_finder_move_readback"}:
         _validate_native_readback(projection.get("native_readback"), basis, binding, effect, op, projection)
         if (
