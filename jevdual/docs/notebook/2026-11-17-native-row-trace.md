@@ -24,3 +24,10 @@ Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/sol-revi
 Observed: actual typed Rust URL regression failed on the remote-authority example (1failed/1positive passed); retention regression failed6cases and kept1matching positive. Correction passes71contract tests and2macOS tests, including native ingress rejection before target validation/collection. Initial correction trace selection35passes. Source archive941c3b35 and trace2 wheel build pass offline; record ABI and callback module bytes are unchanged. Original reviewed SDK source restored to its checkpoint; correction source kept separately.
 Next: final focused packaged checks and independent correction review; no installed/live change. RT3 remains open pending that review and checks; RT1 remains open pending the single real observation.
 Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/{url-red.txt,envelope-red.txt,url-green.txt,ingress-green.txt,correction-trace-tests.txt,wheel-trace2-build.txt,sdk-correction-source}; sol-review-b6c6163/REVIEW.md.
+
+## RT5 · prediction · 2026-11-17 11:18
+Hypothesis: PR37 CI failed because the provenance test retains the row4 count of 15 files after diagnostics deliberately adds row_trace.rs and row_trace_probe.rs; hash-chain checks remain valid.
+Test: reproduce the specific failing test on db09d2f, compare old/current manifest membership, update only its exact expected count and run the complete build/provenance test file plus notebook check. Keep the independently reviewed worktree frozen by using a separate CI worktree.
+Predicts: the red failure is 17 versus 15; exactly the two diagnostic files explain the difference; all build/provenance tests pass with 17 while still checking every file hash.
+Against: any unexpected added file, hash mismatch, or additional test failure means the count correction is insufficient; do not weaken provenance checks.
+Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/CI-b6c6163-failed.txt; tests/test_cua_driver_build.py::test_local_native_patch_has_inspectable_hash_bound_provenance.
