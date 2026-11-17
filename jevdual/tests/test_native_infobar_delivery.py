@@ -150,3 +150,19 @@ def test_default_bridge_error_after_fixed_marker_cannot_claim_no_attempt(world, 
             result = ops.receipt(op)
         assert result['state'] == 'unknown' and result['disposition'] == 'unknown'
         assert result['phase'] == 'ambiguous'
+
+
+@pytest.mark.parametrize('path,value', [
+    ('producer.name', 'sdk'), ('producer.version', True), ('producer.version', 2),
+    ('move', 'drag'), ('target', '99'), ('target', -3),
+    ('schema_version', '2'), ('protocol', True), ('kind', 'observation'), ('custody', 'held'),
+    ('binding.pid', 88), ('binding.window_id', 12.0),
+])
+def test_attached_execution_provenance_and_binding_types(path, value):
+    _op, rec = copy.deepcopy(state_record('confirmed'))
+    p = copy.deepcopy(rec['projection']); p['execution_receipt'] = rec
+    obj = rec
+    keys = path.split('.')
+    for key in keys[:-1]: obj = obj[key]
+    obj[keys[-1]] = value
+    assert outside(p).effect == 'unverifiable'

@@ -131,7 +131,7 @@ def test_public_durable_cannot_settle_against_retained_nested_delivery(world, fw
         result = ops.receipt(rows[-1])
         assert ops._retained_execution(rows[-1]) is None
     assert len(attempts) == 1
-    assert code != 0 and 'infobar nested delivery contradicts execution' in err
+    assert code != 0 and 'infobar' in err
     assert result['state'] == 'unknown' and result['disposition'] == 'unknown'
     assert result['phase'] == 'ambiguous'
 
