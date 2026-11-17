@@ -284,3 +284,29 @@ def test_fullscreen_evidence_rejects_contradictions(mutation):
     elif mutation == 'contradictory_error': proof['error'] = 'unreadable'
     with pytest.raises(EvidenceError):
         validate_execution(record, op, binding=BINDING)
+
+
+@pytest.mark.parametrize('basis', ['sdk_delivery_count', 'ax_insert_ack'])
+@pytest.mark.parametrize('count', [1, 2])
+def test_fullscreen_reserved_target_cannot_erase_its_proof(basis, count):
+    op, record = fullscreen_execution()
+    record['producer'].update(delivery_basis=basis, delivered_count=count)
+    record['projection'].pop('target_identity')
+    record['projection'].pop('native_readback')
+    assert op.target == '-2'
+    with pytest.raises(EvidenceError):
+        validate_execution(record, op, binding=BINDING)
+
+
+@pytest.mark.parametrize('phase,dispatched,basis,count,effect', [
+    ('not_sent', False, 'qualified_gate', 0, 'refused'),
+    ('ambiguous', None, 'unknown', None, 'unverifiable'),
+])
+def test_fullscreen_reserved_target_preserves_no_dispatch_or_unknown(phase, dispatched, basis, count, effect):
+    op, record = fullscreen_execution()
+    record.update(phase=phase, dispatched=dispatched, effect=effect)
+    record['producer'].update(delivery_basis=basis, delivered_count=count)
+    record['projection'].pop('target_identity')
+    record['projection'].pop('native_readback')
+    record['projection'].update(dispatched=dispatched, driver_effect=effect)
+    assert validate_execution(record, op, binding=BINDING) == record

@@ -4711,3 +4711,30 @@ def test_native_fullscreen_durable_unacknowledged_press_retains_unknown(world, f
     assert receipt['action']['native_readback']['press_acknowledged'] is False
     assert receipt['action']['native_readback']['transition_observed'] is True
     assert receipt['action']['execution_receipt']['producer']['delivery_basis'] == 'unknown'
+
+
+@pytest.mark.parametrize('selector', ['-2', 'Enter Full Screen', 'button:Enter Full Screen'])
+@pytest.mark.parametrize('fresh_look', [False, True])
+def test_native_fullscreen_selector_cannot_downgrade_to_sdk_control(world, fw, monkeypatch, selector, fresh_look):
+    win, _, attempts = _fullscreen_actions(world, monkeypatch)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    assert any(c.get('native_window_control') for c in _state(fw)['last_candidates'])
+    win['AXFullScreenButton'] = None
+    world.base['elements'].append({
+        'element_index': 983, 'role': 'AXButton', 'label': 'Enter Full Screen', 'enabled': True,
+        'parent_index': 0, 'actions': ['AXPress'], 'frame': {'x': 200, 'y': 100, 'w': 100, 'h': 20},
+    })
+    sdk = []
+    async def capture(inp):
+        sdk.append(inp.position.element_token)
+        raise RuntimeError('synthetic SDK dispatch captured; no real input')
+    monkeypatch.setattr(world, 'click', capture)
+    if fresh_look:
+        assert fw('look')[0] == 0
+        assert not any(c.get('native_window_control') for c in _state(fw)['last_candidates'])
+    code, out, err = fw('do', 'click', selector)
+    if fresh_look and selector != '-2':
+        assert len(sdk) == 1 and sdk[0].endswith(':983'), (code, out, err, sdk)
+    else:
+        assert code == 4 and not sdk and not world.tool_calls, (code, out, err, sdk)
+    assert not attempts
