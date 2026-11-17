@@ -21,3 +21,16 @@ Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/affected-t
 Observed: final affected suite718passed, including66 infobar cases; focused lint, notebook and diff checks pass. Public ordinary/durable paths retain exact identity/effect, ack-without-disappearance is unverified, prepress census/preemption/replacement failures report not-sent, and ordinary receipt requires exactly one acknowledged dispatch. Original missing-target reproduction and negative controls retained. Live exposure remains untested and installed52da unchanged.
 Next: freeze this source for independent Sol/Opus input-control reviews; resolve their findings before integration/delivery. Separate row diagnosis is read-only and must not widen this delta.
 Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/review-candidate-tests.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/affected-before-receipt-fix.txt
+
+## IB5 · update · 2026-11-17 07:11
+Observed: both frozen3c3e5b5 reviews block integration. Sol reproduces alternate stale-selector fallback to an SDK token, ordinary reserved-target metadata downgrade and contradictory durable dispatch evidence. Opus reproduces rejected real PyObjC NSArray children; retained native Chrome topology otherwise qualifies. Quadratic cycle comparisons, DOM-shaped display text and overstated basis wording also require correction.
+Resolves: IB1 = failed
+Next: preserve both reports/probes and introduce discriminating regression cases before fixes. No installed changes/live input; row SDK work remains separate.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/sol-review-3c3e5b5/review-sol.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/opus-review-3c3e5b5/review-opus.md
+
+## IB6 · prediction · 2026-11-17 07:11
+Hypothesis: prior-selector resolution using the same matching semantics, reserved-intent receipt enforcement and validation of any present native press proof remove the three downgrade paths; bounded iterable child reads admit real NSArray without weakening error handling. CFHash buckets with actual equality preserve collision/cycle refusal while removing the ordinary quadratic comparison cost.
+Test: retain reviewers original evidence, add public CLI stale selector variants and real NSArray success, ordinary/durable contradictory evidence controls and hash-collision/census comparison bounds; run red before correction, then affected suite and fresh independent reviews.
+Predicts: all stale aliases send zero; unchanged exact native action works with NSArray; missing or contradictory evidence never confirms/no-send-launders; normal distinct-hash census uses linear equality comparisons with bounded collision work.
+Against: any fallback dispatch/false receipt, real array failure, hidden peer omitted, collision interpreted as identity, or excessive comparisons disproves the correction. Live behavior/timing remains unproven.
+Refs: tests/test_native_infobar.py; docs/native-infobar.md
