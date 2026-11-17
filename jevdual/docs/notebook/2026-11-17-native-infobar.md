@@ -92,3 +92,10 @@ Observed: committed provenance cases discriminate52failed/44passed on687e935; co
 Resolves: IB14 = held
 Next: freeze final source for fresh Sol/Opus input-control review; no integration or installed/live claim. Row recipient SDK remains independent and incomplete.
 Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/provenance-red-002.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/provenance-affected.txt
+
+## IB16 · prediction · 2026-11-17 08:34
+Hypothesis: durable consumers bypass the new session/error provenance agreement because only presentation calls the shared helper. Calling it inside validate_execution covers producer construction, retention, retained reads and settlement/reconciliation without changing input or journal schema.
+Test: map actual call paths and run the same four malformed/contradictory session/error mutations across confirmed, no-send, ack-only and AX-error states at producer, retention, retained-read/settlement/replay and presentation boundaries. Add an omission control that disables only the durable shared-helper call and reproduces corrupt retention. Preserve optional omissions and explicitly retain the preexisting omitted-error admission-placeholder false negative as deferred compatibility behavior.
+Predicts: every applicable durable consumer rejects before settlement, unknown custody prevents repeat input, and presentation rejects without altering correct durable originals. Removing the one durable helper call restores the original bad retention.
+Against: a consumer bypasses validation, a contradictory capsule settles, omission control cannot reproduce the defect, or natural valid states lose their durable classification. Sol blocker governs despite Opus approval; no new input authority or broader redesign.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/sol-review-8b720d4/review-sol.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/opus-review-8b720d4/review-opus.md
