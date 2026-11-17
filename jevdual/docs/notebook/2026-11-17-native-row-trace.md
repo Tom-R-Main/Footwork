@@ -57,3 +57,8 @@ Test: retain CI failure; inspect the unchanged probe loop and update only the te
 Predicts: Linux CI passes while still failing if every attempt times out, a ready reply is substituted, an editor starts, or children survive. The prior assertion is already disproved by the retained CI run; no aggregate Mac skip is counted as Linux verification.
 Against: no retained explicit refusal exists in the failing scenario or corrected Linux CI fails again; then this hypothesis is insufficient and further probe diagnosis is required, not another permissive assertion.
 Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/CI-186eb4c-failed.txt; python/jevdual/linux_session.py Session.await_probe and Session.run; tests/test_linux_session.py::test_editor_waits_for_window_manager_mapping_acknowledgement.
+
+## RT10 · update · 2026-11-17 11:46
+Observed: unchanged Linux probe source retains each attempt then reports the final reason at shared-deadline expiry. Corrected assertion requires a recorded false/wm_not_servicing reply and keeps no-editor/no-started/no-survivor checks. Ruff/diff checks pass; local notebook tests pass and the Linux case is explicitly skipped on macOS. No claim of executed Linux validation; RT9 remains open until CI.
+Next: push test-only correction for actual Linux CI; no runtime/source archive/wheel change, deadline tuning or live input.
+Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/linux-readiness-check.txt; CI-186eb4c-failed.txt in the same evidence directory.

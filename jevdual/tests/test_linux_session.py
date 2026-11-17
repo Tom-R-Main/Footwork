@@ -379,7 +379,12 @@ def test_editor_waits_for_window_manager_mapping_acknowledgement(tmp_path):
     assert target.run() == 1
     assert 'editor' not in target.processes
     assert not (target.state / 'started').exists()
-    assert target.report['reason'] == 'wm_ready:wm_not_servicing'
+    # A final retry can exhaust the shared deadline after a genuine refusal.
+    # Require that refusal's retained reply, not a scheduler-dependent last reason.
+    assert target.report['reason'] in {'wm_ready:wm_not_servicing', 'wm_ready:probe_timeout'}
+    attempts = [json.loads(p.read_text()) for p in target.state.glob('probe-wm_ready-*.json')]
+    assert any(row.get('result') == {'ready': False, 'reason': 'wm_not_servicing'}
+               for row in attempts)
     assert not target.report['cleanup']['survivors']
 
 
