@@ -72,6 +72,7 @@ _CAND_FIELDS = (
     "native_control_qualified",
     "native_control_opaque",
     "native_window_control",
+    "native_row_control",
     "native_infobar_control",
     "numeric",
 )
@@ -99,6 +100,7 @@ class SessionState:
     last_native_ambiguous: list[int] | None = None
     last_native_text_scope_signature: str = ""
     last_snapshot: str = ""
+    row_intent: dict[str, Any] | None = None  # independently retained pre-dispatch row selection
     pending: dict[str, Any] | None = None  # the action dispatched by the last `do`, awaiting its receipt
     #: "native" (accessibility route) or "browser" (the Driver's DevTools route on footwork's Chrome)
     mode: str = "native"
@@ -621,6 +623,8 @@ def _repair_projection_log(state: SessionState) -> None:
 def _project_operation(state: SessionState, operations: Any, operation: Any) -> None:
     """Repair a missing JSON projection without repeating the effect or overwriting newer state."""
     projection = operations.projection(operation)
+    from jevdual.native_row import admission
+    state.row_intent = admission(operations._execution_preparation(operation.id))
     if not projection:
         return
     projection = {**projection, "operation_id": operation.id}
@@ -679,7 +683,7 @@ def receipt_for(
     )
     r = _field_receipt(r, state.pending, nm, prev=prev, secret_value=secret_value)
     r = _save_receipt(r, state.pending)
-    r = _outside_receipt(r, state.pending, pid=state.pid, window_id=state.window_id)
+    r = _outside_receipt(r, state.pending, pid=state.pid, window_id=state.window_id, row_intent=state.row_intent)
     if state.pending.get("error") and state.pending.get("dispatched", False) is not False:
         # A failed acknowledgement is not evidence of non-delivery. The diff
         # receipt's error handling historically called every error a refusal.
@@ -704,11 +708,20 @@ def receipt_for(
     return out
 
 
-def _outside_receipt(r: Any, pending: dict[str, Any], *, pid: int | None = None, window_id: int | None = None) -> Any:
+def _outside_receipt(r: Any, pending: dict[str, Any], *, pid: int | None = None, window_id: int | None = None, row_intent: dict[str, Any] | None = None) -> Any:
     """Q13a: two effects that happen outside the observed window. A menu item's effect (File > Open) may
     land in another app, so the window's own change cannot confirm it; a save is the exception, confirmed
     by its readback. A browser navigation Chrome ends with ERR_ABORTED is what a navigation that becomes a
     download looks like, so it is not "not applied": what it did is outside the page."""
+    from jevdual.native_row import has_row, projection_effect
+    if row_intent is not None or has_row(pending):
+        try:
+            effect = projection_effect(pending, row_intent, pid, window_id)
+        except (ValueError, TypeError, KeyError):
+            effect = "unverifiable"
+        return dataclasses.replace(r, effect=effect, evidence=(
+            "qualified row input not sent" if effect == "refused" else
+            "row input/application outcome unverified; generic page change is not recipient evidence"))
     # Reserved intent wins before any other family can return a confirmation.
     identity = pending.get("target_identity")
     native_proof = pending.get("native_readback")
@@ -1074,7 +1087,9 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
             extra += " numeric=" + json.dumps(c.numeric, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
         if qualified_link_href(c) is not None:
             extra += f" href={c.href!r}"
-        if c.native_window_control is not None:
+        if c.native_row_control is not None:
+            extra += " native_row=" + json.dumps(c.native_row_control, sort_keys=True)
+        elif c.native_window_control is not None:
             extra += " native_window=" + json.dumps(c.native_window_control, sort_keys=True)
         elif c.native_infobar_control is not None:
             extra += " native_infobar=" + json.dumps(c.native_infobar_control, sort_keys=True)
@@ -1272,6 +1287,7 @@ def finish_observation(
         state.memory.append(f"step {state.step}: {line} -> {word}")
         state.log({"kind": "receipt", "action": state.pending, **receipt})
         state.pending = None
+        state.row_intent = None
     state.remember(nm)
     if generation is not None:
         state.visual_generation = generation
@@ -2588,6 +2604,19 @@ async def cmd_do(args: Any) -> int:
                     f"note: the window changed since your last look ({drift.summary[:120]}); "
                     "ids below are from the fresh observation"
                 )
+        selected_row = None
+        if state.mode == "native" and before is not None:
+            prior_hits = ([before.candidate(cid)] if isinstance(cid, int) and before.candidate(cid) is not None
+                          else _selector_candidates(before, str(requested_selector))[0])
+            if any(c.native_row_control is not None for c in prior_hits):
+                if len(prior_hits) != 1 or qualified_control_identity(prior_hits[0]) is None:
+                    return targeting_refused("target_ambiguous", "previous row selector was not unique; observe again")
+                previous_row = prior_hits[0]
+                current_rows = [c for c in nm.menu.candidates
+                                if qualified_control_identity(c) == qualified_control_identity(previous_row)]
+                if len(current_rows) != 1 or previous_row.id in (chosen_ambiguity or ()):
+                    return targeting_refused("target_changed", "row selector lost its qualified recipient; observe again")
+                selected_row = current_rows[0]
         target = None
         file_target = None
         # A selector chosen from a native window action must not fall through to
@@ -2622,6 +2651,8 @@ async def cmd_do(args: Any) -> int:
                 return targeting_refused(_selector_failure_code(nm, why), "selector did not resolve uniquely")
             if selected_window_controls and rid != selected_window_controls[0].id:
                 return targeting_refused("target_changed", "fullscreen selector changed control kind since look; observe again")
+            if selected_row is not None and rid != selected_row.id:
+                return targeting_refused("target_changed", "row selector changed recipient since look")
             cid = rid
             chosen_from = {}  # a label is resolved on the fresh observation; nothing to compare
         if cid is not None:
@@ -2698,6 +2729,12 @@ async def cmd_do(args: Any) -> int:
         if op == "move" and file_target is None:
             raise NativeBridgeError("file_scope_missing", "move requires a manifest-owned file:/ selector")
         destination = None
+        if target is not None and target.native_row_control is not None:
+            if selected_row is None:
+                return targeting_refused("target_changed", "qualified row must first be selected from an observed look")
+            if (op != "click" or len(args.words) != 2 or getattr(args, "route", None)
+                    or web_text_delivery or click_delivery or web_text_range is not None):
+                return targeting_refused("row_operator_only", "row controls require ordinary do click without delivery overrides")
         if target is not None and (target.native_window_control is not None or target.native_infobar_control is not None):
             selector = str(requested_selector).strip().casefold()
             if (op != "click" or len(args.words) != 2
@@ -2925,6 +2962,10 @@ async def cmd_do(args: Any) -> int:
             )
             print(f"operation: {operation.id}")
             operations.start(operation.id)
+        from jevdual.native_row import intent as row_intent_for
+        state.row_intent = row_intent_for(target, operation=op) if target is not None and target.native_row_control is not None else None
+        state.save()
+        row_dispatches = getattr(bridge, "dispatches", None)
         t0 = time.perf_counter()
         started_at = time.time()
         ended_at = None
@@ -2955,7 +2996,7 @@ async def cmd_do(args: Any) -> int:
             else:
                 assert target is not None
                 route_arg = getattr(args, "route", None)
-                if target.native_window_control is not None or target.native_infobar_control is not None:
+                if target.native_window_control is not None or target.native_row_control is not None or target.native_infobar_control is not None:
                     eff = await bridge.act(nm, op, target.id, text, operator_window_control=True)
                 elif route_arg and state.mode == "browser":
                     eff = await bridge.act(
@@ -2997,6 +3038,12 @@ async def cmd_do(args: Any) -> int:
                     filmed_note = f"{', '.join(marks)}: {eff.summary[:400]}"
         except (NativeBridgeError, RuntimeError) as exc:
             dispatched = getattr(exc, "dispatched", None)
+            if state.row_intent is not None and dispatched is False:
+                current_dispatches = getattr(bridge, "dispatches", None)
+                if type(row_dispatches) is not int or type(current_dispatches) is not int or current_dispatches < row_dispatches:
+                    dispatched = None
+                elif current_dispatches > row_dispatches:
+                    dispatched = True
             if target is not None and target.native_infobar_control is not None and dispatched is False:
                 after_dispatches = getattr(bridge, "dispatches", None)
                 # This fixed action increments at its sole AXPress site. A
@@ -3051,8 +3098,14 @@ async def cmd_do(args: Any) -> int:
                         "delivery", "driver_delivery", "dispatched", "delivered_count", "delivery_basis", "route"
                     )
                 },
-            } if web_text_delivery or click_delivery or (target is not None and (target.native_window_control is not None or target.native_infobar_control is not None)) else {}),
+            } if web_text_delivery or click_delivery or (target is not None and (target.native_window_control is not None or target.native_row_control is not None or target.native_infobar_control is not None)) else {}),
         }
+        if state.row_intent is not None and eff is None:
+            state.pending["native_delivery"] = {
+                "delivery": None, "driver_delivery": None, "route": None,
+                "dispatched": dispatched, "delivered_count": 0 if dispatched is False else None,
+                "delivery_basis": "qualified_gate" if dispatched is False else "unknown",
+            }
         # A bridge exception explicitly marked before dispatch is a producer
         # zero-send fact. Preserve it here instead of asking consumers to infer
         # absence from an empty delivery object. Unknown exceptions stay unknown.
@@ -3105,6 +3158,7 @@ async def cmd_do(args: Any) -> int:
                     effect="unverifiable" if basis == "ax_menu_press_ack" else eff.effect,
                     projection=state.pending,
                     error=state.pending.get("error"),
+                    admitted_projection=prepared,
                 )
                 operations.record_execution(operation.id, record)
                 finished = operations.finish_from_execution(operation.id)
@@ -3719,6 +3773,7 @@ def _proposal(
 def _target_identity(target: Any) -> dict[str, Any]:
     return {
         **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
+        **({"native_row_control": target.native_row_control} if getattr(target, "native_row_control", None) is not None else {}),
         **({"native_infobar_control": target.native_infobar_control} if getattr(target, "native_infobar_control", None) is not None else {}),
         **({"native_window_control": target.native_window_control} if getattr(target, "native_window_control", None) is not None else {}),
         **({"native_control_opaque": True} if getattr(target, "native_control_opaque", None) is True else {}),

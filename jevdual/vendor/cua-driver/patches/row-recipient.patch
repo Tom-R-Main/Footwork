@@ -1,0 +1,1482 @@
+--- /dev/null
++++ b/libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs
+@@ -0,0 +1,81 @@
++//! Offline AX-provider adapter: production schema and recipient validator, no OS input.
++use cua_driver_contract::row::{discover_row, dispatch_row, RowBinding, RowGraph};
++use cua_driver_contract::{ActionTarget, ClickInput, ToolInput};
++use std::io::{self, Read};
++fn main() {
++    let mut text = String::new();
++    io::stdin().read_to_string(&mut text).unwrap();
++    let input: serde_json::Value = serde_json::from_str(&text).unwrap();
++    if input["mode"] == "discover" {
++        let graph: RowGraph = serde_json::from_value(input["graph"].clone()).unwrap();
++        let result = discover_row(
++            &graph,
++            input["pid"].as_u64().unwrap() as u32,
++            input["window_id"].as_u64().unwrap(),
++            input["recipient"].as_u64().unwrap(),
++        );
++        println!(
++            "{}",
++            match result {
++                Ok(binding) => serde_json::json!({"binding":binding}),
++                Err(error) => serde_json::json!({"binding":null,"error":error}),
++            }
++        );
++        return;
++    }
++    let parsed = serde_json::from_value::<ClickInput>(input["click"].clone())
++        .map_err(|e| e.to_string())
++        .and_then(|i| {
++            i.validate()?;
++            Ok(i)
++        });
++    let click = match parsed {
++        Ok(click) => click,
++        Err(error) => {
++            println!(
++                "{}",
++                serde_json::json!({"schema_valid":false,"error":error,"presses":[]})
++            );
++            return;
++        }
++    };
++    if input["mode"] != "dispatch" {
++        println!("{}", serde_json::json!({"schema_valid":true}));
++        return;
++    }
++    let binding: RowBinding = serde_json::from_value(input["binding"].clone()).unwrap();
++    let graph =
++        serde_json::from_value::<RowGraph>(input["graph"].clone()).map_err(|e| e.to_string());
++    let ActionTarget::Window { pid, window_id } = click.target else {
++        panic!("fixture requires window")
++    };
++    let recipient = input["recipient"].as_u64().unwrap();
++    let mut presses = Vec::new();
++    let receipt = dispatch_row(
++        graph,
++        &binding,
++        click.expected_row.as_ref(),
++        pid,
++        window_id,
++        recipient,
++        || {
++            if input["admission_error"] == true {
++                Err("fixture focus lost before press".into())
++            } else {
++                Ok(())
++            }
++        },
++        || {
++            presses.push(recipient);
++            if input["press_error"] == true {
++                Err("fixture AXPress response lost".into())
++            } else {
++                Ok(())
++            }
++        },
++    );
++    println!(
++        "{}",
++        serde_json::json!({"schema_valid":true,"receipt":receipt,"presses":presses})
++    );
++}
+--- a/libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs
+@@ -822,0 +823,3 @@
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    #[uniffi(default = None)]
++    pub expected_row: Option<crate::ExpectedRow>,
+@@ -835,0 +839,2 @@
++    #[serde(default, deserialize_with = "present_click_field")]
++    expected_row: Option<crate::ExpectedRow>,
+@@ -882,0 +888 @@
++            expected_row: wire.expected_row,
+@@ -905,0 +912,9 @@
++        if let Some(row) = &self.expected_row {
++            row.validate()?;
++            if !matches!(&self.target, ActionTarget::Window { pid, window_id } if *pid == row.pid && *window_id == row.window_id)
++                || !matches!(self.position, ClickPosition::Element { .. })
++                || self.delivery_mode != InputDeliveryMode::Foreground
++                || !matches!(self.button, None | Some(ClickButton::Left)) || self.count.unwrap_or(1) != 1 {
++                return Err("expected_row requires exact bound foreground element left-click once".into());
++            }
++        }
+@@ -1225,0 +1241 @@
++            expected_row: None,
+--- a/libs/cua-driver/rust/crates/cua-driver-contract/src/lib.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/lib.rs
+@@ -21,0 +22,2 @@
++pub mod row;
++pub use row::ExpectedRow;
+--- a/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs
+@@ -720,0 +721,3 @@
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    #[uniffi(default = None)]
++    pub row_receipt: Option<crate::row::RowReceipt>,
+@@ -794,0 +798 @@
++    RowReceiptContradiction,
+@@ -804,0 +809 @@
++            Self::RowReceiptContradiction => "row receipt contradicts public action outcome",
+@@ -812,0 +818,9 @@
++        if let Some(row) = &self.row_receipt {
++            let expected = if row.dispatched { ActionEffect::Unverifiable } else { ActionEffect::Refused };
++            if row.validate().is_err() || self.effect != expected || self.route != ActionRoute::Accessibility
++                || self.evidence.is_some() || self.escalation.is_some()
++                || (row.dispatched && self.delivery.as_ref().is_none_or(|d|
++                    d.mode != ActionDeliveryMode::Foreground || d.delivered_count != Some(row.delivered_count))) {
++                return Err(ActionResultValidationError::RowReceiptContradiction);
++            }
++        }
+@@ -928,0 +943 @@
++            row_receipt: None,
+@@ -948,0 +964,41 @@
++    fn row_receipt_cannot_upgrade_or_contradict_public_outcome() {
++        let mut valid = confirmed_result();
++        valid.effect = ActionEffect::Unverifiable;
++        valid.evidence = None;
++        valid.delivery = Some(ActionDelivery { mode: ActionDeliveryMode::Foreground, delivered_count: Some(1) });
++        valid.row_receipt = Some(crate::row::RowReceipt {
++            version: 1, predicate: crate::ExpectedRow {
++                version: 2, pid: 77, window_id: 12, document_url: "https://example.test/tasks".into(),
++                table_headers: vec!["Task ID".into()], row_values: vec!["TASK-0".into()], key_column: "Task ID".into(), key_value: "TASK-0".into(),
++                role: "AXPopUpButton".into(), name: "Open menu".into(), action: "AXPress".into(),
++            }, dispatched: true, acknowledged: true, delivered_count: 1, effect: "unverifiable".into(), error: None,
++        });
++        assert!(valid.validate_invariants().is_ok());
++        for case in 0..11 {
++            let mut bad = valid.clone();
++            match case {
++                0 => bad.effect = ActionEffect::Confirmed,
++                1 => bad.route = ActionRoute::SyntheticEvents,
++                2 => bad.delivery.as_mut().unwrap().mode = ActionDeliveryMode::Background,
++                3 => bad.delivery.as_mut().unwrap().delivered_count = Some(0),
++                4 => bad.delivery = None,
++                5 => bad.row_receipt.as_mut().unwrap().dispatched = false,
++                6 => bad.row_receipt.as_mut().unwrap().acknowledged = false,
++                7 => bad.row_receipt.as_mut().unwrap().effect = "confirmed".into(),
++                8 => bad.row_receipt.as_mut().unwrap().error = Some("press failed".into()),
++                9 => bad.row_receipt.as_mut().unwrap().predicate.action = "AXShowMenu".into(),
++                _ => bad.evidence = Some(vec![]),
++            }
++            assert!(bad.validate_invariants().is_err(), "case {case}");
++        }
++        let mut refused = valid.clone();
++        refused.effect = ActionEffect::Refused; refused.delivery = None;
++        let row = refused.row_receipt.as_mut().unwrap();
++        row.dispatched = false; row.acknowledged = false; row.delivered_count = 0;
++        row.effect = "refused".into(); row.error = Some("row changed".into());
++        assert!(refused.validate_invariants().is_ok());
++        refused.delivery = valid.delivery;
++        assert!(refused.validate_invariants().is_err());
++    }
++
++    #[test]
+@@ -1008,0 +1065 @@
++                "row_receipt",
+--- /dev/null
++++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs
+@@ -0,0 +1,684 @@
++//! Bounded row-recipient predicates. Graphs are SDK-owned observations, never public tool inputs.
++use schemars::JsonSchema;
++use serde::{Deserialize, Serialize};
++use std::collections::{BTreeMap, BTreeSet};
++
++#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq, uniffi::Record)]
++#[serde(deny_unknown_fields)]
++pub struct ExpectedRow {
++    pub version: u32,
++    pub pid: u32,
++    pub window_id: u64,
++    pub document_url: String,
++    pub table_headers: Vec<String>,
++    pub row_values: Vec<String>,
++    pub key_column: String,
++    pub key_value: String,
++    pub role: String,
++    pub name: String,
++    pub action: String,
++}
++impl ExpectedRow {
++    pub fn validate(&self) -> Result<(), String> {
++        let text = [
++            &self.document_url,
++            &self.key_column,
++            &self.key_value,
++            &self.name,
++        ];
++        if self.version != 2
++            || self.pid == 0
++            || self.window_id == 0
++            || text.iter().any(|s| s.is_empty() || s.len() > 2048)
++            || !matches!(self.role.as_str(), "AXButton" | "AXPopUpButton")
++            || self.action != "AXPress"
++            || self.table_headers.is_empty()
++            || self.table_headers.len() > 64
++            || self.table_headers.iter().any(|s| s.len() > 2048)
++            || self.row_values.len() != self.table_headers.len()
++            || self.row_values.iter().any(|s| s.len() > 2048)
++            || self
++                .table_headers
++                .iter()
++                .position(|s| s == &self.key_column)
++                .is_none_or(|i| self.row_values.get(i) != Some(&self.key_value))
++            || self
++                .table_headers
++                .iter()
++                .filter(|s| **s == self.key_column)
++                .count()
++                != 1
++        {
++            return Err("invalid expected-row predicate".into());
++        }
++        Ok(())
++    }
++}
++
++// The native adapter interns CFEqual objects, including row/column aliases. IDs
++// stay within an owned snapshot lifetime; they are not exposed as AX endpoints.
++#[derive(Debug, Clone, Serialize, Deserialize)]
++#[serde(deny_unknown_fields)]
++pub struct RowNode {
++    pub id: u64,
++    pub pid: u32,
++    pub window_id: u64,
++    pub role: String,
++    pub name: String,
++    pub value: Option<String>,
++    pub url: Option<String>,
++    pub parent: Option<u64>,
++    pub children: Vec<u64>,
++    pub rows: Option<Vec<u64>>,
++    pub columns: Option<Vec<u64>>,
++    pub header: Option<u64>,
++    pub enabled: Option<bool>,
++    pub actions: Vec<String>,
++    pub error: Option<String>,
++}
++#[derive(Debug, Clone, Serialize, Deserialize)]
++#[serde(deny_unknown_fields)]
++pub struct RowGraph {
++    pub root: u64,
++    pub nodes: Vec<RowNode>,
++    pub complete: bool,
++}
++#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
++#[serde(deny_unknown_fields)]
++pub struct RowBinding {
++    pub predicate: ExpectedRow,
++    pub window: u64,
++    pub document: u64,
++    pub table: u64,
++    pub row: u64,
++    pub key_cell: u64,
++    pub row_cells: Vec<u64>,
++    pub key_column: u64,
++    pub header: u64,
++    pub recipient: u64,
++}
++struct Census<'a> {
++    graph: &'a RowGraph,
++    nodes: BTreeMap<u64, &'a RowNode>,
++}
++impl<'a> Census<'a> {
++    fn new(graph: &'a RowGraph, pid: u32, window_id: u64) -> Result<Self, String> {
++        if !graph.complete || graph.nodes.is_empty() || graph.nodes.len() > 2048 {
++            return Err("row census incomplete".into());
++        }
++        let nodes: BTreeMap<_, _> = graph.nodes.iter().map(|n| (n.id, n)).collect();
++        let c = Self { graph, nodes };
++        if c.nodes.len() != graph.nodes.len()
++            || c.node(graph.root)?.role != "AXWindow"
++            || c.node(graph.root)?.parent.is_some()
++        {
++            return Err("invalid row census root/aliases".into());
++        }
++        for n in &graph.nodes {
++            if n.pid != pid
++                || n.window_id != window_id
++                || n.error.is_some()
++                || n.role.is_empty()
++                || n.name.len() > 2048
++                || n.value.as_ref().is_some_and(|v| v.len() > 2048)
++                || n.children.len() > 2048
++                || n.actions.len() > 64
++            {
++                return Err("row census peer unreadable or wrong owner".into());
++            }
++            if n.id != graph.root {
++                c.ancestors(n.id)?;
++            }
++            for id in n
++                .children
++                .iter()
++                .chain(n.rows.iter().flatten())
++                .chain(n.columns.iter().flatten())
++                .chain(n.header.iter())
++            {
++                c.node(*id)?;
++            }
++            // AXColumn legitimately aliases cells owned by rows. Other child
++            // listings must agree in both directions with the actual AXParent.
++            if n.role != "AXColumn" && n.children.iter().any(|id| c.nodes[id].parent != Some(n.id))
++            {
++                return Err("row conflicting child ancestry".into());
++            }
++            // Every non-root object's actual parent must expose it. A column may
++            // additionally expose the very same cell whose actual parent is a row.
++            if let Some(p) = n.parent {
++                if !c.node(p)?.children.contains(&n.id) {
++                    return Err("row parent/child mismatch".into());
++                }
++            }
++        }
++        // The reciprocity exception is valid only for declared columns of a
++        // fully validated table. Orphan/nested columns cannot hide alias edges.
++        let mut column_tables = BTreeSet::new();
++        for column in c.nodes.values().filter(|n| n.role == "AXColumn") {
++            let table = c.node(column.parent.ok_or("column table absent")?)?;
++            if table.role != "AXTable"
++                || table
++                    .columns
++                    .as_ref()
++                    .is_none_or(|ids| !ids.contains(&column.id))
++            {
++                return Err("column alias lacks declared table ownership".into());
++            }
++            column_tables.insert(table.id);
++        }
++        for table in column_tables {
++            c.table(table)?;
++        }
++        Ok(c)
++    }
++    fn node(&self, id: u64) -> Result<&'a RowNode, String> {
++        self.nodes
++            .get(&id)
++            .copied()
++            .ok_or_else(|| "row census missing reference".into())
++    }
++    fn ancestors(&self, id: u64) -> Result<Vec<u64>, String> {
++        let mut out = Vec::new();
++        let mut current = id;
++        while current != self.graph.root {
++            let parent = self
++                .node(current)?
++                .parent
++                .ok_or("row ancestry ends before window")?;
++            if out.len() >= 32 || out.contains(&parent) || parent == id {
++                return Err("row ancestry cyclic/overlong".into());
++            }
++            out.push(parent);
++            current = parent;
++        }
++        Ok(out)
++    }
++    fn unique(&self, ids: &[u64]) -> Vec<u64> {
++        ids.iter()
++            .copied()
++            .collect::<BTreeSet<_>>()
++            .into_iter()
++            .collect()
++    }
++    fn text(&self, id: u64) -> Result<String, String> {
++        let mut stack = vec![id];
++        let mut seen = BTreeSet::new();
++        let mut text = BTreeSet::new();
++        while let Some(next) = stack.pop() {
++            if !seen.insert(next) {
++                continue;
++            }
++            if seen.len() > 64 {
++                return Err("row cell text exceeds bound".into());
++            }
++            let n = self.node(next)?;
++            if next != id
++                && !matches!(
++                    n.role.as_str(),
++                    "AXStaticText"
++                        | "AXGroup"
++                        | "AXButton"
++                        | "AXPopUpButton"
++                        | "AXCheckBox"
++                        | "AXImage"
++                        | "AXLink"
++                )
++            {
++                return Err("unsupported row cell content".into());
++            }
++            for value in [Some(&n.name), n.value.as_ref()].into_iter().flatten() {
++                if !value.is_empty() {
++                    text.insert(value.clone());
++                }
++            }
++            for child in &n.children {
++                if self.node(*child)?.parent != Some(next) {
++                    return Err("cell text belongs to another parent".into());
++                }
++                stack.push(*child);
++            }
++        }
++        if text.len() > 1 {
++            return Err("row cell text is not singular".into());
++        }
++        Ok(text.into_iter().next().unwrap_or_default())
++    }
++    // Non-key content is evidence, never a new action surface. Preserve the
++    // old simple-text representation; rich content has an ordered, typed form.
++    // Escape plain strings beginning with the tag, so literal page text cannot
++    // impersonate a serialized tree. AXValue is only collected for cells/text;
++    // this is not a fingerprint of checkbox state, pixels or all application state.
++    fn cell_value(&self, id: u64) -> Result<String, String> {
++        let mut stack = vec![(id, 0u32)];
++        let mut seen = BTreeSet::new();
++        let mut texts = BTreeSet::new();
++        let mut content = Vec::new();
++        let mut rich = false;
++        while let Some((next, depth)) = stack.pop() {
++            if !seen.insert(next) {
++                continue;
++            }
++            if seen.len() > 64 {
++                return Err("row cell content exceeds bound".into());
++            }
++            let n = self.node(next)?;
++            if next != id
++                && !matches!(
++                    n.role.as_str(),
++                    "AXStaticText"
++                        | "AXGroup"
++                        | "AXButton"
++                        | "AXPopUpButton"
++                        | "AXCheckBox"
++                        | "AXImage"
++                        | "AXLink"
++                )
++            {
++                return Err("unsupported row cell content".into());
++            }
++            rich |= matches!(n.role.as_str(), "AXCheckBox" | "AXImage" | "AXLink");
++            if n.name.len() > 2048 || n.value.as_ref().is_some_and(|v| v.len() > 2048) {
++                return Err("row cell content exceeds bound".into());
++            }
++            for value in [Some(&n.name), n.value.as_ref()].into_iter().flatten() {
++                if !value.is_empty() {
++                    texts.insert(value.clone());
++                }
++            }
++            content.push((depth, &n.role, &n.name, &n.value));
++            // Reverse push retains the observed child order in the fingerprint.
++            for child in n.children.iter().rev() {
++                if self.node(*child)?.parent != Some(next) {
++                    return Err("cell content belongs to another parent".into());
++                }
++                stack.push((*child, depth + 1));
++            }
++        }
++        let value = if rich || texts.len() > 1 {
++            format!(
++                "\u{001e}{}",
++                serde_json::to_string(&content).map_err(|e| e.to_string())?
++            )
++        } else {
++            let plain = texts.into_iter().next().unwrap_or_default();
++            if plain.starts_with('\u{001e}') {
++                format!(
++                    "\u{001e}{}",
++                    serde_json::to_string(&plain).map_err(|e| e.to_string())?
++                )
++            } else {
++                plain
++            }
++        };
++        if value.len() > 2048 {
++            return Err("row cell representation exceeds bound".into());
++        }
++        Ok(value)
++    }
++    fn table(&self, id: u64) -> Result<(Vec<u64>, Vec<String>, Vec<u64>), String> {
++        let n = self.node(id)?;
++        if n.role != "AXTable" {
++            return Err("row table missing".into());
++        }
++        let columns = n.columns.as_ref().ok_or("row columns unreadable")?;
++        let rows = self.unique(n.rows.as_ref().ok_or("table rows unreadable")?);
++        if columns.is_empty()
++            || columns.len() > 64
++            || rows.is_empty()
++            || rows.len() > 256
++            || self.unique(columns).len() != columns.len()
++        {
++            return Err("row table census invalid".into());
++        }
++        if self
++            .nodes
++            .values()
++            .any(|p| p.parent == Some(n.id) && p.role == "AXColumn" && !columns.contains(&p.id))
++        {
++            return Err("omitted table column".into());
++        }
++        let mut headers = Vec::new();
++        let mut header_rows = BTreeSet::new();
++        for id in columns {
++            let col = self.node(*id)?;
++            if col.role != "AXColumn" || col.parent != Some(n.id) {
++                return Err("column belongs to another table".into());
++            }
++            let header = col.header.ok_or("explicit column header absent")?;
++            let cell = self.node(header)?;
++            let parent = cell.parent.ok_or("header row absent")?;
++            if cell.role != "AXCell"
++                || self.node(parent)?.role != "AXRow"
++                || self.node(parent)?.parent != Some(n.id)
++                || !col.children.contains(&header)
++            {
++                return Err("header/cell relationship unqualified".into());
++            }
++            header_rows.insert(parent);
++            headers.push(self.text(header)?);
++            for cell_id in self.unique(&col.children) {
++                let cell = self.node(cell_id)?;
++                let row_id = cell.parent.ok_or("column cell row absent")?;
++                if cell.role != "AXCell"
++                    || self.node(row_id)?.role != "AXRow"
++                    || self.node(row_id)?.parent != Some(n.id)
++                    || (!rows.contains(&row_id) && row_id != parent)
++                {
++                    return Err("column cell escaped table row census".into());
++                }
++            }
++        }
++        if header_rows.len() != 1
++            || headers
++                .iter()
++                .filter(|s| !s.is_empty())
++                .collect::<BTreeSet<_>>()
++                .len()
++                != headers.iter().filter(|s| !s.is_empty()).count()
++        {
++            return Err("column headers ambiguous".into());
++        }
++        let data_rows: Vec<_> = rows
++            .into_iter()
++            .filter(|r| !header_rows.contains(r))
++            .collect();
++        if data_rows.is_empty() {
++            return Err("no data rows".into());
++        }
++        // AXRows must cover every actual direct row, including hidden peers.
++        for peer in self
++            .nodes
++            .values()
++            .filter(|p| p.parent == Some(n.id) && p.role == "AXRow")
++        {
++            if !data_rows.contains(&peer.id) && !header_rows.contains(&peer.id) {
++                return Err("omitted table row".into());
++            }
++        }
++        for row in &data_rows {
++            if self.node(*row)?.role != "AXRow" || self.node(*row)?.parent != Some(n.id) {
++                return Err("wrong table row".into());
++            }
++        }
++        Ok((columns.clone(), headers, data_rows))
++    }
++    fn qualify(&self, recipient: u64, key_column: &str) -> Result<RowBinding, String> {
++        let action = self.node(recipient)?;
++        if !matches!(action.role.as_str(), "AXButton" | "AXPopUpButton")
++            || action.name.is_empty()
++            || action.enabled != Some(true)
++            || !action.actions.iter().any(|a| a == "AXPress")
++        {
++            return Err("row recipient does not offer enabled AXPress".into());
++        }
++        let ancestry = self.ancestors(recipient)?;
++        let find = |role: &str| -> Result<u64, String> {
++            let ids: Vec<_> = ancestry
++                .iter()
++                .filter(|id| self.nodes[id].role == role)
++                .copied()
++                .collect();
++            if ids.len() != 1 {
++                return Err(format!("row recipient lacks unique {role} ancestry"));
++            }
++            Ok(ids[0])
++        };
++        let row = find("AXRow")?;
++        let table = find("AXTable")?;
++        let document = find("AXWebArea")?;
++        if self.node(row)?.parent != Some(table) || !self.ancestors(table)?.contains(&document) {
++            return Err("nested row/table ancestry".into());
++        }
++        let url = self
++            .node(document)?
++            .url
++            .as_ref()
++            .filter(|s| !s.is_empty())
++            .ok_or("document URL absent")?;
++        if self
++            .nodes
++            .values()
++            .filter(|n| n.role == "AXWebArea" && n.url.as_ref() == Some(url))
++            .count()
++            != 1
++        {
++            return Err("document URL ambiguous".into());
++        }
++        let (cols, headers, rows) = self.table(table)?;
++        if !rows.contains(&row) {
++            return Err("recipient is outside data rows".into());
++        }
++        let keys: Vec<_> = headers
++            .iter()
++            .enumerate()
++            .filter(|(_, h)| *h == key_column && !h.is_empty())
++            .collect();
++        if keys.len() != 1 {
++            return Err("key column unqualified".into());
++        }
++        for peer in self
++            .nodes
++            .values()
++            .filter(|n| n.role == "AXTable" && n.id != table)
++        {
++            if self.ancestors(peer.id)?.contains(&document) {
++                // Unreadable peer tables cannot silently disappear from uniqueness.
++                if self.table(peer.id)?.1 == headers {
++                    return Err("table signature ambiguous".into());
++                }
++            }
++        }
++        let col = self.node(cols[keys[0].0])?;
++        let mut values = BTreeSet::new();
++        let mut selected = None;
++        for id in rows {
++            let cells: Vec<_> = self
++                .unique(&self.node(id)?.children)
++                .into_iter()
++                .filter(|c| col.children.contains(c))
++                .collect();
++            if cells.len() != 1
++                || self.node(cells[0])?.role != "AXCell"
++                || self.node(cells[0])?.parent != Some(id)
++            {
++                return Err("key cell relationship ambiguous".into());
++            }
++            let value = self.text(cells[0])?;
++            if value.is_empty() || !values.insert(value.clone()) {
++                return Err("row key missing or duplicated".into());
++            }
++            if id == row {
++                selected = Some((cells[0], value));
++            }
++        }
++        let matching: Vec<_> = self
++            .nodes
++            .values()
++            .filter(|n| n.role == action.role && n.name == action.name)
++            .filter_map(|n| {
++                self.ancestors(n.id)
++                    .ok()
++                    .filter(|a| a.contains(&row))
++                    .map(|_| n.id)
++            })
++            .collect();
++        if matching != [recipient] {
++            return Err("row action is not unique".into());
++        }
++        let (key_cell, key_value) = selected.ok_or("key cell missing")?;
++        // A unique column is a display locator, not semantic identity. Bind all
++        // selected row cells through explicit column membership (never index).
++        let mut row_cells = Vec::new();
++        let mut row_values = Vec::new();
++        for col_id in &cols {
++            let column = self.node(*col_id)?;
++            let cells: Vec<_> = self
++                .unique(&self.node(row)?.children)
++                .into_iter()
++                .filter(|id| column.children.contains(id))
++                .collect();
++            if cells.len() != 1
++                || self.node(cells[0])?.role != "AXCell"
++                || self.node(cells[0])?.parent != Some(row)
++                || row_cells.contains(&cells[0])
++            {
++                return Err("full row cell relationship ambiguous".into());
++            }
++            row_cells.push(cells[0]);
++            row_values.push(if cells[0] == key_cell {
++                key_value.clone()
++            } else {
++                self.cell_value(cells[0])?
++            });
++        }
++        if self.unique(&self.node(row)?.children) != self.unique(&row_cells) {
++            return Err("full row contains unmapped content".into());
++        }
++        let predicate = ExpectedRow {
++            version: 2,
++            pid: action.pid,
++            window_id: action.window_id,
++            document_url: url.clone(),
++            table_headers: headers,
++            row_values,
++            key_column: key_column.into(),
++            key_value,
++            role: action.role.clone(),
++            name: action.name.clone(),
++            action: "AXPress".into(),
++        };
++        predicate.validate()?;
++        Ok(RowBinding {
++            predicate,
++            window: self.graph.root,
++            document,
++            table,
++            row,
++            key_cell,
++            row_cells,
++            key_column: col.id,
++            header: col.header.ok_or("header absent")?,
++            recipient,
++        })
++    }
++}
++
++pub fn qualify_row(
++    graph: &RowGraph,
++    pid: u32,
++    window: u64,
++    recipient: u64,
++    key: &str,
++) -> Result<RowBinding, String> {
++    Census::new(graph, pid, window)?.qualify(recipient, key)
++}
++pub fn discover_row(
++    graph: &RowGraph,
++    pid: u32,
++    window: u64,
++    recipient: u64,
++) -> Result<RowBinding, String> {
++    let c = Census::new(graph, pid, window)?;
++    let table = c
++        .ancestors(recipient)?
++        .into_iter()
++        .find(|id| c.nodes[id].role == "AXTable")
++        .ok_or("not a table action")?;
++    for header in c.table(table)?.1 {
++        if !header.is_empty() {
++            if let Ok(binding) = c.qualify(recipient, &header) {
++                return Ok(binding);
++            }
++        }
++    }
++    Err("no unambiguous named key column".into())
++}
++
++#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq, uniffi::Record)]
++#[serde(deny_unknown_fields)]
++pub struct RowReceipt {
++    pub version: u32,
++    pub predicate: ExpectedRow,
++    pub dispatched: bool,
++    pub acknowledged: bool,
++    pub delivered_count: u32,
++    pub effect: String,
++    pub error: Option<String>,
++}
++impl RowReceipt {
++    pub fn validate(&self) -> Result<(), String> {
++        self.predicate.validate()?;
++        if self.version != 1
++            || self.delivered_count != u32::from(self.acknowledged)
++            || (!self.dispatched && (self.acknowledged || self.effect != "refused"))
++            || (self.dispatched && self.effect != "unverifiable")
++            || (self.acknowledged && self.error.is_some())
++            || (!self.acknowledged && self.error.as_ref().is_none_or(|e| e.is_empty()))
++        {
++            return Err("inconsistent row dispatch receipt".into());
++        }
++        Ok(())
++    }
++}
++
++/// Used by the native adapter and the offline fixture. The closure is the only
++/// dispatch site. A returned AX error proves an attempt, not acknowledgement.
++pub fn dispatch_row<A, F>(
++    graph: Result<RowGraph, String>,
++    binding: &RowBinding,
++    expected: Option<&ExpectedRow>,
++    pid: u32,
++    window: u64,
++    recipient: u64,
++    admit: A,
++    press: F,
++) -> RowReceipt
++where
++    A: FnOnce() -> Result<(), String>,
++    F: FnOnce() -> Result<(), String>,
++{
++    let mut receipt = RowReceipt {
++        version: 1,
++        predicate: binding.predicate.clone(),
++        dispatched: false,
++        acknowledged: false,
++        delivered_count: 0,
++        effect: "refused".into(),
++        error: None,
++    };
++    let gate = (|| {
++        let expected = expected.ok_or("row predicate required by snapshot")?;
++        expected.validate()?;
++        if expected != &binding.predicate
++            || pid != expected.pid
++            || window != expected.window_id
++            || recipient != binding.recipient
++        {
++            return Err("row predicate differs from held recipient".into());
++        }
++        let current = qualify_row(&graph?, pid, window, recipient, &expected.key_column)?;
++        if &current != binding {
++            return Err("row predicate or held objects changed".into());
++        }
++        admit()
++    })();
++    if let Err(error) = gate {
++        receipt.error = Some(error);
++        return receipt;
++    }
++    receipt.dispatched = true;
++    receipt.effect = "unverifiable".into();
++    match press() {
++        Ok(()) => {
++            receipt.acknowledged = true;
++            receipt.delivered_count = 1;
++        }
++        Err(error) => receipt.error = Some(error),
++    }
++    receipt
++}
++
++pub fn predicate_schema() -> serde_json::Value {
++    serde_json::to_value(schemars::schema_for!(ExpectedRow)).expect("record schema serializes")
++}
+--- a/libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs
+@@ -128,0 +129,5 @@
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    #[uniffi(default = None)]
++    /// Row predicates are enforced by foreground left AXPress click only.
++    /// Other token tools do not enforce this predicate; unavailable proof is omitted.
++    pub qualify_rows: Option<bool>,
+@@ -291,0 +297,3 @@
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    #[uniffi(default = None)]
++    pub expected_row: Option<crate::ExpectedRow>,
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs
+@@ -350,0 +351 @@
++            row_receipt: None,
+--- a/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
+@@ -3740,0 +3741,3 @@
++    if let Some(value) = result.structured_content.as_ref().and_then(|v| v.get("row_receipt")) {
++        public.row_receipt = Some(serde_json::from_value(value.clone()).map_err(|e| format!("invalid row receipt: {e}"))?);
++    }
+@@ -6569,0 +6573,38 @@
++    }
++
++    #[test]
++    fn action_projection_preserves_and_validates_row_delivery() {
++        use crate::action_record::{ActionEffect, ActionExecutionRecord, ActionTransport, ActualDelivery, RequestedDelivery};
++        for (dispatched, acknowledged) in [(false, false), (true, false), (true, true)] {
++            let proof = serde_json::json!({
++                "version": 1, "predicate": {"version": 2, "pid": 77, "window_id": 40335,
++                    "document_url": "https://example.test/tasks", "table_headers": ["Task ID", "Actions"],
++                    "row_values": ["TASK-0", "Open menu"],
++                    "key_column": "Task ID", "key_value": "TASK-0", "role": "AXPopUpButton",
++                    "name": "Open menu", "action": "AXPress"},
++                "dispatched": dispatched, "acknowledged": acknowledged,
++                "delivered_count": if acknowledged { 1 } else { 0 },
++                "effect": if dispatched { "unverifiable" } else { "refused" },
++                "error": if acknowledged { None } else { Some("fixture refusal or lost acknowledgement") }
++            });
++            let mut action = ActionExecutionRecord::new(
++                if dispatched { ActionEffect::Unverifiable } else { ActionEffect::Refused },
++                ActionTransport::MacosAxAction, RequestedDelivery::Foreground);
++            if dispatched {
++                action.actual_delivery = Some(ActualDelivery::Foreground);
++                action.delivered_count = Some(if acknowledged { 1 } else { 0 });
++            }
++            let mut result = ToolResult::text("row effect remains unverified")
++                .with_structured(serde_json::json!({"row_receipt": proof.clone()}))
++                .with_action_record(action);
++            publish_action_result(&mut result).expect("natural row delivery projects");
++            let public = result.structured_content.as_ref().unwrap();
++            assert_eq!(public["row_receipt"], proof);
++            assert_eq!(public["effect"], proof["effect"]);
++            assert_eq!(public["route"], "accessibility");
++            cua_driver_contract::validate_success_output("click", public.clone()).unwrap();
++            let mut bad = proof;
++            bad["delivered_count"] = serde_json::json!(2);
++            result.structured_content = Some(serde_json::json!({"row_receipt": bad}));
++            assert!(publish_action_result(&mut result).is_err());
++        }
+--- a/libs/cua-driver/rust/crates/cua-driver-sdk/src/tests/native_windows.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-sdk/src/tests/native_windows.rs
+@@ -254,0 +255 @@
++                expected_row: None,
+@@ -347,0 +349 @@
++                expected_row: None,
+--- a/libs/cua-driver/rust/crates/cua-driver-sdk/src/tests/snapshot_lifecycle.rs
++++ b/libs/cua-driver/rust/crates/cua-driver-sdk/src/tests/snapshot_lifecycle.rs
+@@ -319,0 +320 @@
++                        rows: Default::default(),
+--- a/libs/cua-driver/rust/crates/platform-macos/src/ax/mod.rs
++++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/mod.rs
+@@ -29,0 +30 @@
++pub(crate) mod row_guard;
+--- /dev/null
++++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/row_guard.rs
+@@ -0,0 +1,425 @@
++//! SDK-owned row census and actual-token press. No public raw AX entry point.
++use super::bindings::*;
++use core_foundation::{
++    array::CFArray,
++    base::{CFEqual, CFGetTypeID, CFHash, CFRelease, CFRetain, CFType, CFTypeRef, TCFType},
++    boolean::CFBoolean,
++    string::CFString,
++    url::CFURL,
++};
++use cua_driver_contract::row::{
++    discover_row, dispatch_row, RowBinding, RowGraph, RowNode, RowReceipt,
++};
++use cua_driver_contract::ExpectedRow;
++use std::collections::{BTreeMap, BTreeSet};
++use std::sync::Arc;
++use std::time::{Duration, Instant};
++
++pub struct OwnedAx(usize);
++impl OwnedAx {
++    unsafe fn retain(p: AXUIElementRef) -> Self {
++        CFRetain(p as CFTypeRef);
++        Self(p as usize)
++    }
++    fn ptr(&self) -> AXUIElementRef {
++        self.0 as AXUIElementRef
++    }
++}
++impl Clone for OwnedAx {
++    fn clone(&self) -> Self {
++        unsafe { Self::retain(self.ptr()) }
++    }
++}
++impl Drop for OwnedAx {
++    fn drop(&mut self) {
++        unsafe { CFRelease(self.ptr() as CFTypeRef) }
++    }
++}
++
++pub struct QualifiedRow {
++    pub binding: RowBinding,
++    pub objects: Arc<Vec<OwnedAx>>,
++}
++struct Capture {
++    objects: Vec<OwnedAx>,
++    buckets: BTreeMap<u64, Vec<usize>>,
++    comparisons: usize,
++    deadline: Instant,
++}
++impl Capture {
++    fn new(seed: &[OwnedAx]) -> Self {
++        let mut c = Self {
++            objects: seed.to_vec(),
++            buckets: BTreeMap::new(),
++            comparisons: 0,
++            deadline: Instant::now() + Duration::from_secs(2),
++        };
++        for (i, el) in c.objects.iter().enumerate() {
++            c.buckets
++                .entry(unsafe { CFHash(el.ptr() as CFTypeRef) as u64 })
++                .or_default()
++                .push(i);
++        }
++        c
++    }
++    fn intern(&mut self, el: AXUIElementRef) -> Result<u64, String> {
++        if el.is_null()
++            || unsafe { CFGetTypeID(el as CFTypeRef) } != unsafe { AXUIElementGetTypeID() }
++        {
++            return Err("row census non-AX reference".into());
++        }
++        if Instant::now() > self.deadline {
++            return Err("row census deadline".into());
++        }
++        let hash = unsafe { CFHash(el as CFTypeRef) as u64 };
++        let bucket = self.buckets.entry(hash).or_default();
++        for i in bucket.iter() {
++            self.comparisons += 1;
++            if self.comparisons > 500_000 {
++                return Err("row census equality budget".into());
++            }
++            if self.objects[*i].ptr() == el
++                || unsafe { CFEqual(self.objects[*i].ptr() as CFTypeRef, el as CFTypeRef) } != 0
++            {
++                return Ok(*i as u64);
++            }
++        }
++        if self.objects.len() >= 4096 {
++            return Err("row reference limit".into());
++        }
++        let id = self.objects.len();
++        self.objects.push(unsafe { OwnedAx::retain(el) });
++        bucket.push(id);
++        Ok(id as u64)
++    }
++    fn element(
++        &mut self,
++        el: AXUIElementRef,
++        key: &str,
++        optional: bool,
++    ) -> Result<Option<u64>, String> {
++        let Some(value) = read(el, key, optional)? else {
++            return Ok(None);
++        };
++        self.intern(value.as_CFTypeRef() as AXUIElementRef)
++            .map(Some)
++    }
++    fn elements(
++        &mut self,
++        el: AXUIElementRef,
++        key: &str,
++        optional: bool,
++    ) -> Result<Option<Vec<u64>>, String> {
++        let Some(value) = read(el, key, optional)? else {
++            return Ok(None);
++        };
++        if value.type_of() != CFArray::<CFType>::type_id() {
++            return Err(format!("{key} is not an array"));
++        }
++        let arr = unsafe { CFArray::<CFType>::wrap_under_get_rule(value.as_CFTypeRef() as _) };
++        if arr.len() > 2048 {
++            return Err(format!("{key} exceeds row census bound"));
++        }
++        let mut ids = Vec::new();
++        for item in arr.iter() {
++            let id = self.intern(item.as_CFTypeRef() as AXUIElementRef)?;
++            if !ids.contains(&id) {
++                ids.push(id);
++            } // CFEqual aliases count once, not by geometry/hash.
++        }
++        Ok(Some(ids))
++    }
++    fn graph(
++        &mut self,
++        window: AXUIElementRef,
++        pid: u32,
++        window_id: u64,
++    ) -> Result<RowGraph, String> {
++        let root = self.intern(window)?;
++        let mut wid = 0;
++        if unsafe { _AXUIElementGetWindow(window, &mut wid) } != 0 || u64::from(wid) != window_id {
++            return Err("row window ID unproven".into());
++        }
++        let mut stack = vec![root];
++        let mut seen = BTreeSet::new();
++        let mut nodes = Vec::new();
++        while let Some(id) = stack.pop() {
++            if !seen.insert(id) {
++                continue;
++            }
++            if nodes.len() >= 2048 || Instant::now() > self.deadline {
++                return Err("row census incomplete".into());
++            }
++            let el = self.objects[id as usize].ptr();
++            let mut owner = 0;
++            if unsafe { AXUIElementGetPid(el, &mut owner) } != 0 || owner as u32 != pid {
++                return Err("row peer PID mismatch".into());
++            }
++            let role = text(el, "AXRole", false)?.ok_or("row peer role missing")?;
++            let parent = if id == root {
++                None
++            } else {
++                self.element(el, "AXParent", false)?
++            };
++            if id != root && self.element(el, "AXWindow", false)? != Some(root) {
++                return Err("row peer window mismatch".into());
++            }
++            let children = self
++                .elements(
++                    el,
++                    "AXChildren",
++                    !matches!(
++                        role.as_str(),
++                        "AXWindow"
++                            | "AXWebArea"
++                            | "AXTable"
++                            | "AXRow"
++                            | "AXColumn"
++                            | "AXCell"
++                            | "AXGroup"
++                    ),
++                )?
++                .unwrap_or_default();
++            stack.extend(children.iter().copied());
++            let name = text(el, "AXTitle", true)?
++                .filter(|s| !s.is_empty())
++                .or(text(el, "AXDescription", true)?)
++                .unwrap_or_default();
++            let value = if matches!(role.as_str(), "AXCell" | "AXStaticText") {
++                text(el, "AXValue", true)?
++            } else {
++                None
++            };
++            let url = if role == "AXWebArea" {
++                text(el, "AXURL", false)?
++            } else {
++                None
++            };
++            let rows = if role == "AXTable" {
++                self.elements(el, "AXRows", false)?
++            } else {
++                None
++            };
++            let columns = if role == "AXTable" {
++                self.elements(el, "AXColumns", false)?
++            } else {
++                None
++            };
++            let header = if role == "AXColumn" {
++                self.element(el, "AXHeader", false)?
++            } else {
++                None
++            };
++            let (enabled, actions) = if matches!(role.as_str(), "AXButton" | "AXPopUpButton") {
++                (boolean(el, "AXEnabled")?, actions(el)?)
++            } else {
++                (None, vec![])
++            };
++            nodes.push(RowNode {
++                id,
++                pid,
++                window_id,
++                role,
++                name,
++                value,
++                url,
++                parent,
++                children,
++                rows,
++                columns,
++                header,
++                enabled,
++                actions,
++                error: None,
++            });
++        }
++        Ok(RowGraph {
++            root,
++            nodes,
++            complete: true,
++        })
++    }
++}
++fn read(el: AXUIElementRef, key: &str, optional: bool) -> Result<Option<CFType>, String> {
++    let key_cf = CFString::new(key);
++    let mut value = std::ptr::null();
++    let error =
++        unsafe { AXUIElementCopyAttributeValue(el, key_cf.as_concrete_TypeRef(), &mut value) };
++    if error != 0 {
++        if !value.is_null() {
++            unsafe { CFRelease(value) };
++        }
++        if optional && (error == kAXErrorNoValue || error == kAXErrorAttributeUnsupported) {
++            return Ok(None);
++        }
++        return Err(format!("{key} unreadable ({error})"));
++    }
++    if value.is_null() {
++        return Err(format!("{key} null success"));
++    }
++    Ok(Some(unsafe { CFType::wrap_under_create_rule(value) }))
++}
++fn text(el: AXUIElementRef, key: &str, optional: bool) -> Result<Option<String>, String> {
++    let Some(value) = read(el, key, optional)? else {
++        return Ok(None);
++    };
++    let result = if value.type_of() == CFString::type_id() {
++        unsafe { CFString::wrap_under_get_rule(value.as_CFTypeRef() as _) }.to_string()
++    } else if key == "AXURL" && value.type_of() == CFURL::type_id() {
++        unsafe { CFURL::wrap_under_get_rule(value.as_CFTypeRef() as _) }
++            .get_string()
++            .to_string()
++    } else {
++        return Err(format!("{key} has unsupported text type"));
++    };
++    if result.len() > 2048 {
++        return Err(format!("{key} exceeds text bound"));
++    }
++    Ok(Some(result))
++}
++fn boolean(el: AXUIElementRef, key: &str) -> Result<Option<bool>, String> {
++    let value = read(el, key, false)?.ok_or("enabled missing")?;
++    if value.type_of() != CFBoolean::type_id() {
++        return Err("enabled type invalid".into());
++    }
++    Ok(Some(bool::from(unsafe {
++        CFBoolean::wrap_under_get_rule(value.as_CFTypeRef() as _)
++    })))
++}
++fn actions(el: AXUIElementRef) -> Result<Vec<String>, String> {
++    let mut names = std::ptr::null();
++    let error = unsafe { AXUIElementCopyActionNames(el, &mut names) };
++    if error != 0 || names.is_null() {
++        if !names.is_null() {
++            unsafe { CFRelease(names as _) };
++        }
++        return Err("row actions unreadable".into());
++    }
++    let value = unsafe { CFType::wrap_under_create_rule(names as _) };
++    if value.type_of() != CFArray::<CFType>::type_id() {
++        return Err("row actions wrong type".into());
++    }
++    let arr = unsafe { CFArray::<CFType>::wrap_under_get_rule(value.as_CFTypeRef() as _) };
++    if arr.len() > 64 {
++        return Err("row actions exceed bound".into());
++    }
++    arr.iter()
++        .map(|v| {
++            if v.type_of() != CFString::type_id() {
++                return Err("row action name unreadable".into());
++            }
++            Ok(unsafe { CFString::wrap_under_get_rule(v.as_CFTypeRef() as _) }.to_string())
++        })
++        .collect()
++}
++
++pub fn qualify_snapshot(
++    nodes: &[super::tree::AXNode],
++    pid: u32,
++    window_id: u64,
++) -> BTreeMap<usize, Arc<QualifiedRow>> {
++    let mut qualified = BTreeMap::new();
++    let Some(first) = nodes.iter().find(|n| {
++        n.element_index.is_some()
++            && n.in_web_content
++            && matches!(n.role.as_str(), "AXButton" | "AXPopUpButton")
++    }) else {
++        return qualified;
++    };
++    let Ok(Some(win)) = read(first.element_ptr as AXUIElementRef, "AXWindow", false) else {
++        return qualified;
++    };
++    if win.type_of() != unsafe { AXUIElementGetTypeID() } {
++        return qualified;
++    }
++    let mut capture = Capture::new(&[]);
++    let Ok(graph) = capture.graph(win.as_CFTypeRef() as AXUIElementRef, pid, window_id) else {
++        return qualified;
++    };
++    let mut bindings = Vec::new();
++    for n in nodes.iter().filter(|n| {
++        n.element_index.is_some()
++            && n.in_web_content
++            && matches!(n.role.as_str(), "AXButton" | "AXPopUpButton")
++    }) {
++        let Ok(id) = capture.intern(n.element_ptr as AXUIElementRef) else {
++            return BTreeMap::new();
++        };
++        if let Ok(binding) = discover_row(&graph, pid, window_id, id) {
++            bindings.push((n.element_index.unwrap(), binding));
++        }
++    }
++    let objects = Arc::new(capture.objects);
++    for (id, binding) in bindings {
++        qualified.insert(
++            id,
++            Arc::new(QualifiedRow {
++                binding,
++                objects: objects.clone(),
++            }),
++        );
++    }
++    qualified
++}
++
++pub fn press(
++    qualified: &QualifiedRow,
++    recipient: usize,
++    expected: Option<&ExpectedRow>,
++    pid: u32,
++    wid: u64,
++) -> RowReceipt {
++    let mut capture = Capture::new(&qualified.objects);
++    let graph = (|| {
++        let id = capture.intern(recipient as AXUIElementRef)?;
++        if id != qualified.binding.recipient {
++            return Err("actual SDK token differs from row recipient".into());
++        }
++        let win = read(recipient as AXUIElementRef, "AXWindow", false)?
++            .ok_or("recipient window absent")?;
++        capture.graph(win.as_CFTypeRef() as AXUIElementRef, pid, wid)
++    })();
++    dispatch_row(
++        graph,
++        &qualified.binding,
++        expected,
++        pid,
++        wid,
++        qualified.binding.recipient,
++        || {
++            if crate::apps::frontmost_pid() != Some(pid as i32) {
++                return Err("row recipient app no longer foreground".into());
++            }
++            let raw_app = unsafe { AXUIElementCreateApplication(pid as i32) };
++            if raw_app.is_null() {
++                return Err("row foreground app unreadable".into());
++            }
++            let app = unsafe { CFType::wrap_under_create_rule(raw_app as _) };
++            let focused = read(
++                app.as_CFTypeRef() as AXUIElementRef,
++                "AXFocusedWindow",
++                false,
++            )?
++            .ok_or("focused window absent")?;
++            let held_window = qualified.objects[qualified.binding.window as usize].ptr();
++            if unsafe { CFEqual(focused.as_CFTypeRef(), held_window as CFTypeRef) } == 0 {
++                return Err("row recipient window no longer focused".into());
++            }
++            if boolean(held_window, "AXFocused")? != Some(true) {
++                return Err("row window is not focused".into());
++            }
++            Ok(())
++        },
++        || {
++            let action = CFString::new("AXPress");
++            let error = unsafe {
++                AXUIElementPerformAction(recipient as AXUIElementRef, action.as_concrete_TypeRef())
++            };
++            if error == 0 {
++                Ok(())
++            } else {
++                Err(format!("AXPress attempted, result {error}; do not retry"))
++            }
++        },
++    )
++}
+--- a/libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs
++++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs
+@@ -9 +9 @@
+-pub struct RetainedElement(usize);
++pub struct RetainedElement(usize, pub Option<std::sync::Arc<super::row_guard::QualifiedRow>>);
+@@ -25 +25 @@
+-        Self(ptr)
++        Self(ptr, None)
+@@ -31 +31 @@
+-        unsafe { Self::retain(self.0) }
++        unsafe { let mut held = Self::retain(self.0); held.1 = self.1.clone(); held }
+@@ -44,0 +45 @@
++    pub rows: std::collections::BTreeMap<usize, std::sync::Arc<super::row_guard::QualifiedRow>>,
+@@ -49,0 +51 @@
++            rows: Default::default(),
+@@ -67 +69 @@
+-            .map(|ptr| unsafe { RetainedElement::retain(*ptr) })
++            .map(|ptr| unsafe { let mut held = RetainedElement::retain(*ptr); held.1 = self.rows.get(&index).cloned(); held })
+@@ -105,0 +108 @@
++            rows: Default::default(),
+--- a/libs/cua-driver/rust/crates/platform-macos/src/tools/click.rs
++++ b/libs/cua-driver/rust/crates/platform-macos/src/tools/click.rs
+@@ -319,0 +320,16 @@
++fn row_result(receipt: cua_driver_contract::row::RowReceipt) -> ToolResult {
++    use cua_driver_core::action_record::{ActionEffect, ActionExecutionRecord, ActionTransport, ActualDelivery, RequestedDelivery};
++    let mut record = ActionExecutionRecord::new(
++        if receipt.dispatched { ActionEffect::Unverifiable } else { ActionEffect::Refused },
++        ActionTransport::MacosAxAction, RequestedDelivery::Foreground,
++    );
++    if receipt.dispatched {
++        record.actual_delivery = Some(ActualDelivery::Foreground);
++        record.delivered_count = Some(receipt.delivered_count);
++    }
++    let summary = if receipt.dispatched {
++        "Qualified row AXPress attempted; acknowledgement does not prove the menu or application effect. Do not retry without readback."
++    } else { "Qualified row refused before AXPress; no input attempted." };
++    ToolResult::text(summary).with_structured(serde_json::json!({"row_receipt": receipt})).with_action_record(record)
++}
++
+@@ -341,0 +358 @@
++                "expected_row": cua_driver_contract::row::predicate_schema(),
+@@ -403,0 +421,14 @@
++
++        // Qualified row calls cannot reach the pixel/alternate-action branches.
++        let expected_row = match args.get("expected_row") {
++            Some(value) => match serde_json::from_value::<cua_driver_contract::ExpectedRow>(value.clone()) {
++                Ok(row) if row.validate().is_ok() => Some(row),
++                _ => return ToolResult::error("invalid expected_row; no input attempted"),
++            },
++            None => None,
++        };
++        if expected_row.is_some() && (args.opt_str("element_token").is_none()
++            || args.get("x").is_some() || args.get("y").is_some() || args.get("capture_id").is_some()
++            || args.str_or("scope", "window") != "window") {
++            return ToolResult::error("expected_row requires only a bound element token; no input attempted");
++        }
+@@ -586,0 +618,31 @@
++
++        let row_binding = element_guard.as_ref().and_then(|guard| guard.1.clone());
++        if expected_row.is_some() || row_binding.is_some() {
++            let predicate = row_binding.as_ref().map(|q| q.binding.predicate.clone()).or(expected_row.clone()).unwrap();
++            let refusal = |reason: &str| row_result(cua_driver_contract::row::RowReceipt {
++                version: 1, predicate: predicate.clone(), dispatched: false, acknowledged: false,
++                delivered_count: 0, effect: "refused".into(), error: Some(reason.into()),
++            });
++            let Some(qualified) = row_binding else { return refusal("SDK token has no row binding"); };
++            if expected_row.as_ref() != Some(&qualified.binding.predicate) || !delivery_mode.is_foreground()
++                || window_id.map(u64::from) != Some(predicate.window_id) || u32::try_from(pid).ok() != Some(predicate.pid)
++                || action != "press" || button_str != "left" || count != 1
++                || from_zoom || !modifiers.is_empty() || debug_image_out.is_some() {
++                return refusal("row-qualified token requires its exact predicate and a single foreground AXPress");
++            }
++            let guard = element_guard.expect("qualified row has held token");
++            let wid = window_id.expect("bound window checked");
++            // Existing fast-path freshness predicate still applies. There is no
++            // fronting fallback here: exact foreground is rechecked immediately
++            // before the sole AXPress, including when platform SPIs are absent.
++            match crate::fast_path_guard::guard_element("click", pid, wid, &args, guard.as_ptr(), false).await {
++                crate::fast_path_guard::Outcome::Refuse(_) => return refusal("row token failed freshness guard"),
++                crate::fast_path_guard::Outcome::Proceed { summary, .. } => *fast_path = summary,
++            }
++            return match tokio::task::spawn_blocking(move || {
++                crate::ax::row_guard::press(&qualified, guard.as_ptr(), expected_row.as_ref(), pid as u32, u64::from(wid))
++            }).await {
++                Ok(receipt) => row_result(receipt),
++                Err(_) => ToolResult::error("row action interrupted; outcome unknown; do not retry"),
++            };
++        }
+--- a/libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs
++++ b/libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs
+@@ -73,0 +74 @@
++                "qualify_rows": { "type": "boolean", "description": "Opt in to SDK-owned row recipient predicates enforced by foreground left AXPress click only. Other token tools are not qualified by this option; unavailable proof is omitted." },
+@@ -362,0 +364 @@
++        let qualify_rows = args.get("qualify_rows").and_then(Value::as_bool) == Some(true);
+@@ -379 +381,4 @@
+-                let payload = crate::ax::snapshot::AxSnapshot::from_nodes(&tree.nodes);
++                let mut payload = crate::ax::snapshot::AxSnapshot::from_nodes(&tree.nodes);
++                if qualify_rows && !observation_only {
++                    payload.rows = crate::ax::row_guard::qualify_snapshot(&tree.nodes, pid as u32, u64::from(window_id));
++                }
+@@ -402,0 +408,2 @@
++        let row_predicates: std::collections::BTreeMap<usize, _> = prepared_snapshot.as_ref()
++            .map(|p| p.rows.iter().map(|(i, q)| (*i, q.binding.predicate.clone())).collect()).unwrap_or_default();
+@@ -671 +678 @@
+-        let elements_json: Vec<serde_json::Value> = match (snapshot_id, tree_result.as_ref()) {
++        let mut elements_json: Vec<serde_json::Value> = match (snapshot_id, tree_result.as_ref()) {
+@@ -678,0 +686,7 @@
++        for entry in &mut elements_json {
++            if entry.get("element_token").and_then(Value::as_str).is_some() {
++                if let Some(proof) = entry.get("element_index").and_then(Value::as_u64).and_then(|i| row_predicates.get(&(i as usize))) {
++                    entry["expected_row"] = serde_json::to_value(proof).expect("typed row predicate");
++                }
++            }
++        }

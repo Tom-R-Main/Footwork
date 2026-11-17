@@ -263,6 +263,14 @@ def click_input(**fields: Any) -> Any:
     return _sdk().ClickInput(**fields)
 
 
+def row_snapshot_options() -> dict[str, bool]:
+    return {"qualify_rows": True} if hasattr(_sdk(), "ExpectedRow") else {}
+
+
+def row_click_input(*, expected_row: dict[str, Any], **fields: Any) -> Any:
+    return _sdk().ClickInput(expected_row=_sdk().ExpectedRow(**expected_row), **fields)
+
+
 def invoke_menu_input(**fields: Any) -> Any:
     return _sdk().InvokeMenuInput(**fields)
 

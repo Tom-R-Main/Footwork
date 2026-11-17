@@ -362,6 +362,17 @@ class SessionOperations(Journal):
             "operator unknowns require a qualified reconciliation producer; manual resolution is unsupported"
         )
 
+    def _execution_preparation(self, op_id: str) -> dict[str, Any]:
+        row = self._db.execute(
+            "SELECT projection FROM operator_admissions WHERE operation=?", (op_id,)
+        ).fetchone()
+        if row is None:
+            raise JournalError("missing admission projection")
+        value = json.loads(row[0])
+        if not isinstance(value, dict):
+            raise JournalError("invalid admission projection")
+        return value
+
     def _execution_binding(self, op_id: str) -> dict[str, Any]:
         row = self._db.execute(
             "SELECT projection FROM operator_admissions WHERE operation=?", (op_id,)
@@ -382,7 +393,8 @@ class SessionOperations(Journal):
         op = self._owned(op_id)
         if op.state != "dispatching" or op.execution_stage != "started":
             raise JournalError("execution receipt requires a started, owned attempt")
-        validate_execution(capsule, op, binding=self._execution_binding(op_id))
+        validate_execution(capsule, op, binding=self._execution_binding(op_id),
+                           admitted_projection=self._execution_preparation(op_id))
         body = canonical(capsule)
         digest = hashlib.sha256(body.encode()).hexdigest()
         with self._tx() as db:
@@ -410,7 +422,8 @@ class SessionOperations(Journal):
         if hashlib.sha256(row["body"].encode()).hexdigest() != row["digest"]:
             raise EvidenceError("retained execution receipt integrity failed")
         record = json.loads(row["body"])
-        validate_execution(record, op, binding=self._execution_binding(op.id))
+        validate_execution(record, op, binding=self._execution_binding(op.id),
+                           admitted_projection=self._execution_preparation(op.id))
         if record["interval"]["end"] > row["recorded"]:
             raise EvidenceError("execution receipt predates its capture")
         return record

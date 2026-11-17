@@ -1,0 +1,8 @@
+{
+  "generated_sha256": "0f940ed9cff1ab9a0f43dc73718e6a6a77acb08d0ca4dd586d936a1654d6e8ea",
+  "patched_sha256": "8bb3927dd6579d94468eb5c08b1700230359813074cd1959c2e226c318dd4828",
+  "patch_sha256": "719e7ed61e9371dbdd71a7bee218709cc64a51aaf52cea54f4c2c20c93b642f9",
+  "restored_from": "fdbf48f824921268cb79cc4393a169efa4c9c320",
+  "file": "src/cua_driver/_native.py",
+  "purpose": "Preserve landed foreign-future thread-safe drop and remote object owner-loop binding after UniFFI regeneration; no row ABI change."
+}

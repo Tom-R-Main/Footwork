@@ -17,6 +17,7 @@ VERSION = "1"
 BASES = frozenset(
     {
         "sdk_delivery_count",
+        "sdk_row_press_ack",
         "ax_insert_ack",
         "ax_menu_press_ack",
         "ax_menu_effect_readback",
@@ -595,7 +596,8 @@ def _validate_finder_move(
         raise EvidenceError("invalid Finder move readback") from exc
 
 
-def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict[str, Any]:
+def validate_execution(record: Any, op: Any, *, binding: dict[str, Any],
+                       admitted_projection: dict[str, Any] | None = None) -> dict[str, Any]:
     if not isinstance(record, dict) or set(record) != {
         "schema_version",
         "kind",
@@ -695,6 +697,7 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
             or basis
             not in {
                 "sdk_delivery_count",
+                "sdk_row_press_ack",
                 "ax_insert_ack",
                 "ax_menu_press_ack",
                 "ax_menu_effect_readback",
@@ -717,6 +720,15 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
     ):
         raise EvidenceError("invalid execution projection/error")
     projection = record["projection"]
+    from jevdual import native_row
+    try:
+        row_intent = native_row.admission(admitted_projection)
+        if row_intent is not None or native_row.has_row(projection) or basis == "sdk_row_press_ack":
+            observed = native_row.projection_effect(projection, row_intent, binding["pid"], binding["window_id"], execution=record)
+            if op.move != "click" or op.target != str(row_intent["target_id"]) or observed != effect:
+                raise EvidenceError("row result differs from admitted operation")
+    except (TypeError, ValueError, KeyError) as exc:
+        raise EvidenceError("invalid admitted row execution: " + str(exc)) from exc
     identity = projection.get("target_identity")
     fullscreen = identity.get("native_window_control") if isinstance(identity, dict) else None
     # The admitted reserved target carries semantic intent even if a producer
@@ -788,6 +800,7 @@ def execution_record(
     phase: str,
     projection: dict[str, Any],
     error: str | None = None,
+    admitted_projection: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     record = {
         "schema_version": VERSION,
@@ -810,7 +823,7 @@ def execution_record(
         "projection": projection,
         "error": error,
     }
-    return validate_execution(record, op, binding=binding)
+    return validate_execution(record, op, binding=binding, admitted_projection=admitted_projection)
 
 
 def fact_record(

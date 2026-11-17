@@ -148,15 +148,18 @@ def test_local_native_patch_has_inspectable_hash_bound_provenance():
     helptag = json.loads((vendor / 'patches/ordinary-helptag.json').read_text())
     connected = json.loads((vendor / 'patches/connected-click.json').read_text())
     locate = json.loads((vendor / 'patches/ref-locate.json').read_text())
+    row = json.loads((vendor / 'patches/row-recipient.json').read_text())
     # the pinned archive is the end of one hash-bound chain: cleanup2, focus1, helptag1, connected4, locate10
     assert foreground['patched_archive_sha256'] == helptag['base_archive_sha256']
     assert helptag['patched_archive_sha256'] == connected['base_archive_sha256']
     assert connected['patched_archive_sha256'] == locate['base_archive_sha256']
-    assert locate['patched_archive_sha256'] == BUILD.SOURCE_SHA256
+    assert locate['patched_archive_sha256'] == row['base_archive_sha256']
+    assert row['patched_archive_sha256'] == BUILD.SOURCE_SHA256
     assert foreground['version'] == helptag['base_version']
     assert helptag['version'] == connected['base_version']
     assert connected['version'] == locate['base_version']
-    assert locate['version'] == BUILD.VERSION
+    assert locate['version'] == row['base_version']
+    assert row['version'] == BUILD.VERSION
     # the prose record names the same build and archive as the code that verifies them
     provenance = (vendor / 'PROVENANCE.md').read_text()
     assert f'Footwork distribution version: `{BUILD.VERSION}`' in provenance
@@ -166,7 +169,10 @@ def test_local_native_patch_has_inspectable_hash_bound_provenance():
     assert len(manifest['files']) == 4
     with tarfile.open(vendor / 'native-source.tar.gz') as source:
         for name, hashes in manifest['files'].items():
-            assert hashlib.sha256(source.extractfile(name).read()).hexdigest() == hashes['after']
+            if name in row['files']:
+                assert row['files'][name]['before'] == hashes['after']
+            else:
+                assert hashlib.sha256(source.extractfile(name).read()).hexdigest() == hashes['after']
             assert hashes['before'] != hashes['after']
         focus_patch = (vendor / 'patches/foreground-text-focus.patch').read_bytes()
         assert hashlib.sha256(focus_patch).hexdigest() == foreground['patch_sha256']
@@ -174,7 +180,7 @@ def test_local_native_patch_has_inspectable_hash_bound_provenance():
         for name, hashes in foreground['files'].items():
             assert hashlib.sha256(source.extractfile(name).read()).hexdigest() == hashes['after']
             assert hashes['before'] != hashes['after']
-        steps = (('ordinary-helptag', helptag, 2), ('connected-click', connected, 2), ('ref-locate', locate, 3))
+        steps = (('ordinary-helptag', helptag, 2), ('connected-click', connected, 2), ('ref-locate', locate, 3), ('row-recipient', row, 15))
         for index, (step, record, count) in enumerate(steps):
             step_patch = (vendor / f'patches/{step}.patch').read_bytes()
             assert hashlib.sha256(step_patch).hexdigest() == record['patch_sha256']

@@ -5,22 +5,22 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
-The six Python files are copied byte-for-byte from the exact release source. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
+Three Python files remain byte-for-byte from the exact release source. The contract UniFFI module carries the row2 ABI; the SDK UniFFI module preserves exact landed fdbf48f callback ownership/drop hardening after regeneration. __init__.py additionally exports ExpectedRow and RowReceipt. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
 | Source file | SHA256 |
 | --- | --- |
-| `__init__.py` | `968e30886e29ef5fc66316d4bb5aef46a30c9b8f5422635ac48982ab15379ddd` |
+| `__init__.py` | `79835f444dffd8b64cbb76a0c7b4836a3d290b49febeb3c330ec78ad91e0043b` |
 | `__main__.py` | `bcb78a6283dc6da69f3338879ae34a0f2dbeea3b444e4c3dd43f170d2922a387` |
 | `_daemon.py` | `f6ce97a08ab5c124ba0210b00e44bd652b41cca5a9ae20a511a6409093e8f01e` |
 | `_native.py` | `8bb3927dd6579d94468eb5c08b1700230359813074cd1959c2e226c318dd4828` |
-| `_native_contract.py` | `f5237aa6dac954ea15959347ddaeb38e99b6df18c6c323093fabe275f27c808f` |
+| `_native_contract.py` | `2fabf55da93f67899246918e76516b8e8427340649d9fa1b6da152fc2862ec0f` |
 | `wrapper.py` | `cfd7abe6215aab7c1d8f66f2c15e6cd6ab7f150918de7b301b73c253e90a61d6` |
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9` (6,431,079 bytes). It is the end of a five-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
+`native-source.tar.gz` SHA256: `c9ca9cd7d71779f33dc031f4bf38e1ad48518fce940fd1a06d79e8a7f56ae7ba` (6,444,769 bytes). It is the end of a six-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10, row4. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -297,3 +297,37 @@ element outside the shadow tree covers (FP47: the shadow root's hit test answers
 covering element, and nothing is sent), on a control inside a focusable container (FP55) and on
 an editable region whose selection a script has moved (FP56), and `tests/test_filmed_delivery_functions.py` runs them
 in Node on stand-in elements.
+
+## Typed row recipient patch (row1)
+
+`patches/row-recipient.json` binds the inspectable patch, before/after file hashes,
+three explicit added source files and one added directory. Its predicate is
+validated against the actual held SDK token recipient immediately before one
+AXPress; independent geometry never joins an AX object to a token. Snapshot
+qualification is opt-in, missing predicates refuse qualified tokens, and receipt
+acknowledgement does not prove application effect. See docs/native-row-contract.md.
+
+The SDK dependency lock is unchanged. Python modules were generated with UniFFI
+0.31.0 from the compiled row1 library using the SDK's byte-identical bindgen main.
+An isolated generation-only Cargo utility omits the unused, uncached C-header
+`cbindgen` dependency and locks cached clap 4.6.7 (instead of 4.6.1) and its CLI
+dependencies; no shipped SDK dependency changes. `--metadata-no-deps` is used
+because both exported namespaces are in the workspace. Generation uses their
+committed uniffi.toml files, `--language python --no-format`; outputs are renamed
+from cua_driver_sdk.py / cua_driver_contract.py to _native.py / _native_contract.py
+with trailing whitespace removed deterministically (no semantic edits). The generator source, lock, commands and output hashes are
+retained with the row evidence; neither a Driver nor live input was started.
+
+Source reconstruction and offline ABI checks do not prove live Chrome AXHeader
+exposure, census latency or recipient behavior. Installed delivery and live
+qualification remain separate boundaries.
+
+## Row2 review corrections
+
+ExpectedRow version2 requires complete selected-row values aligned to explicitly qualified columns, with held cell references inside one dispatch. A unique-column display locator alone is not identity. The reciprocal census rejects conflicting child lists and requires document-above-table-above-row ancestry. Original row1 review/archive/wheel evidence is retained outside this tree. Only click implements this predicate gate; raw SDK alternate tools remain outside Footwork's click-only row support. No live AX behavior or application outcome is established by these offline changes.
+
+## Required Python callback ownership overlay
+
+Regeneration must preserve the landed fdbf48f foreign-future drop and remote-channel owning-loop implementation. `patches/python-callback-owner.patch` restores those exact bytes on the generated `_native.py`; its JSON manifest binds the generated, patch and restored hashes. From this vendor directory, after verifying the generated hash, apply `patch --batch --forward -p1 -i patches/python-callback-owner.patch` and verify the restored hash. Unexpected generator drift refuses this overlay rather than silently dropping it. `_native_contract.py` retains the independently generated row ABI.
+
+The packaged SDK module is byte-identical to fdbf48f. Tests execute the actual callback from another thread on an owned debug asyncio loop, test closed/absent loops and both remote object converters' owner-loop guard, and verify reversible overlay reconstruction against the packaged bytes. No Driver or OS input is created.

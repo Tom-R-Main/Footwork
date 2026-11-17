@@ -92,6 +92,8 @@ from ._native import (
     plan_cursor_spec,
 )
 from ._native_contract import (
+    ExpectedRow,
+    RowReceipt,
     CursorMotionEffectsOutput,
     AppInfo,
     ClickPosition,

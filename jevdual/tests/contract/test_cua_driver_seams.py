@@ -17,7 +17,7 @@ import pytest
 
 cd = pytest.importorskip("cua_driver")
 
-PINNED_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10"
+PINNED_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4"
 
 
 def _params(cls) -> set[str]:
@@ -239,3 +239,20 @@ def test_native_bridge_preserves_explicit_driver_session():
 def test_embedded_constructor_is_available_without_starting_runtime():
     # Native sessions must retain their host's permission identity, not auto-launch CuaDriver.app.
     assert "embedded" in inspect.signature(cd.CuaDriver.create).parameters
+
+
+def test_row_recipient_records_match_native_abi():
+    from cua_driver import _native_contract as native
+    expected = cd.ExpectedRow(version=2, pid=77, window_id=9,
+        document_url="http://127.0.0.1:5176/tasks", table_headers=["ID", "Action"], row_values=["TASK-1", "Open menu"],
+        key_column="ID", key_value="TASK-1", role="AXButton", name="Open menu", action="AXPress")
+    converter = native._UniffiFfiConverterTypeExpectedRow
+    assert converter.lift(converter.lower(expected)) == expected
+    proof = cd.RowReceipt(version=1, predicate=expected, dispatched=True,
+        acknowledged=True, delivered_count=1, effect="unverifiable", error=None)
+    converter = native._UniffiFfiConverterTypeRowReceipt
+    assert converter.lift(converter.lower(proof)) == proof
+    assert "expected_row" in _params(cd.ClickInput)
+    assert "expected_row" in _params(cd.WindowElement)
+    assert "row_receipt" in _params(cd.ActionResult)
+    assert "qualify_rows" in _params(cd.GetWindowStateInput)
