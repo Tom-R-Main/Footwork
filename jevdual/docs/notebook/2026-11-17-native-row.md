@@ -18,3 +18,10 @@ Established: existing supported section and DOM-ID controls discriminate in publ
 Uncertain: actual raw SDK omission/flattening/supplement failure in the retained live run, alias-versus-hidden-peer equality, and a future acceptable recipient-binding design. No live input tested.
 Decision: conditional implementation stop honored. Deliver only fixture/contract evidence; no row source behavior change, integration or installation. Reopen only on a separately supported recipient-contract decision.
 Refs: /Volumes/External SSD/Footwork-native-row-evidence-20261117/RECIPIENT-CONTRACT.md
+
+## RW4 · prediction · 2026-11-17 07:10
+Hypothesis: a typed row predicate produced and revalidated by the SDK against its actual retained token recipient can close the missing binding without a geometry join or generic AX endpoint. SDK snapshot metadata can require that predicate, preventing metadata removal from downgrading this route.
+Test: record schema/adapter/public-CLI failures first, then implement a bounded complete row/document census and one guarded AXPress; exercise real validation with fixture AX reads in ordinary/durable paths, plus wrong/duplicate/reordered/replaced/hidden/unreadable peers, stale selectors and evidence downgrade. Keep original f65368d cases and separate infobar stack.
+Predicts: qualified token dispatches once only when exact semantic predicate and held references agree; malformed/missing/stale predicate sends nothing, acknowledgement alone remains unverified, and no fallback occurs.
+Against: fixture bypasses production validation, actual token cannot be bound to explicit table/column/key identity, incomplete census qualifies, any negative sends, or metadata removal/generic diff confirms the route. Missing bounded truthful contract stops implementation.
+Refs: docs/native-row-contract.md; /Volumes/External SSD/Footwork-native-row-evidence-20261117/RECIPIENT-CONTRACT.md
