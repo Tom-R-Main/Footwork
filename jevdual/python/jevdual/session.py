@@ -730,9 +730,13 @@ def _outside_receipt(r: Any, pending: dict[str, Any], *, pid: int | None = None,
             evidence="qualified fullscreen state transition" if confirmed else "fullscreen transition was not independently verified",
         )
     infobar_control = (pending.get("target_identity") or {}).get("native_infobar_control")
-    if infobar_control is not None and pending.get("dispatched") is False:
+    infobar_intent = (infobar_control is not None or pending.get("target_id") == -3
+                      or proof.get("predicate") == "native_infobar_disappearance"
+                      or basis == "ax_infobar_disappearance_readback"
+                      or (pending.get("native_delivery") or {}).get("delivery_basis") == "ax_infobar_disappearance_readback")
+    if infobar_intent and pending.get("dispatched") is False and not proof:
         return dataclasses.replace(r, effect="refused", evidence="qualified infobar AXPress not attempted")
-    if infobar_control is not None and pending.get("dispatched") is not False:
+    if infobar_intent:
         from jevdual.operator_evidence import EvidenceError, infobar_readback_effect
 
         delivery = pending.get("native_delivery") or {}
@@ -1072,6 +1076,8 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
             extra += f" href={c.href!r}"
         if c.native_window_control is not None:
             extra += " native_window=" + json.dumps(c.native_window_control, sort_keys=True)
+        elif c.native_infobar_control is not None:
+            extra += " native_infobar=" + json.dumps(c.native_infobar_control, sort_keys=True)
         elif qualified_control_identity(c) is not None:
             extra += f" dom_id={c.native_dom_id!r} document={c.native_document_url!r}"
         if c.native_control_opaque:
@@ -2342,32 +2348,31 @@ def resolve_destination(nm: Any, selector: str) -> tuple[Any, str]:
     return (nm.menu.candidate(rid), "") if rid is not None else (None, f"destination: {why}")
 
 
-def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
-    """Resolve a label, optionally ``section:<exact ancestor>::<role:label>``.
-
-    Section matching is exact (case-insensitive); label matching retains its exact-before-substring
-    rule. A literal label starting with ``section:`` remains addressable with ``label:``.
-    """
+def _selector_candidates(menu: Menu, label: str) -> tuple[list[Candidate], str]:
+    """Shared exact-before-substring matching for previous intent and fresh selection."""
     role = None
     section = None
     if label.startswith("section:"):
         section, separator, label = label[len("section:"):].partition("::")
         if not separator or not section or not label:
-            return None, "invalid section selector; use section:<exact ancestor>::<label>"
+            return [], "invalid section selector; use section:<exact ancestor>::<label>"
     if label.startswith("label:"):
-        label = label[len("label:") :]  # label:2 addresses a label that is a number (Q19 R4)
+        label = label[len("label:") :]
     elif ":" in label and label.split(":", 1)[0].isalpha():
-        role, label = label.split(":", 1)  # button:Search narrows by role
+        role, label = label.split(":", 1)
     low = label.casefold()
-    pool = [
-        c for c in nm.menu.candidates
-        if (role is None or c.role == role.casefold())
-        and (section is None or (c.section or "").casefold() == section.casefold())
-    ]
+    pool = [c for c in menu.candidates
+            if (role is None or c.role == role.casefold())
+            and (section is None or (c.section or "").casefold() == section.casefold())]
     exact = [c for c in pool if c.label.casefold() == low]
-    if len(exact) == 1:
-        return exact[0].id, ""
-    hits = exact or [c for c in pool if low in c.label.casefold()]
+    return exact or [c for c in pool if low in c.label.casefold()], ""
+
+
+def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
+    """Resolve a label, optionally section:<exact ancestor>::<role:label>."""
+    hits, invalid = _selector_candidates(nm.menu, label)
+    if invalid:
+        return None, invalid
     if len(hits) == 1:
         return hits[0].id, ""
     if not hits:
@@ -2588,14 +2593,20 @@ async def cmd_do(args: Any) -> int:
         # A selector chosen from a native window action must not fall through to
         # an ordinary SDK control when fresh AX qualification disappears. The
         # caller must observe and select the different control separately.
+        prior_hits = []
+        if state.mode == "native" and before is not None:
+            if isinstance(cid, int):
+                previous = before.candidate(cid)
+                prior_hits = [previous] if previous is not None else []
+            elif isinstance(cid, str):
+                prior_hits, _ = _selector_candidates(before, cid)
         selected_window_controls = [
-            c for c in chosen_cands
-            if (c.get("native_window_control") or c.get("native_infobar_control")) and str(requested_selector).strip().casefold()
-            in {str(c["id"]), c["label"].casefold(), "button:" + c["label"].casefold()}
-        ] if state.mode == "native" else []
+            c for c in prior_hits
+            if c.native_window_control is not None or c.native_infobar_control is not None
+        ]
         if selected_window_controls:
             previous_control = selected_window_controls[0]
-            current_control = nm.menu.candidate(previous_control["id"])
+            current_control = nm.menu.candidate(previous_control.id)
             if (len(selected_window_controls) != 1 or current_control is None
                     or (current_control.native_window_control is None and current_control.native_infobar_control is None)
                     or qualified_control_identity(previous_control) != qualified_control_identity(current_control)):
@@ -2609,7 +2620,7 @@ async def cmd_do(args: Any) -> int:
             if rid is None:
                 print(why, file=sys.stderr)
                 return targeting_refused(_selector_failure_code(nm, why), "selector did not resolve uniquely")
-            if selected_window_controls and rid != selected_window_controls[0]["id"]:
+            if selected_window_controls and rid != selected_window_controls[0].id:
                 return targeting_refused("target_changed", "fullscreen selector changed control kind since look; observe again")
             cid = rid
             chosen_from = {}  # a label is resolved on the fresh observation; nothing to compare

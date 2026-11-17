@@ -573,8 +573,11 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
     ):
         _validate_fullscreen_execution(projection.get("native_readback"), binding, effect, op, projection, basis, count)
     infobar = identity.get("native_infobar_control") if isinstance(identity, dict) else None
-    if basis == "ax_infobar_disappearance_readback" or (
-        (op.target == "-3" or infobar is not None) and (dispatched is True or effect in {"confirmed", "partial"})
+    native_proof = projection.get("native_readback")
+    infobar_intent = op.target == "-3" or infobar is not None
+    infobar_proof = isinstance(native_proof, dict) and native_proof.get("predicate") == "native_infobar_disappearance"
+    if basis == "ax_infobar_disappearance_readback" or infobar_proof or (
+        infobar_intent and (dispatched is True or effect in {"confirmed", "partial"} or native_proof is not None)
     ):
         _validate_infobar_execution(projection.get("native_readback"), binding, effect, op, projection, basis, count)
     if basis in {"ax_menu_effect_readback", "ax_finder_rename_readback", "ax_finder_move_readback"}:

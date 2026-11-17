@@ -314,6 +314,7 @@ def test_ordinary_reserved_target_cannot_downgrade_to_generic_receipt(drop):
 @pytest.mark.parametrize('phase', ['not_sent', 'ambiguous'])
 def test_durable_positive_press_proof_cannot_be_relabelled_no_send_or_unknown(phase):
     from jevdual.operator_evidence import EvidenceError, validate_execution
+
     from tests.test_operator_evidence import BINDING
     op, record = infobar_execution()
     no_send = phase == 'not_sent'
@@ -354,8 +355,8 @@ def test_real_nsarray_children_offer_and_press_only_native_infobar(world, fw, mo
 def test_census_equality_work_is_bounded_without_trusting_hashes(world, monkeypatch, collisions):
     from jevdual import ax
     win, *_ = infobar_world(world, monkeypatch)
-    win['AXChildren'] = [dict(AXRole='AXStaticText', AXParent=win, AXWindow=win,
-                             _pid=77, _hash=10000 + (0 if collisions else i)) for i in range(2000)]
+    win['AXChildren'] = [{'AXRole': 'AXStaticText', 'AXParent': win, 'AXWindow': win,
+                             '_pid': 77, '_hash': 10000 + (0 if collisions else i)} for i in range(2000)]
     comparisons = []
     original = ax.same_element
     def same(a, b):

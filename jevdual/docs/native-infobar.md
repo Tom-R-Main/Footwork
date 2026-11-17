@@ -18,8 +18,9 @@ used. A stale label cannot fall through to an ordinary same-label SDK candidate.
 Persistence carries semantic proof and CFHash discriminators; it does not claim
 object continuity across commands. AX offers no atomic app-side conditional press.
 After dispatch, unreadable/replaced window or tab state stays unverified. The
-`ax_infobar_disappearance_readback` basis confirms only observed infobar absence
-with the same window and tabs retained, plus exactly one acknowledged press.
+`ax_infobar_disappearance_readback` basis records an acknowledged press with
+readback evidence. Only `effect=confirmed` asserts observed infobar absence with
+the same window and tabs retained, plus exactly one acknowledged press.
 Acknowledgement without that readback is unverified; prepress refusal records zero
 AX attempts even if an observation changed. Ordinary and durable receipts preserve
 this boundary; a durable token replay does not press again.
@@ -27,3 +28,8 @@ this boundary; a durable token replay does not press again.
 Offline fixtures do not establish live accessibility exposure or timing. Live
 qualification requires reviewed installed bytes, fresh exact target and custody.
 Page scrolling and row-menu identity are separate, unimplemented scopes here.
+
+The census reads at most 2,048 native nodes, excluding web subtrees. CFHash buckets
+only accelerate actual object-equality checks; collisions do not prove identity.
+Excessive collision work refuses. Full census AX reads still cost linear work on
+operator observations; this has not been measured as live end-to-end latency.

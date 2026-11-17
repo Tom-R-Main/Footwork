@@ -34,3 +34,9 @@ Test: retain reviewers original evidence, add public CLI stale selector variants
 Predicts: all stale aliases send zero; unchanged exact native action works with NSArray; missing or contradictory evidence never confirms/no-send-launders; normal distinct-hash census uses linear equality comparisons with bounded collision work.
 Against: any fallback dispatch/false receipt, real array failure, hidden peer omitted, collision interpreted as identity, or excessive comparisons disproves the correction. Live behavior/timing remains unproven.
 Refs: tests/test_native_infobar.py; docs/native-infobar.md
+
+## IB7 · update · 2026-11-17 07:15
+Observed: committed regression set fails15/passes70 before corrections; afterward85 focused cases and840 affected cases pass. Real Foundation NSArray passes ordinary/durable CLI; stale aliases and evidence downgrades refuse. Equality work is bounded with collision refusal; actual equality remains decisive. Rendered identity is native, and basis wording separates acknowledgement from confirmed disappearance. Ruff/notebook/diff checks pass.
+Resolves: IB6 = held
+Next: freeze corrected source for fresh Sol/Opus review. No GUI/live timing/install established. Record exact affected command for reproducibility: PYTHONPATH=python python -m pytest -q tests/test_native_infobar.py tests/test_native.py tests/test_menu.py tests/test_session_scenarios.py tests/test_operator_evidence.py tests/test_native_receipts.py tests/test_session_operations.py tests/test_session_evidence.py tests/test_session.py tests/test_ax_semantics.py.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/review-corrections-red-002.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/review-corrections-affected.txt

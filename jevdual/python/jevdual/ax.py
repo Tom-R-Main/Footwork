@@ -285,7 +285,10 @@ def fullscreen_readback(pid: int, window_id: int, expected_window: Any) -> dict[
 
 def _infobar_census(pid: int, window_id: int) -> tuple[Any, list[Any], list[Any], list[Any]]:
     """Complete bounded native-chrome census; web subtrees never confer native authority."""
+    from itertools import islice
+
     from ApplicationServices import AXUIElementGetPid
+    from CoreFoundation import CFHash
 
     read = _fullscreen_attr  # preserves unsupported/no-value versus an AX read error
     win = window_element(pid, window_id)
@@ -293,10 +296,18 @@ def _infobar_census(pid: int, window_id: int) -> tuple[Any, list[Any], list[Any]
         raise AXError("infobar_unqualified", "bound window unavailable")
     rows: list[tuple[Any, list[Any], str, Any, Any]] = []
     stack = [(win, [])]
+    buckets: dict[int, list[Any]] = {}
+    comparisons = 0
     while stack:
         el, ancestors = stack.pop()
-        if len(rows) >= 2048 or len(ancestors) > 20 or any(same_element(el, r[0]) for r in rows):
+        peers = buckets.setdefault(int(CFHash(el)), [])
+        comparisons += len(peers)
+        # Hash only selects comparisons; equality still decides aliases/cycles.
+        # A pathological collision bucket refuses rather than doing quadratic IPC.
+        if (len(rows) >= 2048 or len(ancestors) > 20 or comparisons > 4096
+                or any(same_element(el, peer) for peer in peers)):
             raise AXError("infobar_unqualified", "native census incomplete or cyclic")
+        peers.append(el)
         error, owner = AXUIElementGetPid(el, None)
         role = read(el, "AXRole")
         subrole = read(el, "AXSubrole", optional=True)
@@ -311,8 +322,14 @@ def _infobar_census(pid: int, window_id: int) -> tuple[Any, list[Any], list[Any]
             continue  # page-authored alert/button labels are deliberately outside this census
         children = read(el, "AXChildren", optional=role not in {"AXWindow", "AXGroup", "AXTabGroup", "AXRadioButton"})
         if children is not None:
-            if not isinstance(children, (list, tuple)) or len(children) > 2048:
+            if isinstance(children, (str, bytes, dict)):
                 raise AXError("infobar_unqualified", "native children unreadable")
+            try:
+                children = list(islice(iter(children), 2049))
+            except (TypeError, ValueError) as exc:
+                raise AXError("infobar_unqualified", "native children unreadable") from exc
+            if len(children) > 2048:
+                raise AXError("infobar_unqualified", "native children exceed census bound")
             stack.extend((child, ancestors + [el]) for child in reversed(children))
     containers = [r for r in rows if r[2:] == ("AXGroup", "AXApplicationGroup", "Infobar Container")]
     alerts = [r for r in rows if r[2:] == ("AXGroup", "AXApplicationAlertDialog", "Infobar")]
