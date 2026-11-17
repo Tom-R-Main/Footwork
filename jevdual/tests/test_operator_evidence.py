@@ -310,3 +310,14 @@ def test_fullscreen_reserved_target_preserves_no_dispatch_or_unknown(phase, disp
     record['projection'].pop('native_readback')
     record['projection'].update(dispatched=dispatched, driver_effect=effect)
     assert validate_execution(record, op, binding=BINDING) == record
+
+
+def test_fullscreen_reserved_target_unknown_dispatch_cannot_confirm_without_proof():
+    op, record = fullscreen_execution()
+    record.update(phase='ambiguous', dispatched=None)
+    record['producer'].update(delivery_basis='unknown', delivered_count=None)
+    record['projection'].pop('target_identity')
+    record['projection'].pop('native_readback')
+    record['projection']['dispatched'] = None
+    with pytest.raises(EvidenceError):
+        validate_execution(record, op, binding=BINDING)

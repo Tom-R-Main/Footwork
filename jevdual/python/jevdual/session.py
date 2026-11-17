@@ -2565,6 +2565,21 @@ async def cmd_do(args: Any) -> int:
                 )
         target = None
         file_target = None
+        # A selector chosen from a native window action must not fall through to
+        # an ordinary SDK control when fresh AX qualification disappears. The
+        # caller must observe and select the different control separately.
+        selected_window_controls = [
+            c for c in chosen_cands
+            if c.get("native_window_control") and str(requested_selector).strip().casefold()
+            in {str(c["id"]), c["label"].casefold(), "button:" + c["label"].casefold()}
+        ] if state.mode == "native" else []
+        if selected_window_controls:
+            previous_control = selected_window_controls[0]
+            current_control = nm.menu.candidate(previous_control["id"])
+            if (len(selected_window_controls) != 1 or current_control is None
+                    or current_control.native_window_control is None
+                    or qualified_control_identity(previous_control) != qualified_control_identity(current_control)):
+                return targeting_refused("target_changed", "fullscreen control lost qualification since look; observe again")
         if isinstance(cid, str):
             if cid.startswith("file:"):
                 file_target, rid = _file_target(state, nm, cid)
@@ -2574,6 +2589,8 @@ async def cmd_do(args: Any) -> int:
             if rid is None:
                 print(why, file=sys.stderr)
                 return targeting_refused(_selector_failure_code(nm, why), "selector did not resolve uniquely")
+            if selected_window_controls and rid != selected_window_controls[0]["id"]:
+                return targeting_refused("target_changed", "fullscreen selector changed control kind since look; observe again")
             cid = rid
             chosen_from = {}  # a label is resolved on the fresh observation; nothing to compare
         if cid is not None:

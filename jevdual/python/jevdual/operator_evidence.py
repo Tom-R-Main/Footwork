@@ -478,7 +478,7 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
                 "ax_insert_ack",
                 "ax_menu_press_ack",
                 "ax_menu_effect_readback",
-        "ax_fullscreen_state_readback",
+                "ax_fullscreen_state_readback",
                 "ax_finder_rename_readback",
                 "ax_finder_move_readback",
             }
@@ -498,7 +498,13 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
     projection = record["projection"]
     identity = projection.get("target_identity")
     fullscreen = identity.get("native_window_control") if isinstance(identity, dict) else None
-    if basis == "ax_fullscreen_state_readback" or (fullscreen is not None and dispatched is True):
+    # The admitted reserved target carries semantic intent even if a producer
+    # omits its optional projection or relabels the delivery basis. No-send and
+    # interrupted unknown-dispatch receipts do not claim an observed effect.
+    fullscreen_target = op.target == "-2" or fullscreen is not None
+    if basis == "ax_fullscreen_state_readback" or (
+        fullscreen_target and (dispatched is True or effect in {"confirmed", "partial"})
+    ):
         _validate_fullscreen_execution(projection.get("native_readback"), binding, effect, op, projection, basis, count)
     if basis in {"ax_menu_effect_readback", "ax_finder_rename_readback", "ax_finder_move_readback"}:
         _validate_native_readback(projection.get("native_readback"), basis, binding, effect, op, projection)
