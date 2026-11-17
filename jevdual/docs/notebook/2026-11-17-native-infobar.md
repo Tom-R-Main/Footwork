@@ -79,3 +79,10 @@ Observed: new delivery/type/marker cases fail38/pass5 before correction; additio
 Resolves: IB12 = held
 Next: freeze for both fresh independent reviews. Installed runtime unchanged and live qualification held; source and evidence remain separate from unfinished row SDK work.
 Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/closed-schema-red.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/closed-schema-envelope-red.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/closed-schema-final-affected.txt
+
+## IB14 · prediction · 2026-11-17 08:20
+Hypothesis: the remaining ordinary-consumer gap is incomplete agreement of retained provenance copies, not input qualification or durable settlement. Validating every present binding and comparing all available attempt/observation/binding/error copies closes this boundary without requiring historical optional fields.
+Test: retain Sol11d59ef twelve public-CLI contradictions and unchanged/omitted controls as committed regressions; extend to outer/inner/envelope malformed identities and all optional-copy subsets, then run affected checks and fresh independent Sol/Opus reviews.
+Predicts: contradictory or malformed retained provenance yields unverifiable while the original durable capsule and one actual fixture press remain unchanged; consistent historical omissions retain their classification.
+Against: any retained disagreement confirms, legitimate producer shapes lose their truthful result, or input authority changes. Opus approval and Sol blocker are both retained; integration remains held.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/sol-review-11d59ef/review-sol.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/opus-review-11d59ef/review-opus.md
