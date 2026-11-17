@@ -15,8 +15,17 @@ pytestmark = pytest.mark.skipif(not PROBE, reason='requires compiled pinned SDK 
 
 def sdk_row_world(world, monkeypatch, variant):
     from jevdual.effectors import cua
+    from jevdual import ax, posture
+    from tests.test_posture import Activity
+
+    monkeypatch.setattr(posture, "MacActivity", lambda: Activity(idle=60, fronts=(77,)))
+    monkeypatch.setattr(ax, "raise_window", lambda *args: None)
+    monkeypatch.setattr(ax, "focused_window_id", lambda pid: 40335)
 
     row_world(world, monkeypatch, variant)
+    # The recorded calculator fixture carries its historical PID; this synthetic
+    # SDK instance and actual row graph are bound to the fixture process 77.
+    world.base["pid"] = 77
     graph = graph_fixture()
     held = {}
     sent = []
@@ -82,13 +91,13 @@ def test_public_cli_uses_actual_sdk_row_contract(world, fw, monkeypatch, tmp_pat
     else:
         assert fw('start', 'Open TASK-0', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
     offered = [c for c in _state(fw)['last_candidates'] if c['label'] == 'Open menu']
-    assert len(offered) == 2
+    assert len(offered) == 2, _state(fw)
     assert offered[0]['native_row_control']['key_value'] == 'TASK-0'
     result = fw('do', 'click', 'section:Task ID=TASK-0::combobox:Open menu',
                 *(['--token', 'row-contract'] if durable else []))
     assert result[0] == 0, result
-    assert sent == [940]
-    assert _state(fw)['last_receipt']['effect'] == 'unverifiable'
+    assert sent == [940], result
+    assert last_receipt(fw)['effect'] == 'unverifiable'
 
 
 def test_tokenless_row_stays_unavailable(world, fw, monkeypatch):
@@ -97,3 +106,93 @@ def test_tokenless_row_stays_unavailable(world, fw, monkeypatch):
     assert not [c for c in _state(fw)['last_candidates'] if c['label'] == 'Open menu']
     assert fw('do', 'click', 'section:Task ID=TASK-0::combobox:Open menu')[0] != 0
     assert not sent
+
+
+def last_receipt(fw):
+    import json
+    return [json.loads(line) for line in (fw.session / 'session.jsonl').read_text().splitlines()
+            if json.loads(line)['kind'] == 'receipt'][-1]
+
+
+def start_row(fw, monkeypatch, tmp_path, durable):
+    if durable:
+        from jevdual.session import SessionState
+        authority = _durable_start(fw, monkeypatch, tmp_path)
+        state = SessionState.load(fw.session)
+        state.posture = 'exclusive_desktop'
+        state.save()
+        return authority
+    assert fw('start', 'Open TASK-0', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+
+
+@pytest.mark.parametrize('durable', [False, True])
+def test_row_metadata_downgrade_cannot_become_generic_confirmation(world, fw, monkeypatch, tmp_path, durable):
+    from jevdual import operator_evidence, session
+    from jevdual.session_operations import SessionOperations
+
+    _graph, sent = sdk_row_world(world, monkeypatch, 'complete')
+    authority = start_row(fw, monkeypatch, tmp_path, durable)
+    original_click = world.click
+    async def click(inp):
+        result = await original_click(inp)
+        world.toggles[990] = ['Unrelated UI update', '1']
+        return result
+    monkeypatch.setattr(world, 'click', click)
+
+    def downgrade(p):
+        p['target_identity'].pop('native_row_control')
+        p.pop('native_readback', None)
+        p['native_delivery']['delivery_basis'] = 'sdk_delivery_count'
+        p['driver_effect'] = 'confirmed'
+
+    if durable:
+        original = operator_evidence.execution_record
+        def corrupt(*args, **kwargs):
+            rec = original(*args, **kwargs)
+            downgrade(rec['projection'])
+            rec['producer']['delivery_basis'] = 'sdk_delivery_count'
+            rec['effect'] = 'confirmed'
+            return rec
+        monkeypatch.setattr(operator_evidence, 'execution_record', corrupt)
+    else:
+        original = session._outside_receipt
+        def corrupt(r, pending, **kwargs):
+            downgrade(pending)
+            return original(r, pending, **kwargs)
+        monkeypatch.setattr(session, '_outside_receipt', corrupt)
+    result = fw('do', 'click', 'section:Task ID=TASK-0::combobox:Open menu',
+                *(['--token', 'downgrade'] if durable else []))
+    assert sent == [940]
+    if durable:
+        with SessionOperations(authority) as ops:
+            op = ops.status()[-1]
+            assert ops._retained_execution(op) is None
+            status = ops.receipt(op)
+        assert result[0] != 0 and status['state'] == 'unknown'
+        fw('do', 'click', 'section:Task ID=TASK-0::combobox:Open menu', '--token', 'downgrade')
+        assert sent == [940]
+    else:
+        assert result[0] == 0
+        assert last_receipt(fw)['effect'] == 'unverifiable'
+
+
+@pytest.mark.parametrize('durable', [False, True])
+def test_row_default_exception_after_sdk_attempt_is_unknown(world, fw, monkeypatch, tmp_path, durable):
+    from jevdual.native import NativeBridge, NativeBridgeError
+    from jevdual.session_operations import SessionOperations
+    _graph, sent = sdk_row_world(world, monkeypatch, 'complete')
+    authority = start_row(fw, monkeypatch, tmp_path, durable)
+    original = NativeBridge.act
+    async def fail_after(self, *args, **kwargs):
+        await original(self, *args, **kwargs)
+        raise NativeBridgeError('late_error', 'reply lost after actual row press')
+    monkeypatch.setattr(NativeBridge, 'act', fail_after)
+    fw('do', 'click', 'section:Task ID=TASK-0::combobox:Open menu',
+       *(['--token', 'late-error'] if durable else []))
+    assert sent == [940]
+    assert last_receipt(fw)['effect'] == 'unverifiable'
+    if durable:
+        with SessionOperations(authority) as ops:
+            op = ops.status()[-1]
+            assert ops._retained_execution(op) is None
+            assert ops.receipt(op)['state'] == 'unknown'
