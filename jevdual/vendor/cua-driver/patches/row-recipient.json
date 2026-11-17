@@ -1,6 +1,6 @@
 {
   "base_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
-  "patch_sha256": "256bf7c6088e104badae0280945c0f8940f8c10f0223884e99166c38c022d4cf",
+  "patch_sha256": "55e0557284839f268c9fba497276c959fe12ecdd71e02b0d0d3ca37ff4bdf7c5",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs": {
       "before": null,
@@ -13,7 +13,7 @@
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/lib.rs": {
       "before": "24696d580184ab248114b1294ca1e9d8b568eea88b6137c2d15c7c726d549b3b",
-      "after": "7b8c2b723a69428148283fd390fc7eefe3ebb3f331cbeaadcfb01d343db3f50d"
+      "after": "43acecdb48835c512873a57acf7c616292d85f7804dead1072298cf2393ff572"
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs": {
       "before": "fa9ce6eec69a605bb45142bcad21faf6a0529eed7ad36d4ddd1b81b7d14b6300",
@@ -50,7 +50,7 @@
     },
     "libs/cua-driver/rust/crates/platform-macos/src/ax/row_guard.rs": {
       "before": null,
-      "after": "abe7100e3b9ea21f64adc3aa54008b9d110e7ae63afc2fe2ebfe50476a507f9c",
+      "after": "9a744d51b823478020feffbad90cbe1caf7e1d6123b0e6cc58bd3952768138e2",
       "mode": 420
     },
     "libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs": {
@@ -74,6 +74,16 @@
       "before": null,
       "after": "8034c5f399b687fa106a4cf8ed977c0d4ecf53236e6f2f7187a15817452b0e28",
       "mode": 420
+    },
+    "libs/cua-driver/rust/crates/cua-driver-contract/src/row_window.rs": {
+      "before": null,
+      "after": "217f84f56f29eb45cd5829ada840f273f99587603191771995eee23da137dbca",
+      "mode": 420
+    },
+    "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_parent_probe.rs": {
+      "before": null,
+      "after": "2a121216d3ad9f7ed6bfcef0d031671229065fe4ac61e0a15e32a5b3884c734e",
+      "mode": 420
     }
   },
   "added_directories": [
@@ -82,7 +92,7 @@
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
   "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2",
-  "patched_archive_sha256": "941c3b35a6d467a14c64a4bfe5a4d6a84a67b032675b893b856cb8dcf256b52a",
+  "patched_archive_sha256": "5333d385bd6da0a75671fe990c224196e73d303d9f3ead4d385929582123b3b1",
   "abi": "ExpectedRow version2 unchanged; optional row_trace_url input and row_trace_json output; callback overlay unchanged",
   "toolchain": "1.97.1"
 }
