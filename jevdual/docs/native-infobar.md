@@ -69,3 +69,11 @@ projection omits its optional `error`, the admission placeholder can reappear in
 ordinary presentation. Durable settlement stays correct; ordinary presentation
 conservatively says unverifiable. This projection-merge behavior is deferred,
 not silently described as preserving the ordinary success classification.
+
+Known qualification limit: the SDK types `snapshot_id` as optional. An empty
+observation ID fails strict provenance validation, so a natural press or no-send
+can quarantine rather than settle durably. Real-driver reachability is unproven.
+Before live qualification, inspect the fresh observation and require a nonempty
+snapshot ID; otherwise stop without input. This is an operational qualification
+precondition, not an implemented prepress guard. Do not relax provenance or retry
+an unknown outcome.

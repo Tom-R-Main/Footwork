@@ -105,3 +105,9 @@ Observed: consumer matrix on d220e72 fails52/passes192; the bounded correction a
 Resolves: IB16 = held
 Next: freeze final source for fresh independent Sol/Opus reviews after both8b720d4 reviews completed. Installed52da remains unchanged; no GUI/input/install. No row or scroll scope folded into this fix.
 Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/CONSUMER-COVERAGE-001.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/boundary-red.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/boundary-green.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/boundary-affected.txt
+
+## IB18 · summary · 2026-11-17 09:00
+Established: independent Sol and Opus reviews approve frozen0dc4221 with no blockers; both verify consumer coverage and source custody. The prior durable provenance blocker is closed.
+Uncertain: Opus reproduces an empty optional snapshot_id causing natural infobar results to quarantine, including genuine no-send. IB16/IB17 held only for nonempty observation IDs; the broader natural-state claim is falsified for this omitted-ID case. Live reachability remains unknown. The historical omitted-error ordinary presentation limitation remains deferred.
+Decision: proceed under existing integration/delivery authority with unchanged reviewed production bytes. Live qualification is separate and must inspect a nonempty fresh snapshot ID before any infobar action, otherwise stop without input. No relaxed validator, retry, row or scroll expansion.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/REVIEW-RECONCILIATION-0dc4221.json; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/sol-review-0dc4221/review-sol.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/opus-review-0dc4221/review-opus.md
