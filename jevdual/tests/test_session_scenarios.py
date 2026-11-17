@@ -4328,3 +4328,45 @@ def test_filmed_point_waits_for_delayed_native_delivery_before_claiming_arrival(
     assert poster.location() == (455., 415.) and poster.max_pending == 1
     assert record['gestures'][-1]['outcome'] == 'arrived'
     assert world.presses == []
+
+
+def _fullscreen_world(world, monkeypatch):
+    """Unlabelled title-bar controls; real AX qualification, synthetic OS boundary."""
+    import sys
+    from jevdual import ax
+
+    win = {'AXRole': 'AXWindow', '_pid': 77, '_hash': 100,
+           'AXFullScreen': False, 'AXChildren': []}
+    nodes = []
+    for idx, subrole in ((980, 'AXCloseButton'), (981, 'AXFullScreenButton'), (982, 'AXMinimizeButton')):
+        frame = ax.Frame(20 + (idx - 980) * 23, 30, 16, 16)
+        node = {'AXRole': 'AXButton', 'AXSubrole': subrole, 'AXEnabled': True,
+                'AXParent': win, 'AXWindow': win, '_pid': 77, '_hash': idx,
+                '_actions': ['AXPress'], '_frame': frame}
+        nodes.append(node)
+        world.base['elements'].append({'element_index': idx, 'role': 'AXButton', 'label': None,
+            'enabled': True, 'parent_index': 0, 'actions': ['AXPress'],
+            'frame': dict(zip(('x', 'y', 'w', 'h'), (frame.x, frame.y, frame.w, frame.h)))})
+    win['AXChildren'] = nodes
+    win['AXFullScreenButton'] = nodes[1]
+    monkeypatch.setattr(ax, 'window_element', lambda pid, wid: win if (pid, wid) == (77, 40335) else None)
+    monkeypatch.setattr(ax, '_attr', lambda el, key: el.get(key) if isinstance(el, dict) else None)
+    monkeypatch.setattr(ax, 'frame_of', lambda el: el.get('_frame'))
+    monkeypatch.setattr(ax, 'same_element', lambda left, right: left is right)
+    monkeypatch.setitem(sys.modules, 'ApplicationServices', SimpleNamespace(
+        AXUIElementGetPid=lambda el, _: (0, el['_pid']),
+        AXUIElementCopyActionNames=lambda el, _: (0, el['_actions']),
+    ))
+    monkeypatch.setitem(sys.modules, 'CoreFoundation', SimpleNamespace(CFHash=lambda el: el['_hash']))
+    return win, nodes
+
+
+def test_native_fullscreen_public_cli_offers_only_qualified_window_control(world, fw, monkeypatch):
+    _fullscreen_world(world, monkeypatch)
+    code, out, err = fw('start', 'Prepare window fullscreen', '--app', 'Calculator')
+    assert code == 0, (out, err)
+    code, out, err = fw('look')
+    assert code == 0, (out, err)
+    saved = {row['id']: row for row in _state(fw)['last_candidates']}
+    assert 980 not in saved and 982 not in saved
+    assert saved[981]['label'] == 'Enter Full Screen'
