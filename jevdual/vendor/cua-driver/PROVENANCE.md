@@ -5,7 +5,7 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2.parent1`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2.parent1.edge1`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
 Three Python files remain byte-for-byte from the exact release source. The contract UniFFI module carries the row2 ABI; the SDK UniFFI module preserves exact landed fdbf48f callback ownership/drop hardening after regeneration. __init__.py additionally exports ExpectedRow and RowReceipt. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
@@ -20,7 +20,7 @@ Three Python files remain byte-for-byte from the exact release source. The contr
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `26a6a46dc089553a5505cfe109871e4f21b2638885b702a911cfdaeb3e44b90b` (6,451,272 bytes). It is the end of a six-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10, row4. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
+`native-source.tar.gz` SHA256: `19ca3b1ccd7df267b73557719c92bee88147c2d8cf088887b11df816211cfb4d` (6,452,360 bytes). It is the end of a six-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10, row4. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -336,3 +336,8 @@ The packaged SDK module is byte-identical to fdbf48f. Tests execute the actual c
 ## Observation-only row trace
 
 The optional typed `row_trace_url` request and `row_trace_json` response carry bounded diagnostics through the existing observation. No new AX traversal or input endpoint is added. Existing census budget constants, recipient predicates and foreground checks remain unchanged. Diagnostic bookkeeping has CPU cost and cannot guarantee identical deadline behavior near a time limit. `_native.py` and its callback-ownership overlay are byte-identical; `_native_contract.py` is regenerated from the compiled trace ABI. See docs/native-row-trace.md for scope, retention and evidence limits.
+
+The edge1 diagnostic retains bounded numeric hop operands and direct equality results only for a traced parent membership refusal. Row predicates, generated bindings and press semantics are unchanged.
+The hop index starts at one. `first_parent` and `proof_parent` are two existing reads of the outer object's parent. `current` and `parent` describe the failed hop, which can be higher in the chain. Sample order is raw array order; each pair contains the canonical ID before deduplication and an independent equality result against the held current object. Equality probes run only after refusal. A complete absence describes the sampled AX relationship. It cannot distinguish a persistent topology from an application change between reads. The collector retains at most 64 entries and labels an incomplete array unknown. Missing snapshot identity withholds the entire hop.
+
+The diagnostic label `changed_parent` records differing canonical IDs in the two outer AXParent reads. At higher hops this difference does not establish the cause of the failed edge.

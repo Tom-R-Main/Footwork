@@ -44,6 +44,55 @@ def configuration(pid: int, window_id: int):
     return output, data['url']
 
 
+def _possible_path(edge, references):
+    # A failed membership comparison follows insertion of the parent into seen.
+    # Root can be the failed parent, but a previous successful hop to root exits.
+    root, outer = edge['root'], edge['outer']
+    first, current, parent = edge['proof_parent'], edge['current'], edge['parent']
+    hop = edge['hop']
+    if (root != 0 or outer == root or current == root or parent in (outer, current)
+            or first == outer or references < hop + 1 + (parent != root)):
+        return False
+    if hop == 1:
+        return current == outer and parent == first
+    if first == root or current == outer or parent == first:
+        return False
+    return (hop == 2) == (current == first)
+
+
+def _failed_hop(sdk, edge):
+    """Validate content-free diagnostics before retaining an unscoped capture refusal."""
+    ids = ('root', 'outer', 'first_parent', 'proof_parent', 'current', 'parent')
+    references = sdk.get('references')
+    if (type(references) is not int or not 1 <= references <= 4096
+            or sdk.get('scope_matched') is not False or sdk.get('status') != 'capture_refused' or sdk.get('error') != 'row parent/child mismatch'
+            or type(edge) is not dict or set(edge) != {*ids, 'hop', 'raw_count', 'samples', 'truncated'}
+            or any(type(edge[k]) is not int or not 0 <= edge[k] < references for k in ids)
+            or type(sdk.get('node')) is not int or sdk['node'] != edge['outer']
+            or type(edge['hop']) is not int or not 1 <= edge['hop'] <= 32
+            or type(edge['raw_count']) is not int or not 0 <= edge['raw_count'] <= 2048
+            or type(edge['truncated']) is not bool or sdk.get('truncated') is not edge['truncated']
+            or type(edge['samples']) is not list):
+        return None
+    samples = edge['samples']
+    if (len(samples) > min(64, edge['raw_count'])
+            or edge['truncated'] != (len(samples) < edge['raw_count'])
+            or any(type(pair) is not list or len(pair) != 2 or type(pair[0]) is not int
+                   or not 0 <= pair[0] < references or pair[0] == edge['current']
+                   or type(pair[1]) is not bool for pair in samples)
+            or not _possible_path(edge, references)):
+        return None
+    if edge['truncated']:
+        classification = 'unknown'
+    elif any(equal for _, equal in samples):
+        classification = 'raw_match_lost'
+    elif edge['first_parent'] != edge['proof_parent']:
+        classification = 'changed_parent'
+    else:
+        classification = 'absent_at_read'
+    return {**edge, 'classification': classification}
+
+
 def retain(path, request, snapshot, candidates):
     # O_EXCL/O_NOFOLLOW ensures missing evidence cannot be masked by an old file.
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
@@ -65,6 +114,12 @@ def retain(path, request, snapshot, candidates):
                 if any(type(get(snapshot, key)) is not int or get(snapshot, key) != request.get(key)
                        for key in ('pid', 'window_id')):
                     raise ValueError('trace envelope identity mismatch')
+                # Native capture returns on failure before checking the document URL.
+                if sdk.get('status') == 'capture_refused' and sdk.get('scope_matched') is not False:
+                    raise ValueError('capture refusal cannot establish scope')
+                if 'failed_hop' in sdk and (sdk.get('scope_matched') is not False
+                        or sdk.get('status') != 'capture_refused' or sdk.get('error') != 'row parent/child mismatch'):
+                    raise ValueError('failed hop outside reciprocal membership refusal')
                 snapshot_id, trace_id = get(snapshot, 'snapshot_id'), sdk.get('snapshot_id')
                 if not isinstance(snapshot_id, str) or not snapshot_id or not isinstance(trace_id, str) or not trace_id:
                     result.update(status='snapshot_unproven', sdk=None, truncated=sdk.get('truncated') is True,
@@ -72,12 +127,21 @@ def retain(path, request, snapshot, candidates):
                     raise _SnapshotUnproven('missing snapshot binding')
                 if snapshot_id != trace_id:
                     raise ValueError('trace snapshot mismatch')
+                edge = sdk.pop('failed_hop', None)
                 result.update(status='retained', sdk=sdk, truncated=sdk.get('truncated') is True)
                 # Unscoped content is never retained, even if a faulty producer emits it.
                 if sdk.get('scope_matched') is not True:
                     result['sdk'] = {k: sdk[k] for k in ('version', 'pid', 'window_id', 'status', 'scope_url', 'scope_matched', 'truncated',
                                                        'error', 'node', 'role', 'budget', 'references', 'comparisons', 'reads', 'request') if k in sdk}
                     result['status'] = 'scope_unproven'
+                    if edge is not None:
+                        verified = _failed_hop(sdk, edge)
+                        if verified is None:
+                            result['failed_hop_status'] = 'invalid'
+                            result['truncated'] = True
+                        else:
+                            result['sdk']['failed_hop'] = verified
+                            result['truncated'] |= verified['truncated']
                 else:
                     result['typed_elements'] = [
                         {'index': get(e, 'element_index'), 'token_present': bool(get(e, 'element_token')),

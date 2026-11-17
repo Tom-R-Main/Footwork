@@ -16,7 +16,7 @@ def test_trace_missing_sdk_retention_is_explicit(tmp_path):
     assert path.stat().st_mode & 0o777 == 0o600
 
 
-@pytest.mark.parametrize('status', ['capture_refused', 'qualified', 'discovery_refused'])
+@pytest.mark.parametrize('status', ['qualified', 'discovery_refused'])
 def test_trace_preserves_actual_stage_and_projection(tmp_path, status):
     from jevdual.row_trace import retain
     path = tmp_path / 'trace.json'
