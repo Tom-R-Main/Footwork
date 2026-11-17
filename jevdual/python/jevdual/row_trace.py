@@ -3,10 +3,15 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 from urllib.parse import urlsplit
 
 MAX_BYTES = 4 * 1024 * 1024
+
+
+class _SnapshotUnproven(ValueError):
+    pass
 
 
 def get(value, key):
@@ -25,8 +30,13 @@ def configuration(pid: int, window_id: int):
         raise ValueError('invalid row trace configuration fields')
     if type(data['pid']) is not int or type(data['window_id']) is not int or (data['pid'], data['window_id']) != (pid, window_id):
         raise ValueError('row trace target mismatch')
-    url = urlsplit(data['url'])
-    if url.scheme != 'http' or url.hostname != '127.0.0.1' or url.username or url.password or url.fragment or url.query:
+    raw_url = data['url']
+    if not isinstance(raw_url, str) or len(raw_url) > 2048 or not raw_url.isascii() or any(ord(c) <= 32 or ord(c) == 127 or c in '\\?#' for c in raw_url):
+        raise ValueError('invalid row trace URL')
+    url = urlsplit(raw_url)
+    if (not raw_url.startswith('http://') or url.scheme != 'http'
+            or not re.fullmatch(r'127\.0\.0\.1(?::[0-9]+)?', url.netloc)
+            or url.port == 0 or url.username or url.password or url.fragment or url.query):
         raise ValueError('row trace requires an exact numeric-loopback page')
     output = Path(data['output'])
     if not output.is_absolute() or output.exists() or output.is_symlink() or output.parent.resolve() != output.parent:
@@ -47,10 +57,21 @@ def retain(path, request, snapshot, candidates):
             try:
                 sdk = json.loads(raw)
                 if (type(sdk) is not dict or type(sdk.get('version')) is not int or sdk.get('version') != 1
+                        or any(type(request.get(key)) is not int for key in ('pid', 'window_id'))
                         or type(sdk.get('pid')) is not int or type(sdk.get('window_id')) is not int
                         or sdk.get('pid') != request.get('pid') or sdk.get('window_id') != request.get('window_id')
                         or sdk.get('scope_url') != request.get('row_trace_url')):
                     raise ValueError('trace binding mismatch')
+                if any(type(get(snapshot, key)) is not int or get(snapshot, key) != request.get(key)
+                       for key in ('pid', 'window_id')):
+                    raise ValueError('trace envelope identity mismatch')
+                snapshot_id, trace_id = get(snapshot, 'snapshot_id'), sdk.get('snapshot_id')
+                if not isinstance(snapshot_id, str) or not snapshot_id or not isinstance(trace_id, str) or not trace_id:
+                    result.update(status='snapshot_unproven', sdk=None,
+                                  unbound_summary={k: sdk[k] for k in ('status', 'error', 'node', 'role', 'budget', 'references', 'comparisons', 'reads') if k in sdk})
+                    raise _SnapshotUnproven('missing snapshot binding')
+                if snapshot_id != trace_id:
+                    raise ValueError('trace snapshot mismatch')
                 result.update(status='retained', sdk=sdk, truncated=sdk.get('truncated') is True)
                 # Unscoped content is never retained, even if a faulty producer emits it.
                 if sdk.get('scope_matched') is not True:
@@ -69,6 +90,8 @@ def retain(path, request, snapshot, candidates):
                     ]
                     if len(get(snapshot, 'elements') or []) > 2048 or len(candidates) > 1000:
                         result['truncated'] = True
+            except _SnapshotUnproven:
+                pass
             except (TypeError, ValueError, AttributeError):
                 result.update(status='invalid_sdk_trace', sdk=None)
         encoded = json.dumps(result, ensure_ascii=True)

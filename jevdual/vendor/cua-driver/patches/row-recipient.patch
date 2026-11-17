@@ -888,15 +888,35 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
 +    pub row_trace_url: Option<String>,
-@@ -291,0 +301,3 @@
+@@ -147,0 +157,17 @@
++/// Parse the closed diagnostic URL grammar without normalizing alternate hosts.
++/// Only literal HTTP numeric-loopback authority, an optional nonzero u16 port,
++/// and an ASCII path are admitted. Userinfo, query, fragment and URL backslash
++/// reinterpretation are deliberately unsupported.
++pub fn validate_row_trace_url(value: &str) -> Result<(), String> {
++    let invalid = || "row_trace_url requires exact HTTP numeric-loopback authority without credentials, query or fragment".to_owned();
++    if value.len() > 2048 || value.bytes().any(|b| !b.is_ascii() || b.is_ascii_control()
++        || matches!(b, b' ' | b'\\' | b'?' | b'#')) { return Err(invalid()); }
++    let rest = value.strip_prefix("http://").ok_or_else(invalid)?;
++    let authority = rest.split('/').next().ok_or_else(invalid)?;
++    if authority == "127.0.0.1" { return Ok(()); }
++    let port = authority.strip_prefix("127.0.0.1:").ok_or_else(invalid)?;
++    if port.is_empty() || !port.bytes().all(|b| b.is_ascii_digit())
++        || !port.parse::<u16>().is_ok_and(|p| p > 0) { return Err(invalid()); }
++    Ok(())
++}
++
+@@ -150,0 +177 @@
++        if let Some(url) = &self.row_trace_url { validate_row_trace_url(url)?; }
+@@ -291,0 +319,3 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
 +    pub expected_row: Option<crate::ExpectedRow>,
-@@ -301,0 +314,3 @@
+@@ -301,0 +332,3 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
 +    pub row_trace_json: Option<String>,
-@@ -517,0 +533,14 @@
+@@ -517,0 +551,39 @@
 +
 +#[cfg(test)]
 +mod row_trace_tests {
@@ -909,6 +929,31 @@
 +        let reply = serde_json::json!({"pid":77,"window_id":9,"row_trace_json":"{\"status\":\"capture_refused\"}"});
 +        let typed: WindowStateOutput = serde_json::from_value(reply.clone()).unwrap();
 +        assert_eq!(serde_json::to_value(typed).unwrap()["row_trace_json"],reply["row_trace_json"]);
++    }
++}
++
++#[cfg(test)]
++mod row_trace_url_review_tests {
++    use super::*;
++    #[test]
++    fn invalid_trace_authorities_are_rejected() {
++        for url in ["http://127.0.0.1:5176@outside.example/tasks", "http://user@127.0.0.1:5176/tasks",
++            "http://127.0.0.1:5176/tasks?", "http://127.0.0.1:5176/tasks#", "http://127.0.0.1:0/tasks",
++            "http://127.0.0.1:65536/tasks", "http://127.0.0.1:abc/tasks", "http://127.0.0.1:/tasks",
++            "https://127.0.0.1:5176/tasks", "http://localhost:5176/tasks", "http://127.0.0.1.evil/tasks",
++            "http://127.0.0.1:5176\\@outside.example/tasks", "http://127.0.0.1:5176/ta\nks"] {
++            let typed: GetWindowStateInput = serde_json::from_value(serde_json::json!({
++                "pid":77,"window_id":9,"qualify_rows":true,"row_trace_url":url})).unwrap();
++            assert!(typed.validate().is_err(), "admitted {url:?}");
++        }
++    }
++    #[test]
++    fn exact_local_trace_and_no_trace_remain_valid() {
++        for url in [None, Some("http://127.0.0.1:5176/tasks"), Some("http://127.0.0.1/tasks")] {
++            let typed: GetWindowStateInput = serde_json::from_value(serde_json::json!({
++                "pid":77,"window_id":9,"qualify_rows":true,"row_trace_url":url})).unwrap();
++            assert!(typed.validate().is_ok());
++        }
 +    }
 +}
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs
@@ -1525,14 +1570,24 @@
 @@ -73,0 +74,2 @@
 +                "row_trace_url": { "type": "string", "description": "Bounded observation diagnostics for this exact numeric-loopback document only; no input authority." },
 +                "qualify_rows": { "type": "boolean", "description": "Opt in to SDK-owned row recipient predicates enforced by foreground left AXPress click only. Other token tools are not qualified by this option; unavailable proof is omitted." },
-@@ -363 +365,5 @@
+@@ -194,0 +197,11 @@
++        // Validate before native preflight, screenshot or accessibility collection.
++        let trace_url = match args.get("row_trace_url") {
++            None | Some(Value::Null) => None,
++            Some(Value::String(url)) => {
++                if let Err(error) = cua_driver_contract::validate_row_trace_url(url) {
++                    return ToolResult::error(error);
++                }
++                Some(url.clone())
++            }
++            Some(_) => return ToolResult::error("row_trace_url must be a string"),
++        };
+@@ -363 +376,3 @@
 -        let (tree_result, prepared_snapshot) = if want_tree {
 +        let qualify_rows = args.get("qualify_rows").and_then(Value::as_bool) == Some(true);
-+        let trace_url = args.get("row_trace_url").and_then(Value::as_str)
-+            .filter(|s| s.starts_with("http://127.0.0.1:") && s.len() <= 2048).map(str::to_owned);
 +        let collect_trace = trace_url.clone();
 +        let (tree_result, prepared_snapshot, mut row_trace) = if want_tree {
-@@ -379,2 +385,6 @@
+@@ -379,2 +394,6 @@
 -                let payload = crate::ax::snapshot::AxSnapshot::from_nodes(&tree.nodes);
 -                (tree, payload)
 +                let mut payload = crate::ax::snapshot::AxSnapshot::from_nodes(&tree.nodes);
@@ -1541,13 +1596,13 @@
 +                    (payload.rows, trace) = crate::ax::row_guard::qualify_snapshot(&tree.nodes, pid as u32, u64::from(window_id), collect_trace.as_deref());
 +                }
 +                (tree, payload, trace)
-@@ -387 +397 @@
+@@ -387 +406 @@
 -                Ok(Ok((tree, payload))) => (Some(tree), Some(payload)),
 +                Ok(Ok((tree, payload, trace))) => (Some(tree), Some(payload), trace),
-@@ -400 +410 @@
+@@ -400 +419 @@
 -            (None, None)
 +            (None, None, None)
-@@ -402 +412,9 @@
+@@ -402 +421,9 @@
 -
 +        if let Some(url) = trace_url.as_ref() {
 +            if row_trace.is_none() { row_trace = Some(serde_json::json!({"version":1,"pid":pid,"window_id":window_id,"scope_url":url,
@@ -1558,10 +1613,10 @@
 +
 +        let row_predicates: std::collections::BTreeMap<usize, _> = prepared_snapshot.as_ref()
 +            .map(|p| p.rows.iter().map(|(i, q)| (*i, q.binding.predicate.clone())).collect()).unwrap_or_default();
-@@ -671 +689 @@
+@@ -671 +698 @@
 -        let elements_json: Vec<serde_json::Value> = match (snapshot_id, tree_result.as_ref()) {
 +        let mut elements_json: Vec<serde_json::Value> = match (snapshot_id, tree_result.as_ref()) {
-@@ -678,0 +697,18 @@
+@@ -678,0 +706,18 @@
 +        for entry in &mut elements_json {
 +            if entry.get("element_token").and_then(Value::as_str).is_some() {
 +                if let Some(proof) = entry.get("element_index").and_then(Value::as_u64).and_then(|i| row_predicates.get(&(i as usize))) {
@@ -1580,7 +1635,7 @@
 +                trace["attachment"] = serde_json::json!(attachment);
 +            }
 +        }
-@@ -716,0 +753,7 @@
+@@ -716,0 +762,7 @@
 +        if let Some(trace) = row_trace.as_mut() {
 +            trace["snapshot_id"] = serde_json::json!(snapshot_id.map(cua_driver_core::element_token::format_snapshot_id));
 +            let encoded = crate::ax::row_trace::limited(trace, 3 * 1024 * 1024).unwrap_or_else(|| serde_json::json!({
@@ -1588,6 +1643,22 @@
 +                "truncated":true,"status":"sdk_trace_oversize"}).to_string());
 +            structured["row_trace_json"] = serde_json::json!(encoded);
 +        }
+@@ -1650,0 +1703,15 @@
++    #[tokio::test]
++    async fn row_trace_rejects_invalid_scope_before_target_or_collection() {
++        let tool = GetWindowStateTool::new(Arc::new(ToolState::new(false, false, None)));
++        for value in [json!("http://127.0.0.1:5176@outside.example/tasks"),
++                      json!("http://127.0.0.1:0/tasks"), json!("http://127.0.0.1:5176/tasks?"), json!(42)] {
++            // No PID/window: a late check would return the target-field error instead.
++            let result = tool.invoke(json!({"row_trace_url":value})).await;
++            let encoded = serde_json::to_string(&result).unwrap();
++            assert!(encoded.contains("row_trace_url"), "{encoded}");
++            assert!(!encoded.contains("Missing required"), "{encoded}");
++        }
++        let result = tool.invoke(json!({"row_trace_url":"http://127.0.0.1:5176/tasks"})).await;
++        assert!(serde_json::to_string(&result).unwrap().contains("Missing required"));
++    }
++
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/row_trace.rs
 @@ -0,0 +1,43 @@

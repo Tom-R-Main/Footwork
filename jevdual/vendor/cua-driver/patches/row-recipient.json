@@ -1,6 +1,6 @@
 {
   "base_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
-  "patch_sha256": "ac9cb4294390cccbe1fd3cb40f8af97ce54db19dd75f5e46dcc1d0e771653d3c",
+  "patch_sha256": "256bf7c6088e104badae0280945c0f8940f8c10f0223884e99166c38c022d4cf",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs": {
       "before": null,
@@ -26,7 +26,7 @@
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs": {
       "before": "7d119f50cfbc83d0d02d8e278835195de97694c0593e7f1fcda4d85ab0281d68",
-      "after": "c3f9c312e12c95025bec788848025346ca6397ee9f8b8cd19c6fe9679cf4ac9b"
+      "after": "25258c06e450d3f0116b659817d666e45d5836eec4ce1ec86a0fa3329e672548"
     },
     "libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs": {
       "before": "5f39eca0bce322cf74262d6d4d36aa37402fd8d432c51ea47c377fcfe0e13686",
@@ -63,7 +63,7 @@
     },
     "libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs": {
       "before": "6a2659ace6595ba002a105a7a8f209221d58067b51106fa221872f64ca8c9c25",
-      "after": "24a9567365ba996ddda32f40891e4dc5c3e716f6a6fbdda97f9218453b57aa0e"
+      "after": "4b23054eb6046c7b74b1ce30f0e698b34b764a3bbbc7062de45424385d87897e"
     },
     "libs/cua-driver/rust/crates/platform-macos/src/ax/row_trace.rs": {
       "before": null,
@@ -81,8 +81,8 @@
   ],
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
-  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace1",
-  "patched_archive_sha256": "87479dabc9a278fe4d4e925d4d36a52aaeefad80ca022a16c9aa1a882f537e20",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2",
+  "patched_archive_sha256": "941c3b35a6d467a14c64a4bfe5a4d6a84a67b032675b893b856cb8dcf256b52a",
   "abi": "ExpectedRow version2 unchanged; optional row_trace_url input and row_trace_json output; callback overlay unchanged",
   "toolchain": "1.97.1"
 }

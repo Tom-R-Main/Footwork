@@ -21,7 +21,7 @@ def test_trace_preserves_actual_stage_and_projection(tmp_path, status):
     from jevdual.row_trace import retain
     path = tmp_path / 'trace.json'
     trace = {'version': 1, 'pid': 77, 'window_id': 9, 'scope_url': 'http://127.0.0.1:5176/tasks',
-             'status': status, 'truncated': False, 'scope_matched': True,
+             'status': status, 'truncated': False, 'scope_matched': True, 'snapshot_id': 's1',
              'graph': None, 'results': [], 'attachment': []}
     retain(path, {'pid': 77, 'window_id': 9, 'row_trace_url': trace['scope_url']},
            SimpleNamespace(pid=77, window_id=9, snapshot_id='s1', elements=[], row_trace_json=json.dumps(trace)), [])
@@ -47,13 +47,13 @@ def test_trace_oversize_and_existing_artifact_never_silently_succeed(tmp_path):
 def test_unscoped_failure_keeps_reason_but_never_graph_or_proofs(tmp_path):
     from jevdual.row_trace import retain
     trace = {'version': 1, 'pid': 77, 'window_id': 9, 'scope_url': 'http://127.0.0.1:5176/tasks',
-             'status': 'capture_refused', 'scope_matched': False, 'truncated': False,
+             'status': 'capture_refused', 'scope_matched': False, 'truncated': False, 'snapshot_id': 's1',
              'error': 'AXHeader has unsupported text type', 'node': 17, 'role': 'AXColumn',
              'reads': {'attribute_action_reads': 91, 'first_read_refusal': None},
              'graph': {'unscoped': 'must not retain'}, 'keys': ['unscoped']}
     path = tmp_path / 'trace.json'
     retain(path, {'pid': 77, 'window_id': 9, 'row_trace_url': trace['scope_url']},
-           {'snapshot_id': 's1', 'row_trace_json': json.dumps(trace), 'elements': ['private']}, ['private'])
+           {'pid': 77, 'window_id': 9, 'snapshot_id': 's1', 'row_trace_json': json.dumps(trace), 'elements': ['private']}, ['private'])
     data = json.loads(path.read_text())
     assert data['status'] == 'scope_unproven'
     assert data['sdk']['error'] == trace['error'] and data['sdk']['reads'] == trace['reads']
@@ -92,11 +92,11 @@ def test_configuration_is_opt_in_exact_target_and_create_once(tmp_path, monkeypa
 def test_projection_loss_and_count_truncation_are_visible(tmp_path):
     from jevdual.row_trace import retain
     trace = {'version': 1, 'pid': 77, 'window_id': 9, 'scope_url': 'http://127.0.0.1:5176/tasks',
-             'status': 'qualified', 'scope_matched': True, 'truncated': False,
+             'status': 'qualified', 'scope_matched': True, 'truncated': False, 'snapshot_id': 's1',
              'attachment': [{'index': 3, 'generated_proof_present': True, 'proof_present': True, 'token_present': True}]}
     path = tmp_path / 'trace.json'
     retain(path, {'pid': 77, 'window_id': 9, 'row_trace_url': trace['scope_url']},
-           {'row_trace_json': json.dumps(trace), 'elements': [{'element_index': 3, 'element_token': 's1:3'}]},
+           {'pid': 77, 'window_id': 9, 'snapshot_id': 's1', 'row_trace_json': json.dumps(trace), 'elements': [{'element_index': 3, 'element_token': 's1:3'}]},
            [{'id': 3, 'native_row_control': None}] * 1001)
     data = json.loads(path.read_text())
     assert data['sdk']['attachment'][0]['proof_present']
@@ -148,7 +148,7 @@ def test_public_start_observes_once_and_retains_only_when_enabled(world, fw, mon
         snapshot = await original(inp)
         if getattr(inp, 'row_trace_url', None):
             snapshot['row_trace_json'] = json.dumps({'version': 1, 'pid': 77, 'window_id': 40335,
-                'scope_url': url, 'scope_matched': True, 'status': 'qualified', 'truncated': False,
+                'scope_url': url, 'scope_matched': True, 'status': 'qualified', 'truncated': False, 'snapshot_id': snapshot['snapshot_id'],
                 'graph': graph, 'attachment': [{'index': 940, 'proof_present': True, 'token_present': True}]})
         return snapshot
     monkeypatch.setattr(world, 'get_window_state', read)
@@ -172,7 +172,7 @@ fw = scenarios.fw
 world = scenarios.world
 
 
-@pytest.mark.parametrize('fault', ['sdk_id', 'envelope_id', 'pid', 'window', 'missing_sdk_id', 'missing_envelope_id', 'matching'])
+@pytest.mark.parametrize('fault', ['sdk_id', 'envelope_id', 'pid', 'window', 'pid_float', 'window_float', 'request_float', 'missing_sdk_id', 'missing_envelope_id', 'matching'])
 def test_review_trace_envelope_binding(tmp_path, fault):
     from jevdual.row_trace import retain
     trace = {'version': 1, 'pid': 77, 'window_id': 9, 'scope_url': 'http://127.0.0.1:5176/tasks',
@@ -182,13 +182,29 @@ def test_review_trace_envelope_binding(tmp_path, fault):
     if fault == 'envelope_id': snap['snapshot_id'] = 's00000002'
     if fault == 'pid': snap['pid'] = 88
     if fault == 'window': snap['window_id'] = 10
+    if fault == 'pid_float': snap['pid'] = 77.0
+    if fault == 'window_float': snap['window_id'] = 9.0
     if fault == 'missing_sdk_id': trace.pop('snapshot_id')
     if fault == 'missing_envelope_id': snap['snapshot_id'] = None
     snap['row_trace_json'] = json.dumps(trace)
     path = tmp_path / 'trace.json'
-    retain(path, {'pid': 77, 'window_id': 9, 'row_trace_url': trace['scope_url']}, snap, [])
+    request = {'pid': 77.0 if fault == 'request_float' else 77, 'window_id': 9, 'row_trace_url': trace['scope_url']}
+    retain(path, request, snap, [])
     data = json.loads(path.read_text())
     expected = 'retained' if fault == 'matching' else 'snapshot_unproven' if fault.startswith('missing') else 'invalid_sdk_trace'
     assert data['status'] == expected
     if expected != 'retained':
         assert not data.get('sdk') and 'typed_elements' not in data and 'candidates' not in data
+
+
+@pytest.mark.parametrize('url', ['http://127.0.0.1:5176@outside.example/tasks',
+    'http://user@127.0.0.1:5176/tasks', 'http://127.0.0.1:5176/tasks?',
+    'http://127.0.0.1:5176/tasks#', 'http://127.0.0.1:65536/tasks',
+    'http://127.0.0.1:0/tasks', 'http://127.0.0.1:/tasks',
+    'http://127.0.0.1:5176\\@outside.example/tasks'])
+def test_python_trace_config_matches_strict_authority(tmp_path, monkeypatch, url):
+    from jevdual.row_trace import configuration
+    path = tmp_path / 'config.json'
+    path.write_text(json.dumps({'pid': 77, 'window_id': 9, 'url': url, 'output': str(tmp_path / 'result.json')}))
+    monkeypatch.setenv('FOOTWORK_ROW_TRACE_CONFIG', str(path))
+    with pytest.raises(ValueError): configuration(77, 9)

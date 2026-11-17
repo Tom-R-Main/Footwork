@@ -6,9 +6,9 @@ recipient and must never be used to authorize a click.
 
 Set `FOOTWORK_ROW_TRACE_CONFIG` to an absolute private JSON file containing exactly
 `pid`, `window_id`, `url`, and `output`. The target must match the native session;
-`url` must be the authorized exact numeric-loopback page. `output` must be a new
+`url` must be the authorized exact ASCII HTTP numeric-loopback page, with an optional decimal port 1–65535 and no credentials, query, fragment, whitespace or backslash. The same strict authority grammar runs at typed and native SDK ingress before collection. `output` must be a new
 absolute file in the private evidence directory. Run the normal public `start`
-once: start itself observes. Do not also call `look` for a one-observation release.
+once using app/title selection and exact diagnostic PID/window configuration: start itself observes. Explicit `--pid` start currently observes twice and is unsuitable for this one-collection route. A discovery result that differs from the configuration refuses before the SDK collection; there is no fallback. Do not also call `look`. Native URL/title guards require their already-authorized durable route; `--url` is navigation and is excluded.
 Configuration is checked before the SDK call; output is created exclusively with
 mode 0600 after collection. An existing output refuses rather than overwriting it.
 
@@ -40,3 +40,7 @@ I/O occur after the AX collection. Callback ownership remains byte-identical.
 The authorized live use is one bound Tasks observation after reviewed delivery,
 with Desktop's owner channel paused. No activation, input or functional repair is
 part of this diagnostic. A start observation consumes the entire collection slot.
+
+Snapshot identity is compared across request, enclosing SDK response and embedded trace. A disagreement is invalid; missing/empty snapshot IDs are `snapshot_unproven`, with only explicitly unbound failure context retained and no graph or proofs. Diagnostics remain non-authoritative.
+
+Capture node/role fields are last-current context; a budget refusal before the next node assignment does not identify a new faulting object. Byte limits bound serialized retention, not peak process allocations.

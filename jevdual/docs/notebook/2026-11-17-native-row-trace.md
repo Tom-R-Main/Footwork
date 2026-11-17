@@ -19,3 +19,8 @@ Test: preserve red controls for loopback-looking remote authority, credentials, 
 Predicts: invalid URL is refused before native preflight/collection; inconsistent envelope is invalid and missing snapshot is explicitly unproven. Valid local requests and matching traces retain unchanged discovery/input outcomes.
 Against: a remote authority still enters diagnostics, genuine matching records lose classification, or the fix changes census predicates/read budgets/input.
 Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/sol-review-b6c6163/REVIEW.md F1/F2.
+
+## RT4 · update · 2026-11-17 16:12
+Observed: actual typed Rust URL regression failed on the remote-authority example (1failed/1positive passed); retention regression failed6cases and kept1matching positive. Correction passes71contract tests and2macOS tests, including native ingress rejection before target validation/collection. Initial correction trace selection35passes. Source archive941c3b35 and trace2 wheel build pass offline; record ABI and callback module bytes are unchanged. Original reviewed SDK source restored to its checkpoint; correction source kept separately.
+Next: final focused packaged checks and independent correction review; no installed/live change. RT3 remains open pending that review and checks; RT1 remains open pending the single real observation.
+Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/{url-red.txt,envelope-red.txt,url-green.txt,ingress-green.txt,correction-trace-tests.txt,wheel-trace2-build.txt,sdk-correction-source}; sol-review-b6c6163/REVIEW.md.
