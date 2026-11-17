@@ -34,3 +34,15 @@ Resolves: RWP2 = held
 Observed: corrected package/probe passes633affectedPython tests (49focused cases), zero skips. Only offline example changes among903SDKfiles; native SDK library, callback and generated contract bytes match352cbdac wheel. Rebuilt CLI binary and wheel RECORD differ and are bound by fresh hashes; no claim of all-binary identity. Production code remains unchanged, so prior76Rust/2native-policy checks are retained evidence, not repeated runs.
 Next: fresh council review of the correction and package binding, carrying original findings; no installed or live action until review/check gates clear.
 Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/correction-001/{integrated-final.txt,WHEEL-IDENTITY.json,PRODUCTION-EQUIVALENCE.json,SDK-CORRECTION.diff}.
+
+## RWU5 · update · 2026-11-17 14:50
+Resolves: RWP1 = held
+Observed: The installed single observation advanced to a reciprocal parent/child mismatch on outer AXGroup6. No canonical graph, qualified row or input. The trace lacks hop operands. Three final reviews passed, merged and reviewed trees match, and 167 installed fixtures passed. Custody closed.
+Next: Preserve the refusal and diagnose the failing comparison within the existing read and work budget.
+Refs: workspace/approved-path-readiness-002/row-parent-requalification-001/{RESULT.json,CLOSURE.json,EDGE-DIAGNOSIS.md}; correction-001/release-preparation-e90616cd/INSTALLED-2e9cf38.json.
+
+## RWS1 · summary · 2026-11-17 14:50
+Established: Installed held-parent qualification requires a reciprocal chain. The actual observation refused during membership capture.
+Uncertain: The failing hop and source of the mismatch remain unknown. Public HTTPS remains closed. In the independent loopback fixture the pending witness timed out on an unlogged RPC. Timing relative to AX is unknown.
+Decision: Keep the row predicate and input path unchanged.
+Refs: Footwork-native-https-evidence-20261117/transition-diagnosis-001/DIAGNOSIS.md.
