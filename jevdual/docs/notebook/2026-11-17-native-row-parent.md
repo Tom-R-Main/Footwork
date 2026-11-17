@@ -28,3 +28,9 @@ Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/council
 Observed: RWP2 red public-CLI regressions 8 failed/41 passed on retained352cbdac probe; corrected probe 49 passed. Only SDK example row_parent_probe.rs changes, other902SDKfiles identical. Initial append used a doubled path and did not add tests; that prior29-test run is retained separately, not counted as red evidence. The scoped correction mirrors strict actual-recipient window read before general census; production source is unchanged.
 Next: rebind package/wheel/probe, run affected checks and obtain fresh council on correction; preserve all original reviews and frozen artifacts.
 Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/correction-001/{recipient-red.txt,recipient-red-correct-path.txt,recipient-green.txt,PRODUCTION-EQUIVALENCE.json,SDK-CORRECTION.diff}.
+
+## RWU4 · update · 2026-11-17 13:44
+Resolves: RWP2 = held
+Observed: corrected package/probe passes633affectedPython tests (49focused cases), zero skips. Only offline example changes among903SDKfiles; native SDK library, callback and generated contract bytes match352cbdac wheel. Rebuilt CLI binary and wheel RECORD differ and are bound by fresh hashes; no claim of all-binary identity. Production code remains unchanged, so prior76Rust/2native-policy checks are retained evidence, not repeated runs.
+Next: fresh council review of the correction and package binding, carrying original findings; no installed or live action until review/check gates clear.
+Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/correction-001/{integrated-final.txt,WHEEL-IDENTITY.json,PRODUCTION-EQUIVALENCE.json,SDK-CORRECTION.diff}.
