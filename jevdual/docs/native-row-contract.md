@@ -1,12 +1,12 @@
 # SDK-owned row recipient contract (design boundary)
 
-Authority: Monitor explicitly reopened the closed f65368d feasibility tranche for a bounded change to the pinned CUA fork and minimal Footwork plumbing. Infobar3c3e5b5 is a separate review stack; scroll and live input remain excluded.
+Authority: Monitor explicitly reopened the closed f65368d feasibility tranche for a bounded change to the pinned CUA fork and minimal Footwork plumbing. The independently reviewed infobar repair is landed and delivered as fdbf48f; this row branch includes that base without widening its authority. Scroll and live input remain excluded.
 
 ## Source and ownership
 
 Base Footwork52da, row feasibility f65368d. The owning fork is the vendored source distribution, not a new upstream branch: CUA release5486b6246e4c807c0d793216e52df283671d9362 with cleanup2.focus1.helptag1.connected4.locate10. Base native-source.tar.gz SHA2565cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9. Extracted source and all build outputs stay under the separate SSD row evidence directory; final review uses an inspectable patch, manifest and deterministic archive in this row branch. No upstream publication.
 
-## Proposed minimal contract
+## Implemented contract pending independent review
 
 The existing snapshot seam may publish a versioned expected-row predicate only for a token whose actual retained AX recipient is qualified by the SDK. Footwork does not associate an independent AX object with a token. A row-qualified token is marked as requiring the predicate in SDK-owned snapshot metadata: removing the predicate must not downgrade it to ordinary click.
 
@@ -24,4 +24,4 @@ AX has no atomic application-side compare-and-press. Holding/checking actual ref
 
 Record red public-CLI cases for complete/flattened SDK rows; tokenless stays refused. Exercise actual Rust schema/validation/dispatch adapter through a fixture AX provider and assert ordinary/durable evidence. Include wrong PID/window/document/table/key/recipient, duplicate and unreadable/hidden peers, reorder without identity drift, replacement/key-control swaps, stale selector variants, metadata loss, contradictory dispatch and acknowledgement-only outcomes. Preserve existing named-section/DOM-ID controls and unchanged unrelated routes.
 
-This is a design, not a delivered capability. If AX cannot expose an explicit column/key relationship or the SDK seam cannot retain required binding with bounded work, stop and report the precise unsupported contract. Do not infer a broader primitive or live discovery authority.
+This is built and checked offline, not a delivered or live-qualified capability. If AX cannot expose an explicit column/key relationship or the SDK seam cannot retain required binding with bounded work, stop and report the precise unsupported contract. Do not infer a broader primitive or live discovery authority.

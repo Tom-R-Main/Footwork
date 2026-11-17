@@ -63,3 +63,9 @@ Test: integrate exact landed fdbf48f into the owned row branch, resolve shared s
 Predicts: infobar checks retain their existing results; qualified row acknowledgement remains unverifiable; identity loss or contradictions never fall through to generic confirmation, and both pre-input refusals and after-marker uncertainty remain truthful.
 Against: any cross-family substitution confirms, an existing selector dispatches a wrong control, either family loses true no-send/unknown distinctions, or integration changes the fixed-object dispatch contract. Final combined dependency/integration source receives independent Sol/Opus reviews before row delivery; no live input.
 Refs: /Volumes/External SSD/Footwork-native-row-evidence-20261117/ROW-PACKAGE-CHECKPOINT-001.json; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/release-fdbf48f/INSTALLED-fdbf48f.json
+
+## RW11 · update · 2026-11-17 10:00
+Observed: named integration355a7b5 passes1486 combined tests against the real row1 wheel and Rust adapter, including all existing infobar consumer matrices. Merge resolved only menu/session overlap by retaining both identity fields, family-specific validators and dispatch counters; no infobar production behavior was intentionally changed. Ruff/notebook/diff checks pass.
+Resolves: RW10 = held
+Next: freeze source for fresh independent Sol and Opus reviews of the final dependency/integration delta against landed fdbf48f. Installed infobar fdbf48f is already separately delivered; row remains offline and uninstalled. No GUI/live census/input, scroll or wider SDK scope.
+Refs: /Volumes/External SSD/Footwork-native-row-evidence-20261117/integrated-tests-001.txt; /Volumes/External SSD/Footwork-native-row-evidence-20261117/ROW-FINAL-REVIEW-BRIEF.md; /Volumes/External SSD/Footwork-native-row-evidence-20261117/row-integration-ruff.txt
