@@ -127,3 +127,23 @@ def test_complete_row_positive_control(reorder):
                               'element_token': 's00000001:940', 'delivery_mode': 'foreground',
                               'expected_row': copy.deepcopy(binding['predicate'])}})
     assert result['presses'] == [940] and result['receipt']['effect'] == 'unverifiable'
+
+
+@pytest.mark.parametrize('fault', ['missing', 'null', 'bool', 'short', 'long', 'wrong_key', 'old_version'])
+def test_full_row_schema_refuses_incomplete_or_malformed_identity(fault):
+    graph = base()
+    binding = discover(graph)['binding']
+    expected = copy.deepcopy(binding['predicate'])
+    assert expected['row_values'] == ['TASK-0', 'Open menu']
+    if fault == 'missing': expected.pop('row_values')
+    elif fault == 'null': expected['row_values'] = None
+    elif fault == 'bool': expected['row_values'][0] = True
+    elif fault == 'short': expected['row_values'].pop()
+    elif fault == 'long': expected['row_values'].append('extra')
+    elif fault == 'wrong_key': expected['row_values'][0] = 'TASK-1'
+    else: expected['version'] = 1
+    result = probe({'mode': 'dispatch', 'graph': graph, 'binding': binding, 'recipient': 940,
+                    'click': {'target': {'kind': 'window', 'pid': 77, 'window_id': 40335},
+                              'element_token': 's00000001:940', 'delivery_mode': 'foreground',
+                              'expected_row': expected}})
+    assert result['presses'] == []
