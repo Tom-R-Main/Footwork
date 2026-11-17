@@ -1,0 +1,36 @@
+# Held-parent membership for row capture
+
+## RWP1 · prediction · 2026-11-17 12:33
+Hypothesis: the observed AXWindow NoValue refusal can be handled without weakening recipient authority when the existing held-object census proves a complete same-PID reciprocal parent chain to the exact window. NoValue alone is never proof.
+Test: preserve the real capture error as a failing native read-policy regression; construct explicitly synthetic direct-window/NoValue-chain positives and foreign-window/PID, Unsupported/timeout/error, missing/unreadable parents, cycle, conflicting alias, incomplete children and budget negatives. Exercise the shared Rust membership algorithm through actual SDK probe and public ordinary/durable CLI, with native error-policy tests and matched generated wheel bindings. Trace/callback and prior row recipient controls remain. Freeze final source for independent Kimi K3.1 Pro, GPT-6.1 Sol, Antigravity Gemini4Hydrogen review before integration/delivery. One live guarded observation only after checked delivery and serialized owner pause, never an action/retry.
+Predicts: direct-window positives are unchanged; NoValue qualifies only with complete held-parent proof. All other read errors and contradictory membership refuse with zero press. Existing two-second/2048-node/4096-reference/500000-comparison bounds account additional work; incomplete evidence never creates a row binding. Generated ABI/callback ownership and row/effect rules remain unchanged.
+Against: unsafe chain accepted, explicit disagreement ignored, NoValue conflated with Unsupported, budget enlarged/unaccounted, synthetic graph presented as live evidence, or any authority dependency outside this contract. Stop on new scope dependency; preserve failures.
+Refs: /Volumes/External SSD/demoApps/demo/films/showcase-2026-11-17/workspace/approved-path-readiness-002/diagnostic-001/{row-trace.json,DIAGNOSIS.md,READ-REFUSAL-SPECIMEN.json}; /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/BASELINE.json.
+
+## RWU1 · update · 2026-11-17 13:01
+Observed: RWP1 red boundary retained: native error-policy regression 1 failed/1 passed; shared membership tests 2 failed/2 passed; actual Rust adapter/public CLI 4 failed/25 passed. The four failures are synthetic complete/flattened valid NoValue parent chains in ordinary/durable mode. Initial native command used an incorrect Cargo package name and is preserved as setup failure, not evidence.
+Next: implement only exact NoValue held-parent membership, preserve error/alias/budget refusal and existing recipient/evidence contracts. Kimi review route corrected by Thomas to Kimi CLI standard kimi-code/k3.1-pro; resolve current settings at dispatch.
+Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/{parent-contract-red.txt,native-parent-red-correct-package.txt,public-cli-red.txt,probe-red-build.txt}.
+
+## RWU2 · update · 2026-11-17 13:12
+Observed: behavior commit 50b46ff1 builds pinned parent1 wheel; 613 affected Python tests, 76 Rust contract tests and 2 native capture-policy tests pass. Initial affected run retained 1 stale version-pin assertion failure/612 passes; corrected test names exact parent1 distribution. Archive, source and wheel-build extraction match all 903 SDK source files; generated ABI and callback ownership modules are byte-identical to trace2. No installed/runtime change or live collection.
+Next: freeze exact source and artifacts for three independent council reviews using Kimi CLI standard K3.1 Pro/max, GPT-6.1 Sol/high and Antigravity Gemini4Hydrogen/high; resolve findings before CI/integration/delivery. RWP1 remains open for independent review and separately authorized single live observation.
+Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/{CHECKPOINT.json,integrated-final.txt,integrated-final-pin.txt,contract-final.txt,native-parent-final.txt,WHEEL-IDENTITY.json,SDK-SOURCE-HASHES.json}.
+
+## RWP2 · prediction · 2026-11-17 13:37
+Hypothesis: the council probe mismatch is isolated to the offline dispatch adapter omitting the actual recipient explicit-window preflight; native production already refuses that condition.
+Test: preserve recipient-local NoValue counterexample through ordinary/durable public CLI before correcting the probe. Include direct recipient and peer-only NoValue positives, recipient Unsupported/timeout/foreign/missing controls, zero-press refusal receipts and durable same-token replay. Rebuild/rebind only the owned probe/package after red tests; compare all production SDK files and callback/ABI bytes to frozen352cbdac.
+Predicts: recipient NoValue tests fail on the retained old probe and pass with zero sends after the preflight mirror. Valid peers and direct recipients still dispatch exactly once, unverifiable; no production code changes.
+Against: the correction alters production behavior, hides the original positive/negative controls, or still acknowledges a missing/unreadable/foreign recipient window.
+Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/council-kimi-352cbdac/REVIEW.md; Sol I1 and Gemini F2 on same frozen source.
+
+## RWU3 · update · 2026-11-17 13:41
+Observed: RWP2 red public-CLI regressions 8 failed/41 passed on retained352cbdac probe; corrected probe 49 passed. Only SDK example row_parent_probe.rs changes, other902SDKfiles identical. Initial append used a doubled path and did not add tests; that prior29-test run is retained separately, not counted as red evidence. The scoped correction mirrors strict actual-recipient window read before general census; production source is unchanged.
+Next: rebind package/wheel/probe, run affected checks and obtain fresh council on correction; preserve all original reviews and frozen artifacts.
+Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/correction-001/{recipient-red.txt,recipient-red-correct-path.txt,recipient-green.txt,PRODUCTION-EQUIVALENCE.json,SDK-CORRECTION.diff}.
+
+## RWU4 · update · 2026-11-17 13:44
+Resolves: RWP2 = held
+Observed: corrected package/probe passes633affectedPython tests (49focused cases), zero skips. Only offline example changes among903SDKfiles; native SDK library, callback and generated contract bytes match352cbdac wheel. Rebuilt CLI binary and wheel RECORD differ and are bound by fresh hashes; no claim of all-binary identity. Production code remains unchanged, so prior76Rust/2native-policy checks are retained evidence, not repeated runs.
+Next: fresh council review of the correction and package binding, carrying original findings; no installed or live action until review/check gates clear.
+Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/correction-001/{integrated-final.txt,WHEEL-IDENTITY.json,PRODUCTION-EQUIVALENCE.json,SDK-CORRECTION.diff}.

@@ -110,6 +110,9 @@
 @@ -21,0 +22,2 @@
 +pub mod row;
 +pub use row::ExpectedRow;
+@@ -817,0 +820,2 @@
++
++pub mod row_window;
 --- a/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs
 @@ -720,0 +721,3 @@
@@ -1022,7 +1025,7 @@
 +pub(crate) mod row_trace;
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/row_guard.rs
-@@ -0,0 +1,454 @@
+@@ -0,0 +1,514 @@
 +//! SDK-owned row census and actual-token press. No public raw AX entry point.
 +use super::bindings::*;
 +use core_foundation::{
@@ -1036,6 +1039,7 @@
 +    discover_row_traced, dispatch_row, RowBinding, RowGraph, RowNode, RowReceipt,
 +};
 +use cua_driver_contract::ExpectedRow;
++use cua_driver_contract::row_window::{prove_window_member, WindowMembership, WindowReference};
 +use std::collections::{BTreeMap, BTreeSet};
 +use std::sync::Arc;
 +use std::time::{Duration, Instant};
@@ -1193,8 +1197,8 @@
 +            } else {
 +                self.element(el, "AXParent", false)?
 +            };
-+            if id != root && self.element(el, "AXWindow", false)? != Some(root) {
-+                return Err("row peer window mismatch".into());
++            if id != root {
++                prove_window_member(self, id, root, pid)?;
 +            }
 +            let children = self
 +                .elements(
@@ -1272,17 +1276,59 @@
 +        })
 +    }
 +}
++impl WindowMembership for Capture {
++    fn checkpoint(&mut self) -> Result<(), String> {
++        // Charge new membership work to the existing comparison/deadline budget.
++        self.comparisons += 1;
++        if self.comparisons > 500_000 { return Err("row census equality budget".into()); }
++        if Instant::now() > self.deadline { return Err("row census deadline".into()); }
++        Ok(())
++    }
++    fn pid(&mut self, id: u64) -> Result<u32, String> {
++        let el = self.objects.get(id as usize).ok_or("row held peer absent")?.ptr();
++        let mut pid = 0;
++        if unsafe { AXUIElementGetPid(el, &mut pid) } != 0 || pid <= 0 {
++            return Err("row peer PID unreadable".into());
++        }
++        Ok(pid as u32)
++    }
++    fn window(&mut self, id: u64) -> Result<WindowReference, String> {
++        let el = self.objects.get(id as usize).ok_or("row held peer absent")?.ptr();
++        let key = CFString::new("AXWindow");
++        let mut value = std::ptr::null();
++        let error = unsafe { AXUIElementCopyAttributeValue(el, key.as_concrete_TypeRef(), &mut value) };
++        match read_window_result(error, value)? {
++            Some(value) => self.intern(value.as_CFTypeRef() as AXUIElementRef).map(WindowReference::Direct),
++            None => Ok(WindowReference::NoValue),
++        }
++    }
++    fn parent(&mut self, id: u64) -> Result<u64, String> {
++        let el = self.objects.get(id as usize).ok_or("row held peer absent")?.ptr();
++        self.element(el, "AXParent", false)?.ok_or("row parent missing".into())
++    }
++    fn children(&mut self, id: u64) -> Result<Vec<u64>, String> {
++        let el = self.objects.get(id as usize).ok_or("row held peer absent")?.ptr();
++        self.elements(el, "AXChildren", false)?.ok_or("row parent children missing".into())
++    }
++}
++
 +fn read(el: AXUIElementRef, key: &str, optional: bool) -> Result<Option<CFType>, String> {
 +    let key_cf = CFString::new(key);
 +    let mut value = std::ptr::null();
 +    let error =
 +        unsafe { AXUIElementCopyAttributeValue(el, key_cf.as_concrete_TypeRef(), &mut value) };
-+    super::row_trace::read(key, (error != 0 && !(optional && (error == kAXErrorNoValue || error == kAXErrorAttributeUnsupported))).then_some(error));
++    read_result(key, error, value, optional, optional)
++}
++fn read_window_result(error: i32, value: CFTypeRef) -> Result<Option<CFType>, String> {
++    read_result("AXWindow", error, value, true, false)
++}
++fn read_result(key: &str, error: i32, value: CFTypeRef, no_value: bool, unsupported: bool) -> Result<Option<CFType>, String> {
++    super::row_trace::read(key, (error != 0 && !((no_value && error == kAXErrorNoValue) || (unsupported && error == kAXErrorAttributeUnsupported))).then_some(error));
 +    if error != 0 {
 +        if !value.is_null() {
 +            unsafe { CFRelease(value) };
 +        }
-+        if optional && (error == kAXErrorNoValue || error == kAXErrorAttributeUnsupported) {
++        if (no_value && error == kAXErrorNoValue) || (unsupported && error == kAXErrorAttributeUnsupported) {
 +            return Ok(None);
 +        }
 +        return Err(format!("{key} unreadable ({error})"));
@@ -1476,6 +1522,23 @@
 +            }
 +        },
 +    )
++}
++
++#[cfg(test)]
++mod window_absence_tests {
++    use super::*;
++    #[test]
++    fn capture_boundary_real_no_value_is_distinct_from_other_errors() {
++        // Exact retained error code; constructed null result, no live AX call.
++        assert!(read_window_result(-25212, std::ptr::null()).unwrap().is_none());
++    }
++    #[test]
++    fn capture_boundary_other_errors_still_refuse() {
++        for error in [-25205,-25204,-25202] {
++            assert!(read_window_result(error, std::ptr::null()).is_err());
++        }
++        assert!(read_window_result(0,std::ptr::null()).is_err());
++    }
 +}
 --- a/libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs
@@ -1771,6 +1834,464 @@
 +        panic!("fixture requires window")
 +    };
 +    let recipient = input["recipient"].as_u64().unwrap();
++    let mut presses = Vec::new();
++    let receipt = dispatch_row(
++        graph,
++        &binding,
++        click.expected_row.as_ref(),
++        pid,
++        window_id,
++        recipient,
++        || {
++            if input["admission_error"] == true {
++                Err("fixture focus lost before press".into())
++            } else {
++                Ok(())
++            }
++        },
++        || {
++            presses.push(recipient);
++            if input["press_error"] == true {
++                Err("fixture AXPress response lost".into())
++            } else {
++                Ok(())
++            }
++        },
++    );
++    println!(
++        "{}",
++        serde_json::json!({"schema_valid":true,"receipt":receipt,"presses":presses})
++    );
++}
+--- /dev/null
++++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/row_window.rs
+@@ -0,0 +1,261 @@
++//! Window membership over SDK-held canonical object identities, never coordinates.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub enum WindowReference {
++    Direct(u64),
++    NoValue,
++}
++
++pub trait WindowMembership {
++    fn checkpoint(&mut self) -> Result<(), String>;
++    fn pid(&mut self, id: u64) -> Result<u32, String>;
++    fn window(&mut self, id: u64) -> Result<WindowReference, String>;
++    fn parent(&mut self, id: u64) -> Result<u64, String>;
++    fn children(&mut self, id: u64) -> Result<Vec<u64>, String>;
++}
++
++/// Direct window references keep their original requirement. Only NoValue invokes
++/// the bounded parent proof. IDs denote SDK-held CFEqual-canonical references;
++/// this proves membership within this census, not continuity across commands.
++pub fn prove_window_member<P: WindowMembership>(
++    p: &mut P,
++    id: u64,
++    root: u64,
++    pid: u32,
++) -> Result<bool, String> {
++    p.checkpoint()?;
++    if p.pid(id)? != pid {
++        return Err("row peer PID mismatch".into());
++    }
++    p.checkpoint()?;
++    match p.window(id)? {
++        WindowReference::Direct(window) if window == root => {
++            p.checkpoint()?;
++            return Ok(false);
++        }
++        WindowReference::Direct(_) => return Err("row peer window mismatch".into()),
++        WindowReference::NoValue => {}
++    }
++    let mut current = id;
++    let mut seen = std::collections::BTreeSet::from([id]);
++    // The existing row ancestry contract permits at most 32 parent edges.
++    for _ in 0..32 {
++        p.checkpoint()?;
++        let parent = p.parent(current)?;
++        if !seen.insert(parent) {
++            return Err("row parent cycle".into());
++        }
++        p.checkpoint()?;
++        if p.pid(parent)? != pid {
++            return Err("row parent PID mismatch".into());
++        }
++        if parent != root {
++            p.checkpoint()?;
++            match p.window(parent)? {
++                WindowReference::Direct(window) if window != root => {
++                    return Err("row parent window mismatch".into())
++                }
++                WindowReference::Direct(_) | WindowReference::NoValue => {}
++            }
++        }
++        p.checkpoint()?;
++        let children = p.children(parent)?;
++        let mut member = false;
++        for child in children {
++            p.checkpoint()?;
++            member |= child == current;
++        }
++        if !member {
++            return Err("row parent/child mismatch".into());
++        }
++        p.checkpoint()?;
++        if parent == root {
++            return Ok(true);
++        }
++        current = parent;
++    }
++    Err("row parent depth limit".into())
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use std::collections::BTreeMap;
++    #[derive(Clone)]
++    struct Node {
++        pid: u32,
++        window: Result<WindowReference, String>,
++        parent: Result<u64, String>,
++        children: Result<Vec<u64>, String>,
++    }
++    struct Fixture {
++        nodes: BTreeMap<u64, Node>,
++        budget: usize,
++        reads: usize,
++    }
++    impl WindowMembership for Fixture {
++        fn checkpoint(&mut self) -> Result<(), String> {
++            if self.budget == 0 {
++                return Err("row census equality budget".into());
++            }
++            self.budget -= 1;
++            Ok(())
++        }
++        fn pid(&mut self, id: u64) -> Result<u32, String> {
++            self.reads += 1;
++            self.nodes
++                .get(&id)
++                .map(|n| n.pid)
++                .ok_or("missing peer".into())
++        }
++        fn window(&mut self, id: u64) -> Result<WindowReference, String> {
++            self.reads += 1;
++            self.nodes.get(&id).ok_or("missing peer")?.window.clone()
++        }
++        fn parent(&mut self, id: u64) -> Result<u64, String> {
++            self.reads += 1;
++            self.nodes.get(&id).ok_or("missing peer")?.parent.clone()
++        }
++        fn children(&mut self, id: u64) -> Result<Vec<u64>, String> {
++            self.reads += 1;
++            self.nodes.get(&id).ok_or("missing peer")?.children.clone()
++        }
++    }
++    fn fixture() -> Fixture {
++        // Synthetic chain only. The live trace establishes NoValue, not this topology.
++        Fixture {
++            budget: 500000,
++            reads: 0,
++            nodes: [
++                (
++                    1,
++                    Node {
++                        pid: 77,
++                        window: Ok(WindowReference::Direct(1)),
++                        parent: Err("root".into()),
++                        children: Ok(vec![2]),
++                    },
++                ),
++                (
++                    2,
++                    Node {
++                        pid: 77,
++                        window: Ok(WindowReference::Direct(1)),
++                        parent: Ok(1),
++                        children: Ok(vec![6]),
++                    },
++                ),
++                (
++                    6,
++                    Node {
++                        pid: 77,
++                        window: Ok(WindowReference::NoValue),
++                        parent: Ok(2),
++                        children: Ok(vec![]),
++                    },
++                ),
++            ]
++            .into_iter()
++            .collect(),
++        }
++    }
++    #[test]
++    fn direct_window_unchanged() {
++        let mut f = fixture();
++        assert_eq!(prove_window_member(&mut f, 2, 1, 77), Ok(false));
++        assert_eq!(f.reads, 2);
++    }
++    #[test]
++    fn live_error_synthetic_chain_positive() {
++        let mut f = fixture();
++        assert_eq!(prove_window_member(&mut f, 6, 1, 77), Ok(true));
++    }
++    #[test]
++    fn multiple_no_value_parents() {
++        let mut f = fixture();
++        f.nodes.get_mut(&2).unwrap().window = Ok(WindowReference::NoValue);
++        assert_eq!(prove_window_member(&mut f, 6, 1, 77), Ok(true));
++    }
++    #[test]
++    fn decisive_chain_refusals() {
++        for fault in [
++            "foreign",
++            "ancestor_foreign",
++            "pid",
++            "root_pid",
++            "missing_parent",
++            "unreadable_parent",
++            "cycle",
++            "nonreciprocal",
++            "children_error",
++            "unsupported",
++            "timeout",
++            "budget",
++        ] {
++            let mut f = fixture();
++            match fault {
++                "foreign" => f.nodes.get_mut(&6).unwrap().window = Ok(WindowReference::Direct(99)),
++                "ancestor_foreign" => {
++                    f.nodes.get_mut(&2).unwrap().window = Ok(WindowReference::Direct(99))
++                }
++                "pid" => f.nodes.get_mut(&2).unwrap().pid = 78,
++                "root_pid" => f.nodes.get_mut(&1).unwrap().pid = 78,
++                "missing_parent" => f.nodes.get_mut(&6).unwrap().parent = Ok(99),
++                "unreadable_parent" => {
++                    f.nodes.get_mut(&6).unwrap().parent = Err("AXParent unreadable".into())
++                }
++                "cycle" => {
++                    f.nodes.get_mut(&2).unwrap().parent = Ok(6);
++                    f.nodes.get_mut(&6).unwrap().children = Ok(vec![2]);
++                }
++                "nonreciprocal" => f.nodes.get_mut(&2).unwrap().children = Ok(vec![]),
++                "children_error" => {
++                    f.nodes.get_mut(&2).unwrap().children = Err("AXChildren unreadable".into())
++                }
++                "unsupported" => {
++                    f.nodes.get_mut(&6).unwrap().window = Err("AXWindow unreadable (-25205)".into())
++                }
++                "timeout" => {
++                    f.nodes.get_mut(&6).unwrap().window = Err("AXWindow unreadable (-25204)".into())
++                }
++                "budget" => f.budget = 1,
++                _ => unreachable!(),
++            }
++            assert!(prove_window_member(&mut f, 6, 1, 77).is_err(), "{fault}");
++        }
++    }
++    #[test]
++    fn existing_ancestry_bound_and_final_work_are_enforced() {
++        for edges in [32, 33] {
++            let mut f = fixture();
++            f.nodes.clear();
++            for id in 0..=edges {
++                f.nodes.insert(
++                    id,
++                    Node {
++                        pid: 77,
++                        window: Ok(WindowReference::NoValue),
++                        parent: if id == 0 {
++                            Err("root".into())
++                        } else {
++                            Ok(id - 1)
++                        },
++                        children: Ok(if id == edges { vec![] } else { vec![id + 1] }),
++                    },
++                );
++            }
++            assert_eq!(
++                prove_window_member(&mut f, edges, 0, 77).is_ok(),
++                edges == 32
++            );
++        }
++        let mut f = fixture();
++        assert_eq!(prove_window_member(&mut f, 6, 1, 77), Ok(true));
++        let charged = 500000 - f.budget;
++        let mut f = fixture();
++        f.budget = charged - 1;
++        assert!(prove_window_member(&mut f, 6, 1, 77).is_err());
++        let mut f = fixture();
++        f.budget = charged;
++        assert_eq!(prove_window_member(&mut f, 6, 1, 77), Ok(true));
++    }
++}
+--- /dev/null
++++ b/libs/cua-driver/rust/crates/cua-driver-contract/examples/row_parent_probe.rs
+@@ -0,0 +1,191 @@
++//! Offline AX-provider adapter: production schema and recipient validator, no OS input.
++use cua_driver_contract::row::{
++    discover_row, discover_row_traced, dispatch_row, RowBinding, RowGraph,
++};
++use cua_driver_contract::row_window::{prove_window_member, WindowMembership, WindowReference};
++use cua_driver_contract::{ActionTarget, ClickInput, ToolInput};
++// Synthetic provider only: no claim that this graph was captured from Chrome.
++struct Membership<'a> {
++    graph: &'a RowGraph,
++    faults: &'a serde_json::Value,
++    budget: usize,
++    window_id: u64,
++}
++impl Membership<'_> {
++    fn node(&self, id: u64) -> Result<&cua_driver_contract::row::RowNode, String> {
++        self.graph
++            .nodes
++            .iter()
++            .find(|n| n.id == id)
++            .ok_or("missing held peer".into())
++    }
++}
++impl WindowMembership for Membership<'_> {
++    fn checkpoint(&mut self) -> Result<(), String> {
++        if self.budget == 0 {
++            return Err("row census equality budget".into());
++        }
++        self.budget -= 1;
++        Ok(())
++    }
++    fn pid(&mut self, id: u64) -> Result<u32, String> {
++        Ok(self.node(id)?.pid)
++    }
++    fn window(&mut self, id: u64) -> Result<WindowReference, String> {
++        match self.faults[id.to_string()].as_str() {
++            Some("no_value") => Ok(WindowReference::NoValue),
++            Some("missing") => Err("recipient window absent".into()),
++            Some("unsupported") => Err("AXWindow unreadable (-25205)".into()),
++            Some("timeout") => Err("AXWindow unreadable (-25204)".into()),
++            Some("foreign") => Ok(WindowReference::Direct(u64::MAX)),
++            _ => {
++                if self.node(id)?.window_id == self.window_id {
++                    Ok(WindowReference::Direct(self.graph.root))
++                } else {
++                    Err("row peer window mismatch".into())
++                }
++            }
++        }
++    }
++    fn parent(&mut self, id: u64) -> Result<u64, String> {
++        self.node(id)?.parent.ok_or("AXParent missing".into())
++    }
++    fn children(&mut self, id: u64) -> Result<Vec<u64>, String> {
++        Ok(self.node(id)?.children.clone())
++    }
++}
++fn capture_membership(
++    input: &serde_json::Value,
++    graph: RowGraph,
++    pid: u32,
++    window_id: u64,
++) -> Result<RowGraph, String> {
++    let mut p = Membership {
++        graph: &graph,
++        faults: &input["window_faults"],
++        budget: input["membership_budget"].as_u64().unwrap_or(500000) as usize,
++        window_id,
++    };
++    for node in &graph.nodes {
++        if node.id != graph.root {
++            prove_window_member(&mut p, node.id, graph.root, pid)?;
++        }
++    }
++    Ok(graph)
++}
++use std::io::{self, Read};
++fn main() {
++    let mut text = String::new();
++    io::stdin().read_to_string(&mut text).unwrap();
++    let input: serde_json::Value = serde_json::from_str(&text).unwrap();
++    if input["mode"] == "trace" {
++        let graph: RowGraph = serde_json::from_value(input["graph"].clone()).unwrap();
++        let pid = input["pid"].as_u64().unwrap() as u32;
++        let window = input["window_id"].as_u64().unwrap();
++        let recipient = input["recipient"].as_u64().unwrap();
++        let off = discover_row(&graph, pid, window, recipient);
++        let mut events = Vec::new();
++        let on = discover_row_traced(&graph, pid, window, recipient, Some(&mut events));
++        println!(
++            "{}",
++            serde_json::json!({"off": off, "on": on, "keys": events})
++        );
++        return;
++    }
++    if input["mode"] == "discover" {
++        let graph: RowGraph = serde_json::from_value(input["graph"].clone()).unwrap();
++        let result = capture_membership(
++            &input,
++            graph,
++            input["pid"].as_u64().unwrap() as u32,
++            input["window_id"].as_u64().unwrap(),
++        )
++        .and_then(|graph| {
++            discover_row(
++                &graph,
++                input["pid"].as_u64().unwrap() as u32,
++                input["window_id"].as_u64().unwrap(),
++                input["recipient"].as_u64().unwrap(),
++            )
++        });
++        println!(
++            "{}",
++            match result {
++                Ok(binding) => serde_json::json!({"binding":binding}),
++                Err(error) => serde_json::json!({"binding":null,"error":error}),
++            }
++        );
++        return;
++    }
++    let parsed = serde_json::from_value::<ClickInput>(input["click"].clone())
++        .map_err(|e| e.to_string())
++        .and_then(|i| {
++            i.validate()?;
++            Ok(i)
++        });
++    let click = match parsed {
++        Ok(click) => click,
++        Err(error) => {
++            println!(
++                "{}",
++                serde_json::json!({"schema_valid":false,"error":error,"presses":[]})
++            );
++            return;
++        }
++    };
++    if input["mode"] != "dispatch" {
++        println!("{}", serde_json::json!({"schema_valid":true}));
++        return;
++    }
++    let binding: RowBinding = serde_json::from_value(input["binding"].clone()).unwrap();
++    let graph =
++        serde_json::from_value::<RowGraph>(input["graph"].clone()).map_err(|e| e.to_string());
++    let ActionTarget::Window { pid, window_id } = click.target else {
++        panic!("fixture requires window")
++    };
++    let recipient = input["recipient"].as_u64().unwrap();
++    let graph = graph.and_then(|graph| {
++        // Mirror row_guard::press: the actual recipient requires an explicit
++        // window before the more permissive peer-membership census can run.
++        let mut reader = Membership {
++            graph: &graph,
++            faults: &input["window_faults"],
++            budget: 500000,
++            window_id,
++        };
++        match reader.window(recipient)? {
++            WindowReference::Direct(root) if root == graph.root => {}
++            WindowReference::Direct(_) => return Err("recipient window mismatch".into()),
++            WindowReference::NoValue => return Err("AXWindow unreadable (-25212)".into()),
++        }
++        capture_membership(&input, graph, pid, window_id)
++    });
 +    let mut presses = Vec::new();
 +    let receipt = dispatch_row(
 +        graph,
