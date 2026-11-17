@@ -208,3 +208,25 @@ def test_python_trace_config_matches_strict_authority(tmp_path, monkeypatch, url
     path.write_text(json.dumps({'pid': 77, 'window_id': 9, 'url': url, 'output': str(tmp_path / 'result.json')}))
     monkeypatch.setenv('FOOTWORK_ROW_TRACE_CONFIG', str(path))
     with pytest.raises(ValueError): configuration(77, 9)
+
+
+@pytest.mark.parametrize('marker', [True, False, None, 1, 'true'])
+def test_unbound_native_oversize_fallback_preserves_strict_truncation(tmp_path, marker):
+    from jevdual.row_trace import retain
+    trace = {'version': 1, 'pid': 77, 'window_id': 9,
+             'scope_url': 'http://127.0.0.1:5176/tasks', 'scope_matched': False,
+             'status': 'sdk_trace_oversize', 'truncated': marker}
+    if marker is None:
+        del trace['truncated']
+    path = tmp_path / 'trace.json'
+    retain(path, {'pid': 77, 'window_id': 9, 'row_trace_url': trace['scope_url']},
+           {'pid': 77, 'window_id': 9, 'snapshot_id': 's1',
+            'row_trace_json': json.dumps(trace), 'elements': ['must not retain']},
+           ['must not retain'])
+    data = json.loads(path.read_text())
+    assert data['status'] == 'snapshot_unproven'
+    assert data['truncated'] is (marker is True)
+    assert data['sdk'] is None
+    assert data['unbound_summary'] == {'status': 'sdk_trace_oversize'}
+    assert 'typed_elements' not in data and 'candidates' not in data
+    assert data['input_performed'] is False
