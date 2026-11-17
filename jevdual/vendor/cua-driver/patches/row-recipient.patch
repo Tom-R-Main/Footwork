@@ -885,7 +885,7 @@
 +    if let Some(value) = result.structured_content.as_ref().and_then(|v| v.get("row_receipt")) {
 +        public.row_receipt = Some(serde_json::from_value(value.clone()).map_err(|e| format!("invalid row receipt: {e}"))?);
 +    }
-@@ -6569,0 +6573,37 @@
+@@ -6569,0 +6573,38 @@
 +    }
 +
 +    #[test]
@@ -893,8 +893,9 @@
 +        use crate::action_record::{ActionEffect, ActionExecutionRecord, ActionTransport, ActualDelivery, RequestedDelivery};
 +        for (dispatched, acknowledged) in [(false, false), (true, false), (true, true)] {
 +            let proof = serde_json::json!({
-+                "version": 1, "predicate": {"version": 1, "pid": 77, "window_id": 40335,
++                "version": 1, "predicate": {"version": 2, "pid": 77, "window_id": 40335,
 +                    "document_url": "https://example.test/tasks", "table_headers": ["Task ID", "Actions"],
++                    "row_values": ["TASK-0", "Open menu"],
 +                    "key_column": "Task ID", "key_value": "TASK-0", "role": "AXPopUpButton",
 +                    "name": "Open menu", "action": "AXPress"},
 +                "dispatched": dispatched, "acknowledged": acknowledged,
