@@ -147,3 +147,32 @@ def test_full_row_schema_refuses_incomplete_or_malformed_identity(fault):
                               'element_token': 's00000001:940', 'delivery_mode': 'foreground',
                               'expected_row': expected}})
     assert result['presses'] == []
+
+
+@pytest.mark.parametrize('state', ['ack', 'sdk_refusal', 'preinput_error', 'rpc_error'])
+@pytest.mark.parametrize('fault', ['missing', 'changed', 'typed'])
+def test_full_row_values_survive_durable_and_attached_consumers(world, fw, monkeypatch, tmp_path, state, fault):
+    from jevdual import native_row
+    from jevdual.operator_evidence import EvidenceError, validate_execution
+    from jevdual.session_operations import SessionOperations
+
+    from tests.test_native_row_labels import SELECTOR, assert_presses, setup
+    authority, sent = setup(world, fw, monkeypatch, tmp_path, state, True)
+    assert fw('do', 'click', SELECTOR, '--token', 'full-row')[0] == 0
+    with SessionOperations(authority) as ops:
+        op = ops.status()[-1]
+        record = ops.qualified_receipt(op)
+        prepared = ops._execution_preparation(op.id)
+        intent = native_row.admission(prepared)
+        assert intent['predicate']['row_values'] == ['TASK-0', 'Open menu']
+        damaged = copy.deepcopy(record)
+        row = damaged['projection']['target_identity']['native_row_control']
+        if fault == 'missing': row.pop('row_values')
+        elif fault == 'changed': row['row_values'][1] = 'Different cell content'
+        else: row['row_values'][1] = True
+        with pytest.raises(EvidenceError):
+            validate_execution(damaged, op, binding=ops._execution_binding(op.id), admitted_projection=prepared)
+        attached = {**copy.deepcopy(record['projection']), 'execution_receipt': damaged}
+        with pytest.raises(ValueError): native_row.projection_effect(attached, intent, 77, 40335)
+        assert ops.qualified_receipt(op) == record
+    assert_presses(sent, state)

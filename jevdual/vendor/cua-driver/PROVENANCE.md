@@ -5,9 +5,9 @@ Reference commit: `5486b6246e4c807c0d793216e52df283671d9362` (release `cua-drive
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row1`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
+Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row2`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
-Three Python files remain byte-for-byte from the exact release source. The two UniFFI modules are regenerated for row1 and __init__.py additionally exports ExpectedRow and RowReceipt. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
+Three Python files remain byte-for-byte from the exact release source. The two UniFFI modules are regenerated for row2 and __init__.py additionally exports ExpectedRow and RowReceipt. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
 | Source file | SHA256 |
 | --- | --- |
@@ -15,12 +15,12 @@ Three Python files remain byte-for-byte from the exact release source. The two U
 | `__main__.py` | `bcb78a6283dc6da69f3338879ae34a0f2dbeea3b444e4c3dd43f170d2922a387` |
 | `_daemon.py` | `f6ce97a08ab5c124ba0210b00e44bd652b41cca5a9ae20a511a6409093e8f01e` |
 | `_native.py` | `0f940ed9cff1ab9a0f43dc73718e6a6a77acb08d0ca4dd586d936a1654d6e8ea` |
-| `_native_contract.py` | `a04ea2d876e6c2022b83e4c648e8a017d55e107b8285aefd078e85e1b1fad0e4` |
+| `_native_contract.py` | `2fabf55da93f67899246918e76516b8e8427340649d9fa1b6da152fc2862ec0f` |
 | `wrapper.py` | `cfd7abe6215aab7c1d8f66f2c15e6cd6ab7f150918de7b301b73c253e90a61d6` |
 
 ## Source archive
 
-`native-source.tar.gz` SHA256: `df5257fed36679bf43f3678741fe97bf63199cef1e925ccc71dd2bf7d1d6e731` (6,443,563 bytes). It is the end of a six-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10, row1. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
+`native-source.tar.gz` SHA256: `875182c44449e2806bd2bf44e4515d03848b3896f50db85230bdaf0f3dc211cf` (6,444,000 bytes). It is the end of a six-step patch chain on the selected release source: cleanup2, focus1, helptag1, connected4, locate10, row2. Each step's manifest under `patches/` binds its base archive, patch, patched archive and changed files by SHA256. The focus1 archive (`804aeb8b2ba5b2b49772250a0435032bd9510835a56a33122d1cab531810cfb2`, 6,403,795 bytes) remains in Git history; `python3 scripts/cua_source_chain.py --base <focus1 archive> --output <file>` rebuilds this archive from it and checks every hash.
 
 The complete upstream release archive has SHA256 `032ce99f2e33154082cf854a1a04213e8a7b9eeae0e524564c7c6adb0ae93112`. The selected, unpatched native archive has SHA256 `257a36f5a793ad66d9c3e276709a7c81b667ed960ca5a3544e2d0ea43678fad1`.
 
@@ -321,3 +321,7 @@ retained with the row evidence; neither a Driver nor live input was started.
 Source reconstruction and offline ABI checks do not prove live Chrome AXHeader
 exposure, census latency or recipient behavior. Installed delivery and live
 qualification remain separate boundaries.
+
+## Row2 review corrections
+
+ExpectedRow version2 requires complete selected-row values aligned to explicitly qualified columns, with held cell references inside one dispatch. A unique-column display locator alone is not identity. The reciprocal census rejects conflicting child lists and requires document-above-table-above-row ancestry. Original row1 review/archive/wheel evidence is retained outside this tree. Only click implements this predicate gate; raw SDK alternate tools remain outside Footwork's click-only row support. No live AX behavior or application outcome is established by these offline changes.

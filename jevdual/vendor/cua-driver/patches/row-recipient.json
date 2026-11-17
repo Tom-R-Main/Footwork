@@ -1,6 +1,6 @@
 {
   "base_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
-  "patch_sha256": "1b36d5544a56a08ac91057e921d272c9726483780c0c058bc97743b721890541",
+  "patch_sha256": "394432b3972d0e8df4eb1dbdb8f40a69f14e3bfd0405cf2071c804cd2c7642f6",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs": {
       "before": null,
@@ -17,11 +17,11 @@
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs": {
       "before": "fa9ce6eec69a605bb45142bcad21faf6a0529eed7ad36d4ddd1b81b7d14b6300",
-      "after": "c782883f947b65b2880569d84ab56686765db5f9650c324ff2daa65b58f9811e"
+      "after": "ff0f33c83d981c28a4281e177e19cc6e216375ff3923dd6823d56b04e0a6b044"
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs": {
       "before": null,
-      "after": "c12399231bb352a3fe87cde3e7b27735f402dc28c27cb3e515d03de57517f611",
+      "after": "6c122cfc5833c5b8277b0f1f0364ab076cf071ba900da06ec405a8469bc274be",
       "mode": 420
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs": {
@@ -71,8 +71,8 @@
   ],
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
-  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row1",
-  "patched_archive_sha256": "df5257fed36679bf43f3678741fe97bf63199cef1e925ccc71dd2bf7d1d6e731",
-  "abi": "ExpectedRow, RowReceipt and optional snapshot/click/action row fields; regenerated UniFFI Python modules must match native library",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row2",
+  "patched_archive_sha256": "875182c44449e2806bd2bf44e4515d03848b3896f50db85230bdaf0f3dc211cf",
+  "abi": "ExpectedRow version2 requires full row_values; held row_cells; regenerated native/Python bindings together",
   "toolchain": "1.97.1"
 }

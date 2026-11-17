@@ -140,8 +140,8 @@
 +        valid.delivery = Some(ActionDelivery { mode: ActionDeliveryMode::Foreground, delivered_count: Some(1) });
 +        valid.row_receipt = Some(crate::row::RowReceipt {
 +            version: 1, predicate: crate::ExpectedRow {
-+                version: 1, pid: 77, window_id: 12, document_url: "https://example.test/tasks".into(),
-+                table_headers: vec!["Task ID".into()], key_column: "Task ID".into(), key_value: "TASK-0".into(),
++                version: 2, pid: 77, window_id: 12, document_url: "https://example.test/tasks".into(),
++                table_headers: vec!["Task ID".into()], row_values: vec!["TASK-0".into()], key_column: "Task ID".into(), key_value: "TASK-0".into(),
 +                role: "AXPopUpButton".into(), name: "Open menu".into(), action: "AXPress".into(),
 +            }, dispatched: true, acknowledged: true, delivered_count: 1, effect: "unverifiable".into(), error: None,
 +        });
@@ -178,7 +178,7 @@
 +                "row_receipt",
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs
-@@ -0,0 +1,538 @@
+@@ -0,0 +1,584 @@
 +//! Bounded row-recipient predicates. Graphs are SDK-owned observations, never public tool inputs.
 +use schemars::JsonSchema;
 +use serde::{Deserialize, Serialize};
@@ -192,6 +192,7 @@
 +    pub window_id: u64,
 +    pub document_url: String,
 +    pub table_headers: Vec<String>,
++    pub row_values: Vec<String>,
 +    pub key_column: String,
 +    pub key_value: String,
 +    pub role: String,
@@ -206,7 +207,7 @@
 +            &self.key_value,
 +            &self.name,
 +        ];
-+        if self.version != 1
++        if self.version != 2
 +            || self.pid == 0
 +            || self.window_id == 0
 +            || text.iter().any(|s| s.is_empty() || s.len() > 2048)
@@ -215,6 +216,13 @@
 +            || self.table_headers.is_empty()
 +            || self.table_headers.len() > 64
 +            || self.table_headers.iter().any(|s| s.len() > 2048)
++            || self.row_values.len() != self.table_headers.len()
++            || self.row_values.iter().any(|s| s.len() > 2048)
++            || self
++                .table_headers
++                .iter()
++                .position(|s| s == &self.key_column)
++                .is_none_or(|i| self.row_values.get(i) != Some(&self.key_value))
 +            || self
 +                .table_headers
 +                .iter()
@@ -265,6 +273,7 @@
 +    pub table: u64,
 +    pub row: u64,
 +    pub key_cell: u64,
++    pub row_cells: Vec<u64>,
 +    pub key_column: u64,
 +    pub header: u64,
 +    pub recipient: u64,
@@ -309,6 +318,12 @@
 +                .chain(n.header.iter())
 +            {
 +                c.node(*id)?;
++            }
++            // AXColumn legitimately aliases cells owned by rows. Other child
++            // listings must agree in both directions with the actual AXParent.
++            if n.role != "AXColumn" && n.children.iter().any(|id| c.nodes[id].parent != Some(n.id))
++            {
++                return Err("row conflicting child ancestry".into());
 +            }
 +            // Every non-root object's actual parent must expose it. A column may
 +            // additionally expose the very same cell whose actual parent is a row.
@@ -361,7 +376,12 @@
 +                return Err("row cell text exceeds bound".into());
 +            }
 +            let n = self.node(next)?;
-+            if next != id && !matches!(n.role.as_str(), "AXStaticText" | "AXGroup" | "AXButton") {
++            if next != id
++                && !matches!(
++                    n.role.as_str(),
++                    "AXStaticText" | "AXGroup" | "AXButton" | "AXPopUpButton"
++                )
++            {
 +                return Err("unsupported row cell content".into());
 +            }
 +            for value in [Some(&n.name), n.value.as_ref()].into_iter().flatten() {
@@ -492,7 +512,7 @@
 +        let row = find("AXRow")?;
 +        let table = find("AXTable")?;
 +        let document = find("AXWebArea")?;
-+        if self.node(row)?.parent != Some(table) {
++        if self.node(row)?.parent != Some(table) || !self.ancestors(table)?.contains(&document) {
 +            return Err("nested row/table ancestry".into());
 +        }
 +        let url = self
@@ -572,12 +592,37 @@
 +            return Err("row action is not unique".into());
 +        }
 +        let (key_cell, key_value) = selected.ok_or("key cell missing")?;
++        // A unique column is a display locator, not semantic identity. Bind all
++        // selected row cells through explicit column membership (never index).
++        let mut row_cells = Vec::new();
++        let mut row_values = Vec::new();
++        for col_id in &cols {
++            let column = self.node(*col_id)?;
++            let cells: Vec<_> = self
++                .unique(&self.node(row)?.children)
++                .into_iter()
++                .filter(|id| column.children.contains(id))
++                .collect();
++            if cells.len() != 1
++                || self.node(cells[0])?.role != "AXCell"
++                || self.node(cells[0])?.parent != Some(row)
++                || row_cells.contains(&cells[0])
++            {
++                return Err("full row cell relationship ambiguous".into());
++            }
++            row_cells.push(cells[0]);
++            row_values.push(self.text(cells[0])?);
++        }
++        if self.unique(&self.node(row)?.children) != self.unique(&row_cells) {
++            return Err("full row contains unmapped content".into());
++        }
 +        let predicate = ExpectedRow {
-+            version: 1,
++            version: 2,
 +            pid: action.pid,
 +            window_id: action.window_id,
 +            document_url: url.clone(),
 +            table_headers: headers,
++            row_values,
 +            key_column: key_column.into(),
 +            key_value,
 +            role: action.role.clone(),
@@ -592,6 +637,7 @@
 +            table,
 +            row,
 +            key_cell,
++            row_cells,
 +            key_column: col.id,
 +            header: col.header.ok_or("header absent")?,
 +            recipient,

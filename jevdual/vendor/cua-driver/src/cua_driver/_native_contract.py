@@ -1573,12 +1573,13 @@ class _UniffiFfiConverterSequenceString(_UniffiConverterRustBuffer):
 
 @dataclass
 class ExpectedRow:
-    def __init__(self, *, version:int, pid:int, window_id:int, document_url:str, table_headers:typing.List[str], key_column:str, key_value:str, role:str, name:str, action:str):
+    def __init__(self, *, version:int, pid:int, window_id:int, document_url:str, table_headers:typing.List[str], row_values:typing.List[str], key_column:str, key_value:str, role:str, name:str, action:str):
         self.version = version
         self.pid = pid
         self.window_id = window_id
         self.document_url = document_url
         self.table_headers = table_headers
+        self.row_values = row_values
         self.key_column = key_column
         self.key_value = key_value
         self.role = role
@@ -1589,7 +1590,7 @@ class ExpectedRow:
 
 
     def __str__(self):
-        return "ExpectedRow(version={}, pid={}, window_id={}, document_url={}, table_headers={}, key_column={}, key_value={}, role={}, name={}, action={})".format(self.version, self.pid, self.window_id, self.document_url, self.table_headers, self.key_column, self.key_value, self.role, self.name, self.action)
+        return "ExpectedRow(version={}, pid={}, window_id={}, document_url={}, table_headers={}, row_values={}, key_column={}, key_value={}, role={}, name={}, action={})".format(self.version, self.pid, self.window_id, self.document_url, self.table_headers, self.row_values, self.key_column, self.key_value, self.role, self.name, self.action)
     def __eq__(self, other):
         if self.version != other.version:
             return False
@@ -1600,6 +1601,8 @@ class ExpectedRow:
         if self.document_url != other.document_url:
             return False
         if self.table_headers != other.table_headers:
+            return False
+        if self.row_values != other.row_values:
             return False
         if self.key_column != other.key_column:
             return False
@@ -1622,6 +1625,7 @@ class _UniffiFfiConverterTypeExpectedRow(_UniffiConverterRustBuffer):
             window_id=_UniffiFfiConverterUInt64.read(buf),
             document_url=_UniffiFfiConverterString.read(buf),
             table_headers=_UniffiFfiConverterSequenceString.read(buf),
+            row_values=_UniffiFfiConverterSequenceString.read(buf),
             key_column=_UniffiFfiConverterString.read(buf),
             key_value=_UniffiFfiConverterString.read(buf),
             role=_UniffiFfiConverterString.read(buf),
@@ -1636,6 +1640,7 @@ class _UniffiFfiConverterTypeExpectedRow(_UniffiConverterRustBuffer):
         _UniffiFfiConverterUInt64.check_lower(value.window_id)
         _UniffiFfiConverterString.check_lower(value.document_url)
         _UniffiFfiConverterSequenceString.check_lower(value.table_headers)
+        _UniffiFfiConverterSequenceString.check_lower(value.row_values)
         _UniffiFfiConverterString.check_lower(value.key_column)
         _UniffiFfiConverterString.check_lower(value.key_value)
         _UniffiFfiConverterString.check_lower(value.role)
@@ -1649,6 +1654,7 @@ class _UniffiFfiConverterTypeExpectedRow(_UniffiConverterRustBuffer):
         _UniffiFfiConverterUInt64.write(value.window_id, buf)
         _UniffiFfiConverterString.write(value.document_url, buf)
         _UniffiFfiConverterSequenceString.write(value.table_headers, buf)
+        _UniffiFfiConverterSequenceString.write(value.row_values, buf)
         _UniffiFfiConverterString.write(value.key_column, buf)
         _UniffiFfiConverterString.write(value.key_value, buf)
         _UniffiFfiConverterString.write(value.role, buf)

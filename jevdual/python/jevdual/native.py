@@ -661,8 +661,11 @@ def menu_from_snapshot(
         native_control_qualified=True, native_control_opaque=True,
     ) if candidate.id in (mac_opaque_controls or {}) else candidate for candidate in candidates]
     identity_counts = Counter((c.role, c.label, c.section, qualified_link_href(c), qualified_control_identity(c)) for c in candidates)
+    row_peers = {(c.role, c.label) for c in candidates if c.native_row_control is not None}
     ambiguous_targets = frozenset(
-        c.id for c in candidates if identity_counts[c.role, c.label, c.section, qualified_link_href(c), qualified_control_identity(c)] > 1
+        c.id for c in candidates
+        if identity_counts[c.role, c.label, c.section, qualified_link_href(c), qualified_control_identity(c)] > 1
+        or (c.native_row_control is None and (c.role, c.label) in row_peers)
     )
     text_roster = sorted(
         (c.role, c.label, c.section or "", c.placeholder or "")

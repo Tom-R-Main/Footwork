@@ -10,9 +10,9 @@ PROBE = os.environ.get("FOOTWORK_ROW_SDK_PROBE")
 pytestmark = pytest.mark.skipif(not PROBE, reason="requires compiled pinned SDK row adapter probe")
 
 PREDICATE = {
-    "version": 1, "pid": 77, "window_id": 40335,
+    "version": 2, "pid": 77, "window_id": 40335,
     "document_url": "https://example.test/tasks",
-    "table_headers": ["Task ID", "Actions"], "key_column": "Task ID", "key_value": "TASK-0",
+    "table_headers": ["Task ID", "Actions"], "row_values": ["TASK-0", "Open menu"], "key_column": "Task ID", "key_value": "TASK-0",
     "role": "AXPopUpButton", "name": "Open menu", "action": "AXPress",
 }
 

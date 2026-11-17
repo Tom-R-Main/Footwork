@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-FIELDS = ('version', 'pid', 'window_id', 'document_url', 'table_headers', 'key_column', 'key_value', 'role', 'name', 'action')
+FIELDS = ('version', 'pid', 'window_id', 'document_url', 'table_headers', 'row_values', 'key_column', 'key_value', 'role', 'name', 'action')
 RECEIPT_FIELDS = ('version', 'predicate', 'dispatched', 'acknowledged', 'delivered_count', 'effect', 'error')
 
 
@@ -25,14 +25,18 @@ def record(value: Any, fields: tuple[str, ...]) -> dict[str, Any]:
 def predicate(value: Any) -> dict[str, Any]:
     row = record(value, FIELDS)
     headers = row['table_headers']
-    if (type(row['version']) is not int or row['version'] != 1
+    values = row['row_values']
+    if (type(row['version']) is not int or row['version'] != 2
             or any(type(row[k]) is not int or row[k] <= 0 for k in ('pid', 'window_id'))
             or any(not isinstance(row[k], str) or not row[k] or len(row[k].encode()) > 2048
                    for k in ('document_url', 'key_column', 'key_value', 'name'))
             or row['role'] not in ('AXButton', 'AXPopUpButton') or row['action'] != 'AXPress'
             or not isinstance(headers, list) or not 1 <= len(headers) <= 64
             or any(not isinstance(h, str) or len(h.encode()) > 2048 for h in headers)
-            or headers.count(row['key_column']) != 1):
+            or headers.count(row['key_column']) != 1
+            or not isinstance(values, list) or len(values) != len(headers)
+            or any(not isinstance(v, str) or len(v.encode()) > 2048 for v in values)
+            or values[headers.index(row['key_column'])] != row['key_value']):
         raise ValueError('invalid SDK row predicate')
     return row
 
@@ -42,7 +46,7 @@ def identity(value: Any) -> tuple[Any, ...] | None:
         row = predicate(value)
     except (ValueError, TypeError):
         return None
-    return ('sdk_row', *(tuple(row[key]) if key == 'table_headers' else row[key] for key in FIELDS))
+    return ('sdk_row', *(tuple(row[key]) if key in ('table_headers', 'row_values') else row[key] for key in FIELDS))
 
 
 def section(row: dict[str, Any]) -> str:

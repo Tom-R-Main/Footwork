@@ -17,7 +17,7 @@ import pytest
 
 cd = pytest.importorskip("cua_driver")
 
-PINNED_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row1"
+PINNED_VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row2"
 
 
 def _params(cls) -> set[str]:
@@ -243,8 +243,8 @@ def test_embedded_constructor_is_available_without_starting_runtime():
 
 def test_row_recipient_records_match_native_abi():
     from cua_driver import _native_contract as native
-    expected = cd.ExpectedRow(version=1, pid=77, window_id=9,
-        document_url="http://127.0.0.1:5176/tasks", table_headers=["ID", "Action"],
+    expected = cd.ExpectedRow(version=2, pid=77, window_id=9,
+        document_url="http://127.0.0.1:5176/tasks", table_headers=["ID", "Action"], row_values=["TASK-1", "Open menu"],
         key_column="ID", key_value="TASK-1", role="AXButton", name="Open menu", action="AXPress")
     converter = native._UniffiFfiConverterTypeExpectedRow
     assert converter.lift(converter.lower(expected)) == expected
