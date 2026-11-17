@@ -21,6 +21,7 @@ BASES = frozenset(
         "ax_menu_press_ack",
         "ax_menu_effect_readback",
         "ax_fullscreen_state_readback",
+        "ax_infobar_disappearance_readback",
         "ax_finder_rename_readback",
         "ax_finder_move_readback",
         "qualified_gate",
@@ -137,6 +138,70 @@ def _validate_fullscreen_execution(proof: Any, binding: dict[str, Any], effect: 
             raise EvidenceError("fullscreen acknowledgement lacks exact delivery evidence")
     elif basis != "unknown" or count is not None or effect != "unverifiable":
         raise EvidenceError("unacknowledged fullscreen press cannot confirm delivery")
+
+
+def infobar_readback_effect(proof: Any, control: Any, pid: Any, window_id: Any) -> str:
+    """Validate a fixed infobar predicate, independently of generic visible UI changes."""
+    required = {"schema_version", "producer", "predicate", "before", "after", "press_acknowledged", "transition_observed"}
+    if (not isinstance(proof, dict) or set(proof) not in (required, required | {"error"})
+            or type(proof.get("schema_version")) is not int or proof["schema_version"] != 1
+            or proof.get("producer") != "footwork.ax.infobar"
+            or proof.get("predicate") != "native_infobar_disappearance"
+            or type(proof.get("press_acknowledged")) is not bool
+            or type(proof.get("transition_observed")) is not bool
+            or ("error" in proof and (not isinstance(proof["error"], str) or not proof["error"]))):
+        raise EvidenceError("unsupported infobar readback")
+    before = proof["before"]
+    from jevdual.menu import qualified_control_identity
+
+    if (qualified_control_identity({"role": "button", "native_infobar_control": before}) is None
+            or qualified_control_identity({"role": "button", "native_infobar_control": control}) is None
+            or canonical(before) != canonical(control)
+            or type(pid) is not int or pid <= 0 or type(window_id) is not int or window_id <= 0
+            or before["pid"] != pid or before["window_id"] != window_id):
+        raise EvidenceError("infobar target differs from admitted binding")
+    after = proof["after"]
+    transition = False
+    if after is not None:
+        fields = {"pid", "window_id", "window_hash", "tab_hashes", "infobar_absent", "window_retained", "tabs_retained"}
+        if (not isinstance(after, dict) or set(after) != fields
+                or any(type(after[k]) is not int or after[k] != before[k] for k in ("pid", "window_id", "window_hash"))
+                or canonical(after["tab_hashes"]) != canonical(before["tab_hashes"])
+                or any(type(after[k]) is not bool for k in ("infobar_absent", "window_retained", "tabs_retained"))):
+            raise EvidenceError("infobar after-state differs from bound window/tabs")
+        transition = after["infobar_absent"] and after["window_retained"] and after["tabs_retained"]
+    if proof["transition_observed"] != transition or (transition and "error" in proof):
+        raise EvidenceError("contradictory infobar transition")
+    return "confirmed" if proof["press_acknowledged"] and transition else "unverifiable"
+
+
+def _validate_infobar_execution(proof: Any, binding: dict[str, Any], effect: str,
+                                   op: Any, projection: dict[str, Any], basis: str, count: Any) -> None:
+    identity = projection.get("target_identity")
+    if not isinstance(identity, dict):
+        raise EvidenceError("missing infobar target identity")
+    control = identity.get("native_infobar_control")
+    expected = infobar_readback_effect(proof, control, binding["pid"], binding["window_id"])
+    label = "Dismiss browser infobar"
+    arguments = getattr(op, "args", {})
+    if not isinstance(arguments, dict):
+        raise EvidenceError("missing infobar admission arguments")
+    words = arguments.get("words", [])
+    if (op.move != "click" or op.target != "-3" or projection.get("op") != "click"
+            or type(projection.get("target_id")) is not int or projection["target_id"] != -3
+            or identity.get("role") != "button" or identity.get("section") != "Native browser"
+            or identity.get("label") != label or projection.get("target_label") != label
+            or not isinstance(words, list) or len(words) != 2 or words[0] != "click"
+            or not isinstance(words[1], str)
+            or words[1].strip().casefold() not in {"-3", label.casefold(), "button:" + label.casefold()}
+            or effect != expected or projection.get("driver_effect") != effect
+            or projection.get("dispatched") is not True):
+        raise EvidenceError("infobar proof differs from admitted click or effect")
+    if proof["press_acknowledged"]:
+        if basis != "ax_infobar_disappearance_readback" or type(count) is not int or count != 1:
+            raise EvidenceError("infobar acknowledgement lacks exact delivery evidence")
+    elif basis != "unknown" or count is not None or effect != "unverifiable":
+        raise EvidenceError("unacknowledged infobar press cannot confirm delivery")
 
 
 def _validate_native_readback(
@@ -479,6 +544,7 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
                 "ax_menu_press_ack",
                 "ax_menu_effect_readback",
                 "ax_fullscreen_state_readback",
+                "ax_infobar_disappearance_readback",
                 "ax_finder_rename_readback",
                 "ax_finder_move_readback",
             }
@@ -506,6 +572,11 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
         fullscreen_target and (dispatched is True or effect in {"confirmed", "partial"})
     ):
         _validate_fullscreen_execution(projection.get("native_readback"), binding, effect, op, projection, basis, count)
+    infobar = identity.get("native_infobar_control") if isinstance(identity, dict) else None
+    if basis == "ax_infobar_disappearance_readback" or (
+        (op.target == "-3" or infobar is not None) and (dispatched is True or effect in {"confirmed", "partial"})
+    ):
+        _validate_infobar_execution(projection.get("native_readback"), binding, effect, op, projection, basis, count)
     if basis in {"ax_menu_effect_readback", "ax_finder_rename_readback", "ax_finder_move_readback"}:
         _validate_native_readback(projection.get("native_readback"), basis, binding, effect, op, projection)
         if (

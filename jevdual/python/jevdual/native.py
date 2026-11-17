@@ -59,6 +59,7 @@ log = logging.getLogger("jevdual.native")
 
 # Separate semantic window action, never an SDK element index or token.
 FULLSCREEN_CONTROL_ID = -2
+INFOBAR_CONTROL_ID = -3
 
 #: AX role -> (menu role, operations). Roles absent here fall back to ``click`` when the element
 #: advertises AXPress, and are skipped otherwise.
@@ -454,6 +455,7 @@ def menu_from_snapshot(
     mac_opaque_controls: dict[int, tuple[str, str]] | None = None,
     mac_census_only: set[int] | None = None,
     mac_fullscreen: dict[int, dict[str, Any]] | None = None,
+    mac_infobar: dict[int, dict[str, Any]] | None = None,
 ) -> NativeMenu:
     """Build the System 1 menu from a Driver ``get_window_state`` result (SDK object or dict)."""
     b = budget or MenuBudget()
@@ -598,6 +600,14 @@ def menu_from_snapshot(
         ))
         by_index[FULLSCREEN_CONTROL_ID] = {"element_index": FULLSCREEN_CONTROL_ID, "role": "AXButton"}
         ax_roles[FULLSCREEN_CONTROL_ID] = "AXButton"
+
+    if mac_infobar and INFOBAR_CONTROL_ID not in by_index:
+        candidates.append(Candidate(
+            id=INFOBAR_CONTROL_ID, role="button", operations=("click",), label="Dismiss browser infobar",
+            section="Native browser", native_infobar_control=mac_infobar[INFOBAR_CONTROL_ID],
+        ))
+        by_index[INFOBAR_CONTROL_ID] = {"element_index": INFOBAR_CONTROL_ID, "role": "AXButton"}
+        ax_roles[INFOBAR_CONTROL_ID] = "AXButton"
 
     scope_address_bars = tuple(
         (candidate.id, values.get(candidate.id))
@@ -1234,9 +1244,12 @@ class NativeBridge:
         mac_opaque_controls = None
         mac_census_only = None
         mac_fullscreen = None
+        mac_infobar = None
+        self._infobar_refs = {}
         self._fullscreen_refs = {}
         if sys.platform == "darwin":
             mac_fullscreen = await asyncio.to_thread(self._fullscreen_identity, snap)
+            mac_infobar = await asyncio.to_thread(self._infobar_identity, snap)
             mac_text = await asyncio.to_thread(self._web_text_attributes, snap)
             mac_sections = await asyncio.to_thread(self._web_control_sections, snap)
             mac_links = await asyncio.to_thread(self._link_resources, snap)
@@ -1251,6 +1264,7 @@ class NativeBridge:
             mac_opaque_controls=mac_opaque_controls,
             mac_census_only=mac_census_only,
             mac_fullscreen=mac_fullscreen,
+            mac_infobar=mac_infobar,
         )
         if linux_text is not None:
             # Linux window managers may report the desktop ID as the app name.
@@ -1299,6 +1313,20 @@ class NativeBridge:
             win, button, proof = self.ax.fullscreen_control(self.pid, self.window_id)
             self._fullscreen_refs[FULLSCREEN_CONTROL_ID] = (win, button)
             return {FULLSCREEN_CONTROL_ID: proof}
+        except Exception:  # noqa: BLE001 - unreadable native semantics never expose a new control
+            return {}
+
+    def _infobar_identity(self, snapshot: Any) -> dict[int, dict[str, Any]]:
+        """Project independent native window semantics, never infer a cached SDK token by geometry."""
+        if (not self.window_controls or _get(snapshot, "pid") != self.pid or _get(snapshot, "window_id") != self.window_id
+                or _get(snapshot, "truncated") or _get(snapshot, "degraded")
+                or any(_get(row, "element_index") == INFOBAR_CONTROL_ID
+                       for row in _get(snapshot, "elements") or [])):
+            return {}
+        try:
+            win, button, tabs, proof = self.ax.infobar_control(self.pid, self.window_id)
+            self._infobar_refs[INFOBAR_CONTROL_ID] = (win, button, tabs)
+            return {INFOBAR_CONTROL_ID: proof}
         except Exception:  # noqa: BLE001 - unreadable native semantics never expose a new control
             return {}
 
@@ -1533,6 +1561,9 @@ class NativeBridge:
         if (cand is not None and id == FULLSCREEN_CONTROL_ID and cand.native_window_control is not None
                 and qualified_control_identity(cand) is not None):
             return cand, ""  # native semantic action; never passed to the SDK
+        if (cand is not None and id == INFOBAR_CONTROL_ID and cand.native_infobar_control is not None
+                and qualified_control_identity(cand) is not None):
+            return cand, ""
         if cand is None or token is None:
             raise NativeBridgeError("target_missing", f"id {id} is not on the menu from {nm.snapshot_id}")
         return cand, token
@@ -2331,6 +2362,97 @@ class NativeBridge:
             summary="native fullscreen state changed" if confirmed else "fullscreen click attempted; transition unverified",
         )
 
+    async def _click_infobar(self, nm: NativeMenu, id: int, cand: Candidate) -> NativeEffect:
+        expected = cand.native_infobar_control
+        if (qualified_control_identity(cand) is None or expected is None
+                or expected["pid"] != self.pid or expected["window_id"] != self.window_id):
+            raise NativeBridgeError("target_changed", "infobar identity does not match the bound native window")
+        if self.filmed is not None:
+            return self._not_sent("click", id, cand.label, "cross_window",
+                                  "infobar preparation must be outside a filmed take", "foreground")
+        initial_refs = None
+        before_window = None
+        attempted = False
+
+        async def call() -> Any:
+            nonlocal before_window, attempted
+            await self._front()
+            if (self.policy._activity().frontmost_pid() != self.pid
+                    or self.ax.focused_window_id(self.pid) != self.window_id):
+                raise NativeBridgeError("not_key", "the exact infobar window is not front/key; no click fallback")
+            current, target_id = await self._live(nm, id, "click")
+            self._require_fresh(current, target_id)
+            refs = self._infobar_refs.get(target_id)
+            win, button, tabs, proof = self.ax.infobar_control(self.pid, self.window_id)
+            if (proof != expected or refs is None or not self.ax.same_element(win, refs[0])
+                    or not self.ax.same_element(button, refs[1])
+                    or not self.ax.same_element(win, initial_refs[0])
+                    or not self.ax.same_element(button, initial_refs[1])
+                    or len(tabs) != len(initial_refs[2])
+                    or any(not self.ax.same_element(a, b) for a, b in zip(tabs, initial_refs[2], strict=True))):
+                raise NativeBridgeError("target_changed", "infobar control changed before dispatch")
+            before_window = (win, button, tabs)
+
+            def check_ready() -> None:
+                checkpoint()
+                if (self.policy._activity().frontmost_pid() != self.pid
+                        or self.ax.focused_window_id(self.pid) != self.window_id):
+                    raise NativeBridgeError("not_key", "infobar window lost front/key ownership before dispatch")
+
+            def on_dispatch() -> None:
+                nonlocal attempted
+                self.last = None
+                self.dispatches += 1
+                attempted = True
+
+            await owned_thread(self.ax.press_infobar, self.pid, self.window_id, expected,
+                               (win, button, tabs), check_ready=check_ready, on_dispatch=on_dispatch)
+            return _PRESSED
+
+        try:
+            # Requalify before even bringing a window forward; a stale decision must not cause input.
+            _, initial_id = await self._live(nm, id, "click")
+            initial_refs = self._infobar_refs.get(initial_id)
+            if initial_refs is None:
+                raise NativeBridgeError("target_changed", "infobar reference is unavailable")
+            effect = await self._foreground("click", id, cand.label, call, why="native window infobar preparation")
+        except Exception as exc:  # noqa: BLE001 - the fixed action's dispatch marker decides delivery, never retry
+            effect = self._effect("click", id, cand.label, exc, "foreground")
+        if not attempted:
+            # Unlike a generic SDK call, this route has exactly one input site,
+            # marked immediately before AXPress. Census/preemption errors cannot
+            # imply that input was attempted merely because _effect defaults so.
+            return dataclasses.replace(
+                effect, effect="refused", dispatched=False, delivery_basis="qualified_gate", delivered_count=0,
+                summary="infobar AXPress not attempted; " + effect.summary,
+            )
+        acknowledged = effect.delivered_count == 1 and effect.error_code is None
+        readback: dict[str, Any] = {
+            "schema_version": 1, "producer": "footwork.ax.infobar",
+            "predicate": "native_infobar_disappearance", "before": expected, "after": None,
+            "press_acknowledged": acknowledged, "transition_observed": False,
+        }
+        deadline = asyncio.get_running_loop().time() + 2.0
+        while True:
+            try:
+                after = self.ax.infobar_readback(self.pid, self.window_id, before_window, expected)
+                readback["after"] = after
+                readback["transition_observed"] = after["infobar_absent"] and after["window_retained"] and after["tabs_retained"]
+            except Exception as exc:  # noqa: BLE001 - input already attempted, never retry it
+                readback["error"] = str(exc)
+                break
+            if readback["transition_observed"] or asyncio.get_running_loop().time() >= deadline:
+                break
+            await asyncio.sleep(0.05)
+        confirmed = acknowledged and readback["transition_observed"]
+        return dataclasses.replace(
+            effect, effect="confirmed" if confirmed else "unverifiable", dispatched=True,
+            delivery_basis="ax_infobar_disappearance_readback" if acknowledged else "unknown",
+            delivered_count=1 if acknowledged else None,
+            native_readback=readback,
+            summary="native infobar state changed" if confirmed else "infobar click attempted; transition unverified",
+        )
+
     async def _click_token(self, token: str, *, foreground: bool = False, target_point: Any = None) -> Any:
         from jevdual.effectors.cua import (
             background_delivery,
@@ -2941,7 +3063,7 @@ class NativeBridge:
 
         src, _ = self._require_fresh(nm, source)
         dst, _ = self._require_fresh(nm, destination)
-        if src.native_window_control is not None or dst.native_window_control is not None:
+        if any(c.native_window_control is not None or c.native_infobar_control is not None for c in (src, dst)):
             raise NativeBridgeError("fullscreen_operator_only", "native window controls cannot be drag endpoints")
         label = f"{src.label} -> {dst.label}"
         if source == destination:
@@ -3058,6 +3180,13 @@ class NativeBridge:
             if operation != "click" or web_text_delivery is not None or web_text_range is not None:
                 raise NativeBridgeError("unknown_operation", "native fullscreen control only supports click")
             return await self._click_fullscreen(nm, id, cand)
+        if cand.native_infobar_control is not None:
+            if not self.window_controls or not operator_window_control:
+                raise NativeBridgeError("infobar_operator_only", "infobar requires explicit operator do click")
+            if (operation != "click" or text is not None or web_text_delivery is not None
+                    or web_text_range is not None or click_delivery is not None):
+                raise NativeBridgeError("unknown_operation", "native infobar control only supports click")
+            return await self._click_infobar(nm, id, cand)
         if click_delivery is not None:
             require_foreground_click_runtime()
             if (click_delivery != "foreground" or operation != "click" or "click" not in cand.operations

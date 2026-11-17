@@ -283,6 +283,110 @@ def fullscreen_readback(pid: int, window_id: int, expected_window: Any) -> dict[
             "bounds": {"x": frame.x, "y": frame.y, "w": frame.w, "h": frame.h} if frame else None}
 
 
+def _infobar_census(pid: int, window_id: int) -> tuple[Any, list[Any], list[Any], list[Any]]:
+    """Complete bounded native-chrome census; web subtrees never confer native authority."""
+    from ApplicationServices import AXUIElementGetPid
+
+    read = _fullscreen_attr  # preserves unsupported/no-value versus an AX read error
+    win = window_element(pid, window_id)
+    if win is None or read(win, "AXRole") != "AXWindow":
+        raise AXError("infobar_unqualified", "bound window unavailable")
+    rows: list[tuple[Any, list[Any], str, Any, Any]] = []
+    stack = [(win, [])]
+    while stack:
+        el, ancestors = stack.pop()
+        if len(rows) >= 2048 or len(ancestors) > 20 or any(same_element(el, r[0]) for r in rows):
+            raise AXError("infobar_unqualified", "native census incomplete or cyclic")
+        error, owner = AXUIElementGetPid(el, None)
+        role = read(el, "AXRole")
+        subrole = read(el, "AXSubrole", optional=True)
+        title = read(el, "AXTitle", optional=True)
+        if error or owner != pid or not isinstance(role, str) or not role:
+            raise AXError("infobar_unqualified", "native peer ownership/role unreadable")
+        if ancestors and (not same_element(read(el, "AXParent"), ancestors[-1])
+                          or not same_element(read(el, "AXWindow"), win)):
+            raise AXError("infobar_unqualified", "native ancestry does not match the bound window")
+        rows.append((el, ancestors, role, subrole, title))
+        if role == "AXWebArea":
+            continue  # page-authored alert/button labels are deliberately outside this census
+        children = read(el, "AXChildren", optional=role not in {"AXWindow", "AXGroup", "AXTabGroup", "AXRadioButton"})
+        if children is not None:
+            if not isinstance(children, (list, tuple)) or len(children) > 2048:
+                raise AXError("infobar_unqualified", "native children unreadable")
+            stack.extend((child, ancestors + [el]) for child in reversed(children))
+    containers = [r for r in rows if r[2:] == ("AXGroup", "AXApplicationGroup", "Infobar Container")]
+    alerts = [r for r in rows if r[2:] == ("AXGroup", "AXApplicationAlertDialog", "Infobar")]
+    groups = [r for r in rows if r[2] == "AXTabGroup"]
+    tabs = [r for r in rows if r[2:4] == ("AXRadioButton", "AXTabButton")]
+    if (len(containers) > 1 or (alerts and len(containers) != 1)
+            or len(groups) != 1 or not tabs or len(tabs) > 64):
+        raise AXError("infobar_unqualified", "native infobar/tab census is not unique")
+    if any(not r[1] or not same_element(r[1][-1], groups[0][0]) for r in tabs):
+        raise AXError("infobar_unqualified", "tab ancestry is unqualified")
+    if any(not r[1] or not same_element(r[1][-1], containers[0][0]) for r in alerts):
+        raise AXError("infobar_unqualified", "alert ancestry is unqualified")
+    closes = [r for r in rows if r[2] == "AXButton" and r[4] == "Close"
+              and any(any(same_element(a, alert[0]) for a in r[1]) for alert in alerts)]
+    # Every intermediate ancestor between the alert and Close must be a plain group.
+    for r in closes:
+        chain = r[1]
+        alert_index = next(i for i, a in enumerate(chain) if any(same_element(a, x[0]) for x in alerts))
+        for a in chain[alert_index + 1:]:
+            if read(a, "AXRole") != "AXGroup" or read(a, "AXSubrole", optional=True) is not None:
+                raise AXError("infobar_unqualified", "Close has non-infobar ancestry")
+    return win, [r[0] for r in alerts], [r[0] for r in closes], [r[0] for r in tabs]
+
+
+def infobar_control(pid: int, window_id: int) -> tuple[Any, Any, list[Any], dict[str, Any]]:
+    from ApplicationServices import AXUIElementCopyActionNames
+    from CoreFoundation import CFHash
+
+    win, alerts, closes, tabs = _infobar_census(pid, window_id)
+    if len(alerts) != 1 or len(closes) != 1:
+        raise AXError("infobar_unqualified", "infobar Close missing or ambiguous")
+    close = closes[0]
+    error, actions = AXUIElementCopyActionNames(close, None)
+    if (_fullscreen_attr(close, "AXEnabled") is not True or error or "AXPress" not in (actions or ())
+            or _fullscreen_attr(close, "AXSubrole", optional=True) is not None):
+        raise AXError("infobar_unqualified", "infobar Close does not offer enabled AXPress")
+    proof = {"pid": pid, "window_id": window_id, "window_hash": int(CFHash(win)),
+             "button_hash": int(CFHash(close)), "alert_hash": int(CFHash(alerts[0])),
+             "tab_hashes": [int(CFHash(t)) for t in tabs], "kind": "native_infobar_close"}
+    return win, close, tabs, proof
+
+
+def press_infobar(pid: int, window_id: int, expected: dict[str, Any], refs: tuple[Any, Any, list[Any]],
+                  *, check_ready: Any, on_dispatch: Any) -> None:
+    """One fixed AXPress on the actual requalified Close, never an SDK token or raw endpoint."""
+    from ApplicationServices import AXUIElementPerformAction
+
+    checkpoint()
+    win, button, tabs, proof = infobar_control(pid, window_id)
+    if (proof != expected or not same_element(win, refs[0]) or not same_element(button, refs[1])
+            or len(tabs) != len(refs[2]) or any(not same_element(a, b) for a, b in zip(tabs, refs[2], strict=True))):
+        raise AXError("infobar_changed", "infobar identity changed at the press boundary")
+    check_ready()
+    on_dispatch()  # AX has no atomic compare-and-press; later uncertainty never triggers a retry.
+    error = AXUIElementPerformAction(button, "AXPress")
+    if error:
+        raise AXError("infobar_press_unverified", f"infobar AXPress returned {error}; do not retry")
+
+
+def infobar_readback(pid: int, window_id: int, refs: tuple[Any, Any, list[Any]],
+                     expected: dict[str, Any]) -> dict[str, Any]:
+    from CoreFoundation import CFHash
+
+    win, alerts, closes, tabs = _infobar_census(pid, window_id)
+    if (int(CFHash(win)) != expected["window_hash"]
+            or [int(CFHash(t)) for t in tabs] != expected["tab_hashes"]
+            or not same_element(win, refs[0]) or len(tabs) != len(refs[2])
+            or any(not same_element(a, b) for a, b in zip(tabs, refs[2], strict=True))):
+        raise AXError("infobar_unobservable", "window or tabs changed after press")
+    return {"pid": pid, "window_id": window_id, "window_hash": int(CFHash(win)),
+            "tab_hashes": [int(CFHash(t)) for t in tabs], "infobar_absent": not alerts and not closes,
+            "window_retained": True, "tabs_retained": True}
+
+
 def web_area(win: Any, *, depth: int = 12) -> tuple[Frame | None, str | None] | None:
     """The first AXWebArea under ``win`` (a browser's content area) as ``(frame, address)``, or None.
 
