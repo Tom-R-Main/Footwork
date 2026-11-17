@@ -99,3 +99,29 @@ def test_a_step_whose_result_differs_from_its_record_is_refused(tmp_path):
     vendor = _patched_vendor(tmp_path, {"patched_archive_sha256": "0" * 64})
     with pytest.raises(ValueError, match="patched archive checksum mismatch"):
         CHAIN.rebuild(base, vendor=vendor)
+
+
+def test_explicit_added_source_member_is_packed(tmp_path):
+    import gzip
+    import io
+    import tarfile
+    base_file = b"old source\n"
+    def archive(entries):
+        out = io.BytesIO()
+        with gzip.GzipFile(filename="", fileobj=out, mode="wb", mtime=0, compresslevel=9) as gz:
+            with tarfile.open(fileobj=gz, mode="w", format=tarfile.PAX_FORMAT) as tar:
+                for name, content in sorted(entries.items()):
+                    info = tarfile.TarInfo(name)
+                    info.mode = 0o644
+                    info.size = len(content)
+                    tar.addfile(info, io.BytesIO(content))
+        return out.getvalue()
+    base = archive({"old.rs": base_file})
+    patch = tmp_path / "addition.patch"
+    patch.write_text("--- /dev/null\n+++ b/new.rs\n@@ -0,0 +1 @@\n+new source\n")
+    new_file = b"new source\n"
+    expected = archive({"old.rs": base_file, "new.rs": new_file})
+    record = {"base_archive_sha256": CHAIN.sha(base), "patch_sha256": CHAIN.sha(patch.read_bytes()),
+              "patched_archive_sha256": CHAIN.sha(expected), "added_directories": [],
+              "files": {"new.rs": {"before": None, "after": CHAIN.sha(new_file), "mode": 0o644}}}
+    assert CHAIN.apply_step(base, patch, record) == expected
