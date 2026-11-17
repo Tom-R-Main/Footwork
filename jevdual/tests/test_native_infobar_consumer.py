@@ -7,7 +7,11 @@ from jevdual.operator_evidence import EvidenceError, validate_execution
 
 from tests.test_native_infobar import infobar_execution, infobar_world, ordinary_pending, outside, receipt
 from tests.test_operator_evidence import BINDING
+from tests import test_session_scenarios as scenarios
 from tests.test_session_scenarios import _durable_start
+
+fw = scenarios.fw
+world = scenarios.world
 
 
 def state_record(state):
@@ -119,14 +123,13 @@ def test_public_durable_cannot_settle_against_retained_nested_delivery(world, fw
         return rec
     monkeypatch.setattr(operator_evidence, 'execution_record', corrupt)
     try:
-        code, out, err = fw('do', 'click', '-3', '--token', 'contract-' + state)
+        fw('do', 'click', '-3', '--token', 'contract-' + state)
     except EvidenceError:
         assert len(attempts) == 1
         return
     with SessionOperations(authority) as ops:
         rows = ops.status()
         result = ops.receipt(rows[-1])
-    evidence = {'exit': code, 'stdout': out, 'stderr': err, 'attempts': len(attempts), 'operation': result, 'receipt': receipt(fw)}
     assert len(attempts) == 1
     pytest.fail('contradictory execution accepted: ' + json.dumps({k: result[k] for k in ('state', 'disposition', 'phase', 'reservation')}))
 
@@ -204,7 +207,7 @@ def test_exception_path_genuine_no_send(world, fw, monkeypatch, tmp_path, durabl
                 raise NativeBridgeError('target_changed', 'synthetic stale observation for -3')
             return original(self, nm, id, *a, **k)
         monkeypatch.setattr(NativeBridge, '_require_fresh', fresh)
-    code, out, err = fw('do', 'click', '-3', *(['--token', 'exc'] if durable else []))
+    fw('do', 'click', '-3', *(['--token', 'exc'] if durable else []))
     r = receipt(fw)
     assert not attempts
     assert r['effect'] == 'refused'
