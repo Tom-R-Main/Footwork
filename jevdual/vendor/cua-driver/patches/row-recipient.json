@@ -1,6 +1,6 @@
 {
   "base_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
-  "patch_sha256": "0f30c110fd6ff2e412ba3bd5f0d34d24756deaaa90716263dc06190c10745713",
+  "patch_sha256": "cb8ea4b762093b1ce13f3f5b9799fcd8e80c8c525f7fb980b667067d636affad",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs": {
       "before": null,
@@ -50,7 +50,7 @@
     },
     "libs/cua-driver/rust/crates/platform-macos/src/ax/row_guard.rs": {
       "before": null,
-      "after": "44f3dd69a68262c4fcf3d480f72278cd8b48fa46d03f871f2837cb488b20782b",
+      "after": "2781a144f3c48ecb2d5e1fb550d5b9264b276709abe478121b98ebb2c6ad90e3",
       "mode": 420
     },
     "libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs": {
@@ -91,8 +91,8 @@
   ],
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
-  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2.parent1",
-  "patched_archive_sha256": "26a6a46dc089553a5505cfe109871e4f21b2638885b702a911cfdaeb3e44b90b",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2.parent1.edge1",
+  "patched_archive_sha256": "19ca3b1ccd7df267b73557719c92bee88147c2d8cf088887b11df816211cfb4d",
   "abi": "ExpectedRow version2 unchanged; optional row_trace_url input and row_trace_json output; callback overlay unchanged",
   "toolchain": "1.97.1"
 }

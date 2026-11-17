@@ -1025,7 +1025,7 @@
 +pub(crate) mod row_trace;
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/row_guard.rs
-@@ -0,0 +1,514 @@
+@@ -0,0 +1,632 @@
 +//! SDK-owned row census and actual-token press. No public raw AX entry point.
 +use super::bindings::*;
 +use core_foundation::{
@@ -1076,6 +1076,8 @@
 +    deadline: Instant,
 +    current_node: Option<u64>,
 +    current_role: String,
++    trace_edges: bool,
++    failed_hop: Option<serde_json::Value>,
 +}
 +impl Capture {
 +    fn new(seed: &[OwnedAx]) -> Self {
@@ -1086,6 +1088,8 @@
 +            deadline: Instant::now() + Duration::from_secs(2),
 +            current_node: None,
 +            current_role: String::new(),
++            trace_edges: false,
++            failed_hop: None,
 +        };
 +        for (i, el) in c.objects.iter().enumerate() {
 +            c.buckets
@@ -1146,6 +1150,11 @@
 +        let Some(value) = read(el, key, optional)? else {
 +            return Ok(None);
 +        };
++        self.array_ids(&value, key, |_| {}).map(Some)
++    }
++    fn array_ids(
++        &mut self, value: &CFType, key: &str, mut observe: impl FnMut(u64),
++    ) -> Result<Vec<u64>, String> {
 +        if value.type_of() != CFArray::<CFType>::type_id() {
 +            return Err(format!("{key} is not an array"));
 +        }
@@ -1156,11 +1165,12 @@
 +        let mut ids = Vec::new();
 +        for item in arr.iter() {
 +            let id = self.intern(item.as_CFTypeRef() as AXUIElementRef)?;
++            observe(id);
 +            if !ids.contains(&id) {
 +                ids.push(id);
 +            } // CFEqual aliases count once, not by geometry/hash.
 +        }
-+        Ok(Some(ids))
++        Ok(ids)
 +    }
 +    fn graph(
 +        &mut self,
@@ -1198,7 +1208,16 @@
 +                self.element(el, "AXParent", false)?
 +            };
 +            if id != root {
-+                prove_window_member(self, id, root, pid)?;
++                if self.trace_edges {
++                    let mut reader = EdgeReader::new(self, id, root, parent);
++                    let result = prove_window_member(&mut reader, id, root, pid);
++                    if matches!(&result, Err(error) if error == "row parent/child mismatch") {
++                        self.failed_hop = reader.failure();
++                    }
++                    result?;
++                } else {
++                    prove_window_member(self, id, root, pid)?;
++                }
 +            }
 +            let children = self
 +                .elements(
@@ -1276,6 +1295,82 @@
 +        })
 +    }
 +}
++// Holds only the most recent proof hop. No additional AX attributes are requested.
++// Payload comparison consumes remaining budget only after the original refusal.
++const EDGE_SAMPLES: usize = 64;
++struct EdgeReader<'a> {
++    capture: &'a mut Capture,
++    outer: u64,
++    root: u64,
++    first_parent: Option<u64>,
++    proof_parent: Option<u64>,
++    hop: usize,
++    current: u64,
++    parent: u64,
++    array: Option<CFType>,
++    emitted: Vec<u64>,
++}
++
++impl<'a> EdgeReader<'a> {
++    fn new(capture: &'a mut Capture, outer: u64, root: u64, first_parent: Option<u64>) -> Self {
++        Self { capture, outer, root, first_parent, proof_parent: None, hop: 0,
++            current: outer, parent: root, array: None, emitted: Vec::new() }
++    }
++
++    fn failure(&mut self) -> Option<serde_json::Value> {
++        let array = self.array.as_ref()?;
++        let current = self.capture.objects.get(self.current as usize)?.ptr() as CFTypeRef;
++        let (count, samples) = raw_edge_samples(array, current, &self.emitted, || {
++            if self.capture.comparisons >= 500_000 { return Err("row census equality budget".into()); }
++            self.capture.checkpoint()
++        });
++        Some(serde_json::json!({"root":self.root,"outer":self.outer,"first_parent":self.first_parent,
++            "proof_parent":self.proof_parent,"hop":self.hop,"current":self.current,"parent":self.parent,
++            "raw_count":count,"truncated":samples.len()!=count,"samples":samples}))
++    }
++}
++
++fn raw_edge_samples(
++    value: &CFType, current: CFTypeRef, emitted: &[u64], mut charge: impl FnMut() -> Result<(), String>,
++) -> (usize, Vec<(u64, bool)>) {
++    use core_foundation::array::{CFArrayGetCount, CFArrayGetValueAtIndex, CFArrayRef};
++    // Caller already validated value's type/length and interned every AX object.
++    let array = value.as_CFTypeRef() as CFArrayRef;
++    let count = unsafe { CFArrayGetCount(array) } as usize;
++    let mut samples = Vec::new();
++    for (i, &id) in emitted.iter().take(count.min(EDGE_SAMPLES)).enumerate() {
++        if charge().is_err() { break; }
++        let raw = unsafe { CFArrayGetValueAtIndex(array, i as _) };
++        let matches = raw == current || unsafe { CFEqual(raw, current) } != 0;
++        samples.push((id, matches));
++    }
++    (count, samples)
++}
++
++impl WindowMembership for EdgeReader<'_> {
++    fn checkpoint(&mut self) -> Result<(), String> { self.capture.checkpoint() }
++    fn pid(&mut self, id: u64) -> Result<u32, String> { self.capture.pid(id) }
++    fn window(&mut self, id: u64) -> Result<WindowReference, String> { self.capture.window(id) }
++    fn parent(&mut self, id: u64) -> Result<u64, String> {
++        let parent = self.capture.parent(id)?;
++        self.proof_parent.get_or_insert(parent);
++        self.current = id;
++        self.parent = parent;
++        self.hop += 1;
++        Ok(parent)
++    }
++    fn children(&mut self, id: u64) -> Result<Vec<u64>, String> {
++        let el = self.capture.objects.get(id as usize).ok_or("row held peer absent")?.ptr();
++        let array = read(el, "AXChildren", false)?.ok_or("row parent children missing")?;
++        self.emitted.clear();
++        let ids = self.capture.array_ids(&array, "AXChildren", |id| {
++            if self.emitted.len() < EDGE_SAMPLES { self.emitted.push(id); }
++        })?;
++        self.array = Some(array);
++        Ok(ids)
++    }
++}
++
 +impl WindowMembership for Capture {
 +    fn checkpoint(&mut self) -> Result<(), String> {
 +        // Charge new membership work to the existing comparison/deadline budget.
@@ -1414,11 +1509,16 @@
 +            report["status"] = json!("window_type_refused"); return qualified;
 +        }
 +        let mut capture = Capture::new(&[]);
++        capture.trace_edges = trace_url.is_some();
 +        let graph = match capture.graph(win.as_CFTypeRef() as AXUIElementRef, pid, window_id) {
 +            Ok(graph) => graph,
 +            Err(error) => { report["status"] = json!("capture_refused"); report["error"] = json!(error);
 +                report["node"] = json!(capture.current_node); report["role"] = json!(capture.current_role);
 +                report["references"] = json!(capture.objects.len()); report["comparisons"] = json!(capture.comparisons);
++                if let Some(edge) = capture.failed_hop.take() {
++                    report["truncated"] = edge["truncated"].clone();
++                    report["failed_hop"] = edge;
++                }
 +                return qualified; }
 +        };
 +        let urls: Vec<_> = graph.nodes.iter().filter(|n| n.role == "AXWebArea").map(|n| n.url.as_deref()).collect();
@@ -1538,6 +1638,24 @@
 +            assert!(read_window_result(error, std::ptr::null()).is_err());
 +        }
 +        assert!(read_window_result(0,std::ptr::null()).is_err());
++    }
++}
++
++#[cfg(test)]
++mod raw_edge_tests {
++    use super::*;
++    #[test]
++    fn uses_original_array_order_and_direct_equality_independently_of_ids() {
++        let target = CFString::new("held");
++        let array = CFArray::from_CFTypes(&[CFString::new("other"), CFString::new("held")]);
++        let value = array.as_CFType();
++        let mut charges = 0;
++        let (count, samples) = raw_edge_samples(&value, target.as_CFTypeRef(), &[5, 4], || {
++            charges += 1; Ok(())
++        });
++        assert_eq!((count, samples, charges), (2, vec![(5,false), (4,true)], 2));
++        let (count, partial) = raw_edge_samples(&value, target.as_CFTypeRef(), &[5, 4], || Err("budget".into()));
++        assert_eq!((count, partial.len()), (2, 0));
 +    }
 +}
 --- a/libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs
