@@ -47,3 +47,9 @@ Test: retain Sol757ea8c fault-injected public CLI cases, metadata substitutions 
 Predicts: inconsistent family/op/target/role/label/section/nested dispatch cannot confirm or report no attempt; valid exact records retain their effects.
 Against: contradictory ordinary records still claim confirmation/no-send, valid durable records break, or independent control dispatch changes. Both independent reviews run again on final exact source.
 Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/sol-review-757ea8c/review-sol.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/opus-review-757ea8c/review-opus.md
+
+## IB9 · update · 2026-11-17 07:32
+Observed: Sol757ea8c reproduced two ordinary-consumer blockers despite Opus approval; retained14 red/88passing regressions. Infobar intent now precedes other family returns and shared exact action identity plus delivery/projection agreement gates ordinary confirmation and no-send. Initial strict check incorrectly treated existing producer word not sent as different from refused; normalized only those known words with mutually consistent zero-send metadata.102 focused/857 affected tests pass, lint/diff clean. Prior ambiguous selector and null peer now refuse.
+Resolves: IB8 = held
+Next: freeze for both fresh independent final-source reviews. Existing fullscreen ordinary-metadata issue noted by Opus remains outside this infobar repair. Installed52da unchanged; no live qualification.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/consumer-red.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/consumer-debug.json; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/consumer-affected.txt

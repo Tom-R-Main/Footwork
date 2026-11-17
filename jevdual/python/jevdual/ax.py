@@ -300,6 +300,8 @@ def _infobar_census(pid: int, window_id: int) -> tuple[Any, list[Any], list[Any]
     comparisons = 0
     while stack:
         el, ancestors = stack.pop()
+        if el is None:
+            raise AXError("infobar_unqualified", "null native child")
         peers = buckets.setdefault(int(CFHash(el)), [])
         comparisons += len(peers)
         # Hash only selects comparisons; equality still decides aliases/cycles.

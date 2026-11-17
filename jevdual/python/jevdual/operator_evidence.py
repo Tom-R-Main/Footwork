@@ -175,12 +175,80 @@ def infobar_readback_effect(proof: Any, control: Any, pid: Any, window_id: Any) 
     return "confirmed" if proof["press_acknowledged"] and transition else "unverifiable"
 
 
+def infobar_action_identity(projection: Any, pid: Any, window_id: Any) -> Any:
+    """One action-family binding shared by ordinary and durable consumers."""
+    from jevdual.menu import qualified_control_identity
+
+    if not isinstance(projection, dict):
+        raise EvidenceError("missing infobar projection")
+    identity = projection.get("target_identity")
+    label = "Dismiss browser infobar"
+    if (not isinstance(identity, dict) or projection.get("op") != "click"
+            or type(projection.get("target_id")) is not int or projection["target_id"] != -3
+            or projection.get("target_label") != label or identity.get("label") != label
+            or identity.get("role") != "button" or identity.get("section") != "Native browser"
+            or identity.get("native_window_control") is not None):
+        raise EvidenceError("infobar action identity inconsistent")
+    control = identity.get("native_infobar_control")
+    if (qualified_control_identity(identity) is None or not isinstance(control, dict)
+            or type(pid) is not int or type(window_id) is not int
+            or control.get("pid") != pid or control.get("window_id") != window_id):
+        raise EvidenceError("infobar action binding missing or different")
+    return control
+
+
+def infobar_projection_effect(projection: Any, pid: Any, window_id: Any) -> str:
+    """Validate all retained delivery claims before ordinary effect/no-send reporting."""
+    control = infobar_action_identity(projection, pid, window_id)
+    delivery = projection.get("native_delivery")
+    if not isinstance(delivery, dict):
+        raise EvidenceError("missing infobar delivery")
+    dispatched = projection.get("dispatched")
+    raw_effect = projection.get("driver_effect")
+    effect = "refused" if raw_effect in ("not sent", "not dispatched") else raw_effect
+    basis, count = delivery.get("delivery_basis"), delivery.get("delivered_count")
+    if type(delivery.get("dispatched")) is not type(dispatched) or delivery.get("dispatched") != dispatched:
+        raise EvidenceError("infobar nested dispatch contradicts projection")
+    execution = projection.get("execution_receipt")
+    if execution is not None:
+        if not isinstance(execution, dict) or not isinstance(execution.get("producer"), dict):
+            raise EvidenceError("invalid infobar execution receipt")
+        if (type(execution.get("dispatched")) is not type(dispatched) or execution.get("dispatched") != dispatched
+                or execution.get("effect") != effect or execution["producer"].get("delivery_basis") != basis
+                or type(execution["producer"].get("delivered_count")) is not type(count)
+                or execution["producer"].get("delivered_count") != count):
+            raise EvidenceError("infobar execution contradicts projection")
+        inner = execution.get("projection")
+        if not isinstance(inner, dict) or any(inner.get(k) != projection.get(k) for k in (
+            "op", "target_id", "target_label", "target_identity", "native_readback", "dispatched", "driver_effect"
+        )):
+            raise EvidenceError("infobar execution action differs")
+    proof = projection.get("native_readback")
+    if dispatched is False:
+        if (proof is not None or effect != "refused" or basis != "qualified_gate"
+                or type(count) is not int or count != 0
+                or (execution is not None and execution.get("phase") != "not_sent")):
+            raise EvidenceError("infobar no-send contradicts retained delivery evidence")
+        return "refused"
+    if dispatched is not True:
+        raise EvidenceError("infobar dispatch unknown")
+    observed = infobar_readback_effect(proof, control, pid, window_id)
+    if effect != observed:
+        raise EvidenceError("infobar effect contradicts readback")
+    if proof["press_acknowledged"]:
+        if (basis != "ax_infobar_disappearance_readback" or type(count) is not int or count != 1
+                or (execution is not None and execution.get("phase") != "sent")):
+            raise EvidenceError("infobar acknowledgement lacks delivery agreement")
+    elif (basis != "unknown" or count is not None
+          or (execution is not None and execution.get("phase") != "ambiguous")):
+        raise EvidenceError("unacknowledged infobar delivery inconsistent")
+    return observed
+
+
 def _validate_infobar_execution(proof: Any, binding: dict[str, Any], effect: str,
                                    op: Any, projection: dict[str, Any], basis: str, count: Any) -> None:
-    identity = projection.get("target_identity")
-    if not isinstance(identity, dict):
-        raise EvidenceError("missing infobar target identity")
-    control = identity.get("native_infobar_control")
+    control = infobar_action_identity(projection, binding["pid"], binding["window_id"])
+    identity = projection["target_identity"]
     expected = infobar_readback_effect(proof, control, binding["pid"], binding["window_id"])
     label = "Dismiss browser infobar"
     arguments = getattr(op, "args", {})

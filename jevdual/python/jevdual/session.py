@@ -709,6 +709,31 @@ def _outside_receipt(r: Any, pending: dict[str, Any], *, pid: int | None = None,
     land in another app, so the window's own change cannot confirm it; a save is the exception, confirmed
     by its readback. A browser navigation Chrome ends with ERR_ABORTED is what a navigation that becomes a
     download looks like, so it is not "not applied": what it did is outside the page."""
+    # Reserved intent wins before any other family can return a confirmation.
+    identity = pending.get("target_identity")
+    native_proof = pending.get("native_readback")
+    native_delivery = pending.get("native_delivery")
+    execution_hint = pending.get("execution_receipt")
+    producer_hint = execution_hint.get("producer") if isinstance(execution_hint, dict) else None
+    infobar_intent = (
+        pending.get("target_id") in (-3, "-3")
+        or isinstance(identity, dict) and "native_infobar_control" in identity
+        or isinstance(native_proof, dict) and native_proof.get("predicate") == "native_infobar_disappearance"
+        or isinstance(native_delivery, dict) and native_delivery.get("delivery_basis") == "ax_infobar_disappearance_readback"
+        or isinstance(producer_hint, dict) and producer_hint.get("delivery_basis") == "ax_infobar_disappearance_readback"
+    )
+    if infobar_intent:
+        from jevdual.operator_evidence import EvidenceError, infobar_projection_effect
+
+        try:
+            effect = infobar_projection_effect(pending, pid, window_id)
+        except (EvidenceError, TypeError, ValueError):
+            effect = "unverifiable"
+        return dataclasses.replace(r, effect=effect, evidence={
+            "confirmed": "qualified infobar state transition",
+            "refused": "qualified infobar AXPress not attempted",
+            "unverifiable": "infobar action or transition was not independently verified",
+        }[effect])
     execution = pending.get("execution_receipt") or {}
     proof = pending.get("native_readback") or {}
     basis = (execution.get("producer") or {}).get("delivery_basis")
@@ -728,31 +753,6 @@ def _outside_receipt(r: Any, pending: dict[str, Any], *, pid: int | None = None,
         return dataclasses.replace(
             r, effect="confirmed" if confirmed else "unverifiable",
             evidence="qualified fullscreen state transition" if confirmed else "fullscreen transition was not independently verified",
-        )
-    infobar_control = (pending.get("target_identity") or {}).get("native_infobar_control")
-    infobar_intent = (infobar_control is not None or pending.get("target_id") == -3
-                      or proof.get("predicate") == "native_infobar_disappearance"
-                      or basis == "ax_infobar_disappearance_readback"
-                      or (pending.get("native_delivery") or {}).get("delivery_basis") == "ax_infobar_disappearance_readback")
-    if infobar_intent and pending.get("dispatched") is False and not proof:
-        return dataclasses.replace(r, effect="refused", evidence="qualified infobar AXPress not attempted")
-    if infobar_intent:
-        from jevdual.operator_evidence import EvidenceError, infobar_readback_effect
-
-        delivery = pending.get("native_delivery") or {}
-        effect_basis = basis if execution else delivery.get("delivery_basis")
-        effect_word = execution.get("effect") if execution else pending.get("driver_effect")
-        try:
-            read_effect = infobar_readback_effect(proof, infobar_control, pid, window_id)
-        except EvidenceError:
-            read_effect = "unverifiable"
-        count = (execution.get("producer") or {}).get("delivered_count") if execution else delivery.get("delivered_count")
-        confirmed = (effect_word == "confirmed" and effect_basis == "ax_infobar_disappearance_readback"
-                     and read_effect == "confirmed" and pending.get("dispatched") is True
-                     and type(count) is int and count == 1)
-        return dataclasses.replace(
-            r, effect="confirmed" if confirmed else "unverifiable",
-            evidence="qualified infobar state transition" if confirmed else "infobar transition was not independently verified",
         )
     if execution.get("effect") == "confirmed" and basis in {
         "ax_finder_rename_readback",
@@ -2607,7 +2607,7 @@ async def cmd_do(args: Any) -> int:
         if selected_window_controls:
             previous_control = selected_window_controls[0]
             current_control = nm.menu.candidate(previous_control.id)
-            if (len(selected_window_controls) != 1 or current_control is None
+            if (len(prior_hits) != 1 or len(selected_window_controls) != 1 or current_control is None
                     or (current_control.native_window_control is None and current_control.native_infobar_control is None)
                     or qualified_control_identity(previous_control) != qualified_control_identity(current_control)):
                 return targeting_refused("target_changed", "native fixed control lost qualification since look; observe again")

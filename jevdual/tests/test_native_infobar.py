@@ -454,6 +454,7 @@ def test_public_cli_receipt_consumer_preserves_infobar_contract(world, fw, monke
     This is fault injection, not a claim the normal producer emits these records.
     """
     from jevdual import session
+
     from tests.test_operator_evidence import fullscreen_execution
     *_, attempts = infobar_world(world, monkeypatch, disappear=False)
     assert fw('start', 'Dismiss', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
