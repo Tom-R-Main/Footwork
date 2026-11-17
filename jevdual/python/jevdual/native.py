@@ -554,17 +554,29 @@ def menu_from_snapshot(
         if linux_role and role in ("checkbox", "radio"):
             checked = _get(el, "selected")
         frame = _get(el, "frame")
+        sdk_row = _get(el, "expected_row")
+        if sdk_row is not None:
+            from jevdual.native_row import predicate, section
+            try:
+                sdk_row = predicate(sdk_row)
+                if (sdk_row["pid"] != _get(snapshot, "pid") or sdk_row["window_id"] != _get(snapshot, "window_id")
+                        or sdk_row["role"] != ax_role or sdk_row["name"] != label):
+                    raise ValueError("SDK row proof differs from snapshot")
+            except (TypeError, ValueError):
+                omitted["row_unqualified"] = omitted.get("row_unqualified", 0) + 1
+                continue
         cand = Candidate(
             id=int(idx),
             label=label,
             role=role,
-            operations=ops,
+            operations=("click",) if sdk_row is not None else ops,
             value=value,
             input_type="password" if sensitive else ("textarea" if multiline else None),
             has_value=(raw_value not in (None, "")) if sensitive else None,
             checked=checked,
             selected=_get(el, "selected"),
-            section=(mac_sections or {}).get(int(idx)) or _section_of(el, by_index),
+            section=section(sdk_row) if sdk_row is not None else (mac_sections or {}).get(int(idx)) or _section_of(el, by_index),
+            native_row_control=sdk_row,
             offscreen=_offscreen(frame, bounds),
             placeholder=placeholder,
             value_truncated=value_truncated,
@@ -1165,7 +1177,7 @@ class NativeBridge:
         from jevdual.effectors import require_available
 
         require_available("desktop")
-        from jevdual.effectors.cua import window_state_input
+        from jevdual.effectors.cua import row_snapshot_options, window_state_input
 
         budget = budget or getattr(self, "menu_budget", None)
 
@@ -1191,6 +1203,7 @@ class NativeBridge:
                 max_image_dimension=None,
                 # Compact SDK defaults omit the structured elements and static-text detail.
                 full_output=True,
+                **(row_snapshot_options() if self.window_controls else {}),
             )
         )
         self.last = None
@@ -2223,6 +2236,67 @@ class NativeBridge:
                 )
         return effect
 
+    async def _click_row(self, nm: NativeMenu, id: int, cand: Candidate) -> NativeEffect:
+        from jevdual.native_row import action_receipt, same
+
+        expected = cand.native_row_control
+        if (qualified_control_identity(cand) is None or expected is None
+                or expected["pid"] != self.pid or expected["window_id"] != self.window_id):
+            raise NativeBridgeError("target_changed", "row predicate is not bound to this native window")
+        if self.filmed is not None:
+            return self._not_sent("click", id, cand.label, "row_filmed_unsupported",
+                                  "row predicate does not authorize a filmed pointer approach", "foreground")
+        self._require_unambiguous(nm, id)
+
+        attempted = False
+
+        async def dispatch() -> NativeEffect:
+            nonlocal attempted
+            # Only ordinary exact-window fronting; no key/click fallback.
+            await self._front()
+            if (self.policy._activity().frontmost_pid() != self.pid
+                    or self.ax.focused_window_id(self.pid) != self.window_id):
+                raise NativeBridgeError("not_key", "row window is not exactly front/key")
+            current, target_id = await self._live(nm, id, "click")
+            target, token = self._require_fresh(current, target_id)
+            if not same(target.native_row_control, expected):
+                raise NativeBridgeError("target_changed", "fresh row predicate differs")
+            from jevdual.effectors.cua import element_position, foreground_delivery, row_click_input
+            request = row_click_input(target=self._target(), position=element_position(element_token=token),
+                                      delivery_mode=foreground_delivery(), session=self.session,
+                                      button=None, count=1, expected_row=expected)
+            checkpoint()
+            self.last = None
+            self.dispatches += 1
+            attempted = True
+            result = await self.driver.click(request)
+            try:
+                proof = action_receipt(result, expected)
+            except (TypeError, ValueError) as exc:
+                return NativeEffect("click", id, cand.label, "unverifiable", delivery="foreground",
+                                    summary="SDK row outcome unsupported; do not retry", error_code=str(exc))
+            return NativeEffect(
+                "click", id, cand.label, proof["effect"], route="accessibility",
+                dispatched=proof["dispatched"], delivered_count=1 if proof["acknowledged"] else (None if proof["dispatched"] else 0),
+                delivery_basis="sdk_row_press_ack" if proof["acknowledged"] else ("unknown" if proof["dispatched"] else "qualified_gate"),
+                summary="row AXPress acknowledged; application effect unverified" if proof["acknowledged"] else proof["error"],
+                error_code=None if proof["acknowledged"] else "row_unverified" if proof["dispatched"] else "row_refused",
+                native_readback={"schema_version": 1, "producer": "cua.sdk.row", "predicate": "sdk_row_recipient", "receipt": proof},
+            )
+
+        async def call() -> NativeEffect:
+            try:
+                return await dispatch()
+            except Exception as exc:  # noqa: BLE001 - distinguish pre-RPC refusal from lost reply
+                if not attempted:
+                    return self._not_sent("click", id, cand.label, getattr(exc, "reason", "row_preinput_refused"),
+                                          str(exc)[:160], "foreground")
+                return NativeEffect("click", id, cand.label, "unverifiable", dispatched=True,
+                                    delivery="foreground", delivery_basis="unknown", delivered_count=None,
+                                    summary="row SDK reply unavailable; do not retry", error_code="row_outcome_unknown")
+
+        return await self._foreground("click", id, cand.label, call, why="qualified table row action")
+
     async def _click_foreground(self, nm: NativeMenu, id: int, cand: Candidate) -> NativeEffect:
         refused = await self._filmed_gate("click", id, cand.label, nm.frames.get(id))
         if refused is not None:
@@ -2946,6 +3020,8 @@ class NativeBridge:
         label = f"{src.label} -> {dst.label}"
         if source == destination:
             raise NativeBridgeError("drag_same_target", f"[{source}] {src.label!r} is both ends of the drag")
+        if any(nm.menu.candidate(i) is not None and nm.menu.candidate(i).native_row_control is not None for i in (source, destination)):
+            raise NativeBridgeError("row_operator_only", "row-qualified controls cannot be drag endpoints")
         self._require_unambiguous(nm, source)
         self._require_unambiguous(nm, destination)
         refusal = self.policy.permits("desktop", why=f"drag {label!r} (it moves the real pointer and holds its button)")
@@ -3052,6 +3128,11 @@ class NativeBridge:
                 "unknown_operation", "An exact append precondition only applies to append"
             )
         cand, token = self._require_fresh(nm, id)
+        if cand.native_row_control is not None:
+            if (not self.window_controls or not operator_window_control or operation != "click"
+                    or web_text_delivery is not None or web_text_range is not None or click_delivery is not None):
+                raise NativeBridgeError("row_operator_only", "qualified rows require explicit operator do click")
+            return await self._click_row(nm, id, cand)
         if cand.native_window_control is not None:
             if not self.window_controls or not operator_window_control:
                 raise NativeBridgeError("fullscreen_operator_only", "fullscreen requires explicit operator do click")

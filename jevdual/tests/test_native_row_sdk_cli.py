@@ -1,4 +1,5 @@
 """Public CLI -> typed wire -> actual Rust row adapter; only AX reads/press are simulated."""
+import sys
 from types import SimpleNamespace
 
 import pytest
@@ -14,8 +15,9 @@ pytestmark = pytest.mark.skipif(not PROBE, reason='requires compiled pinned SDK 
 
 
 def sdk_row_world(world, monkeypatch, variant):
-    from jevdual.effectors import cua
     from jevdual import ax, posture
+    from jevdual.effectors import cua
+
     from tests.test_posture import Activity
 
     monkeypatch.setattr(posture, "MacActivity", lambda: Activity(idle=60, fronts=(77,)))
@@ -221,3 +223,53 @@ def test_row_prior_selector_cannot_downgrade_to_ordinary_control(world, fw, monk
     monkeypatch.setattr(world, 'click', click)
     fw('do', 'click', selector, *(['--token', 'stale-row'] if durable else []))
     assert not calls and not sent
+
+
+@pytest.mark.parametrize('durable', [False, True])
+@pytest.mark.parametrize('outcome', ['ack', 'sdk_refusal', 'unacknowledged', 'preinput_error', 'rpc_error'])
+def test_row_dispatch_boundaries_keep_honest_receipts(world, fw, monkeypatch, tmp_path, durable, outcome):
+    from jevdual.native import NativeBridge, NativeBridgeError
+    from jevdual.session_operations import SessionOperations
+
+    from tests.test_native_row_sdk import node
+    graph, sent = sdk_row_world(world, monkeypatch, 'complete')
+    authority = start_row(fw, monkeypatch, tmp_path, durable)
+    if outcome == 'preinput_error':
+        async def refuse(*args, **kwargs):
+            raise NativeBridgeError('census_failed', 'synthetic unreadable current recipient')
+        monkeypatch.setattr(NativeBridge, '_live', refuse)
+    elif outcome == 'rpc_error':
+        original = world.click
+        async def lose_reply(inp):
+            await original(inp)
+            raise RuntimeError('synthetic lost reply')
+        monkeypatch.setattr(world, 'click', lose_reply)
+    elif outcome == 'sdk_refusal':
+        original = world.click
+        async def changed_recipient(inp):
+            node(graph, 940)['enabled'] = False
+            try:
+                return await original(inp)
+            finally:
+                node(graph, 940)['enabled'] = True
+        monkeypatch.setattr(world, 'click', changed_recipient)
+    elif outcome == 'unacknowledged':
+        original = probe
+        def unack(data):
+            if data.get('mode') == 'dispatch': data = {**data, 'press_error': 'AX action response lost'}
+            return original(data)
+        monkeypatch.setattr(sys.modules[__name__], 'probe', unack)
+    result = fw('do', 'click', 'section:Task ID=TASK-0::combobox:Open menu',
+                *(['--token', 'delivery-boundary'] if durable else []))
+    assert result[0] == 0, result
+    no_send = outcome in ('preinput_error', 'sdk_refusal')
+    assert sent == ([] if no_send else [940])
+    assert last_receipt(fw)['effect'] == ('refused' if no_send else 'unverifiable')
+    if durable:
+        with SessionOperations(authority) as ops:
+            op = ops.status()[-1]
+            assert ops._retained_execution(op) is not None
+            status = ops.receipt(op)
+        assert (status['state'], status['disposition']) == (('final', 'not_sent') if no_send else ('unknown', 'unknown'))
+        fw('do', 'click', 'section:Task ID=TASK-0::combobox:Open menu', '--token', 'delivery-boundary')
+        assert sent == ([] if no_send else [940])

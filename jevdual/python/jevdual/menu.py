@@ -75,6 +75,8 @@ class Candidate:
     numeric: dict[str, Any] | None = None
     #: Qualified native title-bar identity; never a DOM identifier or raw action token.
     native_window_control: dict[str, Any] | None = None
+    #: SDK-qualified table/key/document predicate tied to its actual held token.
+    native_row_control: dict[str, Any] | None = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
@@ -86,7 +88,7 @@ class Candidate:
         }
         for key in (
             "value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section", "placeholder",
-            "value_truncated", "href_qualified", "native_dom_id", "native_document_url", "native_control_qualified", "native_control_opaque", "native_window_control",
+            "value_truncated", "href_qualified", "native_dom_id", "native_document_url", "native_control_qualified", "native_control_opaque", "native_window_control", "native_row_control",
         ):
             val = getattr(self, key)
             if val is not None:
@@ -115,6 +117,13 @@ def qualified_control_identity(candidate: Any) -> tuple[Any, ...] | None:
     def get(key: str) -> Any:
         return candidate.get(key) if isinstance(candidate, dict) else getattr(candidate, key, None)
 
+    row = get("native_row_control")
+    if row is not None:
+        from jevdual.native_row import identity, section
+        key = identity(row)
+        if key is not None and get("role") == {"AXButton": "button", "AXPopUpButton": "combobox"}[row["role"]] and get("label") == row["name"] and get("section") == section(row):
+            return key
+        return None
     window = get("native_window_control")
     if isinstance(window, dict) and get("role") == "button":
         fields = ("pid", "window_id", "window_hash", "button_hash")
