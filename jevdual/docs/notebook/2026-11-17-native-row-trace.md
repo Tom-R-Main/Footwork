@@ -37,3 +37,10 @@ Resolves: RT5 = held
 Observed: db09d2f reproduces the exact provenance count failure. The two added manifest members are row_trace.rs and row_trace_probe.rs. Updating only the expected count preserves all per-file/hash-chain assertions; the complete build/provenance file and notebook tests pass (see retained green log for count). Production and packaged artifact bytes remain identical to frozen db09d2f; its review worktree is untouched.
 Next: await independent diagnostic correction review and fresh CI; no installation or live observation yet.
 Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/ci-provenance-red.txt; /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/ci-provenance-green.txt.
+
+## RT7 · prediction · 2026-11-17 11:22
+Hypothesis: the snapshot-unproven branch loses only the producer truncation marker; carrying its strict boolean value preserves explicit diagnostic limits without retaining unbound content.
+Test: reproduce the exact native sdk_trace_oversize fallback without inner snapshot ID, plus false/missing/nonboolean marker controls. Assert snapshot_unproven and no graph/proof/candidate data in every case, and strict true propagation only. Run trace, ABI, source-chain and packaging controls after the one-line correction.
+Predicts: only the true-marker regression fails before correction; all cases pass afterward with unchanged binding refusals and input decisions.
+Against: any unbound content becomes retained, malformed truthy values imply truncation, or other classification changes.
+Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/sol-review-db09d2f/REVIEW.md F3.
