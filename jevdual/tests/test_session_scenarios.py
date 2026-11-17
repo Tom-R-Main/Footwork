@@ -4513,3 +4513,53 @@ def test_native_fullscreen_unreadable_post_effect_never_confirms_or_retries(worl
     assert code == 0 and len(attempts) == 1, (out, err)
     assert receipt['action']['driver_effect'] == 'unverifiable'
     assert receipt['effect'] != 'confirmed'
+
+
+def test_native_fullscreen_snapshot_geometry_swap_never_clicks_cached_close(world, fw, monkeypatch):
+    _, nodes, _ = _fullscreen_actions(world, monkeypatch)
+    frames = [nodes[0]['_frame'], nodes[1]['_frame']]
+    original = world.get_window_state
+    cached_dispatch = []
+
+    async def snapshot(inp):
+        nodes[0]['_frame'], nodes[1]['_frame'] = frames
+        result = await original(inp)
+        nodes[0]['_frame'], nodes[1]['_frame'] = frames[::-1]
+        return result
+
+    async def click(inp):
+        cached_dispatch.append(inp.position.element_token)
+        raise RuntimeError('synthetic cached Close token must not dispatch')
+
+    monkeypatch.setattr(world, 'get_window_state', snapshot)
+    monkeypatch.setattr(world, 'click', click)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    offered = [c for c in _state(fw)['last_candidates'] if c.get('native_window_control')]
+    if offered:
+        fw('do', 'click', str(offered[0]['id']))
+    assert not cached_dispatch
+
+
+def test_native_fullscreen_unreadable_peer_census_never_dispatches(world, fw, monkeypatch):
+    from jevdual import ax
+    win, nodes, attempts = _fullscreen_actions(world, monkeypatch)
+    original = ax._attr
+    peer = {**nodes[1], '_hash': 999, '_frame': ax.Frame(200, 30, 16, 16), '_errors': {'AXSubrole': -25204}}
+    nodes.append(peer)
+    monkeypatch.setattr(ax, '_attr', lambda el, key: None if el is peer and key == 'AXSubrole' else original(el, key))
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    offered = [c for c in _state(fw)['last_candidates'] if c.get('native_window_control')]
+    if offered:
+        fw('do', 'click', str(offered[0]['id']))
+    assert not offered and not attempts and not win['AXFullScreen']
+
+
+def test_native_fullscreen_ordinary_success_receipt_confirms_state_only(world, fw, monkeypatch):
+    _fullscreen_actions(world, monkeypatch)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    offered = next(c for c in _state(fw)['last_candidates'] if c.get('native_window_control'))
+    assert fw('do', 'click', str(offered['id']))[0] == 0
+    receipt = next(json.loads(line) for line in (fw.session / 'session.jsonl').read_text().splitlines()
+                   if json.loads(line)['kind'] == 'receipt')
+    assert receipt['action']['native_readback']['transition_observed'] is True
+    assert receipt['effect'] == 'confirmed'
