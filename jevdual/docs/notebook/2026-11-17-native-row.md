@@ -56,3 +56,10 @@ Observed: row1 archive reconstructs byte-identically with explicit added members
 Resolves: RW7 = held
 Next: freeze package checkpoint; reconcile with separately reviewed infobar integration before independent Sol/Opus final dependency/integration review. No installed selection or live row qualification. Original SDK omission cause, real AXHeader exposure, complete-census cost and final read/press race remain unproven.
 Refs: /Volumes/External SSD/Footwork-native-row-evidence-20261117/ROW-PACKAGE-CHECKPOINT-001.json; /Volumes/External SSD/Footwork-native-row-evidence-20261117/row-bundle-affected-001.txt; /Volumes/External SSD/Footwork-native-row-evidence-20261117/row-bundle-adapter-001.txt; /Volumes/External SSD/Footwork-native-row-evidence-20261117/row-abi-001.txt
+
+## RW10 · prediction · 2026-11-17 09:55
+Hypothesis: the row recipient route can coexist with the separately landed infobar contract by retaining each independent admitted identity and its own receipt validator, without weakening either fixed-action guard.
+Test: integrate exact landed fdbf48f into the owned row branch, resolve shared selector and exception-accounting seams explicitly, then exercise both complete infobar consumer selection and row actual-SDK adapter selection with the matched row1 wheel. Preserve all historical red tests.
+Predicts: infobar checks retain their existing results; qualified row acknowledgement remains unverifiable; identity loss or contradictions never fall through to generic confirmation, and both pre-input refusals and after-marker uncertainty remain truthful.
+Against: any cross-family substitution confirms, an existing selector dispatches a wrong control, either family loses true no-send/unknown distinctions, or integration changes the fixed-object dispatch contract. Final combined dependency/integration source receives independent Sol/Opus reviews before row delivery; no live input.
+Refs: /Volumes/External SSD/Footwork-native-row-evidence-20261117/ROW-PACKAGE-CHECKPOINT-001.json; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/release-fdbf48f/INSTALLED-fdbf48f.json
