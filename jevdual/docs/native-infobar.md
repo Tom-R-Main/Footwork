@@ -41,3 +41,10 @@ unknown with no automatic retry. A bridge exception explicitly marked before
 dispatch writes zero-send facts at the producer. Empty or missing facts alone do
 not establish no-send. Older optional projection metadata may be absent; any
 retained delivery object must contain the complete, agreeing delivery facts.
+
+The retained delivery object is closed to its six declared fields. Optional
+posture/route fields must describe this foreground AX action when present;
+attached execution identity and proof copies compare with JSON types preserved.
+The session also checks the fixed action's dispatch counter before accepting an
+exception's default no-send flag. A marker already observed remains an attempted,
+unverified action even if the reply is lost.

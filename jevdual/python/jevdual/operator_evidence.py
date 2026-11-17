@@ -220,8 +220,22 @@ def _infobar_delivery_agreement(projection: dict[str, Any], *, dispatched: Any,
             raise EvidenceError("infobar projection effect differs")
     if "native_delivery" in projection:
         delivery = projection["native_delivery"]
-        if not isinstance(delivery, dict):
+        if not isinstance(delivery, dict) or not set(delivery) <= {
+            "dispatched", "delivery_basis", "delivered_count", "delivery", "driver_delivery", "route"
+        }:
             raise EvidenceError("invalid retained infobar delivery")
+        # These are the only route/posture facts the fixed AX producer can
+        # emit. Historical records may omit optional fields, but a retained
+        # invalid value is never treated as absence.
+        acknowledged = basis == "ax_infobar_disappearance_readback"
+        permitted = {
+            "delivery": ("foreground",) if acknowledged else (None, "foreground"),
+            "driver_delivery": (None,),
+            "route": ("accessibility",) if acknowledged else ((None,) if dispatched is False else (None, "accessibility")),
+        }
+        for key, allowed in permitted.items():
+            if key in delivery and not any(type(delivery[key]) is type(value) and delivery[key] == value for value in allowed):
+                raise EvidenceError("infobar delivery route/posture contradicts fixed AX producer")
         for key, expected in (("dispatched", dispatched), ("delivery_basis", basis), ("delivered_count", count)):
             if key not in delivery or type(delivery[key]) is not type(expected) or delivery[key] != expected:
                 raise EvidenceError("infobar nested delivery contradicts execution")
@@ -242,17 +256,34 @@ def infobar_projection_effect(projection: Any, pid: Any, window_id: Any) -> str:
     if execution is not None:
         if not isinstance(execution, dict) or not isinstance(execution.get("producer"), dict):
             raise EvidenceError("invalid infobar execution receipt")
+        expected_envelope = {"schema_version": VERSION, "kind": "execution", "protocol": 1,
+                             "custody": "returned", "move": "click", "target": "-3"}
+        if any(canonical(execution.get(k)) != canonical(value) for k, value in expected_envelope.items()):
+            raise EvidenceError("infobar execution provenance or operation differs")
+        producer = execution["producer"]
+        if (set(producer) != {"name", "version", "delivery_basis", "delivered_count"}
+                or producer.get("name") != "footwork.native"
+                or type(producer.get("version")) is not int or producer["version"] != 1):
+            raise EvidenceError("unsupported attached infobar producer")
         if (type(execution.get("dispatched")) is not type(dispatched) or execution.get("dispatched") != dispatched
                 or execution.get("effect") != effect or execution["producer"].get("delivery_basis") != basis
                 or type(execution["producer"].get("delivered_count")) is not type(count)
                 or execution["producer"].get("delivered_count") != count):
             raise EvidenceError("infobar execution contradicts projection")
         inner = execution.get("projection")
-        if not isinstance(inner, dict) or any(inner.get(k) != projection.get(k) for k in (
+        if not isinstance(inner, dict) or any(canonical(inner.get(k)) != canonical(projection.get(k)) for k in (
             "op", "target_id", "target_label", "target_identity", "native_readback", "dispatched", "driver_effect"
         )):
             raise EvidenceError("infobar execution action differs")
         _infobar_delivery_agreement(inner, dispatched=dispatched, effect=effect, basis=basis, count=count)
+        if "native_delivery" in inner:
+            for key in inner["native_delivery"].keys() & delivery.keys():
+                if canonical(inner["native_delivery"][key]) != canonical(delivery[key]):
+                    raise EvidenceError("infobar retained delivery copies differ")
+        if "binding" in execution:
+            bound = validate_binding(execution["binding"])
+            if bound["pid"] != pid or bound["window_id"] != window_id:
+                raise EvidenceError("infobar execution belongs to another binding")
         if "execution_receipt" in inner:
             raise EvidenceError("nested infobar execution envelope unsupported")
     proof = projection.get("native_readback")

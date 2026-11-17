@@ -121,11 +121,7 @@ def test_public_durable_cannot_settle_against_retained_nested_delivery(world, fw
                 p['native_delivery'].update(dispatched=False, delivery_basis='qualified_gate', delivered_count=0)
         return rec
     monkeypatch.setattr(operator_evidence, 'execution_record', corrupt)
-    try:
-        code, _out, err = fw('do', 'click', '-3', '--token', 'contract-' + state)
-    except EvidenceError:
-        assert len(attempts) == 1
-        return
+    code, _out, err = fw('do', 'click', '-3', '--token', 'contract-' + state)
     with SessionOperations(authority) as ops:
         rows = ops.status()
         result = ops.receipt(rows[-1])
@@ -190,7 +186,7 @@ def test_exception_path_genuine_no_send(world, fw, monkeypatch, tmp_path, durabl
     *_, attempts = infobar_world(world, monkeypatch)
     if durable:
         from jevdual.session import SessionState
-        _durable_start(fw, monkeypatch, tmp_path)
+        authority = _durable_start(fw, monkeypatch, tmp_path)
         state = SessionState.load(fw.session)
         state.posture = 'exclusive_desktop'
         state.save()
@@ -213,3 +209,9 @@ def test_exception_path_genuine_no_send(world, fw, monkeypatch, tmp_path, durabl
     r = receipt(fw)
     assert not attempts
     assert r['effect'] == 'refused'
+    if durable:
+        from jevdual.session_operations import SessionOperations
+        with SessionOperations(authority) as ops:
+            result = ops.receipt(ops.status()[-1])
+        assert result['state'] == 'final' and result['disposition'] == 'not_sent'
+        assert result['phase'] == 'not_sent'

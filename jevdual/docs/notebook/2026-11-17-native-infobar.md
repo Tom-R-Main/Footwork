@@ -73,3 +73,9 @@ Test: retain Sol a4fba07 invalid delivery/driver_delivery/route and inner bool/f
 Predicts: invalid or conflicting retained route/posture types cannot confirm or settle; malformed inner equal-valued JSON types refuse; post-marker exceptions stay unknown without a second press.
 Against: any retained contradiction confirms/settles, legitimate producer shapes fail, or an actual recorded marker becomes no-attempt. Sol blocks despite Opus approval; no live/install authority inferred.
 Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/sol-review-a4fba07/review-sol.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/opus-review-a4fba07/review-opus.md
+
+## IB13 · update · 2026-11-17 08:07
+Observed: new delivery/type/marker cases fail38/pass5 before correction; additional attached envelope controls fail10/pass2 before their correction. All997 affected cases now pass with stronger durable assertions (no escaping-error shortcut; genuine no-send checks final/not_sent). Retained delivery accepts only six declared fields, fixed foreground/AX provenance where present, and type-preserving inner/outer agreement. Attached producer/protocol/operation/binding provenance is checked. A default bridge exception cannot erase an incremented fixed-action dispatch counter. Genuine pre-input cases remain refused; after-marker errors remain unknown. Lint/diff clean; no input route changed.
+Resolves: IB12 = held
+Next: freeze for both fresh independent reviews. Installed runtime unchanged and live qualification held; source and evidence remain separate from unfinished row SDK work.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/closed-schema-red.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/closed-schema-envelope-red.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/closed-schema-final-affected.txt

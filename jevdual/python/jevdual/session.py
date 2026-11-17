@@ -2933,6 +2933,7 @@ async def cmd_do(args: Any) -> int:
         filmed_note = None
         eff = None
         dispatched = None  # a missing acknowledgement cannot establish no-send
+        infobar_dispatches = getattr(bridge, "dispatches", None)
         try:
             if file_target is not None:
                 if op not in ("type", "move"):
@@ -2996,6 +2997,16 @@ async def cmd_do(args: Any) -> int:
                     filmed_note = f"{', '.join(marks)}: {eff.summary[:400]}"
         except (NativeBridgeError, RuntimeError) as exc:
             dispatched = getattr(exc, "dispatched", None)
+            if target is not None and target.native_infobar_control is not None and dispatched is False:
+                after_dispatches = getattr(bridge, "dispatches", None)
+                # This fixed action increments at its sole AXPress site. A
+                # default exception flag cannot erase a marker already observed.
+                if type(infobar_dispatches) is not int or type(after_dispatches) is not int:
+                    dispatched = None
+                elif after_dispatches > infobar_dispatches:
+                    dispatched = True
+                elif after_dispatches != infobar_dispatches:
+                    dispatched = None
             driver_effect = "not dispatched" if dispatched is False else "unverifiable"
             error = f"{getattr(exc, 'reason', 'error')}: {exc}"[:160]
         except BaseException:
