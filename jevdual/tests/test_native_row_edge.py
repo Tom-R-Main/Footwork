@@ -52,6 +52,7 @@ def test_failed_hop_retention(tmp_path, case, want):
         "status": "capture_refused",
         "error": "row parent/child mismatch",
         "node": 6,
+        "references": 7,
         "failed_hop": edge,
         "truncated": edge["truncated"],
     }
@@ -80,7 +81,7 @@ def test_failed_hop_retention(tmp_path, case, want):
 def test_partial_raw_match_cannot_establish_a_complete_edge(tmp_path):
     from jevdual.row_trace import _failed_hop
 
-    refusal = {"status": "capture_refused", "error": "row parent/child mismatch", "node": 6}
+    refusal = {"status": "capture_refused", "error": "row parent/child mismatch", "node": 6, "references": 7, "truncated": True, "scope_matched": False}
     edge = {
         "root": 0,
         "outer": 6,
@@ -98,7 +99,8 @@ def test_partial_raw_match_cannot_establish_a_complete_edge(tmp_path):
     assert _failed_hop(dict(refusal, status="qualified"), edge) is None
 
 
-def test_public_start_retains_bound_refusal_once_without_input(world, fw, monkeypatch, tmp_path):
+@pytest.mark.parametrize("claims_scope", [False, True])
+def test_public_start_retains_bound_refusal_once_without_input(world, fw, monkeypatch, tmp_path, claims_scope):
     from tests.test_native_row_sdk import PROBE
     from tests.test_native_row_sdk_cli import sdk_row_world
 
@@ -125,7 +127,9 @@ def test_public_start_retains_bound_refusal_once_without_input(world, fw, monkey
                 "window_id": 40335,
                 "scope_url": url,
                 "snapshot_id": snapshot["snapshot_id"],
-                "scope_matched": False,
+                "scope_matched": claims_scope,
+                "graph": "fixture-private-marker",
+                "references": 7,
                 "status": "capture_refused",
                 "error": "row parent/child mismatch",
                 "node": 6,
@@ -151,6 +155,11 @@ def test_public_start_retains_bound_refusal_once_without_input(world, fw, monkey
     assert code == 0, err
     assert len(requests) == 1 and sent == []
     result = json.loads(out.read_text())
+    assert "fixture-private-marker" not in out.read_text()
+    if claims_scope:
+        assert result["status"] == "invalid_sdk_trace"
+        assert not result.get("sdk") and "candidates" not in result
+        return
     assert result["status"] == "scope_unproven"
     assert result["sdk"]["failed_hop"]["classification"] == "absent_at_read"
 
@@ -159,3 +168,20 @@ from tests import test_session_scenarios as scenarios
 
 fw = scenarios.fw
 world = scenarios.world
+
+
+@pytest.mark.parametrize("changes,header", [
+    ({"current": 6}, {}), ({"current": 0}, {}), ({"current": 4}, {}),
+    ({"parent": 6}, {}), ({"proof_parent": 0}, {}), ({"hop": 3}, {}),
+    ({"hop": 8, "current": 4}, {}), ({"root": 1}, {}),
+    ({"samples": [[7, False]]}, {}), ({"first_parent": 7}, {}),
+    ({}, {"truncated": True}), ({}, {"references": True}), ({}, {"references": None}),
+])
+def test_contradictory_hop_never_classifies(changes, header):
+    from jevdual.row_trace import _failed_hop
+
+    refusal = {"status": "capture_refused", "error": "row parent/child mismatch", "node": 6,
+               "references": 7, "scope_matched": False, "truncated": False, **header}
+    edge = {"root": 0, "outer": 6, "first_parent": 3, "proof_parent": 3, "hop": 2,
+            "current": 3, "parent": 2, "raw_count": 1, "samples": [[5, False]], "truncated": False, **changes}
+    assert _failed_hop(refusal, edge) is None
