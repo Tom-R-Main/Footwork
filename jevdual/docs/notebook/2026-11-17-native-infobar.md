@@ -66,3 +66,10 @@ Observed: corrected regression harness discriminates24failed/61passed on pre-fix
 Resolves: IB10 = held
 Next: freeze this source for fresh independent Sol/Opus review; no integration/install or live input until gates pass. Row SDK remains separate unfinished offline source.
 Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/agreement-red-003.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/agreement-green-002.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/agreement-affected.txt
+
+## IB12 · prediction · 2026-11-17 08:02
+Hypothesis: a closed retained-delivery schema and type-preserving comparison of every action/proof copy closes the remaining provenance/type gaps. A default pre-input exception flag must not erase this fixed action's observed dispatch marker.
+Test: retain Sol a4fba07 invalid delivery/driver_delivery/route and inner bool/float substitutions as red public-CLI controls; add a post-press default NativeBridgeError control against the bridge dispatch count. Preserve valid optional historical metadata, genuine pre-input refusals, unknown and ack-only states. Rerun affected checks and both independent reviews.
+Predicts: invalid or conflicting retained route/posture types cannot confirm or settle; malformed inner equal-valued JSON types refuse; post-marker exceptions stay unknown without a second press.
+Against: any retained contradiction confirms/settles, legitimate producer shapes fail, or an actual recorded marker becomes no-attempt. Sol blocks despite Opus approval; no live/install authority inferred.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/sol-review-a4fba07/review-sol.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/opus-review-a4fba07/review-opus.md
