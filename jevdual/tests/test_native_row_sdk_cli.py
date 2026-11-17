@@ -196,3 +196,28 @@ def test_row_default_exception_after_sdk_attempt_is_unknown(world, fw, monkeypat
             op = ops.status()[-1]
             assert ops._retained_execution(op) is None
             assert ops.receipt(op)['state'] == 'unknown'
+
+
+@pytest.mark.parametrize('selector', ['Open menu', 'label:Open menu', 'combobox:Open menu', 'Open',
+                                     'section:Task ID=TASK-0::Open menu', '940'])
+@pytest.mark.parametrize('durable', [False, True])
+def test_row_prior_selector_cannot_downgrade_to_ordinary_control(world, fw, monkeypatch, tmp_path, selector, durable):
+    _graph, sent = sdk_row_world(world, monkeypatch, 'complete')
+    start_row(fw, monkeypatch, tmp_path, durable)
+    original = world.get_window_state
+    async def ordinary_now(inp):
+        snap = await original(inp)
+        snap['elements'] = [e for e in snap['elements'] if e['element_index'] not in (941, 820, 821, 822)]
+        for e in snap['elements']:
+            e.pop('expected_row', None)
+            if e['element_index'] == 810: e['label'] = 'Task ID=TASK-0'
+        return snap
+    monkeypatch.setattr(world, 'get_window_state', ordinary_now)
+    original_click = world.click
+    calls = []
+    async def click(inp):
+        calls.append(inp)
+        return await original_click(inp)
+    monkeypatch.setattr(world, 'click', click)
+    fw('do', 'click', selector, *(['--token', 'stale-row'] if durable else []))
+    assert not calls and not sent
