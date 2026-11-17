@@ -4738,3 +4738,72 @@ def test_native_fullscreen_selector_cannot_downgrade_to_sdk_control(world, fw, m
     else:
         assert code == 4 and not sdk and not world.tool_calls, (code, out, err, sdk)
     assert not attempts
+
+
+@pytest.mark.parametrize('durable', [False, True])
+@pytest.mark.parametrize('failure', ['census', 'preemption', 'ready_preemption', 'unexpected'])
+def test_native_fullscreen_prepress_failures_are_truthful_refusals(world, fw, monkeypatch, tmp_path, durable, failure):
+    import sys
+
+    from jevdual import ax, native
+    from jevdual.coordination import CoordinationError
+    from jevdual.session import SessionState
+
+    _, _, attempts = _fullscreen_actions(world, monkeypatch)
+    if durable:
+        _durable_start(fw, monkeypatch, tmp_path)
+        state = SessionState.load(fw.session)
+        state.posture = 'exclusive_desktop'
+        state.save()
+    else:
+        assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    if failure in {'census', 'unexpected'}:
+        original = ax.fullscreen_control
+        def control(pid, window_id):
+            if sys._getframe(1).f_code.co_name == 'call':
+                if failure == 'census':
+                    raise ax.AXError('fullscreen_unqualified', 'title-bar peer is unreadable')
+                raise RuntimeError('unexpected pre-press qualification error')
+            return original(pid, window_id)
+        monkeypatch.setattr(ax, 'fullscreen_control', control)
+    else:
+        def checkpoint():
+            if sys._getframe(1).f_code.co_name in {'press_fullscreen', 'check_ready'}:
+                raise CoordinationError('desktop claim preempted before AXPress')
+        monkeypatch.setattr(ax if failure == 'preemption' else native, 'checkpoint', checkpoint)
+    words = ['do', 'click', '-2'] + (['--token', 'prepress-refusal'] if durable else [])
+    code, out, err = fw(*words)
+    rows = [json.loads(line) for line in (fw.session / 'session.jsonl').read_text().splitlines()]
+    receipt = next((row for row in rows if row['kind'] == 'receipt'), None)
+    assert not attempts and not any(row['kind'] == 'stopped' for row in rows), (code, out, err)
+    assert code == 0 and receipt is not None, (code, out, err)
+    assert receipt['effect'] == 'refused' and receipt['action']['dispatched'] is False
+    if durable:
+        execution = receipt['action']['execution_receipt']
+        assert execution['phase'] == 'not_sent' and execution['dispatched'] is False
+        assert execution['producer']['delivery_basis'] == 'qualified_gate'
+        assert execution['producer']['delivered_count'] == 0
+        assert fw(*words)[0] == 0 and not attempts  # replay cannot dispatch a refused operation
+
+
+@pytest.mark.parametrize('field', ['pid', 'window_id'])
+def test_native_fullscreen_ordinary_receipt_binds_independent_session(world, fw, monkeypatch, field):
+    from jevdual import session
+
+    _, _, attempts = _fullscreen_actions(world, monkeypatch)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    original = session.receipt_for
+    def receipt_for(state, nm, **kwargs):
+        pending = state.pending or {}
+        proof = pending.get('native_readback')
+        if proof and pending.get('target_identity', {}).get('native_window_control'):
+            pending['target_identity']['native_window_control'][field] = 999
+            proof['before'][field] = 999
+            proof['after'][field] = 999
+        return original(state, nm, **kwargs)
+    monkeypatch.setattr(session, 'receipt_for', receipt_for)
+    code, out, err = fw('do', 'click', '-2')
+    rows = [json.loads(line) for line in (fw.session / 'session.jsonl').read_text().splitlines()]
+    receipt = next(row for row in rows if row['kind'] == 'receipt')
+    assert code == 0 and len(attempts) == 1, (out, err)
+    assert receipt['effect'] == 'unverifiable'
