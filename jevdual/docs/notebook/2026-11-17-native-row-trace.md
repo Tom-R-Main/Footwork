@@ -31,3 +31,9 @@ Test: reproduce the specific failing test on db09d2f, compare old/current manife
 Predicts: the red failure is 17 versus 15; exactly the two diagnostic files explain the difference; all build/provenance tests pass with 17 while still checking every file hash.
 Against: any unexpected added file, hash mismatch, or additional test failure means the count correction is insufficient; do not weaken provenance checks.
 Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/CI-b6c6163-failed.txt; tests/test_cua_driver_build.py::test_local_native_patch_has_inspectable_hash_bound_provenance.
+
+## RT6 · update · 2026-11-17 11:18
+Resolves: RT5 = held
+Observed: db09d2f reproduces the exact provenance count failure. The two added manifest members are row_trace.rs and row_trace_probe.rs. Updating only the expected count preserves all per-file/hash-chain assertions; the complete build/provenance file and notebook tests pass (see retained green log for count). Production and packaged artifact bytes remain identical to frozen db09d2f; its review worktree is untouched.
+Next: await independent diagnostic correction review and fresh CI; no installation or live observation yet.
+Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/ci-provenance-red.txt; /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/ci-provenance-green.txt.

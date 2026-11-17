@@ -180,7 +180,7 @@ def test_local_native_patch_has_inspectable_hash_bound_provenance():
         for name, hashes in foreground['files'].items():
             assert hashlib.sha256(source.extractfile(name).read()).hexdigest() == hashes['after']
             assert hashes['before'] != hashes['after']
-        steps = (('ordinary-helptag', helptag, 2), ('connected-click', connected, 2), ('ref-locate', locate, 3), ('row-recipient', row, 15))
+        steps = (('ordinary-helptag', helptag, 2), ('connected-click', connected, 2), ('ref-locate', locate, 3), ('row-recipient', row, 17))
         for index, (step, record, count) in enumerate(steps):
             step_patch = (vendor / f'patches/{step}.patch').read_bytes()
             assert hashlib.sha256(step_patch).hexdigest() == record['patch_sha256']
