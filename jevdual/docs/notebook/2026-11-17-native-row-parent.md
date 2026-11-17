@@ -23,3 +23,8 @@ Test: preserve recipient-local NoValue counterexample through ordinary/durable p
 Predicts: recipient NoValue tests fail on the retained old probe and pass with zero sends after the preflight mirror. Valid peers and direct recipients still dispatch exactly once, unverifiable; no production code changes.
 Against: the correction alters production behavior, hides the original positive/negative controls, or still acknowledges a missing/unreadable/foreign recipient window.
 Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/council-kimi-352cbdac/REVIEW.md; Sol I1 and Gemini F2 on same frozen source.
+
+## RWU3 · update · 2026-11-17 13:41
+Observed: RWP2 red public-CLI regressions 8 failed/41 passed on retained352cbdac probe; corrected probe 49 passed. Only SDK example row_parent_probe.rs changes, other902SDKfiles identical. Initial append used a doubled path and did not add tests; that prior29-test run is retained separately, not counted as red evidence. The scoped correction mirrors strict actual-recipient window read before general census; production source is unchanged.
+Next: rebind package/wheel/probe, run affected checks and obtain fresh council on correction; preserve all original reviews and frozen artifacts.
+Refs: /Volumes/External SSD/Footwork-native-row-parent-evidence-20261117/correction-001/{recipient-red.txt,recipient-red-correct-path.txt,recipient-green.txt,PRODUCTION-EQUIVALENCE.json,SDK-CORRECTION.diff}.

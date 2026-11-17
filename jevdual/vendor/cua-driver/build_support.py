@@ -12,7 +12,7 @@ from pathlib import Path, PurePosixPath
 
 VERSION = "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2.parent1"
 SOURCE_COMMIT = "5486b6246e4c807c0d793216e52df283671d9362"
-SOURCE_SHA256 = "f46ad7db9b8b8b60870d41db46a9b6b709240effe83f7b19bb97998267f62fde"
+SOURCE_SHA256 = "26a6a46dc089553a5505cfe109871e4f21b2638885b702a911cfdaeb3e44b90b"
 TOOLCHAIN = "1.97.1"
 
 

@@ -1,6 +1,6 @@
 {
   "base_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
-  "patch_sha256": "28f06a12e4484b9c3f06ffba3678f4db9c409392a6b4d81ff7b08a65b9266728",
+  "patch_sha256": "0f30c110fd6ff2e412ba3bd5f0d34d24756deaaa90716263dc06190c10745713",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs": {
       "before": null,
@@ -82,7 +82,7 @@
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_parent_probe.rs": {
       "before": null,
-      "after": "efc7e5a206e1dc492f65d11403fe96e14f71a6c8bf91e8e4cfddbae06691bfce",
+      "after": "c87aab038b51396a28038c4df8d1779ec6ff79531e3d2e411bdc4cec09a54e41",
       "mode": 420
     }
   },
@@ -92,7 +92,7 @@
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
   "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4.trace2.parent1",
-  "patched_archive_sha256": "f46ad7db9b8b8b60870d41db46a9b6b709240effe83f7b19bb97998267f62fde",
+  "patched_archive_sha256": "26a6a46dc089553a5505cfe109871e4f21b2638885b702a911cfdaeb3e44b90b",
   "abi": "ExpectedRow version2 unchanged; optional row_trace_url input and row_trace_json output; callback overlay unchanged",
   "toolchain": "1.97.1"
 }

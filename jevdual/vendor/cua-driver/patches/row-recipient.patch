@@ -2129,7 +2129,7 @@
 +}
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/examples/row_parent_probe.rs
-@@ -0,0 +1,175 @@
+@@ -0,0 +1,191 @@
 +//! Offline AX-provider adapter: production schema and recipient validator, no OS input.
 +use cua_driver_contract::row::{
 +    discover_row, discover_row_traced, dispatch_row, RowBinding, RowGraph,
@@ -2166,6 +2166,7 @@
 +    fn window(&mut self, id: u64) -> Result<WindowReference, String> {
 +        match self.faults[id.to_string()].as_str() {
 +            Some("no_value") => Ok(WindowReference::NoValue),
++            Some("missing") => Err("recipient window absent".into()),
 +            Some("unsupported") => Err("AXWindow unreadable (-25205)".into()),
 +            Some("timeout") => Err("AXWindow unreadable (-25204)".into()),
 +            Some("foreign") => Ok(WindowReference::Direct(u64::MAX)),
@@ -2274,8 +2275,23 @@
 +    let ActionTarget::Window { pid, window_id } = click.target else {
 +        panic!("fixture requires window")
 +    };
-+    let graph = graph.and_then(|graph| capture_membership(&input, graph, pid, window_id));
 +    let recipient = input["recipient"].as_u64().unwrap();
++    let graph = graph.and_then(|graph| {
++        // Mirror row_guard::press: the actual recipient requires an explicit
++        // window before the more permissive peer-membership census can run.
++        let mut reader = Membership {
++            graph: &graph,
++            faults: &input["window_faults"],
++            budget: 500000,
++            window_id,
++        };
++        match reader.window(recipient)? {
++            WindowReference::Direct(root) if root == graph.root => {}
++            WindowReference::Direct(_) => return Err("recipient window mismatch".into()),
++            WindowReference::NoValue => return Err("AXWindow unreadable (-25212)".into()),
++        }
++        capture_membership(&input, graph, pid, window_id)
++    });
 +    let mut presses = Vec::new();
 +    let receipt = dispatch_row(
 +        graph,
