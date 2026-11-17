@@ -69,3 +69,10 @@ Observed: named integration355a7b5 passes1486 combined tests against the real ro
 Resolves: RW10 = held
 Next: freeze source for fresh independent Sol and Opus reviews of the final dependency/integration delta against landed fdbf48f. Installed infobar fdbf48f is already separately delivered; row remains offline and uninstalled. No GUI/live census/input, scroll or wider SDK scope.
 Refs: /Volumes/External SSD/Footwork-native-row-evidence-20261117/integrated-tests-001.txt; /Volumes/External SSD/Footwork-native-row-evidence-20261117/ROW-FINAL-REVIEW-BRIEF.md; /Volumes/External SSD/Footwork-native-row-evidence-20261117/row-integration-ruff.txt
+
+## RW12 · prediction · 2026-11-17 10:13
+Hypothesis: Sol's contradictory displayed row label survives because admission reconstructs intent from target_identity.label but never checks its sibling target_label. Checking that sibling in the shared admission path will reject the same contradiction at ordinary consumption, producer retention, retained read, settlement and replay without changing SDK input.
+Test: in a separate correction worktree preserve frozen2734be1 for Opus; commit public-CLI label corruption regressions across actual SDK-adapter acknowledgement, genuine no-send and lost-reply states before fixing native_row.py. Include malformed/missing labels, outer/attached copies, matched-digest retained corruption and restored valid controls; assert validator rejection rather than only already-unverifiable effect.
+Predicts: baseline accepts contradictory labels; the narrow shared check rejects them at each applicable boundary, retains valid labels and existing classifications, and replay never sends twice. SDK archive/wheel and dispatch files remain unchanged.
+Against: any consumer bypasses the check, valid natural records lose their classification, a negative dispatches again, or the test only observes unchanged unverifiable effect without proving rejection. No SDK scope expansion, installation or live input; final reviews wait for reconciliation of the frozen Opus result.
+Refs: /Volumes/External SSD/Footwork-native-row-evidence-20261117/sol-review-2734be1/review-sol.md
