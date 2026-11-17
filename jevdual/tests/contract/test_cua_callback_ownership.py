@@ -67,3 +67,23 @@ def test_remote_object_stays_bound_to_its_owner_loop(name):
             # If the guard regresses, retain cleanup even though the assertion fails.
             converter._handle_map.remove(h)
     asyncio.run(wrong_loop())
+
+
+def test_generation_overlay_reproduces_landed_callback_module(tmp_path):
+    import hashlib
+    import json
+    import subprocess
+    from pathlib import Path
+    vendor = Path(__file__).resolve().parents[2] / 'vendor/cua-driver'
+    manifest = json.loads((vendor / 'patches/python-callback-owner.json').read_text())
+    patch = vendor / 'patches/python-callback-owner.patch'
+    digest = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+    assert digest(patch) == manifest['patch_sha256']
+    target = tmp_path / manifest['file']
+    target.parent.mkdir(parents=True)
+    target.write_bytes((vendor / manifest['file']).read_bytes())
+    assert digest(target) == digest(Path(sdk.__file__)) == manifest['patched_sha256']
+    subprocess.run(['patch', '--batch', '--silent', '-R', '-p1', '-i', str(patch)], cwd=tmp_path, check=True)
+    assert digest(target) == manifest['generated_sha256']
+    subprocess.run(['patch', '--batch', '--silent', '-p1', '-i', str(patch)], cwd=tmp_path, check=True)
+    assert digest(target) == manifest['patched_sha256']

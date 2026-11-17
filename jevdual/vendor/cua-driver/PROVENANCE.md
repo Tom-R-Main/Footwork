@@ -7,14 +7,14 @@ Python/native version: `0.46.0`. License: upstream MIT (`LICENSE.md`, copied as 
 
 Footwork distribution version: `0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row2`. The published 0.46.0 wheel does not contain the required shutdown cleanup, foreground text focus, passive HelpTag, connected-node click and ref locate patches and cannot satisfy this exact dependency. The upstream Python `__version__` remains `0.46.0`.
 
-Three Python files remain byte-for-byte from the exact release source. The two UniFFI modules are regenerated for row2 and __init__.py additionally exports ExpectedRow and RowReceipt. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
+Three Python files remain byte-for-byte from the exact release source. The contract UniFFI module carries the row2 ABI; the SDK UniFFI module preserves exact landed fdbf48f callback ownership/drop hardening after regeneration. __init__.py additionally exports ExpectedRow and RowReceipt. The published macOS wheel has the same files except that its packaging removes the `x-release-please-version` comment from `__init__.py`. Generated records and native library must always be upgraded together.
 
 | Source file | SHA256 |
 | --- | --- |
 | `__init__.py` | `79835f444dffd8b64cbb76a0c7b4836a3d290b49febeb3c330ec78ad91e0043b` |
 | `__main__.py` | `bcb78a6283dc6da69f3338879ae34a0f2dbeea3b444e4c3dd43f170d2922a387` |
 | `_daemon.py` | `f6ce97a08ab5c124ba0210b00e44bd652b41cca5a9ae20a511a6409093e8f01e` |
-| `_native.py` | `0f940ed9cff1ab9a0f43dc73718e6a6a77acb08d0ca4dd586d936a1654d6e8ea` |
+| `_native.py` | `8bb3927dd6579d94468eb5c08b1700230359813074cd1959c2e226c318dd4828` |
 | `_native_contract.py` | `2fabf55da93f67899246918e76516b8e8427340649d9fa1b6da152fc2862ec0f` |
 | `wrapper.py` | `cfd7abe6215aab7c1d8f66f2c15e6cd6ab7f150918de7b301b73c253e90a61d6` |
 
@@ -325,3 +325,9 @@ qualification remain separate boundaries.
 ## Row2 review corrections
 
 ExpectedRow version2 requires complete selected-row values aligned to explicitly qualified columns, with held cell references inside one dispatch. A unique-column display locator alone is not identity. The reciprocal census rejects conflicting child lists and requires document-above-table-above-row ancestry. Original row1 review/archive/wheel evidence is retained outside this tree. Only click implements this predicate gate; raw SDK alternate tools remain outside Footwork's click-only row support. No live AX behavior or application outcome is established by these offline changes.
+
+## Required Python callback ownership overlay
+
+Regeneration must preserve the landed fdbf48f foreign-future drop and remote-channel owning-loop implementation. `patches/python-callback-owner.patch` restores those exact bytes on the generated `_native.py`; its JSON manifest binds the generated, patch and restored hashes. From this vendor directory, after verifying the generated hash, apply `patch --batch --forward -p1 -i patches/python-callback-owner.patch` and verify the restored hash. Unexpected generator drift refuses this overlay rather than silently dropping it. `_native_contract.py` retains the independently generated row ABI.
+
+The packaged SDK module is byte-identical to fdbf48f. Tests execute the actual callback from another thread on an owned debug asyncio loop, test closed/absent loops and both remote object converters' owner-loop guard, and verify reversible overlay reconstruction against the packaged bytes. No Driver or OS input is created.
