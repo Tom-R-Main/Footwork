@@ -178,7 +178,7 @@
 +                "row_receipt",
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs
-@@ -0,0 +1,602 @@
+@@ -0,0 +1,684 @@
 +//! Bounded row-recipient predicates. Graphs are SDK-owned observations, never public tool inputs.
 +use schemars::JsonSchema;
 +use serde::{Deserialize, Serialize};
@@ -397,7 +397,13 @@
 +            if next != id
 +                && !matches!(
 +                    n.role.as_str(),
-+                    "AXStaticText" | "AXGroup" | "AXButton" | "AXPopUpButton"
++                    "AXStaticText"
++                        | "AXGroup"
++                        | "AXButton"
++                        | "AXPopUpButton"
++                        | "AXCheckBox"
++                        | "AXImage"
++                        | "AXLink"
 +                )
 +            {
 +                return Err("unsupported row cell content".into());
@@ -418,6 +424,78 @@
 +            return Err("row cell text is not singular".into());
 +        }
 +        Ok(text.into_iter().next().unwrap_or_default())
++    }
++    // Non-key content is evidence, never a new action surface. Preserve the
++    // old simple-text representation; rich content has an ordered, typed form.
++    // Escape plain strings beginning with the tag, so literal page text cannot
++    // impersonate a serialized tree. AXValue is only collected for cells/text;
++    // this is not a fingerprint of checkbox state, pixels or all application state.
++    fn cell_value(&self, id: u64) -> Result<String, String> {
++        let mut stack = vec![(id, 0u32)];
++        let mut seen = BTreeSet::new();
++        let mut texts = BTreeSet::new();
++        let mut content = Vec::new();
++        let mut rich = false;
++        while let Some((next, depth)) = stack.pop() {
++            if !seen.insert(next) {
++                continue;
++            }
++            if seen.len() > 64 {
++                return Err("row cell content exceeds bound".into());
++            }
++            let n = self.node(next)?;
++            if next != id
++                && !matches!(
++                    n.role.as_str(),
++                    "AXStaticText"
++                        | "AXGroup"
++                        | "AXButton"
++                        | "AXPopUpButton"
++                        | "AXCheckBox"
++                        | "AXImage"
++                        | "AXLink"
++                )
++            {
++                return Err("unsupported row cell content".into());
++            }
++            rich |= matches!(n.role.as_str(), "AXCheckBox" | "AXImage" | "AXLink");
++            if n.name.len() > 2048 || n.value.as_ref().is_some_and(|v| v.len() > 2048) {
++                return Err("row cell content exceeds bound".into());
++            }
++            for value in [Some(&n.name), n.value.as_ref()].into_iter().flatten() {
++                if !value.is_empty() {
++                    texts.insert(value.clone());
++                }
++            }
++            content.push((depth, &n.role, &n.name, &n.value));
++            // Reverse push retains the observed child order in the fingerprint.
++            for child in n.children.iter().rev() {
++                if self.node(*child)?.parent != Some(next) {
++                    return Err("cell content belongs to another parent".into());
++                }
++                stack.push((*child, depth + 1));
++            }
++        }
++        let value = if rich || texts.len() > 1 {
++            format!(
++                "\u{001e}{}",
++                serde_json::to_string(&content).map_err(|e| e.to_string())?
++            )
++        } else {
++            let plain = texts.into_iter().next().unwrap_or_default();
++            if plain.starts_with('\u{001e}') {
++                format!(
++                    "\u{001e}{}",
++                    serde_json::to_string(&plain).map_err(|e| e.to_string())?
++                )
++            } else {
++                plain
++            }
++        };
++        if value.len() > 2048 {
++            return Err("row cell representation exceeds bound".into());
++        }
++        Ok(value)
 +    }
 +    fn table(&self, id: u64) -> Result<(Vec<u64>, Vec<String>, Vec<u64>), String> {
 +        let n = self.node(id)?;
@@ -629,7 +707,11 @@
 +                return Err("full row cell relationship ambiguous".into());
 +            }
 +            row_cells.push(cells[0]);
-+            row_values.push(self.text(cells[0])?);
++            row_values.push(if cells[0] == key_cell {
++                key_value.clone()
++            } else {
++                self.cell_value(cells[0])?
++            });
 +        }
 +        if self.unique(&self.node(row)?.children) != self.unique(&row_cells) {
 +            return Err("full row contains unmapped content".into());
@@ -783,11 +865,13 @@
 +}
 --- a/libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs
-@@ -128,0 +129,3 @@
+@@ -128,0 +129,5 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
++    /// Row predicates are enforced by foreground left AXPress click only.
++    /// Other token tools do not enforce this predicate; unavailable proof is omitted.
 +    pub qualify_rows: Option<bool>,
-@@ -291,0 +295,3 @@
+@@ -291,0 +297,3 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
 +    pub expected_row: Option<crate::ExpectedRow>,
@@ -1372,7 +1456,7 @@
 --- a/libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs
 @@ -73,0 +74 @@
-+                "qualify_rows": { "type": "boolean", "description": "Opt in to SDK-owned exact row recipient predicates; unavailable proof is omitted." },
++                "qualify_rows": { "type": "boolean", "description": "Opt in to SDK-owned row recipient predicates enforced by foreground left AXPress click only. Other token tools are not qualified by this option; unavailable proof is omitted." },
 @@ -362,0 +364 @@
 +        let qualify_rows = args.get("qualify_rows").and_then(Value::as_bool) == Some(true);
 @@ -379 +381,4 @@

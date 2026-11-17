@@ -1,6 +1,6 @@
 {
   "base_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
-  "patch_sha256": "13bf83da8ac53fa095dfed34f8f832a1f2320a31390131ab371e4b0c57a578b5",
+  "patch_sha256": "0129e91327699f7b76b32a6b42dcb0dcdb5ae7d727b11fea217384637e189a14",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs": {
       "before": null,
@@ -21,12 +21,12 @@
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs": {
       "before": null,
-      "after": "4b0231cd62da4b16b74ec2abfb373a31cd78042bc8c408ed6f0f8675c88f2df5",
+      "after": "c994cd1c0dbf5b33136f7f938965988180fdd0e13fecd5eb4dc82e2876bd5ec1",
       "mode": 420
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs": {
       "before": "7d119f50cfbc83d0d02d8e278835195de97694c0593e7f1fcda4d85ab0281d68",
-      "after": "1612af810bec7119ff4dff223df8915e7034bb4965d504c7f6ab4025032e56b9"
+      "after": "1c457a60d6dc9146938774fa5e0ec88c5a38d3e38e8d2dc541533197fe7a0a1d"
     },
     "libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs": {
       "before": "5f39eca0bce322cf74262d6d4d36aa37402fd8d432c51ea47c377fcfe0e13686",
@@ -63,7 +63,7 @@
     },
     "libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs": {
       "before": "6a2659ace6595ba002a105a7a8f209221d58067b51106fa221872f64ca8c9c25",
-      "after": "a1b1c654966feeb252e47edcad360480a8f4814567bc6ebdc4edff5d0b0476c4"
+      "after": "67b74f56f30ce3dc9cacd96899fb9d1b4eef9a6ff75c5df64e8aef04b53984f7"
     }
   },
   "added_directories": [
@@ -71,8 +71,8 @@
   ],
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
-  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row3",
-  "patched_archive_sha256": "7c246ee4f28a56443aede601861070a1d614d9d5f0d1fac050fd52d30ac8608e",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row4",
+  "patched_archive_sha256": "ddd4a6fc21a9243220e70ac7afbe39dc0fe1ba7ffb2a6a09d48ab0f0d6c1799b",
   "abi": "ExpectedRow version2 requires full row_values; held row_cells; regenerated native/Python bindings together",
   "toolchain": "1.97.1"
 }
