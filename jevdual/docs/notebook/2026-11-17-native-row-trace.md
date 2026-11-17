@@ -12,3 +12,10 @@ Observed: typed contract red rejects row_trace_url; contract green69 and initial
 Inferred: diagnostics can expose the missing boundary without adding AX calls or changing predicates; fixed wall-time limits still make instrumentation overhead a real uncertainty.
 Next: frozen-source affected checks and independent Sol review, rollback delivery, then one authorized live observation. RT1 stays open until actual trace and custody closure.
 Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/{typed-red.txt,contract-green.txt,trace-cli-tests-rerun.txt,native-build.txt,wheel-build-resumed.txt,SOURCE-INVARIANTS.json}; failed root-directory test invocations and malformed ABI fixture retained separately, not qualification evidence.
+
+## RT3 · prediction · 2026-11-17 16:01
+Hypothesis: the SDK prefix check confuses userinfo with authority, while private retention does not bind an embedded trace to its enclosing snapshot. A shared strict numeric-loopback URL grammar at typed/native ingress and exact envelope matching will reject these review cases without changing valid local trace qualification or input.
+Test: preserve red controls for loopback-looking remote authority, credentials, query/fragment, invalid port, and wrong/missing snapshot/PID/window; keep valid URL and matching envelope controls. Run actual Rust validation and private retention before and after, then focused ABI/integration checks and one independent correction review.
+Predicts: invalid URL is refused before native preflight/collection; inconsistent envelope is invalid and missing snapshot is explicitly unproven. Valid local requests and matching traces retain unchanged discovery/input outcomes.
+Against: a remote authority still enters diagnostics, genuine matching records lose classification, or the fix changes census predicates/read budgets/input.
+Refs: /Volumes/External SSD/Footwork-native-row-trace-evidence-20261117/sol-review-b6c6163/REVIEW.md F1/F2.
