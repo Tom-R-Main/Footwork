@@ -86,3 +86,9 @@ Test: retain Sol11d59ef twelve public-CLI contradictions and unchanged/omitted c
 Predicts: contradictory or malformed retained provenance yields unverifiable while the original durable capsule and one actual fixture press remain unchanged; consistent historical omissions retain their classification.
 Against: any retained disagreement confirms, legitimate producer shapes lose their truthful result, or input authority changes. Opus approval and Sol blocker are both retained; integration remains held.
 Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/sol-review-11d59ef/review-sol.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/opus-review-11d59ef/review-opus.md
+
+## IB15 · update · 2026-11-17 08:23
+Observed: committed provenance cases discriminate52failed/44passed on687e935; correction passes1093 affected cases. All present outer/attached/inner bindings are validated with exact PID/window and canonical full binding agreement; attempt, observation, session and error copies are typed and compared when present. Public injection tests retain the original correct durable capsule and exactly one fixture press while presentation downgrades contradictions. Forty historical-subset/state controls preserve classifications. First red invocation used the repository root instead of jevdual and failed fixture setup; the corrected run and initial failure are retained. Ruff/notebook/diff checks pass.
+Resolves: IB14 = held
+Next: freeze final source for fresh Sol/Opus input-control review; no integration or installed/live claim. Row recipient SDK remains independent and incomplete.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/provenance-red-002.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/provenance-affected.txt

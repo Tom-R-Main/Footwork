@@ -48,3 +48,10 @@ attached execution identity and proof copies compare with JSON types preserved.
 The session also checks the fixed action's dispatch counter before accepting an
 exception's default no-send flag. A marker already observed remains an attempted,
 unverified action even if the reply is lost.
+
+Every present binding copy is validated, including boot and process incarnation,
+and agrees across the outer projection, attached envelope and inner projection.
+Present attempt, observation, session and error copies are typed and agree too.
+Historical omissions remain optional; a lone retained value does not authenticate
+history that no other copy records. Contradictory attachments can only downgrade
+the ordinary receipt; they do not alter the original durable capsule.

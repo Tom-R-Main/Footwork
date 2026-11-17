@@ -241,9 +241,36 @@ def _infobar_delivery_agreement(projection: dict[str, Any], *, dispatched: Any,
                 raise EvidenceError("infobar nested delivery contradicts execution")
 
 
+def _infobar_provenance_agreement(copies: list[dict[str, Any]], pid: int, window_id: int) -> None:
+    """Present provenance is typed and agrees; omitted historical copies add no claim.
+
+    This compares cooperative retained records, not authenticated external input.
+    A lone session/incarnation value cannot establish history absent another copy.
+    """
+    for key in ("binding", "operation_id", "observation", "session_id", "error"):
+        retained = []
+        for record in copies:
+            if key not in record:
+                continue
+            value = record[key]
+            if key == "binding":
+                bound = validate_binding(value)
+                if bound["pid"] != pid or bound["window_id"] != window_id:
+                    raise EvidenceError("infobar provenance belongs to another binding")
+            elif key == "error":
+                if value is not None and not isinstance(value, str):
+                    raise EvidenceError("invalid infobar provenance error")
+            else:
+                _text(value, "infobar " + key)
+            retained.append(canonical(value))
+        if retained and any(value != retained[0] for value in retained[1:]):
+            raise EvidenceError("infobar retained provenance copies differ: " + key)
+
+
 def infobar_projection_effect(projection: Any, pid: Any, window_id: Any) -> str:
     """Validate all retained delivery claims before ordinary effect/no-send reporting."""
     control = infobar_action_identity(projection, pid, window_id)
+    _infobar_provenance_agreement([projection], pid, window_id)
     delivery = projection.get("native_delivery")
     if not isinstance(delivery, dict):
         raise EvidenceError("missing infobar delivery")
@@ -280,10 +307,7 @@ def infobar_projection_effect(projection: Any, pid: Any, window_id: Any) -> str:
             for key in inner["native_delivery"].keys() & delivery.keys():
                 if canonical(inner["native_delivery"][key]) != canonical(delivery[key]):
                     raise EvidenceError("infobar retained delivery copies differ")
-        if "binding" in execution:
-            bound = validate_binding(execution["binding"])
-            if bound["pid"] != pid or bound["window_id"] != window_id:
-                raise EvidenceError("infobar execution belongs to another binding")
+        _infobar_provenance_agreement([projection, execution, inner], pid, window_id)
         if "execution_receipt" in inner:
             raise EvidenceError("nested infobar execution envelope unsupported")
     proof = projection.get("native_readback")
