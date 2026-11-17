@@ -2,7 +2,7 @@
 
 Each step's manifest under vendor/cua-driver/patches binds its base archive, patch and patched
 archive by SHA256. A step extracts the base with the build hook's own extractor, applies the patch
-with ``patch -p1`` and re-packs the base's member list deterministically (path-sorted PAX tar, zero
+with ``patch -p1`` and re-packs the base's members plus explicitly declared new files/directories deterministically (path-sorted PAX tar, zero
 mtime/uid/gid, empty owner names, the base's modes, Python gzip at level nine with no name or
 mtime). Every hash is checked before anything is written. Standard library only.
 
@@ -23,11 +23,11 @@ import json
 import subprocess
 import tarfile
 import tempfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 VENDOR = Path(__file__).resolve().parents[1] / "vendor/cua-driver"
 #: Applied in order on top of the cleanup2.focus1 archive; the last one produces the pinned archive.
-STEPS = ("ordinary-helptag", "connected-click", "ref-locate")
+STEPS = ("ordinary-helptag", "connected-click", "ref-locate", "row-recipient")
 
 
 def sha(data: bytes) -> str:
@@ -64,7 +64,34 @@ def apply_step(base: bytes, patch: Path, record: dict, *, vendor: Path = VENDOR)
             gzip.GzipFile(filename="", fileobj=memory, mode="wb", mtime=0, compresslevel=9) as compressed,
             tarfile.open(fileobj=compressed, mode="w", format=tarfile.PAX_FORMAT) as bundle,
         ):
-            for member in sorted(original.getmembers(), key=lambda item: item.name):
+            members = {member.name: member for member in original.getmembers()}
+            base_files = {name for name, member in members.items() if member.isfile()}
+            added = {name: hashes for name, hashes in record["files"].items() if hashes["before"] is None}
+            added_dirs = set()
+            for name, hashes in added.items():
+                path = PurePosixPath(name)
+                if (not name or path.is_absolute() or ".." in path.parts or str(path) != name
+                        or name in members or type(hashes.get("mode")) is not int
+                        or hashes["mode"] not in (0o644, 0o755)):
+                    raise ValueError("invalid added source member")
+                if not (source / name).is_file() or (source / name).is_symlink():
+                    raise ValueError("added source member is not a regular file")
+                info = tarfile.TarInfo(name)
+                info.mode = hashes["mode"]
+                members[name] = info
+                for ancestor in path.parents:
+                    if str(ancestor) == "." or str(ancestor) in members:
+                        continue
+                    info = tarfile.TarInfo(str(ancestor))
+                    info.type, info.mode = tarfile.DIRTYPE, 0o755
+                    members[info.name] = info
+                    added_dirs.add(info.name)
+            if sorted(added_dirs) != record.get("added_directories", []):
+                raise ValueError("added source directories differ from manifest")
+            actual_files = {p.relative_to(source).as_posix() for p in source.rglob("*") if p.is_file()}
+            if actual_files != base_files | added.keys():
+                raise ValueError("unlisted source additions or removals")
+            for member in sorted(members.values(), key=lambda item: item.name):
                 info = tarfile.TarInfo(member.name)
                 info.mode = member.mode
                 if member.isdir():

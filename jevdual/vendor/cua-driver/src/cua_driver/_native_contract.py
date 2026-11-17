@@ -1535,89 +1535,125 @@ class _UniffiFfiConverterOptionalTypeActionNextCall(_UniffiConverterRustBuffer):
         else:
             raise InternalError("Unexpected flag byte for optional type")
 
+class _UniffiFfiConverterUInt64(_UniffiConverterPrimitiveInt):
+    CLASS_NAME = "u64"
+    VALUE_MIN = 0
+    VALUE_MAX = 2**64
+
+    @staticmethod
+    def read(buf):
+        return buf.read_u64()
+
+    @staticmethod
+    def write(value, buf):
+        buf.write_u64(value)
+
+class _UniffiFfiConverterSequenceString(_UniffiConverterRustBuffer):
+    @classmethod
+    def check_lower(cls, value):
+        for item in value:
+            _UniffiFfiConverterString.check_lower(item)
+
+    @classmethod
+    def write(cls, value, buf):
+        items = len(value)
+        buf.write_i32(items)
+        for item in value:
+            _UniffiFfiConverterString.write(item, buf)
+
+    @classmethod
+    def read(cls, buf):
+        count = buf.read_i32()
+        if count < 0:
+            raise InternalError("Unexpected negative sequence length")
+
+        return [
+            _UniffiFfiConverterString.read(buf) for i in range(count)
+        ]
+
 @dataclass
-class ActionResult:
-    def __init__(self, *, effect:ActionEffect, route:ActionRoute, delivery:typing.Optional[ActionDelivery], evidence:typing.Optional[typing.List[ActionEvidence]], escalation:typing.Optional[ActionEscalation], summary:typing.Optional[str], error:typing.Optional[ActionError], hint:typing.Optional[str], next_call:typing.Optional[ActionNextCall], fast_path:typing.Optional[str]):
-        self.effect = effect
-        self.route = route
-        self.delivery = delivery
-        self.evidence = evidence
-        self.escalation = escalation
-        self.summary = summary
-        self.error = error
-        self.hint = hint
-        self.next_call = next_call
-        self.fast_path = fast_path
+class ExpectedRow:
+    def __init__(self, *, version:int, pid:int, window_id:int, document_url:str, table_headers:typing.List[str], key_column:str, key_value:str, role:str, name:str, action:str):
+        self.version = version
+        self.pid = pid
+        self.window_id = window_id
+        self.document_url = document_url
+        self.table_headers = table_headers
+        self.key_column = key_column
+        self.key_value = key_value
+        self.role = role
+        self.name = name
+        self.action = action
 
 
 
 
     def __str__(self):
-        return "ActionResult(effect={}, route={}, delivery={}, evidence={}, escalation={}, summary={}, error={}, hint={}, next_call={}, fast_path={})".format(self.effect, self.route, self.delivery, self.evidence, self.escalation, self.summary, self.error, self.hint, self.next_call, self.fast_path)
+        return "ExpectedRow(version={}, pid={}, window_id={}, document_url={}, table_headers={}, key_column={}, key_value={}, role={}, name={}, action={})".format(self.version, self.pid, self.window_id, self.document_url, self.table_headers, self.key_column, self.key_value, self.role, self.name, self.action)
     def __eq__(self, other):
-        if self.effect != other.effect:
+        if self.version != other.version:
             return False
-        if self.route != other.route:
+        if self.pid != other.pid:
             return False
-        if self.delivery != other.delivery:
+        if self.window_id != other.window_id:
             return False
-        if self.evidence != other.evidence:
+        if self.document_url != other.document_url:
             return False
-        if self.escalation != other.escalation:
+        if self.table_headers != other.table_headers:
             return False
-        if self.summary != other.summary:
+        if self.key_column != other.key_column:
             return False
-        if self.error != other.error:
+        if self.key_value != other.key_value:
             return False
-        if self.hint != other.hint:
+        if self.role != other.role:
             return False
-        if self.next_call != other.next_call:
+        if self.name != other.name:
             return False
-        if self.fast_path != other.fast_path:
+        if self.action != other.action:
             return False
         return True
 
-class _UniffiFfiConverterTypeActionResult(_UniffiConverterRustBuffer):
+class _UniffiFfiConverterTypeExpectedRow(_UniffiConverterRustBuffer):
     @staticmethod
     def read(buf):
-        return ActionResult(
-            effect=_UniffiFfiConverterTypeActionEffect.read(buf),
-            route=_UniffiFfiConverterTypeActionRoute.read(buf),
-            delivery=_UniffiFfiConverterOptionalTypeActionDelivery.read(buf),
-            evidence=_UniffiFfiConverterOptionalSequenceTypeActionEvidence.read(buf),
-            escalation=_UniffiFfiConverterOptionalTypeActionEscalation.read(buf),
-            summary=_UniffiFfiConverterOptionalString.read(buf),
-            error=_UniffiFfiConverterOptionalTypeActionError.read(buf),
-            hint=_UniffiFfiConverterOptionalString.read(buf),
-            next_call=_UniffiFfiConverterOptionalTypeActionNextCall.read(buf),
-            fast_path=_UniffiFfiConverterOptionalString.read(buf),
+        return ExpectedRow(
+            version=_UniffiFfiConverterUInt32.read(buf),
+            pid=_UniffiFfiConverterUInt32.read(buf),
+            window_id=_UniffiFfiConverterUInt64.read(buf),
+            document_url=_UniffiFfiConverterString.read(buf),
+            table_headers=_UniffiFfiConverterSequenceString.read(buf),
+            key_column=_UniffiFfiConverterString.read(buf),
+            key_value=_UniffiFfiConverterString.read(buf),
+            role=_UniffiFfiConverterString.read(buf),
+            name=_UniffiFfiConverterString.read(buf),
+            action=_UniffiFfiConverterString.read(buf),
         )
 
     @staticmethod
     def check_lower(value):
-        _UniffiFfiConverterTypeActionEffect.check_lower(value.effect)
-        _UniffiFfiConverterTypeActionRoute.check_lower(value.route)
-        _UniffiFfiConverterOptionalTypeActionDelivery.check_lower(value.delivery)
-        _UniffiFfiConverterOptionalSequenceTypeActionEvidence.check_lower(value.evidence)
-        _UniffiFfiConverterOptionalTypeActionEscalation.check_lower(value.escalation)
-        _UniffiFfiConverterOptionalString.check_lower(value.summary)
-        _UniffiFfiConverterOptionalTypeActionError.check_lower(value.error)
-        _UniffiFfiConverterOptionalString.check_lower(value.hint)
-        _UniffiFfiConverterOptionalTypeActionNextCall.check_lower(value.next_call)
-        _UniffiFfiConverterOptionalString.check_lower(value.fast_path)
+        _UniffiFfiConverterUInt32.check_lower(value.version)
+        _UniffiFfiConverterUInt32.check_lower(value.pid)
+        _UniffiFfiConverterUInt64.check_lower(value.window_id)
+        _UniffiFfiConverterString.check_lower(value.document_url)
+        _UniffiFfiConverterSequenceString.check_lower(value.table_headers)
+        _UniffiFfiConverterString.check_lower(value.key_column)
+        _UniffiFfiConverterString.check_lower(value.key_value)
+        _UniffiFfiConverterString.check_lower(value.role)
+        _UniffiFfiConverterString.check_lower(value.name)
+        _UniffiFfiConverterString.check_lower(value.action)
 
     @staticmethod
     def write(value, buf):
-        _UniffiFfiConverterTypeActionEffect.write(value.effect, buf)
-        _UniffiFfiConverterTypeActionRoute.write(value.route, buf)
-        _UniffiFfiConverterOptionalTypeActionDelivery.write(value.delivery, buf)
-        _UniffiFfiConverterOptionalSequenceTypeActionEvidence.write(value.evidence, buf)
-        _UniffiFfiConverterOptionalTypeActionEscalation.write(value.escalation, buf)
-        _UniffiFfiConverterOptionalString.write(value.summary, buf)
-        _UniffiFfiConverterOptionalTypeActionError.write(value.error, buf)
-        _UniffiFfiConverterOptionalString.write(value.hint, buf)
-        _UniffiFfiConverterOptionalTypeActionNextCall.write(value.next_call, buf)
-        _UniffiFfiConverterOptionalString.write(value.fast_path, buf)
+        _UniffiFfiConverterUInt32.write(value.version, buf)
+        _UniffiFfiConverterUInt32.write(value.pid, buf)
+        _UniffiFfiConverterUInt64.write(value.window_id, buf)
+        _UniffiFfiConverterString.write(value.document_url, buf)
+        _UniffiFfiConverterSequenceString.write(value.table_headers, buf)
+        _UniffiFfiConverterString.write(value.key_column, buf)
+        _UniffiFfiConverterString.write(value.key_value, buf)
+        _UniffiFfiConverterString.write(value.role, buf)
+        _UniffiFfiConverterString.write(value.name, buf)
+        _UniffiFfiConverterString.write(value.action, buf)
 
 class _UniffiFfiConverterBoolean:
     @classmethod
@@ -1639,6 +1675,190 @@ class _UniffiFfiConverterBoolean:
     @classmethod
     def write(cls, value, buf):
         buf.write_u8(value)
+
+@dataclass
+class RowReceipt:
+    def __init__(self, *, version:int, predicate:ExpectedRow, dispatched:bool, acknowledged:bool, delivered_count:int, effect:str, error:typing.Optional[str]):
+        self.version = version
+        self.predicate = predicate
+        self.dispatched = dispatched
+        self.acknowledged = acknowledged
+        self.delivered_count = delivered_count
+        self.effect = effect
+        self.error = error
+
+
+
+
+    def __str__(self):
+        return "RowReceipt(version={}, predicate={}, dispatched={}, acknowledged={}, delivered_count={}, effect={}, error={})".format(self.version, self.predicate, self.dispatched, self.acknowledged, self.delivered_count, self.effect, self.error)
+    def __eq__(self, other):
+        if self.version != other.version:
+            return False
+        if self.predicate != other.predicate:
+            return False
+        if self.dispatched != other.dispatched:
+            return False
+        if self.acknowledged != other.acknowledged:
+            return False
+        if self.delivered_count != other.delivered_count:
+            return False
+        if self.effect != other.effect:
+            return False
+        if self.error != other.error:
+            return False
+        return True
+
+class _UniffiFfiConverterTypeRowReceipt(_UniffiConverterRustBuffer):
+    @staticmethod
+    def read(buf):
+        return RowReceipt(
+            version=_UniffiFfiConverterUInt32.read(buf),
+            predicate=_UniffiFfiConverterTypeExpectedRow.read(buf),
+            dispatched=_UniffiFfiConverterBoolean.read(buf),
+            acknowledged=_UniffiFfiConverterBoolean.read(buf),
+            delivered_count=_UniffiFfiConverterUInt32.read(buf),
+            effect=_UniffiFfiConverterString.read(buf),
+            error=_UniffiFfiConverterOptionalString.read(buf),
+        )
+
+    @staticmethod
+    def check_lower(value):
+        _UniffiFfiConverterUInt32.check_lower(value.version)
+        _UniffiFfiConverterTypeExpectedRow.check_lower(value.predicate)
+        _UniffiFfiConverterBoolean.check_lower(value.dispatched)
+        _UniffiFfiConverterBoolean.check_lower(value.acknowledged)
+        _UniffiFfiConverterUInt32.check_lower(value.delivered_count)
+        _UniffiFfiConverterString.check_lower(value.effect)
+        _UniffiFfiConverterOptionalString.check_lower(value.error)
+
+    @staticmethod
+    def write(value, buf):
+        _UniffiFfiConverterUInt32.write(value.version, buf)
+        _UniffiFfiConverterTypeExpectedRow.write(value.predicate, buf)
+        _UniffiFfiConverterBoolean.write(value.dispatched, buf)
+        _UniffiFfiConverterBoolean.write(value.acknowledged, buf)
+        _UniffiFfiConverterUInt32.write(value.delivered_count, buf)
+        _UniffiFfiConverterString.write(value.effect, buf)
+        _UniffiFfiConverterOptionalString.write(value.error, buf)
+
+class _UniffiFfiConverterOptionalTypeRowReceipt(_UniffiConverterRustBuffer):
+    @classmethod
+    def check_lower(cls, value):
+        if value is not None:
+            _UniffiFfiConverterTypeRowReceipt.check_lower(value)
+
+    @classmethod
+    def write(cls, value, buf):
+        if value is None:
+            buf.write_u8(0)
+            return
+
+        buf.write_u8(1)
+        _UniffiFfiConverterTypeRowReceipt.write(value, buf)
+
+    @classmethod
+    def read(cls, buf):
+        flag = buf.read_u8()
+        if flag == 0:
+            return None
+        elif flag == 1:
+            return _UniffiFfiConverterTypeRowReceipt.read(buf)
+        else:
+            raise InternalError("Unexpected flag byte for optional type")
+
+@dataclass
+class ActionResult:
+    def __init__(self, *, effect:ActionEffect, route:ActionRoute, delivery:typing.Optional[ActionDelivery], evidence:typing.Optional[typing.List[ActionEvidence]], escalation:typing.Optional[ActionEscalation], summary:typing.Optional[str], error:typing.Optional[ActionError], hint:typing.Optional[str], next_call:typing.Optional[ActionNextCall], fast_path:typing.Optional[str], row_receipt:typing.Optional[RowReceipt] = _DEFAULT):
+        self.effect = effect
+        self.route = route
+        self.delivery = delivery
+        self.evidence = evidence
+        self.escalation = escalation
+        self.summary = summary
+        self.error = error
+        self.hint = hint
+        self.next_call = next_call
+        self.fast_path = fast_path
+        if row_receipt is _DEFAULT:
+            self.row_receipt = None
+        else:
+            self.row_receipt = row_receipt
+
+
+
+
+    def __str__(self):
+        return "ActionResult(effect={}, route={}, delivery={}, evidence={}, escalation={}, summary={}, error={}, hint={}, next_call={}, fast_path={}, row_receipt={})".format(self.effect, self.route, self.delivery, self.evidence, self.escalation, self.summary, self.error, self.hint, self.next_call, self.fast_path, self.row_receipt)
+    def __eq__(self, other):
+        if self.effect != other.effect:
+            return False
+        if self.route != other.route:
+            return False
+        if self.delivery != other.delivery:
+            return False
+        if self.evidence != other.evidence:
+            return False
+        if self.escalation != other.escalation:
+            return False
+        if self.summary != other.summary:
+            return False
+        if self.error != other.error:
+            return False
+        if self.hint != other.hint:
+            return False
+        if self.next_call != other.next_call:
+            return False
+        if self.fast_path != other.fast_path:
+            return False
+        if self.row_receipt != other.row_receipt:
+            return False
+        return True
+
+class _UniffiFfiConverterTypeActionResult(_UniffiConverterRustBuffer):
+    @staticmethod
+    def read(buf):
+        return ActionResult(
+            effect=_UniffiFfiConverterTypeActionEffect.read(buf),
+            route=_UniffiFfiConverterTypeActionRoute.read(buf),
+            delivery=_UniffiFfiConverterOptionalTypeActionDelivery.read(buf),
+            evidence=_UniffiFfiConverterOptionalSequenceTypeActionEvidence.read(buf),
+            escalation=_UniffiFfiConverterOptionalTypeActionEscalation.read(buf),
+            summary=_UniffiFfiConverterOptionalString.read(buf),
+            error=_UniffiFfiConverterOptionalTypeActionError.read(buf),
+            hint=_UniffiFfiConverterOptionalString.read(buf),
+            next_call=_UniffiFfiConverterOptionalTypeActionNextCall.read(buf),
+            fast_path=_UniffiFfiConverterOptionalString.read(buf),
+            row_receipt=_UniffiFfiConverterOptionalTypeRowReceipt.read(buf),
+        )
+
+    @staticmethod
+    def check_lower(value):
+        _UniffiFfiConverterTypeActionEffect.check_lower(value.effect)
+        _UniffiFfiConverterTypeActionRoute.check_lower(value.route)
+        _UniffiFfiConverterOptionalTypeActionDelivery.check_lower(value.delivery)
+        _UniffiFfiConverterOptionalSequenceTypeActionEvidence.check_lower(value.evidence)
+        _UniffiFfiConverterOptionalTypeActionEscalation.check_lower(value.escalation)
+        _UniffiFfiConverterOptionalString.check_lower(value.summary)
+        _UniffiFfiConverterOptionalTypeActionError.check_lower(value.error)
+        _UniffiFfiConverterOptionalString.check_lower(value.hint)
+        _UniffiFfiConverterOptionalTypeActionNextCall.check_lower(value.next_call)
+        _UniffiFfiConverterOptionalString.check_lower(value.fast_path)
+        _UniffiFfiConverterOptionalTypeRowReceipt.check_lower(value.row_receipt)
+
+    @staticmethod
+    def write(value, buf):
+        _UniffiFfiConverterTypeActionEffect.write(value.effect, buf)
+        _UniffiFfiConverterTypeActionRoute.write(value.route, buf)
+        _UniffiFfiConverterOptionalTypeActionDelivery.write(value.delivery, buf)
+        _UniffiFfiConverterOptionalSequenceTypeActionEvidence.write(value.evidence, buf)
+        _UniffiFfiConverterOptionalTypeActionEscalation.write(value.escalation, buf)
+        _UniffiFfiConverterOptionalString.write(value.summary, buf)
+        _UniffiFfiConverterOptionalTypeActionError.write(value.error, buf)
+        _UniffiFfiConverterOptionalString.write(value.hint, buf)
+        _UniffiFfiConverterOptionalTypeActionNextCall.write(value.next_call, buf)
+        _UniffiFfiConverterOptionalString.write(value.fast_path, buf)
+        _UniffiFfiConverterOptionalTypeRowReceipt.write(value.row_receipt, buf)
 
 @dataclass
 class AppInfo:
@@ -1799,19 +2019,6 @@ class _UniffiFfiConverterTypeBoundsExpectation(_UniffiConverterRustBuffer):
         _UniffiFfiConverterFloat64.write(value.width, buf)
         _UniffiFfiConverterFloat64.write(value.height, buf)
         _UniffiFfiConverterOptionalFloat64.write(value.tolerance_px, buf)
-
-class _UniffiFfiConverterUInt64(_UniffiConverterPrimitiveInt):
-    CLASS_NAME = "u64"
-    VALUE_MIN = 0
-    VALUE_MAX = 2**64
-
-    @staticmethod
-    def read(buf):
-        return buf.read_u64()
-
-    @staticmethod
-    def write(value, buf):
-        buf.write_u64(value)
 
 
 
@@ -2236,21 +2443,50 @@ class _UniffiFfiConverterOptionalTypeClickButton(_UniffiConverterRustBuffer):
         else:
             raise InternalError("Unexpected flag byte for optional type")
 
+class _UniffiFfiConverterOptionalTypeExpectedRow(_UniffiConverterRustBuffer):
+    @classmethod
+    def check_lower(cls, value):
+        if value is not None:
+            _UniffiFfiConverterTypeExpectedRow.check_lower(value)
+
+    @classmethod
+    def write(cls, value, buf):
+        if value is None:
+            buf.write_u8(0)
+            return
+
+        buf.write_u8(1)
+        _UniffiFfiConverterTypeExpectedRow.write(value, buf)
+
+    @classmethod
+    def read(cls, buf):
+        flag = buf.read_u8()
+        if flag == 0:
+            return None
+        elif flag == 1:
+            return _UniffiFfiConverterTypeExpectedRow.read(buf)
+        else:
+            raise InternalError("Unexpected flag byte for optional type")
+
 @dataclass
 class ClickInput:
-    def __init__(self, *, target:ActionTarget, position:ClickPosition, delivery_mode:InputDeliveryMode, session:typing.Optional[str], button:typing.Optional[ClickButton], count:typing.Optional[int]):
+    def __init__(self, *, target:ActionTarget, position:ClickPosition, delivery_mode:InputDeliveryMode, session:typing.Optional[str], button:typing.Optional[ClickButton], count:typing.Optional[int], expected_row:typing.Optional[ExpectedRow] = _DEFAULT):
         self.target = target
         self.position = position
         self.delivery_mode = delivery_mode
         self.session = session
         self.button = button
         self.count = count
+        if expected_row is _DEFAULT:
+            self.expected_row = None
+        else:
+            self.expected_row = expected_row
 
 
 
 
     def __str__(self):
-        return "ClickInput(target={}, position={}, delivery_mode={}, session={}, button={}, count={})".format(self.target, self.position, self.delivery_mode, self.session, self.button, self.count)
+        return "ClickInput(target={}, position={}, delivery_mode={}, session={}, button={}, count={}, expected_row={})".format(self.target, self.position, self.delivery_mode, self.session, self.button, self.count, self.expected_row)
     def __eq__(self, other):
         if self.target != other.target:
             return False
@@ -2264,6 +2500,8 @@ class ClickInput:
             return False
         if self.count != other.count:
             return False
+        if self.expected_row != other.expected_row:
+            return False
         return True
 
 class _UniffiFfiConverterTypeClickInput(_UniffiConverterRustBuffer):
@@ -2276,6 +2514,7 @@ class _UniffiFfiConverterTypeClickInput(_UniffiConverterRustBuffer):
             session=_UniffiFfiConverterOptionalString.read(buf),
             button=_UniffiFfiConverterOptionalTypeClickButton.read(buf),
             count=_UniffiFfiConverterOptionalUInt32.read(buf),
+            expected_row=_UniffiFfiConverterOptionalTypeExpectedRow.read(buf),
         )
 
     @staticmethod
@@ -2286,6 +2525,7 @@ class _UniffiFfiConverterTypeClickInput(_UniffiConverterRustBuffer):
         _UniffiFfiConverterOptionalString.check_lower(value.session)
         _UniffiFfiConverterOptionalTypeClickButton.check_lower(value.button)
         _UniffiFfiConverterOptionalUInt32.check_lower(value.count)
+        _UniffiFfiConverterOptionalTypeExpectedRow.check_lower(value.expected_row)
 
     @staticmethod
     def write(value, buf):
@@ -2295,6 +2535,7 @@ class _UniffiFfiConverterTypeClickInput(_UniffiConverterRustBuffer):
         _UniffiFfiConverterOptionalString.write(value.session, buf)
         _UniffiFfiConverterOptionalTypeClickButton.write(value.button, buf)
         _UniffiFfiConverterOptionalUInt32.write(value.count, buf)
+        _UniffiFfiConverterOptionalTypeExpectedRow.write(value.expected_row, buf)
 
 @dataclass
 class ClipboardReadInput:
@@ -2331,29 +2572,6 @@ class _UniffiFfiConverterTypeClipboardReadInput(_UniffiConverterRustBuffer):
     def write(value, buf):
         _UniffiFfiConverterBoolean.write(value.include_text, buf)
         _UniffiFfiConverterOptionalString.write(value.session, buf)
-
-class _UniffiFfiConverterSequenceString(_UniffiConverterRustBuffer):
-    @classmethod
-    def check_lower(cls, value):
-        for item in value:
-            _UniffiFfiConverterString.check_lower(item)
-
-    @classmethod
-    def write(cls, value, buf):
-        items = len(value)
-        buf.write_i32(items)
-        for item in value:
-            _UniffiFfiConverterString.write(item, buf)
-
-    @classmethod
-    def read(cls, buf):
-        count = buf.read_i32()
-        if count < 0:
-            raise InternalError("Unexpected negative sequence length")
-
-        return [
-            _UniffiFfiConverterString.read(buf) for i in range(count)
-        ]
 
 @dataclass
 class ClipboardReadOutput:
@@ -2543,8 +2761,6 @@ class _UniffiFfiConverterTypeCursorEffectSetting(_UniffiConverterRustBuffer):
 
     @staticmethod
     def check_lower(value):
-        if type(value) is bool:
-            value = CursorEffectSetting.ON if value else CursorEffectSetting.OFF
         if value == CursorEffectSetting.ON:
             return
         if value == CursorEffectSetting.OFF:
@@ -2555,8 +2771,6 @@ class _UniffiFfiConverterTypeCursorEffectSetting(_UniffiConverterRustBuffer):
 
     @staticmethod
     def write(value, buf):
-        if type(value) is bool:
-            value = CursorEffectSetting.ON if value else CursorEffectSetting.OFF
         if value == CursorEffectSetting.ON:
             buf.write_i32(1)
         if value == CursorEffectSetting.OFF:
@@ -2597,7 +2811,7 @@ class CursorMotionEffects:
     Per-effect overrides for the agent cursor. An omitted field keeps the current setting.
     `on` and `off` set it; `default` restores the style default.
 """
-    def __init__(self, *, trail:typing.Optional[typing.Union[CursorEffectSetting, bool]], glow:typing.Optional[typing.Union[CursorEffectSetting, bool]], magnet:typing.Optional[typing.Union[CursorEffectSetting, bool]], ripple:typing.Optional[typing.Union[CursorEffectSetting, bool]], squish:typing.Optional[typing.Union[CursorEffectSetting, bool]]):
+    def __init__(self, *, trail:typing.Optional[CursorEffectSetting], glow:typing.Optional[CursorEffectSetting], magnet:typing.Optional[CursorEffectSetting], ripple:typing.Optional[CursorEffectSetting], squish:typing.Optional[CursorEffectSetting]):
         self.trail = trail
         self.glow = glow
         self.magnet = magnet
@@ -4351,7 +4565,7 @@ class _UniffiFfiConverterTypeGetSessionStateInput(_UniffiConverterRustBuffer):
 
 @dataclass
 class GetWindowStateInput:
-    def __init__(self, *, pid:int, window_id:int, session:typing.Optional[str], query:typing.Optional[str], include_accessibility_tree:typing.Optional[bool], include_screenshot:typing.Optional[bool], screenshot_out_file:typing.Optional[str], max_elements:typing.Optional[int], max_depth:typing.Optional[int], max_dimension:typing.Optional[int], max_image_dimension:typing.Optional[int], timeout_ms:typing.Optional[int] = _DEFAULT, tree_format:typing.Optional[str] = _DEFAULT, since:typing.Optional[str] = _DEFAULT, verbose:typing.Optional[bool] = _DEFAULT, full_output:typing.Optional[bool] = _DEFAULT):
+    def __init__(self, *, pid:int, window_id:int, session:typing.Optional[str], query:typing.Optional[str], include_accessibility_tree:typing.Optional[bool], include_screenshot:typing.Optional[bool], screenshot_out_file:typing.Optional[str], max_elements:typing.Optional[int], max_depth:typing.Optional[int], max_dimension:typing.Optional[int], max_image_dimension:typing.Optional[int], timeout_ms:typing.Optional[int] = _DEFAULT, tree_format:typing.Optional[str] = _DEFAULT, since:typing.Optional[str] = _DEFAULT, verbose:typing.Optional[bool] = _DEFAULT, full_output:typing.Optional[bool] = _DEFAULT, qualify_rows:typing.Optional[bool] = _DEFAULT):
         self.pid = pid
         self.window_id = window_id
         self.session = session
@@ -4383,12 +4597,16 @@ class GetWindowStateInput:
             self.full_output = None
         else:
             self.full_output = full_output
+        if qualify_rows is _DEFAULT:
+            self.qualify_rows = None
+        else:
+            self.qualify_rows = qualify_rows
 
 
 
 
     def __str__(self):
-        return "GetWindowStateInput(pid={}, window_id={}, session={}, query={}, include_accessibility_tree={}, include_screenshot={}, screenshot_out_file={}, max_elements={}, max_depth={}, max_dimension={}, max_image_dimension={}, timeout_ms={}, tree_format={}, since={}, verbose={}, full_output={})".format(self.pid, self.window_id, self.session, self.query, self.include_accessibility_tree, self.include_screenshot, self.screenshot_out_file, self.max_elements, self.max_depth, self.max_dimension, self.max_image_dimension, self.timeout_ms, self.tree_format, self.since, self.verbose, self.full_output)
+        return "GetWindowStateInput(pid={}, window_id={}, session={}, query={}, include_accessibility_tree={}, include_screenshot={}, screenshot_out_file={}, max_elements={}, max_depth={}, max_dimension={}, max_image_dimension={}, timeout_ms={}, tree_format={}, since={}, verbose={}, full_output={}, qualify_rows={})".format(self.pid, self.window_id, self.session, self.query, self.include_accessibility_tree, self.include_screenshot, self.screenshot_out_file, self.max_elements, self.max_depth, self.max_dimension, self.max_image_dimension, self.timeout_ms, self.tree_format, self.since, self.verbose, self.full_output, self.qualify_rows)
     def __eq__(self, other):
         if self.pid != other.pid:
             return False
@@ -4422,6 +4640,8 @@ class GetWindowStateInput:
             return False
         if self.full_output != other.full_output:
             return False
+        if self.qualify_rows != other.qualify_rows:
+            return False
         return True
 
 class _UniffiFfiConverterTypeGetWindowStateInput(_UniffiConverterRustBuffer):
@@ -4444,6 +4664,7 @@ class _UniffiFfiConverterTypeGetWindowStateInput(_UniffiConverterRustBuffer):
             since=_UniffiFfiConverterOptionalString.read(buf),
             verbose=_UniffiFfiConverterOptionalBoolean.read(buf),
             full_output=_UniffiFfiConverterOptionalBoolean.read(buf),
+            qualify_rows=_UniffiFfiConverterOptionalBoolean.read(buf),
         )
 
     @staticmethod
@@ -4464,6 +4685,7 @@ class _UniffiFfiConverterTypeGetWindowStateInput(_UniffiConverterRustBuffer):
         _UniffiFfiConverterOptionalString.check_lower(value.since)
         _UniffiFfiConverterOptionalBoolean.check_lower(value.verbose)
         _UniffiFfiConverterOptionalBoolean.check_lower(value.full_output)
+        _UniffiFfiConverterOptionalBoolean.check_lower(value.qualify_rows)
 
     @staticmethod
     def write(value, buf):
@@ -4483,6 +4705,7 @@ class _UniffiFfiConverterTypeGetWindowStateInput(_UniffiConverterRustBuffer):
         _UniffiFfiConverterOptionalString.write(value.since, buf)
         _UniffiFfiConverterOptionalBoolean.write(value.verbose, buf)
         _UniffiFfiConverterOptionalBoolean.write(value.full_output, buf)
+        _UniffiFfiConverterOptionalBoolean.write(value.qualify_rows, buf)
 
 @dataclass
 class HotkeyInput:
@@ -8215,7 +8438,7 @@ class _UniffiFfiConverterOptionalTypeElementFrame(_UniffiConverterRustBuffer):
 
 @dataclass
 class WindowElement:
-    def __init__(self, *, element_index:int, role:str, depth:int, element_token:typing.Optional[str], label:typing.Optional[str], value:typing.Optional[str], value_description:typing.Optional[str], enabled:typing.Optional[bool], selected:typing.Optional[bool], in_web_content:typing.Optional[bool], actions:typing.Optional[typing.List[str]], parent_index:typing.Optional[int], frame:typing.Optional[ElementFrame], min:typing.Optional[float], max:typing.Optional[float]):
+    def __init__(self, *, element_index:int, role:str, depth:int, element_token:typing.Optional[str], label:typing.Optional[str], value:typing.Optional[str], value_description:typing.Optional[str], enabled:typing.Optional[bool], selected:typing.Optional[bool], in_web_content:typing.Optional[bool], actions:typing.Optional[typing.List[str]], parent_index:typing.Optional[int], frame:typing.Optional[ElementFrame], min:typing.Optional[float], max:typing.Optional[float], expected_row:typing.Optional[ExpectedRow] = _DEFAULT):
         self.element_index = element_index
         self.role = role
         self.depth = depth
@@ -8231,12 +8454,16 @@ class WindowElement:
         self.frame = frame
         self.min = min
         self.max = max
+        if expected_row is _DEFAULT:
+            self.expected_row = None
+        else:
+            self.expected_row = expected_row
 
 
 
 
     def __str__(self):
-        return "WindowElement(element_index={}, role={}, depth={}, element_token={}, label={}, value={}, value_description={}, enabled={}, selected={}, in_web_content={}, actions={}, parent_index={}, frame={}, min={}, max={})".format(self.element_index, self.role, self.depth, self.element_token, self.label, self.value, self.value_description, self.enabled, self.selected, self.in_web_content, self.actions, self.parent_index, self.frame, self.min, self.max)
+        return "WindowElement(element_index={}, role={}, depth={}, element_token={}, label={}, value={}, value_description={}, enabled={}, selected={}, in_web_content={}, actions={}, parent_index={}, frame={}, min={}, max={}, expected_row={})".format(self.element_index, self.role, self.depth, self.element_token, self.label, self.value, self.value_description, self.enabled, self.selected, self.in_web_content, self.actions, self.parent_index, self.frame, self.min, self.max, self.expected_row)
     def __eq__(self, other):
         if self.element_index != other.element_index:
             return False
@@ -8268,6 +8495,8 @@ class WindowElement:
             return False
         if self.max != other.max:
             return False
+        if self.expected_row != other.expected_row:
+            return False
         return True
 
 class _UniffiFfiConverterTypeWindowElement(_UniffiConverterRustBuffer):
@@ -8289,6 +8518,7 @@ class _UniffiFfiConverterTypeWindowElement(_UniffiConverterRustBuffer):
             frame=_UniffiFfiConverterOptionalTypeElementFrame.read(buf),
             min=_UniffiFfiConverterOptionalFloat64.read(buf),
             max=_UniffiFfiConverterOptionalFloat64.read(buf),
+            expected_row=_UniffiFfiConverterOptionalTypeExpectedRow.read(buf),
         )
 
     @staticmethod
@@ -8308,6 +8538,7 @@ class _UniffiFfiConverterTypeWindowElement(_UniffiConverterRustBuffer):
         _UniffiFfiConverterOptionalTypeElementFrame.check_lower(value.frame)
         _UniffiFfiConverterOptionalFloat64.check_lower(value.min)
         _UniffiFfiConverterOptionalFloat64.check_lower(value.max)
+        _UniffiFfiConverterOptionalTypeExpectedRow.check_lower(value.expected_row)
 
     @staticmethod
     def write(value, buf):
@@ -8326,6 +8557,7 @@ class _UniffiFfiConverterTypeWindowElement(_UniffiConverterRustBuffer):
         _UniffiFfiConverterOptionalTypeElementFrame.write(value.frame, buf)
         _UniffiFfiConverterOptionalFloat64.write(value.min, buf)
         _UniffiFfiConverterOptionalFloat64.write(value.max, buf)
+        _UniffiFfiConverterOptionalTypeExpectedRow.write(value.expected_row, buf)
 
 class _UniffiFfiConverterSequenceTypeWindowElement(_UniffiConverterRustBuffer):
     @classmethod
@@ -8720,6 +8952,8 @@ __all__ = [
     "ActionEscalation",
     "ActionEvidence",
     "ActionNextCall",
+    "ExpectedRow",
+    "RowReceipt",
     "ActionResult",
     "AppInfo",
     "BoundsExpectation",

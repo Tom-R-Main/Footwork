@@ -72,7 +72,10 @@ def test_a_step_whose_result_differs_from_its_record_is_refused(tmp_path):
     subprocess.run(["patch", "--batch", "--reverse", "--silent", "-p1", "-i",
                     str(VENDOR / f"patches/{LAST}.patch")], cwd=source, check=True)
     for name, hashes in record["files"].items():
-        assert hashlib.sha256((source / name).read_bytes()).hexdigest() == hashes["before"]
+        if hashes["before"] is None:
+            assert not (source / name).exists()
+        else:
+            assert hashlib.sha256((source / name).read_bytes()).hexdigest() == hashes["before"]
     import gzip
     import io
 
@@ -82,7 +85,11 @@ def test_a_step_whose_result_differs_from_its_record_is_refused(tmp_path):
         gzip.GzipFile(filename="", fileobj=memory, mode="wb", mtime=0, compresslevel=9) as compressed,
         tarfile.open(fileobj=compressed, mode="w", format=tarfile.PAX_FORMAT) as bundle,
     ):
+        added = {name for name, hashes in record["files"].items() if hashes["before"] is None}
+        removed = added | set(record.get("added_directories", []))
         for member in sorted(original.getmembers(), key=lambda item: item.name):
+            if member.name in removed:
+                continue
             info = tarfile.TarInfo(member.name)
             info.mode = member.mode
             if member.isdir():
@@ -108,13 +115,15 @@ def test_explicit_added_source_member_is_packed(tmp_path):
     base_file = b"old source\n"
     def archive(entries):
         out = io.BytesIO()
-        with gzip.GzipFile(filename="", fileobj=out, mode="wb", mtime=0, compresslevel=9) as gz:
-            with tarfile.open(fileobj=gz, mode="w", format=tarfile.PAX_FORMAT) as tar:
-                for name, content in sorted(entries.items()):
-                    info = tarfile.TarInfo(name)
-                    info.mode = 0o644
-                    info.size = len(content)
-                    tar.addfile(info, io.BytesIO(content))
+        with (
+            gzip.GzipFile(filename="", fileobj=out, mode="wb", mtime=0, compresslevel=9) as gz,
+            tarfile.open(fileobj=gz, mode="w", format=tarfile.PAX_FORMAT) as tar,
+        ):
+            for name, content in sorted(entries.items()):
+                info = tarfile.TarInfo(name)
+                info.mode = 0o644
+                info.size = len(content)
+                tar.addfile(info, io.BytesIO(content))
         return out.getvalue()
     base = archive({"old.rs": base_file})
     patch = tmp_path / "addition.patch"
@@ -125,3 +134,44 @@ def test_explicit_added_source_member_is_packed(tmp_path):
               "patched_archive_sha256": CHAIN.sha(expected), "added_directories": [],
               "files": {"new.rs": {"before": None, "after": CHAIN.sha(new_file), "mode": 0o644}}}
     assert CHAIN.apply_step(base, patch, record) == expected
+
+
+@pytest.mark.parametrize("name", ["../escape.rs", "/absolute.rs", "a/../b.rs", "a//b.rs"])
+def test_added_manifest_paths_must_be_canonical_relative(tmp_path, name):
+    # Refuse before reading or packing a path outside the extracted source.
+    import gzip
+    import io
+    import tarfile
+    memory = io.BytesIO()
+    with (
+        gzip.GzipFile(filename="", fileobj=memory, mode="wb", mtime=0) as gz,
+        tarfile.open(fileobj=gz, mode="w"),
+    ):
+        pass
+    base = memory.getvalue()
+    patch = tmp_path / "safe.patch"
+    patch.write_text("--- /dev/null\n+++ b/safe.rs\n@@ -0,0 +1 @@\n+safe\n")
+    record = {"base_archive_sha256": CHAIN.sha(base), "patch_sha256": CHAIN.sha(patch.read_bytes()),
+              "patched_archive_sha256": "0" * 64,
+              "files": {name: {"before": None, "after": "0" * 64, "mode": 0o644}}}
+    with pytest.raises(ValueError, match="invalid added source member"):
+        CHAIN.apply_step(base, patch, record)
+
+
+def test_unlisted_source_addition_is_refused(tmp_path):
+    import gzip
+    import io
+    import tarfile
+    memory = io.BytesIO()
+    with (
+        gzip.GzipFile(filename="", fileobj=memory, mode="wb", mtime=0) as gz,
+        tarfile.open(fileobj=gz, mode="w"),
+    ):
+        pass
+    base = memory.getvalue()
+    patch = tmp_path / "unlisted.patch"
+    patch.write_text("--- /dev/null\n+++ b/unlisted.rs\n@@ -0,0 +1 @@\n+unlisted\n")
+    record = {"base_archive_sha256": CHAIN.sha(base), "patch_sha256": CHAIN.sha(patch.read_bytes()),
+              "patched_archive_sha256": "0" * 64, "files": {}}
+    with pytest.raises(ValueError, match="unlisted source additions"):
+        CHAIN.apply_step(base, patch, record)

@@ -84,37 +84,16 @@
 +}
 --- a/libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs
-@@ -820,6 +820,9 @@
-     pub button: Option<ClickButton>,
-     #[serde(skip_serializing_if = "Option::is_none")]
-     pub count: Option<u32>,
+@@ -822,0 +823,3 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
 +    pub expected_row: Option<crate::ExpectedRow>,
- }
- 
- impl ClickInput {
-@@ -833,6 +836,8 @@
- #[serde(deny_unknown_fields)]
- struct ClickWireInput {
-     target: ActionTarget,
+@@ -835,0 +839,2 @@
 +    #[serde(default, deserialize_with = "present_click_field")]
 +    expected_row: Option<crate::ExpectedRow>,
-     delivery_mode: InputDeliveryMode,
-     #[serde(default, deserialize_with = "present_click_field")]
-     #[schemars(schema_with = "number_schema")]
-@@ -880,6 +885,7 @@
-         };
-         let input = Self {
-             target: wire.target,
+@@ -882,0 +888 @@
 +            expected_row: wire.expected_row,
-             position,
-             delivery_mode: wire.delivery_mode,
-             session: wire.session,
-@@ -903,6 +909,15 @@
- impl ToolInput for ClickInput {
-     const TOOL_NAME: &'static str = "click";
-     fn validate(&self) -> Result<(), String> {
+@@ -905,0 +912,9 @@
 +        if let Some(row) = &self.expected_row {
 +            row.validate()?;
 +            if !matches!(&self.target, ActionTarget::Window { pid, window_id } if *pid == row.pid && *window_id == row.window_id)
@@ -124,60 +103,24 @@
 +                return Err("expected_row requires exact bound foreground element left-click once".into());
 +            }
 +        }
-         match &self.position {
-             ClickPosition::Coordinates { x, y } if !x.is_finite() || !y.is_finite() => {
-                 return Err("click coordinates must be finite".into())
-@@ -1223,6 +1238,7 @@
-         }
-         assert!(serde_json::from_value::<ClickInput>(json!({"x":1,"y":2})).is_err());
-         let mut input = ClickInput {
+@@ -1225,0 +1241 @@
 +            expected_row: None,
-             target: ActionTarget::Desktop {
-                 display_id: "primary".into(),
-             },
 --- a/libs/cua-driver/rust/crates/cua-driver-contract/src/lib.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/lib.rs
-@@ -19,6 +19,8 @@
- mod cursor_tools;
- mod desktop;
- mod inputs;
+@@ -21,0 +22,2 @@
 +pub mod row;
 +pub use row::ExpectedRow;
- mod outputs;
- mod session;
- mod verification;
 --- a/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs
-@@ -718,6 +718,9 @@
-     )]
-     #[schemars(schema_with = "object_schema")]
-     pub fast_path: Option<String>,
+@@ -720,0 +721,3 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
 +    pub row_receipt: Option<crate::row::RowReceipt>,
- }
- 
- /// A call an agent can make next: `{tool, arguments}`.
-@@ -792,6 +795,7 @@
-     RefusedCannotHaveDelivery,
-     RefusedCannotHaveEvidence,
-     ErrorRequiresRefused,
+@@ -794,0 +798 @@
 +    RowReceiptContradiction,
- }
- 
- impl std::fmt::Display for ActionResultValidationError {
-@@ -802,6 +806,7 @@
-             Self::RefusedCannotHaveDelivery => "refused effect cannot include delivery",
-             Self::RefusedCannotHaveEvidence => "refused effect cannot include evidence",
-             Self::ErrorRequiresRefused => "error is only reported with a refused effect",
+@@ -804,0 +809 @@
 +            Self::RowReceiptContradiction => "row receipt contradicts public action outcome",
-         })
-     }
- }
-@@ -810,6 +815,15 @@
- 
- impl ActionResult {
-     pub fn validate_invariants(&self) -> Result<(), ActionResultValidationError> {
+@@ -812,0 +818,9 @@
 +        if let Some(row) = &self.row_receipt {
 +            let expected = if row.dispatched { ActionEffect::Unverifiable } else { ActionEffect::Refused };
 +            if row.validate().is_err() || self.effect != expected || self.route != ActionRoute::Accessibility
@@ -187,17 +130,52 @@
 +                return Err(ActionResultValidationError::RowReceiptContradiction);
 +            }
 +        }
-         match self.effect {
-             ActionEffect::Confirmed
-                 if self
-@@ -926,6 +940,7 @@
- 
-     fn confirmed_result() -> ActionResult {
-         ActionResult {
+@@ -928,0 +943 @@
 +            row_receipt: None,
-             effect: ActionEffect::Confirmed,
-             route: ActionRoute::Accessibility,
-             delivery: Some(ActionDelivery {
+@@ -948,0 +964,41 @@
++    fn row_receipt_cannot_upgrade_or_contradict_public_outcome() {
++        let mut valid = confirmed_result();
++        valid.effect = ActionEffect::Unverifiable;
++        valid.evidence = None;
++        valid.delivery = Some(ActionDelivery { mode: ActionDeliveryMode::Foreground, delivered_count: Some(1) });
++        valid.row_receipt = Some(crate::row::RowReceipt {
++            version: 1, predicate: crate::ExpectedRow {
++                version: 1, pid: 77, window_id: 12, document_url: "https://example.test/tasks".into(),
++                table_headers: vec!["Task ID".into()], key_column: "Task ID".into(), key_value: "TASK-0".into(),
++                role: "AXPopUpButton".into(), name: "Open menu".into(), action: "AXPress".into(),
++            }, dispatched: true, acknowledged: true, delivered_count: 1, effect: "unverifiable".into(), error: None,
++        });
++        assert!(valid.validate_invariants().is_ok());
++        for case in 0..11 {
++            let mut bad = valid.clone();
++            match case {
++                0 => bad.effect = ActionEffect::Confirmed,
++                1 => bad.route = ActionRoute::SyntheticEvents,
++                2 => bad.delivery.as_mut().unwrap().mode = ActionDeliveryMode::Background,
++                3 => bad.delivery.as_mut().unwrap().delivered_count = Some(0),
++                4 => bad.delivery = None,
++                5 => bad.row_receipt.as_mut().unwrap().dispatched = false,
++                6 => bad.row_receipt.as_mut().unwrap().acknowledged = false,
++                7 => bad.row_receipt.as_mut().unwrap().effect = "confirmed".into(),
++                8 => bad.row_receipt.as_mut().unwrap().error = Some("press failed".into()),
++                9 => bad.row_receipt.as_mut().unwrap().predicate.action = "AXShowMenu".into(),
++                _ => bad.evidence = Some(vec![]),
++            }
++            assert!(bad.validate_invariants().is_err(), "case {case}");
++        }
++        let mut refused = valid.clone();
++        refused.effect = ActionEffect::Refused; refused.delivery = None;
++        let row = refused.row_receipt.as_mut().unwrap();
++        row.dispatched = false; row.acknowledged = false; row.delivered_count = 0;
++        row.effect = "refused".into(); row.error = Some("row changed".into());
++        assert!(refused.validate_invariants().is_ok());
++        refused.delivery = valid.delivery;
++        assert!(refused.validate_invariants().is_err());
++    }
++
++    #[test]
+@@ -1008,0 +1065 @@
++                "row_receipt",
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs
 @@ -0,0 +1,538 @@
@@ -741,86 +719,76 @@
 +}
 --- a/libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs
-@@ -126,6 +126,9 @@
-     #[schemars(schema_with = "bool_schema")]
-     #[uniffi(default = None)]
-     pub full_output: Option<bool>,
+@@ -128,0 +129,3 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
 +    pub qualify_rows: Option<bool>,
- }
- 
- fn tree_format_schema(_: &mut schemars::SchemaGenerator) -> schemars::Schema {
-@@ -289,6 +292,9 @@
-     pub min: Option<f64>,
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-     pub max: Option<f64>,
+@@ -291,0 +295,3 @@
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[uniffi(default = None)]
 +    pub expected_row: Option<crate::ExpectedRow>,
- }
- 
- #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, uniffi::Record)]
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs
-@@ -348,6 +348,7 @@
-     ) -> Result<cua_driver_contract::ActionResult, ActionRecordValidationError> {
-         let projection = self.stable_projection()?;
-         Ok(cua_driver_contract::ActionResult {
+@@ -350,0 +351 @@
 +            row_receipt: None,
-             effect: match projection.effect {
-                 ActionEffect::Confirmed => cua_driver_contract::ActionEffect::Confirmed,
-                 ActionEffect::Partial => cua_driver_contract::ActionEffect::Partial,
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
-@@ -3738,6 +3738,9 @@
-     let mut public = action
-         .public_result()
-         .map_err(|error| format!("invalid internal execution record: {error:?}"))?;
+@@ -3740,0 +3741,3 @@
 +    if let Some(value) = result.structured_content.as_ref().and_then(|v| v.get("row_receipt")) {
 +        public.row_receipt = Some(serde_json::from_value(value.clone()).map_err(|e| format!("invalid row receipt: {e}"))?);
 +    }
-     // Some MCP clients (Claude Code among them) hand the model only
-     // `structuredContent` when it is present and drop the text blocks. The
-     // producer's text is the only place the resolved points, the element hit,
+@@ -6569,0 +6573,37 @@
++    }
++
++    #[test]
++    fn action_projection_preserves_and_validates_row_delivery() {
++        use crate::action_record::{ActionEffect, ActionExecutionRecord, ActionTransport, ActualDelivery, RequestedDelivery};
++        for (dispatched, acknowledged) in [(false, false), (true, false), (true, true)] {
++            let proof = serde_json::json!({
++                "version": 1, "predicate": {"version": 1, "pid": 77, "window_id": 40335,
++                    "document_url": "https://example.test/tasks", "table_headers": ["Task ID", "Actions"],
++                    "key_column": "Task ID", "key_value": "TASK-0", "role": "AXPopUpButton",
++                    "name": "Open menu", "action": "AXPress"},
++                "dispatched": dispatched, "acknowledged": acknowledged,
++                "delivered_count": if acknowledged { 1 } else { 0 },
++                "effect": if dispatched { "unverifiable" } else { "refused" },
++                "error": if acknowledged { None } else { Some("fixture refusal or lost acknowledgement") }
++            });
++            let mut action = ActionExecutionRecord::new(
++                if dispatched { ActionEffect::Unverifiable } else { ActionEffect::Refused },
++                ActionTransport::MacosAxAction, RequestedDelivery::Foreground);
++            if dispatched {
++                action.actual_delivery = Some(ActualDelivery::Foreground);
++                action.delivered_count = Some(if acknowledged { 1 } else { 0 });
++            }
++            let mut result = ToolResult::text("row effect remains unverified")
++                .with_structured(serde_json::json!({"row_receipt": proof.clone()}))
++                .with_action_record(action);
++            publish_action_result(&mut result).expect("natural row delivery projects");
++            let public = result.structured_content.as_ref().unwrap();
++            assert_eq!(public["row_receipt"], proof);
++            assert_eq!(public["effect"], proof["effect"]);
++            assert_eq!(public["route"], "accessibility");
++            cua_driver_contract::validate_success_output("click", public.clone()).unwrap();
++            let mut bad = proof;
++            bad["delivered_count"] = serde_json::json!(2);
++            result.structured_content = Some(serde_json::json!({"row_receipt": bad}));
++            assert!(publish_action_result(&mut result).is_err());
++        }
 --- a/libs/cua-driver/rust/crates/cua-driver-sdk/src/tests/native_windows.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-sdk/src/tests/native_windows.rs
-@@ -252,6 +252,7 @@
-     let driver = CuaDriver::connect(Some(socket)).unwrap();
-     let output: ActionResult = driver
-         .click(ClickInput {
+@@ -254,0 +255 @@
 +                expected_row: None,
-             target: ActionTarget::Window {
-                 pid: 42,
-                 window_id: 73,
-@@ -345,6 +346,7 @@
-     ] {
-         let error = driver
-             .click(ClickInput {
+@@ -347,0 +349 @@
 +                expected_row: None,
-                 target,
-                 position,
-                 delivery_mode,
 --- a/libs/cua-driver/rust/crates/cua-driver-sdk/src/tests/snapshot_lifecycle.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-sdk/src/tests/snapshot_lifecycle.rs
-@@ -317,6 +317,7 @@
-                     731_348,
-                     u64::from(window),
-                     AxSnapshot {
+@@ -319,0 +320 @@
 +                        rows: Default::default(),
-                         elements: vec![*ptr],
-                     },
-                 );
 --- a/libs/cua-driver/rust/crates/platform-macos/src/ax/mod.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/mod.rs
-@@ -27,6 +27,7 @@
- pub(crate) mod main_thread;
- pub mod reveal_scroll;
- pub mod snapshot;
+@@ -29,0 +30 @@
 +pub(crate) mod row_guard;
- pub mod tree;
- pub mod window_scope;
- 
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/row_guard.rs
 @@ -0,0 +1,425 @@
@@ -1251,68 +1219,27 @@
 +}
 --- a/libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs
-@@ -6,7 +6,7 @@
- use core_foundation::base::{CFRelease, CFRetain, CFTypeRef};
- use cua_driver_core::snapshot_store::{SnapshotPayload, SnapshotStore};
- 
+@@ -9 +9 @@
 -pub struct RetainedElement(usize);
 +pub struct RetainedElement(usize, pub Option<std::sync::Arc<super::row_guard::QualifiedRow>>);
- 
- impl RetainedElement {
-     pub fn as_ptr(&self) -> usize {
-@@ -22,13 +22,13 @@
-         if ptr != 0 {
-             unsafe { CFRetain(ptr as AXUIElementRef as CFTypeRef) };
-         }
+@@ -25 +25 @@
 -        Self(ptr)
 +        Self(ptr, None)
-     }
- }
- 
- impl Clone for RetainedElement {
-     fn clone(&self) -> Self {
+@@ -31 +31 @@
 -        unsafe { Self::retain(self.0) }
 +        unsafe { let mut held = Self::retain(self.0); held.1 = self.1.clone(); held }
-     }
- }
- 
-@@ -42,11 +42,13 @@
- 
- pub struct AxSnapshot {
-     pub elements: Vec<usize>,
+@@ -44,0 +45 @@
 +    pub rows: std::collections::BTreeMap<usize, std::sync::Arc<super::row_guard::QualifiedRow>>,
- }
- 
- impl AxSnapshot {
-     pub fn from_nodes(nodes: &[AXNode]) -> Self {
-         Self {
+@@ -49,0 +51 @@
 +            rows: Default::default(),
-             elements: nodes
-                 .iter()
-                 .filter(|node| node.element_index.is_some())
-@@ -64,7 +66,7 @@
-     fn retain(&self, index: usize) -> Option<RetainedElement> {
-         self.elements
-             .get(index)
+@@ -67 +69 @@
 -            .map(|ptr| unsafe { RetainedElement::retain(*ptr) })
 +            .map(|ptr| unsafe { let mut held = RetainedElement::retain(*ptr); held.1 = self.rows.get(&index).cloned(); held })
-     }
- }
- 
-@@ -103,6 +105,7 @@
-     fn payload(ptr: usize) -> AxSnapshot {
-         unsafe { CFRetain(ptr as CFTypeRef) };
-         AxSnapshot {
+@@ -105,0 +108 @@
 +            rows: Default::default(),
-             elements: vec![ptr],
-         }
-     }
 --- a/libs/cua-driver/rust/crates/platform-macos/src/tools/click.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/tools/click.rs
-@@ -317,6 +317,22 @@
-     }
- }
- 
+@@ -319,0 +320,16 @@
 +fn row_result(receipt: cua_driver_contract::row::RowReceipt) -> ToolResult {
 +    use cua_driver_core::action_record::{ActionEffect, ActionExecutionRecord, ActionTransport, ActualDelivery, RequestedDelivery};
 +    let mut record = ActionExecutionRecord::new(
@@ -1329,21 +1256,9 @@
 +    ToolResult::text(summary).with_structured(serde_json::json!({"row_receipt": receipt})).with_action_record(record)
 +}
 +
- fn def() -> &'static ToolDef {
-     DEF.get_or_init(|| ToolDef {
-         name: "click".into(),
-@@ -339,6 +355,7 @@
-                 "pid":           { "type": "integer", "description": "Target process ID. Optional with element_token (it carries the pid)." },
-                 "window_id":     { "type": "integer", "description": "Target window ID. Omit with element_token." },
-                 "element_token": cua_driver_core::tool_schema::element_token_schema(),
+@@ -341,0 +358 @@
 +                "expected_row": cua_driver_contract::row::predicate_schema(),
-                 "capture_id": { "type": "string", "description": "Optional capture ID from get_window_state or get_desktop_state. With x,y it is consumed atomically; stale or mismatched captures are refused." },
-                 "x":             { "type": "number",  "description": "X in screenshot pixels (get_window_state PNG, or get_desktop_state PNG for a desktop target)." },
-                 "y":             { "type": "number",  "description": "Y in screenshot pixels from the image selected by target." },
-@@ -401,6 +418,20 @@
- impl ClickTool {
-     async fn invoke_guarded(&self, args: Value, fast_path: &mut Option<Value>) -> ToolResult {
-         use cua_driver_core::tool_args::ArgsExt;
+@@ -403,0 +421,14 @@
 +
 +        // Qualified row calls cannot reach the pixel/alternate-action branches.
 +        let expected_row = match args.get("expected_row") {
@@ -1358,13 +1273,7 @@
 +            || args.str_or("scope", "window") != "window") {
 +            return ToolResult::error("expected_row requires only a bound element token; no input attempted");
 +        }
- 
-         // ── Window-less screen-absolute branch (scope="desktop") ──────
-         // x,y given with NO pid and NO window_id → the coordinates are TRUE
-@@ -584,6 +615,37 @@
-         let from_zoom = args.bool_or("from_zoom", false);
-         let debug_image_out = args.opt_str("debug_image_out");
-         let modifiers: Vec<String> = args.str_array("modifier");
+@@ -586,0 +618,31 @@
 +
 +        let row_binding = element_guard.as_ref().and_then(|guard| guard.1.clone());
 +        if expected_row.is_some() || row_binding.is_some() {
@@ -1396,61 +1305,25 @@
 +                Err(_) => ToolResult::error("row action interrupted; outcome unknown; do not retry"),
 +            };
 +        }
- 
-         // PID-routed key transitions can look correct for one AX poll and then
-         // collapse to a plain click once AppKit resolves the gesture. Refuse
 --- a/libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs
-@@ -71,6 +71,7 @@
-                     "maximum": 95,
-                     "description": "JPEG quality, 1-95, with screenshot_format:\"jpeg\" only. Default 85."
-                 },
+@@ -73,0 +74 @@
 +                "qualify_rows": { "type": "boolean", "description": "Opt in to SDK-owned exact row recipient predicates; unavailable proof is omitted." },
-                 "max_elements": {
-                     "type": "integer",
-                     "minimum": 1,
-@@ -360,6 +361,7 @@
-         let prefetched_capture = prefetch_capture(should_capture, want_tree, move || {
-             crate::capture::screenshot_window_image(window_id)
-         });
+@@ -362,0 +364 @@
 +        let qualify_rows = args.get("qualify_rows").and_then(Value::as_bool) == Some(true);
-         let (tree_result, prepared_snapshot) = if want_tree {
-             let q = query.clone();
-             // `timeout_ms` bounds the walk itself: it returns the partial tree
-@@ -376,7 +378,10 @@
-                         cua_driver_core::walk_budget::WalkBudget::new(timeout_ms, max_elements),
-                     )
-                 });
+@@ -379 +381,4 @@
 -                let payload = crate::ax::snapshot::AxSnapshot::from_nodes(&tree.nodes);
 +                let mut payload = crate::ax::snapshot::AxSnapshot::from_nodes(&tree.nodes);
 +                if qualify_rows && !observation_only {
 +                    payload.rows = crate::ax::row_guard::qualify_snapshot(&tree.nodes, pid as u32, u64::from(window_id));
 +                }
-                 (tree, payload)
-             });
-             // A launching app is waited on for up to `timeout_ms` before the
-@@ -400,6 +405,8 @@
-             (None, None)
-         };
- 
+@@ -402,0 +408,2 @@
 +        let row_predicates: std::collections::BTreeMap<usize, _> = prepared_snapshot.as_ref()
 +            .map(|p| p.rows.iter().map(|(i, q)| (*i, q.binding.predicate.clone())).collect()).unwrap_or_default();
-         // The window can close, or its CGWindow can be re-parented onto another
-         // process, between the pre-flight and the walk. Re-apply the same
-         // refusals against what the walk actually observed.
-@@ -668,7 +675,7 @@
-         // alongside for back-compat with existing text-parsing callers
-         // (Hermes' regex parser, Codex, Claude Code) and is signalled as
-         // preferred-for-back-compat-only via the `_note` field below.
+@@ -671 +678 @@
 -        let elements_json: Vec<serde_json::Value> = match (snapshot_id, tree_result.as_ref()) {
 +        let mut elements_json: Vec<serde_json::Value> = match (snapshot_id, tree_result.as_ref()) {
-             (Some(sid), Some(r)) => build_elements_array_with_token(&r.nodes, Some(sid)),
-             (None, Some(r)) if scope_matched && observation_only => {
-                 build_observation_elements_array(&r.nodes)
-@@ -676,6 +683,13 @@
-             (None, Some(r)) if scope_matched => build_elements_array_with_token(&r.nodes, None),
-             _ => Vec::new(),
-         };
+@@ -678,0 +686,7 @@
 +        for entry in &mut elements_json {
 +            if entry.get("element_token").and_then(Value::as_str).is_some() {
 +                if let Some(proof) = entry.get("element_index").and_then(Value::as_u64).and_then(|i| row_predicates.get(&(i as usize))) {
@@ -1458,6 +1331,3 @@
 +                }
 +            }
 +        }
-         let elements_json = cua_driver_core::element_query::project_elements_for_query(
-             elements_json,
-             query.as_deref(),

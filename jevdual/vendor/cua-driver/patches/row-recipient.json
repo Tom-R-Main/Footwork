@@ -1,0 +1,78 @@
+{
+  "base_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
+  "patch_sha256": "1b36d5544a56a08ac91057e921d272c9726483780c0c058bc97743b721890541",
+  "files": {
+    "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs": {
+      "before": null,
+      "after": "d0cd180956bde7e2abed5682d4060c8e8081e3acde16c42c6095905ba12e6460",
+      "mode": 420
+    },
+    "libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs": {
+      "before": "d9bb3f661d06a5783091d53f3c68cac02802bf744dbe24f1e5a61849f31b6aaa",
+      "after": "f468fd0ecf8f5ae87f0012132c2c97e02329b6cc49f9590475be96d3c5aaac0b"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-contract/src/lib.rs": {
+      "before": "24696d580184ab248114b1294ca1e9d8b568eea88b6137c2d15c7c726d549b3b",
+      "after": "7b8c2b723a69428148283fd390fc7eefe3ebb3f331cbeaadcfb01d343db3f50d"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs": {
+      "before": "fa9ce6eec69a605bb45142bcad21faf6a0529eed7ad36d4ddd1b81b7d14b6300",
+      "after": "c782883f947b65b2880569d84ab56686765db5f9650c324ff2daa65b58f9811e"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs": {
+      "before": null,
+      "after": "c12399231bb352a3fe87cde3e7b27735f402dc28c27cb3e515d03de57517f611",
+      "mode": 420
+    },
+    "libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs": {
+      "before": "7d119f50cfbc83d0d02d8e278835195de97694c0593e7f1fcda4d85ab0281d68",
+      "after": "1612af810bec7119ff4dff223df8915e7034bb4965d504c7f6ab4025032e56b9"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs": {
+      "before": "5f39eca0bce322cf74262d6d4d36aa37402fd8d432c51ea47c377fcfe0e13686",
+      "after": "acd5edcb88bbc26e6d28e17e710dabe4e28ab2bd4cae021d7370a673e6c1b4b5"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs": {
+      "before": "184a6365bb413c4fd1904f52265eed6c7622a7b167ba531fc4f4a0f0089f346e",
+      "after": "39716f2f21a904d4f5d06746d75e62c9616faec1439db01b51971b5c06107d02"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-sdk/src/tests/native_windows.rs": {
+      "before": "0668eba4ec31c4c433776c9fb8bb9ac1ae95c311edfc3437226b432ed0a39ca3",
+      "after": "d446f7c13bbca7ef7b99cc1f96d5b292c6723943c7aa8507574fa8222ba0db48"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-sdk/src/tests/snapshot_lifecycle.rs": {
+      "before": "302ffac57799c3a334a5860e2e0b4c9a4f1d5e1acba06bd1ecac6670367498e7",
+      "after": "e27998f5ed4698b3bc8f476e9a5b538425a132bb26f091a8b5c89dad9d9646d8"
+    },
+    "libs/cua-driver/rust/crates/platform-macos/src/ax/mod.rs": {
+      "before": "d646cf0ff1fc6454130206484574d646205a9d9b2964416b9364d186418c381a",
+      "after": "05851f3175b4f1df9e3c9394196241dea8618c140965ac84dde80620b3cc068f"
+    },
+    "libs/cua-driver/rust/crates/platform-macos/src/ax/row_guard.rs": {
+      "before": null,
+      "after": "5424983d3efb02afbe5c8acf0a8726f4600c12196c76b414cc621765587e778b",
+      "mode": 420
+    },
+    "libs/cua-driver/rust/crates/platform-macos/src/ax/snapshot.rs": {
+      "before": "4e2c7fbb2eb9435ce92422e82466bcdfeacaeffdca072dc1d5abcb8d4fd23117",
+      "after": "82619cac334116af804a67d5ccafea582f7588f4bfdae2db9ada1653288001cc"
+    },
+    "libs/cua-driver/rust/crates/platform-macos/src/tools/click.rs": {
+      "before": "7c944eea087c18c50bdd21c634d98a52c27277235728774b93de7a8a08ed3d54",
+      "after": "b054bbf9295417b9f3b95ff78db8b57ac90b3ae4e351fead261b69c5467c0a09"
+    },
+    "libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs": {
+      "before": "6a2659ace6595ba002a105a7a8f209221d58067b51106fa221872f64ca8c9c25",
+      "after": "a1b1c654966feeb252e47edcad360480a8f4814567bc6ebdc4edff5d0b0476c4"
+    }
+  },
+  "added_directories": [
+    "libs/cua-driver/rust/crates/cua-driver-contract/examples"
+  ],
+  "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
+  "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row1",
+  "patched_archive_sha256": "df5257fed36679bf43f3678741fe97bf63199cef1e925ccc71dd2bf7d1d6e731",
+  "abi": "ExpectedRow, RowReceipt and optional snapshot/click/action row fields; regenerated UniFFI Python modules must match native library",
+  "toolchain": "1.97.1"
+}
