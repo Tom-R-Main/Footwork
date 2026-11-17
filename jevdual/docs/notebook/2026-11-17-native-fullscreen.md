@@ -24,3 +24,22 @@ Inferred: the projection mechanism is reproduced and repaired in fixtures; CFHas
 Resolves: FS1 = held; FS3 = held
 Next: independent Sol and Opus input-control reviews, then reviewed integration and installed byte/discovery qualification; live preparation remains held until installed receipt.
 Refs: /Volumes/External SSD/Footwork-native-fullscreen-evidence-20261117/red.txt; /Volumes/External SSD/Footwork-native-fullscreen-evidence-20261117/readonly-hash-stability.json; /Volumes/External SSD/Footwork-native-fullscreen-evidence-20261117/focused.txt; docs/native-fullscreen.md
+
+## FS5 · update · 2026-11-17 04:13
+Observed: independent Sol review reproduced a wrong-control dispatch by swapping current AX Close/Fullscreen geometry after SDK snapshot creation; the cached token still named Close. It also reproduced unreadable peer census acceptance and an ordinary CLI success receipt stuck at unverifiable. Same-hash replacement between commands and state drift after the last state check expose limits not covered by FS4. FS4's claim of a repaired general mechanism was too broad.
+Resolves: FS1 = failed
+Next: remove the SDK geometry/token join for this native-only control; project a distinct semantic window-action candidate and dispatch only a narrowly qualified AXPress through the existing look/do click route, with no generic AX endpoint.
+Refs: /Volumes/External SSD/Footwork-native-fullscreen-evidence-20261117/review-sol.md
+
+## FS6 · update · 2026-11-17 04:13
+Observed: FS3's two-process hash stability prediction held for those observations, and reference continuity during one action is testable. It does not establish collision-free persisted object identity: Sol's same-hash replacement between commands passes. Neither a new controller nor serializing a private AX identity is authorized; persist the exact-window semantic action plus conservative hash discriminator, and state the limitation explicitly.
+Resolves: FS3 = inconclusive
+Next: require fresh exact-window semantics and reference continuity during action; never claim object continuity across CLI processes from CFHash alone.
+Refs: /Volumes/External SSD/Footwork-native-fullscreen-evidence-20261117/review-sol.md
+
+## FS7 · prediction · 2026-11-17 04:13
+Hypothesis: SDK token dispatch is unnecessary for this one native window action. A separately numbered native semantic candidate, projected from complete status-preserving AX reads, can use the existing internal AX adapter for a fixed AXPress after final ownership/reference/state requalification, eliminating the frame-to-cached-token seam without exposing a generic raw endpoint.
+Test: retain Sol's mapping-race, unreadable-census and ordinary-receipt cases as failing public CLI scenarios before repair. Then verify SDK button tokens are never dispatched by this action, geometry swaps cannot click Close, unreadable census refuses, late observed state drift refuses, and exact state readback alone confirms both ordinary and durable receipts. Recheck focused tests and obtain both independent reviews of the final input diff.
+Predicts: the mapping race either refuses or dispatches only the independently qualified fullscreen AX reference; neither Close nor SDK click is invoked. Unknown peer census and observed state drift refuse; valid ordinary receipt confirms while ack/no-transition remains unverified.
+Against: any SDK token or wrong AX reference is dispatched, incomplete census is accepted, or success/no-op receipts cannot be distinguished.
+Refs: python/jevdual/ax.py; python/jevdual/native.py; python/jevdual/session.py; tests/test_session_scenarios.py
