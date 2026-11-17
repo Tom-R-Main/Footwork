@@ -310,3 +310,20 @@ def test_unique_named_control_census_is_complete_and_exact(monkeypatch, failure)
     else:
         with pytest.raises(ax.AXError):
             ax.unique_named_control(window, pid=77, role='AXButton', label='Hide Tips', limit=1 if failure == 'limit' else 1024)
+
+
+def test_duplicate_fullscreen_menu_variants_still_refuse_without_press(monkeypatch):
+    import sys
+    from types import SimpleNamespace
+    items = [{'AXTitle': 'Enter Full Screen', 'AXIdentifier': 'toggleFullScreen:',
+              'AXMenuItemCmdModifiers': value} for value in (20, 24)]
+    calls = []
+    monkeypatch.setattr(ax, '_attr', lambda el, key: el.get(key))
+    monkeypatch.setattr(ax, '_menu_items', lambda el: items)
+    monkeypatch.setitem(sys.modules, 'ApplicationServices', SimpleNamespace(
+        AXUIElementCreateApplication=lambda pid: {'AXMenuBar': {}},
+        AXUIElementPerformAction=lambda *args: calls.append(args),
+    ))
+    with pytest.raises(ax.AXError) as caught:
+        ax.press_menu(77, ['Enter Full Screen'])
+    assert caught.value.reason == 'menu_ambiguous' and calls == []

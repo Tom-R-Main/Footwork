@@ -71,6 +71,7 @@ _CAND_FIELDS = (
     "native_document_url",
     "native_control_qualified",
     "native_control_opaque",
+    "native_window_control",
     "numeric",
 )
 
@@ -710,6 +711,19 @@ def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
     execution = pending.get("execution_receipt") or {}
     proof = pending.get("native_readback") or {}
     basis = (execution.get("producer") or {}).get("delivery_basis")
+    window_control = (pending.get("target_identity") or {}).get("native_window_control")
+    if window_control is not None and pending.get("dispatched") is not False:
+        after = proof.get("after") or {}
+        confirmed = (execution.get("effect") == "confirmed" and basis == "ax_fullscreen_state_readback"
+                     and proof.get("transition_observed") is True and proof.get("before") == window_control
+                     and after.get("pid") == window_control.get("pid")
+                     and after.get("window_id") == window_control.get("window_id")
+                     and type(after.get("fullscreen")) is bool
+                     and after["fullscreen"] is not window_control.get("fullscreen"))
+        return dataclasses.replace(
+            r, effect="confirmed" if confirmed else "unverifiable",
+            evidence="qualified fullscreen state transition" if confirmed else "fullscreen transition was not independently verified",
+        )
     if execution.get("effect") == "confirmed" and basis in {
         "ax_finder_rename_readback",
         "ax_finder_move_readback",
@@ -1030,7 +1044,9 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
             extra += " numeric=" + json.dumps(c.numeric, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
         if qualified_link_href(c) is not None:
             extra += f" href={c.href!r}"
-        if qualified_control_identity(c) is not None:
+        if c.native_window_control is not None:
+            extra += " native_window=" + json.dumps(c.native_window_control, sort_keys=True)
+        elif qualified_control_identity(c) is not None:
             extra += f" dom_id={c.native_dom_id!r} document={c.native_document_url!r}"
         if c.native_control_opaque:
             extra += " [opaque identifier; accessible name empty]"
@@ -2627,6 +2643,11 @@ async def cmd_do(args: Any) -> int:
         if op == "move" and file_target is None:
             raise NativeBridgeError("file_scope_missing", "move requires a manifest-owned file:/ selector")
         destination = None
+        if target is not None and target.native_window_control is not None:
+            previous = [c for c in chosen_cands if c.get("label") == target.label and c.get("native_window_control")]
+            if len(previous) != 1 or qualified_control_identity(previous[0]) != qualified_control_identity(target):
+                return targeting_refused("target_changed", "fullscreen control identity changed since look; observe again")
+
         if op == "drag":
             if state.mode != "native" or not callable(getattr(bridge, "drag", None)):
                 print("not admitted: drag is a native route (footwork start --app ...)", file=sys.stderr)
@@ -3612,6 +3633,7 @@ def _proposal(
 def _target_identity(target: Any) -> dict[str, Any]:
     return {
         **{key: getattr(target, key) for key in ("role", "label", "section", "placeholder")},
+        **({"native_window_control": target.native_window_control} if getattr(target, "native_window_control", None) is not None else {}),
         **({"native_control_opaque": True} if getattr(target, "native_control_opaque", None) is True else {}),
         **({"href": target.href, "href_qualified": True} if qualified_link_href(target) is not None else {}),
         **({key: getattr(target, key) for key in ("native_dom_id", "native_document_url", "native_control_qualified")}

@@ -17,3 +17,10 @@ Hypothesis: CoreFoundation CFHash of the same window/button AX references is sta
 Test: two independent read-only AX queries of the already authorized exact Chrome PID82786/window635573, compare window/button hashes without input; fixture mutations test changed hashes and same-process AX reference equality immediately before dispatch.
 Predicts: the two independent observations agree on hashes and state, and replaced references are refused at dispatch.
 Against: hashes vary across observers of the unchanged control, or a replaced reference passes fresh qualification.
+
+## FS4 · update · 2026-11-17 04:03
+Observed: two independent read-only installed-runtime AX observers returned matching window/button hashes and fullscreen state. The focused fullscreen scenarios initially exposed a second defect: generic visual diff confirmed a changed button label even when exact fullscreen readback failed. The new scoped receipt rule keeps that case unverifiable. All 28 fullscreen scenarios now pass, including replacement with unchanged hash during foreground preparation; the six affected native/session/menu test files pass 571 tests. The reproduction fixture's recorded Calculator PID was corrected to its simulated PID77, and qualification deliberately uses the complete native title-bar census rather than requiring a complete SDK page tree.
+Inferred: the projection mechanism is reproduced and repaired in fixtures; CFHash agreement is bounded to two reads of this unchanged window, not a uniqueness guarantee. No fullscreen input or live qualification occurred.
+Resolves: FS1 = held; FS3 = held
+Next: independent Sol and Opus input-control reviews, then reviewed integration and installed byte/discovery qualification; live preparation remains held until installed receipt.
+Refs: /Volumes/External SSD/Footwork-native-fullscreen-evidence-20261117/red.txt; /Volumes/External SSD/Footwork-native-fullscreen-evidence-20261117/readonly-hash-stability.json; /Volumes/External SSD/Footwork-native-fullscreen-evidence-20261117/focused.txt; docs/native-fullscreen.md

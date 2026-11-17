@@ -1,0 +1,11 @@
+# Native fullscreen preparation
+
+`look` can offer `Enter Full Screen` or `Exit Full Screen` for one independently qualified native title-bar button. Use the fresh observed ID with the existing `do click ID` command. Fullscreen changes require a foreground-permitted posture (or exclusive desktop custody); filmed sessions refuse this preparation. The route never falls back to a shortcut, pointer coordinate, title-bar click or first menu match.
+
+The control must be the exact bound PID/window's unique direct `AXFullScreenButton`, enabled, advertising `AXPress`, with an observable `AXFullScreen` boolean. A bounded independent AX census and exact-window AX resolution qualify its correspondence to one SDK row. A partial SDK tree alone does not disqualify it: the independent native title-bar census must be complete. Other anonymous controls remain excluded.
+
+The session persists `native_window_control`: `pid`, `window_id`, `subrole`, `window_hash`, `button_hash`, and `fullscreen`. CFHash is a conservative additional replacement discriminator, not a unique global identity. Ownership/subrole/state are requalified afresh, and live AX references are compared across foreground preparation and immediately before the existing SDK accessibility click. No new raw AX/token endpoint is exposed. Numeric and label selectors refuse identity drift since the prior observation.
+
+The action retains `native_readback` with `predicate`, `before`, `after`, and `transition_observed`. Only a state change independently read from the same bound window confirms fullscreen. An SDK acknowledgement, visible label change, timeout, or unreadable/replaced window does not substitute for that proof. Readback waits at most two seconds; there is no repeated click. `after.bounds` is the observed native window frame or null when unavailable. The session does not automatically rebind to a new window ID. A fullscreen transition that replaces the window therefore remains unverified and requires reconciliation.
+
+This fixture-qualified route does not establish live fullscreen behavior or production framing. Live use still needs exact runtime/window identity, normal custody, and actual fullscreen/client/content measurements. Existing duplicate menu paths continue to refuse.

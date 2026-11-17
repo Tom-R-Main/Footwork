@@ -192,6 +192,58 @@ def resolve(pid: int, window_id: int, role: str, frame: Frame | None) -> Any:
     return hits[0]
 
 
+def fullscreen_control(pid: int, window_id: int) -> tuple[Any, Any, dict[str, Any]]:
+    """Qualify only the bound native window's direct fullscreen button, never a page control.
+
+    CFHash is an additional replacement discriminator, not global identity or dispatch authority.
+    Callers must also requalify ownership/state and compare live AX references before dispatch.
+    """
+    from ApplicationServices import AXUIElementCopyActionNames, AXUIElementGetPid
+    from CoreFoundation import CFHash
+
+    win = window_element(pid, window_id)
+    if win is None or _attr(win, "AXRole") != "AXWindow":
+        raise AXError("fullscreen_unqualified", "the bound native window is unavailable")
+    error, owner = AXUIElementGetPid(win, None)
+    if error or owner != pid:
+        raise AXError("fullscreen_unqualified", "window process does not match the binding")
+    state = _attr(win, "AXFullScreen")
+    if type(state) is not bool:
+        raise AXError("fullscreen_unqualified", "fullscreen state is not observable")
+    children = list(_attr(win, "AXChildren") or ())
+    if len(children) > 256:
+        raise AXError("fullscreen_unqualified", "title-bar census exceeded its bound")
+    matches = [child for child in children if _attr(child, "AXSubrole") == "AXFullScreenButton"]
+    button = _attr(win, "AXFullScreenButton")
+    if len(matches) != 1 or button is None or not same_element(button, matches[0]):
+        raise AXError("fullscreen_unqualified", "fullscreen button is missing or ambiguous")
+    error, owner = AXUIElementGetPid(button, None)
+    action_error, actions = AXUIElementCopyActionNames(button, None)
+    if (error or owner != pid or _attr(button, "AXRole") != "AXButton"
+            or _attr(button, "AXEnabled") is not True or action_error or "AXPress" not in (actions or ())
+            or not same_element(_attr(button, "AXParent"), win)
+            or not same_element(_attr(button, "AXWindow"), win)):
+        raise AXError("fullscreen_unqualified", "fullscreen button ownership or AXPress is unqualified")
+    proof = {"pid": pid, "window_id": window_id, "subrole": "AXFullScreenButton",
+             "window_hash": int(CFHash(win)), "button_hash": int(CFHash(button)), "fullscreen": state}
+    return win, button, proof
+
+
+def fullscreen_readback(pid: int, window_id: int, expected_window: Any) -> dict[str, Any]:
+    """Read effect only from the exact bound window; a replaced/missing window stays unknown."""
+    from ApplicationServices import AXUIElementGetPid
+
+    win = window_element(pid, window_id)
+    if win is None or not same_element(win, expected_window):
+        raise AXError("fullscreen_window_changed", "the bound native window was replaced")
+    error, owner = AXUIElementGetPid(win, None)
+    state, frame = _attr(win, "AXFullScreen"), frame_of(win)
+    if error or owner != pid or type(state) is not bool:
+        raise AXError("fullscreen_unobservable", "fullscreen effect cannot be read on the bound window")
+    return {"pid": pid, "window_id": window_id, "fullscreen": state,
+            "bounds": {"x": frame.x, "y": frame.y, "w": frame.w, "h": frame.h} if frame else None}
+
+
 def web_area(win: Any, *, depth: int = 12) -> tuple[Frame | None, str | None] | None:
     """The first AXWebArea under ``win`` (a browser's content area) as ``(frame, address)``, or None.
 

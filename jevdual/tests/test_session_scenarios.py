@@ -4333,8 +4333,10 @@ def test_filmed_point_waits_for_delayed_native_delivery_before_claiming_arrival(
 def _fullscreen_world(world, monkeypatch):
     """Unlabelled title-bar controls; real AX qualification, synthetic OS boundary."""
     import sys
+
     from jevdual import ax
 
+    world.base['pid'] = 77
     win = {'AXRole': 'AXWindow', '_pid': 77, '_hash': 100,
            'AXFullScreen': False, 'AXChildren': []}
     nodes = []
@@ -4370,3 +4372,144 @@ def test_native_fullscreen_public_cli_offers_only_qualified_window_control(world
     saved = {row['id']: row for row in _state(fw)['last_candidates']}
     assert 980 not in saved and 982 not in saved
     assert saved[981]['label'] == 'Enter Full Screen'
+
+
+def _fullscreen_actions(world, monkeypatch, *, transition=True):
+    from jevdual import ax, posture
+
+    from tests.test_posture import Activity
+    win, nodes = _fullscreen_world(world, monkeypatch)
+    win['_frame'] = ax.Frame(0, 0, 1200, 905)
+    monkeypatch.setattr(posture, 'MacActivity', lambda: Activity(idle=60, fronts=(77,)))
+    monkeypatch.setattr(ax, 'raise_window', lambda *a: None)
+    monkeypatch.setattr(ax, 'focused_window_id', lambda pid: 40335)
+    attempts = []
+
+    async def click(inp):
+        assert inp.target.pid == 77 and inp.target.window_id == 40335
+        assert inp.delivery_mode.name == 'BACKGROUND'
+        assert inp.position.element_token == f's{world.n:08x}:981'
+        attempts.append(inp)
+        if transition:
+            win['AXFullScreen'] = not win['AXFullScreen']
+            win['_frame'] = ax.Frame(0, 0, 1512, 982)
+        return cd.ActionResult(effect=cd.ActionEffect.CONFIRMED, route=cd.ActionRoute.ACCESSIBILITY,
+            delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.BACKGROUND, delivered_count=1),
+            evidence=[], escalation=None, summary='AXPress acknowledged', error=None,
+            hint=None, next_call=None, fast_path=None)
+    monkeypatch.setattr(world, 'click', click)
+    return win, nodes, attempts
+
+
+def test_native_fullscreen_public_cli_persists_identity_and_reads_effect(world, fw, monkeypatch):
+    win, _, attempts = _fullscreen_actions(world, monkeypatch)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    from jevdual.session import SessionState
+    before = SessionState.load(fw.session).last_menu().candidate(981).native_window_control
+    assert before == {'pid': 77, 'window_id': 40335, 'window_hash': 100, 'button_hash': 981,
+                      'subrole': 'AXFullScreenButton', 'fullscreen': False}
+    code, out, err = fw('do', 'click', '981')
+    assert code == 0 and len(attempts) == 1 and win['AXFullScreen'], (out, err)
+    records = [json.loads(line) for line in (fw.session / 'session.jsonl').read_text().splitlines()]
+    receipt = next(row for row in records if row['kind'] == 'receipt')
+    assert receipt['action']['native_readback']['transition_observed'] is True
+    assert receipt['action']['native_readback']['after']['bounds']['w'] == 1512
+    assert 'Exit Full Screen' in out
+
+
+@pytest.mark.parametrize('mutation', ['pid', 'window', 'duplicate', 'missing', 'disabled', 'replaced', 'state',
+                                      'no_press', 'wrong_parent', 'window_replaced', 'sdk_pid', 'sdk_window'])
+def test_native_fullscreen_public_cli_refuses_changed_control_without_input(world, fw, monkeypatch, mutation):
+    win, nodes, attempts = _fullscreen_actions(world, monkeypatch)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    if mutation == 'pid': nodes[1]['_pid'] = 88
+    elif mutation == 'window': win['_pid'] = 88
+    elif mutation == 'duplicate': nodes.append(dict(nodes[1]))
+    elif mutation == 'missing': win['AXFullScreenButton'] = None
+    elif mutation == 'disabled': nodes[1]['AXEnabled'] = False
+    elif mutation == 'replaced': nodes[1]['_hash'] = 999
+    elif mutation == 'state': win['AXFullScreen'] = True
+    elif mutation == 'no_press': nodes[1]['_actions'] = []
+    elif mutation == 'wrong_parent': nodes[1]['AXParent'] = {}
+    elif mutation == 'window_replaced': win['_hash'] = 200
+    elif mutation == 'sdk_pid': world.base['pid'] = 88
+    elif mutation == 'sdk_window': world.base['window_id'] = 999
+    code, out, err = fw('do', 'click', '981')
+    assert not attempts and not world.tool_calls, (mutation, code, out, err)
+    assert code != 0 or 'not dispatched' in out + err or 'refused' in out + err
+
+
+def test_native_fullscreen_ack_without_transition_stays_unverified(world, fw, monkeypatch):
+    _, _, attempts = _fullscreen_actions(world, monkeypatch, transition=False)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    code, out, err = fw('do', 'click', '981')
+    assert code == 0 and len(attempts) == 1, (out, err)
+    records = [json.loads(line) for line in (fw.session / 'session.jsonl').read_text().splitlines()]
+    receipt = next(row for row in records if row['kind'] == 'receipt')
+    assert receipt['action']['native_readback']['transition_observed'] is False
+    assert receipt['action']['driver_effect'] == 'unverifiable'
+    assert receipt['effect'] != 'confirmed'
+
+
+@pytest.mark.parametrize('mutation', ['replace_same_hash', 'state', 'missing', 'lost_key'])
+def test_native_fullscreen_requalifies_after_foreground_before_sdk_click(world, fw, monkeypatch, mutation):
+    from jevdual import ax
+    win, nodes, attempts = _fullscreen_actions(world, monkeypatch)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+
+    def raise_window(*args):
+        if mutation == 'replace_same_hash':
+            nodes[1] = dict(nodes[1])
+            win['AXFullScreenButton'] = nodes[1]
+        elif mutation == 'state': win['AXFullScreen'] = True
+        elif mutation == 'missing': win['AXFullScreenButton'] = None
+        elif mutation == 'lost_key': monkeypatch.setattr(ax, 'focused_window_id', lambda pid: 999)
+    monkeypatch.setattr(ax, 'raise_window', raise_window)
+    code, out, err = fw('do', 'click', '981')
+    assert not attempts, (code, out, err)
+    assert 'target_changed' in out + err or 'not_key' in out + err
+    assert [name for name, _ in world.tool_calls] == ['bring_to_front']
+
+
+def test_native_fullscreen_label_does_not_rebind_replacement_since_look(world, fw, monkeypatch):
+    _, nodes, attempts = _fullscreen_actions(world, monkeypatch)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    nodes[1]['_hash'] = 999
+    code, out, err = fw('do', 'click', 'Enter Full Screen')
+    assert code == 4 and not attempts and not world.tool_calls, (out, err)
+
+
+def test_native_fullscreen_requires_foreground_posture_without_fallback(world, fw, monkeypatch):
+    _, _, attempts = _fullscreen_actions(world, monkeypatch)
+    assert fw('start', 'Observe fullscreen', '--app', 'Calculator')[0] == 0
+    code, out, err = fw('do', 'click', '981')
+    assert not attempts and not world.tool_calls and 'requires_foreground' in out + err, (code, out, err)
+
+
+@pytest.mark.parametrize('change', ['no_state', 'sdk_frame_collision', 'sdk_disabled', 'sdk_missing', 'renumber'])
+def test_native_fullscreen_missing_observation_proof_never_becomes_actionable(world, fw, monkeypatch, change):
+    win, _, attempts = _fullscreen_actions(world, monkeypatch)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    row = next(r for r in world.base['elements'] if r['element_index'] == 981)
+    if change == 'no_state': win['AXFullScreen'] = None
+    elif change == 'sdk_frame_collision': world.base['elements'].append({**row, 'element_index': 983})
+    elif change == 'sdk_disabled': row['enabled'] = False
+    elif change == 'sdk_missing': world.base['elements'].remove(row)
+    elif change == 'renumber': row['element_index'] = 983
+    code, out, err = fw('do', 'click', '981')
+    assert not attempts and not world.tool_calls, (code, out, err)
+
+
+def test_native_fullscreen_unreadable_post_effect_never_confirms_or_retries(world, fw, monkeypatch):
+    from jevdual import ax
+    _, _, attempts = _fullscreen_actions(world, monkeypatch)
+    assert fw('start', 'Prepare fullscreen', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    def unreadable(*args):
+        raise ax.AXError('window_missing', 'window changed during transition')
+    monkeypatch.setattr(ax, 'fullscreen_readback', unreadable)
+    code, out, err = fw('do', 'click', '981')
+    records = [json.loads(line) for line in (fw.session / 'session.jsonl').read_text().splitlines()]
+    receipt = next(row for row in records if row['kind'] == 'receipt')
+    assert code == 0 and len(attempts) == 1, (out, err)
+    assert receipt['action']['driver_effect'] == 'unverifiable'
+    assert receipt['effect'] != 'confirmed'
