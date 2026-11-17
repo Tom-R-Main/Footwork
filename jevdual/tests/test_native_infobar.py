@@ -375,3 +375,135 @@ def test_infobar_observation_names_native_not_dom_identity(world, fw, monkeypatc
     assert code == 0, err
     line = next(line for line in out.splitlines() if 'Dismiss browser infobar' in line)
     assert 'native_infobar=' in line and 'dom_id=' not in line
+
+
+def ordinary_pending():
+    _op, record = infobar_execution()
+    pending = copy.deepcopy(record['projection'])
+    pending['native_delivery'] = {'delivery_basis': 'ax_infobar_disappearance_readback',
+        'delivered_count': 1, 'dispatched': True}
+    return pending
+
+
+def outside(pending):
+    from jevdual.receipts import Receipt
+    from jevdual.session import _outside_receipt
+    return _outside_receipt(Receipt(1, ('click',), 'confirmed', 'generic visible diff'),
+                            pending, pid=77, window_id=12)
+
+
+@pytest.mark.parametrize('variant', ['valid', 'ack_only', 'genuine_no_send'])
+def test_ordinary_negative_controls(variant):
+    p = ordinary_pending()
+    if variant == 'ack_only':
+        p['native_readback']['after']['infobar_absent'] = False
+        p['native_readback']['transition_observed'] = False
+        p['driver_effect'] = 'unverifiable'
+    elif variant == 'genuine_no_send':
+        p.pop('native_readback')
+        p['dispatched'] = False
+        p['driver_effect'] = 'refused'
+        p['native_delivery'].update(dispatched=False, delivered_count=0, delivery_basis='qualified_gate')
+    assert outside(p).effect == {'valid': 'confirmed', 'ack_only': 'unverifiable', 'genuine_no_send': 'refused'}[variant]
+
+
+@pytest.mark.parametrize('variant', ['ack_basis_count_one', 'generic_basis_count_one', 'nested_dispatch_true'])
+def test_ordinary_no_send_cannot_erase_positive_delivery_metadata(variant):
+    p = ordinary_pending()
+    p.pop('native_readback')
+    p['dispatched'] = False
+    p['driver_effect'] = 'refused'
+    if variant == 'generic_basis_count_one':
+        p['native_delivery']['delivery_basis'] = 'sdk_delivery_count'
+    elif variant == 'nested_dispatch_true':
+        p['native_delivery'].update(delivery_basis='qualified_gate', delivered_count=0)
+    result = outside(p)
+    assert result.effect == 'unverifiable', repr(result)
+
+
+@pytest.mark.parametrize('variant', ['operation', 'target_id', 'role', 'label', 'section', 'nested_dispatch'])
+def test_ordinary_confirmation_requires_consistent_action_metadata(variant):
+    p = ordinary_pending()
+    if variant == 'operation': p['op'] = 'drag'
+    elif variant == 'target_id': p['target_id'] = 99
+    elif variant == 'role': p['target_identity']['role'] = 'textbox'
+    elif variant == 'label': p['target_identity']['label'] = 'Close tab'
+    elif variant == 'section': p['target_identity']['section'] = 'Web area'
+    else: p['native_delivery']['dispatched'] = False
+    result = outside(p)
+    assert result.effect == 'unverifiable', repr(result)
+
+
+def test_ordinary_reserved_infobar_cannot_use_fullscreen_proof():
+    from tests.test_operator_evidence import fullscreen_execution
+    _op, record = fullscreen_execution()
+    p = copy.deepcopy(record['projection'])
+    p['target_id'] = -3
+    p['target_label'] = 'Dismiss browser infobar'
+    p['native_delivery'] = {'delivery_basis': 'ax_fullscreen_state_readback', 'delivered_count': 1}
+    result = outside(p)
+    assert result.effect == 'unverifiable', repr(result)
+
+
+
+
+@pytest.mark.parametrize('variant', ['no_send_positive_delivery', 'fullscreen_substitution'])
+def test_public_cli_receipt_consumer_preserves_infobar_contract(world, fw, monkeypatch, variant):
+    """Inject a malformed producer projection at the actual ordinary receipt boundary.
+
+    This is fault injection, not a claim the normal producer emits these records.
+    """
+    from jevdual import session
+    from tests.test_operator_evidence import fullscreen_execution
+    *_, attempts = infobar_world(world, monkeypatch, disappear=False)
+    assert fw('start', 'Dismiss', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    original = session._outside_receipt
+    def consume(r, pending, **kwargs):
+        if pending.get('target_id') == -3:
+            assert pending['native_readback']['press_acknowledged'] is True
+            assert pending['native_readback']['transition_observed'] is False
+            if variant == 'no_send_positive_delivery':
+                pending.pop('native_readback')
+                pending.update(dispatched=False, driver_effect='refused')
+                assert pending['native_delivery']['delivered_count'] == 1
+                assert pending['native_delivery']['dispatched'] is True
+            else:
+                _op, full = fullscreen_execution()
+                fp = full['projection']
+                control = fp['target_identity']['native_window_control']
+                control['window_id'] = kwargs['window_id']
+                fp['native_readback']['before']['window_id'] = kwargs['window_id']
+                fp['native_readback']['after']['window_id'] = kwargs['window_id']
+                pending['target_identity'] = fp['target_identity']
+                pending['native_readback'] = fp['native_readback']
+                pending['driver_effect'] = 'confirmed'
+                pending['native_delivery']['delivery_basis'] = 'ax_fullscreen_state_readback'
+        return original(r, pending, **kwargs)
+    monkeypatch.setattr(session, '_outside_receipt', consume)
+    assert fw('do', 'click', '-3')[0] == 0
+    r = receipt(fw)
+    assert len(attempts) == 1
+    assert r['effect'] == 'unverifiable', json.dumps({'effect': r['effect'], 'evidence': r['evidence']})
+
+
+def test_infobar_none_peer_refuses_before_cfhash(world, monkeypatch):
+    from jevdual import ax
+    win, *_ = infobar_world(world, monkeypatch)
+    win['AXChildren'].append(None)
+    original = sys.modules['CoreFoundation'].CFHash
+    def hashed(el):
+        assert el is not None, 'real CFHash(None) would crash the interpreter'
+        return original(el)
+    monkeypatch.setattr(sys.modules['CoreFoundation'], 'CFHash', hashed)
+    with pytest.raises(ax.AXError): ax.infobar_control(77, 40335)
+
+
+def test_prior_ambiguous_infobar_label_requires_new_look(world, fw, monkeypatch):
+    *_, attempts = infobar_world(world, monkeypatch)
+    other = {'element_index': 555, 'role': 'AXButton', 'label': 'Dismiss browser infobar',
+             'enabled': True, 'actions': ['AXPress'], 'parent_index': 0}
+    world.base['elements'].append(other)
+    assert fw('start', 'Dismiss', '--app', 'Calculator', '--mode', 'exclusive_desktop')[0] == 0
+    world.base['elements'].remove(other)
+    assert fw('do', 'click', 'Dismiss browser infobar')[0] != 0
+    assert not attempts and not world.tool_calls
