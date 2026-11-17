@@ -1,6 +1,6 @@
 {
   "base_archive_sha256": "5cf6ce6a66b06783d8798a3c90e9a82728266326c80b6beab9ff3efe0080ade9",
-  "patch_sha256": "394432b3972d0e8df4eb1dbdb8f40a69f14e3bfd0405cf2071c804cd2c7642f6",
+  "patch_sha256": "13bf83da8ac53fa095dfed34f8f832a1f2320a31390131ab371e4b0c57a578b5",
   "files": {
     "libs/cua-driver/rust/crates/cua-driver-contract/examples/row_guard_probe.rs": {
       "before": null,
@@ -21,7 +21,7 @@
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs": {
       "before": null,
-      "after": "6c122cfc5833c5b8277b0f1f0364ab076cf071ba900da06ec405a8469bc274be",
+      "after": "4b0231cd62da4b16b74ec2abfb373a31cd78042bc8c408ed6f0f8675c88f2df5",
       "mode": 420
     },
     "libs/cua-driver/rust/crates/cua-driver-contract/src/windows.rs": {
@@ -71,8 +71,8 @@
   ],
   "upstream_commit": "5486b6246e4c807c0d793216e52df283671d9362",
   "base_version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10",
-  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row2",
-  "patched_archive_sha256": "875182c44449e2806bd2bf44e4515d03848b3896f50db85230bdaf0f3dc211cf",
+  "version": "0.46.0+footwork.5486b624.cleanup2.focus1.helptag1.connected4.locate10.row3",
+  "patched_archive_sha256": "7c246ee4f28a56443aede601861070a1d614d9d5f0d1fac050fd52d30ac8608e",
   "abi": "ExpectedRow version2 requires full row_values; held row_cells; regenerated native/Python bindings together",
   "toolchain": "1.97.1"
 }

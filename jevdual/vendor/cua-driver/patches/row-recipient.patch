@@ -178,7 +178,7 @@
 +                "row_receipt",
 --- /dev/null
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/row.rs
-@@ -0,0 +1,584 @@
+@@ -0,0 +1,602 @@
 +//! Bounded row-recipient predicates. Graphs are SDK-owned observations, never public tool inputs.
 +use schemars::JsonSchema;
 +use serde::{Deserialize, Serialize};
@@ -332,6 +332,24 @@
 +                    return Err("row parent/child mismatch".into());
 +                }
 +            }
++        }
++        // The reciprocity exception is valid only for declared columns of a
++        // fully validated table. Orphan/nested columns cannot hide alias edges.
++        let mut column_tables = BTreeSet::new();
++        for column in c.nodes.values().filter(|n| n.role == "AXColumn") {
++            let table = c.node(column.parent.ok_or("column table absent")?)?;
++            if table.role != "AXTable"
++                || table
++                    .columns
++                    .as_ref()
++                    .is_none_or(|ids| !ids.contains(&column.id))
++            {
++                return Err("column alias lacks declared table ownership".into());
++            }
++            column_tables.insert(table.id);
++        }
++        for table in column_tables {
++            c.table(table)?;
 +        }
 +        Ok(c)
 +    }

@@ -34,8 +34,10 @@ def test_public_cli_refuses_new_orphan_column_alias(world, fw, monkeypatch, tmp_
     graph, sent = cli.sdk_row_world(world, monkeypatch, 'complete')
     cli.start_row(fw, monkeypatch, tmp_path, durable)
     add_alias(graph, 1, 941)
-    fw('do', 'click', 'section:Task ID=TASK-1::combobox:Open menu', *(['--token', 'alias'] if durable else []))
+    result = fw('do', 'click', 'section:Task ID=TASK-1::combobox:Open menu', *(['--token', 'alias'] if durable else []))
     assert sent == []
+    assert result[0] != 0
+    assert 'AssertionError' not in ''.join(result[1:])
 
 
 def test_legitimate_column_cell_aliases_stay_supported():
