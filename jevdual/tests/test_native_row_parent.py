@@ -63,3 +63,33 @@ def test_actual_dispatch_refuses_invalid_membership(fault):
     assert answer["schema_valid"]
     assert answer["presses"] == []
     assert answer["receipt"]["dispatched"] is False
+
+
+@pytest.mark.parametrize("durable", [False, True])
+@pytest.mark.parametrize("variant", ["complete", "flattened"])
+@pytest.mark.parametrize("fault", ["no_value", "unsupported", "timeout", "foreign", "missing"])
+def test_actual_recipient_window_preflight_refuses_before_press(
+    world, fw, monkeypatch, tmp_path, durable, variant, fault,
+):
+    from jevdual.session_operations import SessionOperations
+
+    original = cli.probe
+    def fault_at_dispatch(data):
+        if data.get("mode") == "dispatch":
+            data = {**data, "window_faults": {"940": fault}}
+        return original(data)
+    monkeypatch.setattr(cli, "probe", fault_at_dispatch)
+    _graph, sent = cli.sdk_row_world(world, monkeypatch, variant)
+    authority = cli.start_row(fw, monkeypatch, tmp_path, durable)
+    # Observation succeeds with a direct-window recipient. The independent
+    # recipient read fails only at dispatch, before the general peer census.
+    result = fw("do", "click", "section:Task ID=TASK-0::combobox:Open menu",
+                *(["--token", "recipient-window"] if durable else []))
+    assert not sent, result
+    assert cli.last_receipt(fw)["effect"] == "refused"
+    if durable:
+        with SessionOperations(authority) as operations:
+            status = operations.receipt(operations.status()[-1])
+        assert (status["state"], status["disposition"]) == ("final", "not_sent")
+        fw("do", "click", "section:Task ID=TASK-0::combobox:Open menu", "--token", "recipient-window")
+        assert not sent
