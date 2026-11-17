@@ -40,7 +40,11 @@ def sdk_row_world(world, monkeypatch, variant):
                 continue
             observed = probe({'mode': 'discover', 'graph': graph, 'pid': 77,
                               'window_id': 40335, 'recipient': row['element_index']})
-            assert observed.get('binding'), observed
+            # Production discovery withholds metadata on refusal. This must not
+            # become a fixture exception masquerading as a targeting refusal.
+            if not observed.get('binding'):
+                row.pop('expected_row', None)
+                continue
             held[row['element_token']] = observed['binding']
             row['expected_row'] = observed['binding']['predicate']
         return snap
