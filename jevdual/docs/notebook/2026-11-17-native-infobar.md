@@ -53,3 +53,10 @@ Observed: Sol757ea8c reproduced two ordinary-consumer blockers despite Opus appr
 Resolves: IB8 = held
 Next: freeze for both fresh independent final-source reviews. Existing fullscreen ordinary-metadata issue noted by Opus remains outside this infobar repair. Installed52da unchanged; no live qualification.
 Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/consumer-red.txt; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/consumer-debug.json; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/consumer-affected.txt
+
+## IB10 · prediction · 2026-11-17 07:43
+Hypothesis: repeated consumer failures come from validating duplicated delivery claims independently and skipping retained nested facts on no-send/unknown paths. One shared strict delivery-agreement check at every infobar execution/projection boundary removes this gap; explicit producer zero-send facts preserve genuine pre-input exceptions without relaxing consumer checks.
+Test: retain Sol bc74a37 direct and public-CLI nested contradiction probes as committed red regressions and Opus pre-input exception cases; compare ordinary and durable confirmed/ack-only/unacknowledged/no-send/unknown controls, then final affected checks and fresh independent reviews.
+Predicts: conflicting dispatch/count/basis at any retained projection prevents confirmation and no-attempt claims or durable settlement; consistent genuine no-send remains refused. Existing action identity and fixed-object input checks stay unchanged.
+Against: any nested contradiction settles applied/not_sent, any inconsistent receipt confirms, a genuine exception with zero attempts cannot preserve refusal, or new input authority appears. Sol blocks integration despite Opus safety approval; installed52da remains unchanged.
+Refs: /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/sol-review-bc74a37/review-sol.md; /Volumes/External SSD/Footwork-native-infobar-evidence-20261117/opus-review-bc74a37/review-opus.md
