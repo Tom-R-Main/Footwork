@@ -339,3 +339,5 @@ The optional typed `row_trace_url` request and `row_trace_json` response carry b
 
 The edge1 diagnostic retains bounded numeric hop operands and direct equality results only for a traced parent membership refusal. Row predicates, generated bindings and press semantics are unchanged.
 The hop index starts at one. `first_parent` and `proof_parent` are two existing reads of the outer object's parent. `current` and `parent` describe the failed hop, which can be higher in the chain. Sample order is raw array order; each pair contains the canonical ID before deduplication and an independent equality result against the held current object. Equality probes run only after refusal. A complete absence describes the sampled AX relationship. It cannot distinguish a persistent topology from an application change between reads. The collector retains at most 64 entries and labels an incomplete array unknown. Missing snapshot identity withholds the entire hop.
+
+The diagnostic label `changed_parent` records differing canonical IDs in the two outer AXParent reads. At higher hops this difference does not establish the cause of the failed edge.

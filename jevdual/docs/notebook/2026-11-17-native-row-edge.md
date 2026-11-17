@@ -19,3 +19,9 @@ Test: exercise impossible first and higher hops, cycles, root termination, refer
 Predicts: no impossible record classifies absence, no capture refusal retains projected page data, and real shapes still retain the original refusal.
 Against: a contradictory envelope exposes content, an invalid path gets a definite classification, or the native wheel or input path changes.
 Refs: Footwork-native-row-edge-evidence-20261117/council-sol/{retention-probe.txt,native-fixture.txt}.
+
+## REU2 · update · 2026-11-17 15:09
+Resolves: REP2 = held
+Observed: On 9aba0b50 the new operands and public-start privacy cases yielded 14 failures and nine passes. With the Python checks, the full affected selection passed 661, and the unmodified independent probe passed all 18 cases including repeated child IDs and honest truncation. The native wheel and archive are unchanged from the reviewed collector. The 15:12 headings above were mistimed; the prediction commit 80fc4f57 precedes the red-test commit 42216f94 at 15:06 local.
+Next: Independent closure review on the corrected retention boundary, CI, then checked installation. No additional live observation in this release.
+Refs: Footwork-native-row-edge-evidence-20261117/retention-correction-001/{red.txt,final.txt,copied-probes.txt}.

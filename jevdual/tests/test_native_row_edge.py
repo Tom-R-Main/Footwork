@@ -81,7 +81,14 @@ def test_failed_hop_retention(tmp_path, case, want):
 def test_partial_raw_match_cannot_establish_a_complete_edge(tmp_path):
     from jevdual.row_trace import _failed_hop
 
-    refusal = {"status": "capture_refused", "error": "row parent/child mismatch", "node": 6, "references": 7, "truncated": True, "scope_matched": False}
+    refusal = {
+        "status": "capture_refused",
+        "error": "row parent/child mismatch",
+        "node": 6,
+        "references": 7,
+        "truncated": True,
+        "scope_matched": False,
+    }
     edge = {
         "root": 0,
         "outer": 6,
@@ -100,7 +107,9 @@ def test_partial_raw_match_cannot_establish_a_complete_edge(tmp_path):
 
 
 @pytest.mark.parametrize("claims_scope", [False, True])
-def test_public_start_retains_bound_refusal_once_without_input(world, fw, monkeypatch, tmp_path, claims_scope):
+def test_public_start_retains_bound_refusal_once_without_input(
+    world, fw, monkeypatch, tmp_path, claims_scope
+):
     from tests.test_native_row_sdk import PROBE
     from tests.test_native_row_sdk_cli import sdk_row_world
 
@@ -170,18 +179,75 @@ fw = scenarios.fw
 world = scenarios.world
 
 
-@pytest.mark.parametrize("changes,header", [
-    ({"current": 6}, {}), ({"current": 0}, {}), ({"current": 4}, {}),
-    ({"parent": 6}, {}), ({"proof_parent": 0}, {}), ({"hop": 3}, {}),
-    ({"hop": 8, "current": 4}, {}), ({"root": 1}, {}),
-    ({"samples": [[7, False]]}, {}), ({"first_parent": 7}, {}),
-    ({}, {"truncated": True}), ({}, {"references": True}), ({}, {"references": None}),
-])
+@pytest.mark.parametrize(
+    "changes,header",
+    [
+        ({"current": 6}, {}),
+        ({"current": 0}, {}),
+        ({"current": 4}, {}),
+        ({"parent": 6}, {}),
+        ({"proof_parent": 0}, {}),
+        ({"hop": 3}, {}),
+        ({"hop": 8, "current": 4}, {}),
+        ({"root": 1}, {}),
+        ({"samples": [[7, False]]}, {}),
+        ({"first_parent": 7}, {}),
+        ({}, {"truncated": True}),
+        ({}, {"references": True}),
+        ({}, {"references": None}),
+    ],
+)
 def test_contradictory_hop_never_classifies(changes, header):
     from jevdual.row_trace import _failed_hop
 
-    refusal = {"status": "capture_refused", "error": "row parent/child mismatch", "node": 6,
-               "references": 7, "scope_matched": False, "truncated": False, **header}
-    edge = {"root": 0, "outer": 6, "first_parent": 3, "proof_parent": 3, "hop": 2,
-            "current": 3, "parent": 2, "raw_count": 1, "samples": [[5, False]], "truncated": False, **changes}
+    refusal = {
+        "status": "capture_refused",
+        "error": "row parent/child mismatch",
+        "node": 6,
+        "references": 7,
+        "scope_matched": False,
+        "truncated": False,
+        **header,
+    }
+    edge = {
+        "root": 0,
+        "outer": 6,
+        "first_parent": 3,
+        "proof_parent": 3,
+        "hop": 2,
+        "current": 3,
+        "parent": 2,
+        "raw_count": 1,
+        "samples": [[5, False]],
+        "truncated": False,
+        **changes,
+    }
     assert _failed_hop(refusal, edge) is None
+
+
+@pytest.mark.parametrize("scope", [True, 0, None])
+@pytest.mark.parametrize("attach", [False, True])
+def test_capture_refusal_scope_cannot_retain_content(tmp_path, scope, attach):
+    url = "http://127.0.0.1:5176/tasks"
+    trace = {
+        "version": 1,
+        "pid": 77,
+        "window_id": 9,
+        "scope_url": url,
+        "scope_matched": scope,
+        "status": "capture_refused",
+        "snapshot_id": "s1",
+        "graph": "fixture-private-marker",
+    }
+    if attach:
+        trace["failed_hop"] = None
+    out = tmp_path / "trace.json"
+    retain(
+        out,
+        {"pid": 77, "window_id": 9, "row_trace_url": url},
+        {"pid": 77, "window_id": 9, "snapshot_id": "s1", "row_trace_json": json.dumps(trace)},
+        [{"id": "fixture-private-marker"}],
+    )
+    result = json.loads(out.read_text())
+    assert result["status"] == "invalid_sdk_trace" and result["sdk"] is None
+    assert "fixture-private-marker" not in out.read_text()
