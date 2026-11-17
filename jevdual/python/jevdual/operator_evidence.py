@@ -735,6 +735,7 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
     nested_infobar = isinstance(nested_delivery, dict) and nested_delivery.get("delivery_basis") == "ax_infobar_disappearance_readback"
     if infobar_intent or infobar_proof or nested_infobar or basis == "ax_infobar_disappearance_readback":
         _infobar_delivery_agreement(projection, dispatched=dispatched, effect=effect, basis=basis, count=count)
+        _infobar_provenance_agreement([record, projection], binding["pid"], binding["window_id"])
         if "execution_receipt" in projection:
             raise EvidenceError("nested infobar execution envelope unsupported")
     if basis == "ax_infobar_disappearance_readback" or infobar_proof or (

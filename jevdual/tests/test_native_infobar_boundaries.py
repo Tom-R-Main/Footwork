@@ -1,7 +1,6 @@
 """One fault matrix across every infobar evidence consumer; no OS input."""
 import copy
 import hashlib
-import json
 import sys
 
 import pytest

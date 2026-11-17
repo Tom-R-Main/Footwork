@@ -55,3 +55,17 @@ Present attempt, observation, session and error copies are typed and agree too.
 Historical omissions remain optional; a lone retained value does not authenticate
 history that no other copy records. Contradictory attachments can only downgrade
 the ordinary receipt; they do not alter the original durable capsule.
+
+Durable validation applies the same provenance agreement before retention, for
+sent, no-send and unknown outcomes. Record construction and retention call
+`validate_execution`; retained reads call it again; settlement and reconciliation
+read through that validator. Ordinary attached presentation checks separately.
+The consumer matrix in `tests/test_native_infobar_boundaries.py` injects the same
+faults at each boundary, including a matched-digest storage fault and a negative
+control that omits only the durable shared check.
+
+Known historical compatibility limit (preexisting): when a successful returned
+projection omits its optional `error`, the admission placeholder can reappear in
+ordinary presentation. Durable settlement stays correct; ordinary presentation
+conservatively says unverifiable. This projection-merge behavior is deferred,
+not silently described as preserving the ordinary success classification.
